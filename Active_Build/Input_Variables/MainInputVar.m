@@ -79,7 +79,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=100;
+    snakesSteps=50;
     refineGrid=2;
     typeRefine='grey';
     execTest=false;
@@ -128,9 +128,9 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     loadLogical=false;
     useSnakes=true;
     isCheckRes=true;
-    snakesPlotInterval=1;
-    snakesSteps=50;
-    refineGrid=4;
+    snakesPlotInterval=0;
+    snakesSteps=1000;
+    refineGrid=2;
     typeRefine='grey';
     execTest=false;
     makeMov=false;
@@ -208,7 +208,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     snakesPlotInterval=0;
     snakesSteps=50;
     
-    refineGrid=2;
+    refineGrid=4;
     typeRefine='grey';
     execTest=false;
     makeMov=false;

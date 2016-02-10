@@ -20,6 +20,7 @@ function []=TecplotOutput(optionalSubFolder,datType,baseGrid,fineGrid,snakSave,c
     varsCell={};%{['VARIABLES = "X" ,"Y", "U" ,"V", "MAG" ,"TARGFILL" ,"VOLFRAC", "DIFF"']};
     [cellBaseGrid]=GridStructToCellOut(baseGrid,1);
     [cellFineGrid]=GridStructToCellOut(fineGrid,2);
+    [cellConv]=ConvergenceStructToCellOut(snakSave,5);
     time=0;
     for ii=1:length(snakSave)
         [cellSnax(ii).cells]=SnaxelToCellOut(snakSave(ii).snaxel,snakSave(ii).snakposition,3,time);
@@ -36,7 +37,7 @@ function []=TecplotOutput(optionalSubFolder,datType,baseGrid,fineGrid,snakSave,c
     end
     
     [cellMesh]=CellCentredMeshDataExtraction(baseGrid,snakSave(1).volumefraction,[],[],[],[]);
-    cellWrite=[varsCell,cellBaseGrid,cellFineGrid,cellMesh,[cellSnax(:).cells],[cellVol(:).cellMesh]];
+    cellWrite=[varsCell,cellBaseGrid,cellFineGrid,cellMesh,[cellSnax(:).cells],[cellVol(:).cellMesh],cellConv];
     WriteToFile(cellWrite,FID);
     fclose(FID);
 end
@@ -83,7 +84,6 @@ end
 %% Tecplot Headers for various zone types
 
 function cellHeader=FELINESEGHeader(numNodes,numElm,strandID,time)
-    
     
 %     if ~exist('numNodes','var');numNodes=1;end
 %     if ~exist('numElm','var');numElm=1;end
@@ -187,6 +187,22 @@ function [cellMesh]=GridStructToCellOut(gridStruct,strandID)
     vectorDat=zeros(size(coordDat));
     velDat=vectorDat(:,1);
     vectorDat=[vectorDat,velDat];
+    [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID);
+    
+end
+
+function [cellMesh]=ConvergenceStructToCellOut(snakSave,strandID)
+    
+    iter=1:length(snakSave);
+    convVolume=[snakSave(:).currentConvVolume];
+    convVelocity=[snakSave(:).currentConvVelocity];
+    padding=zeros(size(iter));
+    
+    connDat=[[1:length(snakSave)-1]',[2:length(snakSave)]'];
+    coordDat=[iter',convVolume'];
+    vertIndex=iter;
+    
+    vectorDat=[convVelocity',padding',padding'];
     [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID);
     
 end

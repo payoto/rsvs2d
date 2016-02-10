@@ -51,7 +51,7 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
         MakeVideo(movStruct,fps,quality,typDat);
     end
     TecplotOutput('TecPlot',typDat,unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
-    OutPutBinaryResults(snakSave,saveParam,typDat)
+    %OutPutBinaryResults(snakSave,saveParam,typDat)
 end
 
 %% Top Level Execution processes

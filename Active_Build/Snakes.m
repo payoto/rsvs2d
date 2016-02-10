@@ -24,6 +24,12 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     global maxStep
     maxStep=1;
     maxDt=1;
+    
+    forceparam.maxForceVel=0.3;
+    forceparam.bendingVelInfluence=1;
+    forceparam.tensVelInfluence=1;
+    forceparam.maxVelRatio=0.95;
+    
     if ~exist('numSteps','var'),numSteps=50;end
     if ~exist('plotInterval','var'),plotInterval=ceil(numSteps/10);end
     [refinedGrid]=ModifUnstructured(refinedGriduns);
@@ -35,21 +41,24 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
         oldGrid,oldGridUns,connectionInfo,plotInterval,numSteps,debugPlot,...
-        arrivalTolerance,maxStep,maxDt,mergeTopo,makeMov,boundstr);
-    
+        arrivalTolerance,maxStep,maxDt,mergeTopo,makeMov,boundstr,forceparam);
+    figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
+    title('Volume error')
+    ylabel('Root Mean squared error on volume convergence')
+    xlabel('number of iterations')
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
         oldGrid,oldGridUns,connectionInfo,plotInterval,numSteps,debugPlot,...
-        arrivalTolerance1,maxStep,maxDt,mergeTopo,makeMov,boundstr)
+        arrivalTolerance1,maxStep,maxDt,mergeTopo,makeMov,boundstr,forceparam)
     % Main execution container for Snakes
     
     global arrivalTolerance
     arrivalTolerance=arrivalTolerance1;
     dtMin=1;
     decayCoeff=0.15;
-    convLevel=10^-7;
+    convLevel=10^-8;
     
     
     disp(['    Start initialisation'])
@@ -73,7 +82,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
-        [snaxel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure);
+        [snaxel,snakposition]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         % visualise results
         
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
@@ -141,6 +150,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     end
     tEnd=now;
     disp(['Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
+    disp(['Volume converged to ',num2str(currentConvVolume,'%.5e')])
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns);
     
@@ -967,10 +977,10 @@ end
 %% Forcing Function 2
 % Calculates the velocity depending on the volume Fraction
 
-function [snaxel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure)
+function [snaxel,snakposition]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
-    snaxeltensvel=TensileVelocity(snaxel,snakposition);
-    [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxeltensvel);
+    [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam);
+    [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxeltensvel,forceparam);
     [snaxelvel]=DistributeVelocityToSnaxel(velAverage,snaxeltensvel);
     
     [velstruct]=ConvertToVelStructure(snaxelvel);
@@ -1074,7 +1084,7 @@ function [velstruct]=CalculateDeviationVelocity(velstruct,coeffstructure,newcell
     condMatrix=[velEqualMat;deviationCondMat];
     [nCond,nUnknown]=size(condMatrix);
     nSet=nUnknown-nCond;
-    [condMatrix2,rmvColumns]=RemoveUnknowns(nSet-1,condMatrix,fitConditionInd);
+    [condMatrix2,rmvColumns]=RemoveUnknowns(0,condMatrix,fitConditionInd);
     
     condSatisfiedMat=condMatrix(:,rmvColumns);
     condMatrix=condMatrix2;
@@ -1235,8 +1245,8 @@ function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
         snaxelvel(ii).index=snaxelList(ii);
         snaxelvel(ii).averagevel=[];
         snaxelvel(ii).averagevelbase=[];
-        snaxelvel(ii).averageveltens=[];
-        snaxelvel(ii).tensvel=[];
+        snaxelvel(ii).averagevelforce=[];
+        snaxelvel(ii).forcevel=[];
         snaxelvel(ii).cellindex=[];
     end
     
@@ -1246,24 +1256,27 @@ function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
         for jj=1:length(snaxelVelSub)
             [snaxelvel(snaxelVelSub(jj)).cellindex(end+1)]=velaverage(ii).oldCellInd;
             [snaxelvel(snaxelVelSub(jj)).averagevelbase(end+1)]=velaverage(ii).velocity;
-            [snaxelvel(snaxelVelSub(jj)).averageveltens(end+1)]=velaverage(ii).averageveltens;
-            [snaxelvel(snaxelVelSub(jj)).tensvel]=snaxeltensvel(snaxelTensVelSub(jj)).tensvel;
+            [snaxelvel(snaxelVelSub(jj)).averagevelforce(end+1)]=velaverage(ii).averagevelforce;
+            [snaxelvel(snaxelVelSub(jj)).forcevel]=snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
             
             snaxelvel(snaxelVelSub(jj)).averagevel(end+1)=...
-                snaxelvel(snaxelVelSub(jj)).averagevelbase(end);%+...
-                %snaxelvel(snaxelVelSub(jj)).averageveltens(end);
+                snaxelvel(snaxelVelSub(jj)).averagevelbase(end)+...
+                snaxelvel(snaxelVelSub(jj)).averagevelforce(end)-...
+                snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
         end
     end
     
 end
 
-function [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxelvel)
+function [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxelvel,forceparam)
     % Calculates the average velocities required to match the condition
     [coeffCellInd]=[coeffstructure(:).cellindex];
     [coeffSnaxInd]=[coeffstructure(:).snaxelindex];
     snaxVelInd=[snaxelvel(:).index];
     isNeg=zeros(length(volumefraction),1);
     is0=zeros(length(volumefraction),1);
+    
+    maxVelRatio=forceparam.maxVelRatio;
     
     for ii=length(volumefraction):-1:1
         
@@ -1280,7 +1293,7 @@ function [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,s
             coeffsWorking=[coeffstructure(coeffSubs).value];
             snaxIndList=coeffSnaxInd(coeffSubs);
             snaxSubWorking=FindObjNum([],snaxIndList,snaxVelInd);
-            tensVelWorking=snaxelvel(snaxSubWorking).tensvel;
+            tensVelWorking=snaxelvel(snaxSubWorking).forcevel;
             
             tensVelCoeffProd=sum(coeffsWorking.*tensVelWorking);
             sumcoeff=sum(coeffsWorking);
@@ -1288,10 +1301,15 @@ function [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,s
             [velAverage(ii).velocity,isNeg(ii),is0(ii),sumcoeff]...
                 =LogicBlockForAverageVel(sumcoeff,...
                 velAverage(ii).deltaArea);
-            [velAverage(ii).sumcoeff,velAverage(ii).tensVelCoeffProd,...
-                velAverage(ii).averageveltens]=LogicBlockForAverageTensVel...
+            [velAverage(ii).sumcoeff,velAverage(ii).forcevelCoeffProd,...
+                velAverage(ii).averagevelforce]=LogicBlockForAverageTensVel...
                 (sumcoeff,tensVelCoeffProd,tensVelWorking);
-            
+            velAverage(ii).forcevelcoeff=1;
+            if abs(velAverage(ii).averagevelforce)>abs(velAverage(ii).velocity)*maxVelRatio;
+                newAverageTensVel=velAverage(ii).velocity*maxVelRatio;
+                velAverage(ii).forcevelcoeff=newAverageTensVel/velAverage(ii).averagevelforce;
+                velAverage(ii).averagevelforce=newAverageTensVel;
+            end
             velAverage(ii).snaxelindexlist=RemoveIdenticalEntries(snaxIndList);
         end
     end
@@ -1366,7 +1384,7 @@ function [snaxel]=AssignVelocityToSnaxel(velstruct,snaxel,snaxeltensvel)
                 warning('Averaging difference in velocities')
             end
         end
-        snaxel(ii).v=mean(snaxelVel); %+snaxeltensvel(velTensSub).tensvel;
+        snaxel(ii).v=mean(snaxelVel);%-snaxeltensvel(velTensSub).forcevel;
         
         if abs(snaxel(ii).v)<10^-12
             snaxel(ii).v=0;
@@ -1376,7 +1394,7 @@ function [snaxel]=AssignVelocityToSnaxel(velstruct,snaxel,snaxeltensvel)
     
 end
 
-function [snaxeltensvel]=TensileVelocity(snaxel,snakposition)
+function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam)
     % Calculate a tensile velocity to influence the solution
     snakPosIndex=[snakposition(:).index];
     snaxIndex=[snaxel(:).index];
@@ -1384,13 +1402,37 @@ function [snaxeltensvel]=TensileVelocity(snaxel,snakposition)
     if sum(snakPosIndex~=snaxIndex)>0
         error('Indices do not match')
     end
+    [snaxeltensvel,snakposition]=CalculateTensileVelocity(snaxel,snakposition,snakPosIndex);
+    [snaxeltensvel,snakposition]=CalculateBendingVelocity(snaxel,snakposition,snakPosIndex,snaxeltensvel);
+    
+    
+    bendingVelInfluence=forceparam.bendingVelInfluence;
+    tensVelInfluence=forceparam.tensVelInfluence;    
+    maxForceVel=forceparam.maxForceVel;
+    
+    
+    forceVelScaling=maxForceVel/(bendingVelInfluence+tensVelInfluence);
+    for ii=1:length(snaxeltensvel)
+        snaxeltensvel(ii).forcevel=forceVelScaling*...
+            (tensVelInfluence*snaxeltensvel(ii).tensvel...
+            +bendingVelInfluence*snaxeltensvel(ii).bendvel);
+    end
+end
+
+function [snaxeltensvel,snakposition]=CalculateTensileVelocity(snaxel,snakposition,snakPosIndex)
+    
+    
     rotCW=[0 -1; 1 0];
     rotCCW=[0 1; -1 0];
-    velRatio=10; % limits the velocity to 0.1
+    velRatio=1; % limits the velocity to 0.1
     for ii=1:length(snakposition)
-        
-        dirVecs(1,:)=rotCW*snakposition(ii).vectorprec';
-        dirVecs(2,:)=rotCCW*snakposition(ii).vectornext';
+        neighbourSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex);
+        coordNeighbour=vertcat(snakposition(neighbourSub).coord);
+        testVecs=coordNeighbour-([1;1]*snakposition(ii).coord);
+        testPrec=norm(testVecs(1,:))>0;
+        testNext=norm(testVecs(2,:))>0;
+        dirVecs(1,:)=rotCW*snakposition(ii).vectorprec'*testPrec;
+        dirVecs(2,:)=rotCCW*snakposition(ii).vectornext'*testNext;
         dirVecNorm=[norm(dirVecs(1,:));norm(dirVecs(2,:))];
         dirVecNorm(dirVecNorm==0)=1;
         
@@ -1402,6 +1444,22 @@ function [snaxeltensvel]=TensileVelocity(snaxel,snakposition)
     end
     
 end
+
+function [snaxeltensvel,snakposition]=CalculateBendingVelocity(snaxel,snakposition,snakPosIndex,snaxeltensvel)
+    
+    
+    
+    velRatio=4; % limits the velocity to the same range as the 
+    for ii=1:length(snakposition)
+        neighbourSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex);
+        tensVecNeighbour=vertcat(snakposition(neighbourSub).tensVector);
+
+        snakposition(ii).bendVector=-sum(tensVecNeighbour)+2*snakposition(ii).tensVector;
+        snaxeltensvel(ii).bendvel=dot(snakposition(ii).bendVector,snakposition(ii).vector)/(velRatio);
+    end
+    
+end
+
 
 %% Volume fraction calculation
 
@@ -2194,7 +2252,7 @@ function [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace
             error('invalid connection to break');
         end
         if isNext && isPrec
-            error('weird things happening');
+            warning('Topology Collapsing');
         end
         % then replace that number to the snaxel that is being introduced
         singlesnaxel.connectivity(refresh)=connecReplace;
@@ -2477,8 +2535,13 @@ function snaxel=DeleteSnaxel(snaxel,delIndex)
             singlesnaxel=snaxel(targSnaxSub(jj));
             connecReplace=connect(connect~=connect(jj));
             connecRemove=delIndex(ii);
-            [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace);
-            snaxel(targSnaxSub(jj))=singlesnaxel;
+            if ~isempty(connecReplace)
+                [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace);
+                snaxel(targSnaxSub(jj))=singlesnaxel;
+            else
+                warning('Check Topology Collapse')
+            end
+            
         end
         
     end
