@@ -23,10 +23,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     
     global maxStep
     maxStep=0.5;
-    maxDt=0.9;
+    maxDt=1;
     
     forceparam.maxForceVel=1;
-    forceparam.bendingVelInfluence=0.5;
+    forceparam.bendingVelInfluence=0;
     forceparam.tensVelInfluence=1;
     forceparam.maxVelRatio=1;
     
@@ -35,7 +35,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=[53:58];%[1:10:400,2, 4,6,8];
+    debugPlot=[0];%[1:10:400,2, 4,6,8];
     mergeTopo=true;
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
@@ -57,8 +57,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     global arrivalTolerance
     arrivalTolerance=arrivalTolerance1;
     dtMin=1;
-    decayCoeff=0.15;
-    convLevel=10^-8;
+    decayCoeff=0.1;
+    convLevel=10^-15;
     
     
     disp(['    Start initialisation'])
@@ -72,6 +72,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     tStart=now;
     movFrame=struct([]);
     for ii=1:numSteps
+        %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
         disp(' ')
         disp(['Start step ',num2str(ii)])
         tStepStart=now;
@@ -108,15 +109,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         snakSave(ii).currentConvVelocity=currentConvVelocity;
         snakSave(ii).currentConvVolume=currentConvVolume;
         snakSave(ii).movFrame=movFrame;
-        
-        snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
+        for subStep=1:1
+         snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
         
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-        [snakposition]=SnaxelNormal2(snaxel,snakposition);
-        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo);
-        [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
-        
+%         [snakposition]=SnaxelNormal2(snaxel,snakposition);
+%         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+%             cellCentredGrid,insideContourInfo);
+%         [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        end
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
         % Snaxel Repopulation In both directions
         suba=ArrivalCondition(snaxel);
@@ -698,102 +699,6 @@ function []=PlotVolFrac(figh,axh,coord,frac)
     hold on
 end
 
-%% Forcing Function 1
-% Including snaxel velocity calculation and edge normals
-
-function [snaxel]=VelocityCalculationExpand(snaxel,snakposition)
-    % simply sets the velocity of the snaxel to 1 (to be replaced with the
-    % required forcing function)
-    
-    for ii=1:length(snaxel)
-        if snaxel(ii).isfreeze
-            velocity=0;
-            velMultiplier=0;
-        else
-            velocity=1;
-            norm1=snakposition(ii).normvector{1};
-            norm2=snakposition(ii).normvector{2};
-            dirVec=snakposition(ii).vector;
-            normalDirVec=CalcNormVec2DClockWise(dirVec);
-            
-            isSameSide=(dot(normalDirVec,norm1)*dot(normalDirVec,norm1))>=0;
-            % vector away from vertex along one of the edges
-            nextSnax=snaxel(ii).connectivity(1);
-            subNSnax=FindObjNum(snakposition,nextSnax);
-            tanVecEdge=snakposition(subNSnax).coord-snakposition(ii).coord;
-            isConcave=(dot(tanVecEdge,norm1)+dot(tanVecEdge,norm2))<=0;
-            v=[];
-            v(1)=1/dot(norm1,dirVec);
-            v(2)=1/dot(norm2,dirVec);
-            v(isinf(v))=[];
-            velMultiplier=1; % default value
-            if ~isempty(v)
-                if isConcave
-                    if isSameSide
-                        velMultiplier=min(v);
-                    else
-                        velMultiplier=1;
-                    end
-                else
-                    velMultiplier=max(v);
-                end
-                if isinf(velMultiplier)
-                    warning('infinite velocity')
-                end
-            end
-        end
-        %velMultiplier=1;
-        snaxel(ii).v=velocity*velMultiplier;
-    end
-    
-end
-
-function [snaxel]=VelocityCalculationContract(snaxel,snakposition)
-    % simply sets the velocity of the snaxel to 1 (to be replaced with the
-    % required forcing function)
-    
-    for ii=1:length(snaxel)
-        if snaxel(ii).isfreeze
-            velocity=0;
-            velMultiplier=0;
-        else
-            velocity=-1;
-            norm1=snakposition(ii).normvector{1};
-            norm2=snakposition(ii).normvector{2};
-            dirVec=snakposition(ii).vector;
-            normalDirVec=CalcNormVec2DClockWise(dirVec);
-            
-            isSameSide=(dot(normalDirVec,norm1)*dot(normalDirVec,norm1))>=0;
-            % vector away from vertex along one of the edges
-            nextSnax=snaxel(ii).connectivity(1);
-            subNSnax=FindObjNum(snakposition,nextSnax);
-            tanVecEdge=snakposition(subNSnax).coord-snakposition(ii).coord;
-            isConcave=(dot(tanVecEdge,norm1)+dot(tanVecEdge,norm2))<=0;
-            v=[];
-            v(1)=1/dot(norm1,dirVec);
-            v(2)=1/dot(norm2,dirVec);
-            v(isinf(v))=[];
-            velMultiplier=1; % default value
-            if ~isempty(v)
-                if isConcave
-                    if isSameSide
-                        velMultiplier=min(v);
-                    else
-                        velMultiplier=1;
-                    end
-                else
-                    velMultiplier=max(v);
-                end
-                if isinf(velMultiplier)
-                    warning('infinite velocity')
-                end
-            end
-        end
-        %velMultiplier=1;
-        snaxel(ii).v=velocity*velMultiplier;
-    end
-    
-end
 
 %% Contour Normal Calculation
 
@@ -986,16 +891,117 @@ end
 
 function [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction...
         (snaxel,snakposition,volumefraction,coeffstructure,forceparam)
-    
+%     
 %     [snaxel,snakposition,snaxelmodvel]=...
 %         VelocityForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+% %     
+%     
+%     [snaxel,snakposition,snaxelmodvel]=...
+%         VelocityForceMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+    [snaxel,snakposition,snaxelmodvel]=...
+        VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 %     
 %     [snaxel,snakposition,snaxelmodvel]=...
 %         VelocityNormalisedForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 
-    [snaxel,snakposition,snaxelmodvel]=...
-        VelocityAreaOnly(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+%     [snaxel,snakposition,snaxelmodvel]=...
+%         VelocityAreaOnly(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 end
+
+function [snaxel]=VelocityCalculationExpand(snaxel,snakposition)
+    % simply sets the velocity of the snaxel to 1 (to be replaced with the
+    % required forcing function)
+    
+    for ii=1:length(snaxel)
+        if snaxel(ii).isfreeze
+            velocity=0;
+            velMultiplier=0;
+        else
+            velocity=1;
+            norm1=snakposition(ii).normvector{1};
+            norm2=snakposition(ii).normvector{2};
+            dirVec=snakposition(ii).vector;
+            normalDirVec=CalcNormVec2DClockWise(dirVec);
+            
+            isSameSide=(dot(normalDirVec,norm1)*dot(normalDirVec,norm1))>=0;
+            % vector away from vertex along one of the edges
+            nextSnax=snaxel(ii).connectivity(1);
+            subNSnax=FindObjNum(snakposition,nextSnax);
+            tanVecEdge=snakposition(subNSnax).coord-snakposition(ii).coord;
+            isConcave=(dot(tanVecEdge,norm1)+dot(tanVecEdge,norm2))<=0;
+            v=[];
+            v(1)=1/dot(norm1,dirVec);
+            v(2)=1/dot(norm2,dirVec);
+            v(isinf(v))=[];
+            velMultiplier=1; % default value
+            if ~isempty(v)
+                if isConcave
+                    if isSameSide
+                        velMultiplier=min(v);
+                    else
+                        velMultiplier=1;
+                    end
+                else
+                    velMultiplier=max(v);
+                end
+                if isinf(velMultiplier)
+                    warning('infinite velocity')
+                end
+            end
+        end
+        %velMultiplier=1;
+        snaxel(ii).v=velocity*velMultiplier;
+    end
+    
+end
+
+function [snaxel]=VelocityCalculationContract(snaxel,snakposition)
+    % simply sets the velocity of the snaxel to 1 (to be replaced with the
+    % required forcing function)
+    
+    for ii=1:length(snaxel)
+        if snaxel(ii).isfreeze
+            velocity=0;
+            velMultiplier=0;
+        else
+            velocity=-1;
+            norm1=snakposition(ii).normvector{1};
+            norm2=snakposition(ii).normvector{2};
+            dirVec=snakposition(ii).vector;
+            normalDirVec=CalcNormVec2DClockWise(dirVec);
+            
+            isSameSide=(dot(normalDirVec,norm1)*dot(normalDirVec,norm1))>=0;
+            % vector away from vertex along one of the edges
+            nextSnax=snaxel(ii).connectivity(1);
+            subNSnax=FindObjNum(snakposition,nextSnax);
+            tanVecEdge=snakposition(subNSnax).coord-snakposition(ii).coord;
+            isConcave=(dot(tanVecEdge,norm1)+dot(tanVecEdge,norm2))<=0;
+            v=[];
+            v(1)=1/dot(norm1,dirVec);
+            v(2)=1/dot(norm2,dirVec);
+            v(isinf(v))=[];
+            velMultiplier=1; % default value
+            if ~isempty(v)
+                if isConcave
+                    if isSameSide
+                        velMultiplier=min(v);
+                    else
+                        velMultiplier=1;
+                    end
+                else
+                    velMultiplier=max(v);
+                end
+                if isinf(velMultiplier)
+                    warning('infinite velocity')
+                end
+            end
+        end
+        %velMultiplier=1;
+        snaxel(ii).v=velocity*velMultiplier;
+    end
+    
+end
+
 %% Volume fraction calculation
 
 function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
@@ -1620,6 +1626,7 @@ function snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist)
         movDist=snaxel(ii).v*dt;
         
         if abs(movDist)>abs(maxDist(ii))
+            warning('Problem with snaxel update')
             movDist=maxDist(ii);
         end
         snaxel(ii).d=movDist+snaxel(ii).d;

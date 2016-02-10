@@ -8,13 +8,12 @@
 %      for Aerodynamic shape parametrisation
 %                - Snakes -
 %        - Velocity calculation -
-%   Using Area and Normalised geometry forcing
+%      Using Area and geometry forcing
 %             Alexandre Payot
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-function [snaxel,snakposition,snaxelmodvel]=VelocityNormalisedForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
+function [snaxel,snakposition,snaxelmodvel]=VelocityForceMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
     [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam);
     [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxeltensvel,forceparam);
@@ -304,8 +303,8 @@ function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
             [snaxelvel(snaxelVelSub(jj)).forcevel]=snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
             
             snaxelvel(snaxelVelSub(jj)).averagevel(end+1)=...
-                snaxelvel(snaxelVelSub(jj)).averagevelbase(end)+...
-                snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
+                snaxelvel(snaxelVelSub(jj)).averagevelbase(end);%+...
+                %snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
         end
     end
     
@@ -432,6 +431,7 @@ function [snaxel,snaxelvel]=AssignVelocityToSnaxel(velstruct,snaxel,snaxeltensve
         snaxelvel(ii).deviation=velstruct(velSub(1)).deviationvel;
         snaxelvel(ii).force=snaxeltensvel(velTensSub).forcevel;
         %snaxel(ii).v=mean(snaxelVel)+snaxeltensvel(velTensSub).forcevel;
+        snaxel(ii).v=snaxeltensvel(velTensSub).forcevel;
         
         if abs(snaxel(ii).v)<10^-12
             snaxel(ii).v=0;
@@ -539,10 +539,13 @@ function [implicitMatTens,implicitMatBend]=BuildImplicitMatrix(derivtenscalc)
         implicitMatBendm1(ii,snaxPrecSub(snaxPrecSub(ii)))=derivtenscalc(snaxPrecSub(ii)).velcoeff_m;
         implicitMatBendm1(ii,snaxNextSub(snaxPrecSub(ii)))=derivtenscalc(snaxPrecSub(ii)).velcoeff_p;
     end
-    implicitMatBend=2*implicitMatBend-implicitMatBendm1-implicitMatBendp1;
+    implicitMatBend=-2*implicitMatBend+implicitMatBendm1+implicitMatBendp1;
 end
 
 function [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex)
+    
+    global unstructglobal
+     CheckResults(1,unstructglobal,unstructglobal,snakposition,snaxel,0);
     
     
     rotCW=[0 -1; 1 0];
@@ -576,7 +579,9 @@ function [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIn
         derivtenscalc(ii).velcoeff_i=velcoeff_i;
         derivtenscalc(ii).velcoeff_p=velcoeff_p;
         derivtenscalc(ii).velcoeff_m=velcoeff_m;
-        
+        hold on
+        quiver(derivtenscalc(ii).pos_i(1),derivtenscalc(ii).pos_i(2),snakposition(ii).tensVector(1),snakposition(ii).tensVector(2));
+%         quiver(derivtenscalc(ii).pos_i(1),derivtenscalc(ii).pos_i(2),bendingVec(1),bendingVec(2));
     end
     
 end
@@ -644,11 +649,13 @@ function [tensVelVec]=GeometryForcingVelCalc(derivtenscalc,implicitMatTens,impli
     F=T*tensCoeff+B*bendCoeff;
     
     dFdt=implicitMatTens*tensCoeff+implicitMatBend*bendCoeff;
-    
+    [dFdvdtCrossed]=CalculateDerivativeProducts(dFdt);
+    [FdFdv]=CalculateForceDerivativeProducts(dFdt,F);
     if rcond(dFdt)>1e-10
-        tensVelVec=(dFdt)\(-F);
+        tensVelVec=(dFdvdtCrossed)\(-FdFdv);
     else
-        tensVelVec=pinv(dFdt)*(-F);
+        warning('pseudo inverse used when calculating velocities')
+        tensVelVec=pinv(dFdvdtCrossed)*(-FdFdv);
     end
     %tensVelVec=tensVelVec/mean(abs(tensVelVec));
     
@@ -656,4 +663,263 @@ function [tensVelVec]=GeometryForcingVelCalc(derivtenscalc,implicitMatTens,impli
     
 end
 
+function [dFdvdtCrossed]=CalculateDerivativeProducts(dFdt)
+    
+    [m,n]=size(dFdt);
+    
+    if m~=n
+        error('dFdt is not square')
+    end
+    
+    dFdvVert=zeros([m m m]);
+    dFdtHoriz=zeros([m m m]);
+    
+    for ii=1:m
+        dFdvVert(:,ii,:)=dFdt';
+        dFdtHoriz(ii,:,:)=dFdt';
+    end
+    
+    dFdvdtCrossed=2*sum(dFdvVert.*dFdtHoriz,3);
+    
+end
 
+function [FdFdv]=CalculateForceDerivativeProducts(dFdt,F)
+    
+    [m,~]=size(dFdt);
+    [n,~]=size(F);
+    if m~=n
+        error('dFdt and F are not the same size is not square')
+    end
+    
+    FdFdv=2*sum(dFdt'.*(ones([m,1])*F'),2);
+    
+end
+
+%% Visualisation functions
+
+function [movFrame]=CheckResults(iter,unstructured,oldGrid,snakposition,snaxel,makeMovie,volumefraction,borderVertices)
+    global nDim domainBounds
+    movFrame=[];
+    if nDim==2
+        figh=figure('Position',[100 100 1000 900]);
+        axh=axes;
+        hold on
+        title(['Iteration  ',int2str(iter)],'fontsize',16)
+        colString='bgcmyk';
+        
+        isEdgeSub=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeSub)
+            PlotEdge(figh,axh,unstructured,isEdgeSub(ii),'bo')
+        end
+        
+        isEdgeSub=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeSub)
+            PlotEdge(figh,axh,unstructured,isEdgeSub(ii),'b-')
+        end
+        if exist('borderVertices','var')
+            subVert=FindObjNum([],borderVertices,unstructured.vertex.index);
+            for ii=1:length(subVert)
+                PlotVert(figh,axh,unstructured,subVert(ii),'ro')
+            end
+        end
+        isCellFull=find(unstructured.cell.fill);
+        for ii=1:length( isCellFull)
+            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
+        end
+        PlotSnaxel(figh,axh,snakposition,snaxel)
+        PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+        %PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
+        PlotSnaxelIndex(figh,axh,snakposition)
+        
+        if exist('volumefraction','var')
+            oldCellIndUnstructInd=[oldGrid.cell(:).index];
+            
+            oldCellIndUnstructSub=FindObjNum(oldGrid.cell,oldCellIndUnstructInd);
+            oldCellIndVolFracSub=FindObjNum(volumefraction,...
+                oldCellIndUnstructInd,[volumefraction(:).oldCellInd]);
+            for ii=1:length(oldCellIndUnstructInd)
+                
+                coord=oldGrid.cell(oldCellIndUnstructSub(ii)).coord;
+                frac=volumefraction(oldCellIndVolFracSub(ii)).volumefraction...
+                    -volumefraction(oldCellIndVolFracSub(ii)).targetfill;
+                %frac=volumefraction(oldCellIndVolFracSub(ii)).oldCellInd;
+                PlotVolFrac(figh,axh,coord,frac)
+            end
+        end
+        
+%         [normalcontourvec]=ContourNormal2(snaxel,snakposition);
+%         PlotContVec(figh,axh,snakposition,normalcontourvec)
+        
+        
+        axis equal
+        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
+        if makeMovie
+            movFrame=getframe(figh);
+        end
+    end
+    
+end
+
+function []=CheckResultsLight(unstructured,snakposition,snaxel)
+    global nDim domainBounds
+    
+    if nDim==2
+        figh=figure;
+        axh=axes;
+        hold on
+        
+        colString='bgcmyk';
+        
+        isEdgeIndex=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeIndex)
+            %PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'bo')
+        end
+        
+        isEdgeIndex=find(unstructured.edge.boundaryis0);
+        for ii=1:length(isEdgeIndex)
+            %PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'b-')
+        end
+        
+        
+        isCellFull=find(unstructured.cell.fill);
+        for ii=1:length( isCellFull)
+            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
+        end
+        %PlotSnaxel(figh,axh,snakposition)
+        PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+        %PlotSnaxelIndex(figh,axh,snakposition)
+        
+        %[normalcontourvec]=ContourNormal(snaxel,snakposition);
+        %PlotContVec(figh,axh,snakposition,normalcontourvec)
+        
+        axis equal
+        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
+    end
+    
+end
+
+function []=PlotEdge(figh,axh,unstructured,subEdge,format)
+    figure(figh)
+    %axes(axh)
+    
+    vertices=unstructured.edge.vertexindex(subEdge,:);
+    vertsub(1)=find(unstructured.vertex.index==vertices(1));
+    vertsub(2)=find(unstructured.vertex.index==vertices(2));
+    coord=unstructured.vertex.coord(vertsub,:);
+    
+    
+    plot(coord(:,1),coord(:,2),format)
+    
+end
+
+function []=PlotVert(figh,axh,unstructured,subVert,format)
+    figure(figh)
+    %axes(axh)
+    
+    coord=unstructured.vertex.coord(subVert,:);
+    
+    plot(coord(:,1),coord(:,2),format)
+    
+end
+
+function []=PlotSnaxel(figh,axh,snakposition,snaxel)
+    % Plots the snaxels as arrows on the plot
+    for ii=1:length(snakposition)
+        X(ii)=snakposition(ii).coord(1);
+        Y(ii)=snakposition(ii).coord(2);
+        U(ii)=snakposition(ii).vector(1)*snaxel(ii).v/40;
+        V(ii)=snakposition(ii).vector(2)*snaxel(ii).v/40;
+    end
+    figure(figh)
+    axes(axh)
+    quiver(X,Y,U,V,0,'r-')
+    
+end
+
+function []=PlotContVec(figh,axh,snakposition,normalContVec)
+    % Plots the snaxels as arrows on the plot
+    snaxIndex=[snakposition(:).index];
+    for ii=1:length(normalContVec)
+        for jj=1:2
+            workInd=normalContVec(ii).(['index',int2str(jj)]);
+            %workInd=normalContVec(ii).vertex(jj);
+            workSub(jj)=FindObjNum(snakposition,workInd,snaxIndex);
+            coord(jj,1:2)=snakposition(workSub(jj)).coord;
+        end
+        coord=mean(coord);
+        X(ii)=coord(1);
+        Y(ii)=coord(2);
+        U(ii)=normalContVec(ii).vector(1)/20;
+        V(ii)=normalContVec(ii).vector(2)/20;
+    end
+    figure(figh)
+    axes(axh)
+    quiver(X,Y,U,V,0,'r-')
+    
+end
+
+function []=PlotSnaxelIndex(figh,axh,snakposition)
+    % Plots the snaxels as arrows on the plot
+    figure(figh)
+    axes(axh)
+    for ii=1:length(snakposition)
+        X(ii)=snakposition(ii).coord(1);
+        Y(ii)=snakposition(ii).coord(2);
+        U(ii)=snakposition(ii).vector(1)/80;
+        V(ii)=snakposition(ii).vector(2)/80;
+        str=num2str(snakposition(ii).index);
+        text(X(ii)+U(ii),Y(ii)+V(ii),str)
+    end
+    
+    
+    
+end
+
+function []=PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+    % Plots the snaxels as arrows on the plot
+    figure(figh)
+    axes(axh)
+    snaxInd=[snaxel(:).index];
+    for jj=1:length(snaxel)
+        line=[snaxel(jj).index,snaxel(jj).snaxnext];
+        for ii=1:length(line)
+            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
+            X(ii)=snakposition(currSnaxSub).coord(1);
+            Y(ii)=snakposition(currSnaxSub).coord(2);
+        end
+        plot(X,Y,'ro--')
+    end
+
+end
+
+function []=PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
+    % Plots the snaxels as arrows on the plot
+    figure(figh)
+    axes(axh)
+    snaxInd=[snaxel(:).index];
+    for jj=1:length(snaxel)
+        line=[snaxel(jj).index,snaxel(jj).snaxnext];
+        for ii=1:length(line)
+            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
+            X(ii)=snakposition(currSnaxSub).coord(1);
+            Y(ii)=snakposition(currSnaxSub).coord(2);
+            
+        end
+        U=X(2)-X(1);
+        
+        V=Y(2)-Y(1);
+        quiver(X(1),Y(1),U,V,0)
+    end
+
+end
+
+function []=PlotVolFrac(figh,axh,coord,frac)
+    figure(figh)
+    axes(axh)
+    if frac==0
+        text(coord(:,1),coord(:,2),num2str(frac),'HorizontalAlignment','center')
+    else
+    text(coord(:,1),coord(:,2),num2str(frac,'%.1e'),'HorizontalAlignment','center')
+    end
+    hold on
+end

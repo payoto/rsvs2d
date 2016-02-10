@@ -161,6 +161,8 @@ function cellSimilar=FindIdenticalVector(blockSegments)
     
 end
 
+% Order BlockEdges might cause problems as the different versions were not
+% consistant.
 function [cellOrderedVertex,cellOrderedEdges]=...
         OrderBlockEdges(blockEdges,discardInput)
     

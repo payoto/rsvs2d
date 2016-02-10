@@ -121,7 +121,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     passGridSteps=3; 
      % number of refining steps
     refineSteps=2;
-    passPadding=1;
+    passPadding=3;
     
     typDat='vvlofoil';
     typeBound='snaxel'; % 'vertex' or 'snaxel'
@@ -129,9 +129,59 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=80;
-    refineGrid=4;
+    snakesSteps=200;
+    refineGrid=2;
     typeRefine='grey';
+    execTest=false;
+    makeMov=false;
+    
+end
+
+function [passDomBounds,passGridSteps,refineSteps,passPadding...
+        ,typDat,typeBound,loadLogical,useSnakes,isCheckRes,snakesPlotInterval...
+        ,snakesSteps,typeRefine,execTest,refineGrid,makeMov]=Snakestestsmooth1()
+    
+    passDomBounds=[-1,1;-1,1];
+     % number of steps in design domain
+    passGridSteps=3; 
+     % number of refining steps
+    refineSteps=2;
+    passPadding=1;
+    
+    typDat='testsmooth1';
+    typeBound='snaxel'; % 'vertex' or 'snaxel'
+    loadLogical=false;
+    useSnakes=true;
+    isCheckRes=true;
+    snakesPlotInterval=0;
+    snakesSteps=200;
+    refineGrid=4;
+    typeRefine='all';
+    execTest=false;
+    makeMov=false;
+    
+end
+
+function [passDomBounds,passGridSteps,refineSteps,passPadding...
+        ,typDat,typeBound,loadLogical,useSnakes,isCheckRes,snakesPlotInterval...
+        ,snakesSteps,typeRefine,execTest,refineGrid,makeMov]=Snakestestsmooth4()
+    
+    passDomBounds=[-1,1;-1,1];
+     % number of steps in design domain
+    passGridSteps=3; 
+     % number of refining steps
+    refineSteps=2;
+    passPadding=3;
+    
+    typDat='testsmooth4';
+    typeBound='snaxel'; % 'vertex' or 'snaxel'
+    loadLogical=false;
+    useSnakes=true;
+    isCheckRes=true;
+    snakesPlotInterval=0;
+    snakesSteps=70;
+    refineGrid=8;
+    typeRefine='all';
     execTest=false;
     makeMov=false;
     
@@ -206,9 +256,9 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=false;
     snakesPlotInterval=0;
-    snakesSteps=20;
+    snakesSteps=50;
     
-    refineGrid=4;
+    refineGrid=2;
     typeRefine='grey';
     execTest=false;
     makeMov=false;

@@ -73,7 +73,7 @@ function [targetDir,fileName]=OutputDirectory(datType,optionalSubFolder)
     % time
     if ~exist('optionalSubFolder','var'),optionalSubFolder='';end
     
-    fileName=['TecPlot360_',datType,'_',datestr(now,30),'.plt'];
+    fileName=['TecPlot360_',datestr(now,30),'_',datType,'.plt'];
     stampedSubFolders=['DataArchive_',datestr(now,'yyyy_mm')];
     targetDir=[cd,'\Results\',optionalSubFolder,'\',stampedSubFolders,'\'];
     system(['md "',targetDir,'"']);

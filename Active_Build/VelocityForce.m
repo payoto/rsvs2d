@@ -303,8 +303,8 @@ function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
             [snaxelvel(snaxelVelSub(jj)).forcevel]=snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
             
             snaxelvel(snaxelVelSub(jj)).averagevel(end+1)=...
-                snaxelvel(snaxelVelSub(jj)).averagevelbase(end)+...
-                snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
+                snaxelvel(snaxelVelSub(jj)).averagevelbase(end);%+...
+                %snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
         end
     end
     
@@ -538,7 +538,7 @@ function [implicitMatTens,implicitMatBend]=BuildImplicitMatrix(derivtenscalc)
         implicitMatBendm1(ii,snaxPrecSub(snaxPrecSub(ii)))=derivtenscalc(snaxPrecSub(ii)).velcoeff_m;
         implicitMatBendm1(ii,snaxNextSub(snaxPrecSub(ii)))=derivtenscalc(snaxPrecSub(ii)).velcoeff_p;
     end
-    implicitMatBend=2*implicitMatBend-implicitMatBendm1-implicitMatBendp1;
+    implicitMatBend=-2*implicitMatBend+implicitMatBendm1+implicitMatBendp1;
 end
 
 function [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex)
