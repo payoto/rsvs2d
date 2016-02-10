@@ -13,9 +13,9 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [snaxel,snakposition,snaxelmodvel]=VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
+function [snaxel,snakposition,snaxelmodvel,velcalcinfostruct]=VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
-    [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
+    [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
     [snaxel]=AssignVelocityToSnaxel(snaxel,snaxeltensvel);
     
     snaxelmodvel=snaxel;
@@ -51,7 +51,7 @@ end
 
 %% Geometry feature forcing
 % In all code Dt is removed and assumed to be 1
-function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction)
+function [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction)
     % Calculate a tensile velocity to influence the solution
     snakPosIndex=[snakposition(:).index];
     snaxIndex=[snaxel(:).index];
@@ -76,7 +76,8 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
     
     
-    
+    velcalcinfostruct.forcingVec=forcingVec;
+    velcalcinfostruct.conditionMat=conditionMat;
     
     [tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
     

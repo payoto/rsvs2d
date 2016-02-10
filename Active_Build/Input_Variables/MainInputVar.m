@@ -121,7 +121,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     passGridSteps=3; 
      % number of refining steps
     refineSteps=2;
-    passPadding=3;
+    passPadding=1;
     
     typDat='vvlofoil';
     typeBound='snaxel'; % 'vertex' or 'snaxel'
@@ -129,7 +129,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=200;
+    snakesSteps=100;
     refineGrid=2;
     typeRefine='grey';
     execTest=false;
@@ -171,7 +171,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     passGridSteps=3; 
      % number of refining steps
     refineSteps=2;
-    passPadding=3;
+    passPadding=1;
     
     typDat='testsmooth4';
     typeBound='snaxel'; % 'vertex' or 'snaxel'
@@ -180,8 +180,8 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     isCheckRes=true;
     snakesPlotInterval=0;
     snakesSteps=70;
-    refineGrid=8;
-    typeRefine='all';
+    refineGrid=4;
+    typeRefine='grey';
     execTest=false;
     makeMov=false;
     
@@ -256,10 +256,10 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=false;
     snakesPlotInterval=0;
-    snakesSteps=50;
+    snakesSteps=300;
     
-    refineGrid=2;
-    typeRefine='grey';
+    refineGrid=4;
+    typeRefine='all';
     execTest=false;
     makeMov=false;
     
@@ -394,10 +394,10 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=50;
+    snakesSteps=100;
     
-    refineGrid=2;
-    typeRefine='grey';
+    refineGrid=4;
+    typeRefine='all';
     execTest=false;
     makeMov=false;
     

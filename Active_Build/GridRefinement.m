@@ -182,7 +182,8 @@ end
 
 function [newedges,newvertices]=SplitEdge(edgeIndex,nRefine,gridreshape)
     % splits an edge into nRefine edges adding corresponding vertices
-    
+    newedges=AddEdgeStructure([],[],[],[]);
+    newvertices=AddVertexStructure([],[]);
     edgeIndices=[gridreshape.edge(:).index];
     edgeSub=FindObjNum(gridreshape.edge,edgeIndex,edgeIndices);
     maxEdgeIndex=max(edgeIndices);

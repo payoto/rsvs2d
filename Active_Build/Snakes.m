@@ -83,7 +83,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
-        [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         % visualise results
         
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
@@ -109,6 +109,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         snakSave(ii).currentConvVelocity=currentConvVelocity;
         snakSave(ii).currentConvVolume=currentConvVolume;
         snakSave(ii).movFrame=movFrame;
+        snakSave(ii).velcalcinfo=velcalcinfo;
         for subStep=1:1
          snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
         
@@ -236,8 +237,8 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
     conditionVolume=currentConvVolume<convLevel;
     
-    %convergenceCondition= conditionVolume && conditionVelocity;
-    convergenceCondition= conditionVolume;
+    convergenceCondition= conditionVolume && conditionVelocity;
+    %convergenceCondition= conditionVolume;
 end
 
 %% Snaxel Initialisation
@@ -889,7 +890,7 @@ end
 
 %% Velocity Calculation (External Function)
 
-function [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction...
+function [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction...
         (snaxel,snakposition,volumefraction,coeffstructure,forceparam)
 %     
 %     [snaxel,snakposition,snaxelmodvel]=...
@@ -898,7 +899,8 @@ function [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction...
 %     
 %     [snaxel,snakposition,snaxelmodvel]=...
 %         VelocityForceMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
-    [snaxel,snakposition,snaxelmodvel]=...
+velcalcinfo=[];
+    [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
         VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 %     
 %     [snaxel,snakposition,snaxelmodvel]=...
