@@ -22,20 +22,20 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     unstructglobal=refinedGriduns;
     
     global maxStep
-    maxStep=1;
-    maxDt=1;
+    maxStep=0.5;
+    maxDt=0.9;
     
-    forceparam.maxForceVel=0.3;
-    forceparam.bendingVelInfluence=1;
+    forceparam.maxForceVel=1;
+    forceparam.bendingVelInfluence=0.5;
     forceparam.tensVelInfluence=1;
-    forceparam.maxVelRatio=0.95;
+    forceparam.maxVelRatio=1;
     
     if ~exist('numSteps','var'),numSteps=50;end
     if ~exist('plotInterval','var'),plotInterval=ceil(numSteps/10);end
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=0;
+    debugPlot=[53:58];%[1:10:400,2, 4,6,8];
     mergeTopo=true;
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
@@ -82,12 +82,13 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
-        [snaxel,snakposition]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         % visualise results
         
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
+            [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxelmodvel,makeMov,volumefraction);
             [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,makeMov,volumefraction);
-            
+        
         end
         
         [convergenceCondition,currentConvVelocity,currentConvVolume]=...
@@ -109,6 +110,13 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         snakSave(ii).movFrame=movFrame;
         
         snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
+        
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo);
+        [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
         % Snaxel Repopulation In both directions
         suba=ArrivalCondition(snaxel);
@@ -492,7 +500,7 @@ function [movFrame]=CheckResults(iter,unstructured,oldGrid,snakposition,snaxel,m
         for ii=1:length( isCellFull)
             %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
         end
-        PlotSnaxel(figh,axh,snakposition)
+        PlotSnaxel(figh,axh,snakposition,snaxel)
         %PlotSnaxelLoop(figh,axh,snakposition,snaxel)
         PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
         PlotSnaxelIndex(figh,axh,snakposition)
@@ -588,13 +596,13 @@ function []=PlotVert(figh,axh,unstructured,subVert,format)
     
 end
 
-function []=PlotSnaxel(figh,axh,snakposition)
+function []=PlotSnaxel(figh,axh,snakposition,snaxel)
     % Plots the snaxels as arrows on the plot
     for ii=1:length(snakposition)
         X(ii)=snakposition(ii).coord(1);
         Y(ii)=snakposition(ii).coord(2);
-        U(ii)=snakposition(ii).vector(1)/40;
-        V(ii)=snakposition(ii).vector(2)/40;
+        U(ii)=snakposition(ii).vector(1)*snaxel(ii).v/40;
+        V(ii)=snakposition(ii).vector(2)*snaxel(ii).v/40;
     end
     figure(figh)
     axes(axh)
@@ -974,493 +982,20 @@ function normalVector=CalcNormVec2DClockWise(tanVector)
 %     end
 end
 
-%% Forcing Function 2
-% Calculates the velocity depending on the volume Fraction
+%% Velocity Calculation (External Function)
 
-function [snaxel,snakposition]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
+function [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction...
+        (snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
-    [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam);
-    [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxeltensvel,forceparam);
-    [snaxelvel]=DistributeVelocityToSnaxel(velAverage,snaxeltensvel);
-    
-    [velstruct]=ConvertToVelStructure(snaxelvel);
-    [newcelltoold]=StructureNewToOldcell(volumefraction);
-    [velstruct]=CalculateDeviationVelocity(velstruct,coeffstructure,newcelltoold,volumefraction);
-    [snaxel]=AssignVelocityToSnaxel(velstruct,snaxel,snaxeltensvel);
+%     [snaxel,snakposition,snaxelmodvel]=...
+%         VelocityForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+%     
+%     [snaxel,snakposition,snaxelmodvel]=...
+%         VelocityNormalisedForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+
+    [snaxel,snakposition,snaxelmodvel]=...
+        VelocityAreaOnly(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 end
-
-function [velstruct]=ConvertToVelStructure(snaxelvel)
-    
-    nVel=length([snaxelvel(:).cellindex]);
-    velstruct(nVel).index=[];
-    
-    velSub=1;
-    for ii=1:length(snaxelvel)
-        for jj=1:length(snaxelvel(ii).cellindex)
-            velstruct(velSub).index=velSub;
-            velstruct(velSub).cellindex=snaxelvel(ii).cellindex(jj);
-            velstruct(velSub).snaxelindex=snaxelvel(ii).index;
-            %velstruct(velSub).tensvel=snaxelvel(ii).tensvel;
-            velstruct(velSub).averagevel=snaxelvel(ii).averagevel(jj);
-            velSub=velSub+1;
-        end
-    end
-    
-end
-
-function [velAverage]=CalculateAverageVelocities2(volumefraction,coeffstructure)
-    % Calculates the average velocities required to match the condition
-    [coeffCellInd]=[coeffstructure(:).cellindex];
-    [coeffSnaxInd]=[coeffstructure(:).snaxelindex];
-    
-    isNeg=zeros(length(volumefraction),1);
-    is0=zeros(length(volumefraction),1);
-    for ii=length(volumefraction):-1:1
-        
-        coeffSubs=FindObjNum([],volumefraction(ii).newCellInd,coeffCellInd);
-        velAverage(ii).oldCellInd=volumefraction(ii).oldCellInd;
-        velAverage(ii).deltaArea=volumefraction(ii).targetfill*volumefraction(ii).totalvolume...
-            -volumefraction(ii).totalfraction;
-        
-        if sum(coeffSubs)==0
-            
-        else
-            coeffSubs(coeffSubs==0)=[];
-            velAverage(ii).sumcoeff=sum([coeffstructure(coeffSubs).value]);
-            
-            [velAverage(ii).velocity,isNeg(ii),is0(ii),velAverage(ii).sumcoeff]...
-                =LogicBlockForAverageVel(velAverage(ii).sumcoeff,...
-                velAverage(ii).deltaArea);
-            
-            snaxIndList=coeffSnaxInd(coeffSubs);
-            velAverage(ii).snaxelindexlist=RemoveIdenticalEntries(snaxIndList);
-        end
-    end
-    if sum(is0)>0
-        disp(['    The sum of coefficients was equal to zero ',num2str(sum(is0)),' Times'])
-    end
-    if sum(isNeg)>0
-        disp(['    The sum of coefficients was negative ',num2str(sum(isNeg)),' Times'])
-    end
-end
-
-function [velocity,isNeg,is0,sumCoeff]=LogicBlockForAverageVel...
-        (sumCoeff,deltaArea)
-    % Logic block for the calculation of the average vel required for the
-    % counteracting of the tensile velocities
-    isNeg=0;
-    is0=0;
-    if abs(sumCoeff)<10^-15
-        sumCoeff=0;
-    end
-    if sumCoeff<0
-        %warning('The sum of derivative coefficients is negative ignoring value (average velocity will not drive convergence)')
-        isNeg=1;
-        sumCoeff=1;
-    end
-    if sumCoeff==0
-        is0=1;
-        %warning('The sum of derivative coefficients is 0 ignoring value (average velocity will not drive convergence)')
-        
-        velocity=(deltaArea)/1;
-    else
-        velocity=(deltaArea)/sumCoeff;
-    end
-    
-    
-end
-
-function [velstruct]=CalculateDeviationVelocity(velstruct,coeffstructure,newcelltoold,volumefraction)
-    
-    % [A;C]*v_dev+[B;0]*v_bar=0
-    
-    velEqualMat=VelocityEqualityConditions(velstruct);
-    deviationCondMat=DeviationVelocityNoAreaCondition(velstruct,coeffstructure,newcelltoold);
-    subRmvRows=find(sum(abs(deviationCondMat),2)==0);
-    deviationCondMat(subRmvRows,:)=[];
-    [fitConditionInd]=Force0DeviationVelOnEmpty(volumefraction,velstruct,velEqualMat);
-    
-    vBar=[velstruct(:).averagevel];
-    condMatrix=[velEqualMat;deviationCondMat];
-    [nCond,nUnknown]=size(condMatrix);
-    nSet=nUnknown-nCond;
-    [condMatrix2,rmvColumns]=RemoveUnknowns(0,condMatrix,fitConditionInd);
-    
-    condSatisfiedMat=condMatrix(:,rmvColumns);
-    condMatrix=condMatrix2;
-    
-    ControlMat=[velEqualMat;zeros(size(deviationCondMat))];
-    controlVec=ControlMat*vBar';
-    
-    vDev=pinv(condMatrix)*(-controlVec);
-    %vDev=(condMatrix)\(-controlVec);
-    ll=1;
-    for ii=1:length(velstruct)
-        if sum(ii==rmvColumns)>0
-            vDevComplete(ii)=0;
-        else
-            vDevComplete(ii)=vDev(ll);
-            ll=ll+1;
-        end
-    end
-    for ii=1:length(velstruct)
-        velstruct(ii).deviationvel=vDevComplete(ii);
-    end
-    
-end
-
-function [condMatrix,rmvColumns]=RemoveUnknowns(nSet,condMatrix,fitConditionInd)
-    % Removes columns associated with possible to remove variables without
-    % removing an equation
-    
-    condMatrixWorking=condMatrix;
-    fitConditionIndWorking=fitConditionInd;
-    rmvColumns=[];
-    for ii=1:nSet
-        condition=true;
-        ll=1;
-        forceExit=length(fitConditionIndWorking)>ll;
-        while condition && forceExit
-            
-            indWork=fitConditionIndWorking(ll);
-            logicalElmCond=(sum(...
-                abs(condMatrixWorking(:,[1:indWork-1,indWork+1:end]))~=0,2)~=0)...
-                ==(sum(abs(condMatrix)~=0,2)~=0);
-            
-            condition=prod(logicalElmCond)==0; % true when index not to be removed
-            
-            if ~condition
-                rmvColumns(ii)=indWork;
-                fitConditionIndWorking(ll)=[];
-                condMatrixWorking(:,indWork)=0;
-            end
-            ll=ll+1;
-            forceExit=length(fitConditionIndWorking)>ll;
-        end
-        if ~forceExit
-            disp('No More column may be removed')
-            break
-        end
-        
-    end
-    condMatrix(:,rmvColumns)=[];
-    
-end
-
-function [velEqualMat]=VelocityEqualityConditions(velstruct)
-    % Calculates the matrix governing which velocities need to be equal
-    snaxelIndList=[velstruct(:).snaxelindex];
-    nVel=length(velstruct);
-    
-    velEqualMat=zeros(nVel);
-    
-    
-    for ii=1:nVel
-        otherSideVel=FindObjNum([],velstruct(ii).snaxelindex,snaxelIndList);
-        
-        otherSideVel(otherSideVel<=ii)=[];
-        if numel(otherSideVel)>0
-            velEqualMat(ii,ii)=1;
-            velEqualMat(ii,otherSideVel)=-1;
-        end
-        
-        
-    end
-    velEqualMat(find(sum(abs(velEqualMat),2)==0),:)=[];
-    
-end
-
-function [newcelltoold]=StructureNewToOldcell(volumefraction)
-    
-    newIndexCell=[volumefraction(:).newCellInd];
-    newcelltoold(length(newIndexCell)).index=[];
-    ll=1;
-    
-    for ii=1:length(volumefraction)
-        for jj=1:numel(volumefraction(ii).newCellInd)
-            [newcelltoold(ll).newCell]=volumefraction(ii).newCellInd(jj);
-            [newcelltoold(ll).oldCell]=volumefraction(ii).oldCellInd;
-            ll=ll+1;
-        end
-    end
-    
-end
-
-function [deviationCondMat]=DeviationVelocityNoAreaCondition(velstruct,coeffstructure,newcelltoold)
-    
-    velCellInd=[velstruct(:).cellindex];
-    coeffNewCellInd=[coeffstructure(:).cellindex];
-    newToOldNewInd=[newcelltoold(:).newCell];
-    oldIndexSub=FindObjNum([],coeffNewCellInd,newToOldNewInd);
-    coeffOldCellInd=[newcelltoold(oldIndexSub).oldCell];
-    
-    velSnaxelInd=[velstruct(:).snaxelindex];
-    coeffSnaxelInd=[coeffstructure(:).snaxelindex];
-    cellIndUnique=RemoveIdenticalEntries(velCellInd);
-    
-    
-    nCell=length(cellIndUnique);
-    nVel=length(velstruct);
-    
-    
-    hashKeyVel=[velCellInd',velSnaxelInd'];
-    hashKeyCoeff=[coeffOldCellInd',coeffSnaxelInd'];
-    
-    [positionHash]=CompareHashKeys(hashKeyCoeff,hashKeyVel);
-    
-    for ii=1:nVel
-        velstruct(ii).velcoeff=sum([coeffstructure(positionHash{ii}).value]);
-    end
-    deviationCondMat=zeros([nCell,nVel]);
-    for ii=1:nVel
-        cellSubs=FindObjNum([],velstruct(ii).cellindex,cellIndUnique);
-        deviationCondMat(cellSubs,ii)=velstruct(ii).velcoeff;
-    end
-    
-end
-
-function [positionHash]=CompareHashKeys(hashList,hashTest)
-    % Matches the hashkeys fron hashTest to hashList returning the position
-    % on in hashList
-    
-    [nTest,nDim]=size(hashTest);
-    positionHash{nTest}=[];
-    for jj=1:nTest
-        hashLogical=false(size(hashList));
-        for ii=1:nDim
-            hashLogical(:,ii)=hashList(:,ii)==hashTest(jj,ii);
-        end
-        positionHash{jj}=find(prod(hashLogical,2));
-    end
-    
-end
-
-function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
-    % Distributes velocities to a snaxel centred structure
-    snaxelList=[velaverage(:).snaxelindexlist];
-    snaxelList=RemoveIdenticalEntries(snaxelList);
-    snaxTensList=[snaxeltensvel(:).index];
-    
-    for ii=length(snaxelList):-1:1
-        snaxelvel(ii).index=snaxelList(ii);
-        snaxelvel(ii).averagevel=[];
-        snaxelvel(ii).averagevelbase=[];
-        snaxelvel(ii).averagevelforce=[];
-        snaxelvel(ii).forcevel=[];
-        snaxelvel(ii).cellindex=[];
-    end
-    
-    for ii=1:length(velaverage)
-        snaxelVelSub=FindObjNum([],velaverage(ii).snaxelindexlist,snaxelList);
-        snaxelTensVelSub=FindObjNum([],velaverage(ii).snaxelindexlist,snaxTensList);
-        for jj=1:length(snaxelVelSub)
-            [snaxelvel(snaxelVelSub(jj)).cellindex(end+1)]=velaverage(ii).oldCellInd;
-            [snaxelvel(snaxelVelSub(jj)).averagevelbase(end+1)]=velaverage(ii).velocity;
-            [snaxelvel(snaxelVelSub(jj)).averagevelforce(end+1)]=velaverage(ii).averagevelforce;
-            [snaxelvel(snaxelVelSub(jj)).forcevel]=snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
-            
-            snaxelvel(snaxelVelSub(jj)).averagevel(end+1)=...
-                snaxelvel(snaxelVelSub(jj)).averagevelbase(end)+...
-                snaxelvel(snaxelVelSub(jj)).averagevelforce(end)-...
-                snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
-        end
-    end
-    
-end
-
-function [velAverage]=CalculateAverageVelocities(volumefraction,coeffstructure,snaxelvel,forceparam)
-    % Calculates the average velocities required to match the condition
-    [coeffCellInd]=[coeffstructure(:).cellindex];
-    [coeffSnaxInd]=[coeffstructure(:).snaxelindex];
-    snaxVelInd=[snaxelvel(:).index];
-    isNeg=zeros(length(volumefraction),1);
-    is0=zeros(length(volumefraction),1);
-    
-    maxVelRatio=forceparam.maxVelRatio;
-    
-    for ii=length(volumefraction):-1:1
-        
-        coeffSubs=FindObjNum([],volumefraction(ii).newCellInd,coeffCellInd);
-        velAverage(ii).oldCellInd=volumefraction(ii).oldCellInd;
-        velAverage(ii).deltaArea=volumefraction(ii).targetfill*volumefraction(ii).totalvolume...
-            -volumefraction(ii).totalfraction;
-        
-        if sum(coeffSubs)==0
-            
-        else
-            coeffSubs(coeffSubs==0)=[];
-            
-            coeffsWorking=[coeffstructure(coeffSubs).value];
-            snaxIndList=coeffSnaxInd(coeffSubs);
-            snaxSubWorking=FindObjNum([],snaxIndList,snaxVelInd);
-            tensVelWorking=snaxelvel(snaxSubWorking).forcevel;
-            
-            tensVelCoeffProd=sum(coeffsWorking.*tensVelWorking);
-            sumcoeff=sum(coeffsWorking);
-            
-            [velAverage(ii).velocity,isNeg(ii),is0(ii),sumcoeff]...
-                =LogicBlockForAverageVel(sumcoeff,...
-                velAverage(ii).deltaArea);
-            [velAverage(ii).sumcoeff,velAverage(ii).forcevelCoeffProd,...
-                velAverage(ii).averagevelforce]=LogicBlockForAverageTensVel...
-                (sumcoeff,tensVelCoeffProd,tensVelWorking);
-            velAverage(ii).forcevelcoeff=1;
-            if abs(velAverage(ii).averagevelforce)>abs(velAverage(ii).velocity)*maxVelRatio;
-                newAverageTensVel=velAverage(ii).velocity*maxVelRatio;
-                velAverage(ii).forcevelcoeff=newAverageTensVel/velAverage(ii).averagevelforce;
-                velAverage(ii).averagevelforce=newAverageTensVel;
-            end
-            velAverage(ii).snaxelindexlist=RemoveIdenticalEntries(snaxIndList);
-        end
-    end
-    if sum(is0)>0
-        disp(['    The sum of coefficients was equal to zero ',num2str(sum(is0)),' Times'])
-    end
-    if sum(isNeg)>0
-        disp(['    The sum of coefficients was negative ',num2str(sum(isNeg)),' Times'])
-    end
-end
-
-function [sumcoeff,tensVelCoeffProd,averageveltens]=LogicBlockForAverageTensVel...
-        (sumcoeff,tensVelCoeffProd,tensVelWorking)
-    % Logic block for the calculation of the average vel required for the
-    % counteracting of the tensile velocities
-    
-    if abs(sumcoeff)<10^-15
-        sumcoeff=0;
-    end
-    if abs(tensVelCoeffProd)<10^-15
-        tensVelCoeffProd=0;
-    end
-    if sumcoeff<0
-        %warning('The sum of derivative coefficients is negative ignoring value (average velocity will not drive convergence)')
-        sumcoeff=1;
-    end
-    
-    if sumcoeff==0 && tensVelCoeffProd==0
-        %warning('The sum of derivative coefficients is 0 ignoring value (average velocity will not drive convergence)')
-        averageveltens=0;% -sum(tensVelWorking);
-    elseif sumcoeff==0 && tensVelCoeffProd~=0
-        averageveltens=0; %-tensVelCoeffProd;
-        warning('This is weird')
-    else
-        averageveltens=-tensVelCoeffProd/...
-            sumcoeff;
-        
-    end
-    
-end
-
-function [fitConditionInd]=Force0DeviationVelOnEmpty(volumefraction,velstruct,velEqualMat)
-    
-    oldCellVolFrac=[volumefraction(:).oldCellInd];
-    oldCellVelStruct=[velstruct(:).cellindex];
-    cellVellStructInVolFrac=FindObjNum([],oldCellVelStruct,oldCellVolFrac);
-    
-    logicFill0=[volumefraction(cellVellStructInVolFrac).targetfill]==0;
-    logicAveVelis0=[velstruct(:).averagevel]==0;
-    logicBorderVel=sum(abs(velEqualMat))>0;
-    
-    fitConditionLogic= logicFill0 & logicAveVelis0 & logicBorderVel;
-    fitConditionInd=[velstruct(fitConditionLogic).index];
-    
-    
-end
-
-function [snaxel]=AssignVelocityToSnaxel(velstruct,snaxel,snaxeltensvel)
-    % Assigns velocities to the snaxel structure
-    
-    snaxInd=[velstruct(:).snaxelindex];
-    snaxTensInd=[snaxeltensvel(:).index];
-    
-    for ii=1:length(snaxel)
-        
-        velSub=FindObjNum([],snaxel(ii).index,snaxInd);
-        velTensSub=FindObjNum([],snaxel(ii).index,snaxTensInd);
-        snaxelVel=[velstruct(velSub).averagevel]+[velstruct(velSub).deviationvel];
-        if numel(snaxelVel)>1
-            if abs(snaxelVel(1)-snaxelVel(2))>10^-12
-                disp(['Difference in Vel is ',num2str(snaxelVel(1)-snaxelVel(2))])
-                warning('Averaging difference in velocities')
-            end
-        end
-        snaxel(ii).v=mean(snaxelVel);%-snaxeltensvel(velTensSub).forcevel;
-        
-        if abs(snaxel(ii).v)<10^-12
-            snaxel(ii).v=0;
-        end
-    end
-    
-    
-end
-
-function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakposition,forceparam)
-    % Calculate a tensile velocity to influence the solution
-    snakPosIndex=[snakposition(:).index];
-    snaxIndex=[snaxel(:).index];
-    
-    if sum(snakPosIndex~=snaxIndex)>0
-        error('Indices do not match')
-    end
-    [snaxeltensvel,snakposition]=CalculateTensileVelocity(snaxel,snakposition,snakPosIndex);
-    [snaxeltensvel,snakposition]=CalculateBendingVelocity(snaxel,snakposition,snakPosIndex,snaxeltensvel);
-    
-    
-    bendingVelInfluence=forceparam.bendingVelInfluence;
-    tensVelInfluence=forceparam.tensVelInfluence;    
-    maxForceVel=forceparam.maxForceVel;
-    
-    
-    forceVelScaling=maxForceVel/(bendingVelInfluence+tensVelInfluence);
-    for ii=1:length(snaxeltensvel)
-        snaxeltensvel(ii).forcevel=forceVelScaling*...
-            (tensVelInfluence*snaxeltensvel(ii).tensvel...
-            +bendingVelInfluence*snaxeltensvel(ii).bendvel);
-    end
-end
-
-function [snaxeltensvel,snakposition]=CalculateTensileVelocity(snaxel,snakposition,snakPosIndex)
-    
-    
-    rotCW=[0 -1; 1 0];
-    rotCCW=[0 1; -1 0];
-    velRatio=1; % limits the velocity to 0.1
-    for ii=1:length(snakposition)
-        neighbourSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex);
-        coordNeighbour=vertcat(snakposition(neighbourSub).coord);
-        testVecs=coordNeighbour-([1;1]*snakposition(ii).coord);
-        testPrec=norm(testVecs(1,:))>0;
-        testNext=norm(testVecs(2,:))>0;
-        dirVecs(1,:)=rotCW*snakposition(ii).vectorprec'*testPrec;
-        dirVecs(2,:)=rotCCW*snakposition(ii).vectornext'*testNext;
-        dirVecNorm=[norm(dirVecs(1,:));norm(dirVecs(2,:))];
-        dirVecNorm(dirVecNorm==0)=1;
-        
-        unitDirVecs=dirVecs./(dirVecNorm*[1 1]);
-        
-        snakposition(ii).tensVector=sum(unitDirVecs);
-        snaxeltensvel(ii).index=snakposition(ii).index;
-        snaxeltensvel(ii).tensvel=dot(snakposition(ii).tensVector,snakposition(ii).vector)/(2*velRatio);
-    end
-    
-end
-
-function [snaxeltensvel,snakposition]=CalculateBendingVelocity(snaxel,snakposition,snakPosIndex,snaxeltensvel)
-    
-    
-    
-    velRatio=4; % limits the velocity to the same range as the 
-    for ii=1:length(snakposition)
-        neighbourSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex);
-        tensVecNeighbour=vertcat(snakposition(neighbourSub).tensVector);
-
-        snakposition(ii).bendVector=-sum(tensVecNeighbour)+2*snakposition(ii).tensVector;
-        snaxeltensvel(ii).bendvel=dot(snakposition(ii).bendVector,snakposition(ii).vector)/(velRatio);
-    end
-    
-end
-
-
 %% Volume fraction calculation
 
 function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
@@ -2072,6 +1607,7 @@ function [snakposition]=PositionSnakes(snaxel,unstructured)
         
         snakposition(ii).index=snaxel(ii).index;
         snakposition(ii).coord=iFromVert+(iToVert-iFromVert)*snaxel(ii).d;
+        snakposition(ii).vectornotnorm=(iToVert-iFromVert);
         snakposition(ii).vector=(iToVert-iFromVert)/norm(iToVert-iFromVert);
     end
     
@@ -2286,7 +1822,10 @@ function maxDist=MaxTravelDistance(snaxel)
         end
         if numel(sameEdgeSnax)==1
             impactDist=(1-dSnax(ii)-dSnax(sameEdgeSnax))/...
-                (vSnax(ii)+vSnax(sameEdgeSnax)+1e-6)*vSnax(ii);
+                (vSnax(ii)+vSnax(sameEdgeSnax))*vSnax(ii);
+            if vSnax(ii)+vSnax(sameEdgeSnax)==0
+                impactDist=1;
+            end
             
             if vSnax(ii)>=0 && impactDist>=0
                 maxDist(ii)=min([maxDist(ii),impactDist]);
@@ -2295,7 +1834,7 @@ function maxDist=MaxTravelDistance(snaxel)
             end
             
         elseif numel(sameEdgeSnax)>1
-            %error('More than 2 snaxels on the same edge')
+            warning('More than 2 snaxels on the same edge')
         end
     end
     
@@ -2367,30 +1906,6 @@ function connecOrder=CCWOrderAroundNode(snaxelRepop,baseEdge)
     [~,chainOrder]=sort(vecAngles);
     
     connecOrder=connecSnax(chainOrder);
-end
-
-function [vecAngles]=ExtractAnglepm180(baseVector,testVector)
-    % This function calculates the angle between vectors
-    
-    toComplex=[1;0+1i];
-    baseAngle=angle(baseVector*toComplex);
-    vecAngles=angle(testVector*toComplex)-baseAngle;
-    vecAngles(vecAngles>pi)=vecAngles(vecAngles>pi)-2*pi;
-    vecAngles(vecAngles<-pi)=vecAngles(vecAngles<-pi)+2*pi;
-    
-    
-end
-
-function [vecAngles]=ExtractAngle360(baseVector,testVector)
-    % This function calculates the angle between vectors
-    
-    toComplex=[1;0+1i];
-    baseAngle=angle(baseVector*toComplex);
-    vecAngles=angle(testVector*toComplex)-baseAngle;
-    vecAngles(vecAngles>(2*pi))=vecAngles(vecAngles>(2*pi))-2*pi;
-    vecAngles(vecAngles<0)=vecAngles(vecAngles<0)+2*pi;
-    
-    
 end
 
 function [connection,indexSnaxCon]=ExtractConnection(additionsnaxel)
@@ -2610,6 +2125,8 @@ function [freezeIndex,pairs]=FreezeEdgeContact(snaxel,saveSingleVal)
     for ii=1:nSnax
         sameEdgeSnax=find(edgeSnax==edgeSnax(ii));
         sameEdgeSnax(sameEdgeSnax==ii)=[];
+        
+        
         if numel(sameEdgeSnax)>1
             warning('More than 2 snaxels on the same edge')
             
@@ -2628,6 +2145,9 @@ function [freezeIndex,pairs]=FreezeEdgeContact(snaxel,saveSingleVal)
                 pairs=[indexSnax(ii),indexSnax(sameEdgeSnax)];
                 break
             end
+            if isFreeze(ii)
+                isImpact(ii)=false;
+            end
             
         end
     end
@@ -2641,7 +2161,8 @@ function [isImpact]=EdgeImpactCondition(dSnax,vSnax,fromvertSnax,sub1,sub2)
     sameDir=fromvertSnax(sub1)==fromvertSnax(sub2);
     if sameDir
         warning('Snaxels are adjacent and moving in same direction Impact condition is invalid')
-        
+        dSnax(sub2)=1-dSnax(sub2);
+        vSnax(sub2)=-vSnax(sub2);
     end
     
     deltaD=(1-dSnax(sub1)-dSnax(sub2));
@@ -2805,45 +2326,35 @@ end
 
 %% Various
 
-function [vectorEntries]=RemoveIdenticalEntries(vectorEntries)
-    % Function which removes identical entries in a column vector
-    vectorEntriesUnsort=vectorEntries;
-    [vectorEntries,vectorIndex]=sort(vectorEntries);
-    kk=1;
-    rmvDI=[];
-    for ii=2:length(vectorEntries)
-        if vectorEntries(ii)==vectorEntries(ii-1)
-            rmvDI(kk)=ii;
-            kk=kk+1;
+function [loopsnaxel]=OrderSurfaceSnaxel(snaxel)
+    % function extracting the snaxels into their separate loops
+    global unstructglobal
+    
+    snaxPositions=PositionSnakes(snaxel,unstructglobal);
+    
+    nSnax=length(snaxel);
+    blockSegments=zeros(2*nSnax,2);
+    for ii=1:nSnax
+        for jj=0:1
+            blockSegments(2*ii-jj,:)=[snaxel(ii).index,snaxel(ii).connectivity(jj+1)];
         end
     end
-    %vectorEntries(rmvDI)=[];
-    vectorIndex(rmvDI)=[];
-    vectorEntries=vectorEntriesUnsort(vectorIndex);
-end
-
-function sub=FindObjNum(object,index,objInd)
-    % finds the array index from a snaxel number
-    if ~exist('objInd','var')
-        objInd=[object(:).index];
+    
+    cellSimilar=FindIdenticalVector(blockSegments);
+    for ii=1:length(cellSimilar)
+        blockEdgeIndex(ii)=cellSimilar{ii}(1);
     end
-    sub=zeros(length(index),1);
-    additionalSlots=0;
-    for ii=1:length(index)
-        
-        snaxLog=objInd==index(ii);
-        jj=ii+additionalSlots;
-        subInter=find(snaxLog);
-        if isempty(subInter)
-            sub(jj)=0;
-        elseif numel(subInter)>1
-            sub(jj:jj+length(subInter)-1)=subInter;
-            additionalSlots=additionalSlots+numel(subInter)-1;
-        else
-            sub(jj)=subInter;
-            
-        end
+    blockEdges=blockSegments(blockEdgeIndex,:);
+    % Order edges into closed loops
+    [cellOrderedVertex]=OrderBlockEdges(blockEdges);
+    snaxIndex=[snaxel(:).index];
+    for ii=1:length(cellOrderedVertex)
+        loopsnaxel(ii).snaxel.index=[cellOrderedVertex{ii}(:,1);cellOrderedVertex{ii}(1:2,1)];
+        loopIndices=FindObjNum(snaxel,loopsnaxel(ii).snaxel.index,snaxIndex);
+        loopsnaxel(ii).snaxel.coord=vertcat(snaxPositions(loopIndices).coord);
+        %loopsnaxel(ii).edge.index=isEdgeIndex(cellOrderedEdges{ii});
     end
+    
 end
 
 function [snaxelrev]=ReverseSnakes(snaxel)
@@ -2885,245 +2396,9 @@ end
 
 %% Copied/Modified from main
 
-function [unstructReshape]=ModifUnstructured(unstructured)
-    % Reshapes the unstructureddata structure to b ein line with the shape
-    % of "snakes"
-    unstrucFields=fieldnames(unstructured);
-    nFields=length(unstrucFields);
-    
-    for ii=1:nFields
-        field1Fields=fieldnames(unstructured.(unstrucFields{ii}));
-        nFields1=length(field1Fields);
-        nObjects=length(unstructured.(unstrucFields{ii}).index);
-        
-        for jj=1:nObjects
-            for kk=1:nFields1
-                if ~isstruct(unstructured.(unstrucFields{ii}).(field1Fields{kk}))
-                    
-                    unstructReshape.(unstrucFields{ii})(jj).(field1Fields{kk})=...
-                        unstructured.(unstrucFields{ii}).(field1Fields{kk})(jj,:);
-                else
-                    field2Fields=fieldnames(unstructured.(unstrucFields{ii}).(field1Fields{kk}));
-                    nFields2=length(field2Fields);
-                    
-                    for ll=1:nFields2
-                        unstructReshape.(unstrucFields{ii})(jj).(...
-                            [field1Fields{kk},field2Fields{ll}])=...
-                            unstructured.(unstrucFields{ii}).(...
-                            field1Fields{kk}).(field2Fields{ll})(jj,:);
-                    end
-                end
-            end
-        end
-    end
-end
-
-function [unstructured]=ModifReshape(unstructReshape)
-    % Reshapes the unstructureddata structure to b ein line with the shape
-    % of "snakes"
-    unstrucFields=fieldnames(unstructReshape);
-    nFields=length(unstrucFields);
-    
-    for ii=1:nFields
-        field1Fields=fieldnames(unstructReshape.(unstrucFields{ii}));
-        nFields1=length(field1Fields);
-        nObjects=length(unstructReshape.(unstrucFields{ii}));
-        
-        
-        for kk=1:nFields1
-            unstructured.(unstrucFields{ii}).(field1Fields{kk})=...
-                zeros([nObjects,length(unstructReshape.(unstrucFields{ii})(1).(field1Fields{kk}))]);
-            for jj=1:nObjects
-                %                 if ~isstruct(unstructReshape.(unstrucFields{ii}).(field1Fields{kk}))
-                
-                unstructured.(unstrucFields{ii}).(field1Fields{kk})(jj,:)...
-                    =unstructReshape.(unstrucFields{ii})(jj).(field1Fields{kk});
-                %                 else
-                %                     field2Fields=fieldnames(unstructReshape.(unstrucFields{ii}).(field1Fields{kk}));
-                %                     nFields2=length(field2Fields);
-                %
-                %                     for ll=1:nFields2
-                %
-                %                         unstructReshape.(unstrucFields{ii}).(...
-                %                             field1Fields{kk}).(field2Fields{ll})(jj,:)= ...
-                %                             unstructured.(unstrucFields{ii})(jj).(...
-                %                             [field1Fields{kk},field2Fields{ll}]);
-                %                     end
-                %                 end
-            end
-        end
-    end
-end
-
-function [leftMost]=LeftMostCorner(coord)
-    % Returns the left most coordinate in a a set
-    
-    [xMin]=min(coord(:,1));
-    iXMin=find(coord(:,1)==xMin);
-    [~,iYMin]=min(coord(iXMin,2));
-    leftMost=iXMin(iYMin);
-    
-end
-
-function [isCCW]=CCWLoop(coord)
-    % Checks if the order of points at the left most corner to determine the
-    % direction of the loop.
-    [mCoord,~]=size(coord);
-    %coord(end-1:end,:)=[];
-    
-    [leftMostCorner]=LeftMostCorner(coord);
-    switch leftMostCorner
-        case 1
-            precVert=mCoord;
-            nextVert=leftMostCorner+1;
-        case mCoord
-            precVert=leftMostCorner-1;
-            nextVert=1;
-        otherwise
-            precVert=leftMostCorner-1;
-            nextVert=leftMostCorner+1;
-    end
-    
-    precVec=coord(precVert,:)-coord(leftMostCorner,:);
-    nextVec=coord(nextVert,:)-coord(leftMostCorner,:);
-    precAngle=ExtractAngle360([-1 -1],precVec);
-    nextAngle=ExtractAngle360([-1 -1],nextVec);
-    
-    
-    if precAngle>nextAngle
-        isCCW=true;
-    elseif precAngle<nextAngle
-        isCCW=false;
-    else
-        isCCW=[];
-    end
-    
-end
-
-function [loopsnaxel]=OrderSurfaceSnaxel(snaxel)
-    % function extracting the snaxels into their separate loops
-    global unstructglobal
-    
-    snaxPositions=PositionSnakes(snaxel,unstructglobal);
-    
-    nSnax=length(snaxel);
-    blockSegments=zeros(2*nSnax,2);
-    for ii=1:nSnax
-        for jj=0:1
-            blockSegments(2*ii-jj,:)=[snaxel(ii).index,snaxel(ii).connectivity(jj+1)];
-        end
-    end
-    
-    cellSimilar=FindIdenticalVector(blockSegments);
-    for ii=1:length(cellSimilar)
-        blockEdgeIndex(ii)=cellSimilar{ii}(1);
-    end
-    blockEdges=blockSegments(blockEdgeIndex,:);
-    % Order edges into closed loops
-    [cellOrderedVertex]=OrderBlockEdges(blockEdges);
-    snaxIndex=[snaxel(:).index];
-    for ii=1:length(cellOrderedVertex)
-        loopsnaxel(ii).snaxel.index=[cellOrderedVertex{ii}(:,1);cellOrderedVertex{ii}(1:2,1)];
-        loopIndices=FindObjNum(snaxel,loopsnaxel(ii).snaxel.index,snaxIndex);
-        loopsnaxel(ii).snaxel.coord=vertcat(snaxPositions(loopIndices).coord);
-        %loopsnaxel(ii).edge.index=isEdgeIndex(cellOrderedEdges{ii});
-    end
-    
-end
-
-function cellSimilar=FindIdenticalVector(blockSegments)
-    % this function takes in a group of Segments and returns the indices of
-    % those identical grouped within a cell array. blockSegments should be a
-    % vertical array of horizontal vectors to be compared.
-    
-    [m,n]=size(blockSegments);
-    blockSegments=sort(blockSegments,2);
-    preSortIndex=1:m; % save the index before shuffling
-    % Shuffles edges such that similar edges are side by side
-    
-    for ii=1:n
-        [blockSegments,sortIndex]=SortVecColumn(blockSegments,ii);
-        preSortIndex=preSortIndex(sortIndex);
-    end
-    %compares neighbouring segments
-    blockSegTrunc1=blockSegments(1:end-1,:);
-    blockSegTrunc2=blockSegments(2:end,:);
-    isPrecedent=[0;(sum(blockSegTrunc1==blockSegTrunc2,2)>1)];
-    % creates a cell array wih as many elements as there are different edges
-    cellSimilar{-sum((isPrecedent-1))}=[];
-    kk=0;
-    for ii=1:m
-        if ~isPrecedent(ii)
-            kk=kk+1;
-            jj=0;
-        end
-        jj=jj+1;
-        % assigns the presorted index to the similarity array
-        cellSimilar{kk}(jj)=preSortIndex(ii);
-    end
-    
-end
-
-function [cellOrderedVertex,cellOrderedEdges]=...
-        OrderBlockEdges(blockEdges)
-    
-    
-    [mBE,~]=size(blockEdges);
-    blockEdgesWorking=blockEdges;
-    
-    edgeList=1:mBE;
-    
-    % New array counters
-    iCell=1;
-    iEdge=0;
-    % Old array locations
-    ii=1;
-    jj=1;
-    while ~isempty(blockEdgesWorking)
-        iEdge=iEdge+1;
-        kk=abs(jj-3); % opposite column of jj
-        % Save current Edge
-        currentVertex=blockEdgesWorking(ii,jj);
-        nextVertex=blockEdgesWorking(ii,kk);
-        cellOrderedVertex{iCell}(iEdge,1)=currentVertex;
-        cellOrderedVertex{iCell}(iEdge,2)=nextVertex;
-        cellOrderedEdges{iCell}(iEdge)=edgeList(ii);
-        
-        % Delete current edge and edgeList entry from working set
-        edgeList(ii)=[];
-        blockEdgesWorking(ii,:)=[];
-        
-        %Increment the counter variables
-        
-        [ii,jj]=find(blockEdgesWorking==nextVertex);
-        if length(ii)>1
-            warning('ii is empty after cell identification this is an unlikely event in normal operations')
-        end
-        
-        if isempty(ii) % reset loop if ii is not found
-            % restart from the first unassigned edge
-            ii=1;
-            jj=1;
-            % Increment the loop number
-            iCell=iCell+1;
-            % Restart teh edge count
-            iEdge=0;
-        end
-    end
-    
-end
-
-function [vec,iRows]=SortVecColumn(vec,iCol)
-    % Sorts according to a columns
-    [~,iRows]=sort(vec(:,iCol));
-    vec=vec(iRows,:);
-    
-end
-
 function []=template()
     
 end
-
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% OLD Working  CODE %%

@@ -12,15 +12,15 @@
 
 
 
-function []=CommitChanges(commitType,archDir2)
+function []=CommitChanges(commitType1,commitType2,archDir2)
     
     originalDir=[cd,'\Active_Build'];
     
     timeStamp=[datestr(now,'yyyy_mm_ddHHMM')];
     stampedSubFolders=['Archive_',datestr(now,'yyyy_mm')];
-    archiveDir=[cd,'\Archives\',stampedSubFolders,'\',commitType,'_',timeStamp];
+    archiveDir=[cd,'\Archives\',stampedSubFolders,'\',commitType1,'_',timeStamp,'_',commitType2];
     if exist('archDir2','var')
-        archiveDir2=[archDir2,'\Archives\',stampedSubFolders,'\',commitType,'_',timeStamp];
+        archiveDir2=[archDir2,'\Archives\',stampedSubFolders,'\',commitType1,'_',timeStamp,'_',commitType2];
         copyfile(originalDir,archiveDir2)
     end
     copyfile(originalDir,archiveDir)

@@ -15,6 +15,11 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
     
     close all
     clc
+    
+    include_SnakeParam
+    include_EdgeInformation
+    
+    
     boundstr{1}='boundaryis0'; %'boundaryis0'
     boundstr{2}='solidnotIn0';
     boundstr{3}='0bound';
@@ -55,7 +60,6 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
 end
 
 %% Top Level Execution processes
-
 
 function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(...
         passDomBounds,passGridSteps,passPadding,...
@@ -115,41 +119,7 @@ function [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstr
 end
 
 
-
 %% Subdivision process
-
-function [isCCW]=CCWLoop(coord)
-    % Checks if the order of points at the left most corner to determine the
-    % direction of the loop.
-    coord(end-1:end,:)=[];
-    [mCoord,~]=size(coord);
-    
-    [xMin]=min(coord(:,1));
-    iXMin=find(coord(:,1)==xMin);
-    [~,iYMin]=min(coord(iXMin,2));
-    leftMostCorner=iXMin(iYMin);
-    
-    switch leftMostCorner
-        case 1
-            precVert=mCoord;
-            nextVert=leftMostCorner+1;
-        case mCoord
-            precVert=leftMostCorner-1;
-            nextVert=1;
-        otherwise
-            precVert=leftMostCorner-1;
-            nextVert=leftMostCorner+1;
-    end
-    
-    if coord(precVert,2)>coord(nextVert,2)
-        isCCW=true;
-    elseif coord(precVert,2)<coord(nextVert,2)
-        isCCW=false;
-    else
-        isCCW=[];
-    end
-    
-end
 
 function [loop]=SubdivisionSurface(loop,refineSteps,typeBound)
     % Function taking in a closed loop of vertices and applying the subdivision
@@ -370,7 +340,6 @@ end
 
 %% General Utility Functions
 
-
 function []=MakeVideo(movStruct,fps,quality,datType)
     
     fileName=['Vid_',datType,'_',datestr(now,30),'.avi'];
@@ -395,14 +364,6 @@ function []=OutPutBinaryResults(snakSave,paramStruct,datType,optionalSubFolder)
     
     save([targetDir,fileName],'snakSave','paramStruct');
     
-end
-
-function [quotient,left]=IntegerQuotient(a,b)
-    % Divides a by b and gives the integer result and the leftover
-    % Works best for positive numbers
-    
-    quotient=floor(a/b);
-    left=a-(floor(a/b)*b);
 end
 
 function []=template()

@@ -20,7 +20,7 @@ function []=TecplotOutput(optionalSubFolder,datType,baseGrid,fineGrid,snakSave,c
     varsCell={};%{['VARIABLES = "X" ,"Y", "U" ,"V", "MAG" ,"TARGFILL" ,"VOLFRAC", "DIFF"']};
     [cellBaseGrid]=GridStructToCellOut(baseGrid,1);
     [cellFineGrid]=GridStructToCellOut(fineGrid,2);
-    [cellConv]=ConvergenceStructToCellOut(snakSave,5);
+    [cellConv]=ConvergenceStructToCellOut(snakSave,5:8);
     time=0;
     for ii=1:length(snakSave)
         [cellSnax(ii).cells]=SnaxelToCellOut(snakSave(ii).snaxel,snakSave(ii).snakposition,3,time);
@@ -194,17 +194,32 @@ end
 function [cellMesh]=ConvergenceStructToCellOut(snakSave,strandID)
     
     iter=1:length(snakSave);
-    convVolume=[snakSave(:).currentConvVolume];
-    convVelocity=[snakSave(:).currentConvVelocity];
+    convVolume=log10([snakSave(:).currentConvVolume]);
+    convVelocity=log10([snakSave(:).currentConvVelocity]);
     padding=zeros(size(iter));
     
-    connDat=[[1:length(snakSave)-1]',[2:length(snakSave)]'];
-    coordDat=[iter',convVolume'];
     vertIndex=iter;
+    vectorDat=[convVolume',convVelocity',padding'];
+    connDat=[[1:length(snakSave)-1]',[2:length(snakSave)]'];
     
-    vectorDat=[convVelocity',padding',padding'];
-    [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID);
+    coordDat=[iter',convVolume'];
+    [cellMesh1]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID(1));
+    time=0;
+    for ii=1:length(vertIndex)
+        [cellMesh3(ii).cells]=CellEdgeMesh(coordDat([ii],:),1,[1 1],vectorDat([ii],:),strandID(3),time);
+        time=time+snakSave(ii).dt;
+    end
     
+    coordDat=[iter',convVelocity'];
+    [cellMesh2]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID(2));
+    time=0;
+    for ii=1:length(vertIndex)
+        [cellMesh4(ii).cells]=CellEdgeMesh(coordDat([ii],:),1,[1 1],vectorDat([ii],:),strandID(4),time);
+        time=time+snakSave(ii).dt;
+    end
+    
+    
+    cellMesh=[cellMesh1,cellMesh2,[cellMesh3(:).cells],[cellMesh4(:).cells]];
 end
 
 function [cellMesh]=SnaxelToCellOut(snaxel,snakposition,strandID,time)
@@ -391,31 +406,6 @@ end
 
 %% Various
 
-
-function sub=FindObjNum(object,index,objInd)
-    % finds the array index from a snaxel number
-    if ~exist('objInd','var')
-        objInd=[object(:).index];
-    end
-    sub=zeros(length(index),1);
-    additionalSlots=0;
-    for ii=1:length(index)
-        
-        snaxLog=objInd==index(ii);
-        jj=ii+additionalSlots;
-        subInter=find(snaxLog);
-        if isempty(subInter)
-            sub(jj)=0;
-        elseif numel(subInter)>1
-            sub(jj:jj+length(subInter)-1)=subInter;
-            additionalSlots=additionalSlots+numel(subInter)-1;
-        else
-            sub(jj)=subInter;
-            
-        end
-    end
-end
-
 function [cellCentredGrid]=CellCentredGridInformationReduced(refinedGrid)
     % Returns cell centred information about the grid being used
     
@@ -438,22 +428,5 @@ function [cellCentredGrid]=CellCentredGridInformationReduced(refinedGrid)
     end
     
     
-end
-
-function [vectorEntries]=RemoveIdenticalEntries(vectorEntries)
-    % Function which removes identical entries in a column vector
-    vectorEntriesUnsort=vectorEntries;
-    [vectorEntries,vectorIndex]=sort(vectorEntries);
-    kk=1;
-    rmvDI=[];
-    for ii=2:length(vectorEntries)
-        if vectorEntries(ii)==vectorEntries(ii-1)
-            rmvDI(kk)=ii;
-            kk=kk+1;
-        end
-    end
-    %vectorEntries(rmvDI)=[];
-    vectorIndex(rmvDI)=[];
-    vectorEntries=vectorEntriesUnsort(vectorIndex);
 end
 
