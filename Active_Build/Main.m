@@ -328,8 +328,7 @@ function [FID]=OpenValidFile(writeDirectory)
     datestr(now)
     if ~exist('writeDirectory','var')
         cdDir=cd;
-        backSlash=regexp(cdDir,'\');
-        writeDirectory=[cdDir,'boundaries'];
+        writeDirectory=[cdDir,'\..\results\boundaries'];
     end
     system(['md "',writeDirectory,'"']);
     
@@ -359,7 +358,7 @@ function []=OutPutBinaryResults(snakSave,paramStruct,datType,optionalSubFolder)
     
     fileName=['Variables_',datType,'_',datestr(now,30),'.mat'];
     stampedSubFolders=['DataArchive_',datestr(now,'yyyy_mm')];
-    targetDir=[cd,'\Results\',optionalSubFolder,'\',stampedSubFolders,'\'];
+    targetDir=[cd,'\..\results\',optionalSubFolder,'\',stampedSubFolders,'\'];
     system(['md "',targetDir,'"']);
     
     save([targetDir,fileName],'snakSave','paramStruct');

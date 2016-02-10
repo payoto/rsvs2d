@@ -76,11 +76,13 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         disp(' ')
         disp(['Start step ',num2str(ii)])
         tStepStart=now;
-        
+        snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]),ones([1,length(snaxel)]));
         %arrivalTolerance=arrivalTolerance1*exp(-decayCoeff*ii);
         % snaxel properties calculation
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        
+        CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,0);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
         [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);

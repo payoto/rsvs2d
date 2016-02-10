@@ -247,7 +247,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
      % number of steps in design domain
     passGridSteps=10; 
      % number of refining steps
-    refineSteps=4;
+    refineSteps=2;
     passPadding=1;
     
     typDat='low5shape';
@@ -256,7 +256,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=false;
     snakesPlotInterval=0;
-    snakesSteps=300;
+    snakesSteps=200;
     
     refineGrid=4;
     typeRefine='all';

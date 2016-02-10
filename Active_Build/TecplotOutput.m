@@ -75,7 +75,7 @@ function [targetDir,fileName]=OutputDirectory(datType,optionalSubFolder)
     
     fileName=['TecPlot360_',datestr(now,30),'_',datType,'.plt'];
     stampedSubFolders=['DataArchive_',datestr(now,'yyyy_mm')];
-    targetDir=[cd,'\Results\',optionalSubFolder,'\',stampedSubFolders,'\'];
+    targetDir=[cd,'\..\results\',optionalSubFolder,'\',stampedSubFolders,'\'];
     system(['md "',targetDir,'"']);
     
     
