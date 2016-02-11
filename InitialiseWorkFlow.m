@@ -12,8 +12,8 @@
 
 function []=InitialiseWorkFlow()
     
-    singleFolder={'Active_Build','Test Code'};
-    rootTreeFolders={'Active_Build\Input_Variables','Active_Build\Various'};
+    singleFolder={'Active_Build'};
+    rootTreeFolders={'Active_Build\Input_Variables','Active_Build\Various','Active_Build\Velocity'};
     
     [addSingleDir]=FormulateValidFolders(singleFolder);
     [rootTreeDirs]=FormulateValidFolders(rootTreeFolders);
