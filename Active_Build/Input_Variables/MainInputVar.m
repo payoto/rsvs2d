@@ -154,7 +154,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=200;
+    snakesSteps=400;
     refineGrid=4;
     typeRefine='all';
     execTest=false;
@@ -179,7 +179,7 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=70;
+    snakesSteps=200;
     refineGrid=4;
     typeRefine='grey';
     execTest=false;

@@ -25,10 +25,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     maxStep=0.5;
     maxDt=1;
     
-    forceparam.maxForceVel=1;
+    forceparam.maxForceVel=2;
     forceparam.bendingVelInfluence=0;
     forceparam.tensVelInfluence=1;
-    forceparam.maxVelRatio=1;
+    forceparam.maxVelRatio=4;
     
     if ~exist('numSteps','var'),numSteps=50;end
     if ~exist('plotInterval','var'),plotInterval=ceil(numSteps/10);end
@@ -76,13 +76,13 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         disp(' ')
         disp(['Start step ',num2str(ii)])
         tStepStart=now;
-        snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]),ones([1,length(snaxel)]));
+        %snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]),ones([1,length(snaxel)]));
         %arrivalTolerance=arrivalTolerance1*exp(-decayCoeff*ii);
         % snaxel properties calculation
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         
-        CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,0);
+        % CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,0);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
         [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
@@ -902,14 +902,16 @@ function [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolum
 %     [snaxel,snakposition,snaxelmodvel]=...
 %         VelocityForceMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 velcalcinfo=[];
-    [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
-        VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+%     [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+%         VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 %     
 %     [snaxel,snakposition,snaxelmodvel]=...
 %         VelocityNormalisedForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 
 %     [snaxel,snakposition,snaxelmodvel]=...
 %         VelocityAreaOnly(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+    [snaxel,snakposition,snaxelmodvel]=...
+        VelocityForce_FE(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 end
 
 function [snaxel]=VelocityCalculationExpand(snaxel,snakposition)
