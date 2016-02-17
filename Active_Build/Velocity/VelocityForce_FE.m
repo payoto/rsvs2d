@@ -27,6 +27,7 @@ function [snaxel,snakposition,snaxelmodvel]=VelocityForce_FE(snaxel,snakposition
     snaxelmodvel=snaxel;
     for ii=1:length(snaxel)
         snaxelmodvel(ii).v=snaxeltensvel(ii).bendforce;
+        snaxel(ii).v=snaxeltensvel(ii).bendforce;
     end
 end
 
@@ -454,6 +455,7 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     [implicitMatTens,implicitMatBend]=BuildImplicitMatrix(derivtenscalc);
     
     [bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex);
+    [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce);
     
     bendingVelInfluence=forceparam.bendingVelInfluence;
     tensVelInfluence=forceparam.tensVelInfluence;    
@@ -468,7 +470,7 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     %%
     for ii=1:length(snaxeltensvel)
         snaxeltensvel(ii).forcevel= snaxeltensvel(ii).tensvel*tensCoeff+ snaxeltensvel(ii).bendvel*bendCoeff;
-        snaxeltensvel(ii).bendforce=bendforce(ii).bendforce2; % watch the change of force
+        snaxeltensvel(ii).bendforce=bendforce(ii).vel; % watch the change of force
     end
     
 end
@@ -769,5 +771,35 @@ function [d2pds2]=SecondDerivativeVarStencil(Pi,Pp,Pm,Dp,Dm)
     
     d2pds2=2*(-Pi*(Dp+Dm)+Dp*Pm+Dm*Pp)...
         /(Dp^2*Dm+Dm^2*Dp);
+    
+end
+
+%% Dynamic equations
+
+function [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce)
+    global maxDt
+    Dt=maxDt;
+    vt=[snaxel(:).v]';
+    Fvec=vertcat(bendforce(:).shearforce);
+    dirSnak=vertcat(snakposition(:).vector);
+    for ii=1:length(Fvec)
+        Ft(ii)=dot(Fvec(ii,:),dirSnak(ii,:));
+    end
+    Ft=Ft';
+    [vtp1]=ForceToVelocity(vt,Ft,Dt);
+    for ii=1:length(vtp1)
+        bendforce(ii).vel=vtp1(ii);
+    end
+end
+
+
+function [vtp1]=ForceToVelocity(vt,Ft,Dt)
+    
+    dampRatio=0.5;
+    maxForce=0.5/Dt;
+    forceScaling=maxForce/max([mean(abs(Ft)),maxForce]);
+    Fd=-vt*dampRatio;
+    vtp1=vt+Fd+Dt*(Ft*forceScaling);
+    
     
 end

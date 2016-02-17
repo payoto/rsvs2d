@@ -16,14 +16,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
         oldGridUns,connectionInfo,plotInterval,numSteps,makeMov,boundstr)
     
     global arrivalTolerance
-    arrivalTolerance=0.01;
+    arrivalTolerance=0.001;
     
     global unstructglobal
     unstructglobal=refinedGriduns;
     
     global maxStep
     maxStep=0.5;
-    maxDt=1;
+    global maxDt
+    maxDt=0.1;
     
     forceparam.maxForceVel=2.5;
     forceparam.bendingVelInfluence=0;
@@ -35,7 +36,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=[1:10];%[1:10:400,2, 4,6,8];
+    debugPlot=[0];%[1:10:400,2, 4,6,8];
     mergeTopo=true;
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
@@ -56,7 +57,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     
     global arrivalTolerance
     arrivalTolerance=arrivalTolerance1;
-    dtMin=1;
+    dtMin=maxDt/10;
     decayCoeff=0.1;
     convLevel=10^-15;
     
@@ -128,6 +129,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snaxel,insideContourInfo]=SnaxelRepopulate(refinedGriduns,snaxel,...
             insideContourInfo);
         [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+        if numel(snaxel)==0
+            warning('Contour has collapsed')
+            break
+        end
         [snaxelrev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
             insideContourInfo,refinedGriduns);
         
@@ -137,6 +142,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snaxelrev,insideContourInfoRev]=SnaxelRepopulate(refinedGriduns,snaxelrev,...
             insideContourInfoRev);
         [snaxelrev,insideContourInfoRev]=SnaxelCleaningProcess(snaxelrev,insideContourInfoRev);
+        if numel(snaxelrev)==0
+            warning('Contour has collapsed')
+            break
+        end
         [snaxel,insideContourInfo]=ReverseSnaxelInformation(snaxelrev,...
             insideContourInfoRev,refinedGriduns);
         
@@ -1075,6 +1084,7 @@ function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid
         snaxEdge=snaxel(ii).edge;
         snaxEdgeSub=FindObjNum(refinedGrid.edge,snaxEdge,edgeInd);
         snaxCells=refinedGrid.edge(snaxEdgeSub).cellindex;
+        snaxCells(snaxCells==0)=[];
         snaxCellsSub=FindObjNum(cellCentredGrid,snaxCells,cellInd);
         snaxPosSub=FindObjNum(snakposition,snaxel(ii).index,snakPosInd);
         
@@ -1634,17 +1644,20 @@ end
 
 function snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist)
     % Updates the current distance of the snaxel
-    
+    count=0;
     for ii=1:length(snaxel)
         movDist=snaxel(ii).v*dt;
         
         if abs(movDist)>abs(maxDist(ii))
-            warning('Problem with snaxel update')
+            count=count+1;
+            
             movDist=maxDist(ii);
         end
         snaxel(ii).d=movDist+snaxel(ii).d;
     end
-    
+    if count>0
+    disp([num2str(count),' Problems with snaxel update'])
+    end
 end
 
 function [finishedSnakesSub]=ArrivalCondition(snaxel)
@@ -1730,6 +1743,10 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
         snaxelRepop=InitialSnaxelStructure(snaxel(breedSub).tovertex,edgeVertIndex,...
             edgeIndex,snaxel(breedSub).edge,snaxelIndexStart,...
             connec);
+        previousV=snaxel(breedSub).v;
+        for ii=1:length(snaxelRepop)
+            snaxelRepop(ii).v=0;%previousV;            
+        end
         [snaxel]=AddSnaxel(snaxel,snaxelRepop);
         % Remove breeding snaxels snaxels
         delIndex(kk,1:2)=[snaxel(breedSub).index,indexDoubled]; %#ok<AGROW>

@@ -33,7 +33,8 @@ function []=TecplotOutput(optionalSubFolder,datType,baseGrid,fineGrid,snakSave,c
             varshare.vars=[1,2];
         end
         [cellVol(ii).cellMesh]=CellCentredMeshDataExtraction(baseGrid,snakSave(ii).volumefraction,4,time,connShare,varshare);
-        time=time+snakSave(ii).dt;
+        %time=time+snakSave(ii).dt;
+        time=time+1;
     end
     
     [cellMesh]=CellCentredMeshDataExtraction(baseGrid,snakSave(1).volumefraction,[],[],[],[]);
@@ -102,7 +103,7 @@ function cellHeader=FELINESEGHeader(numNodes,numElm,strandID,time)
     cellHeader{kk}=elmStr; kk=kk+1;
     if exist('time','var');
         cellHeader{kk}=idStr; kk=kk+1;
-        timeStr=['SOLUTIONTIME=',num2str(time),' '];
+        timeStr=['SOLUTIONTIME=',num2str(time,'%.15f'),' '];
         cellHeader{kk}=timeStr; kk=kk+1;
     end
     cellHeader{kk}='DATAPACKING=POINT'; kk=kk+1;
@@ -140,7 +141,7 @@ function cellHeader=CellCentredDataHeader(numNodes,numElm,nFaces,vararg)
     if ~isempty(time);
         idStr=['STRANDID=',int2str(strandID)];
         cellHeader{kk}=idStr; kk=kk+1;
-        timeStr=['SOLUTIONTIME=',num2str(time),' '];
+        timeStr=['SOLUTIONTIME=',num2str(time,'%.15f'),' '];
         cellHeader{kk}=timeStr; kk=kk+1;
     end
     if ~isempty(connecShareZone);
