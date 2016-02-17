@@ -25,7 +25,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     maxStep=0.5;
     maxDt=1;
     
-    forceparam.maxForceVel=2;
+    forceparam.maxForceVel=2.5;
     forceparam.bendingVelInfluence=0;
     forceparam.tensVelInfluence=1;
     forceparam.maxVelRatio=4;
@@ -35,7 +35,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=[0];%[1:10:400,2, 4,6,8];
+    debugPlot=[1:10];%[1:10:400,2, 4,6,8];
     mergeTopo=true;
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
@@ -90,7 +90,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
             [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxelmodvel,makeMov,volumefraction);
-            [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,makeMov,volumefraction);
+            %[movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,makeMov,volumefraction);
         
         end
         
@@ -146,8 +146,6 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
-        
-        
         
         
         nSnax=length(snaxel);
@@ -602,11 +600,20 @@ end
 
 function []=PlotSnaxel(figh,axh,snakposition,snaxel)
     % Plots the snaxels as arrows on the plot
-    for ii=1:length(snakposition)
-        X(ii)=snakposition(ii).coord(1);
-        Y(ii)=snakposition(ii).coord(2);
-        U(ii)=snakposition(ii).vector(1)*snaxel(ii).v/40;
-        V(ii)=snakposition(ii).vector(2)*snaxel(ii).v/40;
+    if numel(snaxel(1).v)==1
+        for ii=1:length(snakposition)
+            X(ii)=snakposition(ii).coord(1);
+            Y(ii)=snakposition(ii).coord(2);
+            U(ii)=snakposition(ii).vector(1)*snaxel(ii).v/40;
+            V(ii)=snakposition(ii).vector(2)*snaxel(ii).v/40;
+        end
+    else
+        for ii=1:length(snakposition)
+            X(ii)=snakposition(ii).coord(1);
+            Y(ii)=snakposition(ii).coord(2);
+            U(ii)=snaxel(ii).v(1)/1000;
+            V(ii)=snaxel(ii).v(2)/1000;
+        end
     end
     figure(figh)
     axes(axh)
