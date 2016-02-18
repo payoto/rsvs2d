@@ -304,8 +304,8 @@ function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
             [snaxelvel(snaxelVelSub(jj)).forcevel]=snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
             
             snaxelvel(snaxelVelSub(jj)).averagevel(end+1)=...
-                snaxelvel(snaxelVelSub(jj)).averagevelbase(end)+...
-                snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
+                snaxelvel(snaxelVelSub(jj)).averagevelbase(end);%...
+                %+snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
         end
     end
     
@@ -454,7 +454,9 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex);
     [implicitMatTens,implicitMatBend]=BuildImplicitMatrix(derivtenscalc);
     
-    [bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex);
+    %[bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex);
+    [bendforce]=CalculateShearForce_fullderiv(snaxel,snakposition,snakPosIndex);
+    %[bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce);
     [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce);
     
     bendingVelInfluence=forceparam.bendingVelInfluence;
@@ -469,8 +471,9 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     [tensVelVec]=GeometryForcingVelCalc(derivtenscalc,implicitMatTens,implicitMatBend,tensCoeff,bendCoeff);
     %%
     for ii=1:length(snaxeltensvel)
-        snaxeltensvel(ii).forcevel= snaxeltensvel(ii).tensvel*tensCoeff+ snaxeltensvel(ii).bendvel*bendCoeff;
+        %snaxeltensvel(ii).forcevel= snaxeltensvel(ii).tensvel*tensCoeff+ snaxeltensvel(ii).bendvel*bendCoeff;
         snaxeltensvel(ii).bendforce=bendforce(ii).vel; % watch the change of force
+        snaxeltensvel(ii).forcevel=bendforce(ii).vel;
     end
     
 end
@@ -671,8 +674,11 @@ function [bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex)
              snaxel,snakposition,'prec');
          [nextInd]=FindNextNonIdenticalSnaxel(snaxIndList,snakposition(ii).index,...
              snaxel,snakposition,'next');
-        
-        [bendforce(ii)]=BendForceDataExtraction(ii,nextInd,precInd,snakposition,snakPosIndex);
+         simFlag=false;
+        if precInd~=snaxel(ii).snaxprec || nextInd~=snaxel(ii).snaxnext
+            simFlag=true;
+        end
+        [bendforce(ii)]=BendForceDataExtraction(ii,nextInd,precInd,snakposition,snakPosIndex,simFlag);
     end
     
     % Calculating second difference    
@@ -729,6 +735,88 @@ function [bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex)
     end
 end
 
+function [bendforce]=CalculateShearForce_fullderiv(snaxel,snakposition,snakPosIndex)
+
+    snaxIndList=[snaxel(:).index];
+    for ii=length(snakposition):-1:1
+        %Find closest neighbour with different cooerdinates
+         [precInd]=FindNextNonIdenticalSnaxel(snaxIndList,snakposition(ii).index,...
+             snaxel,snakposition,'prec');
+         [nextInd]=FindNextNonIdenticalSnaxel(snaxIndList,snakposition(ii).index,...
+             snaxel,snakposition,'next');
+         simFlag=false;
+        if precInd~=snaxel(ii).snaxprec || nextInd~=snaxel(ii).snaxnext
+            simFlag=true;
+        end
+        [bendforce(ii)]=ShearForceDataExtraction(ii,nextInd,precInd,snakposition,snakPosIndex,simFlag);
+    end
+    
+    % Calculating second difference    
+    for ii=length(bendforce):-1:1
+
+        bendforce(ii).d2pds2=SecondDerivativeVarStencil...
+            (bendforce(ii).pos_i,bendforce(ii).pos_p,bendforce(ii).pos_m,...
+            bendforce(ii).dist_p,bendforce(ii).dist_m);
+        %{
+        % extracting data from preexisting arrays
+        derivtenscalc(ii).dir_i=snakposition(ii).vectornotnorm;
+        derivtenscalc(ii).dir_p=snakposition(neighSub(2)).vectornotnorm;
+        derivtenscalc(ii).dir_m=snakposition(neighSub(1)).vectornotnorm;
+        derivtenscalc(ii).dir_norm=snakposition(ii).vector;
+        derivtenscalc(ii).pos_i=snakposition(ii).coord;
+        derivtenscalc(ii).pos_p=snakposition(neighSub(2)).coord;
+        derivtenscalc(ii).pos_m=snakposition(neighSub(1)).coord;
+        derivtenscalc(ii).tension=dot(snakposition(ii).tensVector,snakposition(ii).vector);
+        bendingVec=2*snakposition(ii).tensVector-(snakposition(neighSub(1)).tensVector+snakposition(neighSub(2)).tensVector);
+        derivtenscalc(ii).bending=dot(bendingVec,snakposition(ii).vector);
+        % calculating data
+        derivtenscalc(ii).Dvec_p=derivtenscalc(ii).pos_p-derivtenscalc(ii).pos_i;
+        derivtenscalc(ii).Dvec_m=derivtenscalc(ii).pos_m-derivtenscalc(ii).pos_i;
+        derivtenscalc(ii).Dnorm_p=norm(derivtenscalc(ii).Dvec_p);
+        derivtenscalc(ii).Dnorm_m=norm(derivtenscalc(ii).Dvec_m);
+        
+        [velcoeff_i,velcoeff_p,velcoeff_m]=TensileVelDerivCoeff(derivtenscalc(ii));
+        
+        derivtenscalc(ii).velcoeff_i=velcoeff_i;
+        derivtenscalc(ii).velcoeff_p=velcoeff_p;
+        derivtenscalc(ii).velcoeff_m=velcoeff_m;
+        %}
+    end
+    % Calculate 3rd derivative
+    for ii=length(bendforce):-1:1
+        neighSub=FindObjNum([],[bendforce(ii).snaxprec,bendforce(ii).snaxnext],snakPosIndex);
+        
+        bendforce(ii).snax_pp=bendforce(neighSub(2)).snaxnext;
+        bendforce(ii).snax_mm=bendforce(neighSub(1)).snaxprec;
+        
+        bendforce(ii).pos_pp=bendforce(neighSub(2)).pos_p;
+        bendforce(ii).pos_mm=bendforce(neighSub(1)).pos_m;
+        bendforce(ii).dist_pp=bendforce(neighSub(2)).dist_p;
+        bendforce(ii).dist_mm=bendforce(neighSub(1)).dist_m;
+        
+        bendforce(ii).dist_ep=bendforce(ii).dist_p+bendforce(ii).dist_pp;
+        bendforce(ii).dist_em=bendforce(ii).dist_m+bendforce(ii).dist_mm;
+        
+        bendforce(ii).shearforce=ThrirdDerivativeVarStencil(...
+            bendforce(ii).pos_i,...
+            bendforce(ii).pos_p,...
+            bendforce(ii).pos_m,...
+            bendforce(ii).pos_pp,...
+            bendforce(ii).pos_mm,...
+            bendforce(ii).dist_p,...
+            bendforce(ii).dist_m,...
+            bendforce(ii).dist_ep,...
+            bendforce(ii).dist_em...
+            );
+        
+        bendforce(ii).d4pds4=SecondDerivativeVarStencil...
+            (bendforce(ii).d2pds2,bendforce(neighSub(1)).d2pds2,bendforce(neighSub(2)).d2pds2,...
+            bendforce(ii).dist_p,bendforce(ii).dist_m);
+    end
+
+end
+
+
 function [neighInd]=FindNextNonIdenticalSnaxel(snaxIndList,rootInd,snaxel,snakposition,dirSnax)
 % Returns the closest non similar snaxel
 % Where dirSnax is a string: either 'prec' or 'next'
@@ -748,13 +836,31 @@ end
 
 end
 
-function [derivtenscalc]=BendForceDataExtraction(ii,nextInd,precInd,snakposition,snakPosIndex)
+function [derivtenscalc]=BendForceDataExtraction(ii,nextInd,precInd,snakposition,snakPosIndex,simFlag)
     % Extracts data for BendForce
     
     derivtenscalc.index=snakposition(ii).index;
     derivtenscalc.snaxnext=nextInd;
     derivtenscalc.snaxprec=precInd;
+    derivtenscalc.samepos=simFlag;
+    neighSub=FindObjNum([],[precInd,nextInd],snakPosIndex);
+    % Extracting positions
+    derivtenscalc.pos_i=snakposition(ii).coord;
+    derivtenscalc.pos_p=snakposition(neighSub(2)).coord; % p for plus: i+1
+    derivtenscalc.pos_m=snakposition(neighSub(1)).coord; % m for minus: i-1
 
+    % Calculating distances
+    derivtenscalc.dist_p=sqrt(sum((derivtenscalc.pos_i-derivtenscalc.pos_p).^2));
+    derivtenscalc.dist_m=sqrt(sum((derivtenscalc.pos_i-derivtenscalc.pos_m).^2));
+end
+
+function [derivtenscalc]=ShearForceDataExtraction(ii,nextInd,precInd,snakposition,snakPosIndex,simFlag)
+    % Extracts data for BendForce
+    
+    derivtenscalc.index=snakposition(ii).index;
+    derivtenscalc.snaxnext=nextInd;
+    derivtenscalc.snaxprec=precInd;
+    derivtenscalc.samepos=simFlag;
     neighSub=FindObjNum([],[precInd,nextInd],snakPosIndex);
     % Extracting positions
     derivtenscalc.pos_i=snakposition(ii).coord;
@@ -774,32 +880,117 @@ function [d2pds2]=SecondDerivativeVarStencil(Pi,Pp,Pm,Dp,Dm)
     
 end
 
+function [d3pds3]=ThrirdDerivativeVarStencil(Pi,Pp,Pm,Ppp,Pmm,Dp,Dm,Ep,Em)
+    % Calculation of a second difference with variable stencil
+    
+    d3pds3=6*(((Pp*Dm^2-Pm*Dp^2)*(Ep*Em^2+Em*Ep^2))...
+        -((Em^2*Ppp-Ep^2*Pmm)*(Dp*Dm^2+Dm*Dp^2))-...
+        Pi*((Dm^2-Dp^2)*(Ep^2*Em+Ep*Em^2)-(Em^2-Ep^2)*(Dp^2*Dm+Dp*Dm^2)))...
+        /...
+        ((Dp^2*Dm^3+Dp^3*Dm^2)*(Ep^2*Em+Ep*Em^2)-(Dp*Dm^2+Dp^2*Dm)*(Ep^2*Em^3+Ep^3*Em^2));
+    
+end
+
+
 %% Dynamic equations
 
-function [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce)
+function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
     global maxDt
     Dt=maxDt;
     vt=[snaxel(:).v]';
     Fvec=vertcat(bendforce(:).shearforce);
     dirSnak=vertcat(snakposition(:).vector);
     for ii=1:length(Fvec)
-        Ft(ii)=dot(Fvec(ii,:),dirSnak(ii,:));
+        FMag(ii)=sqrt(sum(Fvec(ii,:).^2));
     end
+    flat=find(FMag==0);
+    for ii=1:length(Fvec)
+        FUnit(ii,1:2)=Fvec(ii,:)/sqrt(sum(Fvec(ii,:).^2));
+    end
+    for ii=flat
+        FUnit(ii,1:2)=snakposition(ii).normvector{1};
+    end
+    for ii=1:length(Fvec)
+        FMagsign(ii)=sign(dot(FUnit(ii,:),dirSnak(ii,:)))*FMag(ii);
+    end
+    meanMag=mean(FMagsign);
+    for ii=1:length(Fvec)
+        Fd(ii,1:2)=Fvec(ii,:)-sign(dot(FUnit(ii,:),dirSnak(ii,:)))*meanMag*FUnit(ii,:);
+    end
+    for ii=1:length(Fvec)
+        Ft(ii)=dot(Fd(ii,:),dirSnak(ii,:));
+    end
+    simPos=find([bendforce(:).samepos]);
+    for ii=simPos
+        Ft(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
+    end
+    Ft(isinf(Ft))=sign(Ft(isinf(Ft)))*1000;
     Ft=Ft';
-    [vtp1]=ForceToVelocity(vt,Ft,Dt);
+    dampBase=0.5;
+    dampSides=0.5;
+    [implicitMatDamp]=BuildDampingMatrix(bendforce,snaxel,dampBase,dampSides);
+    
+    [vtp1]=ForceToVelocity(vt,Ft,Dt,implicitMatDamp);
     for ii=1:length(vtp1)
         bendforce(ii).vel=vtp1(ii);
     end
 end
 
-
-function [vtp1]=ForceToVelocity(vt,Ft,Dt)
+function [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce)
+    global maxDt
+    Dt=maxDt;
+    vt=[snaxel(:).v]';
+    Fvec=-vertcat(bendforce(:).d4pds4);
+    dirSnak=vertcat(snakposition(:).vector);
     
-    dampRatio=0.5;
-    maxForce=0.5/Dt;
+    for ii=1:length(Fvec)
+        Ft(ii)=dot(Fvec(ii,:),dirSnak(ii,:));
+    end
+    simPos=find([bendforce(:).samepos]);
+    for ii=simPos
+        Ft(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
+    end
+    Ft(isinf(Ft))=sign(Ft(isinf(Ft)))*1000;
+    Ft=Ft';
+    dampBase=0.5;
+    dampSides=0.5;
+    [implicitMatDamp]=BuildDampingMatrix(bendforce,snaxel,dampBase,dampSides);
+    
+    [vtp1]=ForceToVelocity(vt,Ft,Dt,implicitMatDamp);
+    for ii=1:length(vtp1)
+        bendforce(ii).vel=vtp1(ii);
+    end
+end
+
+function [vtp1]=ForceToVelocity(vt,Ft,Dt,dampMat)
+    
+    
+    maxForce=10;
     forceScaling=maxForce/max([mean(abs(Ft)),maxForce]);
-    Fd=-vt*dampRatio;
+    Fd=dampMat*vt;
     vtp1=vt+Fd+Dt*(Ft*forceScaling);
     
+    %vtp1=(eye(length(Fd))-dampMat)\(Dt*Ft*forceScaling+vt);
+end
+
+function [implicitMatDamp]=BuildDampingMatrix(derivtenscalc,snaxel,dampBase,dampSides)
+    numCoeff=length(derivtenscalc);
     
+    implicitMatDamp=zeros(numCoeff);
+
+
+    
+    snaxPrecList=[snaxel(:).snaxprec];
+    snaxNextList=[snaxel(:).snaxnext];
+    snaxIndList=[derivtenscalc(:).index];
+    snaxPrecSub=FindObjNum([],snaxPrecList,snaxIndList);
+    
+    snaxNextSub=FindObjNum([],snaxNextList,snaxIndList);
+    
+    
+    for ii=1:length(derivtenscalc)
+        implicitMatDamp(ii,ii)=-1*dampBase;
+        implicitMatDamp(ii,snaxPrecSub(ii))=0.5*dampSides;
+        implicitMatDamp(ii,snaxNextSub(ii))=0.5*dampSides;
+    end
 end

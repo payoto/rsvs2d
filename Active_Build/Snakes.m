@@ -16,7 +16,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
         oldGridUns,connectionInfo,plotInterval,numSteps,makeMov,boundstr)
     
     global arrivalTolerance
-    arrivalTolerance=0.001;
+    arrivalTolerance=1e-10;
     
     global unstructglobal
     unstructglobal=refinedGriduns;
@@ -36,7 +36,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=[0];%[1:10:400,2, 4,6,8];
+    debugPlot=[1:10];%[1:10:400,2, 4,6,8];
     mergeTopo=true;
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
@@ -117,10 +117,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
          snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
         
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-%         [snakposition]=SnaxelNormal2(snaxel,snakposition);
-%         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-%             cellCentredGrid,insideContourInfo);
-%         [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo);
+        [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         end
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
         % Snaxel Repopulation In both directions
@@ -429,7 +429,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
         dist=0; % Snaxel initialisation, it starts at the vertex
-        velocity=1; % Initialisation velocity
+        velocity=0; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);
         vertexDest(vertexDest==vertexOrig)=[];

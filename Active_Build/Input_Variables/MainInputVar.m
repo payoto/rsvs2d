@@ -129,8 +129,8 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=100;
-    refineGrid=2;
+    snakesSteps=50;
+    refineGrid=4;
     typeRefine='all';
     execTest=false;
     makeMov=false;
@@ -179,9 +179,84 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=200;
+    snakesSteps=500;
     refineGrid=4;
     typeRefine='grey';
+    execTest=false;
+    makeMov=false;
+    
+end
+
+function [passDomBounds,passGridSteps,refineSteps,passPadding...
+        ,typDat,typeBound,loadLogical,useSnakes,isCheckRes,snakesPlotInterval...
+        ,snakesSteps,typeRefine,execTest,refineGrid,makeMov]=Snakestestsmooth3()
+    
+    passDomBounds=[-1,1;-1,1];
+     % number of steps in design domain
+    passGridSteps=3; 
+     % number of refining steps
+    refineSteps=2;
+    passPadding=1;
+    
+    typDat='testsmooth3';
+    typeBound='snaxel'; % 'vertex' or 'snaxel'
+    loadLogical=false;
+    useSnakes=true;
+    isCheckRes=true;
+    snakesPlotInterval=0;
+    snakesSteps=100;
+    refineGrid=4;
+    typeRefine='all';
+    execTest=false;
+    makeMov=false;
+    
+end
+
+function [passDomBounds,passGridSteps,refineSteps,passPadding...
+        ,typDat,typeBound,loadLogical,useSnakes,isCheckRes,snakesPlotInterval...
+        ,snakesSteps,typeRefine,execTest,refineGrid,makeMov]=Snakestestsmooth3_1()
+    
+    passDomBounds=[-1,1;-1,1];
+     % number of steps in design domain
+    passGridSteps=3; 
+     % number of refining steps
+    refineSteps=2;
+    passPadding=1;
+    
+    typDat='testsmooth3_1';
+    typeBound='snaxel'; % 'vertex' or 'snaxel'
+    loadLogical=false;
+    useSnakes=true;
+    isCheckRes=true;
+    snakesPlotInterval=0;
+    snakesSteps=100;
+    refineGrid=4;
+    typeRefine='all';
+    execTest=false;
+    makeMov=false;
+    
+end
+
+function [passDomBounds,passGridSteps,refineSteps,passPadding...
+        ,typDat,typeBound,loadLogical,useSnakes,isCheckRes,snakesPlotInterval...
+        ,snakesSteps,typeRefine,execTest,refineGrid,makeMov]=Snakestestsmooth2()
+    
+    passDomBounds=[-1,1;-1,1];
+     % number of steps in design domain
+    passGridSteps=3; 
+     % number of refining steps
+    refineSteps=2;
+    passPadding=1;
+    
+    typDat='testsmooth2';
+    typeBound='snaxel'; % 'vertex' or 'snaxel'
+    loadLogical=false;
+    useSnakes=true;
+    isCheckRes=true;
+    snakesPlotInterval=0;
+    snakesSteps=50;
+    refineGrid=4;
+    typeRefine='all';
     execTest=false;
     makeMov=false;
     
