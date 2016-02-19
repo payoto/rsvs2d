@@ -36,7 +36,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=[1:10];%[1:10:400,2, 4,6,8];
+    debugPlot=[0];%[1:10:400,2, 4,6,8];
     mergeTopo=true;
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
@@ -470,6 +470,7 @@ function [snaxel]=SnaxelStructure(index,dist,velocity,vertexOrig,...
     snaxel.index=index;
     snaxel.d=dist;
     snaxel.v=velocity;
+    snaxel.acc=0;
     snaxel.fromvertex=vertexOrig;
     snaxel.tovertex=vertexDest;
     snaxel.edge=edge;
@@ -1744,8 +1745,10 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
             edgeIndex,snaxel(breedSub).edge,snaxelIndexStart,...
             connec);
         previousV=snaxel(breedSub).v;
+        previousACC=snaxel(breedSub).acc;
         for ii=1:length(snaxelRepop)
-            snaxelRepop(ii).v=0;%previousV;            
+            snaxelRepop(ii).v=0;%previousV;
+            snaxelRepop(ii).acc=previousACC;
         end
         [snaxel]=AddSnaxel(snaxel,snaxelRepop);
         % Remove breeding snaxels snaxels
@@ -2407,6 +2410,7 @@ function [snaxelrev]=ReverseSnakes(snaxel)
         % changed
         snaxelrev(ii).d=1-snaxel(ii).d;
         snaxelrev(ii).v=-snaxel(ii).v;
+        snaxelrev(ii).acc=-snaxel(ii).acc;
         snaxelrev(ii).tovertex=snaxel(ii).fromvertex;
         snaxelrev(ii).fromvertex=snaxel(ii).tovertex;
         snaxelrev(ii).snaxprec=snaxel(ii).snaxnext;

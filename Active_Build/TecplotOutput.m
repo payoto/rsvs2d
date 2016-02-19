@@ -33,8 +33,8 @@ function []=TecplotOutput(optionalSubFolder,datType,baseGrid,fineGrid,snakSave,c
             varshare.vars=[1,2];
         end
         [cellVol(ii).cellMesh]=CellCentredMeshDataExtraction(baseGrid,snakSave(ii).volumefraction,4,time,connShare,varshare);
-        %time=time+snakSave(ii).dt;
-        time=time+1;
+        time=time+snakSave(ii).dt;
+        %time=time+1;
     end
     
     [cellMesh]=CellCentredMeshDataExtraction(baseGrid,snakSave(1).volumefraction,[],[],[],[]);

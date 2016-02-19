@@ -254,8 +254,8 @@ function [passDomBounds,passGridSteps,refineSteps,passPadding...
     useSnakes=true;
     isCheckRes=true;
     snakesPlotInterval=0;
-    snakesSteps=50;
-    refineGrid=4;
+    snakesSteps=100;
+    refineGrid=8;
     typeRefine='all';
     execTest=false;
     makeMov=false;

@@ -27,7 +27,8 @@ function [snaxel,snakposition,snaxelmodvel]=VelocityForce_FE(snaxel,snakposition
     snaxelmodvel=snaxel;
     for ii=1:length(snaxel)
         snaxelmodvel(ii).v=snaxeltensvel(ii).bendforce;
-        snaxel(ii).v=snaxeltensvel(ii).bendforce;
+        %snaxel(ii).v=snaxeltensvel(ii).forcevel;
+        snaxel(ii).acc=snaxeltensvel(ii).forceacc;
     end
 end
 
@@ -304,8 +305,8 @@ function [snaxelvel]=DistributeVelocityToSnaxel(velaverage,snaxeltensvel)
             [snaxelvel(snaxelVelSub(jj)).forcevel]=snaxeltensvel(snaxelTensVelSub(jj)).forcevel*velaverage(ii).forcevelcoeff;
             
             snaxelvel(snaxelVelSub(jj)).averagevel(end+1)=...
-                snaxelvel(snaxelVelSub(jj)).averagevelbase(end);%...
-                %+snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
+                snaxelvel(snaxelVelSub(jj)).averagevelbase(end)...
+                +snaxelvel(snaxelVelSub(jj)).averagevelforce(end);
         end
     end
     
@@ -456,8 +457,8 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     
     %[bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex);
     [bendforce]=CalculateShearForce_fullderiv(snaxel,snakposition,snakPosIndex);
-    %[bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce);
-    [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce);
+    [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce);
+    %[bendforce]=SnaxelToForce(snaxel,snakposition,bendforce);
     
     bendingVelInfluence=forceparam.bendingVelInfluence;
     tensVelInfluence=forceparam.tensVelInfluence;    
@@ -472,8 +473,9 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     %%
     for ii=1:length(snaxeltensvel)
         %snaxeltensvel(ii).forcevel= snaxeltensvel(ii).tensvel*tensCoeff+ snaxeltensvel(ii).bendvel*bendCoeff;
-        snaxeltensvel(ii).bendforce=bendforce(ii).vel; % watch the change of force
+        snaxeltensvel(ii).bendforce=bendforce(ii).d2pds2; % watch the change of force
         snaxeltensvel(ii).forcevel=bendforce(ii).vel;
+        snaxeltensvel(ii).forceacc=bendforce(ii).acc;
     end
     
 end
@@ -898,7 +900,8 @@ function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
     global maxDt
     Dt=maxDt;
     vt=[snaxel(:).v]';
-    Fvec=vertcat(bendforce(:).shearforce);
+    Fvec=vertcat(bendforce(:).d2pds2);
+    Ft=[snaxel(:).acc]';
     dirSnak=vertcat(snakposition(:).vector);
     for ii=1:length(Fvec)
         FMag(ii)=sqrt(sum(Fvec(ii,:).^2));
@@ -918,21 +921,22 @@ function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
         Fd(ii,1:2)=Fvec(ii,:)-sign(dot(FUnit(ii,:),dirSnak(ii,:)))*meanMag*FUnit(ii,:);
     end
     for ii=1:length(Fvec)
-        Ft(ii)=dot(Fd(ii,:),dirSnak(ii,:));
+        Ftp1(ii)=dot(Fd(ii,:),dirSnak(ii,:));
     end
     simPos=find([bendforce(:).samepos]);
     for ii=simPos
-        Ft(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
+        Ftp1(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
     end
-    Ft(isinf(Ft))=sign(Ft(isinf(Ft)))*1000;
-    Ft=Ft';
-    dampBase=0.5;
-    dampSides=0.5;
+    Ftp1(isinf(Ftp1))=sign(Ftp1(isinf(Ftp1)))*1000;
+    Ftp1=Ftp1';
+    dampBase=1;
+    dampSides=0;
     [implicitMatDamp]=BuildDampingMatrix(bendforce,snaxel,dampBase,dampSides);
     
-    [vtp1]=ForceToVelocity(vt,Ft,Dt,implicitMatDamp);
+    [vtp1,Ftp1]=ForceToVelocity(vt,Ftp1,Ft,Dt,implicitMatDamp);
     for ii=1:length(vtp1)
         bendforce(ii).vel=vtp1(ii);
+        bendforce(ii).acc=Ftp1(ii);
     end
 end
 
@@ -940,35 +944,43 @@ function [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce)
     global maxDt
     Dt=maxDt;
     vt=[snaxel(:).v]';
-    Fvec=-vertcat(bendforce(:).d4pds4);
+    Ft=[snaxel(:).acc]';
+    Fvec=vertcat(bendforce(:).d2pds2);
     dirSnak=vertcat(snakposition(:).vector);
     
     for ii=1:length(Fvec)
-        Ft(ii)=dot(Fvec(ii,:),dirSnak(ii,:));
+        Ftp1(ii)=dot(Fvec(ii,:),dirSnak(ii,:));
     end
     simPos=find([bendforce(:).samepos]);
     for ii=simPos
-        Ft(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
+        Ftp1(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
     end
-    Ft(isinf(Ft))=sign(Ft(isinf(Ft)))*1000;
-    Ft=Ft';
-    dampBase=0.5;
-    dampSides=0.5;
+    Ftp1(isinf(Ftp1))=sign(Ftp1(isinf(Ftp1)))*1000;
+    Ftp1=Ftp1';
+    dampBase=0;
+    dampSides=0;
     [implicitMatDamp]=BuildDampingMatrix(bendforce,snaxel,dampBase,dampSides);
     
-    [vtp1]=ForceToVelocity(vt,Ft,Dt,implicitMatDamp);
+    [vtp1,Ftp1]=ForceToVelocity(vt,Ftp1,Ft,Dt,implicitMatDamp);
     for ii=1:length(vtp1)
         bendforce(ii).vel=vtp1(ii);
+        bendforce(ii).acc=Ftp1(ii);
     end
 end
 
-function [vtp1]=ForceToVelocity(vt,Ft,Dt,dampMat)
+function [vtp1,Ftp1]=ForceToVelocity(vt,Ftp1,Ft,Dt,dampMat)
+    %rhonm=1 keeps energy bounded, and conserves in the linear case
+    rhonm=1.0;
+    gam=(3-rhonm)/(2*(1+rhonm));
     
-    
-    maxForce=10;
-    forceScaling=maxForce/max([mean(abs(Ft)),maxForce]);
+    maxForce=1;
+    forceScaling=maxForce/max([mean(abs(Ftp1)),maxForce]);
     Fd=dampMat*vt;
-    vtp1=vt+Fd+Dt*(Ft*forceScaling);
+    %Ftp1=Ftp1*forceScaling+Fd;
+    Ftp1(Ftp1>maxForce)=maxForce;
+    Ftp1(Ftp1<-maxForce)=-maxForce;
+    Ftp1=Ftp1+Fd;
+    vtp1=vt+((1-gam)*Ft+gam*Ftp1)*Dt;
     
     %vtp1=(eye(length(Fd))-dampMat)\(Dt*Ft*forceScaling+vt);
 end
