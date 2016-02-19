@@ -13,38 +13,27 @@
 
 %% Main execution functions
 function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refinedGriduns,loop,...
-        oldGridUns,connectionInfo,plotInterval,numSteps,makeMov,boundstr)
+        oldGridUns,connectionInfo,param)
+    % JUST DECLARING VARIABLES FOR LATER
     
-    global arrivalTolerance
-    arrivalTolerance=1e-10;
+    % plotInterval,numSteps,makeMov,boundstr
+    global arrivalTolerance unstructglobal maxStep maxDt
     
-    global unstructglobal
     unstructglobal=refinedGriduns;
+    varExtract={'arrivalTolerance','maxStep','maxDt'};
+    [arrivalTolerance,maxStep,maxDt]=ExtractVariables(varExtract,param);
     
-    global maxStep
-    maxStep=0.5;
-    global maxDt
-    maxDt=0.1;
     
-    forceparam.maxForceVel=2.5;
-    forceparam.bendingVelInfluence=0;
-    forceparam.tensVelInfluence=1;
-    forceparam.maxVelRatio=4;
-    
-    mergeTopo=true;
-    
-    if ~exist('numSteps','var'),numSteps=50;end
-    if ~exist('plotInterval','var'),plotInterval=ceil(numSteps/10);end
+    % ACTUALLY DOING STUFF
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
-    debugPlot=[0];%[1:10:400,2, 4,6,8];
-    
-    
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
-        oldGrid,oldGridUns,connectionInfo,plotInterval,numSteps,debugPlot,...
-        arrivalTolerance,maxStep,maxDt,mergeTopo,makeMov,boundstr,forceparam);
+        oldGrid,oldGridUns,connectionInfo,param);
+    
+    
+    
     figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
     title('Volume error')
     ylabel('Root Mean squared error on volume convergence')
@@ -53,17 +42,20 @@ end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
-        oldGrid,oldGridUns,connectionInfo,plotInterval,numSteps,debugPlot,...
-        arrivalTolerance1,maxStep,maxDt,mergeTopo,makeMov,boundstr,forceparam)
+        oldGrid,oldGridUns,connectionInfo,param)
     % Main execution container for Snakes
     
-    global arrivalTolerance
-    arrivalTolerance=arrivalTolerance1;
+    % Unpacking NECESSARY variables
+    global maxStep maxDt
+    varExtract={'snakesSteps','mergeTopo','makeMov','boundstr','convLevel','debugPlot','plotInterval',...
+        'subStep'};
+    [snakesSteps,mergeTopo,makeMov,boundstr,convLevel,debugPlot,plotInterval,subStep]=...
+        ExtractVariables(varExtract,param);
+    forceparam=param.snakes.force;
     dtMin=maxDt/10;
-    decayCoeff=0.1;
-    convLevel=10^-15;
     
     
+    % Starting process
     disp(['    Start initialisation'])
         tStepStart=now;
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
@@ -74,18 +66,17 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         
     tStart=now;
     movFrame=struct([]);
-    for ii=1:numSteps
+    for ii=1:snakesSteps
         %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
         disp(' ')
         disp(['Start step ',num2str(ii)])
         tStepStart=now;
         %snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]),ones([1,length(snaxel)]));
         %arrivalTolerance=arrivalTolerance1*exp(-decayCoeff*ii);
+        
         % snaxel properties calculation
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
-        
-        % CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,0);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
         [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
@@ -115,14 +106,14 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         snakSave(ii).currentConvVolume=currentConvVolume;
         snakSave(ii).movFrame=movFrame;
         snakSave(ii).velcalcinfo=velcalcinfo;
-        for subStep=1:1
-         snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
         
-        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-        [snakposition]=SnaxelNormal2(snaxel,snakposition);
-        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo);
-        [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        for subStep=1:subStep
+             snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
+            [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+            [snakposition]=SnaxelNormal2(snaxel,snakposition);
+            [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+                cellCentredGrid,insideContourInfo);
+            [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         end
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
         % Snaxel Repopulation In both directions

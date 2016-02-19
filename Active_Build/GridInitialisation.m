@@ -14,10 +14,14 @@
 
 
 function [unstructured,loop,unstructReshape]=...
-        GridInitialisation(passDomBounds,passGridSteps,passPadding,...
-        typDat,loadLogical,isCheckRes,boundstr)
+        GridInitialisation(param)
     % Main function for the execution of the Subdivision process
     
+    %unpacking input parameters
+    varExtract={'passDomBounds','passGridSteps','passPadding',...
+        'typDat','loadLogical','isCheckRes','boundstr'};
+    [passDomBounds,passGridSteps,passPadding,...
+        typDat,loadLogical,isCheckRes,boundstr]=ExtractVariables(varExtract,param);
     
     % Defining global variables
     

@@ -38,7 +38,6 @@ function [param]=structInputVar(caseStr)
 end
 
 
-
 %% Default Inputs
 function paramgeneral=default_general()
     
@@ -51,13 +50,16 @@ function paramgeneral=default_general()
     paramgeneral.loadLogical=false;
     paramgeneral.useSnakes=true;
     paramgeneral.execTest=false;
+    paramgeneral.boundstr{1}='boundaryis0'; %'boundaryis0'
+    paramgeneral.boundstr{2}='solidnotIn0';
+    paramgeneral.boundstr{3}='0bound';
     
 end
 
 function paramplotting=default_plotting()
     
     paramplotting.isCheckRes=true;
-    paramplotting.snakesPlotInterval=0;
+    paramplotting.plotInterval=0;
     paramplotting.makeMov=false;
     paramplotting.debugPlot=[0];
     
@@ -70,6 +72,8 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.maxStep=0.5;
     paramsnakesstep.maxDt=0.1;
     paramsnakesstep.convLevel=10^-8;
+    paramsnakesstep.arrivalTolerance=1e-10;
+    paramsnakesstep.subStep=1;
     
 end
 
@@ -88,6 +92,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.maxVelRatio=4;
     paramsnakesforce.dampBase=1;
     paramsnakesforce.dampSides=0;
+    paramsnakesforce.vectorMagAveraging=true;
 end
 
 function paramsnakes=default_snakes()

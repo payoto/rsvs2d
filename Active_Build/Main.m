@@ -25,9 +25,12 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
     boundstr{3}='0bound';
     if ~exist('caseString','var'),caseString='WeirdShape';end
     
-    [passDomBounds,passGridSteps,refineSteps,passPadding...
-            ,typDat,typeBound,loadLogical,useSnakes,isCheckRes,snakesPlotInterval...
-            ,snakesSteps,typeRefine,execTest,refineGrid,makeMov]=MainInputVar(caseString);
+    [param]=structInputVar(caseString);
+    
+    varExtract={'useSnakes','typeBound','refineSteps','makeMov','typDat'};
+    [useSnakes,typeBound,refineSteps,makeMov,typDat]=ExtractVariables(varExtract,param);
+    
+    
     w = whos;
     for a = 1:length(w) 
         saveParam.(w(a).name) = eval(w(a).name); 
@@ -35,14 +38,14 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
     
     % Execution of subroutines
     
-    [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(...
-        passDomBounds,passGridSteps,passPadding,...
-        typDat,loadLogical,isCheckRes,boundstr);
+    [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param);
+    
     [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
-        ExecuteGridRefinement(unstructReshape,refineGrid,boundstr,typeRefine,execTest);
+        ExecuteGridRefinement(unstructReshape,param);
+    
     if useSnakes
         [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructuredrefined,looprefined,...
-            unstructured,connectstructinfo,snakesPlotInterval,snakesSteps,makeMov,boundstr);
+            unstructured,connectstructinfo,param);
     end
     
     
@@ -61,16 +64,13 @@ end
 
 %% Top Level Execution processes
 
-function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(...
-        passDomBounds,passGridSteps,passPadding,...
-        typDat,loadLogical,isCheckRes,boundstr)
+function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param)
     % Executes the Grid Initialisation process
     
     disp('GENERATION PROCESS START')
     t1=now;
     [unstructured,loop,unstructReshape]=...
-        GridInitialisation(passDomBounds,passGridSteps,passPadding,...
-        typDat,loadLogical,isCheckRes,boundstr);
+        GridInitialisation(param);
     
     t2=now;
     disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
@@ -80,13 +80,13 @@ function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(...
 end
 
 function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
-        ExecuteGridRefinement(unstructReshape,refineGrid,boundstr,typeRefine,execTest)
+        ExecuteGridRefinement(unstructReshape,param)
     % Executes the Grid Initialisation process
     
     disp('GRID REFINEMENT START')
     t1=now;
     [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
-        GridRefinement(unstructReshape,refineGrid,boundstr,typeRefine,execTest);
+        GridRefinement(unstructReshape,param);
     
     t2=now;
     disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
@@ -96,14 +96,14 @@ function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
 end
 
 function [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructured,loop,...
-        oldGrid,connectionInfo,plotInterval,numSteps,makeMov,boundstr)
+        oldGrid,connectionInfo,param)
     % Executes the snakes edge detection process
     %
     
     t1=now;
     disp('SNAKE PROCESS START')
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(unstructured,loop,...
-        oldGrid,connectionInfo,plotInterval,numSteps,makeMov,boundstr);
+        oldGrid,connectionInfo,param);
 
     t2=now;
     disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);

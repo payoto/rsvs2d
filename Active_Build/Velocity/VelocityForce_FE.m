@@ -457,8 +457,7 @@ function [snaxeltensvel,snakposition]=GeometryForcingVelocity(snaxel,snakpositio
     
     %[bendforce]=CalculateBendForce(snaxel,snakposition,snakPosIndex);
     [bendforce]=CalculateShearForce_fullderiv(snaxel,snakposition,snakPosIndex);
-    [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce);
-    %[bendforce]=SnaxelToForce(snaxel,snakposition,bendforce);
+    [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce,forceparam);
     
     bendingVelInfluence=forceparam.bendingVelInfluence;
     tensVelInfluence=forceparam.tensVelInfluence;    
@@ -818,7 +817,6 @@ function [bendforce]=CalculateShearForce_fullderiv(snaxel,snakposition,snakPosIn
 
 end
 
-
 function [neighInd]=FindNextNonIdenticalSnaxel(snaxIndList,rootInd,snaxel,snakposition,dirSnax)
 % Returns the closest non similar snaxel
 % Where dirSnax is a string: either 'prec' or 'next'
@@ -896,32 +894,27 @@ end
 
 %% Dynamic equations
 
-function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
+function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce,forceparam)
     % need to pass parameter array
     
+    % Unpack constants
     global maxDt
     Dt=maxDt;
+    dampBase=forceparam.dampBase;
+    dampSides=forceparam.dampSides;
+    vectorMagAveraging=forceparam.vectorMagAveraging;
+    % Extract structure data
     vt=[snaxel(:).v]';
     Fvec=vertcat(bendforce(:).d2pds2);
     Ft=[snaxel(:).acc]';
     dirSnak=vertcat(snakposition(:).vector);
-    for ii=1:length(Fvec)
-        FMag(ii)=sqrt(sum(Fvec(ii,:).^2));
+    
+    if vectorMagAveraging
+        Fd=MagnitudeAveraging(Fvec,dirSnak,snakposition);
+    else
+        Fd=Fvec;
     end
-    flat=find(FMag==0);
-    for ii=1:length(Fvec)
-        FUnit(ii,1:2)=Fvec(ii,:)/sqrt(sum(Fvec(ii,:).^2));
-    end
-    for ii=flat
-        FUnit(ii,1:2)=snakposition(ii).normvector{1};
-    end
-    for ii=1:length(Fvec)
-        FMagsign(ii)=sign(dot(FUnit(ii,:),dirSnak(ii,:)))*FMag(ii);
-    end
-    meanMag=mean(FMagsign);
-    for ii=1:length(Fvec)
-        Fd(ii,1:2)=Fvec(ii,:)-sign(dot(FUnit(ii,:),dirSnak(ii,:)))*meanMag*FUnit(ii,:);
-    end
+    
     for ii=1:length(Fvec)
         Ftp1(ii)=dot(Fd(ii,:),dirSnak(ii,:));
     end
@@ -931,8 +924,7 @@ function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
     end
     Ftp1(isinf(Ftp1))=sign(Ftp1(isinf(Ftp1)))*1000;
     Ftp1=Ftp1';
-    dampBase=1;
-    dampSides=0;
+    
     [implicitMatDamp]=BuildDampingMatrix(bendforce,snaxel,dampBase,dampSides);
     
     [vtp1,Ftp1]=ForceToVelocity(vt,Ftp1,Ft,Dt,implicitMatDamp);
@@ -942,31 +934,33 @@ function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
     end
 end
 
-function [bendforce]=SnaxelToForce(snaxel,snakposition,bendforce)
-    global maxDt
-    Dt=maxDt;
-    vt=[snaxel(:).v]';
-    Ft=[snaxel(:).acc]';
-    Fvec=vertcat(bendforce(:).d2pds2);
-    dirSnak=vertcat(snakposition(:).vector);
+function FAveraged=MagnitudeAveraging(Fvec,dirSnak,snakposition)
+    % Sets the mean signed magnitude to 0 for a group of vectors Fvec where
+    % the sign is defined relative to dirSnak
+    
+    [m,n]=size(Fvec);
+    FMag=zeros([1,m]);
+    FMagSign=zeros([m,1]);
+    FUnit=zeros([m n]);
+    FAveraged=zeros([m n]);
     
     for ii=1:length(Fvec)
-        Ftp1(ii)=dot(Fvec(ii,:),dirSnak(ii,:));
+        FMag(ii)=sqrt(sum(Fvec(ii,:).^2)); % Get magnitude
     end
-    simPos=find([bendforce(:).samepos]);
-    for ii=simPos
-        Ftp1(ii)=1/dot(Fvec(ii,:),dirSnak(ii,:));
+    flat=find(FMag==0);
+    for ii=1:length(Fvec)
+        FUnit(ii,1:2)=Fvec(ii,:)/sqrt(sum(Fvec(ii,:).^2));% Calculate unit vector
     end
-    Ftp1(isinf(Ftp1))=sign(Ftp1(isinf(Ftp1)))*1000;
-    Ftp1=Ftp1';
-    dampBase=0;
-    dampSides=0;
-    [implicitMatDamp]=BuildDampingMatrix(bendforce,snaxel,dampBase,dampSides);
-    
-    [vtp1,Ftp1]=ForceToVelocity(vt,Ftp1,Ft,Dt,implicitMatDamp);
-    for ii=1:length(vtp1)
-        bendforce(ii).vel=vtp1(ii);
-        bendforce(ii).acc=Ftp1(ii);
+    for ii=flat
+        FUnit(ii,1:2)=snakposition(ii).normvector{1}; % Extract unit vector if [0 0]
+    end
+    for ii=1:length(Fvec)
+        FMagSign(ii)=sign(dot(FUnit(ii,:),dirSnak(ii,:)))*FMag(ii); % % Signed magnitude
+    end
+    meanMag=mean(FMagSign);
+    for ii=1:length(Fvec)
+        FAveraged(ii,1:2)=Fvec(ii,:)... % Remove som eof th emagnitude along unit axis
+            -sign(dot(FUnit(ii,:),dirSnak(ii,:)))*meanMag*FUnit(ii,:);
     end
 end
 

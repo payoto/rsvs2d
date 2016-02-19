@@ -63,7 +63,7 @@ function [varargout]=ExtractVariables(varNames,param)
         
         targLocation=regexp(varInStruct,varNames{ii}, 'once');
         if isempty(targLocation) || varPosInStruct(targLocation)==0
-            error('Invalid variable Has been declared')
+            error([varNames{ii},' is an invalid variable name'])
         end
         
         activeVarNum=varPosInStruct(targLocation);

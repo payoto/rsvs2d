@@ -14,10 +14,13 @@
 
 
 function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
-        GridRefinement(gridreshape,nRefine,boundstr,typeRefine,execTest)
+        GridRefinement(gridreshape,param)
     % bridge function for the refinement function
-    if ~exist('execTest','var'), execTest=true; end
-    if ~exist('typeRefine','var'), typeRefine='grey'; end
+    
+    %unpacking input parameters
+    varExtract={'refineGrid','boundstr','typeRefine','execTest'};
+    [refineGrid,boundstr,typeRefine,execTest]=ExtractVariables(varExtract,param);
+    nRefine=refineGrid;
     if execTest
         ExecuteTestCode();
     end
