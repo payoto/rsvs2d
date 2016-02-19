@@ -51,14 +51,14 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
     
     loop=SubdivisionSurface(loop,refineSteps,typeBound);
     CheckResults(unstructured,loop,typeBound)
-    BoundaryOutput(loop)
-    if makeMov
-        fps=5;
-        quality=100;
-        movStruct=[snakSave(:).movFrame];
-        MakeVideo(movStruct,fps,quality,typDat);
-    end
-    TecplotOutput('TecPlot',typDat,unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
+    
+    tecoutstruct.baseGrid=unstructReshape;
+    tecoutstruct.fineGrid=unstructuredrefined;
+    tecoutstruct.snakSave=snakSave;
+    tecoutstruct.connectstructinfo=connectstructinfo;
+    
+    ManageOutputResults(param,loop,tecoutstruct)
+    %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
 end
 
@@ -245,113 +245,8 @@ function []=PlotCell(figh,axh,unstructured,indexCell,format)
     
 end
 
-%% Output Functions to dat file
-
-function []=BoundaryOutput(loop)
-    
-    % trim loops and extract data
-    loopout=TrimLoops(loop);
-    
-    
-    % format numeric data to printable strings
-    cellLoops=DataToString(loopout);
-    
-    % print string data to file
-    WriteToFile(cellLoops)
-    
-end
-
-function [loopout]=TrimLoops(loop)
-    % function extracting the data that must be written to the boundary.dat
-    % file
-    
-    nLoop=length(loop);
-    
-    for ii=1:nLoop
-        if loop(ii).isccw
-            loopout.surf(ii).coord=loop(ii).subdivision(1:end-2,:);
-        else
-            loopout.surf(ii).coord=loop(ii).subdivision(end-2:-1:1,:);
-        end
-        loopout.surf(ii).nvertex=length(loopout.surf(ii).coord(:,1));
-        loopout.surf(ii).nfaces=loopout.surf(ii).nvertex;
-    end
-    loopout.total.nvertex=sum([loopout.surf(:).nvertex]);
-    loopout.total.nfaces=sum([loopout.surf(:).nfaces]);
-    loopout.total.nloops=nLoop;
-    
-end
-
-function cellLoops=DataToString(loopout)
-    % Transforms the data organised in loopout into a cell array of strings
-    % ready to be written to a file
-    
-    cellLoops{1}=int2str(loopout.total.nloops);
-    cellLoops{2}=int2str([loopout.total.nvertex, loopout.total.nfaces]);
-    kk=3;
-    
-    % run through the different surfaces
-    for ii=1:loopout.total.nloops
-        cellLoops{kk}=int2str(loopout.surf(ii).nvertex);
-        kk=kk+1;
-        % Write an array of numbers in the correct format
-        for jj=1:length(loopout.surf(ii).coord(:,1))
-            cellLoops{kk}='';
-            for ll=1:length(loopout.surf(ii).coord(jj,:))
-                cellLoops{kk}=[cellLoops{kk},...
-                    num2str(loopout.surf(ii).coord(jj,ll),8),'  '];
-            end
-            kk=kk+1;
-        end
-        
-    end
-    
-end
-
-function []=WriteToFile(cellLoops)
-    % writes the data to the file
-    [FID]=OpenValidFile();
-    
-    for ii=1:length(cellLoops)
-        for jj=1:length(cellLoops{ii}(:,1))
-            fprintf(FID,[cellLoops{ii}(jj,:),'\n']);
-        end
-    end
-    
-    
-    fclose(FID);
-end
-
-function [FID]=OpenValidFile(writeDirectory)
-    % Creates a file in the current directory to write data to.
-    
-    datestr(now)
-    if ~exist('writeDirectory','var')
-        cdDir=cd;
-        writeDirectory=[cdDir,'\..\results\boundaries'];
-    end
-    system(['md "',writeDirectory,'"']);
-    
-    fileName=['boundary_',datestr(now,30),'.dat'];
-    FID=fopen([writeDirectory,'\',fileName],'w+');
-    
-end
 
 %% General Utility Functions
-
-function []=MakeVideo(movStruct,fps,quality,datType)
-    
-    fileName=['Vid_',datType,'_',datestr(now,30),'.avi'];
-    stampedSubFolders=['VideoArchive_',datestr(now,'yyyy_mm')];
-    targetDir=[cd,'\Videos\',stampedSubFolders,'\'];
-    system(['md "',targetDir,'"']);
-    writerObj = VideoWriter([targetDir,fileName]);
-    writerObj.FrameRate=fps;
-    writerObj.Quality=quality;
-    open(writerObj)
-    writeVideo(writerObj,movStruct)
-    close(writerObj)
-end
 
 function []=OutPutBinaryResults(snakSave,paramStruct,datType,optionalSubFolder)
     if ~exist('optionalSubFolder','var'),optionalSubFolder='';end

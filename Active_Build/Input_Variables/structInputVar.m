@@ -53,6 +53,8 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{1}='boundaryis0'; %'boundaryis0'
     paramgeneral.boundstr{2}='solidnotIn0';
     paramgeneral.boundstr{3}='0bound';
+    paramgeneral.resultRoot=[cd,'\..\results\'];
+    paramgeneral.archiveName='Standard_Execution';
     
 end
 
@@ -74,6 +76,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=1e-10;
     paramsnakesstep.subStep=1;
+    paramsnakesstep.restartFlag=false;
     
 end
 
@@ -173,7 +176,7 @@ function [param]=Snakestestsmooth2()
     
     param.general.typDat='testsmooth2';
 
-    param.snakes.step.snakesSteps=200;
+    param.snakes.step.snakesSteps=10;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
     

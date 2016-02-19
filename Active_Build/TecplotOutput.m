@@ -11,12 +11,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function []=TecplotOutput(optionalSubFolder,datType,baseGrid,fineGrid,snakSave,connectstructinfo)
-    
-    
+function []=TecplotOutput(FID,baseGrid,fineGrid,snakSave,connectstructinfo)
     
     [baseCellCentredGrid]=CellCentredGridInformationReduced(baseGrid);
-    [FID]=OpenValidFile(optionalSubFolder,datType);
+    
     varsCell={};%{['VARIABLES = "X" ,"Y", "U" ,"V", "MAG" ,"TARGFILL" ,"VOLFRAC", "DIFF"']};
     [cellBaseGrid]=GridStructToCellOut(baseGrid,1);
     [cellFineGrid]=GridStructToCellOut(fineGrid,2);
