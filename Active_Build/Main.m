@@ -18,7 +18,7 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
     
     include_SnakeParam
     include_EdgeInformation
-    
+    include_Utilities
     
     boundstr{1}='boundaryis0'; %'boundaryis0'
     boundstr{2}='solidnotIn0';

@@ -897,6 +897,8 @@ end
 %% Dynamic equations
 
 function [bendforce]=SnaxelToForce_curvature(snaxel,snakposition,bendforce)
+    % need to pass parameter array
+    
     global maxDt
     Dt=maxDt;
     vt=[snaxel(:).v]';

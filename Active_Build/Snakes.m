@@ -31,13 +31,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     forceparam.tensVelInfluence=1;
     forceparam.maxVelRatio=4;
     
+    mergeTopo=true;
+    
     if ~exist('numSteps','var'),numSteps=50;end
     if ~exist('plotInterval','var'),plotInterval=ceil(numSteps/10);end
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     
     debugPlot=[0];%[1:10:400,2, 4,6,8];
-    mergeTopo=true;
+    
     
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,loop,...

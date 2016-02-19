@@ -39,8 +39,10 @@ function []=WriteConatainerFunctionFile(funcName,funcDir)
     funcText{1}=['function [varargout]=',funcName,'(varargin)'];
     funcText{2}=['global ',funcName,'_Handle'];
     funcText{3}=['nOut=nargout(',funcName,'_Handle',');'];
-    funcText{4}=['[varargout{1:nOut}]=',funcName,'_Handle','(varargin{:});'];
-    funcText{5}=['end'];
+    funcText{4}=['nOutReq=nargout;'];
+    funcText{5}=['nOut(nOut<0)=nOutReq;'];
+    funcText{6}=['[varargout{1:nOut}]=',funcName,'_Handle','(varargin{:});'];
+    funcText{7}=['end'];
     
     for ii=1:length(funcText)
         
