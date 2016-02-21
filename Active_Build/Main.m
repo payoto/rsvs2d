@@ -15,6 +15,10 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString)
     
     close all
     clc
+    diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
+    fidDiary=fopen(diaryFile,'w');
+    fclose(fidDiary);
+    diary(diaryFile);
     
     include_SnakeParam
     include_EdgeInformation
@@ -57,6 +61,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString)
     tecoutstruct.snakSave=snakSave;
     tecoutstruct.connectstructinfo=connectstructinfo;
     
+    diary off
     ManageOutputResults(param,loop,tecoutstruct);
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)

@@ -1,0 +1,28 @@
+A subdirectory or file E:\Users\alexandre\Documents\Travail\PhD\Year 1\Development\GitRepo_SnakesParam_2016_02_19-17-02\Automated_Function_Directory already exists. 
+A subdirectory or file E:\Users\alexandre\Documents\Travail\PhD\Year 1\Development\GitRepo_SnakesParam_2016_02_19-17-02\Automated_Function_Directory already exists. 
+A subdirectory or file E:\Users\alexandre\Documents\Travail\PhD\Year 1\Development\GitRepo_SnakesParam_2016_02_19-17-02\Automated_Function_Directory already exists. 
+A subdirectory or file E:\Users\alexandre\Documents\Travail\PhD\Year 1\Development\GitRepo_SnakesParam_2016_02_19-17-02\Automated_Function_Directory already exists. 
+GENERATION PROCESS START
+Reshaping
+Time taken:00:00:00:607
+GENERATION PROCESS end
+GRID REFINEMENT START
+Time taken:00:00:00:402
+GRID REFINEMENT end
+SNAKE PROCESS START
+    Start initialisation
+Find Border Vertices
+Initialise Snaxel Grid
+   Initialisation time:00:00:00:737
+ 
+Start step 1
+   Step time:00:00:00:978
+ 
+Start step 2
+   Step time:00:00:00:974
+Iteration Time:00:00:01:955
+Volume converged to 2.89225e-02
+Finished Iterations , starting Post Process
+Creating Snaxel Loops
+Time taken:00:00:03:209
+SNAKE PROCESS END

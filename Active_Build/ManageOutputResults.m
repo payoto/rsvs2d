@@ -24,6 +24,8 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
     % Create Directory
     [writeDirectory]=GenerateDirectoryName(marker,resultRoot,archiveName);
     
+    CopyDiary(writeDirectory,marker)
+    
     % Output boundary data file
     [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
     BoundaryOutput(loop,fidBoundary);
@@ -170,9 +172,6 @@ function []=PersnaliseLayFile(FID,pltFile)
     layData{1}='#!MC 1410';
     layData{2}=['$!VarSet |LFDSFN1| = ''"',pltFile,'"'''];
     WriteToFile(layData,FID)
-    
-    
-    
 end
 
 
@@ -201,6 +200,15 @@ function [FID]=OpenTecLayFile(writeDirectory,marker)
     originalLayFile=[cd,'\Result_Template\Layout_Template.lay'];
     copyfile(originalLayFile,[writeDirectory,'\',fileName])
     FID=fopen([writeDirectory,'\',fileName],'r+');
+    
+end
+
+function []=CopyDiary(writeDirectory,marker)
+    % Creates a file in the current directory to write data to.
+    
+    fileName=['diary_',marker,'.log'];
+    originalLayFile=[cd,'\Result_Template\Latest_Diary.log'];
+    copyfile(originalLayFile,[writeDirectory,'\',fileName])
     
 end
 
