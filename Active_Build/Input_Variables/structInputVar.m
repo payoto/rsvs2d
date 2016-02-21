@@ -54,6 +54,7 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{1}='boundaryis0'; %'boundaryis0'
     paramgeneral.boundstr{2}='solidnotIn0';
     paramgeneral.boundstr{3}='0bound';
+    paramgeneral.restart=false;
     
 end
 
@@ -236,7 +237,7 @@ function [param]=SnakesFoilVVSmall()
     
     [param]=DefaultCase();
     
-    param.snakes.step.snakesSteps=2;
+    param.snakes.step.snakesSteps=10;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     

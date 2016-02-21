@@ -12,7 +12,7 @@
 
 
 
-function []=ManageOutputResults(param,loop,tecoutstruct)
+function []=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
     
     % Unpack necessary variables
     varExtract={'makeMov','typDat','resultRoot','archiveName'};
@@ -66,7 +66,8 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
     [fidIndexFile]=OpenIndexFile(resultRoot,archiveName);
     WriteToFile(indexEntry,fidIndexFile);
     
-    
+    % Generate Restart Binary
+    GenerateRestartBinary(writeDirectory,marker,restartstruct)
     
     
     fclose('all');
@@ -470,4 +471,13 @@ function [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n)
         varStr=[varStr,varStrCell{m,jj},','];
     end
     varStr=[varStr,varStrCell{m,n},closeStr];
+end
+
+%% Generate Restart Binary
+
+function []=GenerateRestartBinary(resultDirectory,marker,restartstruct)
+    
+    fileName=[resultDirectory,'\restart_',marker,'.mat'];
+    save(fileName,'-struct','restartstruct');
+    
 end

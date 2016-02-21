@@ -49,18 +49,18 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     global maxStep maxDt
     varExtract={'snakesSteps','mergeTopo','makeMov','boundstr','convLevel','debugPlot','plotInterval',...
         'subStep'};
-    [snakesSteps,mergeTopo,makeMov,boundstr,convLevel,debugPlot,plotInterval,subStep]=...
-        ExtractVariables(varExtract,param);
+    [snakesSteps,mergeTopo,makeMov,boundstr,convLevel,debugPlot,...
+        plotInterval,subStep]=ExtractVariables(varExtract,param);
     forceparam=param.snakes.force;
     dtMin=maxDt/10;
     
     
     % Starting process
     disp(['    Start initialisation'])
-        tStepStart=now;
-    [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-        StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
-        oldGrid,connectionInfo,mergeTopo,boundstr);
+    tStepStart=now;
+    [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
+        insideContourInfo]=InitialisationRestart(refinedGriduns,...
+        refinedGrid,loop,oldGrid,connectionInfo,mergeTopo,boundstr,param);
     tStepEnd=now;
     disp(['   Initialisation time:',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF')]);
         
@@ -106,6 +106,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         snakSave(ii).currentConvVolume=currentConvVolume;
         snakSave(ii).movFrame=movFrame;
         snakSave(ii).velcalcinfo=velcalcinfo;
+        snakSave(ii).insideContourInfo=insideContourInfo;
         
         for subStep=1:subStep
              snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
@@ -169,6 +170,25 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     %[snakSave]=ReformatSnakSave(snakSave);
 end
 
+function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
+        insideContourInfo]=InitialisationRestart(refinedGriduns,...
+        refinedGrid,loop,oldGrid,connectionInfo,mergeTopo,boundstr,param)
+    
+    varExtract={'restart'};
+    [restart]=ExtractVariables(varExtract,param);
+    if ~restart
+        [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
+            StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
+            oldGrid,connectionInfo,mergeTopo,boundstr);
+    else
+        [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
+            RestartSnakeProcess(refinedGriduns,refinedGrid,loop,...
+            oldGrid,connectionInfo,mergeTopo,boundstr);
+    end
+    
+    
+end
+
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
         oldGrid,connectionInfo,mergeTopo,boundstr)
@@ -186,6 +206,32 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     % Inside contour info will change depending on the type of contour under
     % consideration (0 contour or 1 contour)
     [snaxel,insideContourInfo]=SnaxelInitialisation(refinedGriduns,loop,insideContourInfo,boundstr);
+    
+    [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+    [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+    [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
+    [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
+end
+
+
+function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
+        RestartSnakeProcess(refinedGriduns,refinedGrid,restartsnake,...
+        oldGrid,connectionInfo,mergeTopo,boundstr)
+    
+    [cellCentredGrid]=CellCentredGridInformation(refinedGrid);
+    [volfracconnec]=VolumeFractionConnectivity(oldGrid,...
+        connectionInfo,cellCentredGrid,refinedGrid);
+    
+    
+    insideContourInfo=refinedGriduns.edge.(boundstr{2});
+    disp('Find Border Vertices')
+    [borderVertices]=FindBorderVertex(refinedGriduns);
+    disp('Initialise Snaxel Grid')
+    
+    % Inside contour info will change depending on the type of contour under
+    % consideration (0 contour or 1 contour)
+    snaxel=restartsnake.snaxel;
+    insideContourInfo=restartsnake.insideContourInfo;
     
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);

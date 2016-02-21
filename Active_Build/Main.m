@@ -10,11 +10,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString)
+function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,restart)
     % Main function for the execution of the Subdivision process
     
     close all
     clc
+    
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
@@ -23,36 +24,31 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString)
     include_SnakeParam
     include_EdgeInformation
     include_Utilities
-    
-    boundstr{1}='boundaryis0'; %'boundaryis0'
-    boundstr{2}='solidnotIn0';
-    boundstr{3}='0bound';
+
     if ~exist('caseString','var'),caseString='WeirdShape';end
+    if ~exist('restart','var'),restart=false;end
     
-    [param]=structInputVar(caseString);
-    
-    varExtract={'useSnakes','typeBound','refineSteps','makeMov','typDat'};
-    [useSnakes,typeBound,refineSteps,makeMov,typDat]=ExtractVariables(varExtract,param);
-    
-    
-    w = whos;
-    for a = 1:length(w) 
-        saveParam.(w(a).name) = eval(w(a).name); 
+    if ~restart
+        [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+            ,snakSave,unstructReshape]=StandardRun(caseString);
+    else
+        [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+            ,snakSave,unstructReshape]=RestartRun(caseString);
     end
+    varExtract={'useSnakes','typeBound','refineSteps'};
+    [useSnakes,typeBound,refineSteps]=ExtractVariables(varExtract,param);
     
-    % Execution of subroutines
-    
-    [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param);
-    
-    [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
-        ExecuteGridRefinement(unstructReshape,param);
-    
+    % Restart structure generation
+    restartstruct.unstructuredrefined=unstructuredrefined;
+    restartstruct.param=param;
+    restartstruct.connectstructinfo=connectstructinfo;
+    restartstruct.unstructured=unstructured;
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructuredrefined,looprefined,...
-            unstructured,connectstructinfo,param);
+        restartstruct.snakrestart.snaxel=snakSave(end).snaxel;
+        restartstruct.snakrestart.cellCentredGid=snakSave(end).cellCentredGrid;
+        restartstruct.snakrestart.insideContourInfo=snakSave(end).insideContourInfo;
     end
-    
-    
+    % Post processes
     loop=SubdivisionSurface(loop,refineSteps,typeBound);
     CheckResults(unstructured,loop,typeBound)
     
@@ -62,12 +58,50 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString)
     tecoutstruct.connectstructinfo=connectstructinfo;
     
     diary off
-    ManageOutputResults(param,loop,tecoutstruct);
+    ManageOutputResults(param,loop,tecoutstruct,restartstruct);
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
 end
 
 %% Top Level Execution processes
+
+function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+        ,snakSave,unstructReshape]=StandardRun(caseString)
+    
+    [param]=structInputVar(caseString);
+    param.general.restart=false;
+    varExtract={'useSnakes'};
+    [useSnakes]=ExtractVariables(varExtract,param);
+    
+    
+    % Execution of subroutines
+    
+    [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param);
+    
+    [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
+        ExecuteGridRefinement(unstructReshape,param);
+    snakSave=[];
+    if useSnakes
+        [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructuredrefined,looprefined,...
+            unstructured,connectstructinfo,param);
+    end
+    
+end
+
+function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+        ,snakSave,unstructReshape]=RestartRun(caseStr)
+    
+    load([caseStr,'.mat'])
+    param.general.restart=true;
+    
+    varExtract={'useSnakes'};
+    [useSnakes]=ExtractVariables(varExtract,param);
+    if useSnakes
+        [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructuredrefined,snakrestart,...
+            unstructured,connectstructinfo,param);
+    end
+    unstructReshape=ModifUnstructured(unstructured);
+end
 
 function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param)
     % Executes the Grid Initialisation process
