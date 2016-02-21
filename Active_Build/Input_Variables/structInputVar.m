@@ -27,7 +27,8 @@ function [param]=structInputVar(caseStr)
     % Main function that allows changes
     include_Utilities
     [param]=eval(caseStr);
-
+    param.general.case=caseStr;
+    
     [param.structdat]=ExploreStructureTree(param);
     param.structdat.vardat.names=[param.structdat.vars(:).name];
     param.structdat.vardat.varmatch=zeros(size(param.structdat.vardat.names));
@@ -53,8 +54,8 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{1}='boundaryis0'; %'boundaryis0'
     paramgeneral.boundstr{2}='solidnotIn0';
     paramgeneral.boundstr{3}='0bound';
-    paramgeneral.resultRoot=[cd,'\..\results\'];
-    paramgeneral.archiveName='Standard_Execution';
+    paramgeneral
+    paramgeneral
     
 end
 
@@ -66,6 +67,18 @@ function paramplotting=default_plotting()
     paramplotting.debugPlot=[0];
     
 end
+
+
+function paramresults=default_results()
+    
+    paramresults.archiveName='Standard_Execution';
+    paramresults.resultRoot=[cd,'\..\results\'];
+    paramresults.noteFiles={'FESmoothing','CurrentBuild'};
+    paramresults.tags={'fe smoothing','dynamic'};
+    
+end
+
+
 
 function paramsnakesstep=default_snakes_step()
     
@@ -117,6 +130,7 @@ function [param]=DefaultCase()
     
     % Load defaults
     param.general=default_general();
+    param.results=default_results();
     param.plotting=default_plotting();
     param.snakes=default_snakes();
     
@@ -227,7 +241,7 @@ function [param]=SnakesFoilVVSmall()
     
     [param]=DefaultCase();
     
-    param.snakes.step.snakesSteps=70;
+    param.snakes.step.snakesSteps=2;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     

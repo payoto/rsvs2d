@@ -1,0 +1,4 @@
+These Notes on the current build are to be kept up to date:
+Updated 21/02/16
+ 
+Current development focused on improving results archive and smoothing.

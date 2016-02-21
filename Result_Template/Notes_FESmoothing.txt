@@ -1,0 +1,3 @@
+The current smoothing uses dynamic equations for a finite element beam under bending
+ 
+Problematic behaviour through grid vertices hints that it might be a doomed strategy.

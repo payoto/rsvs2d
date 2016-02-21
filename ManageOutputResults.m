@@ -6,7 +6,7 @@
 %
 %          snake parametrisation
 %      for Aerodynamic shape parametrisation
-%           - Outputs Management Function - 
+%           - Outputs Management Function -
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -20,7 +20,7 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
     
     
     % Create Marker
-    [marker]=GenerateResultMarker(typDat);
+    [marker,t]=GenerateResultMarker(typDat);
     % Create Directory
     [writeDirectory]=GenerateDirectoryName(marker,resultRoot,archiveName);
     
@@ -30,8 +30,9 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
     fclose(fidBoundary);
     
     % TecPlot Data
-    [fidTecPLT]=OpenTecPLTFile(writeDirectory,marker);
+    [fidTecPLT,pltFileName]=OpenTecPLTFile(writeDirectory,marker);
     fidTecLAY=OpenTecLayFile(writeDirectory,marker);
+    PersnaliseLayFile(fidTecLAY,pltFileName)
     
     baseGrid=tecoutstruct.baseGrid;
     fineGrid=tecoutstruct.fineGrid;
@@ -47,7 +48,7 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
     
     % Comments file
     [fidComments]=OpenCommentsFile(writeDirectory,marker);
-    
+    MakeCommentsFile(fidComments,param,t,writeDirectory)
     
     % Video File
     
@@ -137,8 +138,12 @@ function []=WriteToFile(cellLoops,FID)
     
     
     for ii=1:length(cellLoops)
+        if numel(cellLoops{ii})>0
         for jj=1:length(cellLoops{ii}(:,1))
-            fprintf(FID,[cellLoops{ii}(jj,:),'\n']);
+            fprintf(FID,'%s \n',cellLoops{ii}(jj,:));
+        end
+        else
+            fprintf(FID,'\n');
         end
     end
 end
@@ -155,6 +160,22 @@ function []=MakeVideo(movStruct,fps,quality,fileName)
     close(writerObj)
 end
 
+%% Layout Operation functions
+
+function []=PersnaliseLayFile(FID,pltFile)
+    
+    
+    
+    frewind(FID);
+    layData{1}='#!MC 1410';
+    layData{2}=['$!VarSet |LFDSFN1| = ''"',pltFile,'"'''];
+    WriteToFile(layData,FID)
+    
+    
+    
+end
+
+
 %% File Opening Functions
 
 function [FID]=OpenBoundaryFile(writeDirectory,marker)
@@ -165,7 +186,7 @@ function [FID]=OpenBoundaryFile(writeDirectory,marker)
     
 end
 
-function [FID]=OpenTecPLTFile(writeDirectory,marker)
+function [FID,fileName]=OpenTecPLTFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
     fileName=['tec360dat_',marker,'.plt'];
@@ -177,7 +198,9 @@ function [FID]=OpenTecLayFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
     fileName=['tec360lay_',marker,'.lay'];
-    FID=fopen([writeDirectory,'\',fileName],'w+');
+    originalLayFile=[cd,'\Result_Template\Layout_Template.lay'];
+    copyfile(originalLayFile,[writeDirectory,'\',fileName])
+    FID=fopen([writeDirectory,'\',fileName],'r+');
     
 end
 
@@ -207,15 +230,13 @@ end
 
 %% Open Result Directory
 
-
-function [marker]=GenerateResultMarker(typDat)
+function [marker,t]=GenerateResultMarker(typDat)
     
-    
-    marker=[datestr(now,'yyyy-mm-ddTHHMMSS')...
+    t=now;
+    marker=[datestr(t,'yyyy-mm-ddTHHMMSS')...
         ,'_',typDat];
-     
+    
 end
-
 
 function [resultDirectory]=GenerateDirectoryName(marker,resultRoot,archiveName)
     t=now;
@@ -225,7 +246,84 @@ function [resultDirectory]=GenerateDirectoryName(marker,resultRoot,archiveName)
     system(['md "',resultDirectory,'"']);
 end
 
+%% Comments File
 
+function [indexEntry]=MakeCommentsFile(FID,param,t,resultDirectory)
+    indexEntry=[];
+    varExtract={'typDat','case','noteFiles','tags'};
+    [typDat,caseStr,noteFiles,tags]=ExtractVariables(varExtract,param);
+    
+    
+    headerLines=GenerateCommentHeader(t,resultDirectory,typDat,caseStr,tags);
+    automatedComments=ConcatenateAutomaticComments(noteFiles);
+    
+    
+    kk=1;
+    breakLines{kk}=['--------------------------------------------------'];
+    kk=kk+1;
+    breakLines{kk}=['ADDITIONAL COMMENTS:'];
+    kk=kk+1;
+    breakLines{kk}=[' '];
+    
+    WriteToFile(headerLines,FID)
+    WriteToFile(automatedComments,FID)
+    WriteToFile(breakLines,FID)
+    
+end
 
+function automatedComments=ConcatenateAutomaticComments(noteFiles)
+    
+    for ii=length(noteFiles):-1:1
+        noteFileName{ii}=[cd,'\Result_Template\Notes_',noteFiles{ii},'.txt'];
+        fidNote=fopen(noteFileName{ii},'r');
+        rawComments(ii)=textscan(fidNote,'%s','Delimiter','\n');
+        fclose(fidNote);
+    end
+    kk=1;
+    automatedComments{kk}=['--------------------------------------------------'];
+    kk=kk+1;
+    automatedComments{kk}=['PRESET COMMENTS:'];
+    kk=kk+1;
+    automatedComments{kk}=[' '];
+    for ii=1:length(noteFiles)
+        kk=kk+1;
+        automatedComments{kk}=['-------'];
+        kk=kk+1;
+        automatedComments{kk}=noteFileName{ii};
+        kk=kk+1;
+        automatedComments{kk}=['-------'];
+        kk=kk+1;
+        kk2=kk+length(rawComments{ii})-1;
+        automatedComments(kk:kk2)=rawComments{ii};
+        kk=kk2;
+        kk=kk+1;
+        automatedComments{kk}=[' '];
+        
+    end
+    kk=kk+1;
+    automatedComments{kk}=[' '];
+    
+end
 
-
+function headerLines=GenerateCommentHeader(t,resultDirectory,typDat,caseStr,tags)
+    
+    kk=1;
+    headerLines{kk}=datestr(t);
+    kk=kk+1;
+    headerLines{kk}=resultDirectory;
+    kk=kk+1;
+    headerLines{kk}=['Data File: ',typDat];
+    kk=kk+1;
+    headerLines{kk}=['Case: ',caseStr];
+    kk=kk+1;
+    headerLines{kk}=[' '];
+    kk=kk+1;
+    headerLines{kk}=['Tags: '];
+    for ii=1:length(tags)
+        headerLines{kk}=[headerLines{kk},tags{ii},', '];
+    end
+    kk=kk+1;
+    headerLines{kk}=[' '];
+    
+    
+end
