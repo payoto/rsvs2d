@@ -43,12 +43,12 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
     
     % Parameter Data
     [fidParam]=OpenParamFile(writeDirectory,marker);
-    
+    GenerateParameterFile(fidParam,param,t,marker);
     
     
     % Comments file
     [fidComments]=OpenCommentsFile(writeDirectory,marker);
-    MakeCommentsFile(fidComments,param,t,writeDirectory)
+    indexEntry=MakeCommentsFile(fidComments,param,t,writeDirectory);
     
     % Video File
     
@@ -60,9 +60,9 @@ function []=ManageOutputResults(param,loop,tecoutstruct)
         MakeVideo(movStruct,fps,quality,fileName);
     end
     
-    
-    
-    
+    % Index File Entry 
+    [fidIndexFile]=OpenIndexFile(resultRoot,archiveName);
+    WriteToFile(indexEntry,fidIndexFile);
     
     
     
@@ -139,9 +139,9 @@ function []=WriteToFile(cellLoops,FID)
     
     for ii=1:length(cellLoops)
         if numel(cellLoops{ii})>0
-        for jj=1:length(cellLoops{ii}(:,1))
-            fprintf(FID,'%s \n',cellLoops{ii}(jj,:));
-        end
+            for jj=1:length(cellLoops{ii}(:,1))
+                fprintf(FID,'%s \n',cellLoops{ii}(jj,:));
+            end
         else
             fprintf(FID,'\n');
         end
@@ -220,6 +220,14 @@ function [FID]=OpenCommentsFile(writeDirectory,marker)
     
 end
 
+function [FID]=OpenIndexFile(resultRoot,archiveName)
+    % Creates a file in the current directory to write data to.
+    
+    fileName=['Index_',archiveName,'.txt'];
+    FID=fopen([resultRoot,'\',archiveName,'\',fileName],'a');
+    
+end
+
 function [FID]=NameVideoFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
@@ -249,14 +257,14 @@ end
 %% Comments File
 
 function [indexEntry]=MakeCommentsFile(FID,param,t,resultDirectory)
-    indexEntry=[];
+    
     varExtract={'typDat','case','noteFiles','tags'};
     [typDat,caseStr,noteFiles,tags]=ExtractVariables(varExtract,param);
     
     
     headerLines=GenerateCommentHeader(t,resultDirectory,typDat,caseStr,tags);
     automatedComments=ConcatenateAutomaticComments(noteFiles);
-    
+    indexEntry{1}=GenerateIndexEntry(t,resultDirectory,typDat,caseStr,tags);
     
     kk=1;
     breakLines{kk}=['--------------------------------------------------'];
@@ -326,4 +334,132 @@ function headerLines=GenerateCommentHeader(t,resultDirectory,typDat,caseStr,tags
     headerLines{kk}=[' '];
     
     
+end
+
+function indexLine=GenerateIndexEntry(t,resultDirectory,typDat,caseStr,tags)
+    
+    indexLine='';
+    indexLine=[indexLine,datestr(t)];
+    indexLine=[indexLine,', '];
+    indexLine=[indexLine,typDat];
+    indexLine=[indexLine,', '];
+    indexLine=[indexLine,caseStr];
+    indexLine=[indexLine,', '];
+    for ii=1:length(tags)-1
+        indexLine=[indexLine,tags{ii},' - '];
+    end
+    indexLine=[indexLine,tags{ii+1}];
+    indexLine=[indexLine,', '];
+    indexLine=[indexLine,resultDirectory];
+    
+end
+
+%% parameter File
+
+function []=GenerateParameterFile(FID,param,t,marker)
+    
+    paramCell{1}='% Parameter File';
+    paramCell{2}=datestr(t);
+    paramCell{3}=marker;
+    for ii=length(param.structdat.vars):-1:1
+        [paramCell{ii+4}]=ExtractVariablePathAndValue(param,ii);
+        
+    end
+    
+    WriteToFile(paramCell,FID);
+end
+
+function [paramStr]=ExtractVariablePathAndValue(param,varNum)
+    
+    varstruct=param.structdat.vars(varNum);
+    actstruct=param;
+    pathVar='param';
+    for jj=1:length(varstruct.vec)
+        pathVar=[pathVar,'.',param.structdat.fields{varstruct.vec(jj)}];
+        actstruct=actstruct.(param.structdat.fields{varstruct.vec(jj)});
+    end
+    
+    varVal=actstruct;
+    [varStr]=GenerateVariableString(varVal);
+    paramStr=[pathVar,' = ',varStr];
+end
+
+function [varStr]=GenerateVariableString(startVar)
+    
+    classVar=class(startVar);
+    [m,n]=size(startVar);
+    switch classVar
+        case 'char'
+            
+            openStr='[';
+            closeStr=']';
+            for ii=1:m
+                varStrCell{ii,1}=['''',startVar(ii,:),''''];
+            end
+            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,1);
+        case 'cell'
+            
+            openStr='{';
+            closeStr='}';
+            for ii=1:m
+                for jj=1:n
+                    varStrCell{ii,jj}=GenerateVariableString(startVar{ii,jj});
+                end
+            end
+            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
+        case 'double'
+            
+            openStr='[';
+            closeStr=']';
+            for ii=1:m
+                for jj=1:n
+                    varStrCell{ii,jj}=num2str(startVar(ii,jj));
+                end
+            end
+            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
+        case 'logical'
+            openStr='[';
+            closeStr=']';
+            for ii=1:m
+                for jj=1:n
+                    if startVar(ii,jj) 
+                        curStr='true';
+                    else
+                        curStr='false';
+                    end
+                    varStrCell{ii,jj}=curStr;
+                end
+            end
+            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
+        otherwise
+            if ~isempty(regexp(classVer,'int','once'))
+                
+            openStr='[';
+            closeStr=']';
+            for ii=1:m
+                for jj=1:n
+                    varStrCell{ii,jj}=int2str(startVar(ii,jj));
+                end
+            end
+            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
+            end
+            warning('Class is not catered for and will not be printed correctly to parameter file')
+    end
+    
+end
+
+function [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n)
+
+    
+    varStr=openStr;
+    for ii=1:m-1
+        for jj=1:n-1
+            varStr=[varStr,varStrCell{ii,jj},','];
+        end
+        varStr=[varStr,varStrCell{ii,n},';'];
+    end
+    for jj=1:n-1
+        varStr=[varStr,varStrCell{m,jj},','];
+    end
+    varStr=[varStr,varStrCell{m,n},closeStr];
 end

@@ -10,7 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
+function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString)
     % Main function for the execution of the Subdivision process
     
     close all
@@ -57,7 +57,7 @@ function [unstructured,loop,unstructReshape,snakSave]=Main(caseString)
     tecoutstruct.snakSave=snakSave;
     tecoutstruct.connectstructinfo=connectstructinfo;
     
-    ManageOutputResults(param,loop,tecoutstruct)
+    ManageOutputResults(param,loop,tecoutstruct);
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
 end
