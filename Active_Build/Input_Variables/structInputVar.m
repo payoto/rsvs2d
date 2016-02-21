@@ -54,8 +54,6 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{1}='boundaryis0'; %'boundaryis0'
     paramgeneral.boundstr{2}='solidnotIn0';
     paramgeneral.boundstr{3}='0bound';
-    paramgeneral
-    paramgeneral
     
 end
 
@@ -68,7 +66,6 @@ function paramplotting=default_plotting()
     
 end
 
-
 function paramresults=default_results()
     
     paramresults.archiveName='Standard_Execution';
@@ -77,8 +74,6 @@ function paramresults=default_results()
     paramresults.tags={'fe smoothing','dynamic'};
     
 end
-
-
 
 function paramsnakesstep=default_snakes_step()
     
