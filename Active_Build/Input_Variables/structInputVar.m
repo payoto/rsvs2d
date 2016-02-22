@@ -71,8 +71,8 @@ function paramresults=default_results()
     
     paramresults.archiveName='Standard_Execution';
     paramresults.resultRoot=[cd,'\..\results\'];
-    paramresults.noteFiles={'FESmoothing','CurrentBuild'};
-    paramresults.tags={'fe smoothing','dynamic'};
+    paramresults.noteFiles={'CurrentBuild'};
+    paramresults.tags={'snakes'};
     
 end
 
@@ -81,9 +81,9 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.snakesSteps=100;
     paramsnakesstep.mergeTopo=true;
     paramsnakesstep.maxStep=0.5;
-    paramsnakesstep.maxDt=0.1;
+    paramsnakesstep.maxDt=1;
     paramsnakesstep.convLevel=10^-8;
-    paramsnakesstep.arrivalTolerance=1e-10;
+    paramsnakesstep.arrivalTolerance=1e-2;
     paramsnakesstep.subStep=1;
     paramsnakesstep.restartFlag=false;
     
@@ -98,10 +98,10 @@ end
 
 function paramsnakesforce=default_snakes_force()
     
-    paramsnakesforce.maxForceVel=2.5;
+    paramsnakesforce.maxForceVel=1;
     paramsnakesforce.bendingVelInfluence=0;
     paramsnakesforce.tensVelInfluence=1;
-    paramsnakesforce.maxVelRatio=4;
+    paramsnakesforce.maxVelRatio=1;
     paramsnakesforce.dampBase=1;
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
@@ -117,6 +117,21 @@ end
 %% Standard Parameter sub sections
 
 
+function param=OptimConvergence(param)
+    
+
+    param.results.noteFiles={'CurrentBuild','OptimSQP'};
+    param.results.tags={'snakes','Opimisation','SQP','Profile Length'};
+    
+end
+
+function param=SmoothFEDynamic(param)
+    
+
+    param.results.noteFiles={'CurrentBuild','FESmoothing'};
+    param.results.tags={'snakes','Dynamic','Curvature'};
+    
+end
 
 
 %% Callable functions
@@ -170,6 +185,7 @@ end
 function [param]=Snakestestsmooth1()
     
     [param]=DefaultCase();
+    param=OptimConvergence(param);
     
     param.general.typDat='testsmooth1';
 
@@ -183,11 +199,12 @@ function [param]=Snakestestsmooth2()
     
     
     [param]=DefaultCase();
+    param=OptimConvergence(param);
     
     param.general.typDat='testsmooth2';
 
-    param.snakes.step.snakesSteps=10;
-    param.snakes.refine.refineGrid=8;
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
 end
@@ -196,6 +213,7 @@ function [param]=Snakestestsmooth3()
     
     
     [param]=DefaultCase();
+    param=OptimConvergence(param);
     
     param.general.typDat='testsmooth3';
 
@@ -209,6 +227,7 @@ function [param]=Snakestestsmooth3_1()
     
     
     [param]=DefaultCase();
+    param=OptimConvergence(param);
     
     param.general.typDat='testsmooth3_1';
 
@@ -222,6 +241,7 @@ function [param]=Snakestestsmooth4()
     
     
     [param]=DefaultCase();
+    param=OptimConvergence(param);
     
     param.general.typDat='testsmooth4';
 
@@ -236,8 +256,9 @@ end
 function [param]=SnakesFoilVVSmall()
     
     [param]=DefaultCase();
+    param=OptimConvergence(param);
     
-    param.snakes.step.snakesSteps=10;
+    param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     
