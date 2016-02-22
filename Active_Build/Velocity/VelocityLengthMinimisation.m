@@ -77,7 +77,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(
     
     % Current SQP
     [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex);
-    [Df,Hf]=BuildJacobianAndHessian(derivtenscalc);
+    [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
+    [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
     velcalcinfostruct.forcingVec=forcingVec;
     velcalcinfostruct.conditionMat=conditionMat;
@@ -350,7 +351,24 @@ function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosI
         
         % calculating data
         derivtenscalc(ii).normFi=sqrt(sum((derivtenscalc(ii).p_i-derivtenscalc(ii).p_m).^2));
-        
+        %{
+        for jj=1:8
+            conv=-1*10^-jj;
+        derivtenscalc(ii).d_i=1+conv;
+        derivtenscalc(ii).d_m=1+conv;
+        derivtenscalc(ii).normFi=sqrt(sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
+        [derivtenscalc(ii).a_i,...
+            derivtenscalc(ii).a_m,...
+            derivtenscalc(ii).a_im,...
+            derivtenscalc(ii).b_i,...
+            derivtenscalc(ii).b_m,...
+            derivtenscalc(ii).c]=...
+            Calc_LengthDerivCoeff(...
+            derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
+            derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
+        [derivtenscalc3(jj)]=CalculateDerivatives(derivtenscalc(ii));
+        end
+        %}
     end
     for ii=length(snakposition):-1:1
         [derivtenscalc(ii).a_i,...
@@ -364,9 +382,12 @@ function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosI
                 derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
             
             [derivtenscalc2(ii)]=CalculateDerivatives(derivtenscalc(ii));
-
+            
     end
-    
+    testnan=find(isnan([derivtenscalc2(:).d2fiddi2]));
+    if ~isempty(testnan)
+       testnan 
+    end
 end
 
 function [a_i,a_m,a_im,b_i,b_m,c]=Calc_LengthDerivCoeff(Dgi,Dgm,g1i,g1m)
@@ -400,6 +421,18 @@ function [Df,Hf]=BuildJacobianAndHessian(derivtenscalc)
     end
     Df=sum(Jacobian,2);
     Hf=sum(Hessian,3);
+    
+end
+
+function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
+    
+    rmvCol=find(sum(Dh~=0)==0);
+    Dh(:,rmvCol)=[];
+    h_vec(rmvCol)=[];
+    
+    Bkinv=(Hf)^(-1);
+    u_kp1=(Dh'*Bkinv*Dh)\(h_vec-Dh'*Bkinv*Df);
+    Deltax=Bkinv*(Df+Dh*u_kp1);
     
 end
 %% Derivative calculations

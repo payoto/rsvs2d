@@ -1,0 +1,5 @@
+The current smoothing uses SQP to find the minimal profile length.
+This is the simplest case where the entire optimisation is done using SQP.
+
+-- Future Options could include a two step process solving first a simpler problem which is linearised by squaring
+it and then using SQP.
