@@ -285,8 +285,8 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
     conditionVolume=currentConvVolume<convLevel;
     
-    convergenceCondition= conditionVolume && conditionVelocity;
-    %convergenceCondition= conditionVolume;
+    %convergenceCondition= conditionVolume && conditionVelocity;
+    convergenceCondition= conditionVolume;
 end
 
 %% Snaxel Initialisation
@@ -458,7 +458,7 @@ end
 
 function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex)
-    
+    global arrivalTolerance
     numSE=length(snaxelEdges); % provides information about snaxel from same vertex
     snaxelEdgesSub=FindObjNum([],snaxelEdges,edgeIndex);
     kkLocal=0;
@@ -467,7 +467,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         kkLocal=kkLocal+1;
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
-        dist=0; % Snaxel initialisation, it starts at the vertex
+        dist=0;%arrivalTolerance^2; % Snaxel initialisation, it starts at the vertex
         velocity=0; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);

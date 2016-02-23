@@ -22,7 +22,7 @@ function []=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
     % Create Marker
     [marker,t]=GenerateResultMarker(typDat);
     % Create Directory
-    [writeDirectory]=GenerateDirectoryName(marker,resultRoot,archiveName);
+    [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
     
     CopyDiary(writeDirectory,marker)
     
@@ -247,21 +247,7 @@ end
 
 %% Open Result Directory
 
-function [marker,t]=GenerateResultMarker(typDat)
-    
-    t=now;
-    marker=[datestr(t,'yyyy-mm-ddTHHMMSS')...
-        ,'_',typDat];
-    
-end
-
-function [resultDirectory]=GenerateDirectoryName(marker,resultRoot,archiveName)
-    t=now;
-    dateSubFolders=['Archive_',datestr(now,'yyyy_mm'),'\Day_',datestr(t,29)];
-    resultDirectory=[resultRoot,'\',archiveName,'\',dateSubFolders,...
-        '\','Dir_',marker];
-    system(['md "',resultDirectory,'"']);
-end
+% Now global functions
 
 %% Comments File
 

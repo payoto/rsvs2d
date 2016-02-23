@@ -76,17 +76,18 @@ function [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(
     [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
     
     % Current SQP
-    [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex);
+    smearLengthEps=forceparam.lengthEpsilon;
+    [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps);
     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
     [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
     velcalcinfostruct.forcingVec=forcingVec;
     velcalcinfostruct.conditionMat=conditionMat;
     
-    [tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
+    %[tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
     
     for ii=1:length(snaxeltensvel)
-        snaxeltensvel(ii).forcevel=tensVelVec(ii);
+        snaxeltensvel(ii).forcevel=Deltax(ii);
     end
     
 end
@@ -330,7 +331,7 @@ end
 
 %% Actual Profile length minimisation using SQP
 
-function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex)
+function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps)
 
     for ii=length(snakposition):-1:1
         neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
@@ -350,24 +351,10 @@ function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosI
         
         
         % calculating data
-        derivtenscalc(ii).normFi=sqrt(sum((derivtenscalc(ii).p_i-derivtenscalc(ii).p_m).^2));
+        
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum((derivtenscalc(ii).p_i-derivtenscalc(ii).p_m).^2));
         %{
-        for jj=1:8
-            conv=-1*10^-jj;
-        derivtenscalc(ii).d_i=1+conv;
-        derivtenscalc(ii).d_m=1+conv;
-        derivtenscalc(ii).normFi=sqrt(sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
-        [derivtenscalc(ii).a_i,...
-            derivtenscalc(ii).a_m,...
-            derivtenscalc(ii).a_im,...
-            derivtenscalc(ii).b_i,...
-            derivtenscalc(ii).b_m,...
-            derivtenscalc(ii).c]=...
-            Calc_LengthDerivCoeff(...
-            derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
-            derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
-        [derivtenscalc3(jj)]=CalculateDerivatives(derivtenscalc(ii));
-        end
+
         %}
     end
     for ii=length(snakposition):-1:1
@@ -432,7 +419,7 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
     
     Bkinv=(Hf)^(-1);
     u_kp1=(Dh'*Bkinv*Dh)\(h_vec-Dh'*Bkinv*Df);
-    Deltax=Bkinv*(Df+Dh*u_kp1);
+    Deltax=-Bkinv*(Df+Dh*u_kp1);
     
 end
 %% Derivative calculations
@@ -467,24 +454,26 @@ end
 function [d2fiddi2]=Calc_D2FiDdi2(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm)
     
     
-    d2fiddi2=(2*a_i)/(2*sqrt(normFi))...
-        -(2*a_i*di+a_im*dm+b_i)^2/(4*((normFi)^3));
+    d2fiddi2=((2*a_i*2*(normFi)^2)...
+        -(2*a_i*di+a_im*dm+b_i)^2) ...
+    /(4*((normFi)^3));
 
 end
 function [d2fiddm2]=Calc_DFiDdm2(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm)
 
-    d2fiddm2=(2*a_m)/(2*(normFi))...
-        -(2*a_m*dm+a_im*di+b_m)^2/(4*(normFi)^3);  
+    d2fiddm2=((2*a_m*2*(normFi)^2)...
+        -(2*a_m*dm+a_im*di+b_m)^2) ...
+    /(4*(normFi)^3);  
 end
 function [d2fiddim]=Calc_D2FiDdim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm)
     
     
-    d2fiddim=(a_im)/(2*(normFi))...
-        -((2*a_m*dm+a_im*di+b_m)*(2*a_i*di+a_im*dm+b_i))/(4*(normFi)^3);  
+    d2fiddim=((a_im*2*(normFi)^2)...
+        -((2*a_m*dm+a_im*di+b_m)*(2*a_i*di+a_im*dm+b_i))) ...
+        /(4*(normFi)^3);  
     
     
 end
-
 
 
 

@@ -24,7 +24,8 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     include_SnakeParam
     include_EdgeInformation
     include_Utilities
-
+    include_PostProcessing
+    
     if ~exist('caseString','var'),caseString='WeirdShape';end
     if ~exist('restart','var'),restart=false;end
     
@@ -93,7 +94,7 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     
     load([caseStr,'.mat'])
     param.general.restart=true;
-    
+    param.snakes.step.snakesSteps=input('How many steps should be carried out?\n');
     varExtract={'useSnakes'};
     [useSnakes]=ExtractVariables(varExtract,param);
     if useSnakes

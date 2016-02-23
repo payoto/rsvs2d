@@ -105,6 +105,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampBase=1;
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
+    paramsnakesforce.lengthEpsilon=1e-5;
 end
 
 function paramsnakes=default_snakes()
@@ -258,7 +259,7 @@ function [param]=SnakesFoilVVSmall()
     [param]=DefaultCase();
     param=OptimConvergence(param);
     
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=500;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     
