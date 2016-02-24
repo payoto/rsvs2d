@@ -52,8 +52,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     [snakesSteps,mergeTopo,makeMov,boundstr,convLevel,debugPlot,...
         plotInterval,subStep,snakesMinSteps]=ExtractVariables(varExtract,param);
     forceparam=param.snakes.force;
-    dtMin=maxDt/10;
-    
+    dtMin=maxDt/3;
+    trigCount=0;
     
     % Starting process
     disp(['    Start initialisation'])
@@ -79,6 +79,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
+        
+        [convergenceCondition,currentConvVelocity,currentConvVolume]=...
+            ConvergenceTest(snaxel,volumefraction,convLevel);
+        [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,ii,currentConvVolume,trigCount);
+        if convergenceCondition && ii>snakesMinSteps && lastAlgo
+            break
+        end
+        
+        
         [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         % visualise results
         
@@ -86,12 +95,6 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
             [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxelmodvel,makeMov,volumefraction);
             %[movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,makeMov,volumefraction);
         
-        end
-        
-        [convergenceCondition,currentConvVelocity,currentConvVolume]=...
-            ConvergenceTest(snaxel,volumefraction,convLevel);
-        if convergenceCondition && ii>snakesMinSteps
-            break
         end
         
         [dt,dtSnax,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin);
@@ -287,6 +290,38 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     
     convergenceCondition= conditionVolume && conditionVelocity;
     %convergenceCondition= conditionVolume;
+end
+
+function [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,currStep,convLevel,trigCount)
+    
+    maxTypeSub=length(forceparam.vel.Type);
+    switch forceparam.vel.ChangeTrigger
+        case 'none'
+            typSub=1;
+        case 'step'
+            
+            typSub=find(forceparam.vel.ChangeStep<currStep,1,'last');
+        case 'conv'
+            if trigCount<length(forceparam.vel.ChangeConv)
+                if convLevel<forceparam.vel.ChangeConv(trigCount+1)
+                    trigCount=trigCount+1;
+                end
+            end
+            typSub=trigCount;
+            
+        case 'both'
+            typSubStep=find(forceparam.vel.ChangeStep<currStep,1,'last');
+            if trigCount<length(forceparam.vel.ChangeConv)
+                if convLevel<forceparam.vel.ChangeConv(trigCount+1)
+                    trigCount=trigCount+1;
+                end
+            end
+            typSubConv=trigCount;
+            typSub=max([typSubStep,typSubConv]);
+    end
+    
+    forceparam.velType=forceparam.vel.Type{typSub};
+    lastAlgo=typSub==maxTypeSub;
 end
 
 %% Snaxel Initialisation
@@ -953,47 +988,41 @@ function [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolum
     velcalcinfo=[];
     
     switch forceparam.velType
+        case 'default'
+            [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+                VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'force'
             [snaxel,snakposition,snaxelmodvel]=...
                 VelocityForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'forceMin'
-            
             [snaxel,snakposition,snaxelmodvel]=...
                 VelocityForceMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'normForce'
-            %     
-%     [snaxel,snakposition,snaxelmodvel]=...
-%         VelocityNormalisedForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
-            
+            [snaxel,snakposition,snaxelmodvel]=...
+                VelocityNormalisedForce(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'velMinSQP'
-            
             [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
                 VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'velMinLin'
-            
             [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
                 VelocityLengthMinimisation(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'velAreaOnly'
-            
             [snaxel,snakposition,snaxelmodvel]=...
                 VelocityAreaOnly(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'velForceFE'
             [snaxel,snakposition,snaxelmodvel]=...
                 VelocityForce_FE(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'expand'
-            
+            [snaxel]=VelocityCalculationExpand(snaxel,snakposition);
+            snaxelmodvel=snaxel;
         case 'contract'
-            
-        case 'default'
+            [snaxel]=VelocityCalculationContract(snaxel,snakposition);
+            snaxelmodvel=snaxel;
+        
+        otherwise %'default'
             [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
                 VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
     end
-    
-
-
-
-
-
 
 end
 

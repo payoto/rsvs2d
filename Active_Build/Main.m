@@ -16,15 +16,17 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     close all
     clc
     
+    include_SnakeParam
+    include_EdgeInformation
+    include_Utilities
+    include_PostProcessing
+    
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
     diary(diaryFile);
     
-    include_SnakeParam
-    include_EdgeInformation
-    include_Utilities
-    include_PostProcessing
+    
     
     if ~exist('caseString','var'),caseString='WeirdShape';end
     if ~exist('restart','var'),restart=false;end
@@ -94,9 +96,18 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     
     load([caseStr,'.mat'])
     param.general.restart=true;
-    param.snakes.step.snakesSteps=input('How many Maximum steps should be carried out?\n');
-    param.snakes.step.snakesMinSteps=input('How many Minimum steps should be carried out?\n');
-    param.snakes.force.velType=input('What Velocity Type should be used?');
+    
+    FID=fopen([cd,'\param_Restart.m'],'w');
+    GenerateParameterFile(FID,param,now,'Restart')
+    
+    disp(' ')
+    disp('Edit Parameter File in Notepad++, press Any key in the MATLAB command window')
+    disp(' once it is saved to resume execution.')
+    system(['"C:\Program Files (x86)\Notepad++\notepad++.exe"  ',...
+        '"',[cd,'\param_Restart.m'],'"']);
+    pause
+    
+    param_Restart
     varExtract={'useSnakes'};
     [useSnakes]=ExtractVariables(varExtract,param);
     if useSnakes

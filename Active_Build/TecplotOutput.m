@@ -194,7 +194,10 @@ function [cellMesh]=ConvergenceStructToCellOut(snakSave,strandID)
     
     iter=1:length(snakSave);
     convVolume=log10([snakSave(:).currentConvVolume]);
+    convVolume(isinf(convVolume(convVolume<0)))=-1000;
     convVelocity=log10([snakSave(:).currentConvVelocity]);
+    
+    convVelocity(isinf(convVelocity(convVelocity<0)))=-1000;
     padding=zeros(size(iter));
     
     vertIndex=iter;

@@ -106,7 +106,12 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
     paramsnakesforce.lengthEpsilon=1e-5;
+    
     paramsnakesforce.velType='default';
+    paramsnakesforce.vel.Type={'default'};
+    paramsnakesforce.vel.ChangeStep=[0];
+    paramsnakesforce.vel.ChangeConv=[10];
+    paramsnakesforce.vel.ChangeTrigger='none';
 end
 
 function paramsnakes=default_snakes()
@@ -135,7 +140,17 @@ function param=SmoothFEDynamic(param)
     
 end
 
-
+function param=DualOptimSmoothing(param)
+    
+    
+    param.snakes.force.velType='default';
+    param.snakes.force.vel.Type={'velAreaOnly','default'};
+    param.snakes.force.vel.ChangeStep=[0, 30];
+    param.snakes.force.vel.ChangeConv=[10,1e-4];
+    param.snakes.force.vel.ChangeTrigger='both'; 
+    
+    
+end
 %% Callable functions
 
 % Default
@@ -234,10 +249,11 @@ function [param]=Snakestestsmooth3_1()
     param.general.typDat='testsmooth3_1';
 
     param.snakes.step.snakesSteps=200;
-    param.snakes.refine.refineGrid=8;
-    param.snakes.refine.typeRefine='all';
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='grey';
     
     param.snakes.force.velType='velMinLin';
+    param=DualOptimSmoothing(param);
 end
 
 function [param]=Snakestestsmooth4()
@@ -267,6 +283,24 @@ function [param]=SnakesFoilVVSmall()
     
 end
 
+function [param]=WeirdShape()
+    
+    % Load defaults
+    param.general=default_general();
+    param.results=default_results();
+    param.plotting=default_plotting();
+    param.snakes=default_snakes();
+    
+    param=OptimConvergence(param);
+    param=DualOptimSmoothing(param);
+    
+    param.snakes.refine.refineGrid=4;
+    param.general.typDat='low5shape';
+    param.snakes.refine.typeRefine='grey';
+    param.snakes.step.snakesSteps=100;
+   
+
+end
 
 %% Not updated yet
 function [param]=SnakesFoilVSmall()
@@ -356,31 +390,6 @@ function [param]=SquareSnakes()
     snakesSteps=50;
     
     refineGrid=2;
-    typeRefine='all';
-    execTest=false;
-    makeMov=false;
-    
-    
-end
-
-function [param]=WeirdShape()
-    
-    passDomBounds=[-1.2,1.2;-1.2,1.2];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=2;
-    passPadding=1;
-    
-    typDat='low5shape';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=false;
-    snakesPlotInterval=0;
-    snakesSteps=100;
-    
-    refineGrid=4;
     typeRefine='all';
     execTest=false;
     makeMov=false;
