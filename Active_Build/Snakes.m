@@ -52,7 +52,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     [snakesSteps,mergeTopo,makeMov,boundstr,convLevel,debugPlot,...
         plotInterval,subStep,snakesMinSteps]=ExtractVariables(varExtract,param);
     forceparam=param.snakes.force;
-    dtMin=maxDt/3;
+    dtMin=maxDt/1;
     trigCount=0;
     
     % Starting process

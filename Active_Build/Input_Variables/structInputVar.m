@@ -81,7 +81,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.snakesSteps=100;
     paramsnakesstep.mergeTopo=true;
     paramsnakesstep.maxStep=0.9;
-    paramsnakesstep.maxDt=1;
+    paramsnakesstep.maxDt=0.5;
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=1e-2;
     paramsnakesstep.subStep=1;
@@ -298,6 +298,25 @@ function [param]=WeirdShape()
     param.general.typDat='low5shape';
     param.snakes.refine.typeRefine='grey';
     param.snakes.step.snakesSteps=100;
+   
+
+end
+
+function [param]=WeirdShape2()
+    
+    % Load defaults
+    param.general=default_general();
+    param.results=default_results();
+    param.plotting=default_plotting();
+    param.snakes=default_snakes();
+    
+    %param=OptimConvergence(param);
+    param=DualOptimSmoothing(param);
+    
+    param.snakes.refine.refineGrid=4;
+    param.general.typDat='low5shape2';
+    param.snakes.refine.typeRefine='grey';
+    param.snakes.step.snakesSteps=2;
    
 
 end
