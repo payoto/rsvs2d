@@ -94,7 +94,9 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     
     load([caseStr,'.mat'])
     param.general.restart=true;
-    param.snakes.step.snakesSteps=input('How many steps should be carried out?\n');
+    param.snakes.step.snakesSteps=input('How many Maximum steps should be carried out?\n');
+    param.snakes.step.snakesMinSteps=input('How many Minimum steps should be carried out?\n');
+    param.snakes.force.velType=input('What Velocity Type should be used?');
     varExtract={'useSnakes'};
     [useSnakes]=ExtractVariables(varExtract,param);
     if useSnakes

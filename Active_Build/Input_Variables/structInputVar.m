@@ -80,13 +80,13 @@ function paramsnakesstep=default_snakes_step()
     
     paramsnakesstep.snakesSteps=100;
     paramsnakesstep.mergeTopo=true;
-    paramsnakesstep.maxStep=0.5;
+    paramsnakesstep.maxStep=0.9;
     paramsnakesstep.maxDt=1;
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=1e-2;
     paramsnakesstep.subStep=1;
     paramsnakesstep.restartFlag=false;
-    
+    paramsnakesstep.snakesMinSteps=5;
 end
 
 function paramsnakesrefine=default_snakes_refine()
@@ -106,6 +106,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
     paramsnakesforce.lengthEpsilon=1e-5;
+    paramsnakesforce.velType='default';
 end
 
 function paramsnakes=default_snakes()
@@ -205,7 +206,7 @@ function [param]=Snakestestsmooth2()
     param.general.typDat='testsmooth2';
 
     param.snakes.step.snakesSteps=100;
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
     
 end
@@ -236,6 +237,7 @@ function [param]=Snakestestsmooth3_1()
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
     
+    param.snakes.force.velType='velMinLin';
 end
 
 function [param]=Snakestestsmooth4()
@@ -260,7 +262,7 @@ function [param]=SnakesFoilVVSmall()
     param=OptimConvergence(param);
     
     param.snakes.step.snakesSteps=500;
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='grey';
     
 end

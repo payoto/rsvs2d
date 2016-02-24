@@ -75,19 +75,19 @@ function [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(
     [implicitMatTens,forceVec]=BuildImplicitMatrix(derivtenscalc);
     [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
     
-    % Current SQP
-    smearLengthEps=forceparam.lengthEpsilon;
-    [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps);
-    [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
-    [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
+%     % Current SQP
+%     smearLengthEps=forceparam.lengthEpsilon;
+%     [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps);
+%     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
+%     [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
     velcalcinfostruct.forcingVec=forcingVec;
     velcalcinfostruct.conditionMat=conditionMat;
     
-    %[tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
+    [tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
     
     for ii=1:length(snaxeltensvel)
-        snaxeltensvel(ii).forcevel=Deltax(ii);
+        snaxeltensvel(ii).forcevel=tensVelVec(ii);
     end
     
 end

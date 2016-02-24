@@ -362,6 +362,7 @@ function []=GenerateParameterFile(FID,param,t,marker)
     end
     
     WriteToFile(paramCell,FID);
+    fclose(FID);
 end
 
 function [paramStr]=ExtractVariablePathAndValue(param,varNum)
