@@ -48,6 +48,38 @@ function []=WriteToFile(cellLoops,FID)
     end
 end
 
+function []=ReorganiseSubPlots(ax,sizSubPlot,outerPad,interPad,fontSizes)
+    
+    if ~exist('outerPad','var'),outerPad=[0.1,0.1,0.05,0.05];end
+    if ~exist('interPad','var'),interPad=[0.05,0.05];end
+    if ~exist('fontSizes','var'),fontSizes=[10,12];end
+    
+    xHeight=1-(outerPad(1)+outerPad(2));
+    xLength=(xHeight-interPad(1)*(sizSubPlot(1)-1))/sizSubPlot(1);
+    xStart=outerPad(1);
+    
+    yHeight=1-(outerPad(3)+outerPad(4));
+    yLength=(yHeight-interPad(2)*(sizSubPlot(2)-1))/sizSubPlot(2);
+    yStart=1-outerPad(4)-yLength;
+    
+    for ii=1:length(ax)
+        jj=ii;
+        xInd=rem(jj-1,sizSubPlot(1));
+        yInd=ceil(jj/sizSubPlot(1))-1;
+        
+        loXCorn=(xInd)*(xLength+interPad(1))+xStart;
+        loYCorn=-(yInd)*(yLength+interPad(2))+yStart;
+        
+        posVec=[loXCorn,loYCorn,xLength,yLength];
+        set(ax(ii),'position',posVec)
+        set(ax(ii),'fontsize',fontSizes(1))
+        set(get(ax(ii),'xlabel'),'fontsize',fontSizes(2))
+        set(get(ax(ii),'ylabel'),'fontsize',fontSizes(2))
+        set(get(ax(ii),'zlabel'),'fontsize',fontSizes(2))
+        
+    end
+    
+end
 
 %% Parameter File
 
