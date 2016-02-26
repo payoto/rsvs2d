@@ -1,18 +1,88 @@
+==1, dbcont; end
+   Step time:00:00:00:483
+ 
+Start step 10
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:766
+ 
+Start step 11
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:02:966
+ 
+Start step 12
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:17:364
+ 
+Start step 13
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:53:512
+ 
+Start step 14
+rcond(matToInv)
+
+ans =
+
+     1
+
+Df'*Deltax
+
+ans =
+
+   -0.0087
+
+Dh'*Deltax
+
+ans =
+
+  -4.6732e-04
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:04:11:248
+ 
+Start step 15
+rcond(matToInv)
+
+ans =
+
+     1
+
+Df'*Deltax
+
+ans =
+
+   -0.4427
+
+Dh'*Deltax
+
+ans =
+
+   3.9163e-04
+
+if system_dependent('IsDebugMode')==1, dbquit; end
+[unstructured,loop,unstructReshape,snakSave]=Main('Snakestestsmooth1_2')
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 GENERATION PROCESS START
 Reshaping
-Time taken:00:00:00:392
+Time taken:00:00:00:203
 GENERATION PROCESS end
 GRID REFINEMENT START
-Time taken:00:00:00:484
+Time taken:00:00:00:078
 GRID REFINEMENT end
 SNAKE PROCESS START
     Start initialisation
 Find Border Vertices
 Initialise Snaxel Grid
-   Initialisation time:00:00:01:310
+   Initialisation time:00:00:00:109
  
 Start step 1
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Velocity\VelocityLengthMinimisationSQP.m',429,1)">429 </a>end
+if system_dependent('IsDebugMode')==1, dbcont; end
 [Warning: Time Step was forced to minimum set by user] 
 [> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',2001,0)">line 2001</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',100,0)">line 100</a>)
@@ -20,23 +90,64 @@ Start step 1
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 158)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',158,0)">line 158</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',88,0)">line 88</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 35)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',35,0)">line 35</a>)] 
-126 Problems with snaxel update
-   Step time:00:00:01:108
+12 Problems with snaxel update
+   Step time:00:00:01:923
  
 Start step 2
-    The sum of coefficients was equal to zero 14 Times
-[Warning: Time Step was forced to minimum set by user] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',2001,0)">line 2001</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',100,0)">line 100</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',31,0)">line 31</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 158)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',158,0)">line 158</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 35)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',35,0)">line 35</a>)] 
-7 Problems with snaxel update
-   Step time:00:00:00:608
-Iteration Time:00:00:01:716
-Volume converged to 1.13670e-02
-Finished Iterations , starting Post Process
-Creating Snaxel Loops
-Time taken:00:00:03:494
-SNAKE PROCESS END
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:546
+ 
+Start step 3
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:375
+ 
+Start step 4
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:390
+ 
+Start step 5
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:436
+ 
+Start step 6
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:546
+ 
+Start step 7
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:938
+ 
+Start step 8
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:593
+ 
+Start step 9
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:00:545
+ 
+Start step 10
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:01:034
+ 
+Start step 11
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:01:54:369
+ 
+Start step 12
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:07:432
+ 
+Start step 13
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:02:262
+ 
+Start step 14
+if system_dependent('IsDebugMode')==1, dbcont; end
+   Step time:00:00:13:762
+ 
+Start step 15
+if system_dependent('IsDebugMode')==1, dbquit; end
+clc
+close all
+clear all
+exit

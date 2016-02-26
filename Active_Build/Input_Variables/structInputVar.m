@@ -105,7 +105,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampBase=1;
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
-    paramsnakesforce.lengthEpsilon=1e-5;
+    paramsnakesforce.lengthEpsilon=1e-3;
     
     paramsnakesforce.velType='default';
     paramsnakesforce.vel.Type={'default'};
@@ -149,6 +149,15 @@ function param=DualOptimSmoothing(param)
     param.snakes.force.vel.ChangeConv=[10,1e-4];
     param.snakes.force.vel.ChangeTrigger='both'; 
     
+    
+end
+
+function param=LinOptimSmoothing(param)
+    param.snakes.force.vel.ChangeStep=[0];
+    param.snakes.force.vel.ChangeConv=[10];
+    param.snakes.force.vel.ChangeTrigger='none'; 
+    param.snakes.force.velType='velMinLin';
+    param.snakes.force.vel.Type={'velMinLin'};
     
 end
 %% Callable functions
@@ -203,15 +212,27 @@ function [param]=Snakestestsmooth1()
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
-    
+    param=LinOptimSmoothing(param);
     param.general.typDat='testsmooth1';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
-    param.snakes.refine.typeRefine='all';
+    param.snakes.refine.typeRefine='grey';
     
 end
-
+function [param]=Snakestestsmooth1_2()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    %param=LinOptimSmoothing(param);
+    param.general.typDat='testsmooth1_2';
+    
+    param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.typeRefine='grey';
+    param.plotting.debugPlot=[10:15];
+    
+end
 function [param]=Snakestestsmooth2()
     
     
@@ -318,6 +339,7 @@ function [param]=WeirdShape2()
     param.snakes.refine.typeRefine='grey';
     param.snakes.step.snakesSteps=2;
    
+    
 
 end
 
