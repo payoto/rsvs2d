@@ -105,7 +105,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampBase=1;
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
-    paramsnakesforce.lengthEpsilon=1e-3;
+    paramsnakesforce.lengthEpsilon=1e-5;
     
     paramsnakesforce.velType='default';
     paramsnakesforce.vel.Type={'default'};
