@@ -7,51 +7,51 @@
 
 
 // Constant declaration
-int dim=2;
+int dim = 2;
 
 // Global Variables declaration
 int nLevels, nCells,nEdges,nVerts;
-int *levelSize,*cells;
-cellTemplate *celldatstruct; // Array containing data from File
+
 // Array for active template
-cellTemplate *cellstructTemp;
-vertexTemplate *vertstructTemp;
-edgeTemplate *edgestructTemp;
-
-
-// Function Declarations
-
+cellTemplate *cellstructTemp=NULL;
+vertexTemplate *vertstructTemp=NULL;
+edgeTemplate *edgestructTemp=NULL;
 
 
 // Allocation functions
 
-void AllocateGridStruct(int domSize[dim]){
+void AllocateGridStruct(int domSize[dim],
+	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
 	
 	int nCellCurr,nEdgeCurr,nVertCurr, ii;
 	nCellCurr=domSize[0]*domSize[1];
 	nEdgeCurr=domSize[0]*(1+domSize[1])+domSize[1]*(1+domSize[0]);
 	nVertCurr=(domSize[0]+1)*(domSize[1]+1);
 	
+	printf("size vertstructTempOut %i\n",nVertCurr * sizeof(vertexTemplate));
+	printf("size edgestructTempOut %i\n",nEdgeCurr * sizeof(edgeTemplate));
+	printf("size cellstructTempOut %i\n",nCellCurr * (sizeof(cellTemplate)+nLevels*sizeof(int)));
 	
-	vertstructTemp=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
-	edgestructTemp=(edgeTemplate*)malloc(nEdgeCurr * sizeof(edgeTemplate));
-	cellstructTemp=(cellTemplate*)malloc(nCellCurr * sizeof(cellTemplate));
+	
+	*vertstructTempOut=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
+	*edgestructTempOut=(edgeTemplate*)malloc(nEdgeCurr * sizeof(edgeTemplate));
+	*cellstructTempOut=(cellTemplate*)malloc(nCellCurr * sizeof(cellTemplate));
 	
 	
-	if (NULL == vertstructTemp) {
+	if (NULL == vertstructTempOut) {
 		printf( "malloc failed for vertstructTemp\n");
 	
 	}
-	if (NULL == edgestructTemp) {
+	if (NULL == edgestructTempOut) {
 		printf( "malloc failed for edgestructTemp\n");
 	
 	}
-	if (NULL == cellstructTemp) {
+	if (NULL == cellstructTempOut) {
 		printf( "malloc failed for cellstructTemp\n");
 	
 	}
 	for(ii=0;ii<nCellCurr;ii++){
-		cellstructTemp[ii].refineVec=(int*)calloc(nLevels,sizeof(int));
+		(*cellstructTempOut)[ii].refineVec=(int*)calloc(nLevels,sizeof(int));
 	} 
 }
 
@@ -162,11 +162,12 @@ void VertexIJGrid(int domSize[dim],int IJK[dim]){
 	
 	vertSub=vertsub(IJK[0],IJK[1],domSize);
 	vertstructTemp[vertSub].index=IJK[0]+(IJK[1]-1)*(domSize[0]+1);
-	
+	printf("Accessed Index\n");
 	vertstructTemp[vertSub].coord[0]=((double)(IJK[0]-1))
 				/((double)(domSize[0]));
 	vertstructTemp[vertSub].coord[1]=((double)(IJK[1]-1))
 				/((double)(domSize[1]));
+	printf("Accessed coord\n");
 	
 }
 
@@ -271,13 +272,44 @@ void AssignCelltructContent(int domSize[dim], int baseRefineLvl){
 	
 }
 
-void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput){
-
+void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
+	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
+	
+	//cellstructTemp=cellstructTempOut;
+	//vertstructTemp=vertstructTempOut;
+	//edgestructTemp=edgestructTempOut;
+	
 	nLevels=nLevelsInput;
-	AllocateGridStruct(domSize);
+	AllocateGridStruct(domSize,cellstructTempOut,vertstructTempOut,edgestructTempOut);
+	AllocateGridStruct(domSize,&cellstructTemp,&vertstructTemp,&edgestructTemp);
+	printf("Allocated the things\n");
 	AssignVertextructContent(domSize);
 	AssignEdgestructContent(domSize);
 	AssignCelltructContent(domSize,baseRefineLvl);
+	printf("Generated the template\n");
+	//*cellstructTempOut=cellstructTemp;
+	//*vertstructTempOut=vertstructTemp;
+	//*edgestructTempOut=edgestructTemp;
+	printf("\n*****  ADRESS OF &cellStructTemp in function is: %d\n",&(cellstructTemp[0].index));
+	printf("\n*****  ADRESS OF &cellStructTemp in function is: %d\n",&(cellstructTemp[1].index));
+	printf("\n*****  ADRESS OF cellStructTemp in function is: %d\n",cellstructTemp[0]);
+	printf("\n*****  ADRESS OF *cellStructTemp in function is: %d\n",*cellstructTemp);
 	
+	memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp));
+	memcpy(*vertstructTempOut,vertstructTemp,sizeof(*vertstructTemp));
+	memcpy(*edgestructTempOut,edgestructTemp,sizeof(*edgestructTemp));
+	//*vertstructTempOut=vertstructTemp;
+	//*edgestructTempOut=edgestructTemp;
+	printf("Returned the template\n");
+	printf("cellstructTemp is %i Bytes\n",sizeof(*cellstructTemp));
+	printf("cellTemplate is %i Bytes\n",sizeof(cellTemplate));
+	printf("cellstructTempOut is %i Bytes\n",sizeof(**cellstructTempOut));
+	int ii;
+	//for (ii=0;ii<sizeof(cellstructTemp);ii++){
+	//	((char*)cellstructTemp)[ii]=1;}
+		
+	free(cellstructTemp);
+	free(vertstructTemp);
+	free(edgestructTemp);
 }
 
