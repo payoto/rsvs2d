@@ -28,7 +28,8 @@ extern int dim;
 
 // Function prototypes
 void Allocatecelldatstruct();
-void AllocateGridStruct(int domSize[dim]);
+void AllocateGridStruct(int domSize[dim],
+	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
 void DataIn();
 void DataArrayToStruct();
 int edgsub(int I, int J, int l, int domSize[dim]);
@@ -42,8 +43,9 @@ void CellIJGrid(int domSize[dim],int IJK[dim], int baseRefineLvl);
 void AssignEdgestructContent(int domSize[dim]);
 void AssignVertextructContent(int domSize[dim]);
 void AssignCelltructContent(int domSize[dim], int baseRefineLvl);
-void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput);
-void OutputTemplateGrid(int domSize[dim]);
+void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
+	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
+//void OutputTemplateGrid(int domSize[dim], int lvlGrid);
 //void GenerateTemplateGrids();
 
 #endif

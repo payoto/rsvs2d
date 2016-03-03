@@ -2,7 +2,7 @@
 
 clear templateGrid
 
-checkTemplate
+checkTemplate1
 CheckGrid(templateGrid)
 cellIndList=vertcat(templateGrid.edge(:).cellindex);
 cellIndList(cellIndList<0)=0;
