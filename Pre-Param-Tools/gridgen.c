@@ -67,10 +67,23 @@ void AllocateGridStruct(int domSize[dim]){
 	
 	vertstructTemp=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
 	edgestructTemp=(edgeTemplate*)malloc(nEdgeCurr * sizeof(edgeTemplate));
-	
 	cellstructTemp=(cellTemplate*)malloc(nCellCurr * sizeof(cellTemplate));
+	
+	
+	if (NULL == vertstructTemp) {
+		printf( "malloc failed for vertstructTemp\n");
+	
+	}
+	if (NULL == edgestructTemp) {
+		printf( "malloc failed for edgestructTemp\n");
+	
+	}
+	if (NULL == cellstructTemp) {
+		printf( "malloc failed for cellstructTemp\n");
+	
+	}
 	for(ii=0;ii<nCellCurr;ii++){
-		celldatstruct[ii].refineVec=(int*)calloc(nLevels,sizeof(int));
+		cellstructTemp[ii].refineVec=(int*)calloc(nLevels,sizeof(int));
 	} 
 }
 
@@ -90,7 +103,7 @@ void DataIn(){
 		levelSize=(int*)calloc(dim*nLevels, sizeof(int));
 		for (ii=0;ii<=nLevels-1;ii++){ // Reads in the size of those levels
 			for (jj=0; jj<dim;jj++){
-				fscanf(cellgridFID,"%i ",&levelSize[dim*ii]);
+				fscanf(cellgridFID,"%i ",&levelSize[dim*ii+jj]);
 				// printf("%i %i\n",levelSize[2*ii],levelSize[2*ii+1]);
 			}
 		}
@@ -168,7 +181,7 @@ int vertsub(int I, int J, int domSize[dim]){
 	
 	int index;
 	index=-1+(I+(J-1)*(domSize[0]+1));
-
+	//printf("domsize %i %i , I %i J %i index %i",domSize[0],domSize[1],I,J,index);
 	return(index);
 }
 
@@ -197,15 +210,15 @@ void EdgeIJtoGrid(int domSize[dim],int IJK[dim], int l){
 			+(l)*((IJK[0]-1)*(domSize[1])+(IJK[1]) // case where l=1
 				+((domSize[1]+1)*domSize[0]));
 				
-	edgestructTemp[edgSub].vertex[0]=(IJK[0]+(IJK[1]-1)*(domSize[1]+1))*(1-l)+ // l=1
-			(IJK[0]+(IJK[1]-1)*(domSize[1]+1))*l;// l=2
-	edgestructTemp[edgSub].vertex[1]=(1+IJK[0]+(IJK[1]-1)*(domSize[1]+1))*(1-l)+ // l=1
-		(IJK[0]+(IJK[1]-1+1)*(domSize[1]+1))*l;// l=2
+	edgestructTemp[edgSub].vertex[0]=(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ // l=1
+			(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*l;// l=2
+	edgestructTemp[edgSub].vertex[1]=(1+IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ // l=1
+		(IJK[0]+(IJK[1]-1+1)*(domSize[0]+1))*l;// l=2
 	
-	edgestructTemp[edgSub].cellind[0]=(IJK[0]+(IJK[1]-2)*domSize[1])*(1-l)+// l=1
-		(-1+IJK[0]+(IJK[1]-1)*domSize[1])*l;// l=2
-	edgestructTemp[edgSub].cellind[1]=(IJK[0]+(IJK[1]-1)*domSize[1])*(1-l)+//ll=1
-		(IJK[0]+(IJK[1]-1)*domSize[1])*l; // l=2
+	edgestructTemp[edgSub].cellind[0]=(IJK[0]+(IJK[1]-2)*domSize[0])*(1-l)+// l=1
+		(-1+IJK[0]+(IJK[1]-1)*domSize[0])*l;// l=2
+	edgestructTemp[edgSub].cellind[1]=(IJK[0]+(IJK[1]-1)*domSize[0])*(1-l)+//ll=1
+		(IJK[0]+(IJK[1]-1)*domSize[0])*l; // l=2
 	
 }
 
@@ -240,34 +253,32 @@ void EdgeIJtoGridHighBound(int domSize[dim],int IJK[dim], int l){
 	
 }
 
-void EdgeIJtoGridDim2(int domSize[dim],int IJK[dim]){
-	
-	int index, vertexind[2], cellind[2];
-	
-	index=domSize[0]*(domSize[1]+1)+IJK[1]+(IJK[0]-1)*domSize[0]; // ll=2
-	
-	
-	vertexind[0]=IJK[0]+(IJK[1]-1)*(domSize[1]+1);
-	vertexind[1]=IJK[0]+(IJK[1]-1+1)*(domSize[1]+1);// ll=2
-	
-
-	cellind[0]=-1+IJK[0]+(IJK[1]-1)*domSize[1];
-	cellind[1]=IJK[0]+(IJK[1]-1)*domSize[1]; //ll=2
-	
-}
-
 void VertexIJGrid(int domSize[dim],int IJK[dim]){
 	// For vertices IJK goes to dim+1
 	// Assigns vertex data to template structure
 	int vertSub;
-	double coord[dim];
-	vertSub=vertsub(IJK[0],IJK[1],domSize);
-	vertstructTemp[vertSub].index=IJK[0]+(IJK[1]-1)*domSize[1];
-	vertstructTemp[vertSub].coord[0]=((double)(IJK[0]-1))
-				/((double)(domSize[0]-1));
-	vertstructTemp[vertSub].coord[1]=((double)(IJK[1]-1))
-				/((double)(domSize[1]-1));
 	
+	vertSub=vertsub(IJK[0],IJK[1],domSize);
+	vertstructTemp[vertSub].index=IJK[0]+(IJK[1]-1)*(domSize[0]+1);
+	
+	vertstructTemp[vertSub].coord[0]=((double)(IJK[0]-1))
+				/((double)(domSize[0]));
+	vertstructTemp[vertSub].coord[1]=((double)(IJK[1]-1))
+				/((double)(domSize[1]));
+	
+}
+
+void CellIJGrid(int domSize[dim],int IJK[dim], int baseRefineLvl){
+	// For vertices IJK goes to dim+1
+	// baseRefineLvl starts from 1
+	int cellSub;
+	
+	cellSub=cellsub(IJK[0],IJK[1],domSize);
+	cellstructTemp[cellSub].index=IJK[0]+(IJK[1]-1)*domSize[0];
+	cellstructTemp[cellSub].fill=0;
+	cellstructTemp[cellSub].refineLvl=baseRefineLvl;
+	cellstructTemp[cellSub].refineVec[baseRefineLvl-1]=IJK[0]+(IJK[1]-1)*domSize[1];
+
 }
 
 // Upper level grid template generation
@@ -341,13 +352,108 @@ void AssignVertextructContent(int domSize[dim]){
 	
 }
 
+void AssignCelltructContent(int domSize[dim], int baseRefineLvl){
+	
+	int ii, jj, IJK[dim];
+	
+	// Assign all data
+	for (ii=1;ii<=domSize[0];ii++){
+		for (jj=1;jj<=domSize[1];jj++){
+			
+			IJK[0]=ii;
+			IJK[1]=jj;
+			CellIJGrid(domSize,IJK,baseRefineLvl);
+		}
+	}
+	
+	
+}
+
+void BuildLvlTemplate(int domSize[dim], int baseRefineLvl){
+	
+	AssignVertextructContent(domSize);
+	AssignEdgestructContent(domSize);
+	AssignCelltructContent(domSize,baseRefineLvl);
+	
+}
+
+// Text output for Template grid
+void OutputTemplateGrid(int domSize[dim]){
+
+	int nCellCurr,nEdgeCurr,nVertCurr, ii;
+	FILE *checkFID;
+	nCellCurr=domSize[0]*domSize[1];
+	nEdgeCurr=domSize[0]*(1+domSize[1])+domSize[1]*(1+domSize[0]);
+	nVertCurr=(domSize[0]+1)*(domSize[1]+1);
+	
+	checkFID=fopen("checkTemplate.m","w");
+	
+	for (ii=0;ii<=nEdgeCurr-1;ii++){
+		fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgestructTemp[ii].index);
+		
+		fprintf(checkFID,"templateGrid.edge(%i).cellindex(1)=%i;\n",ii+1,edgestructTemp[ii].cellind[0]);
+		fprintf(checkFID,"templateGrid.edge(%i).cellindex(2)=%i;\n",ii+1,edgestructTemp[ii].cellind[1]);
+		
+		fprintf(checkFID,"templateGrid.edge(%i).vertexindex(1)=%i;\n",ii+1,edgestructTemp[ii].vertex[0]);
+		fprintf(checkFID,"templateGrid.edge(%i).vertexindex(2)=%i;\n",ii+1,edgestructTemp[ii].vertex[1]);
+	}
+	
+	for (ii=0;ii<=nCellCurr-1;ii++){
+		fprintf(checkFID,"templateGrid.cell(%i).index=%i;\n",ii+1,cellstructTemp[ii].index);
+		
+		fprintf(checkFID,"templateGrid.cell(%i).fill=%lf;\n",ii+1,cellstructTemp[ii].fill);
+	}
+	
+	for (ii=0;ii<=nVertCurr-1;ii++){
+		fprintf(checkFID,"templateGrid.vertex(%i).index=%i;\n",ii+1,vertstructTemp[ii].index);
+		
+		fprintf(checkFID,"templateGrid.vertex(%i).coord(1)=%lf;\n",ii+1,vertstructTemp[ii].coord[0]);
+		fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertstructTemp[ii].coord[1]);
+		
+	} 
+	
+	fclose(checkFID);
+	
+}
+
+// Template grid main process
+void GenerateTemplateGrids(){
+	
+	int domSize[dim],baseRefineLvl,ii;
+	
+	//for (ii=0;ii<=nLevels-1;ii++){
+	for (ii=0;ii<=0;ii++){
+		domSize[0]=levelSize[2*ii];
+		domSize[1]=levelSize[2*ii+1];
+		baseRefineLvl=ii+1;
+		AllocateGridStruct(domSize);
+		BuildLvlTemplate(domSize, baseRefineLvl);
+		//OutputTemplateGrid(domSize);
+	}
+}
+
+void DeAllocate(){
+	
+	free(celldatstruct);
+	free(cells);
+	free(levelSize);
+	free(cellstructTemp);
+	free(vertstructTemp);
+	free(edgestructTemp);
+	free(cellstruct);
+	free(vertstruct);
+	free(edgestruct);
+
+}
+
 // Main text body
 int main(){
 	 //Arrays
+	 printf("%i\n",sizeof(double));
 	DataIn();
 	Allocatecelldatstruct();
 	DataArrayToStruct();
-	
+	GenerateTemplateGrids();
 	//Checks
 	/*
 	int ii, jj;
@@ -365,6 +471,8 @@ int main(){
 		printf("\n");
 	}
 	*/
+	
+	 DeAllocate();
 	return(0);
 }
 
