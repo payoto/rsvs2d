@@ -1,5 +1,7 @@
 %% Test the template file
 
+clear templateGrid
+
 checkTemplate
 CheckGrid(templateGrid)
 cellIndList=vertcat(templateGrid.edge(:).cellindex);
