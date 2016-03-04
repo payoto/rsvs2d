@@ -1,2 +1,2 @@
 
-gcc -o gridgen.exe gridgen.c .\templategrid\templategrid.c
+gcc -ggdb -o gridgen.exe gridgen.c .\templategrid\templategrid.c

@@ -28,10 +28,12 @@ void AllocateGridStruct(int domSize[dim],
 	nEdgeCurr=domSize[0]*(1+domSize[1])+domSize[1]*(1+domSize[0]);
 	nVertCurr=(domSize[0]+1)*(domSize[1]+1);
 	
-	printf("size vertstructTempOut %i\n",nVertCurr * sizeof(vertexTemplate));
-	printf("size edgestructTempOut %i\n",nEdgeCurr * sizeof(edgeTemplate));
-	printf("size cellstructTempOut %i\n",nCellCurr * (sizeof(cellTemplate)+nLevels*sizeof(int)));
+	//printf("size vertstructTempOut %i\n",nVertCurr * sizeof(vertexTemplate));
+	//printf("size edgestructTempOut %i\n",nEdgeCurr * sizeof(edgeTemplate));
+	//printf("size cellstructTempOut %i\n",nCellCurr * (sizeof(cellTemplate)+nLevels*sizeof(int)));
 	
+	
+	//printf("Size of Allocated Cell %i\n",nCellCurr * sizeof(cellTemplate));
 	
 	*vertstructTempOut=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
 	*edgestructTempOut=(edgeTemplate*)malloc(nEdgeCurr * sizeof(edgeTemplate));
@@ -162,12 +164,12 @@ void VertexIJGrid(int domSize[dim],int IJK[dim]){
 	
 	vertSub=vertsub(IJK[0],IJK[1],domSize);
 	vertstructTemp[vertSub].index=IJK[0]+(IJK[1]-1)*(domSize[0]+1);
-	printf("Accessed Index\n");
+	//printf("Accessed Index\n");
 	vertstructTemp[vertSub].coord[0]=((double)(IJK[0]-1))
 				/((double)(domSize[0]));
 	vertstructTemp[vertSub].coord[1]=((double)(IJK[1]-1))
 				/((double)(domSize[1]));
-	printf("Accessed coord\n");
+	//printf("Accessed coord\n");
 	
 }
 
@@ -272,6 +274,13 @@ void AssignCelltructContent(int domSize[dim], int baseRefineLvl){
 	
 }
 
+void CalculateNumElements(int domSize[dim],int *nCellCurr,int *nEdgeCurr,int *nVertCurr){
+	
+	*nCellCurr=domSize[0]*domSize[1];
+	*nEdgeCurr=domSize[0]*(1+domSize[1])+domSize[1]*(1+domSize[0]);
+	*nVertCurr=(domSize[0]+1)*(domSize[1]+1);
+}
+
 void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
 	
@@ -290,21 +299,41 @@ void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	//*cellstructTempOut=cellstructTemp;
 	//*vertstructTempOut=vertstructTemp;
 	//*edgestructTempOut=edgestructTemp;
-	printf("\n*****  ADRESS OF &cellStructTemp in function is: %d\n",&(cellstructTemp[0].index));
-	printf("\n*****  ADRESS OF &cellStructTemp in function is: %d\n",&(cellstructTemp[1].index));
-	printf("\n*****  ADRESS OF cellStructTemp in function is: %d\n",cellstructTemp[0]);
-	printf("\n*****  ADRESS OF *cellStructTemp in function is: %d\n",*cellstructTemp);
+	/*
+	printf("\n*****  &(cellstructTemp[0].index) in function is: %d\n",&(cellstructTemp[0].index));
+	printf("*****  (cellstructTemp[0].index) in function is: %d\n",(cellstructTemp[0].index));
+	printf("*****  ADRESS OF &cellStructTemp in function is: %d\n",&cellstructTemp);
+	printf("*****  ADRESS OF cellStructTemp in function is: %d\n",cellstructTemp);
+	printf("*****  ADRESS OF *cellStructTemp in function is: %d\n",*cellstructTemp);
+	*/
 	
-	memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp));
-	memcpy(*vertstructTempOut,vertstructTemp,sizeof(*vertstructTemp));
-	memcpy(*edgestructTempOut,edgestructTemp,sizeof(*edgestructTemp));
+	int *nCellP, *nEdgeP, *nVertP;
+	int nCellCurr, nEdgeCurr, nVertCurr;
+	
+	nCellP=&nCellCurr;
+	nEdgeP=&nEdgeCurr;
+	nVertP=&nVertCurr;
+	
+	CalculateNumElements(domSize,nCellP,nEdgeP,nVertP);
+	
+	//printf("Size of Copied Cell in function %i\n",sizeof(*cellstructTemp)*(nCellCurr));
+	memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp)*(nCellCurr));
+	memcpy(*vertstructTempOut,vertstructTemp,sizeof(*vertstructTemp)*(nVertCurr));
+	memcpy(*edgestructTempOut,edgestructTemp,sizeof(*edgestructTemp)*(nEdgeCurr));
+	/*
+	//printf("\n*****  &(cellstructTemp[0].index) in function is: %d\n",&(cellstructTempOut[0].index));
+	//printf("*****  (cellstructTemp[0].index) in function is: %d\n",(cellstructTempOut[0].index));
+	printf("\n*****  ADRESS OF &cellstructTempOut in function is: %d\n",&cellstructTempOut);
+	printf("*****  ADRESS OF cellstructTempOut in function is: %d\n",cellstructTempOut);
+	printf("*****  ADRESS OF *cellstructTempOut in function is: %d\n",*cellstructTempOut);
 	//*vertstructTempOut=vertstructTemp;
 	//*edgestructTempOut=edgestructTemp;
 	printf("Returned the template\n");
 	printf("cellstructTemp is %i Bytes\n",sizeof(*cellstructTemp));
 	printf("cellTemplate is %i Bytes\n",sizeof(cellTemplate));
 	printf("cellstructTempOut is %i Bytes\n",sizeof(**cellstructTempOut));
-	int ii;
+*/
+	
 	//for (ii=0;ii<sizeof(cellstructTemp);ii++){
 	//	((char*)cellstructTemp)[ii]=1;}
 		
