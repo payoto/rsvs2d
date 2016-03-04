@@ -45,6 +45,9 @@ void AssignVertextructContent(int domSize[dim]);
 void AssignCelltructContent(int domSize[dim], int baseRefineLvl);
 void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
+void CalculateNumElements(int domSize[dim],int *nCellCurr,int *nEdgeCurr,int *nVertCurr);
+
+
 //void OutputTemplateGrid(int domSize[dim], int lvlGrid);
 //void GenerateTemplateGrids();
 

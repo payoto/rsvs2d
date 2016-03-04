@@ -1,8 +1,11 @@
 %% Test the template file
 
 clear templateGrid
+include_GridCheck
+include_SnakeParam
 
-checkTemplate1
+
+checkGrid
 CheckGrid(templateGrid)
 cellIndList=vertcat(templateGrid.edge(:).cellindex);
 cellIndList(cellIndList<0)=0;
