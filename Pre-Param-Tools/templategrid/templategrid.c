@@ -114,6 +114,8 @@ void EdgeIJtoGrid(int domSize[dim],int IJK[dim], int l){
 			+(l)*((IJK[0]-1)*(domSize[1])+(IJK[1]) // case where l=1
 				+((domSize[1]+1)*domSize[0]));
 				
+	edgestructTemp[edgSub].orientation=l;	
+	
 	edgestructTemp[edgSub].vertex[0]=(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ // l=1
 			(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*l;// l=2
 	edgestructTemp[edgSub].vertex[1]=(1+IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ // l=1
