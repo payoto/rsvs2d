@@ -6,6 +6,8 @@
 
 #include "C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Pre-Param-Tools\templategrid\templategrid.h"
 
+
+
 // Constant declaration
 // dim=2;
 
@@ -35,6 +37,17 @@ void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList);
 void GridInitialisation();
 void OutputGrid(int domSize[dim]);
 int SortOrder(const void * elem1, const void * elem2);
+void IdentifyRefineCell(int refinLvl,int **posGridRef,int **indGridRef, int *nRefineCell);
+void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
+		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine);
+void RemoveIdenticalEntries_int(int **array, int nArray, int *nNewArray);
+int imin(int a, int b);
+int imax(int a, int b);
+float f_min(float a, float b);
+float f_max(float a, float b);
+int min_array(int *array, int nArray);
+int max_array(int *array, int nArray);
+void* ArrayFromStruct(void* ptr, int nStruct, int sizMember, int sizType);
 
 // Main text body
 int main(){
@@ -197,7 +210,6 @@ void OutputTemplateGrid(int domSize[dim], int lvlGrid){
 	
 }
 
-
 void OutputGrid(int domSize[dim]){
 
 	int nCellCurr,nEdgeCurr,nVertCurr, ii;
@@ -239,6 +251,208 @@ void OutputGrid(int domSize[dim]){
 	
 }
 
+// Grid Refinement Processes
+
+void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRefineCell){
+	// Identify cells which still need refinement
+	//	 This is done by going through the data and finding the 
+	//	 positions (specified in the vector) where refinement is needed
+	//	 For all these operations the index of cells CANNOT BE USED
+		
+	// celldatstruct[].refineLvl>=refinLvl -> Needs to be refined
+	// celldatstruct[].refinevec[0:refinLvl-2] 
+	// 				-> indicate the current position of the cell of interest
+	//              => This is the universal indicator that keeps the cell consistant
+	// the corresponding cells in the current grid will be:
+	// cellstruct[].refinevec[0:refinLvl-2] 
+	
+	// The output that is needed here is the position and indices of the cells 
+	// that need refinement 
+	// cellstruct[kk].index
+	
+	int ii,kk, jj,ll, nPosRefine;
+	int *posRefV=NULL;
+	int *posCellRef=NULL;
+	//int *posGridRef=NULL, *indGridRef=NULL;
+	// first count the number of refinements needed
+
+	posRefV= (int *)calloc(nCells,sizeof(int));
+	posCellRef= (int *)calloc(nCells*(refinLvl-1),sizeof(int));
+	printf("%i \n",refinLvl-2);
+	kk=0;
+	for (ii=0;ii<nCells;ii++){
+	
+		printf("%i %i\n",ii,kk);
+		if (celldatstruct[ii].refineLvl>=refinLvl){
+			posRefV[kk]=ii;
+			for (ll=0;ll<refinLvl-1;ll++){
+				posCellRef[kk*(refinLvl-1)+ll]=celldatstruct[ii].refineVec[ll];
+			}
+			kk++;
+		}
+	}
+	printf("%i",kk);
+	posRefV=(int*)realloc(posRefV,kk*sizeof(int));
+	posCellRef=(int*)realloc(posCellRef,kk*sizeof(int)*(refinLvl-1));
+	
+	nPosRefine=kk;
+	(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));
+	kk=0;
+	
+	// Match vectors to cell location 
+	// -> Note will be more efficient to remove 
+	//		vectors which are the same and then do this step
+	printf("\n");
+	for (ii=0;ii<nPosRefine;ii++){
+		for (jj=0;jj<nCellGrid;jj++){
+			ll=0;
+			while((cellstruct[jj].refineVec[ll]==posCellRef[ii*(refinLvl-1)+ll])
+				& (ll<(refinLvl-1))){
+				ll++;
+				printf("%i ",ll);
+			}
+			if ((ll)==(refinLvl-1)){
+				(*posGridRef)[kk]=jj;
+				kk++;
+				printf("\n");
+				break;
+			}
+		}
+	}
+	
+	if (kk==0){perror("ERROR: The specified refineVec does not exist");exit(EXIT_FAILURE);}
+	
+	(*posGridRef)=(int*)realloc((*posGridRef),kk*sizeof(int));
+	/*
+	// Checks - Seem to work
+	printf("\n");
+	for (ii=0;ii<kk;ii++) {
+		printf("%i - ",(*posGridRef)[ii]);
+		for (jj=0;jj<(refinLvl-1);jj++){
+			printf("%i ",cellstruct[(*posGridRef)[ii]].refineVec[jj]);
+		}
+		printf("\n");
+	}
+	
+	
+	//printf("\n");
+	//for (ii=0;ii<kk;ii++) {printf("%i ",posCellRef[ii]);}
+	//printf("\n");
+	*/
+	/*
+	qsort((*posGridRef),nPosRefine,sizeof(int),SortOrder);
+	jj=1;
+	printf("\n");
+	for (ii=1;ii<nPosRefine;ii++){
+		if ((*posGridRef)[ii]>(*posGridRef)[jj-1]){
+			(*posGridRef)[jj]=(*posGridRef)[ii];
+			jj++;
+			//printf("%i ", jj);
+		}
+	}
+	(*posGridRef)=(int*)realloc((*posGridRef),jj*sizeof(int));
+	*/
+	
+	RemoveIdenticalEntries_int(posGridRef, nPosRefine, &jj);
+	*indGridRef=(int*)calloc(jj,sizeof(int));
+	for(ii=0;ii<jj;ii++){
+		(*indGridRef)[ii]=cellstruct[(*posGridRef)[ii]].index;
+	}
+	/*
+	printf("\n");
+	for (ii=0;ii<jj;ii++){
+		printf("%i - ",(*posGridRef)[ii]);
+		for (ll=0;ll<(refinLvl-1);ll++){
+			printf("%i ",cellstruct[(*posGridRef)[ii]].refineVec[ll]);
+		}
+		printf("\n");
+	}
+	*/
+	*nRefineCell=jj;
+	free(posRefV);
+	free(posCellRef);
+	//free(posGridRef);
+	//free(indGridRef)
+}
+
+void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
+		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine){
+	
+	int ii,jj,ll,kk,kkStart,flagEdge;
+	
+	*posEdgeRefine=(int*)calloc(nEdgeGrid,sizeof(int));
+	kk=0;
+	for(ii=0;ii<nEdgeGrid;ii++){
+		for(jj=0;jj<nCellRefine;jj++){
+			ll=0;
+			kkStart=kk;
+			do{
+				flagEdge=((edgestruct[ii].cellind[ll]==indCellRefine[jj]));
+				(*posEdgeRefine)[kk]=ii*flagEdge;
+				kk=kk+flagEdge;
+				ll++;
+			} while((kkStart==kk)&(ll<2));
+		}
+	}
+		
+	
+	*posEdgeRefine=(int*)realloc(*posEdgeRefine,kk*sizeof(int));
+	RemoveIdenticalEntries_int(posEdgeRefine, kk, &kk);
+	*nEdgeRefine=kk;
+	*indEdgeRefine=(int*)calloc(kk,sizeof(int));
+	
+	for(ii=0;ii<kk;ii++){
+		(*indEdgeRefine)[ii]=edgestruct[(*posEdgeRefine)[ii]].index;
+	}
+	/*
+	for(ii=0;ii<kk;ii++){
+		printf("%i ",(*indEdgeRefine)[ii]);
+	}*/
+}
+	
+void RefineSelectedEdges(int domSize[dim],int *posEdgeRefine,int *indEdgeRefine, int nEdgeRefine){
+	// This function needs to find out how many mre edges and vertices are needed.
+	// Reallocate the gridstruct arrays to match that
+	// Then actually do the modification
+	
+	int ii,jj,kk,ll;
+	int nAddEdge,nAddVertex, maxEdgeIndex,maxVertexIndex;
+	int nEdgeSplit,startEdgeSub,startVertSub;
+	int *listIndEdge=NULL, *listIndVert=NULL;
+	
+	nAddEdge=0;
+	
+	for (ii=0;ii<nEdgeRefine;ii++){
+		nAddEdge=nAddEdge
+					+(1-edgestruct[posEdgeRefine[ii]].orientation)*(domSize[0]-1)
+					+(edgestruct[posEdgeRefine[ii]].orientation)*(domSize[1]-1);
+	}
+	nAddVertex=nAddEdge;
+	
+	listIndEdge=(int*)ArrayFromStruct(edgestruct, nEdgeGrid, sizeof(edgeTemplate),sizeof(int));
+	maxEdgeIndex=max_array(listIndEdge, nEdgeGrid);
+	listIndVert=(int*)ArrayFromStruct(vertstruct, nVertGrid, sizeof(vertexTemplate),sizeof(int));
+	maxVertexIndex=max_array(listIndVert, nVertGrid);
+	
+	edgestruct=(edgeTemplate*)realloc(edgestruct,(nEdgeGrid+nAddEdge)*sizeof(edgeTemplate));
+	vertstruct=(vertexTemplate*)realloc(vertstruct,(nVertGrid+nAddVertex)*sizeof(vertexTemplate));
+	
+	startEdgeSub=nEdgeGrid;
+	for(ii=0;ii<nEdgeRefine;ii++){
+		nEdgeSplit=(1-edgestruct[posEdgeRefine[ii]].orientation)*(domSize[0]-1)
+					+(edgestruct[posEdgeRefine[ii]].orientation)*(domSize[1]-1);
+		//printf("nEdgeSplit: %i \n",nEdgeSplit);
+		for(jj=0;jj<nEdgeSplit;jj++){
+			//memcpy(&(edgestruct[startEdgeSub].index),
+			//	&(edgestruct[posEdgeRefine[ii]].index),sizeof(edgeTemplate));
+			printf("%d %d %i\n",&(edgestruct[posEdgeRefine[ii]].index),
+				edgestruct[posEdgeRefine[ii]],edgestruct[posEdgeRefine[ii]].index);
+				
+			startEdgeSub=startEdgeSub+1;
+		}
+	}
+	
+}
 
 // Template grid main process
 void GenerateTemplateGrid(int lvlGenerate){
@@ -295,124 +509,6 @@ void GridInitialisation(){
 	
 }
 
-void IdentifyRefineCell(int refinLvl){
-	// Identify cells which still need refinement
-	//	 This is done by going through the data and finding the 
-	//	 positions (specified in the vector) where refinement is needed
-	//	 For all these operations the index of cells CANNOT BE USED
-		
-	// celldatstruct[].refineLvl>=refinLvl -> Needs to be refined
-	// celldatstruct[].refinevec[0:refinLvl-2] 
-	// 				-> indicate the current position of the cell of interest
-	//              => This is the universal indicator that keeps the cell consistant
-	// the corresponding cells in the current grid will be:
-	// cellstruct[].refinevec[0:refinLvl-2] 
-	
-	// The output that is needed here is the position and indices of the cells 
-	// that need refinement 
-	// cellstruct[kk].index
-	
-	int ii,kk, jj,ll, nPosRefine;
-	int *posRefV=NULL;
-	int *posCellRef=NULL;
-	int *posGridRef=NULL, *indGridRef=NULL;
-	// first count the number of refinements needed
-
-	posRefV= (int *)calloc(nCells,sizeof(int));
-	posCellRef= (int *)calloc(nCells*(refinLvl-1),sizeof(int));
-	printf("%i \n",refinLvl-2);
-	kk=0;
-	for (ii=0;ii<nCells;ii++){
-	
-		printf("%i %i\n",ii,kk);
-		if (celldatstruct[ii].refineLvl>=refinLvl){
-			posRefV[kk]=ii;
-			for (ll=0;ll<refinLvl-1;ll++){
-				posCellRef[kk*(refinLvl-1)+ll]=celldatstruct[ii].refineVec[ll];
-			}
-			kk++;
-		}
-	}
-	printf("%i",kk);
-	posRefV=(int*)realloc(posRefV,kk*sizeof(int));
-	posCellRef=(int*)realloc(posCellRef,kk*sizeof(int)*(refinLvl-1));
-	
-	nPosRefine=kk;
-	posGridRef=(int*)calloc(nCellGrid,sizeof(int));
-	kk=0;
-	
-	// Match vectors to cell location 
-	// -> Note will be more efficient to remove 
-	//		vectors which are the same and then do this step
-	printf("\n");
-	for (ii=0;ii<nPosRefine;ii++){
-		for (jj=0;jj<nCellGrid;jj++){
-			ll=0;
-			while((cellstruct[jj].refineVec[ll]==posCellRef[ii*(refinLvl-1)+ll])
-				& (ll<(refinLvl-1))){
-				ll++;
-				printf("%i ",ll);
-			}
-			if ((ll)==(refinLvl-1)){
-				posGridRef[kk]=jj;
-				kk++;
-				printf("\n");
-				break;
-			}
-		}
-	}
-	
-	if (kk==0){printf("ERROR: The specified refineVec does not exist");}
-	
-	posGridRef=(int*)realloc(posGridRef,kk*sizeof(int));
-	/*
-	// Checks - Seem to work
-	printf("\n");
-	for (ii=0;ii<kk;ii++) {
-		printf("%i - ",posGridRef[ii]);
-		for (jj=0;jj<(refinLvl-1);jj++){
-			printf("%i ",cellstruct[posGridRef[ii]].refineVec[jj]);
-		}
-		printf("\n");
-	}
-	
-	
-	//printf("\n");
-	//for (ii=0;ii<kk;ii++) {printf("%i ",posCellRef[ii]);}
-	//printf("\n");
-	*/
-	
-	qsort(posGridRef,nPosRefine,sizeof(int),SortOrder);
-	jj=1;
-	printf("\n");
-	for (ii=1;ii<nPosRefine;ii++){
-		if (posGridRef[ii]>posGridRef[jj-1]){
-			posGridRef[jj]=posGridRef[ii];
-			jj++;
-			//printf("%i ", jj);
-		}
-	}
-	posGridRef=(int*)realloc(posGridRef,jj*sizeof(int));
-	indGridRef=(int*)calloc(jj,sizeof(int));
-	for(ii=0;ii<jj;ii++){
-		indGridRef[ii]=cellstruct[posGridRef[ii]].index;
-	}
-	/*
-	printf("\n");
-	for (ii=0;ii<jj;ii++){
-		printf("%i - ",posGridRef[ii]);
-		for (ll=0;ll<(refinLvl-1);ll++){
-			printf("%i ",cellstruct[posGridRef[ii]].refineVec[ll]);
-		}
-		printf("\n");
-	}
-	*/
-	
-	free(posRefV);
-	free(posCellRef);
-	free(posGridRef);
-}
-
 int SortOrder(const void * elem1, const void * elem2) {
     int f = *((int*)elem1);
     int s = *((int*)elem2);
@@ -422,14 +518,27 @@ int SortOrder(const void * elem1, const void * elem2) {
 
 void GenerateGrid(){
 	int ii;
-	int *posRefine;
+	int *posCellRefine=NULL,*indCellRefine=NULL,*posEdgeRefine=NULL,*indEdgeRefine=NULL;
+	int domSize[dim];
+	int nCellRefine=0, nEdgeRefine=0;
 	GridInitialisation();
 	
 	for (ii=2;ii<=nLevels;ii++){
 		GenerateTemplateGrid(ii);
 		
-		IdentifyRefineCell(ii);
+		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
+		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
+				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine);
+				
+		domSize[0]=levelSize[2*(ii-1)];
+		domSize[1]=levelSize[2*(ii-1)+1];
 		
+		RefineSelectedEdges(domSize,posEdgeRefine,indEdgeRefine,nEdgeRefine);
+		
+		free(posCellRefine);
+		free(indCellRefine);
+		free(posEdgeRefine);
+		free(indEdgeRefine);
 	}
 }
 
@@ -469,3 +578,58 @@ void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList){
 	}
 
 }
+
+// Utilities
+void* ArrayFromStruct(void* ptr, int nStruct, int sizMember, int sizType){
+	int ii;
+	void *dest;
+	dest=calloc(nStruct,sizType);
+	
+	for(ii=0;ii<nStruct;ii++){
+		memcpy((dest+ii*sizType),(ptr+(ii*sizMember)),sizType);
+	}
+	return(dest);
+}
+
+void RemoveIdenticalEntries_int(int **array, int nArray, int *nNewArray){
+	
+	int jj,ii;
+	
+	qsort((*array),nArray,sizeof(int),SortOrder);
+	jj=1;
+	printf("\n");
+	for (ii=1;ii<nArray;ii++){
+		if ((*array)[ii]>(*array)[jj-1]){
+			(*array)[jj]=(*array)[ii];
+			jj++;
+			//printf("%i ", jj);
+		}
+	}
+	(*array)=(int*)realloc((*array),jj*sizeof(int));
+	*nNewArray=jj;
+}
+
+int min_array(int *array, int nArray){
+	int ii,minNum;
+	minNum=array[0];
+	for (ii=1;ii<nArray;ii++){
+		minNum=min(minNum,array[ii]);
+	}
+	return(minNum);
+}
+
+int max_array(int *array, int nArray){
+	int ii,minNum;
+	minNum=array[0];
+	for (ii=1;ii<nArray;ii++){
+		minNum=max(minNum,array[ii]);
+	}
+	return(minNum);
+}
+
+int imin(int a, int b){return (((a>b)*b)+((a<b)*a));}
+int imax(int a, int b){return (((a<b)*b)+((a>b)*a));}
+float f_min(float a, float b){return (((a>b)*b)+((a<b)*a));}
+float f_max(float a, float b){return (((float)(a<b)*b)+((float)(a>b)*a));}
+
+

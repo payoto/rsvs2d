@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #ifndef TEMPLATEGRID_H_INCLUDED
 #define TEMPLATEGRID_H_INCLUDED
 // Type Definitions
@@ -14,7 +15,7 @@ typedef struct {
 	int index;
 	int cellind[2];
 	int vertex[2];
-	
+	int orientation; // 1 is vertical 0 is Horizontal
 } edgeTemplate;
 
 typedef struct {
@@ -47,6 +48,9 @@ void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
 void CalculateNumElements(int domSize[dim],int *nCellCurr,int *nEdgeCurr,int *nVertCurr);
 
+// Macros
+#define max(a,b) ({ typeof(a) _a = (a);  typeof(b) _b = (b);  _a > _b ? _a : _b; })
+#define min(a,b) ({ typeof(a) _a = (a);  typeof(b) _b = (b);  _a < _b ? _a : _b; })
 
 //void OutputTemplateGrid(int domSize[dim], int lvlGrid);
 //void GenerateTemplateGrids();
