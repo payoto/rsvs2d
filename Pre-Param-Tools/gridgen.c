@@ -692,7 +692,19 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	free(newOrder);
 }
 
-void RefineCell(int domSize[dim],int posCellRefine,int indCellRefine){
+void MergeNewCell(int domSize[dim], int *posEdgeSideTemp,int *posVertSideTemp,int *posCellAddTemp,
+	int *posEdgeAddTemp, int *posVertAddTemp, int *ordPosEdge, int *ordPosVert, int nCurrEdge){
+	
+	
+	int nCellTemplate,nEdgeTemplate,nVertTemplate;
+	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
+	
+	
+	
+}
+
+void RefineCell(int domSize[dim],int posCellRefine,int indCellRefine,int *posEdgeSideTemp,
+		 int *posVertSideTemp,int *posCellAddTemp,int *posEdgeAddTemp, int *posVertAddTemp){
 	
 	int ii;
 	int *posCurrEdge=NULL,*indCurrEdge=NULL;
@@ -711,7 +723,8 @@ void RefineCell(int domSize[dim],int posCellRefine,int indCellRefine){
 	ExtractEdgeChain(posCurrEdge, indCurrEdge,nCurrEdge ,ordPosEdge, ordIndEdge, ordIndVert,edgestruct);
 	OrderEdgeChain(nCurrEdge, ordPosEdge, ordIndEdge, ordIndVert,ordPosVert);
 	
-	
+	MergeNewCell(domSize, posEdgeSideTemp, posVertSideTemp, posCellAddTemp,
+		posEdgeAddTemp,  posVertAddTemp,  ordPosEdge,  ordPosVert,nCurrEdge);
 	//printf("\n");
 	//for (ii=0;ii<nCurrEdge;ii++)
 	//	printf("nOrdered: %i  ; Ordered Vert: %i ; Ordered Edge: %i \n",indCurrEdge[ii],ordIndEdge[ii],ordIndVert[ii]);
@@ -728,31 +741,34 @@ int* OppositeList(int *fullList, int *partial, int nFull, int nPart){
 	int ii,jj,kk,test;
 	int *oppList=NULL;
 	
-	oppList=(int*)calloc(nFull-nPart,sizeof(int));
+	oppList=(int*)calloc(nFull-nPart+1,sizeof(int));
 	kk=0;
 	for(ii=0;ii<nFull;ii++){
 		jj=0;
 		do{
-			test=-abs(fullList[ii]-partial[jj])*nPart+jj;
+			test=fullList[ii]!=partial[jj];
 			jj++;
-		} while((test!=(jj-1)) & (jj<nPart));
+		} while (test & (jj<nPart));
 		oppList[kk]=fullList[ii];
-		kk=kk+(jj==nPart);
+		kk=kk+((jj==nPart) & test);
 	}
+	oppList=(int*)realloc(oppList,(nFull-nPart)*sizeof(int));
 	
-	if (kk!=(nFull-nPart))
-		printf("OppositeList Not Working as expected");exit(EXIT_FAILURE);
+	if (kk!=(nFull-nPart)){
+		printf("OppositeList Not Working as expected\n");
+		printf("%i %i %i",kk, nFull, nPart);
+		exit(EXIT_FAILURE);
+	}
 	
 	return(oppList);
 }
 
-void PrepareTemplateInfo(int domSize[dim],int **posEdgeSide,int **posVertSide,int **posCellAdd){
-//(int **posEdgeAdd,int **posVertAdd,int **posCellAdd){
+void PrepareTemplateInfo(int domSize[dim],int **posEdgeSide,int **posVertSide,int **posCellAdd,
+		int **posEdgeAdd,int **posVertAdd){
 	
 	int ii;
 	int *posCurrEdge=NULL,*indCurrEdge=NULL, indCellRefine[4]={-1,-2,-3,-4};
 	int *ordIndEdge=NULL, *ordIndVert=NULL, *listTempEdge=NULL,*listTempVert=NULL;
-	
 	int nCurrEdge;
 	
 	int nCellTemplate,nEdgeTemplate,nVertTemplate;
@@ -780,21 +796,28 @@ void PrepareTemplateInfo(int domSize[dim],int **posEdgeSide,int **posVertSide,in
 	*posEdgeAdd=(int*)OppositeList(listTempEdge, *posEdgeSide, nEdgeTemplate, nCurrEdge);
 	*posVertAdd=(int*)OppositeList(listTempVert, *posVertSide, nVertTemplate, nCurrEdge);
 	
-	//free(posCurrEdge);
+	free(posCurrEdge);
 	free(indCurrEdge);
 	//free(ordPosEdge);
 	free(ordIndEdge);
 	free(ordIndVert);
+	free(listTempEdge);
+	free(listTempVert);
 }
 
 void RefineSelectedCells(int domSize[dim],int *posCellRefine,int *indCellRefine,int nCellRefine){
 	
 	int ii,jj,kk,ll;
-	int *posEdgeSideTemp=NULL, *posVertSideTemp=NULL, *posCellAdd=NULL;
-	PrepareTemplateInfo(domSize,&posEdgeSideTemp,&posVertSideTemp,&posCellAdd);
+	int *posEdgeSideTemp=NULL, *posVertSideTemp=NULL, *posCellAddTemp=NULL;
+	int *posEdgeAddTemp=NULL, *posVertAddTemp=NULL;
+	PrepareTemplateInfo(domSize,&posEdgeSideTemp,&posVertSideTemp,&posCellAddTemp,
+			&posEdgeAddTemp, &posVertAddTemp);
+	
+	
 	
 	for(ii=0;ii<nCellRefine;ii++){
-		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii]);
+		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii],posEdgeSideTemp,
+		 posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
 	}
 	
 	
