@@ -31,8 +31,6 @@ void AllocateGridStruct(int domSize[dim],
 	//printf("size vertstructTempOut %i\n",nVertCurr * sizeof(vertexTemplate));
 	//printf("size edgestructTempOut %i\n",nEdgeCurr * sizeof(edgeTemplate));
 	//printf("size cellstructTempOut %i\n",nCellCurr * (sizeof(cellTemplate)+nLevels*sizeof(int)));
-	
-	
 	//printf("Size of Allocated Cell %i\n",nCellCurr * sizeof(cellTemplate));
 	
 	*vertstructTempOut=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
