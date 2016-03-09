@@ -5,7 +5,8 @@ include_GridCheck
 include_SnakeParam
 
 
-checkTemplate2
+checkGrid3
+
 CheckGrid(templateGrid)
 cellIndList=vertcat(templateGrid.edge(:).cellindex);
 cellIndList(cellIndList<0)=0;
