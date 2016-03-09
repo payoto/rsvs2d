@@ -182,7 +182,7 @@ void CellIJGrid(int domSize[dim],int IJK[dim], int baseRefineLvl){
 	cellstructTemp[cellSub].index=IJK[0]+(IJK[1]-1)*domSize[0];
 	cellstructTemp[cellSub].fill=0;
 	cellstructTemp[cellSub].refineLvl=baseRefineLvl;
-	cellstructTemp[cellSub].refineVec[baseRefineLvl-1]=IJK[0]+(IJK[1]-1)*domSize[1];
+	cellstructTemp[cellSub].refineVec[baseRefineLvl-1]=IJK[0]+(IJK[1]-1)*domSize[0];
 
 }
 
@@ -281,21 +281,31 @@ void CalculateNumElements(int domSize[dim],int *nCellCurr,int *nEdgeCurr,int *nV
 	*nVertCurr=(domSize[0]+1)*(domSize[1]+1);
 }
 
+void MemCopyCellStruct(cellTemplate *original, cellTemplate *destination, int nElm){
+	int ii;
+	for(ii=0;ii<nElm;ii++){
+		memcpy(&(destination[ii].index),&(original[ii].index),(sizeof(cellTemplate)-sizeof(int*)));
+		memcpy(&(destination[ii].refineVec[0]),&(original[ii].refineVec[0]),sizeof(int)*nLevels);
+	}
+	
+}
+
 void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
 	
 	//cellstructTemp=cellstructTempOut;
 	//vertstructTemp=vertstructTempOut;
 	//edgestructTemp=edgestructTempOut;
+	int ii,jj,kk;
 	
 	nLevels=nLevelsInput;
 	AllocateGridStruct(domSize,cellstructTempOut,vertstructTempOut,edgestructTempOut);
 	AllocateGridStruct(domSize,&cellstructTemp,&vertstructTemp,&edgestructTemp);
-	printf("Allocated the things\n");
+	//printf("Allocated the things\n");
 	AssignVertextructContent(domSize);
 	AssignEdgestructContent(domSize);
 	AssignCelltructContent(domSize,baseRefineLvl);
-	printf("Generated the template\n");
+	//printf("Generated the template\n");
 	//*cellstructTempOut=cellstructTemp;
 	//*vertstructTempOut=vertstructTemp;
 	//*edgestructTempOut=edgestructTemp;
@@ -317,9 +327,32 @@ void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	CalculateNumElements(domSize,nCellP,nEdgeP,nVertP);
 	
 	//printf("Size of Copied Cell in function %i\n",sizeof(*cellstructTemp)*(nCellCurr));
-	memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp)*(nCellCurr));
-	memcpy(*vertstructTempOut,vertstructTemp,sizeof(*vertstructTemp)*(nVertCurr));
-	memcpy(*edgestructTempOut,edgestructTemp,sizeof(*edgestructTemp)*(nEdgeCurr));
+	
+	memcpy(*vertstructTempOut,vertstructTemp,sizeof(vertexTemplate)*(nVertCurr));
+	memcpy(*edgestructTempOut,edgestructTemp,sizeof(edgeTemplate)*(nEdgeCurr));
+	//memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp)*(nCellCurr));
+	MemCopyCellStruct(cellstructTemp,*cellstructTempOut,nCellCurr);
+	/*
+		printf("\n Template \n");
+	for(jj=0;jj<nCellCurr;jj++){
+	
+		printf("%i ",cellstructTemp[jj].index);
+		for(kk=0;kk<nLevels;kk++){
+			printf("%i ",cellstructTemp[jj].refineVec[kk]);
+		}
+		printf("\n");
+	}
+	
+		printf("\n Return \n");
+	for(jj=0;jj<nCellCurr;jj++){
+	
+		printf("%i ",(*cellstructTempOut)[jj].index);
+		for(kk=0;kk<nLevels;kk++){
+			printf("%i ",(*cellstructTempOut)[jj].refineVec[kk]);
+		}
+		printf("\n");
+	}
+	*/
 	/*
 	//printf("\n*****  &(cellstructTemp[0].index) in function is: %d\n",&(cellstructTempOut[0].index));
 	//printf("*****  (cellstructTemp[0].index) in function is: %d\n",(cellstructTempOut[0].index));

@@ -47,6 +47,7 @@ void AssignCelltructContent(int domSize[dim], int baseRefineLvl);
 void BuildLvlTemplate(int domSize[dim], int baseRefineLvl, int nLevelsInput,
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
 void CalculateNumElements(int domSize[dim],int *nCellCurr,int *nEdgeCurr,int *nVertCurr);
+void MemCopyCellStruct(cellTemplate *original, cellTemplate *destination, int nElm);
 
 // Macros
 #define max(a,b) ({ typeof(a) _a = (a);  typeof(b) _b = (b);  _a > _b ? _a : _b; })
