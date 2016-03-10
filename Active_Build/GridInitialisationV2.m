@@ -229,7 +229,7 @@ function [unstructured]=Initialisation_Square(typDat)
     arraySize=nGridSteps;
     
     WriteCellGridDat(arraySize);
-    [unstructReshape.edge,unstructReshape.vertex,unstructReshape.cell]=GridInit_MEX;
+    [unstructReshape]=GridInit_MEX;
     for ii=1:length(unstructReshape.cell)
         unstructReshape.cell(ii).fill=parametrisation.fill(ii);
     end
@@ -237,6 +237,7 @@ function [unstructured]=Initialisation_Square(typDat)
         unstructReshape.edge(ii).cellindex(unstructReshape.edge(ii).cellindex<0)=0;
     end
     unstructured=ModifReshape(unstructReshape);
+    
 end
 
 function [unstructured]=CellVertexIndex(unstructured)
