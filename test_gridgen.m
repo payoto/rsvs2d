@@ -1,11 +1,11 @@
 %% Test the template file
 
 clear templateGrid
-include_GridCheck
-include_SnakeParam
+%include_GridCheck
+%include_SnakeParam
 
 
-checkGrid3
+[templateGrid.edge,templateGrid.vertex,templateGrid.cell]=GridInit_MEX;
 
 CheckGrid(templateGrid)
 cellIndList=vertcat(templateGrid.edge(:).cellindex);
@@ -21,7 +21,7 @@ for ii=1:length(templateGrid.cell),
 end
 
 %% Memory requirement
-
+%{
 vec=[1:100:10001];
 n=1;
 [xGrid,yGrid]=meshgrid(vec,vec);
@@ -39,3 +39,4 @@ end
 figure
 c=contour(xGrid,yGrid,mem/(1e9));
 clabel(c);
+%}
