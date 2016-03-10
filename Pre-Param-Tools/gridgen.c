@@ -188,7 +188,7 @@ void OutputTemplateGrid(int domSize[dim], int lvlGrid){
 	sprintf(fileName,"checkTemplate%i.m",lvlGrid);
 	checkFID=fopen(fileName,"w");
 	free(fileName);
-	printf("\n checkTemplate%i.m... ",lvlGrid);
+	printf("\n    OUTPUT: checkTemplate%i.m... ",lvlGrid);
 	for (ii=0;ii<=nEdgeCurr-1;ii++){
 		fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgeCurrentTemplate[ii].index);
 		
@@ -212,7 +212,7 @@ void OutputTemplateGrid(int domSize[dim], int lvlGrid){
 		fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertCurrentTemplate[ii].coord[1]);
 		
 	} 
-	printf(" done!\n");
+	printf(" done!");
 	fclose(checkFID);
 	
 }
@@ -224,7 +224,7 @@ void OutputGrid(int jj){
 	FILE *checkFID;
 	sprintf(fileName,"checkGrid%i.m",jj);
 	checkFID=fopen(fileName,"w");
-	printf("\n Output of Checkgrid - %i ", jj);
+	printf("\n    OUTPUT: Checkgrid%i.m ", jj);
 	for (ii=0;ii<nEdgeGrid;ii++){
 		fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgestruct[ii].index);
 		
@@ -248,7 +248,7 @@ void OutputGrid(int jj){
 		fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertstruct[ii].coord[1]);
 		
 	} 
-	printf(" done!\n");
+	printf(" done!");
 	fclose(checkFID);
 	
 }
@@ -566,7 +566,7 @@ int LowerLeftVertex(double *coordList, int nEdge){
 	return(minPos);
 }
 
-double* ExtractCoord(int nEdge, int *ordIndVert,int * ordPosVert, vertexTemplate *vertstructAct){
+double* ExtractCoord(int nEdge, int *ordIndVert,int * ordPosVert, vertexTemplate *vertstructAct, int nVertAct){
 	int ii,jj;
 	double *coordList=NULL;
 	int *listIndVert=NULL;
@@ -575,10 +575,10 @@ double* ExtractCoord(int nEdge, int *ordIndVert,int * ordPosVert, vertexTemplate
 	coordList=(double*)calloc(dim*nEdge,sizeof(double));
 	
 	
-	for(ii=0;ii<nVertGrid;ii++){
+	for(ii=0;ii<nVertAct;ii++){
 		listIndVert[ii]=vertstructAct[ii].index;
 	}
-	FindObjNum(ordIndVert,listIndVert,ordPosVert,nEdge,nVertGrid);
+	FindObjNum(ordIndVert,listIndVert,ordPosVert,nEdge,nVertAct);
 	
 	for(ii=0;ii<nEdge;ii++){
 		for(jj=0;jj<dim;jj++){
@@ -615,13 +615,13 @@ double* ExtractAngles(double *vecTest, int nVec, int nDim){
 	return(angles);
 }
 
-int IsClockWiseChain(int *minVertPosRet,int nEdge, int *ordIndVert, int *ordPosVert, vertexTemplate *vertstructAct){
+int IsClockWiseChain(int *minVertPosRet,int nEdge, int *ordIndVert, int *ordPosVert, vertexTemplate *vertstructAct, int nVertAct){
 	int ii,jj;
 	int minVertPos,cwPos;
 	double *coordList=NULL, *angleTest=NULL, vecTest[2*dim];
 	int vertPosTest[2];
 	
-	coordList=(double*)ExtractCoord(nEdge, ordIndVert,ordPosVert, vertstructAct);
+	coordList=(double*)ExtractCoord(nEdge, ordIndVert,ordPosVert, vertstructAct,nVertAct);
 	minVertPos=LowerLeftVertex(coordList,nEdge);
 	
 	vertPosTest[0]=minVertPos-1;
@@ -636,10 +636,11 @@ int IsClockWiseChain(int *minVertPosRet,int nEdge, int *ordIndVert, int *ordPosV
 	}
 	angleTest=(double*)ExtractAngles( vecTest,2,dim);
 	cwPos=pos_fmax_array(angleTest,2);
-	printf("\ncw? %i angles: %lf %lf \n",cwPos,angleTest[0],angleTest[1]);
-	printf("vertprec %i vert next %i \n",ordIndVert[vertPosTest[0]],ordIndVert[vertPosTest[1]]);
+	//printf("\ncw? %i angles: %lf %lf \n",cwPos,angleTest[0],angleTest[1]);
+	//printf("vertprec %i vert next %i \n",ordIndVert[vertPosTest[0]],ordIndVert[vertPosTest[1]]);
 	
 	free(coordList);
+	free(angleTest);
 	*minVertPosRet=minVertPos;
 	return(cwPos);
 }
@@ -658,7 +659,7 @@ void ReorderArray(void *oldArray, int *newOrder ,int nArray, int sizArray){
 	free(tempArray);
 }
 
-void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert,int *ordPosVert, vertexTemplate *vertstructAct){
+void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert,int *ordPosVert, vertexTemplate *vertstructAct, int nVertAct){
 	
 	int ii,jj;
 	int minVertPos,cwPos;
@@ -666,9 +667,10 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	
 	newOrder=(int*)calloc(nEdge,sizeof(int));
 	
-	cwPos=IsClockWiseChain(&minVertPos,nEdge, ordIndVert, ordPosVert, vertstructAct);
-	printf("\n lower left corner detected as %i isCW %i\n",ordIndVert[minVertPos], cwPos);
+	cwPos=IsClockWiseChain(&minVertPos,nEdge, ordIndVert, ordPosVert, vertstructAct, nVertAct);
+	//printf("\n lower left corner detected as %i isCW %i\n",ordIndVert[minVertPos], cwPos);
 	//printf("\n  ");
+	/*
 	for(ii=0;ii<nEdge;ii++){
 		
 		printf("%i ",ordIndVert[ii]);
@@ -679,17 +681,18 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 		printf("%i ",ordIndEdge[ii]);
 	}
 	printf("\n");
+	*/
 	for(ii=0;ii<nEdge;ii++){
 		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*ii)%nEdge;
 		//printf("neworder: %i orderedPos: %i \n",newOrder[ii],ordIndVert[ii]);
 	}
 	ReorderArray(ordIndVert, newOrder ,nEdge, sizeof(int));
 	ReorderArray(ordPosVert, newOrder ,nEdge, sizeof(int));
-	
+	/*
 	for(ii=0;ii<nEdge;ii++){
 		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*(ii+1))%nEdge;
 		printf(" %i ",newOrder[ii]);
-	}
+	}*/
 	ReorderArray(ordPosEdge, newOrder ,nEdge, sizeof(int));
 	ReorderArray(ordIndEdge, newOrder ,nEdge, sizeof(int));
 	/*
@@ -806,7 +809,7 @@ void CopyEdgeStruct(int nCurrEdge,int domSize[dim],int *posEdgeAddTemp,
 	
 	int ii,jj,kk,ll;
 	int currPosGrid;
-	printf("\n");
+	//printf("\n");
 	for(ii=0;ii<(nEdgeTemplate-nCurrEdge);ii++){
 		currPosGrid=nEdgeGrid+ii;
 		memcpy(&(edgestruct[currPosGrid].index),&(edgeCurrentTemplate[posEdgeAddTemp[ii]].index),
@@ -942,17 +945,17 @@ void RefineCell(int domSize[dim],int posCellRefine,int indCellRefine,int *posEdg
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
 			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid);
 			
-	printf("\n***Number of Edge of Cell: %i",nCurrEdge);
+	//printf("\n***Number of Edge of Cell: %i",nCurrEdge);
 	ordPosEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndVert=(int*)calloc(nCurrEdge,sizeof(int));
 	ordPosVert=(int*)calloc(nCurrEdge,sizeof(int));		
 			
 	ExtractEdgeChain(posCurrEdge, indCurrEdge,nCurrEdge ,ordPosEdge, ordIndEdge, ordIndVert,edgestruct);
-	OrderEdgeChain(nCurrEdge, ordPosEdge, ordIndEdge, ordIndVert,ordPosVert, vertstruct);
-	printf("\nRefine Cell edge index list:\n");
+	OrderEdgeChain(nCurrEdge, ordPosEdge, ordIndEdge, ordIndVert,ordPosVert, vertstruct,nVertGrid);
+	/*printf("\nRefine Cell edge index list:\n");
 	for (ii=0;ii<nCurrEdge;ii++){printf("%i ",ordIndEdge[ii]);}
-	printf("\n");
+	printf("\n");*/
 	
 	MergeNewCell(domSize,posCellRefine, posEdgeSideTemp, posVertSideTemp, posCellAddTemp,
 		posEdgeAddTemp,  posVertAddTemp,  ordPosEdge,  ordPosVert,nCurrEdge);
@@ -1011,17 +1014,17 @@ void PrepareTemplateInfo(int domSize[dim],int **posEdgeSide,int **posVertSide,in
 	IdentifyRefineEdge(indCellRefine, indCellRefine,4,
 			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate);
 			
-	printf("\n***Number of Border Edges for template %i",nCurrEdge);
+	//printf("\n***Number of Border Edges for template %i",nCurrEdge);
 	*posEdgeSide=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndVert=(int*)calloc(nCurrEdge,sizeof(int));
 	*posVertSide=(int*)calloc(nCurrEdge,sizeof(int));		
 	
 	ExtractEdgeChain(posCurrEdge, indCurrEdge,nCurrEdge ,*posEdgeSide, ordIndEdge, ordIndVert,edgeCurrentTemplate);
-	OrderEdgeChain(nCurrEdge, *posEdgeSide, ordIndEdge, ordIndVert,*posVertSide, vertCurrentTemplate);
-	printf("\nPrepare template order edge index list:\n");
+	OrderEdgeChain(nCurrEdge, *posEdgeSide, ordIndEdge, ordIndVert,*posVertSide, vertCurrentTemplate,nVertTemplate);
+	/*printf("\nPrepare template order edge index list:\n");
 	for (ii=0;ii<nCurrEdge;ii++){printf("%i ",ordIndEdge[ii]);}
-	printf("\n");
+	printf("\n");*/
 	// Inside 
 	listTempEdge=(int*)calloc(nEdgeTemplate,sizeof(int));
 	listTempVert=(int*)calloc(nVertTemplate,sizeof(int));
@@ -1143,8 +1146,12 @@ void GenerateGrid(){
 	int *posCellRefine=NULL,*indCellRefine=NULL,*posEdgeRefine=NULL,*indEdgeRefine=NULL;
 	int domSize[dim];
 	int nCellRefine=0, nEdgeRefine=0;
+	printf("\n***** START GRID INITIALISATION *****\n");
 	GridInitialisation();
+	printf("\n    ACTION: Starting Grid Generated");
 	OutputGrid(1);
+	printf("\n\n");
+	
 	/*
 	printf("\n Edge Orientation\n");
 	for(jj=0;jj<nEdgeGrid;jj++){
@@ -1152,12 +1159,14 @@ void GenerateGrid(){
 		printf("\n");
 	}*/
 	for (ii=2;ii<=nLevels;ii++){
+		printf("\n***** START GRID REFINEMENT %i of %i *****\n",ii-1,nLevels-1);
 		GenerateTemplateGrid(ii);
-		
+		printf("\n    ACTION: Template Generated");
 		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
 		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
 				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid);
-				
+		
+		printf("\n    ACTION: Refinement Targets Identified");
 		domSize[0]=levelSize[2*(ii-1)];
 		domSize[1]=levelSize[2*(ii-1)+1];
 		/*
@@ -1167,6 +1176,7 @@ void GenerateGrid(){
 			printf("\n");
 		}*/
 		RefineSelectedEdges(domSize,posEdgeRefine,indEdgeRefine,nEdgeRefine);
+		printf("\n    ACTION: Edges Refined");
 		/*
 		printf("\n Edge Orientation post edge refine\n");
 		for(jj=0;jj<nEdgeGrid;jj++){
@@ -1174,6 +1184,7 @@ void GenerateGrid(){
 			printf("\n");
 		}*/
 		RefineSelectedCells(domSize,posCellRefine,indCellRefine,nCellRefine);
+		printf("\n    ACTION: Cells Refined");
 		/*
 		printf("\n Cells refine Vecs\n");
 		for(jj=0;jj<nCellGrid;jj++){
@@ -1197,6 +1208,7 @@ void GenerateGrid(){
 		free(indEdgeRefine);
 		DeAllocateTemplate(domSize);
 		OutputGrid(ii);
+		printf("\n\n");
 	}
 	
 	
@@ -1265,7 +1277,7 @@ void RemoveIdenticalEntries_int(int **array, int nArray, int *nNewArray){
 	
 	qsort((*array),nArray,sizeof(int),SortOrder);
 	jj=1;
-	printf("\n");
+	//printf("\n");
 	for (ii=1;ii<nArray;ii++){
 		if ((*array)[ii]>(*array)[jj-1]){
 			(*array)[jj]=(*array)[ii];
