@@ -27,11 +27,11 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     % ACTUALLY DOING STUFF
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
-    
+    %profile on
     [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
         oldGrid,oldGridUns,connectionInfo,param);
-    
+    %profile viewer
     
     
     figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])

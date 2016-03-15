@@ -32,7 +32,7 @@ function []=GridInit_Wrapper()
     
 end
 
-function refinedGrid=GridRefine_Wrapper(grid,cellRefInd,refineSplit)
+function  [refinedGrid,connec]=GridRefine_Wrapper(grid,cellRefInd,refineSplit)
     
     % Minimize work by modifying position vector in grid?
     refineVecs=vertcat(grid.cell(:).refineVec);
@@ -55,11 +55,16 @@ function refinedGrid=GridRefine_Wrapper(grid,cellRefInd,refineSplit)
         error('Cell Not right');
         
     end
+    if sum(cellRefPos<0)
+        error('Invalid Cell Specified for refinement');
+    end
     nRefine=length(cellRefInd);
-    refinedGrid=GridRefine_MEX(nLevels,levelSize,...
+    [refinedGrid,connec]=GridRefine_MEX(nLevels,levelSize,...
                     nCell,nEdge,nVert,grid,...
                     nRefine,cellRefInd,cellRefPos);
+    clear GridRefine_MEX
     if ~exist('refinedGrid','var'),error('refinedGrid not assigned during call to GridREfine_MEX');end
+    if ~exist('connec','var'),conec=[];warning('connec not assigned during call to GridREfine_MEX');end
     %refinedGrid=grid;
     
 end

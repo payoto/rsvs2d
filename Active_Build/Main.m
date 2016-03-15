@@ -187,12 +187,12 @@ function [loop]=SubdivisionSurface(loop,refineSteps,typeBound)
     for ii=1:length(loop)
         startPoints=loop(ii).(typeBound).coord;
         loop(ii).isccw=CCWLoop(startPoints);
-        newPoints=SubSurfChainkin(startPoints,refineSteps);
+        newPoints=SubSurfChainkin(startPoints(1:end-2,:),refineSteps);
         loop(ii).subdivision=newPoints;
     end
 end
 
-function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
+function [newPoints]=SubSurfChainkin2(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
 
     
@@ -215,6 +215,60 @@ function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
     end
 end
 
+function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
+    % Implements a Chainkin subdivision process
+    TEisLeft=0;
+    chainkinNoCorn=zeros([4,3]);
+    chainkinNoCorn(1:4,2)=[0.25;0.75;0.75;0.25];
+    
+    chainkinCorn=zeros([5,3]);
+    chainkinCorn(1:5,1)=[0;0.25;0;0;0];
+    chainkinCorn(1:5,2)=[0.25;0.5;1;0.5;0.25];
+    chainkinCorn(1:5,3)=[0;0;0;0.25;0];
+    
+    
+    
+    newPoints=startPoints;
+    for nIter=1:refineSteps
+        numPoints=length(startPoints(:,1));
+        isCorner=DetectTrailingEdge(startPoints,TEisLeft);
+        cumCorner=cumsum(isCorner);
+        numNewPoints=(numPoints*2+cumCorner(end));
+        subMask=zeros(numNewPoints,numPoints);
+        
+        for ii=0:numPoints-1
+            iStart=ii-1;
+            jStart=ii*2+cumCorner(ii+1)-isCorner(ii+1);
+            
+            if isCorner(ii+1)
+                nJ=5;
+                chainkinMask=chainkinCorn;
+            else
+                nJ=4;
+                chainkinMask=chainkinNoCorn;
+            end
+            indX=zeros(1,3);
+            indY=zeros(1,nJ);
+            for iLoop=1:3
+                indX(iLoop)=mod(iStart+(iLoop-1),numPoints)+1;
+            end
+            for jLoop=1:nJ
+                indY(jLoop)=mod(jStart+(jLoop-1),numNewPoints)+1;
+            end
+            
+            subMask(indY,indX)=chainkinMask+subMask(indY,indX);
+        end
+        newPoints=subMask*startPoints;
+        startPoints=newPoints;
+        
+    end
+end
+function isCorner=DetectTrailingEdge(coord,TEisLeft)
+    TEisLeft=(TEisLeft-0.5)*2;
+    testLocMin=((TEisLeft*(coord([2:end,1],1)-coord(:,1)))>0) ...
+        & ((TEisLeft*(coord([end,1:end-1],1)-coord(:,1)))>0);
+    isCorner=testLocMin;
+end
 %% Plot Functions
 function []=CheckResults(unstructured,loop,typeBound)
     global nDim domainBounds
