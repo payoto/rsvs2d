@@ -31,3 +31,35 @@ function []=GridInit_Wrapper()
     clear GridInit_MEX
     
 end
+
+function refinedGrid=GridRefine_Wrapper(grid,cellRefInd,refineSplit)
+    
+    % Minimize work by modifying position vector in grid?
+    refineVecs=vertcat(grid.cell(:).refineVec);
+    
+    [grid.cell(:).refineVec]=deal(grid.cell(:).index);
+    [grid.cell(:).refineLvl]=deal(1);
+    sizCell=size(cellRefInd);
+    nCell=length(grid.cell);
+    nEdge=length(grid.edge);
+    nVert=length(grid.vertex);
+    nLevels=2;
+    levelSize=[1 nCell refineSplit];
+    
+    if sizCell(2)==1
+        cellRefPos=FindObjNum([],cellRefInd,[grid.cell(:).index])-1;
+    elseif sizCell(2)==2
+        cellRefPos=cellRefInd(:,2)-1;
+        cellRefInd=cellRefInd(:,1);
+    else
+        error('Cell Not right');
+        
+    end
+    nRefine=length(cellRefInd);
+    refinedGrid=GridRefine_MEX(nLevels,levelSize,...
+                    nCell,nEdge,nVert,grid,...
+                    nRefine,cellRefInd,cellRefPos);
+    if ~exist('refinedGrid','var'),error('refinedGrid not assigned during call to GridREfine_MEX');end
+    %refinedGrid=grid;
+    
+end

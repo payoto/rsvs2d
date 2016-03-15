@@ -1,1910 +1,710 @@
- Parametrisation\source\Active_Build\Main.m',35,0)">line 35</a>)
-        [param,unstructured,unstructuredrefined,loop,connectstructinfo...} 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+GENERATION PROCESS START
+
+Calculations Started . . .
+***** START GRID INITIALISATION *****
+
+    ACTION: Starting Grid Generated
+Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
+
+Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
+done !
+Reshaping
+Time taken:00:00:00:145
+GENERATION PROCESS end
+GRID REFINEMENT START
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',45,1)">45  </a>    gridrefined=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]',[nRefine nRefine])
+if system_dependent('IsDebugMode')==1, dbstep; end
+
+Calculations Started . . .
+
+
+***** START GRID REFINEMENT 1 of 1 *****
+
+    ACTION: Template Generated
+    ACTION: Refinement Targets Identified
+    ACTION: Edges Refined
+    ACTION: Cells Refined
+
+done !
+Grid . . .Edge . . .Vertex . . .Cell . . .
+gridrefined = 
+
+      edge: [2180x1 struct]
+    vertex: [1133x1 struct]
+      cell: [1048x1 struct]
+
+nRefine
+
+nRefine =
+
+     8
+
+clc
 [unstructured,loop,unstructReshape,snakSave]=Main('SnakesFoilVVSmall')
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 GENERATION PROCESS START
+
+Calculations Started . . .
+***** START GRID INITIALISATION *****
+
+    ACTION: Starting Grid Generated
+Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
+
+Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
+done !
 Reshaping
-Time taken:00:00:00:477
+Time taken:00:00:00:133
 GENERATION PROCESS end
 GRID REFINEMENT START
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',233,1)">233 </a>    gridreshape.cell=[gridreshape.cell,adaptedtemplate.cell];
-gridreshape.cell
 
-ans = 
+Calculations Started . . .
 
-1x39 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
 
-    index
-    fill
-    refineLvl
-    refineVec
-    coord
-    vertexindex
+***** START GRID REFINEMENT 1 of 1 *****
 
-adaptedtemplate.cell
+    ACTION: Template Generated
+    ACTION: Refinement Targets Identified
+    ACTION: Edges Refined
+    ACTION: Cells Refined
 
-ans = 
+done !
+Grid . . .Edge . . .Vertex . . .Cell . . .Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement>RefineGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m', 41)" style="font-weight:bold">GridRefinement>RefineGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',41,0)">line 41</a>)
+    [gridreshape.cell(:).coord]=deal([]);
 
-1x64 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+{Output argument "connecstructinfo" (and maybe others) not assigned during call to "GridRefinement>RefineGrid".
 
-    index
-    fill
-    coord
-    vertexindex
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m', 28)" style="font-weight:bold">GridRefinement</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',28,0)">line 28</a>)
+    [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
 
-if system_dependent('IsDebugMode')==1, dbquit; end
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteGridRefinement', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 142)" style="font-weight:bold">Main>ExecuteGridRefinement</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',142,0)">line 142</a>)
+    [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 85)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',85,0)">line 85</a>)
+    [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)
+        [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(888) : error C2059: syntax error : ')'
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(889) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(108) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(110) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(112) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(135) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(137) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(153) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(155) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(157) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(159) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(190) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(192) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(209) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(215) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(240) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(242) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(258) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(260) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(280) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(282) : warning C4090: 'function' : different 'const'
+qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(888) : error C2059: syntax error : ')'
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(889) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(108) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(110) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(112) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(135) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(137) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(153) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(155) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(157) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(159) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(190) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(192) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(209) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(215) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(240) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(242) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(258) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(260) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(280) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(282) : warning C4090: 'function' : different 'const'
+qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+clc
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(888) : error C2059: syntax error : ')'
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(889) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const' qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+clc
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const' qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const'
+qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+clc
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const' qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const' qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const'
+qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+clear all
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+GridInit_MEX.c
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
+c:\users\ap1949\local documents\phd\development work\snakes volume
+parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const'
+qualifiers
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const'
+qualifiers
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
+Compile_Mex
+Building with 'Microsoft Visual C++ 2013 Professional (C)'.
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
+LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
+Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
+
+
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+} 
 clc
 close all
 clear all
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926)
-: warning C4101: 'kk' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926)
-: warning C4101: 'll' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926)
-: warning C4101: 'jj' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089)
-: warning C4101: 'jj' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233)
-: warning C4101: 'kk' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233)
-: warning C4101: 'll' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233)
-: warning C4101: 'jj' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261)
-: warning C4101: 'kk' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261)
-: warning C4101: 'll' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295)
-: warning C4101: 'kk' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295)
-: warning C4101: 'll' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327)
-: warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369)
-: warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476)
-: warning C4101: 'kk' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476)
-: warning C4101: 'll' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476)
-: warning C4101: 'jj' : unreferenced local variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(52)
-: warning C4013: 'OutputGridStruct' undefined; assuming extern returning int
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(54)
-: error C2143: syntax error : missing ';' before 'return'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(57)
-: error C2371: 'OutputGridStruct' : redefinition; different basic types
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(60)
-: error C2148: total size of array must not exceed 0x7fffffff bytes
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(65)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(67)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(69)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71)
-: error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71)
-: warning C4047: 'function' : 'mxArray **' differs in levels of indirection from
-'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71)
-: warning C4024: 'OutputEdgestruct' : different types for formal and actual
-parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71)
-: error C2095: 'mxSetField_700' : actual parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71)
-: error C2198: 'mxSetField_700' : too few arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72)
-: error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72)
-: warning C4047: 'function' : 'mxArray **' differs in levels of indirection from
-'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72)
-: warning C4024: 'OutputEdgestruct' : different types for formal and actual
-parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72)
-: error C2095: 'mxSetField_700' : actual parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72)
-: error C2198: 'mxSetField_700' : too few arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73)
-: error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73)
-: warning C4047: 'function' : 'mxArray **' differs in levels of indirection from
-'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73)
-: warning C4024: 'OutputEdgestruct' : different types for formal and actual
-parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73)
-: error C2095: 'mxSetField_700' : actual parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73)
-: error C2198: 'mxSetField_700' : too few arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(87)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(89)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(91)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(124)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(126)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(141)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(143)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(145)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(147)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(172)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(174)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(187)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(189)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(209)
-: warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211)
-: warning C4090: 'function' : different 'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(52) : warning C4013: 'OutputGridStruct'
-undefined; assuming extern returning int
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(54) : error C2143: syntax error : missing ';'
-before 'return'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(57) : error C2371: 'OutputGridStruct' :
-redefinition; different basic types
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(60) : error C2148: total size of array must
-not exceed 0x7fffffff bytes
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(65) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(67) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(69) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(71) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(87) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(89) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(91) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(124) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(126) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(141) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(143) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(145) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(147) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(172) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(174) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(187) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(189) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(209) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(61) : error C2148: total size of array must
-not exceed 0x7fffffff bytes
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(66) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(68) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(70) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(88) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(90) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(92) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(125) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(127) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(142) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(144) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(146) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(148) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(173) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(175) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(188) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(190) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(210) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(61) : error C2148: total size of array must not
-exceed 0x7fffffff bytes
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(66) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(68) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(70) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2095: 'mxSetField_700' : actual
-parameter has type 'void' : parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2198: 'mxSetField_700' : too few
-arguments for call
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(88) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(90) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(92) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(125) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(127) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(142) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(144) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(146) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(148) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(173) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(175) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(188) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(190) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(210) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(61) : error C2148: total size of array must not
-exceed 0x7fffffff bytes
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(66) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(68) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(70) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4047: 'function' : 'mxArray **'
-differs in levels of indirection from 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4024: 'OutputEdgestruct' :
-different types for formal and actual parameter 1
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : error C2440: 'function' : cannot convert
-from 'mxArray' to 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4024: 'mxSetField_700' :
-different types for formal and actual parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : error C2440: 'function' : cannot convert
-from 'mxArray' to 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : warning C4024: 'mxSetField_700' :
-different types for formal and actual parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(75) : error C2036: 'mxArray *' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(75) : error C2440: 'function' : cannot convert
-from 'mxArray' to 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(75) : warning C4024: 'mxSetField_700' :
-different types for formal and actual parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(89) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(91) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(93) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(126) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(128) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(143) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(145) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(147) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(149) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(174) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(176) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(189) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(191) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-ans = 
-
-      edge: []
-    vertex: []
-      cell: []
-
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(61) : error C2133: 'prhs' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(66) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(68) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(70) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(89) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(91) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(93) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(126) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(128) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(143) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(145) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(147) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(149) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(174) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(176) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(189) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(191) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(61) : error C2133: 'prhs' : unknown size
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(66) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(68) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(70) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(72) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(73) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(74) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(75) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(89) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(91) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(93) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(126) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(128) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(143) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(145) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(147) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(149) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(174) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(176) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(189) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(191) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-ans = 
-
-      edge: []
-    vertex: []
-      cell: []
-
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-ans = 
-
-      edge: []
-    vertex: []
-      cell: []
-
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-ans = 
-
-      edge: []
-    vertex: []
-      cell: []
-
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(926) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1089) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1233) : warning C4101: 'jj' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1261) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1295) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1327) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1369) : warning C4101: 'ii' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'kk' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'll' : unreferenced local
-variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(1476) : warning C4101: 'jj' : unreferenced local
-variable
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(66) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(68) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(70) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(75) : error C2440: 'function' : cannot convert
-from 'mxArray' to 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(75) : warning C4024: 'mxSetField_700' :
-different types for formal and actual parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(76) : error C2440: 'function' : cannot convert
-from 'mxArray' to 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(76) : warning C4024: 'mxSetField_700' :
-different types for formal and actual parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(77) : error C2440: 'function' : cannot convert
-from 'mxArray' to 'mxArray *'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(77) : warning C4024: 'mxSetField_700' :
-different types for formal and actual parameter 4
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(91) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(93) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(95) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(128) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(130) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(145) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(147) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(149) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(151) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(176) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(178) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(191) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different
-'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(215) : warning C4090: 'function' : different
-'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-ans = 
-
-      edge: []
-    vertex: []
-      cell: []
-
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-[a,b.edge,b.cell.b.vert]=GridInit_MEX;
-[a,b.edge,b.cell,b.vert]=GridInit_MEX;
-[a,b.edge,b.cell,b.vert]=GridInit_MEX
-
-a = 
-
-      edge: []
-    vertex: []
-      cell: []
-
-
-b = 
-
-    edge: [94x1 struct]
-    cell: [40x1 struct]
-    vert: [55x1 struct]
-
-
-b = 
-
-    edge: [94x1 struct]
-    cell: [40x1 struct]
-    vert: [55x1 struct]
-
-
-b = 
-
-    edge: [94x1 struct]
-    cell: [40x1 struct]
-    vert: [55x1 struct]
-
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-------------------------------------------------------------------------
-          Access violation detected at Thu Mar 10 18:30:52 2016
-------------------------------------------------------------------------
-
-Configuration:
-  Crash Decoding      : Disabled
-  Crash Mode          : continue (default)
-  Current Graphics Driver: NVIDIA Corporation Quadro K620/PCIe/SSE2 Version 4.4.0
-  Default Encoding    : windows-1252
-  Graphics card 1     : NVIDIA ( 0x10de ) NVIDIA Quadro K620 Version 9.18.13.4121
-  Host Name           : IT062038
-  MATLAB Architecture : win64
-  MATLAB Root         : C:\Program Files\MATLAB\R2015a
-  MATLAB Version      : 8.5.0.197613 (R2015a)
-  OpenGL              : hardware
-  Operating System    : Microsoft Windows 7 Enterprise 
-  Processor ID        : x86 Family 6 Model 60 Stepping 3, GenuineIntel
-  Virtual Machine     : Java 1.7.0_60-b19 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
-  Window System       : Version 6.1 (Build 7601: Service Pack 1)
-
-Fault Count: 1
-
-
-Abnormal termination:
-Access violation
-
-Register State (from fault):
-  RAX = 000000000402b03e  RBX = 0000000000000000
-  RCX = 000000000402a1d0  RDX = 0000000000000003
-  RSP = 0000000004029fe0  RBP = 0000000000000000
-  RSI = 0000000000000000  RDI = 000000000402a1d0
- 
-   R8 = 000000000402b02e   R9 = ffffffffab704f30
-  R10 = 0000000000000000  R11 = 00000000ca4b3540
-  R12 = 0000000000000003  R13 = 00000000feef11d0
-  R14 = 0000000000000000  R15 = 0000000000000000
- 
-  RIP = 00000000fe12fcf3  EFL = 00010246
- 
-   CS = 0033   FS = 0053   GS = 002b
-
-Stack Trace (from fault):
-[  0] 0x00000000fe12fcf3 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00195827 matrix::detail::noninlined::mx_array_api::mxCreateSkeletonCopy+00000563
-[  1] 0x00000000fe1d85e1 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00886241 matrix::detail::noninlined::mx_array_api::mxGetRootRecordForArray+00000289
-[  2] 0x00000000fe111151 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00069969 matrix::detail::noninlined::mx_array_api::mxSetCell+00000257
-[  3] 0x000007fefbd04a3c C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00019004
-[  4] 0x000007fefbd06005 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00024581 mexFunction+00000037
-[  5] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
-[  6] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
-[  7] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
-[  8] 0x00000000051f2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
-[  9] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 10] 0x00000000052d9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
-[ 11] 0x00000000053f31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
-[ 12] 0x00000000052db69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
-[ 13] 0x00000000053a684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
-[ 14] 0x00000000053a67b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
-[ 15] 0x000000000531da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
-[ 16] 0x000000000531ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
-[ 17] 0x000000000531b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
-[ 18] 0x00000000051f2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
-[ 19] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 20] 0x00000000053ab268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
-[ 21] 0x00000000053ab864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
-[ 22] 0x00000000053aba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
-[ 23] 0x00000000053ab9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
-[ 24] 0x00000000053ab9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
-[ 25] 0x000000000535f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
-[ 26] 0x000000000535854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
-[ 27] 0x0000000005358471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
-[ 28] 0x000000000664e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
-[ 29] 0x000000000664f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
-[ 30] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
-[ 31] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
-[ 32] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
-[ 33] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
-[ 34] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
-[ 35] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
-[ 36] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
-[ 37] 0x0000000077398802                     C:\WINDOWS\system32\USER32.dll+00165890 GetMenuBarInfo+00000626
-[ 38] 0x000000007737f5e7                     C:\WINDOWS\system32\USER32.dll+00062951 SystemParametersInfoW+00000247
-[ 39] 0x0000000077384869                     C:\WINDOWS\system32\USER32.dll+00084073 IsProcessDPIAware+00000453
-[ 40] 0x00000000774bba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
-[ 41] 0x00000000773890ca                     C:\WINDOWS\system32\USER32.dll+00102602 PeekMessageW+00000186
-[ 42] 0x00000000773850de                     C:\WINDOWS\system32\USER32.dll+00086238 GetKeyState+00000238
-[ 43] 0x0000000077383a47                     C:\WINDOWS\system32\USER32.dll+00080455 PeekMessageA+00000087
-[ 44] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
-[ 45] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
-[ 46] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
-[ 47] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
-[ 48] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
-[ 49] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
-[ 50] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
-[ 51] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
-[ 52] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
-[ 53] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
-[ 54] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
-[ 55] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
-[ 56] 0x00000000069da27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
-[ 57] 0x00000000069da838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
-[ 58] 0x00000000069daa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
-[ 59] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
-[ 60] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
-[ 61] 0x00000000772659bd                   C:\WINDOWS\system32\kernel32.dll+00088509 BaseThreadInitThunk+00000013
-[ 62] 0x000000007749a2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
-
-
-This error was detected while a MEX-file was running. If the MEX-file
-is not an official MathWorks function, please examine its source code
-for errors. Please consult the External Interfaces Guide for information
-on debugging MEX-files.
-
-If this problem is reproducible, please submit a Service Request via:
-    http://www.mathworks.com/support/contact_us/
-
-A technical support engineer might contact you with further information.
-
-Thank you for your help.** This crash report has been saved to disk as C:\Users\ap1949\AppData\Local\Temp\matlab_crash_dump.13260-1 **
-
-
-Caught MathWorks::System::FatalException
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-GridInit_MEX
-
-------------------------------------------------------------------------
-          Access violation detected at Thu Mar 10 18:31:18 2016
-------------------------------------------------------------------------
-
-Configuration:
-  Crash Decoding      : Disabled
-  Crash Mode          : continue (default)
-  Current Graphics Driver: NVIDIA Corporation Quadro K620/PCIe/SSE2 Version 4.4.0
-  Default Encoding    : windows-1252
-  Graphics card 1     : NVIDIA ( 0x10de ) NVIDIA Quadro K620 Version 9.18.13.4121
-  Host Name           : IT062038
-  MATLAB Architecture : win64
-  MATLAB Root         : C:\Program Files\MATLAB\R2015a
-  MATLAB Version      : 8.5.0.197613 (R2015a)
-  OpenGL              : hardware
-  Operating System    : Microsoft Windows 7 Enterprise 
-  Processor ID        : x86 Family 6 Model 60 Stepping 3, GenuineIntel
-  Virtual Machine     : Java 1.7.0_60-b19 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
-  Window System       : Version 6.1 (Build 7601: Service Pack 1)
-
-Fault Count: 2
-
-
-Abnormal termination:
-Access violation
-
-Register State (from fault):
-  RAX = 000000000402b03e  RBX = 0000000000000000
-  RCX = 000000000402a1d0  RDX = 0000000000000003
-  RSP = 0000000004029fe0  RBP = 0000000000000000
-  RSI = 0000000000000000  RDI = 000000000402a1d0
- 
-   R8 = 000000000402b02e   R9 = ffffffffab704f30
-  R10 = 0000000000000000  R11 = 00000000ca4b3540
-  R12 = 0000000000000003  R13 = 00000000feef11d0
-  R14 = 0000000000000000  R15 = 0000000000000000
- 
-  RIP = 00000000fe12fcf3  EFL = 00010246
- 
-   CS = 0033   FS = 0053   GS = 002b
-
-Stack Trace (from fault):
-[  0] 0x00000000fe12fcf3 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00195827 matrix::detail::noninlined::mx_array_api::mxCreateSkeletonCopy+00000563
-[  1] 0x00000000fe1d85e1 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00886241 matrix::detail::noninlined::mx_array_api::mxGetRootRecordForArray+00000289
-[  2] 0x00000000fe111151 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00069969 matrix::detail::noninlined::mx_array_api::mxSetCell+00000257
-[  3] 0x000007fefbd04a3c C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00019004
-[  4] 0x000007fefbd06005 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00024581 mexFunction+00000037
-[  5] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
-[  6] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
-[  7] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
-[  8] 0x00000000051f2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
-[  9] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 10] 0x00000000052d9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
-[ 11] 0x00000000053f31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
-[ 12] 0x00000000052db69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
-[ 13] 0x00000000053a684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
-[ 14] 0x00000000053a67b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
-[ 15] 0x000000000531da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
-[ 16] 0x000000000531ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
-[ 17] 0x000000000531b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
-[ 18] 0x00000000051f2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
-[ 19] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 20] 0x00000000053ab268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
-[ 21] 0x00000000053ab864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
-[ 22] 0x00000000053aba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
-[ 23] 0x00000000053ab9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
-[ 24] 0x00000000053ab9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
-[ 25] 0x000000000535f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
-[ 26] 0x000000000535854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
-[ 27] 0x0000000005358471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
-[ 28] 0x000000000664e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
-[ 29] 0x000000000664f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
-[ 30] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
-[ 31] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
-[ 32] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
-[ 33] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
-[ 34] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
-[ 35] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
-[ 36] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
-[ 37] 0x0000000077398802                     C:\WINDOWS\system32\USER32.dll+00165890 GetMenuBarInfo+00000626
-[ 38] 0x000000007737f5e7                     C:\WINDOWS\system32\USER32.dll+00062951 SystemParametersInfoW+00000247
-[ 39] 0x0000000077384869                     C:\WINDOWS\system32\USER32.dll+00084073 IsProcessDPIAware+00000453
-[ 40] 0x00000000774bba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
-[ 41] 0x00000000773890ca                     C:\WINDOWS\system32\USER32.dll+00102602 PeekMessageW+00000186
-[ 42] 0x00000000773850de                     C:\WINDOWS\system32\USER32.dll+00086238 GetKeyState+00000238
-[ 43] 0x0000000077383a47                     C:\WINDOWS\system32\USER32.dll+00080455 PeekMessageA+00000087
-[ 44] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
-[ 45] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
-[ 46] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
-[ 47] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
-[ 48] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
-[ 49] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
-[ 50] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
-[ 51] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
-[ 52] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
-[ 53] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
-[ 54] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
-[ 55] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
-[ 56] 0x00000000069da27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
-[ 57] 0x00000000069da838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
-[ 58] 0x00000000069daa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
-[ 59] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
-[ 60] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
-[ 61] 0x00000000772659bd                   C:\WINDOWS\system32\kernel32.dll+00088509 BaseThreadInitThunk+00000013
-[ 62] 0x000000007749a2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
-
-
-Abnormal termination:
-Access violation
-
-Register State (from fault):
-  RAX = 000000000402b03e  RBX = 0000000000000000
-  RCX = 000000000402a1d0  RDX = 0000000000000003
-  RSP = 0000000004029fe0  RBP = 0000000000000000
-  RSI = 0000000000000000  RDI = 000000000402a1d0
- 
-   R8 = 000000000402b02e   R9 = fffffffe4ed7bcd0
-  R10 = 0000000000000000  R11 = 0000000226e3c7a0
-  R12 = 0000000000000003  R13 = 00000000feef11d0
-  R14 = 0000000000000000  R15 = 0000000000000000
- 
-  RIP = 00000000fe12fcf3  EFL = 00010246
- 
-   CS = 0033   FS = 0053   GS = 002b
-
-Stack Trace (from fault):
-[  0] 0x00000000fe12fcf3 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00195827 matrix::detail::noninlined::mx_array_api::mxCreateSkeletonCopy+00000563
-[  1] 0x00000000fe1d85e1 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00886241 matrix::detail::noninlined::mx_array_api::mxGetRootRecordForArray+00000289
-[  2] 0x00000000fe111151 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00069969 matrix::detail::noninlined::mx_array_api::mxSetCell+00000257
-[  3] 0x000007fefbd04a3c C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00019004
-[  4] 0x000007fefbd06005 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00024581 mexFunction+00000037
-[  5] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
-[  6] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
-[  7] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
-[  8] 0x00000000051f2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
-[  9] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 10] 0x00000000052d9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
-[ 11] 0x00000000053f31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
-[ 12] 0x00000000052db69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
-[ 13] 0x00000000053a684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
-[ 14] 0x00000000053a67b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
-[ 15] 0x000000000531da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
-[ 16] 0x000000000531ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
-[ 17] 0x000000000531b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
-[ 18] 0x00000000051f2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
-[ 19] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 20] 0x00000000053ab268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
-[ 21] 0x00000000053ab864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
-[ 22] 0x00000000053aba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
-[ 23] 0x00000000053ab9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
-[ 24] 0x00000000053ab9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
-[ 25] 0x000000000535f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
-[ 26] 0x000000000535854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
-[ 27] 0x0000000005358471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
-[ 28] 0x000000000664e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
-[ 29] 0x000000000664f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
-[ 30] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
-[ 31] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
-[ 32] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
-[ 33] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
-[ 34] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
-[ 35] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
-[ 36] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
-[ 37] 0x0000000077398802                     C:\WINDOWS\system32\USER32.dll+00165890 GetMenuBarInfo+00000626
-[ 38] 0x000000007737f5e7                     C:\WINDOWS\system32\USER32.dll+00062951 SystemParametersInfoW+00000247
-[ 39] 0x0000000077384869                     C:\WINDOWS\system32\USER32.dll+00084073 IsProcessDPIAware+00000453
-[ 40] 0x00000000774bba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
-[ 41] 0x00000000773890ca                     C:\WINDOWS\system32\USER32.dll+00102602 PeekMessageW+00000186
-[ 42] 0x00000000773850de                     C:\WINDOWS\system32\USER32.dll+00086238 GetKeyState+00000238
-[ 43] 0x0000000077383a47                     C:\WINDOWS\system32\USER32.dll+00080455 PeekMessageA+00000087
-[ 44] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
-[ 45] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
-[ 46] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
-[ 47] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
-[ 48] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
-[ 49] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
-[ 50] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
-[ 51] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
-[ 52] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
-[ 53] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
-[ 54] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
-[ 55] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
-[ 56] 0x00000000069da27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
-[ 57] 0x00000000069da838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
-[ 58] 0x00000000069daa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
-[ 59] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
-[ 60] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
-[ 61] 0x00000000772659bd                   C:\WINDOWS\system32\kernel32.dll+00088509 BaseThreadInitThunk+00000013
-[ 62] 0x000000007749a2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
-
-
-This error was detected while a MEX-file was running. If the MEX-file
-is not an official MathWorks function, please examine its source code
-for errors. Please consult the External Interfaces Guide for information
-on debugging MEX-files.
-
-If this problem is reproducible, please submit a Service Request via:
-    http://www.mathworks.com/support/contact_us/
-
-A technical support engineer might contact you with further information.
-
-Thank you for your help.** This crash report has been saved to disk as C:\Users\ap1949\AppData\Local\Temp\matlab_crash_dump.13260-2 **
-
-
-Caught MathWorks::System::FatalException
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-MEX completed successfully.
-clear GridInit_MEX
-GridInit_MEX
-
-------------------------------------------------------------------------
-          Access violation detected at Thu Mar 10 18:31:54 2016
-------------------------------------------------------------------------
-
-Configuration:
-  Crash Decoding      : Disabled
-  Crash Mode          : continue (default)
-  Current Graphics Driver: NVIDIA Corporation Quadro K620/PCIe/SSE2 Version 4.4.0
-  Default Encoding    : windows-1252
-  Graphics card 1     : NVIDIA ( 0x10de ) NVIDIA Quadro K620 Version 9.18.13.4121
-  Host Name           : IT062038
-  MATLAB Architecture : win64
-  MATLAB Root         : C:\Program Files\MATLAB\R2015a
-  MATLAB Version      : 8.5.0.197613 (R2015a)
-  OpenGL              : hardware
-  Operating System    : Microsoft Windows 7 Enterprise 
-  Processor ID        : x86 Family 6 Model 60 Stepping 3, GenuineIntel
-  Virtual Machine     : Java 1.7.0_60-b19 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
-  Window System       : Version 6.1 (Build 7601: Service Pack 1)
-
-Fault Count: 3
-
-
-Abnormal termination:
-Access violation
-
-Register State (from fault):
-  RAX = 000000000402b03e  RBX = 0000000000000000
-  RCX = 000000000402a1d0  RDX = 0000000000000003
-  RSP = 0000000004029fe0  RBP = 0000000000000000
-  RSI = 0000000000000000  RDI = 000000000402a1d0
- 
-   R8 = 000000000402b02e   R9 = ffffffffab704f30
-  R10 = 0000000000000000  R11 = 00000000ca4b3540
-  R12 = 0000000000000003  R13 = 00000000feef11d0
-  R14 = 0000000000000000  R15 = 0000000000000000
- 
-  RIP = 00000000fe12fcf3  EFL = 00010246
- 
-   CS = 0033   FS = 0053   GS = 002b
-
-Stack Trace (from fault):
-[  0] 0x00000000fe12fcf3 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00195827 matrix::detail::noninlined::mx_array_api::mxCreateSkeletonCopy+00000563
-[  1] 0x00000000fe1d85e1 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00886241 matrix::detail::noninlined::mx_array_api::mxGetRootRecordForArray+00000289
-[  2] 0x00000000fe111151 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00069969 matrix::detail::noninlined::mx_array_api::mxSetCell+00000257
-[  3] 0x000007fefbd04a3c C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00019004
-[  4] 0x000007fefbd06005 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00024581 mexFunction+00000037
-[  5] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
-[  6] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
-[  7] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
-[  8] 0x00000000051f2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
-[  9] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 10] 0x00000000052d9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
-[ 11] 0x00000000053f31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
-[ 12] 0x00000000052db69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
-[ 13] 0x00000000053a684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
-[ 14] 0x00000000053a67b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
-[ 15] 0x000000000531da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
-[ 16] 0x000000000531ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
-[ 17] 0x000000000531b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
-[ 18] 0x00000000051f2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
-[ 19] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 20] 0x00000000053ab268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
-[ 21] 0x00000000053ab864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
-[ 22] 0x00000000053aba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
-[ 23] 0x00000000053ab9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
-[ 24] 0x00000000053ab9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
-[ 25] 0x000000000535f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
-[ 26] 0x000000000535854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
-[ 27] 0x0000000005358471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
-[ 28] 0x000000000664e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
-[ 29] 0x000000000664f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
-[ 30] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
-[ 31] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
-[ 32] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
-[ 33] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
-[ 34] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
-[ 35] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
-[ 36] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
-[ 37] 0x0000000077398802                     C:\WINDOWS\system32\USER32.dll+00165890 GetMenuBarInfo+00000626
-[ 38] 0x000000007737f5e7                     C:\WINDOWS\system32\USER32.dll+00062951 SystemParametersInfoW+00000247
-[ 39] 0x0000000077384869                     C:\WINDOWS\system32\USER32.dll+00084073 IsProcessDPIAware+00000453
-[ 40] 0x00000000774bba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
-[ 41] 0x00000000773890ca                     C:\WINDOWS\system32\USER32.dll+00102602 PeekMessageW+00000186
-[ 42] 0x00000000773850de                     C:\WINDOWS\system32\USER32.dll+00086238 GetKeyState+00000238
-[ 43] 0x0000000077383a47                     C:\WINDOWS\system32\USER32.dll+00080455 PeekMessageA+00000087
-[ 44] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
-[ 45] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
-[ 46] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
-[ 47] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
-[ 48] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
-[ 49] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
-[ 50] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
-[ 51] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
-[ 52] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
-[ 53] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
-[ 54] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
-[ 55] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
-[ 56] 0x00000000069da27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
-[ 57] 0x00000000069da838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
-[ 58] 0x00000000069daa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
-[ 59] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
-[ 60] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
-[ 61] 0x00000000772659bd                   C:\WINDOWS\system32\kernel32.dll+00088509 BaseThreadInitThunk+00000013
-[ 62] 0x000000007749a2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
-
-
-Abnormal termination:
-Access violation
-
-Register State (from fault):
-  RAX = 000000000402b03e  RBX = 0000000000000000
-  RCX = 000000000402a1d0  RDX = 0000000000000003
-  RSP = 0000000004029fe0  RBP = 0000000000000000
-  RSI = 0000000000000000  RDI = 000000000402a1d0
- 
-   R8 = 000000000402b02e   R9 = fffffffe4ed7bcd0
-  R10 = 0000000000000000  R11 = 0000000226e3c7a0
-  R12 = 0000000000000003  R13 = 00000000feef11d0
-  R14 = 0000000000000000  R15 = 0000000000000000
- 
-  RIP = 00000000fe12fcf3  EFL = 00010246
- 
-   CS = 0033   FS = 0053   GS = 002b
-
-Stack Trace (from fault):
-[  0] 0x00000000fe12fcf3 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00195827 matrix::detail::noninlined::mx_array_api::mxCreateSkeletonCopy+00000563
-[  1] 0x00000000fe1d85e1 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00886241 matrix::detail::noninlined::mx_array_api::mxGetRootRecordForArray+00000289
-[  2] 0x00000000fe111151 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00069969 matrix::detail::noninlined::mx_array_api::mxSetCell+00000257
-[  3] 0x000007fefbd04a3c C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00019004
-[  4] 0x000007fefbd06005 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00024581 mexFunction+00000037
-[  5] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
-[  6] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
-[  7] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
-[  8] 0x00000000051f2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
-[  9] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 10] 0x00000000052d9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
-[ 11] 0x00000000053f31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
-[ 12] 0x00000000052db69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
-[ 13] 0x00000000053a684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
-[ 14] 0x00000000053a67b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
-[ 15] 0x000000000531da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
-[ 16] 0x000000000531ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
-[ 17] 0x000000000531b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
-[ 18] 0x00000000051f2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
-[ 19] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 20] 0x00000000053ab268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
-[ 21] 0x00000000053ab864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
-[ 22] 0x00000000053aba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
-[ 23] 0x00000000053ab9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
-[ 24] 0x00000000053ab9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
-[ 25] 0x000000000535f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
-[ 26] 0x000000000535854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
-[ 27] 0x0000000005358471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
-[ 28] 0x000000000664e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
-[ 29] 0x000000000664f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
-[ 30] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
-[ 31] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
-[ 32] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
-[ 33] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
-[ 34] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
-[ 35] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
-[ 36] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
-[ 37] 0x0000000077398802                     C:\WINDOWS\system32\USER32.dll+00165890 GetMenuBarInfo+00000626
-[ 38] 0x000000007737f5e7                     C:\WINDOWS\system32\USER32.dll+00062951 SystemParametersInfoW+00000247
-[ 39] 0x0000000077384869                     C:\WINDOWS\system32\USER32.dll+00084073 IsProcessDPIAware+00000453
-[ 40] 0x00000000774bba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
-[ 41] 0x00000000773890ca                     C:\WINDOWS\system32\USER32.dll+00102602 PeekMessageW+00000186
-[ 42] 0x00000000773850de                     C:\WINDOWS\system32\USER32.dll+00086238 GetKeyState+00000238
-[ 43] 0x0000000077383a47                     C:\WINDOWS\system32\USER32.dll+00080455 PeekMessageA+00000087
-[ 44] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
-[ 45] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
-[ 46] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
-[ 47] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
-[ 48] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
-[ 49] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
-[ 50] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
-[ 51] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
-[ 52] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
-[ 53] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
-[ 54] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
-[ 55] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
-[ 56] 0x00000000069da27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
-[ 57] 0x00000000069da838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
-[ 58] 0x00000000069daa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
-[ 59] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
-[ 60] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
-[ 61] 0x00000000772659bd                   C:\WINDOWS\system32\kernel32.dll+00088509 BaseThreadInitThunk+00000013
-[ 62] 0x000000007749a2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
-
-
-Abnormal termination:
-Access violation
-
-Register State (from fault):
-  RAX = 000000000402b03e  RBX = 0000000000000000
-  RCX = 000000000402a1d0  RDX = 0000000000000003
-  RSP = 0000000004029fe0  RBP = 0000000000000000
-  RSI = 0000000000000000  RDI = 000000000402a1d0
- 
-   R8 = 000000000402b02e   R9 = fffffffe798c79b0
-  R10 = 0000000000000000  R11 = 00000001fc2f0ac0
-  R12 = 0000000000000003  R13 = 00000000feef11d0
-  R14 = 0000000000000000  R15 = 0000000000000000
- 
-  RIP = 00000000fe12fcf3  EFL = 00010246
- 
-   CS = 0033   FS = 0053   GS = 002b
-
-Stack Trace (from fault):
-[  0] 0x00000000fe12fcf3 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00195827 matrix::detail::noninlined::mx_array_api::mxCreateSkeletonCopy+00000563
-[  1] 0x00000000fe1d85e1 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00886241 matrix::detail::noninlined::mx_array_api::mxGetRootRecordForArray+00000289
-[  2] 0x00000000fe111151 C:\Program Files\MATLAB\R2015a\bin\win64\libmx.dll+00069969 matrix::detail::noninlined::mx_array_api::mxSetCell+00000257
-[  3] 0x000007fefbd04a3c C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00019004
-[  4] 0x000007fefbd06005 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00024581 mexFunction+00000037
-[  5] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
-[  6] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
-[  7] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
-[  8] 0x00000000051f2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
-[  9] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 10] 0x00000000052d9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
-[ 11] 0x00000000053f31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
-[ 12] 0x00000000052db69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
-[ 13] 0x00000000053a684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
-[ 14] 0x00000000053a67b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
-[ 15] 0x000000000531da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
-[ 16] 0x000000000531ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
-[ 17] 0x000000000531b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
-[ 18] 0x00000000051f2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
-[ 19] 0x00000000051f2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
-[ 20] 0x00000000053ab268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
-[ 21] 0x00000000053ab864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
-[ 22] 0x00000000053aba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
-[ 23] 0x00000000053ab9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
-[ 24] 0x00000000053ab9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
-[ 25] 0x000000000535f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
-[ 26] 0x000000000535854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
-[ 27] 0x0000000005358471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
-[ 28] 0x000000000664e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
-[ 29] 0x000000000664f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
-[ 30] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
-[ 31] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
-[ 32] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
-[ 33] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
-[ 34] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
-[ 35] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
-[ 36] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
-[ 37] 0x0000000077398802                     C:\WINDOWS\system32\USER32.dll+00165890 GetMenuBarInfo+00000626
-[ 38] 0x000000007737f5e7                     C:\WINDOWS\system32\USER32.dll+00062951 SystemParametersInfoW+00000247
-[ 39] 0x0000000077384869                     C:\WINDOWS\system32\USER32.dll+00084073 IsProcessDPIAware+00000453
-[ 40] 0x00000000774bba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
-[ 41] 0x00000000773890ca                     C:\WINDOWS\system32\USER32.dll+00102602 PeekMessageW+00000186
-[ 42] 0x00000000773850de                     C:\WINDOWS\system32\USER32.dll+00086238 GetKeyState+00000238
-[ 43] 0x0000000077383a47                     C:\WINDOWS\system32\USER32.dll+00080455 PeekMessageA+00000087
-[ 44] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
-[ 45] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
-[ 46] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
-[ 47] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
-[ 48] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sy
+quit

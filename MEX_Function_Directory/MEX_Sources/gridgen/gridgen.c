@@ -29,6 +29,9 @@ edgeTemplate *edgestruct=NULL;
 cellTemplate *cellstructTemp=NULL;
 vertexTemplate *vertstructTemp=NULL;
 edgeTemplate *edgestructTemp=NULL;
+// Dependancy Arrays
+int **newEdgesInd=NULL; int *nNewEdges=NULL, *splitEdgesInd=NULL; int nSplitEdges=0;
+int **newCellsInd=NULL, *nNewCells=NULL, *splitCellsInd=NULL, nSplitCells=0;
 #endif
 // Function Declarations
 
@@ -127,7 +130,17 @@ void AllocateGridStruct(int domSize[dim()],
 	nCellCurr=domSize[0]*domSize[1];
 	nEdgeCurr=domSize[0]*(1+domSize[1])+domSize[1]*(1+domSize[0]);
 	nVertCurr=(domSize[0]+1)*(domSize[1]+1);
+	
+	AllocateSolutionStruct(nCellCurr, nEdgeCurr, nVertCurr, nLevels,
+		cellstructTempOut,vertstructTempOut,edgestructTempOut);
+	
+}
 
+void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLevelsAct,
+		cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
+		
+	int ii;
+	
 	*vertstructTempOut=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
 	*edgestructTempOut=(edgeTemplate*)malloc(nEdgeCurr * sizeof(edgeTemplate));
 	*cellstructTempOut=(cellTemplate*)malloc(nCellCurr * sizeof(cellTemplate));
@@ -146,7 +159,7 @@ void AllocateGridStruct(int domSize[dim()],
 	
 	}
 	for(ii=0;ii<nCellCurr;ii++){
-		(*cellstructTempOut)[ii].refineVec=(int*)calloc(nLevels,sizeof(int));
+		(*cellstructTempOut)[ii].refineVec=(int*)calloc(nLevelsAct,sizeof(int));
 	} 
 }
 
@@ -872,12 +885,17 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 	edgestruct=(edgeTemplate*)realloc(edgestruct,(nEdgeGrid+nAddEdge)*sizeof(edgeTemplate));
 	vertstruct=(vertexTemplate*)realloc(vertstruct,(nVertGrid+nAddVertex)*sizeof(vertexTemplate));
 	
+	newEdgesInd=(int**)realloc(newEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof(int**));
+	nNewEdges=(int*)realloc(nNewEdges,(nSplitEdges+nEdgeRefine)*sizeof((int)));
+	splitEdgesInd=(int*)realloc(splitEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof((int)));
+	
 	currEdgeSub=nEdgeGrid;
 	currVertSub=nVertGrid;
 	
 	for(ii=0;ii<nEdgeRefine;ii++){
 		nEdgeSplit=(1-edgestruct[posEdgeRefine[ii]].orientation)*(domSize[0]-1)
 					+(edgestruct[posEdgeRefine[ii]].orientation)*(domSize[1]-1);
+		*(newEdgesInd+(nSplitEdges+ii))=(int*)calloc(nEdgeSplit+1,sizeof(int));
 		//printf("nEdgeSplit: %i \n",nEdgeSplit);
 
 		//printf("Start Finding ObjNum ... ");
@@ -898,7 +916,9 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 		flipSwitch=1;
 		startEdgeSub=posEdgeRefine[ii];
 		edgestruct[startEdgeSub].vertex[flipSwitch]=maxVertexIndex+1;
-		
+		splitEdgesInd[nSplitEdges+ii]=edgestruct[startEdgeSub].index;
+		nNewEdges[nSplitEdges+ii]=nEdgeSplit;
+		*((*(newEdgesInd+(nSplitEdges+ii))))=edgestruct[startEdgeSub].index;
 		for(jj=0;jj<nEdgeSplit;jj++){
 		
 			memcpy(&(edgestruct[currEdgeSub].index),
@@ -910,6 +930,7 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 			
 			edgestruct[currEdgeSub].index=maxEdgeIndex;
 			edgestruct[currEdgeSub].vertex[flipSwitch]=maxVertexIndex+1;
+			*((*(newEdgesInd+(nSplitEdges+ii)))+(jj+1))=maxEdgeIndex;
 			
 			vertstruct[currVertSub].index=maxVertexIndex;
 			vertstruct[currVertSub].coord[0]=coordCooeff[0]*((double)(jj+1))+coordStart[0];
@@ -923,7 +944,7 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 	}
 	nEdgeGrid=(nEdgeGrid+nAddEdge);
 	nVertGrid=(nVertGrid+nAddVertex);
-	
+	nSplitEdges=nSplitEdges+nEdgeGrid;
 	free(listIndEdge);
 	free(listIndVert);
 }
@@ -957,7 +978,7 @@ void ExtractEdgeChain(int *posEdge, int *indEdge,int nEdge ,int *ordPosEdge,
 			
 			
 			*/
-			exit(EXIT_FAILURE);
+			//exit(EXIT_FAILURE);
 		}
 		
 		listIndVert[actPos]=0;
@@ -1381,7 +1402,7 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
 			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid);
-			
+	
 	//printf("\n***Number of Edge of Cell: %i",nCurrEdge);
 	ordPosEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
@@ -1488,8 +1509,10 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 			&posEdgeAddTemp, &posVertAddTemp);
 	
 	for(ii=0;ii<nCellRefine;ii++){
+	printf("Start Cell %i of %i \n",ii,nCellRefine);
 		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii],posEdgeSideTemp,
-		 posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
+			posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
+			
 	}
 	
 	

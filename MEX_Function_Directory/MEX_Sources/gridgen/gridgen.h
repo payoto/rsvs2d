@@ -116,7 +116,8 @@ void PrepareTemplateInfo(int domSize[2],int **posEdgeSide,int **posVertSide,int 
 	int **posEdgeAdd,int **posVertAdd);
 void RefineSelectedCells(int domSize[2],int *posCellRefine,int *indCellRefine,int nCellRefine);
 int CompareDouble(double elem1, double elem2);
-
+void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLevelsAct,
+		cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
 
 //void OutputTemplateGrid(int domSize[2], int lvlGrid);
 //void GenerateTemplateGrids();
