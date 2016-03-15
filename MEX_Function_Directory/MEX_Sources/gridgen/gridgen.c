@@ -51,6 +51,7 @@ int main(){
 InitialiseGridFromFile();
 return(0);
 }
+
 void InitialiseGridFromFile(){
 	 //Arrays
 	//printf("%i\n",sizeof(edgeTemplate));
@@ -62,9 +63,7 @@ void InitialiseGridFromFile(){
 	GridInitialisation();
 	printf("\n    ACTION: Starting Grid Generated");
 	OutputGrid(1);
-	#ifdef MEX_COMPILE
-	
-	#endif
+
 	RefineGrid();
 	//Checks
 	/*
@@ -172,8 +171,12 @@ void DataIn(){
 	FILE *cellgridFID;
 	int ii,jj;
 	
+	#if defined(MEX_COMPILE)
+		cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
+	#else
+		cellgridFID=fopen("cellgrid.dat","r");
+	#endif
 	
-	cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
 	if((cellgridFID!=NULL)){
 		fscanf(cellgridFID,"%i",&nLevels); // Reads in the number of levels
 		levelSize=(int*)calloc(dim()*nLevels, sizeof(int));
@@ -203,7 +206,7 @@ void DataIn(){
 		//printf("Cell Grid Structure succesfully read in\n\n");
 		} else {
 		perror("Data file failed to open!");
-		//exit(0);
+		exit(0);
 	}
 }
 
@@ -886,8 +889,8 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 	vertstruct=(vertexTemplate*)realloc(vertstruct,(nVertGrid+nAddVertex)*sizeof(vertexTemplate));
 	
 	newEdgesInd=(int**)realloc(newEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof(int**));
-	nNewEdges=(int*)realloc(nNewEdges,(nSplitEdges+nEdgeRefine)*sizeof((int)));
-	splitEdgesInd=(int*)realloc(splitEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof((int)));
+	nNewEdges=(int*)realloc(nNewEdges,(nSplitEdges+nEdgeRefine)*sizeof(int));
+	splitEdgesInd=(int*)realloc(splitEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof(int));
 	
 	currEdgeSub=nEdgeGrid;
 	currVertSub=nVertGrid;
@@ -917,7 +920,7 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 		startEdgeSub=posEdgeRefine[ii];
 		edgestruct[startEdgeSub].vertex[flipSwitch]=maxVertexIndex+1;
 		splitEdgesInd[nSplitEdges+ii]=edgestruct[startEdgeSub].index;
-		nNewEdges[nSplitEdges+ii]=nEdgeSplit;
+		nNewEdges[nSplitEdges+ii]=nEdgeSplit+1;
 		*((*(newEdgesInd+(nSplitEdges+ii))))=edgestruct[startEdgeSub].index;
 		for(jj=0;jj<nEdgeSplit;jj++){
 		
@@ -944,7 +947,7 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 	}
 	nEdgeGrid=(nEdgeGrid+nAddEdge);
 	nVertGrid=(nVertGrid+nAddVertex);
-	nSplitEdges=nSplitEdges+nEdgeGrid;
+	nSplitEdges=nSplitEdges+nEdgeRefine;
 	free(listIndEdge);
 	free(listIndVert);
 }
@@ -1330,22 +1333,28 @@ void CopyCellStruct(int domSize[dim()],int posCellRefine,int *convCellList){
 	currPosGrid=(int*)calloc(nCellTemplate,sizeof(int));
 	refineVecOrig=(int*)calloc(nLevels,sizeof(int));
 	
+	
+	
 	memcpy(refineVecOrig,cellstruct[posCellRefine].refineVec,sizeof(int)*nLevels);
+	
+	nNewCells[nSplitCells]=nCellTemplate;
+	*(newCellsInd+nSplitCells)=(int*)calloc(nCellTemplate,sizeof(int));
 	
 	currPosGrid[0]=posCellRefine;
 	for (ii=1;ii<nCellTemplate;ii++){currPosGrid[ii]=nCellGrid+ii-1;}
 	//printf("\n cell assign");
 	for(ii=0;ii<nCellTemplate;ii++){
 		cellstruct[currPosGrid[ii]].index=convCellList[cellCurrentTemplate[ii].index];
+		*((*(newCellsInd+nSplitCells))+ii)=cellstruct[currPosGrid[ii]].index;
 		//printf("\n%i %i ",cellCurrentTemplate[ii].index,convCellList[cellCurrentTemplate[ii].index]);
-		cellstruct[currPosGrid[ii]].fill=0;
+		cellstruct[currPosGrid[ii]].fill=cellstruct[posCellRefine].fill;
 		
 		cellstruct[currPosGrid[ii]].refineLvl=cellCurrentTemplate[ii].refineLvl;
 		for(jj=0;jj<nLevels;jj++){
 			cellstruct[currPosGrid[ii]].refineVec[jj]=cellCurrentTemplate[ii].refineVec[jj]+refineVecOrig[jj];
 		}
 	}
-	
+	nSplitCells=nSplitCells+1;
 	free(currPosGrid);
 	free(refineVecOrig);
 }
@@ -1505,14 +1514,21 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 	int ii,jj,kk,ll;
 	int *posEdgeSideTemp=NULL, *posVertSideTemp=NULL, *posCellAddTemp=NULL;
 	int *posEdgeAddTemp=NULL, *posVertAddTemp=NULL;
+	int nSplitCellsStart;
 	PrepareTemplateInfo(domSize,&posEdgeSideTemp,&posVertSideTemp,&posCellAddTemp,
 			&posEdgeAddTemp, &posVertAddTemp);
 	
+	nSplitCellsStart=nSplitCells;
+	newCellsInd=(int**)realloc(newCellsInd,(nSplitCells+nCellRefine)*sizeof(int**));
+	nNewCells=(int*)realloc(nNewCells,(nSplitCells+nCellRefine)*sizeof(int));
+	splitCellsInd=(int*)realloc(splitCellsInd,(nSplitCells+nCellRefine)*sizeof(int));
+	
 	for(ii=0;ii<nCellRefine;ii++){
-	printf("Start Cell %i of %i \n",ii,nCellRefine);
+	printf("\n			Start Cell %i of %i ",ii+1,nCellRefine);
 		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii],posEdgeSideTemp,
 			posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
 			
+			splitCellsInd[nSplitCellsStart+ii]=indCellRefine[ii];
 	}
 	
 	

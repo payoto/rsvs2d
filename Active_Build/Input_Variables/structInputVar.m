@@ -220,6 +220,7 @@ function [param]=Snakestestsmooth1()
     param.snakes.refine.typeRefine='grey';
     
 end
+
 function [param]=Snakestestsmooth1_2()
     
     [param]=DefaultCase();
@@ -233,6 +234,7 @@ function [param]=Snakestestsmooth1_2()
     param.plotting.debugPlot=[10:15];
     
 end
+
 function [param]=Snakestestsmooth2()
     
     
@@ -298,10 +300,11 @@ function [param]=SnakesFoilVVSmall()
     [param]=DefaultCase();
     param=OptimConvergence(param);
     
-    param.snakes.step.snakesSteps=500;
-    param.snakes.refine.refineGrid=8;
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
-    
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    param.general.refineSteps=4;
 end
 
 function [param]=WeirdShape()

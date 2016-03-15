@@ -4,707 +4,378 @@ GENERATION PROCESS START
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
 
+     OUTPUT:Skipped
     ACTION: Starting Grid Generated
+     OUTPUT:Skipped
 Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
+
+
 
 Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
 done !
 Reshaping
-Time taken:00:00:00:145
+Time taken:00:00:00:165
 GENERATION PROCESS end
 GRID REFINEMENT START
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',45,1)">45  </a>    gridrefined=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]',[nRefine nRefine])
-if system_dependent('IsDebugMode')==1, dbstep; end
 
+     OUTPUT:Skipped
 Calculations Started . . .
 
 
 ***** START GRID REFINEMENT 1 of 1 *****
 
+     OUTPUT:Skipped
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
+			Start Cell 1 of 16 
+			Start Cell 2 of 16 
+			Start Cell 3 of 16 
+			Start Cell 4 of 16 
+			Start Cell 5 of 16 
+			Start Cell 6 of 16 
+			Start Cell 7 of 16 
+			Start Cell 8 of 16 
+			Start Cell 9 of 16 
+			Start Cell 10 of 16 
+			Start Cell 11 of 16 
+			Start Cell 12 of 16 
+			Start Cell 13 of 16 
+			Start Cell 14 of 16 
+			Start Cell 15 of 16 
+			Start Cell 16 of 16 
     ACTION: Cells Refined
+     OUTPUT:Skipped
 
 done !
-Grid . . .Edge . . .Vertex . . .Cell . . .
-gridrefined = 
-
-      edge: [2180x1 struct]
-    vertex: [1133x1 struct]
-      cell: [1048x1 struct]
-
-nRefine
-
-nRefine =
-
-     8
-
-clc
-[unstructured,loop,unstructReshape,snakSave]=Main('SnakesFoilVVSmall')
-A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
-A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
-A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
-A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
-A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
-A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
-GENERATION PROCESS START
-
-Calculations Started . . .
-***** START GRID INITIALISATION *****
-
-    ACTION: Starting Grid Generated
-Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
-
-Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
-done !
-Reshaping
-Time taken:00:00:00:133
-GENERATION PROCESS end
-GRID REFINEMENT START
-
-Calculations Started . . .
-
-
-***** START GRID REFINEMENT 1 of 1 *****
-
-    ACTION: Template Generated
-    ACTION: Refinement Targets Identified
-    ACTION: Edges Refined
-    ACTION: Cells Refined
-
-done !
-Grid . . .Edge . . .Vertex . . .Cell . . .Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement>RefineGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m', 41)" style="font-weight:bold">GridRefinement>RefineGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',41,0)">line 41</a>)
-    [gridreshape.cell(:).coord]=deal([]);
-
-{Output argument "connecstructinfo" (and maybe others) not assigned during call to "GridRefinement>RefineGrid".
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m', 28)" style="font-weight:bold">GridRefinement</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\GridRefinement.m',28,0)">line 28</a>)
-    [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteGridRefinement', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 142)" style="font-weight:bold">Main>ExecuteGridRefinement</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',142,0)">line 142</a>)
-    [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 85)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',85,0)">line 85</a>)
-    [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)
-        [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(888) : error C2059: syntax error : ')'
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(889) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(108) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(110) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(112) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(135) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(137) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(153) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(155) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(157) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(159) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(190) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(192) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(209) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(215) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(240) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(242) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(258) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(260) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(280) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(282) : warning C4090: 'function' : different 'const'
-qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(888) : error C2059: syntax error : ')'
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(889) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(108) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(110) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(112) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(135) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(137) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(153) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(155) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(157) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(159) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(190) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(192) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(209) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(211) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(213) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(215) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(240) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(242) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(258) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(260) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(280) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(282) : warning C4090: 'function' : different 'const'
-qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(888) : error C2059: syntax error : ')'
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(889) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const'
-qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const' qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const' qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const'
-qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clear all
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-GridInit_MEX.c
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(129) : warning C4101: 'ii' : unreferenced local variable
-c:\users\ap1949\local documents\phd\development work\snakes volume
-parametrisation\source\mex_function_directory\mex_sources\gridgen\gridgen.c(887) : error C2059: syntax error : ')'
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(111) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(113) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(115) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(138) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(140) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(156) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(158) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(160) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(162) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(193) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(195) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(212) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(214) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(216) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(218) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(243) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(245) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(261) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(263) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(283) : warning C4090: 'function' : different 'const'
-qualifiers
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c(285) : warning C4090: 'function' : different 'const'
-qualifiers
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-Compile_Mex
-Building with 'Microsoft Visual C++ 2013 Professional (C)'.
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mex')" style="font-weight:bold">mex</a>
-LINK : fatal error LNK1104: cannot open file 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume
-Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64'
-
-
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Compile_Mex', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m', 15)" style="font-weight:bold">Compile_Mex</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Compile_Mex.m',15,0)">line 15</a>)
-mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
-} 
-clc
-close all
-clear all
-quit
+Output Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Connect . . .Edge . . .Cell . . .Time taken:00:00:00:137
+GRID REFINEMENT end
+SNAKE PROCESS START
+    Start initialisation
+Find Border Vertices
+Initialise Snaxel Grid
+   Initialisation time:00:00:00:430
+ 
+Start step 1
+   Step time:00:00:00:339
+ 
+Start step 2
+   Step time:00:00:00:305
+ 
+Start step 3
+   Step time:00:00:00:303
+ 
+Start step 4
+   Step time:00:00:00:299
+ 
+Start step 5
+   Step time:00:00:00:299
+ 
+Start step 6
+   Step time:00:00:00:308
+ 
+Start step 7
+   Step time:00:00:00:306
+ 
+Start step 8
+   Step time:00:00:00:307
+ 
+Start step 9
+   Step time:00:00:00:305
+ 
+Start step 10
+   Step time:00:00:00:309
+ 
+Start step 11
+   Step time:00:00:00:312
+ 
+Start step 12
+   Step time:00:00:00:308
+ 
+Start step 13
+   Step time:00:00:00:306
+ 
+Start step 14
+1 Problems with snaxel update
+   Step time:00:00:00:306
+ 
+Start step 15
+   Step time:00:00:00:308
+ 
+Start step 16
+   Step time:00:00:00:313
+ 
+Start step 17
+   Step time:00:00:00:326
+ 
+Start step 18
+   Step time:00:00:00:323
+ 
+Start step 19
+   Step time:00:00:00:327
+ 
+Start step 20
+   Step time:00:00:00:326
+ 
+Start step 21
+   Step time:00:00:00:321
+ 
+Start step 22
+   Step time:00:00:00:319
+ 
+Start step 23
+   Step time:00:00:00:350
+ 
+Start step 24
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)] 
+28 Problems with snaxel update
+   Step time:00:00:00:348
+ 
+Start step 25
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)] 
+16 Problems with snaxel update
+   Step time:00:00:00:316
+ 
+Start step 26
+   Step time:00:00:00:264
+ 
+Start step 27
+   Step time:00:00:00:268
+ 
+Start step 28
+   Step time:00:00:00:281
+ 
+Start step 29
+   Step time:00:00:00:273
+ 
+Start step 30
+   Step time:00:00:00:277
+ 
+Start step 31
+   Step time:00:00:00:290
+ 
+Start step 32
+   Step time:00:00:00:277
+ 
+Start step 33
+   Step time:00:00:00:279
+ 
+Start step 34
+   Step time:00:00:00:277
+ 
+Start step 35
+   Step time:00:00:00:279
+ 
+Start step 36
+   Step time:00:00:00:288
+ 
+Start step 37
+   Step time:00:00:00:269
+ 
+Start step 38
+   Step time:00:00:00:273
+ 
+Start step 39
+   Step time:00:00:00:272
+ 
+Start step 40
+   Step time:00:00:00:272
+ 
+Start step 41
+   Step time:00:00:00:271
+ 
+Start step 42
+   Step time:00:00:00:271
+ 
+Start step 43
+   Step time:00:00:00:271
+ 
+Start step 44
+   Step time:00:00:00:270
+ 
+Start step 45
+   Step time:00:00:00:264
+ 
+Start step 46
+   Step time:00:00:00:254
+ 
+Start step 47
+   Step time:00:00:00:260
+ 
+Start step 48
+   Step time:00:00:00:257
+ 
+Start step 49
+   Step time:00:00:00:257
+ 
+Start step 50
+   Step time:00:00:00:257
+ 
+Start step 51
+   Step time:00:00:00:239
+ 
+Start step 52
+   Step time:00:00:00:239
+ 
+Start step 53
+   Step time:00:00:00:243
+ 
+Start step 54
+   Step time:00:00:00:248
+ 
+Start step 55
+   Step time:00:00:00:251
+ 
+Start step 56
+   Step time:00:00:00:248
+ 
+Start step 57
+   Step time:00:00:00:250
+ 
+Start step 58
+   Step time:00:00:00:252
+ 
+Start step 59
+   Step time:00:00:00:241
+ 
+Start step 60
+   Step time:00:00:00:238
+ 
+Start step 61
+   Step time:00:00:00:236
+ 
+Start step 62
+   Step time:00:00:00:245
+ 
+Start step 63
+   Step time:00:00:00:240
+ 
+Start step 64
+   Step time:00:00:00:240
+ 
+Start step 65
+   Step time:00:00:00:238
+ 
+Start step 66
+   Step time:00:00:00:237
+ 
+Start step 67
+   Step time:00:00:00:239
+ 
+Start step 68
+   Step time:00:00:00:237
+ 
+Start step 69
+   Step time:00:00:00:239
+ 
+Start step 70
+   Step time:00:00:00:237
+ 
+Start step 71
+   Step time:00:00:00:238
+ 
+Start step 72
+   Step time:00:00:00:236
+ 
+Start step 73
+   Step time:00:00:00:238
+ 
+Start step 74
+   Step time:00:00:00:239
+ 
+Start step 75
+   Step time:00:00:00:238
+ 
+Start step 76
+   Step time:00:00:00:239
+ 
+Start step 77
+   Step time:00:00:00:239
+ 
+Start step 78
+   Step time:00:00:00:237
+ 
+Start step 79
+   Step time:00:00:00:239
+ 
+Start step 80
+   Step time:00:00:00:237
+ 
+Start step 81
+   Step time:00:00:00:239
+ 
+Start step 82
+   Step time:00:00:00:237
+ 
+Start step 83
+   Step time:00:00:00:239
+ 
+Start step 84
+   Step time:00:00:00:242
+ 
+Start step 85
+   Step time:00:00:00:237
+ 
+Start step 86
+   Step time:00:00:00:238
+ 
+Start step 87
+   Step time:00:00:00:238
+ 
+Start step 88
+   Step time:00:00:00:237
+ 
+Start step 89
+   Step time:00:00:00:238
+ 
+Start step 90
+   Step time:00:00:00:235
+ 
+Start step 91
+   Step time:00:00:00:240
+ 
+Start step 92
+   Step time:00:00:00:239
+ 
+Start step 93
+   Step time:00:00:00:238
+ 
+Start step 94
+   Step time:00:00:00:239
+ 
+Start step 95
+   Step time:00:00:00:238
+ 
+Start step 96
+   Step time:00:00:00:240
+ 
+Start step 97
+   Step time:00:00:00:238
+ 
+Start step 98
+   Step time:00:00:00:239
+ 
+Start step 99
+   Step time:00:00:00:240
+ 
+Start step 100
+   Step time:00:00:00:238
+Iteration Time:00:00:26:701
+Volume converged to 6.60729e-09
+Finished Iterations , starting Post Process
+Creating Snaxel Loops
+Time taken:00:00:27:391
+SNAKE PROCESS END

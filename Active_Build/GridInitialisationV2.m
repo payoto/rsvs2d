@@ -236,6 +236,11 @@ function [unstructured]=Initialisation_Square(typDat)
     for ii=1:length(unstructReshape.edge)
         unstructReshape.edge(ii).cellindex(unstructReshape.edge(ii).cellindex<0)=0;
     end
+    domMultiplier=(domainBounds(:,2)-domainBounds(:,1))';
+    domAdd=domainBounds(:,1)';
+    for ii=1:length(unstructReshape.vertex)
+        unstructReshape.vertex(ii).coord=unstructReshape.vertex(ii).coord.*domMultiplier+domAdd;
+    end
     unstructured=ModifReshape(unstructReshape);
     
 end

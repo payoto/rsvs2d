@@ -235,7 +235,7 @@ function [vectorEntries]=RemoveIdenticalEntries(vectorEntries)
     vectorIndex(rmvDI)=[];
     vectorEntries=vectorEntriesUnsort(vectorIndex);
 end
-
+%{
 function sub=FindObjNum(object,index,objInd)
     % finds the array index from a snaxel number
     if ~exist('objInd','var')
@@ -259,7 +259,7 @@ function sub=FindObjNum(object,index,objInd)
         end
     end
 end
-
+%}
 function [vecAngles]=ExtractAnglepm180(baseVector,testVector)
     % This function calculates the angle between vectors
     

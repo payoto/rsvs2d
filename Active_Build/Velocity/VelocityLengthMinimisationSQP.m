@@ -255,7 +255,7 @@ function [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIn
         derivtenscalc(ii).velcoeff_i=velcoeff_i;
         derivtenscalc(ii).velcoeff_p=velcoeff_p;
         derivtenscalc(ii).velcoeff_m=velcoeff_m;
-        hold on
+       
         %quiver(derivtenscalc(ii).pos_i(1),derivtenscalc(ii).pos_i(2),snakposition(ii).tensVector(1),snakposition(ii).tensVector(2));
 %         quiver(derivtenscalc(ii).pos_i(1),derivtenscalc(ii).pos_i(2),bendingVec(1),bendingVec(2));
     end

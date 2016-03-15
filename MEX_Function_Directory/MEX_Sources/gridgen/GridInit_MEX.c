@@ -4,13 +4,15 @@
 #include <string.h>
 //#include <stdbool.h>
 
-#include "gridgen.h"
-#include "gridgen.c"
+
 #include "mex.h" /* Always include this */
 #include "matrix.h"
 // Constant declaration
 //int dim() = 2;
 #define MEX_COMPILE
+
+#include "gridgen.h"
+#include "gridgen.c"
 
 #ifndef GRIDGEN_VAR_INCLUDED
 #define GRIDGEN_VAR_INCLUDED
