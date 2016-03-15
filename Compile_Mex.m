@@ -11,9 +11,13 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
+%% Compile Grid Initialisation
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX.c...
     -outdir .\MEX_Function_Directory\MEX_Executables\gridgen 
 %%
-mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX_OLD.c...
-    -outdir .\MEX_Function_Directory\MEX_Executables\gridgen
+%mex .\MEX_Function_Directory\MEX_Sources\gridgen\GridInit_MEX_OLD.c...
+%    -outdir .\MEX_Function_Directory\MEX_Executables\gridgen
+%% Compile grid refinement
+
+mex -g .\MEX_Function_Directory\MEX_Sources\gridgen\GridRefine_MEX.c...
+    -outdir .\MEX_Function_Directory\MEX_Executables\gridgen 

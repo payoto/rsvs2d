@@ -1,11 +1,11 @@
 %% Test the template file
 
-clear templateGrid
+%clear templateGrid
 %include_GridCheck
 %include_SnakeParam
 
 
-[templateGrid.edge,templateGrid.vertex,templateGrid.cell]=GridInit_MEX;
+%[templateGrid.edge,templateGrid.vertex,templateGrid.cell]=GridInit_MEX;
 
 CheckGrid(templateGrid)
 cellIndList=vertcat(templateGrid.edge(:).cellindex);

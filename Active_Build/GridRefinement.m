@@ -41,18 +41,8 @@ function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefin
     [gridreshape.cell(:).coord]=deal([]);
     [gridreshape.cell(:).vertexindex]=deal([]);
     % Pre refinement processing
-    [cellRefine]=IdentifyRefineCell(gridreshape,typeRefine);
-    [edgeRefine]=IdentifyRefineEdges(gridreshape,cellRefine);
-    [template,ccwtempinfo]=CreateCellRefinementTemplate(nRefine);
-    
-    % Refine Mesh
-    [gridedgerefined,connecstructinfo]=...
-        SplitSpecifiedEdges(gridreshape,edgeRefine,nRefine);
-    
-    
-    
-    [gridrefined,connecstructinfo.cell]=...
-        SplitSpecifiedCells(gridedgerefined,cellRefine,template,ccwtempinfo);
+    [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine);
+    gridrefined=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]',[nRefine nRefine]);
 %     CheckResultsRefineGrid(gridreshape)
 %     CheckResultsRefineGrid(gridedgerefined)
 %     CheckResultsRefineGrid(gridrefined)
@@ -61,7 +51,7 @@ end
 
 %% Refinement preparation operations
 
-function [cellRefine]=IdentifyRefineCell(gridreshape,typeRefine)
+function [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine)
     % Identifies which cell need to be refined based on the type of
     % refinement call required
     % Returns the indices of the cells that must be refined
@@ -69,9 +59,11 @@ function [cellRefine]=IdentifyRefineCell(gridreshape,typeRefine)
     switch typeRefine
         case 'all'
             cellRefine=[gridreshape.cell(:).index];
+            cellRefinePos=1:length(gridreshape.cell);
         case 'grey'
             cellRefineLog=[gridreshape.cell(:).fill]~=1 & [gridreshape.cell(:).fill]~=0;
             cellRefine=[gridreshape.cell(cellRefineLog).index];
+            cellRefinePos=find(cellRefineLog);
         otherwise 
             error('Unsupported refinement type')
     end

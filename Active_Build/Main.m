@@ -20,6 +20,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     include_EdgeInformation
     include_Utilities
     include_PostProcessing
+    include_Mex_Wrapper
     
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
     fidDiary=fopen(diaryFile,'w');

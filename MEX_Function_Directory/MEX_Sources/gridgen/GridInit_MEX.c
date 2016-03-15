@@ -33,6 +33,9 @@ edgeTemplate *edgestruct=NULL;
 cellTemplate *cellstructTemp=NULL;
 vertexTemplate *vertstructTemp=NULL;
 edgeTemplate *edgestructTemp=NULL;
+// Dependancy Arrays
+int **newEdgesInd=NULL, *nNewEdges=NULL, *splitEdgesInd=NULL, nSplitEdges=0;
+int **newCellsInd=NULL, *nNewCells=NULL, *splitCellsInd=NULL, nSplitCells=0;
 #endif
 // Function Declarations
 
@@ -145,7 +148,7 @@ mxArray *OutputEdgestruct(mxArray *outLHS){
 	double *outArray1;
 	double *outArray2;
 	const char **fields;
-	int nFields=3;
+	int nFields=4;
 	int ii,jj;
 	
 	fields=(char**)malloc(nFields*sizeof(char*));
@@ -155,8 +158,8 @@ mxArray *OutputEdgestruct(mxArray *outLHS){
 	sprintf(fields[1],"cellindex");
 	fields[2]=(char*)malloc(12*sizeof(char));
 	sprintf(fields[2],"vertexindex");
-	//fields[3]=(char*)malloc(12*sizeof(char));
-	//sprintf(fields[3],"orientation");
+	fields[3]=(char*)malloc(12*sizeof(char));
+	sprintf(fields[3],"orientation");
 	
 	edgeOut1=(mxArray**)malloc(nEdgeGrid*sizeof(mxArray*));
 	edgeOut2=(mxArray**)malloc(nEdgeGrid*sizeof(mxArray*));
@@ -183,7 +186,7 @@ mxArray *OutputEdgestruct(mxArray *outLHS){
 			outArray2[jj]=(double)edgestruct[ii].vertex[jj];
 		}
 		mxSetField((outLHS),ii,fields[2],edgeOut2[ii]);
-		//mxSetField((outLHS),ii,fields[3],mxCreateDoubleScalar(edgestruct[ii].orientation));
+		mxSetField((outLHS),ii,fields[3],mxCreateDoubleScalar(edgestruct[ii].orientation));
 	}
 	
 	for (ii=0;ii<nFields;ii++){
