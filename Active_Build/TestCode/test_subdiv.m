@@ -1,5 +1,4 @@
-figure
-for ll=1:10
+
 clear h
 clear cellLeg
 clear meanCurv,
@@ -16,22 +15,20 @@ subplot(1,2,1)
 hold on
 
 newPoints=oldPoints;
-
+plot(newPoints(:,1),newPoints(:,2))
 subplot(1,2,2)
 hold on,
 kk=1;
-global testCoeffTest;
-vec=0.0:0.0005:0.1;
+vec=1:10;
 for ii=vec,
-    testCoeffTest=ii;
-    newPoints=SubDivision(oldPoints,ll,'homemade');
+    newPoints=SubDivision(oldPoints,ii,'interp2');
     subplot(1,2,1)
-    %plot(newPoints(:,1),newPoints(:,2))
+    plot(newPoints(:,1),newPoints(:,2))
     for jj=2:length(newPoints(:,1))-1;
         normCurv(jj-1)=normd2pds2(newPoints(jj,:),newPoints(jj-1,:),newPoints(jj+1,:));
     end,
     subplot(1,2,2)
-    %h(kk)=plot(1:(length(newPoints(:,1))-2),normCurv);
+    h(kk)=plot((0:(length(newPoints(:,1))-3))/(length(newPoints(:,1))-3),normCurv);
     cellLeg{kk}=num2str(ii);
     
     meanCurv(kk)=mean(normCurv);
@@ -40,13 +37,11 @@ for ii=vec,
   
 end
 subplot(1,2,1)
-%legend(h,cellLeg);
-figure(1)
+legend(h,cellLeg);
+figure
 subplot(1,2,1)
 hold on
 plot(vec,meanCurv)
 subplot(1,2,2)
 hold on
 plot(vec,stdCurv)
-pause(1)
-end

@@ -10,17 +10,7 @@
 %             Alexandre Payot
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%
-%
-%
-% Valid MainInpuVar case strings are:
-%    ->  SnakesFoilSmall
-%    ->  RandSmall
-%    ->  SquareSnakes
-%    ->
-%    ->
-%    ->
+
 
 
 function [param]=structInputVar(caseStr)
@@ -304,7 +294,7 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
-    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    param.general.passDomBounds=[-1,1;-0.5,0.5];
     param.general.refineSteps=4;
 end
 
