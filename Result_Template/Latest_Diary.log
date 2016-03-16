@@ -14,7 +14,7 @@ Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
 done !
 Reshaping
-Time taken:00:00:00:165
+Time taken:00:00:00:152
 GENERATION PROCESS end
 GRID REFINEMENT START
 
@@ -49,34 +49,34 @@ Calculations Started . . .
 
 done !
 Output Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:137
+Connect . . .Edge . . .Cell . . .Time taken:00:00:00:147
 GRID REFINEMENT end
 SNAKE PROCESS START
     Start initialisation
 Find Border Vertices
 Initialise Snaxel Grid
-   Initialisation time:00:00:00:430
+   Initialisation time:00:00:00:373
  
 Start step 1
-   Step time:00:00:00:339
+   Step time:00:00:00:289
  
 Start step 2
-   Step time:00:00:00:305
+   Step time:00:00:00:290
  
 Start step 3
-   Step time:00:00:00:303
+   Step time:00:00:00:298
  
 Start step 4
-   Step time:00:00:00:299
+   Step time:00:00:00:300
  
 Start step 5
-   Step time:00:00:00:299
+   Step time:00:00:00:311
  
 Start step 6
-   Step time:00:00:00:308
+   Step time:00:00:00:310
  
 Start step 7
-   Step time:00:00:00:306
+   Step time:00:00:00:305
  
 Start step 8
    Step time:00:00:00:307
@@ -85,47 +85,47 @@ Start step 9
    Step time:00:00:00:305
  
 Start step 10
-   Step time:00:00:00:309
+   Step time:00:00:00:306
  
 Start step 11
    Step time:00:00:00:312
  
 Start step 12
-   Step time:00:00:00:308
+   Step time:00:00:00:311
  
 Start step 13
-   Step time:00:00:00:306
+   Step time:00:00:00:303
  
 Start step 14
 1 Problems with snaxel update
    Step time:00:00:00:306
  
 Start step 15
-   Step time:00:00:00:308
+   Step time:00:00:00:306
  
 Start step 16
-   Step time:00:00:00:313
+   Step time:00:00:00:312
  
 Start step 17
-   Step time:00:00:00:326
+   Step time:00:00:00:322
  
 Start step 18
-   Step time:00:00:00:323
+   Step time:00:00:00:319
  
 Start step 19
-   Step time:00:00:00:327
+   Step time:00:00:00:323
  
 Start step 20
-   Step time:00:00:00:326
+   Step time:00:00:00:324
  
 Start step 21
    Step time:00:00:00:321
  
 Start step 22
-   Step time:00:00:00:319
+   Step time:00:00:00:322
  
 Start step 23
-   Step time:00:00:00:350
+   Step time:00:00:00:351
  
 Start step 24
 [Warning: Time Step was forced to minimum set by user] 
@@ -136,7 +136,7 @@ Start step 24
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',89,0)">line 89</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)] 
 28 Problems with snaxel update
-   Step time:00:00:00:348
+   Step time:00:00:00:349
  
 Start step 25
 [Warning: Time Step was forced to minimum set by user] 
@@ -147,64 +147,64 @@ Start step 25
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',89,0)">line 89</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)] 
 16 Problems with snaxel update
-   Step time:00:00:00:316
+   Step time:00:00:00:318
  
 Start step 26
-   Step time:00:00:00:264
+   Step time:00:00:00:267
  
 Start step 27
-   Step time:00:00:00:268
+   Step time:00:00:00:265
  
 Start step 28
    Step time:00:00:00:281
  
 Start step 29
-   Step time:00:00:00:273
+   Step time:00:00:00:271
  
 Start step 30
-   Step time:00:00:00:277
+   Step time:00:00:00:276
  
 Start step 31
-   Step time:00:00:00:290
+   Step time:00:00:00:289
  
 Start step 32
-   Step time:00:00:00:277
+   Step time:00:00:00:281
  
 Start step 33
-   Step time:00:00:00:279
+   Step time:00:00:00:284
  
 Start step 34
    Step time:00:00:00:277
  
 Start step 35
-   Step time:00:00:00:279
+   Step time:00:00:00:285
  
 Start step 36
-   Step time:00:00:00:288
+   Step time:00:00:00:292
  
 Start step 37
-   Step time:00:00:00:269
+   Step time:00:00:00:273
  
 Start step 38
-   Step time:00:00:00:273
+   Step time:00:00:00:275
  
 Start step 39
    Step time:00:00:00:272
  
 Start step 40
-   Step time:00:00:00:272
+   Step time:00:00:00:270
  
 Start step 41
    Step time:00:00:00:271
  
 Start step 42
-   Step time:00:00:00:271
+   Step time:00:00:00:273
  
 Start step 43
-   Step time:00:00:00:271
+   Step time:00:00:00:272
  
 Start step 44
-   Step time:00:00:00:270
+   Step time:00:00:00:272
  
 Start step 45
    Step time:00:00:00:264
@@ -216,34 +216,34 @@ Start step 47
    Step time:00:00:00:260
  
 Start step 48
-   Step time:00:00:00:257
+   Step time:00:00:00:256
  
 Start step 49
-   Step time:00:00:00:257
+   Step time:00:00:00:259
  
 Start step 50
-   Step time:00:00:00:257
+   Step time:00:00:00:258
  
 Start step 51
-   Step time:00:00:00:239
+   Step time:00:00:00:241
  
 Start step 52
-   Step time:00:00:00:239
+   Step time:00:00:00:242
  
 Start step 53
-   Step time:00:00:00:243
+   Step time:00:00:00:241
  
 Start step 54
-   Step time:00:00:00:248
+   Step time:00:00:00:245
  
 Start step 55
-   Step time:00:00:00:251
+   Step time:00:00:00:261
  
 Start step 56
    Step time:00:00:00:248
  
 Start step 57
-   Step time:00:00:00:250
+   Step time:00:00:00:253
  
 Start step 58
    Step time:00:00:00:252
@@ -255,49 +255,49 @@ Start step 60
    Step time:00:00:00:238
  
 Start step 61
-   Step time:00:00:00:236
+   Step time:00:00:00:241
  
 Start step 62
-   Step time:00:00:00:245
+   Step time:00:00:00:240
  
 Start step 63
-   Step time:00:00:00:240
+   Step time:00:00:00:244
  
 Start step 64
-   Step time:00:00:00:240
+   Step time:00:00:00:246
  
 Start step 65
-   Step time:00:00:00:238
+   Step time:00:00:00:243
  
 Start step 66
-   Step time:00:00:00:237
+   Step time:00:00:00:246
  
 Start step 67
-   Step time:00:00:00:239
+   Step time:00:00:00:242
  
 Start step 68
-   Step time:00:00:00:237
+   Step time:00:00:00:240
  
 Start step 69
-   Step time:00:00:00:239
+   Step time:00:00:00:246
  
 Start step 70
-   Step time:00:00:00:237
+   Step time:00:00:00:244
  
 Start step 71
-   Step time:00:00:00:238
+   Step time:00:00:00:241
  
 Start step 72
-   Step time:00:00:00:236
+   Step time:00:00:00:240
  
 Start step 73
-   Step time:00:00:00:238
- 
-Start step 74
    Step time:00:00:00:239
  
+Start step 74
+   Step time:00:00:00:241
+ 
 Start step 75
-   Step time:00:00:00:238
+   Step time:00:00:00:244
  
 Start step 76
    Step time:00:00:00:239
@@ -306,76 +306,76 @@ Start step 77
    Step time:00:00:00:239
  
 Start step 78
-   Step time:00:00:00:237
+   Step time:00:00:00:239
  
 Start step 79
-   Step time:00:00:00:239
+   Step time:00:00:00:241
  
 Start step 80
-   Step time:00:00:00:237
- 
-Start step 81
-   Step time:00:00:00:239
- 
-Start step 82
-   Step time:00:00:00:237
- 
-Start step 83
-   Step time:00:00:00:239
- 
-Start step 84
    Step time:00:00:00:242
  
+Start step 81
+   Step time:00:00:00:248
+ 
+Start step 82
+   Step time:00:00:00:243
+ 
+Start step 83
+   Step time:00:00:00:244
+ 
+Start step 84
+   Step time:00:00:00:246
+ 
 Start step 85
-   Step time:00:00:00:237
+   Step time:00:00:00:244
  
 Start step 86
-   Step time:00:00:00:238
- 
-Start step 87
-   Step time:00:00:00:238
- 
-Start step 88
-   Step time:00:00:00:237
- 
-Start step 89
-   Step time:00:00:00:238
- 
-Start step 90
-   Step time:00:00:00:235
- 
-Start step 91
    Step time:00:00:00:240
  
+Start step 87
+   Step time:00:00:00:244
+ 
+Start step 88
+   Step time:00:00:00:241
+ 
+Start step 89
+   Step time:00:00:00:241
+ 
+Start step 90
+   Step time:00:00:00:243
+ 
+Start step 91
+   Step time:00:00:00:243
+ 
 Start step 92
-   Step time:00:00:00:239
+   Step time:00:00:00:243
  
 Start step 93
    Step time:00:00:00:238
  
 Start step 94
-   Step time:00:00:00:239
+   Step time:00:00:00:237
  
 Start step 95
-   Step time:00:00:00:238
+   Step time:00:00:00:241
  
 Start step 96
-   Step time:00:00:00:240
+   Step time:00:00:00:243
  
 Start step 97
-   Step time:00:00:00:238
+   Step time:00:00:00:242
  
 Start step 98
-   Step time:00:00:00:239
+   Step time:00:00:00:236
  
 Start step 99
    Step time:00:00:00:240
  
 Start step 100
    Step time:00:00:00:238
-Iteration Time:00:00:26:701
+Iteration Time:00:00:26:814
 Volume converged to 6.60729e-09
 Finished Iterations , starting Post Process
 Creating Snaxel Loops
-Time taken:00:00:27:391
+Time taken:00:00:27:410
 SNAKE PROCESS END

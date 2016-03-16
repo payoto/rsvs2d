@@ -48,6 +48,7 @@ function paramgeneral=default_general()
     paramgeneral.passPadding=1;
     paramgeneral.typDat='vvlofoil';
     paramgeneral.typeBound='snaxel'; % 'vertex' or 'snaxel'
+    paramgeneral.subdivType='bspline';
     paramgeneral.loadLogical=false;
     paramgeneral.useSnakes=true;
     paramgeneral.execTest=false;
