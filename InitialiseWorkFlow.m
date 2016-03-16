@@ -11,10 +11,8 @@
 
 
 function []=InitialiseWorkFlow()
-    
-    singleFolder={'Active_Build'};
-    rootTreeFolders={'Active_Build\Input_Variables','Active_Build\Include_Files','Active_Build\Various',...
-        'Active_Build\Velocity','MEX_Function_Directory\MEX_Executables','Automated_Function_Directory'};
+    singleFolder={''};
+    rootTreeFolders={'Active_Build','MEX_Function_Directory\MEX_Executables','Automated_Function_Directory'};
     
     [addSingleDir]=FormulateValidFolders(singleFolder);
     [rootTreeDirs]=FormulateValidFolders(rootTreeFolders);
