@@ -27,8 +27,10 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
             plot(newSpline(:,1),newSpline(:,2),'g+-')
             newPoints.chaikin=newChaik;
             newPoints.bspline=newSpline;
-        case 'homemade'
-            [newPoints]=SubSurfTest(startPoints,nSteps);
+        case 'interp1'
+            [newPoints]=SubSurfinterp1(startPoints,nSteps);
+        case 'interp2'
+            [newPoints]=SubSurfinterp2(startPoints,nSteps);
         otherwise
             
             error('Invalid method');
@@ -159,12 +161,11 @@ function [newPoints]=SubSurfBSpline(startPoints,refineSteps)
     end
 end
 
-function [newPoints]=SubSurfTest(startPoints,refineSteps)
+function [newPoints]=SubSurfinterp1(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
     TEisLeft=0;
     bsplineNoCorn=zeros([7,1]);
-    global testCoeffTest
-    testcoeff=testCoeffTest;
+    testcoeff=1/16;
     bsplineNoCorn(1:7,1)=[-testcoeff;0;0.5+testcoeff;1;testcoeff+0.5;0;-testcoeff];
     
     bsplineCorn=bsplineNoCorn;
@@ -188,6 +189,55 @@ function [newPoints]=SubSurfTest(startPoints,refineSteps)
                 bSplineMask=bsplineCorn;
             else
                 nJ=7;
+                bSplineMask=bsplineNoCorn;
+            end
+            indX=zeros(1,1);
+            indY=zeros(1,nJ);
+            for iLoop=1:1
+                indX(iLoop)=mod(iStart+(iLoop-1),numPoints)+1;
+            end
+            for jLoop=1:nJ
+                indY(jLoop)=mod(jStart+(jLoop-1),numNewPoints)+1;
+            end
+            
+            subMask(indY,indX)=bSplineMask+subMask(indY,indX);
+        end
+        newPoints=subMask*startPoints;
+        startPoints=newPoints;
+        
+    end
+end
+
+function [newPoints]=SubSurfinterp2(startPoints,refineSteps)
+    % Implements a Chainkin subdivision process
+    TEisLeft=0;
+    bsplineNoCorn=zeros([7,1]);
+    tcoeff=3/256;
+    bsplineNoCorn(1:11,1)=...
+        [tcoeff;0;-(1/16+3*tcoeff);0;9/16+2*tcoeff;1;9/16+2*tcoeff;0;...
+        -(1/16+3*tcoeff);0;tcoeff];
+    
+    bsplineCorn=bsplineNoCorn;
+    
+    
+    
+    newPoints=startPoints;
+    for nIter=1:refineSteps
+        numPoints=length(startPoints(:,1));
+        isCorner=DetectTrailingEdge(startPoints,TEisLeft);
+        cumCorner=cumsum(isCorner);
+        numNewPoints=(numPoints*2);
+        subMask=zeros(numNewPoints,numPoints);
+        
+        for ii=0:numPoints-1
+            iStart=ii;
+            jStart=ii*2;
+            
+            if isCorner(ii+1)
+                nJ=11;
+                bSplineMask=bsplineCorn;
+            else
+                nJ=11;
                 bSplineMask=bsplineNoCorn;
             end
             indX=zeros(1,1);

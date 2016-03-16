@@ -26,7 +26,7 @@ function []=ExecuteOptimisation()
     
     % Compute Shape using snakes
     
-    % Evaluate decision Variables
+    % Evaluate Objective Function
     
     % create new population
     

@@ -53,7 +53,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
         restartstruct.snakrestart.insideContourInfo=snakSave(end).insideContourInfo;
     end
     % Post processes
-    loop=SubdivisionSurface_Snakes(loop,refineSteps,typeBound);
+    loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
     CheckResults(unstructured,loop,typeBound)
     
     tecoutstruct.baseGrid=unstructReshape;

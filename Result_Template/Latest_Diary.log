@@ -1,3 +1,22 @@
+tVariables', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractVariables.m', 6)" style="font-weight:bold">ExtractVariables</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractVariables.m',6,0)">line 6</a>)
+[varargout{1:nOut}]=ExtractVariables_Handle(varargin{:});
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>SubdivisionSurface_Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 185)" style="font-weight:bold">Main>SubdivisionSurface_Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',185,0)">line 185</a>)
+    [typeBound,subdivType]=ExtractVariables(varExtract,param);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 56)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',56,0)">line 56</a>)
+    loop=SubdivisionSurface_Snakes(loop,refineSteps,typeBound);
+} 
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m',58,1)">58  </a>    varInStruct=param.structdat.vardat.names;
+matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 56)
+matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 56)
+if system_dependent('IsDebugMode')==1, dbquit; end
+[unstructured,loop,unstructReshape,snakSave]=Main('SnakesFoilVVSmall')
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
+A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 A subdirectory or file C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory already exists. 
 GENERATION PROCESS START
 
@@ -14,7 +33,7 @@ Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Mex Output . . .Grid . . .Edge . . .Vertex . . .Cell . . .done !
 done !
 Reshaping
-Time taken:00:00:00:152
+Time taken:00:00:00:131
 GENERATION PROCESS end
 GRID REFINEMENT START
 
@@ -49,333 +68,347 @@ Calculations Started . . .
 
 done !
 Output Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:147
+Connect . . .Edge . . .Cell . . .Time taken:00:00:00:128
 GRID REFINEMENT end
 SNAKE PROCESS START
     Start initialisation
 Find Border Vertices
 Initialise Snaxel Grid
-   Initialisation time:00:00:00:373
+   Initialisation time:00:00:00:372
  
 Start step 1
-   Step time:00:00:00:289
- 
-Start step 2
-   Step time:00:00:00:290
- 
-Start step 3
-   Step time:00:00:00:298
- 
-Start step 4
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
+7 Problems with snaxel update
    Step time:00:00:00:300
  
+Start step 2
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
+47 Problems with snaxel update
+   Step time:00:00:00:371
+ 
+Start step 3
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
+24 Problems with snaxel update
+   Step time:00:00:00:346
+ 
+Start step 4
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
+14 Problems with snaxel update
+   Step time:00:00:00:295
+ 
 Start step 5
-   Step time:00:00:00:311
+   Step time:00:00:00:279
  
 Start step 6
-   Step time:00:00:00:310
- 
-Start step 7
-   Step time:00:00:00:305
- 
-Start step 8
-   Step time:00:00:00:307
- 
-Start step 9
-   Step time:00:00:00:305
- 
-Start step 10
-   Step time:00:00:00:306
- 
-Start step 11
-   Step time:00:00:00:312
- 
-Start step 12
-   Step time:00:00:00:311
- 
-Start step 13
-   Step time:00:00:00:303
- 
-Start step 14
-1 Problems with snaxel update
-   Step time:00:00:00:306
- 
-Start step 15
-   Step time:00:00:00:306
- 
-Start step 16
-   Step time:00:00:00:312
- 
-Start step 17
-   Step time:00:00:00:322
- 
-Start step 18
-   Step time:00:00:00:319
- 
-Start step 19
-   Step time:00:00:00:323
- 
-Start step 20
-   Step time:00:00:00:324
- 
-Start step 21
-   Step time:00:00:00:321
- 
-Start step 22
-   Step time:00:00:00:322
- 
-Start step 23
-   Step time:00:00:00:351
- 
-Start step 24
-[Warning: Time Step was forced to minimum set by user] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',2001,0)">line 2001</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',100,0)">line 100</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',31,0)">line 31</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',159,0)">line 159</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',89,0)">line 89</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)] 
-28 Problems with snaxel update
-   Step time:00:00:00:349
- 
-Start step 25
-[Warning: Time Step was forced to minimum set by user] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',2001,0)">line 2001</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',100,0)">line 100</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Snakes.m',31,0)">line 31</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',159,0)">line 159</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',89,0)">line 89</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Main.m',36,0)">line 36</a>)] 
-16 Problems with snaxel update
-   Step time:00:00:00:318
- 
-Start step 26
-   Step time:00:00:00:267
- 
-Start step 27
    Step time:00:00:00:265
  
-Start step 28
-   Step time:00:00:00:281
- 
-Start step 29
-   Step time:00:00:00:271
- 
-Start step 30
-   Step time:00:00:00:276
- 
-Start step 31
-   Step time:00:00:00:289
- 
-Start step 32
-   Step time:00:00:00:281
- 
-Start step 33
-   Step time:00:00:00:284
- 
-Start step 34
-   Step time:00:00:00:277
- 
-Start step 35
-   Step time:00:00:00:285
- 
-Start step 36
-   Step time:00:00:00:292
- 
-Start step 37
-   Step time:00:00:00:273
- 
-Start step 38
-   Step time:00:00:00:275
- 
-Start step 39
-   Step time:00:00:00:272
- 
-Start step 40
+Start step 7
    Step time:00:00:00:270
  
-Start step 41
+Start step 8
    Step time:00:00:00:271
  
-Start step 42
-   Step time:00:00:00:273
+Start step 9
+   Step time:00:00:00:268
  
-Start step 43
-   Step time:00:00:00:272
+Start step 10
+   Step time:00:00:00:269
  
-Start step 44
-   Step time:00:00:00:272
+Start step 11
+   Step time:00:00:00:275
  
-Start step 45
-   Step time:00:00:00:264
+Start step 12
+   Step time:00:00:00:276
  
-Start step 46
-   Step time:00:00:00:254
+Start step 13
+   Step time:00:00:00:296
  
-Start step 47
-   Step time:00:00:00:260
+Start step 14
+   Step time:00:00:00:276
  
-Start step 48
-   Step time:00:00:00:256
+Start step 15
+   Step time:00:00:00:274
  
-Start step 49
-   Step time:00:00:00:259
- 
-Start step 50
-   Step time:00:00:00:258
- 
-Start step 51
-   Step time:00:00:00:241
- 
-Start step 52
-   Step time:00:00:00:242
- 
-Start step 53
-   Step time:00:00:00:241
- 
-Start step 54
-   Step time:00:00:00:245
- 
-Start step 55
+Start step 16
    Step time:00:00:00:261
  
+Start step 17
+   Step time:00:00:00:259
+ 
+Start step 18
+   Step time:00:00:00:263
+ 
+Start step 19
+   Step time:00:00:00:260
+ 
+Start step 20
+   Step time:00:00:00:267
+ 
+Start step 21
+   Step time:00:00:00:266
+ 
+Start step 22
+1 Problems with snaxel update
+   Step time:00:00:00:272
+ 
+Start step 23
+   Step time:00:00:00:268
+ 
+Start step 24
+   Step time:00:00:00:269
+ 
+Start step 25
+   Step time:00:00:00:267
+ 
+Start step 26
+   Step time:00:00:00:268
+ 
+Start step 27
+   Step time:00:00:00:259
+ 
+Start step 28
+   Step time:00:00:00:260
+ 
+Start step 29
+   Step time:00:00:00:250
+ 
+Start step 30
+   Step time:00:00:00:256
+ 
+Start step 31
+   Step time:00:00:00:255
+ 
+Start step 32
+   Step time:00:00:00:250
+ 
+Start step 33
+   Step time:00:00:00:246
+ 
+Start step 34
+   Step time:00:00:00:238
+ 
+Start step 35
+   Step time:00:00:00:246
+ 
+Start step 36
+   Step time:00:00:00:230
+ 
+Start step 37
+   Step time:00:00:00:230
+ 
+Start step 38
+   Step time:00:00:00:235
+ 
+Start step 39
+   Step time:00:00:00:239
+ 
+Start step 40
+   Step time:00:00:00:234
+ 
+Start step 41
+   Step time:00:00:00:244
+ 
+Start step 42
+   Step time:00:00:00:240
+ 
+Start step 43
+   Step time:00:00:00:251
+ 
+Start step 44
+   Step time:00:00:00:233
+ 
+Start step 45
+   Step time:00:00:00:229
+ 
+Start step 46
+   Step time:00:00:00:235
+ 
+Start step 47
+[Warning: Time Step was forced to minimum set by user] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TimeStepCalculation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 2001)" style="font-weight:bold">Snakes>TimeStepCalculation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',2001,0)">line 2001</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 100)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',100,0)">line 100</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 31)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',31,0)">line 31</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 159)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',159,0)">line 159</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 89)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',89,0)">line 89</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
+2 Problems with snaxel update
+   Step time:00:00:00:240
+ 
+Start step 48
+   Step time:00:00:00:230
+ 
+Start step 49
+   Step time:00:00:00:229
+ 
+Start step 50
+   Step time:00:00:00:230
+ 
+Start step 51
+   Step time:00:00:00:231
+ 
+Start step 52
+   Step time:00:00:00:232
+ 
+Start step 53
+   Step time:00:00:00:227
+ 
+Start step 54
+   Step time:00:00:00:229
+ 
+Start step 55
+   Step time:00:00:00:230
+ 
 Start step 56
-   Step time:00:00:00:248
+   Step time:00:00:00:229
  
 Start step 57
-   Step time:00:00:00:253
+   Step time:00:00:00:231
  
 Start step 58
-   Step time:00:00:00:252
+   Step time:00:00:00:228
  
 Start step 59
-   Step time:00:00:00:241
+   Step time:00:00:00:230
  
 Start step 60
-   Step time:00:00:00:238
+   Step time:00:00:00:230
  
 Start step 61
-   Step time:00:00:00:241
+   Step time:00:00:00:230
  
 Start step 62
-   Step time:00:00:00:240
+   Step time:00:00:00:229
  
 Start step 63
-   Step time:00:00:00:244
+   Step time:00:00:00:229
  
 Start step 64
-   Step time:00:00:00:246
+   Step time:00:00:00:229
  
 Start step 65
-   Step time:00:00:00:243
+   Step time:00:00:00:231
  
 Start step 66
-   Step time:00:00:00:246
+   Step time:00:00:00:227
  
 Start step 67
-   Step time:00:00:00:242
+   Step time:00:00:00:229
  
 Start step 68
-   Step time:00:00:00:240
+   Step time:00:00:00:230
  
 Start step 69
-   Step time:00:00:00:246
+   Step time:00:00:00:229
  
 Start step 70
-   Step time:00:00:00:244
+   Step time:00:00:00:230
  
 Start step 71
-   Step time:00:00:00:241
+   Step time:00:00:00:229
  
 Start step 72
-   Step time:00:00:00:240
+   Step time:00:00:00:229
  
 Start step 73
-   Step time:00:00:00:239
+   Step time:00:00:00:231
  
 Start step 74
-   Step time:00:00:00:241
+   Step time:00:00:00:229
  
 Start step 75
-   Step time:00:00:00:244
+   Step time:00:00:00:231
  
 Start step 76
-   Step time:00:00:00:239
+   Step time:00:00:00:230
  
 Start step 77
-   Step time:00:00:00:239
+   Step time:00:00:00:231
  
 Start step 78
-   Step time:00:00:00:239
+   Step time:00:00:00:229
  
 Start step 79
-   Step time:00:00:00:241
+   Step time:00:00:00:229
  
 Start step 80
-   Step time:00:00:00:242
+   Step time:00:00:00:230
  
 Start step 81
-   Step time:00:00:00:248
+   Step time:00:00:00:233
  
 Start step 82
-   Step time:00:00:00:243
+   Step time:00:00:00:230
  
 Start step 83
-   Step time:00:00:00:244
+   Step time:00:00:00:230
  
 Start step 84
-   Step time:00:00:00:246
+   Step time:00:00:00:230
  
 Start step 85
-   Step time:00:00:00:244
+   Step time:00:00:00:228
  
 Start step 86
-   Step time:00:00:00:240
+   Step time:00:00:00:231
  
 Start step 87
-   Step time:00:00:00:244
+   Step time:00:00:00:228
  
 Start step 88
-   Step time:00:00:00:241
+   Step time:00:00:00:228
  
 Start step 89
-   Step time:00:00:00:241
+   Step time:00:00:00:229
  
 Start step 90
-   Step time:00:00:00:243
+   Step time:00:00:00:231
  
 Start step 91
-   Step time:00:00:00:243
+   Step time:00:00:00:230
  
 Start step 92
-   Step time:00:00:00:243
+   Step time:00:00:00:229
  
 Start step 93
-   Step time:00:00:00:238
+   Step time:00:00:00:228
  
 Start step 94
-   Step time:00:00:00:237
+   Step time:00:00:00:229
  
 Start step 95
-   Step time:00:00:00:241
- 
-Start step 96
-   Step time:00:00:00:243
- 
-Start step 97
-   Step time:00:00:00:242
- 
-Start step 98
-   Step time:00:00:00:236
- 
-Start step 99
-   Step time:00:00:00:240
- 
-Start step 100
-   Step time:00:00:00:238
-Iteration Time:00:00:26:814
-Volume converged to 6.60729e-09
+Iteration Time:00:00:23:304
+Volume converged to 6.06353e-10
 Finished Iterations , starting Post Process
 Creating Snaxel Loops
-Time taken:00:00:27:410
+Time taken:00:00:23:891
 SNAKE PROCESS END
+{Attempt to reference field of non-structure array.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_Utilities>ExtractVariables', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m', 58)" style="font-weight:bold">include_Utilities>ExtractVariables</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m',58,0)">line 58</a>)
+    varInStruct=param.structdat.vardat.names;
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Extrac
