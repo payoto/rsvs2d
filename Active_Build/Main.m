@@ -4,7 +4,7 @@
 %      Department of Aerospace Engineering
 %                     2015
 %
-%          Subdivision of Surfaces
+%          Parametric Snakes for
 %      for Aerodynamic shape parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
         restartstruct.snakrestart.insideContourInfo=snakSave(end).insideContourInfo;
     end
     % Post processes
-    loop=SubdivisionSurface(loop,refineSteps,typeBound);
+    loop=SubdivisionSurface_Snakes(loop,refineSteps,typeBound);
     CheckResults(unstructured,loop,typeBound)
     
     tecoutstruct.baseGrid=unstructReshape;
@@ -175,100 +175,26 @@ end
 
 %% Subdivision process
 
-function [loop]=SubdivisionSurface(loop,refineSteps,typeBound)
+function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
     % Function taking in a closed loop of vertices and applying the subdivision
     % process
     % typBOund is te type of boundary that is expected, it can either be the
     % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
     % process has been used
-    
+     varExtract={'typeBound','subdivType'};
+    [typeBound,subdivType]=ExtractVariables(varExtract,param);
     if ~exist('typeBound','var'), typeBound='vertex'; end
     
     for ii=1:length(loop)
         startPoints=loop(ii).(typeBound).coord;
         loop(ii).isccw=CCWLoop(startPoints);
-        newPoints=SubSurfChainkin(startPoints(1:end-2,:),refineSteps);
+        newPoints=SubDivision(startPoints,refineSteps,subdivType);
+        %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
         loop(ii).subdivision=newPoints;
     end
 end
 
-function [newPoints]=SubSurfChainkin2(startPoints,refineSteps)
-    % Implements a Chainkin subdivision process
 
-    
-    chainkinMask=[0.25,0.75,0.75,0.25]';
-    newPoints=startPoints;
-    for nIter=1:refineSteps
-        numPoints=length(startPoints(:,1));
-        subMask=zeros((numPoints*2+2),numPoints);
-        
-        % create the right sized mask
-        for ii=1:numPoints
-            jj=(1+(ii-1)*2);
-            subMask(jj:jj+3,ii)=chainkinMask;
-        end
-        
-        newPoints=subMask*startPoints;
-        newPoints(1:2,:)=[];
-        newPoints(end-1:end,:)=[];
-        startPoints=newPoints;
-    end
-end
-
-function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
-    % Implements a Chainkin subdivision process
-    TEisLeft=0;
-    chainkinNoCorn=zeros([4,3]);
-    chainkinNoCorn(1:4,2)=[0.25;0.75;0.75;0.25];
-    
-    chainkinCorn=zeros([5,3]);
-    chainkinCorn(1:5,1)=[0;0.25;0;0;0];
-    chainkinCorn(1:5,2)=[0.25;0.5;1;0.5;0.25];
-    chainkinCorn(1:5,3)=[0;0;0;0.25;0];
-    
-    
-    
-    newPoints=startPoints;
-    for nIter=1:refineSteps
-        numPoints=length(startPoints(:,1));
-        isCorner=DetectTrailingEdge(startPoints,TEisLeft);
-        cumCorner=cumsum(isCorner);
-        numNewPoints=(numPoints*2+cumCorner(end));
-        subMask=zeros(numNewPoints,numPoints);
-        
-        for ii=0:numPoints-1
-            iStart=ii-1;
-            jStart=ii*2+cumCorner(ii+1)-isCorner(ii+1);
-            
-            if isCorner(ii+1)
-                nJ=5;
-                chainkinMask=chainkinCorn;
-            else
-                nJ=4;
-                chainkinMask=chainkinNoCorn;
-            end
-            indX=zeros(1,3);
-            indY=zeros(1,nJ);
-            for iLoop=1:3
-                indX(iLoop)=mod(iStart+(iLoop-1),numPoints)+1;
-            end
-            for jLoop=1:nJ
-                indY(jLoop)=mod(jStart+(jLoop-1),numNewPoints)+1;
-            end
-            
-            subMask(indY,indX)=chainkinMask+subMask(indY,indX);
-        end
-        newPoints=subMask*startPoints;
-        startPoints=newPoints;
-        
-    end
-end
-function isCorner=DetectTrailingEdge(coord,TEisLeft)
-    TEisLeft=(TEisLeft-0.5)*2;
-    testLocMin=((TEisLeft*(coord([2:end,1],1)-coord(:,1)))>0) ...
-        & ((TEisLeft*(coord([end,1:end-1],1)-coord(:,1)))>0);
-    isCorner=testLocMin;
-end
 %% Plot Functions
 function []=CheckResults(unstructured,loop,typeBound)
     global nDim domainBounds
