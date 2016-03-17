@@ -22,15 +22,26 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
             hold on
             plot(startPoints(:,1),startPoints(:,2),'b--')
             [newChaik]=SubSurfChainkin(startPoints,nSteps);
-            plot(newChaik(:,1),newChaik(:,2),'mo-');
+            plot(newChaik(:,1),newChaik(:,2));
             [newSpline]=SubSurfBSpline(startPoints,nSteps);
-            plot(newSpline(:,1),newSpline(:,2),'g+-')
+            plot(newSpline(:,1),newSpline(:,2))
+            [newInterp1]=SubSurfinterp1(startPoints,nSteps);
+            plot(newInterp1(:,1),newInterp1(:,2))
+            [newInterp2]=SubSurfinterp2(startPoints,nSteps);
+            plot(newInterp2(:,1),newInterp2(:,2))
+            [newcube]=SubSurfCubic(startPoints,nSteps);
+            plot(newcube(:,1),newcube(:,2))
             newPoints.chaikin=newChaik;
             newPoints.bspline=newSpline;
+            newPoints.newInterp1=newInterp1;
+            newPoints.newInterp2=newInterp2;
+            newPoints.newcube=newcube;
         case 'interp1'
             [newPoints]=SubSurfinterp1(startPoints,nSteps);
         case 'interp2'
             [newPoints]=SubSurfinterp2(startPoints,nSteps);
+        case 'cubic'
+            [newPoints]=SubSurfCubic(startPoints,nSteps);
         otherwise
             
             error('Invalid method');
@@ -43,7 +54,7 @@ end
 
 function [newPoints]=SubSurfChainkin2(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
-
+    
     
     chainkinMask=[0.25,0.75,0.75,0.25]';
     newPoints=startPoints;
@@ -189,6 +200,53 @@ function [newPoints]=SubSurfinterp1(startPoints,refineSteps)
                 bSplineMask=bsplineCorn;
             else
                 nJ=7;
+                bSplineMask=bsplineNoCorn;
+            end
+            indX=zeros(1,1);
+            indY=zeros(1,nJ);
+            for iLoop=1:1
+                indX(iLoop)=mod(iStart+(iLoop-1),numPoints)+1;
+            end
+            for jLoop=1:nJ
+                indY(jLoop)=mod(jStart+(jLoop-1),numNewPoints)+1;
+            end
+            
+            subMask(indY,indX)=bSplineMask+subMask(indY,indX);
+        end
+        newPoints=subMask*startPoints;
+        startPoints=newPoints;
+        
+    end
+end
+
+function [newPoints]=SubSurfCubic(startPoints,refineSteps)
+    % Implements a Chainkin subdivision process
+    TEisLeft=0;
+    bsplineNoCorn=zeros([4,1]);
+    
+    bsplineNoCorn(1:4,1)=[-1/16;9/16;9/16;-1/16];
+    
+    bsplineCorn=bsplineNoCorn;
+    
+    
+    
+    newPoints=startPoints;
+    for nIter=1:refineSteps
+        numPoints=length(startPoints(:,1));
+        isCorner=DetectTrailingEdge(startPoints,TEisLeft);
+        cumCorner=cumsum(isCorner);
+        numNewPoints=(numPoints*2);
+        subMask=zeros(numNewPoints,numPoints);
+        
+        for ii=0:numPoints-1
+            iStart=ii;
+            jStart=ii*2;
+            
+            if isCorner(ii+1)
+                nJ=4;
+                bSplineMask=bsplineCorn;
+            else
+                nJ=4;
                 bSplineMask=bsplineNoCorn;
             end
             indX=zeros(1,1);

@@ -162,6 +162,27 @@ void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLe
 	} 
 }
 
+void ClearWorkSpace(){
+	int ii;
+	// Connec struct data
+	free(nNewEdges);
+	free(splitEdgesInd);
+	free(nNewCells);
+	free(splitCellsInd);
+	for(ii=0;ii<nSplitEdges;ii++){free(*(newEdgesInd+ii));}
+	for(ii=0;ii<nSplitCells;ii++){free(*(newCellsInd+ii));}
+	free(newEdgesInd);
+	free(newCellsInd);
+	
+	// File Data
+	free(levelSize);
+	free(cells);
+	for (ii=0;ii<nCells;ii++){free(celldatstruct[ii].refineVec);}
+	free(celldatstruct);
+	
+	// Grid Structures
+	
+}
 // EXECUTION FUNCTIONS
 
 // Import data
@@ -172,7 +193,7 @@ void DataIn(){
 	int ii,jj;
 	
 	#if defined(MEX_COMPILE)
-		cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
+		//cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
 	#else
 		cellgridFID=fopen("cellgrid.dat","r");
 	#endif
@@ -222,7 +243,7 @@ void DataArrayToStruct(){
 			celldatstruct[ii].refineVec[jj]=cells[rootSub+2+jj];
 		}
 	}
-	free(cells);
+	//free(cells);
 	// Checks
 	/*
 	for(ii=0;ii<nCells;ii++){
@@ -416,6 +437,7 @@ void RefineGrid(){
 		GenerateTemplateGrid(ii);
 		printf("\n    ACTION: Template Generated");
 		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
+		
 		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
 				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid);
 		
@@ -702,6 +724,8 @@ void BuildLvlTemplate(int domSize[dim()], int baseRefineLvl, int nLevelsInput,
 
 // Grid Refinement Processes
 
+
+
 void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRefineCell){
 	// Identify cells which still need refinement
 	//	 This is done by going through the data and finding the 
@@ -725,6 +749,7 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	//int *posGridRef=NULL, *indGridRef=NULL;
 	// first count the number of refinements needed
 
+	
 	posRefV= (int *)calloc(nCells,sizeof(int));
 	posCellRef= (int *)calloc(nCells*(refinLvl-1),sizeof(int));
 	//printf("%i \n",refinLvl-2);
@@ -742,7 +767,7 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	}
 	//printf("%i",kk);
 	posRefV=(int*)realloc(posRefV,kk*sizeof(int));
-	posCellRef=(int*)realloc(posCellRef,kk*sizeof(int)*(refinLvl-1));
+	posCellRef=(int*)realloc(posCellRef,sizeof(int)*(kk*(refinLvl-1)+1));
 	
 	nPosRefine=kk;
 	(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));
@@ -755,8 +780,7 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	for (ii=0;ii<nPosRefine;ii++){
 		for (jj=0;jj<nCellGrid;jj++){
 			ll=0;
-			while((cellstruct[jj].refineVec[ll]==posCellRef[ii*(refinLvl-1)+ll])
-				& (ll<(refinLvl-1))){
+			while((ll<(refinLvl-1) & (cellstruct[jj].refineVec[ll]==posCellRef[ii*(refinLvl-1)+ll]))){
 				ll++;
 				//printf("%i ",ll);
 			}
@@ -1531,7 +1555,11 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 			splitCellsInd[nSplitCellsStart+ii]=indCellRefine[ii];
 	}
 	
-	
+	free(posEdgeSideTemp);
+	free(posVertSideTemp);
+	free(posCellAddTemp);
+	free(posEdgeAddTemp);
+	free(posVertAddTemp);
 }
 
 
@@ -1558,12 +1586,16 @@ void RemoveIdenticalEntries_int(int **array, int nArray, int *nNewArray){
 	//printf("\n");
 	for (ii=1;ii<nArray;ii++){
 		if ((*array)[ii]>(*array)[jj-1]){
+			
+			//printf("\n%i %i %i",ii,jj,nArray);
 			(*array)[jj]=(*array)[ii];
 			jj++;
 			//printf("%i ", jj);
 		}
 	}
-	(*array)=(int*)realloc((*array),jj*sizeof(int));
+	if (jj<nArray){
+		(*array)=(int*)realloc((*array),jj*sizeof(int));
+	}
 	*nNewArray=jj;
 }
 

@@ -77,7 +77,13 @@ function [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(
     
     % Current SQP
     smearLengthEps=forceparam.lengthEpsilon;
-    [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps);
+    typeSmear=forceparam.typeSmear;
+    switch typeSmear
+        case 'length'
+            [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
+        case 'd'
+            [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
+    end
     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
     [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
@@ -331,8 +337,7 @@ end
 
 %% Actual Profile length minimisation using SQP
 
-function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps)
-
+function [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps)
     for ii=length(snakposition):-1:1
         neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
         
@@ -342,21 +347,19 @@ function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosI
         % extracting data from preexisting arrays
         derivtenscalc(ii).Dg_i=snakposition(ii).vectornotnorm;
         derivtenscalc(ii).Dg_m=snakposition(neighSub).vectornotnorm;
+        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
+        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
         derivtenscalc(ii).p_i=snakposition(ii).coord;
         derivtenscalc(ii).p_m=snakposition(neighSub).coord;
         derivtenscalc(ii).d_i=snaxel(ii).d;
         derivtenscalc(ii).d_m=snaxel(neighSub).d;
-        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
-        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
-        
-        
         % calculating data
-        
-        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum((derivtenscalc(ii).p_i-derivtenscalc(ii).p_m).^2));
-        %{
 
-        %}
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum( (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+
     end
+       
+           
     for ii=length(snakposition):-1:1
         [derivtenscalc(ii).a_i,...
             derivtenscalc(ii).a_m,...
@@ -369,6 +372,51 @@ function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosI
                 derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
             
             [derivtenscalc2(ii)]=CalculateDerivatives(derivtenscalc(ii));
+            
+    end
+    testnan=find(isnan([derivtenscalc2(:).d2fiddi2]));
+    if ~isempty(testnan)
+       testnan 
+    end
+end
+
+function [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps)
+    
+    for ii=length(snakposition):-1:1
+        neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
+        
+        derivtenscalc(ii).index=snakposition(ii).index;
+        derivtenscalc(ii).snaxprec=snaxel(ii).snaxprec;
+        derivtenscalc(ii).precsub=neighSub;
+        % extracting data from preexisting arrays
+        derivtenscalc(ii).Dg_i=snakposition(ii).vectornotnorm;
+        derivtenscalc(ii).Dg_m=snakposition(neighSub).vectornotnorm;
+        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
+        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
+
+        derivtenscalc(ii).d_i=(1-2*smearLengthEps)*snaxel(ii).d+smearLengthEps;
+        derivtenscalc(ii).d_m=(1-2*smearLengthEps)*snaxel(neighSub).d+smearLengthEps;
+        % calculating data
+        derivtenscalc(ii).p_i=(derivtenscalc(ii).g1_i+...
+            derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i);
+        derivtenscalc(ii).p_m=(derivtenscalc(ii).g1_m+...
+            derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m);
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum( (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+
+    end
+    
+    for ii=length(snakposition):-1:1
+        [derivtenscalc(ii).a_i,...
+            derivtenscalc(ii).a_m,...
+            derivtenscalc(ii).a_im,...
+            derivtenscalc(ii).b_i,...
+            derivtenscalc(ii).b_m,...
+            derivtenscalc(ii).c]=...
+            Calc_LengthDerivCoeff(...
+                derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
+                derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
+            
+            [derivtenscalc2(ii)]=CalculateDerivatives_d(derivtenscalc(ii),smearLengthEps);
             
     end
     testnan=find(isnan([derivtenscalc2(:).d2fiddi2]));
@@ -427,7 +475,7 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
     Deltax=-Bkinv*(Df+Dh*u_kp1);
     
 end
-%% Derivative calculations
+%% Derivative calculations - Length Smearing
 
 function [derivtenscalcII]=CalculateDerivatives(derivtenscalcII)
     
@@ -480,8 +528,58 @@ function [d2fiddim]=Calc_D2FiDdim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm)
     
 end
 
+%% Derivative calculations - Distance Smearing
 
+function [derivtenscalcII]=CalculateDerivatives_d(derivtenscalcII,lSmear)
+    
+    varExtract={'a_i','a_m','a_im','b_i','b_m','c','normFi','d_i','d_m'};
+    
+    for ii=1:length(varExtract)
+        eval([varExtract{ii},'=derivtenscalcII.(varExtract{ii});'])
+    end
+    
+    [derivtenscalcII.dfiddi]=Calc_DFiDdi_d(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    [derivtenscalcII.dfiddm]=Calc_DFiDdm_d(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    [derivtenscalcII.d2fiddi2]=Calc_D2FiDdi2_d(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    [derivtenscalcII.d2fiddm2]=Calc_DFiDdm2_d(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    [derivtenscalcII.d2fiddim]=Calc_D2FiDdim_d(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    
+end
 
+function [dfiddi]=Calc_DFiDdi_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    
+    dfiddi=(2*a_i*di*(1-2*lSmear)+a_im*dm*(1-2*lSmear)+b_i*(1-2*lSmear))/(2*(normFi));
+    
+    
+end
+function [dfiddm]=Calc_DFiDdm_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    dfiddm=(2*a_m*dm*(1-2*lSmear)+a_im*di*(1-2*lSmear)+b_m*(1-2*lSmear))/(2*(normFi));
+end
+function [d2fiddi2]=Calc_D2FiDdi2_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    
+    d2fiddi2=((2*a_i*(1-2*lSmear)*(1-2*lSmear)*2*(normFi)^2)...
+        -(2*a_i*di*(1-2*lSmear)+a_im*dm*(1-2*lSmear)+b_i*(1-2*lSmear))^2) ...
+    /(4*((normFi)^3));
+
+end
+function [d2fiddm2]=Calc_DFiDdm2_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+
+    d2fiddm2=((2*a_m*(1-2*lSmear)*(1-2*lSmear)*2*(normFi)^2)...
+        -(2*a_m*dm*(1-2*lSmear)+a_im*di*(1-2*lSmear)+b_m*(1-2*lSmear))^2) ...
+    /(4*(normFi)^3);  
+end
+function [d2fiddim]=Calc_D2FiDdim_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    
+    d2fiddim=((a_im*(1-2*lSmear)*(1-2*lSmear)*2*(normFi)^2)...
+        -((2*a_m*dm*(1-2*lSmear)+a_im*di*(1-2*lSmear)+b_m*(1-2*lSmear))*(2*a_i*di*(1-2*lSmear)+a_im*dm*(1-2*lSmear)+b_i*(1-2*lSmear)))) ...
+        /(4*(normFi)^3);  
+    
+    
+end
 
 
 

@@ -98,7 +98,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	printf("done !\n");
 	OutputGridStruct(&plhs[0]);
 	OutputConnectStruct(&plhs[1]);
-	free(levelSize);
+	//free(levelSize);
+	 ClearWorkSpace();
 	free(cellrefineInd);
 	free(cellrefinePos);
 	/*

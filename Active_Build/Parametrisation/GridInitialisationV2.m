@@ -56,7 +56,7 @@ function [unstructured,loop,unstructReshape]=...
     end
 
     if isCheckRes
-        CheckResults(unstructured,loop)
+        %CheckResults(unstructured,loop)
     end
     disp('Reshaping')
     [unstructReshape]=ModifUnstructured(unstructured);

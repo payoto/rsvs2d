@@ -39,6 +39,7 @@ typedef struct {
 
 #define dim() (2)
 // Function prototypes
+void ClearWorkSpace();
 void Allocatecelldatstruct();
 void AllocateGridStruct(int domSize[dim()],
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
