@@ -1,14 +1,14 @@
 %% Code to generate a 3D plot of function
 
-function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize)
-    
+function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps)
+    if ~exist('eps','var'), eps=0;end
     jj=0:numStep-1;
     dVec=1-jj*stepSize;
     [d_i,d_m]=meshgrid(dVec,dVec);
     for jj=1:numStep
         for kk=1:numStep
-            derivtenscalc.d_i=dVec(jj);
-            derivtenscalc.d_m=dVec(kk);
+            derivtenscalc.d_i=dVec(jj)-eps;
+            derivtenscalc.d_m=dVec(kk)-eps;
             derivtenscalc.normFi=sqrt(sum(((derivtenscalc.g1_i+derivtenscalc.Dg_i*derivtenscalc.d_i)-(derivtenscalc.g1_m+derivtenscalc.Dg_m*derivtenscalc.d_m)).^2));
             [derivtenscalc3(jj,kk)]=CalculateDerivatives(derivtenscalc);
         end
@@ -152,7 +152,65 @@ function [h]=SurfFor2ndDeriv(X,Y,Z)
 end
 
 %% Well Fuck it
-
+function [derivtenscalc2]=ExtractDataForDerivatives(snaxel,snakposition,snakPosIndex,smearLengthEps,smearType)
+    
+    
+    for ii=length(snakposition):-1:1
+        neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
+        
+        derivtenscalc(ii).index=snakposition(ii).index;
+        derivtenscalc(ii).snaxprec=snaxel(ii).snaxprec;
+        derivtenscalc(ii).precsub=neighSub;
+        % extracting data from preexisting arrays
+        derivtenscalc(ii).Dg_i=snakposition(ii).vectornotnorm;
+        derivtenscalc(ii).Dg_m=snakposition(neighSub).vectornotnorm;
+        derivtenscalc(ii).p_i=snakposition(ii).coord;
+        derivtenscalc(ii).p_m=snakposition(neighSub).coord;
+        
+        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
+        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
+    end
+    switch smearType
+        case 'length'
+            for ii=length(snakposition):-1:1
+                derivtenscalc(ii).d_i=snaxel(ii).d;
+                derivtenscalc(ii).d_m=snaxel(neighSub).d;
+                % calculating data
+                % 1st type of smearing - General length smearing
+                derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum((derivtenscalc(ii).p_i-derivtenscalc(ii).p_m).^2));
+                
+            end
+        case 'd'
+            for ii=length(snakposition):-1:1
+                derivtenscalc(ii).d_i=(1-2*smearLengthEps)*snaxel(ii).d+smearLengthEps;
+                derivtenscalc(ii).d_m=(1-2*smearLengthEps)*snaxel(neighSub).d+smearLengthEps;
+                % calculating data
+                % 2nd type of smearing - Distance smearing
+                derivtenscalc(ii).normFi=sqrt(sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
+                
+            end
+    end
+    
+    
+    for ii=length(snakposition):-1:1
+        [derivtenscalc(ii).a_i,...
+            derivtenscalc(ii).a_m,...
+            derivtenscalc(ii).a_im,...
+            derivtenscalc(ii).b_i,...
+            derivtenscalc(ii).b_m,...
+            derivtenscalc(ii).c]=...
+            Calc_LengthDerivCoeff(...
+            derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
+            derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
+        
+        [derivtenscalc2(ii)]=CalculateDerivatives(derivtenscalc(ii));
+        
+    end
+    testnan=find(isnan([derivtenscalc2(:).d2fiddi2]));
+    if ~isempty(testnan)
+        testnan
+    end
+end
 
 function [derivtenscalcII]=CalculateDerivatives(derivtenscalcII)
     

@@ -113,11 +113,9 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         
         for subStep=1:subStep
              snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
-%             [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-%             [snakposition]=SnaxelNormal2(snaxel,snakposition);
-%             [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-%                 cellCentredGrid,insideContourInfo);
-%             [snaxel,snakposition,snaxelmodvel]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+            %[snakposition]=PositionSnakes(snaxel,refinedGriduns);
+            %[snakposition]=SnaxelNormal2(snaxel,snakposition);
+            %[snaxel,~,~]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         end
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
         % Snaxel Repopulation In both directions
@@ -1761,12 +1759,14 @@ end
 function [finishedSnakesSub]=ArrivalCondition(snaxel)
     % Calculates the arrival condition for repopulation
     
-    global arrivalTolerance
-    
+    global arrivalTolerance maxDt
+    v=[snaxel(:).v];
+    d=[snaxel(:).d];
     isFreeze=[snaxel(:).isfreeze]; % finds all unfrozen
-    isFwd=[snaxel(:).v]>0;
-    isArrived=[snaxel(:).d]>=(1-arrivalTolerance);
-    finishedSnakesSub=find((isFwd & ~isFreeze & isArrived));
+    isFwd=v>0;
+    isArrived=d>=(1-arrivalTolerance);
+    willImpact=abs((1-d)./v)<maxDt;
+    finishedSnakesSub=find((isFwd & ~isFreeze & isArrived & willImpact));
 end
 
 function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInsideEdges,snaxel)

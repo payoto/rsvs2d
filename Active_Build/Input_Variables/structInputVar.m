@@ -74,7 +74,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.maxStep=0.9;
     paramsnakesstep.maxDt=0.5;
     paramsnakesstep.convLevel=10^-8;
-    paramsnakesstep.arrivalTolerance=1e-2;
+    paramsnakesstep.arrivalTolerance=2e-1;
     paramsnakesstep.subStep=1;
     paramsnakesstep.restartFlag=false;
     paramsnakesstep.snakesMinSteps=5;
@@ -97,6 +97,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
     paramsnakesforce.lengthEpsilon=1e-5;
+    paramsnakesforce.typeSmear='length';
     
     paramsnakesforce.velType='default';
     paramsnakesforce.vel.Type={'default'};
@@ -123,6 +124,14 @@ function param=OptimConvergence(param)
     
 end
 
+function param=AvoidLocalOptim(param)
+    
+
+    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.typeSmear='length';
+    param.snakes.step.arrivalTolerance=10e-2;
+    
+end
 function param=SmoothFEDynamic(param)
     
 
@@ -290,12 +299,15 @@ function [param]=SnakesFoilVVSmall()
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
     
     param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     param.general.passDomBounds=[-1,1;-0.5,0.5];
     param.general.refineSteps=4;
+    param.snakes.step.mergeTopo=false;
+    
 end
 
 function [param]=WeirdShape()
@@ -328,10 +340,11 @@ function [param]=WeirdShape2()
     %param=OptimConvergence(param);
     param=DualOptimSmoothing(param);
     
+    param=AvoidLocalOptim(param);
     param.snakes.refine.refineGrid=4;
     param.general.typDat='low5shape2';
-    param.snakes.refine.typeRefine='grey';
-    param.snakes.step.snakesSteps=2;
+    param.snakes.refine.typeRefine='all';
+    param.snakes.step.snakesSteps=50;
    
     
 
