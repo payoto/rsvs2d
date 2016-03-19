@@ -75,8 +75,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(
     end
     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
     isFreeze=[snaxel(:).isfreeze];
-    %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
-    [Deltax]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
     
     velcalcinfostruct.forcingVec=forcingVec;
     velcalcinfostruct.conditionMat=conditionMat;
@@ -450,24 +449,7 @@ function [Df,Hf]=BuildJacobianAndHessian(derivtenscalc)
     
 end
 
-function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
-    
-    rmvCol=find(sum(Dh~=0)==0);
-    Dh(:,rmvCol)=[];
-    h_vec(rmvCol)=[];
-    
-    Bkinv=(Hf)^(-1);
-    matToInv=(Dh'*Bkinv*Dh);
-    if rcond(matToInv)>1e-10
-        u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
-    else
-        u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
-    end
-    Deltax=-Bkinv*(Df+Dh*u_kp1);
-    
-end
-
-function [DeltaxFin]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
+function [DeltaxFin]=SQPStep(Df,Hf,Dh,h_vec,isFreeze)
     
     rmvCol=find(sum(Dh~=0)==0);
     Dh(:,rmvCol)=[];
@@ -488,9 +470,8 @@ function [DeltaxFin]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     Deltax=-Bkinv*(Df+Dh*u_kp1);
     
     DeltaxFin=zeros(size(isFreeze));
-    DeltaxFin(~isFreeze)=Deltax;
+    DeltaxFin(~isFreeze)=Deltax
 end
-
 %% Derivative calculations - Length Smearing
 
 function [derivtenscalcII]=CalculateDerivatives(derivtenscalcII)

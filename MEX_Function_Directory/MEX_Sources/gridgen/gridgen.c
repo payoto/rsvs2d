@@ -49,6 +49,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 int main(){
 InitialiseGridFromFile();
+ClearWorkSpace();
 return(0);
 }
 
@@ -182,6 +183,10 @@ void ClearWorkSpace(){
 	
 	// Grid Structures
 	
+	free(edgestruct);
+	free(vertstruct);
+	for(ii=0;ii<nCellGrid;ii++){free(cellstruct[ii].refineVec);}
+	free(cellstruct);
 }
 // EXECUTION FUNCTIONS
 
@@ -193,7 +198,7 @@ void DataIn(){
 	int ii,jj;
 	
 	#if defined(MEX_COMPILE)
-		//cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
+		cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
 	#else
 		cellgridFID=fopen("cellgrid.dat","r");
 	#endif
@@ -439,7 +444,7 @@ void RefineGrid(){
 		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
 		
 		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
-				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid);
+				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,4);
 		
 		printf("\n    ACTION: Refinement Targets Identified");
 		domSize[0]=levelSize[2*(ii-1)];
@@ -849,11 +854,11 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 }
 
 void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
-		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine, edgeTemplate *edgestructAct, int nEdge){
+		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine, edgeTemplate *edgestructAct, int nEdge, int nEdgepCell){
 	
 	int ii,jj,ll,kk,kkStart,flagEdge;
 	
-	*posEdgeRefine=(int*)calloc(nEdge,sizeof(int));
+	*posEdgeRefine=(int*)calloc(nCellRefine*nEdgepCell,sizeof(int));
 	kk=0;
 	for(ii=0;ii<nEdge;ii++){
 		for(jj=0;jj<nCellRefine;jj++){
@@ -1432,9 +1437,10 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	int *posCurrEdge=NULL,*indCurrEdge=NULL;
 	int *ordPosEdge=NULL, *ordIndEdge=NULL, *ordIndVert=NULL,*ordPosVert=NULL;
 	int nCurrEdge;
-	
+	int nEdgepCell=0;
+	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid);
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid,nEdgepCell);
 	
 	//printf("\n***Number of Edge of Cell: %i",nCurrEdge);
 	ordPosEdge=(int*)calloc(nCurrEdge,sizeof(int));
@@ -1495,15 +1501,17 @@ void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,
 	int *posCurrEdge=NULL,*indCurrEdge=NULL, indCellRefine[4]={-1,-2,-3,-4};
 	int *ordIndEdge=NULL, *ordIndVert=NULL, *listTempEdge=NULL,*listTempVert=NULL;
 	int nCurrEdge;
-	
 	int nCellTemplate,nEdgeTemplate,nVertTemplate;
+	int nEdgepCell=0;
+	
+	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
 	// Cell
 	*posCellAdd=(int*)calloc(nCellTemplate,sizeof(int));
 	for (ii=0;ii<nCellTemplate;ii++){ (*posCellAdd)[ii] = ii; }
 	// Edge and Vertex Sides
 	IdentifyRefineEdge(indCellRefine, indCellRefine,4,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate);
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate,nEdgepCell);
 			
 	//printf("\n***Number of Border Edges for template %i",nCurrEdge);
 	*posEdgeSide=(int*)calloc(nCurrEdge,sizeof(int));

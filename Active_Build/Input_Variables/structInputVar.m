@@ -212,12 +212,13 @@ function [param]=Snakestestsmooth1()
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
-    param=LinOptimSmoothing(param);
+    %param=LinOptimSmoothing(param);
+    param=AvoidLocalOptim(param);
     param.general.typDat='testsmooth1';
     
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
-    param.snakes.refine.typeRefine='grey';
+    param.snakes.refine.typeRefine='all';
     
 end
 
@@ -225,12 +226,13 @@ function [param]=Snakestestsmooth1_2()
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
     %param=LinOptimSmoothing(param);
     param.general.typDat='testsmooth1_2';
     
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
-    param.snakes.refine.typeRefine='grey';
+    param.snakes.refine.typeRefine='all';
     param.plotting.debugPlot=[10:15];
     
 end
@@ -301,7 +303,7 @@ function [param]=SnakesFoilVVSmall()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=5;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     param.general.passDomBounds=[-1,1;-0.5,0.5];
