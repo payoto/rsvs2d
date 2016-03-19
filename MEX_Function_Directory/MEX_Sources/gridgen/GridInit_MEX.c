@@ -56,11 +56,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	InitialiseGridFromFile_MEX(plhs);
 	printf("done !\n");
 	
-	/*
-	printf("\nMex Output . . .");
-	OutputGridStruct(&plhs[0]);
-	printf("done !\n");
-	*/
+	ClearWorkSpace();
 	return;
 }
 

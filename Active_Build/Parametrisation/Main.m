@@ -125,7 +125,7 @@ function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param)
     t1=now;
     [unstructured,loop,unstructReshape]=...
         GridInitialisationV2(param);
-    
+    disp('Grid Initialisation exited')
     t2=now;
     disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
     disp('GENERATION PROCESS end')

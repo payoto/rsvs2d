@@ -75,7 +75,7 @@ void OutputGrid(int jj);
 int SortOrder(const void * elem1, const void * elem2);
 void IdentifyRefineCell(int refinLvl,int **posGridRef,int **indGridRef, int *nRefineCell);
 void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
-		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine, edgeTemplate *edgestructAct, int nEdge);
+		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine, edgeTemplate *edgestructAct, int nEdge, int nEdgepCell);
 void RemoveIdenticalEntries_int(int **array, int nArray, int *nNewArray);
 int imin(int a, int b);
 int imax(int a, int b);

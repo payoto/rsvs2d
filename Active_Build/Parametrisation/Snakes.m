@@ -61,10 +61,13 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
         refinedGrid,loop,oldGrid,connectionInfo,mergeTopo,boundstr,param);
+    
+    [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid);
+    
     tStepEnd=now;
     disp(['   Initialisation time:',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF')]);
-        
     tStart=now;
+    
     movFrame=struct([]);
     for ii=1:snakesSteps
         %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
@@ -597,11 +600,11 @@ function [movFrame]=CheckResults(iter,unstructured,oldGrid,snakposition,snaxel,m
                 oldCellIndUnstructInd,[volumefraction(:).oldCellInd]);
             for ii=1:length(oldCellIndUnstructInd)
                 
-                coord=oldGrid.cell(oldCellIndUnstructSub(ii)).coord;
-                frac=volumefraction(oldCellIndVolFracSub(ii)).volumefraction...
-                    -volumefraction(oldCellIndVolFracSub(ii)).targetfill;
+               % coord=oldGrid.cell(oldCellIndUnstructSub(ii)).coord;
+               % frac=volumefraction(oldCellIndVolFracSub(ii)).volumefraction...
+               %     -volumefraction(oldCellIndVolFracSub(ii)).targetfill;
                 %frac=volumefraction(oldCellIndVolFracSub(ii)).oldCellInd;
-                PlotVolFrac(figh,axh,coord,frac)
+               % PlotVolFrac(figh,axh,coord,frac)
             end
         end
         
@@ -2094,7 +2097,7 @@ function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourIn
     kk=0;
     
     while ~isempty(delIndex)
-        canMove=[snaxel(:).isfreeze]==0;
+        canMove=[snaxel(:).isfreeze]~=1;
         if ~isempty(snaxel(canMove))
             [delIndex]=FindBadSnaxels(snaxel(canMove),insideContourInfo);
         else
@@ -2458,6 +2461,15 @@ function [snaxel]=MergeTopologies2(snaxel,workPair,precSnak,nextSnak)
         snaxel(precSub(ii)).connectivity=connecPrec;
         snaxel(nextSub(jj)).connectivity=connecNext;
     end
+    
+end
+
+function [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid)
+    
+   borderEdges=[refinedGrid.edge(:).boundaryis0] & [refinedGrid.edge(:).boundaryis1];
+   borderEdgInd=[refinedGrid.edge(borderEdges).index];
+   borderVertices=sort([refinedGrid.edge(borderEdges).vertexindex]); 
+   freezeVertex=RemoveIdenticalEntries(borderVertices);
     
 end
 

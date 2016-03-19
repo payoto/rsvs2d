@@ -14,7 +14,7 @@
 
 
 function [unstructured,loop,unstructReshape]=...
-        GridInitialisation(param)
+        GridInitialisationV2(param)
     % Main function for the execution of the Subdivision process
     
     %unpacking input parameters
@@ -230,6 +230,7 @@ function [unstructured]=Initialisation_Square(typDat)
     
     WriteCellGridDat(arraySize);
     [unstructReshape]=GridInit_MEX;
+    clear GridInit_MEX
     for ii=1:length(unstructReshape.cell)
         unstructReshape.cell(ii).fill=parametrisation.fill(ii);
     end
