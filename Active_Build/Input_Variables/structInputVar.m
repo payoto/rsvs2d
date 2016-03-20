@@ -217,7 +217,7 @@ function [param]=Snakestestsmooth1()
     param.general.typDat='testsmooth1';
     
     param.snakes.step.snakesSteps=200;
-    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
 end
@@ -231,9 +231,9 @@ function [param]=Snakestestsmooth1_2()
     param.general.typDat='testsmooth1_2';
     
     param.snakes.step.snakesSteps=200;
-    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.refineGrid=6;
     param.snakes.refine.typeRefine='all';
-    param.plotting.debugPlot=[10:15];
+    param.plotting.debugPlot=[0];
     
 end
 
