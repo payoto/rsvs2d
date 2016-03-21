@@ -28,7 +28,6 @@ function [param]=structInputVar(caseStr)
     end
 end
 
-
 %% Default Inputs
 function paramgeneral=default_general()
     
