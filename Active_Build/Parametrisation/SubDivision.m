@@ -12,7 +12,7 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
     
     
     switch refineMethod
-        case 'chainkin'
+        case 'chaikin'
             [newPoints]=SubSurfChainkin(startPoints,nSteps);
         case 'bspline'
             
@@ -42,6 +42,8 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
             [newPoints]=SubSurfinterp2(startPoints,nSteps);
         case 'cubic'
             [newPoints]=SubSurfCubic(startPoints,nSteps);
+        case 'area'
+            [newPoints]=SubSurf_AreaConserv(startPoints,nSteps);
         otherwise
             
             error('Invalid method');
@@ -50,7 +52,6 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
     
     
 end
-
 
 function [newPoints]=SubSurfChainkin2(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
@@ -122,6 +123,8 @@ function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
         startPoints=newPoints;
         
     end
+    
+    limCurvMat=LimitCurve(subMask,3);
 end
 
 function [newPoints]=SubSurfBSpline(startPoints,refineSteps)
@@ -315,9 +318,104 @@ function [newPoints]=SubSurfinterp2(startPoints,refineSteps)
     end
 end
 
+function [newPoints]=SubSurf_AreaConserv(startPoints,refineSteps)
+    
+    newStencilInfo.varStencil=[0
+        -1/40
+        0
+        (2^(1/2)*21^(1/2)*800^(1/2))/800 - 1/20
+        21/40
+        21/20 - (2^(1/2)*21^(1/2)*800^(1/2))/800
+        21/20 - (2^(1/2)*21^(1/2)*800^(1/2))/800
+        21/40
+        (2^(1/2)*21^(1/2)*800^(1/2))/800 - 1/20
+        0
+        -1/40
+        0];
+    
+    newStencilInfo.nNew=3;
+    [newPoints]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencilInfo);
+    
+end
+
+function [newPoints]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencilInfo)
+    % Implements a Chainkin subdivision process
+    
+    varStencil=newStencilInfo.varStencil;
+    nNew=newStencilInfo.nNew;
+    [nJ,nI]=size(varStencil);
+    
+    
+    newPoints=startPoints;
+    for nIter=1:refineSteps
+        numPoints=length(startPoints(:,1));
+        
+        numNewPoints=(numPoints*nNew);
+        subMask=zeros(numNewPoints,numPoints);
+        
+        for ii=0:numPoints-1
+            iStart=ii;
+            jStart=ii*nNew;
+            bSplineMask=varStencil;
+            
+            indX=zeros(1,nI);
+            indY=zeros(1,nJ);
+            for iLoop=1:1
+                indX(iLoop)=mod(iStart+(iLoop-1),numPoints)+1;
+            end
+            for jLoop=1:nJ
+                indY(jLoop)=mod(jStart+(jLoop-1),numNewPoints)+1;
+            end
+            
+            subMask(indY,indX)=bSplineMask+subMask(indY,indX);
+        end
+        newPoints=subMask*startPoints;
+        startPoints=newPoints;
+        
+    end
+end
+
 function isCorner=DetectTrailingEdge(coord,TEisLeft)
     TEisLeft=(TEisLeft-0.5)*2;
     testLocMin=((TEisLeft*(coord([2:end,1],1)-coord(:,1)))>0) ...
         & ((TEisLeft*(coord([end,1:end-1],1)-coord(:,1)))>0);
     isCorner=testLocMin;
+end
+
+function [limCurvMat]=LimitCurve(subMask,nStencil)
+    
+    [nNew,nOld]=size(subMask);
+    locStencil=cumsum(subMask~=0,2);
+    iStart=sum(locStencil==0,2)+1;
+    
+    locStencil=cumsum(subMask(:,end:-1:1)~=0,2);
+    iEnd=nOld-sum(locStencil==0,2);
+    nStencLoc=iEnd-(iStart-1);
+    [~,iCentre]=max(subMask,[],2);
+    nI=nStencil;
+    nJ=nStencil;
+    
+    limCurvMat=zeros(nNew);
+    
+    for ii=1:nNew
+        iStart=-1+iCentre(ii)-floor(nStencil/2);
+        jStart=-1+ii-floor(nStencil/2);
+        
+        indX=zeros(1,nI);
+        indY=zeros(1,nJ);
+        for iLoop=1:nI 
+            indX(iLoop)=mod(iStart+(iLoop-1),nOld)+1;
+        end
+        for jLoop=1:nJ
+            indY(jLoop)=mod(jStart+(jLoop-1),nNew)+1;
+        end
+        
+        [w,d]=eig([subMask(indY,indX)]');
+        
+        limCurvMat(ii,indY)=w(:,1)';
+    end
+    
+    
+    
+    
 end

@@ -70,7 +70,8 @@ end
 %% Top Level Execution processes
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-        ,snakSave,unstructReshape]=StandardRun(caseString)
+        ,snakSave,unstructReshape]...
+        =StandardRun(caseString)
     
     [param]=structInputVar(caseString);
     param.general.restart=false;
@@ -93,7 +94,8 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
 end
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-        ,snakSave,unstructReshape]=RestartRun(caseStr)
+        ,snakSave,unstructReshape]....
+        =RestartRun(caseStr)
     
     load([caseStr,'.mat'])
     param.general.restart=true;
@@ -118,7 +120,8 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     unstructReshape=ModifUnstructured(unstructured);
 end
 
-function [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param)
+function [unstructured,loop,unstructReshape]...
+        =ExecuteGridInitialisation(param)
     % Executes the Grid Initialisation process
     
     disp('GENERATION PROCESS START')

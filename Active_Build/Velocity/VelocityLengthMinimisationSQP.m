@@ -469,11 +469,14 @@ end
 
 function [DeltaxFin]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     
-    rmvCol=find(sum(Dh~=0)==0);
-    Dh(:,rmvCol)=[];
-    h_vec(rmvCol)=[];
-    
     rmvCol=find(isFreeze);
+    Dh(rmvCol,:)=[];
+    Hf(rmvCol,:)=[];
+    Hf(:,rmvCol)=[];
+    Df(rmvCol)=[];
+    %h_vec(rmvCol)=[];
+    
+    rmvCol=find(sum(Dh~=0)==0);
     Dh(:,rmvCol)=[];
     h_vec(rmvCol)=[];
     

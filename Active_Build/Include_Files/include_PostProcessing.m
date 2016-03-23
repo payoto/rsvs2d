@@ -139,6 +139,7 @@ function [varStr]=GenerateVariableString(startVar)
             
             openStr='[';
             closeStr=']';
+            varStrCell{1,1}=' ';
             for ii=1:m
                 for jj=1:n
                     varStrCell{ii,jj}=num2str(startVar(ii,jj));

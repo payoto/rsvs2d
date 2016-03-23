@@ -45,7 +45,7 @@ function [unstructured,loop,unstructReshape]=...
     % Execution of subroutines
     if ~loadLogical
         
-        [unstructured]=InitialisEdgeGrid(typDat);
+        [unstructured]=InitialisEdgeGrid(param);
         [unstructured]=EdgeProperties(unstructured);
         isEdge=unstructured.edge.(boundstr{1});
         cond=boundstr{3};
@@ -63,87 +63,12 @@ function [unstructured,loop,unstructReshape]=...
 end
 
 
-
-%% Plot Functions
-function []=CheckResults(unstructured,loop)
-    global nDim domainBounds
-    
-    if nDim==2
-        figh=figure;
-        axh=axes;
-        hold on
-        
-        colString='bgcmyk';
-        
-        isEdgeIndex=find(unstructured.edge.boundaryis1);
-        for ii=1:length(isEdgeIndex)
-            PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'bo')
-        end
-        
-        isEdgeIndex=find(unstructured.edge.boundaryis0);
-        for ii=1:length(isEdgeIndex)
-            PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'b-')
-        end
-        
-        
-        isCellFull=find(unstructured.cell.fill);
-        for ii=1:length( isCellFull)
-            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
-        end
-        
-        for ii=1:length(loop)
-            [~,colIndex]=IntegerQuotient(ii,length(colString));
-            colIndex=colIndex+1;
-            PlotLoop(figh,axh,loop,ii,[colString(colIndex),'--'])
-%            PlotSubDiv(figh,axh,loop,ii,[colString(colIndex),'-'])
-        end
-        
-        axis equal
-        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
-    end
-    
-end
-
-function []=PlotEdge(figh,axh,unstructured,indexEdge,format)
-    figure(figh)
-    %axes(axh)
-    
-    vertices=unstructured.edge.vertexindex(indexEdge,:);
-    coord=unstructured.vertex.coord(vertices,:);
-    
-    plot(coord(:,1),coord(:,2),format)
-    
-end
-
-function []=PlotLoop(figh,axh,loop,indexLoop,format)
-    figure(figh)
-    axes(axh)
-    
-    
-    coord=loop(indexLoop).vertex.coord;
-    
-    plot(coord(:,1),coord(:,2),format)
-    
-end
-
-function []=PlotCell(figh,axh,unstructured,indexCell,format)
-    figure(figh)
-    axes(axh)
-    
-    
-    coord=unstructured.cell.coord(indexCell,:);
-    
-    plot(coord(:,1),coord(:,2),format)
-    
-end
-
-
 %% Initialisation Functions
 
-function [unstructured]=InitialisEdgeGrid(typDat)
+function [unstructured]=InitialisEdgeGrid(param)
     % Main function for the execution of the Subdivision process
     
-    [unstructured]=Initialisation_Square(typDat);
+    [unstructured]=Initialisation_Square(param);
     %edgeTemplate=EdgeBuildTemplate(unstructured);
     %unstructured.edge=CreateEdges(unstructured,edgeTemplate);
     
@@ -202,6 +127,7 @@ function [fill]=InputData(typDat)
         case 'doubleBody'
             imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
             fill=ImageProcess(imPath,'k',nPadding);
+        
         otherwise
             imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
             fill=ImageProcess(imPath,'w',nPadding);
@@ -209,36 +135,65 @@ function [fill]=InputData(typDat)
     
 end
 
-function []=WriteCellGridDat(arraySize)
+function []=WriteCellGridDat(arraySize,cellRef)
     
     fileName=[cd,'\MEX_Function_Directory\MEX_Executables\gridgen\cellgrid.dat'];
     fID=fopen(fileName,'w');
     
     fprintf(fID,'1\n');
-    fprintf(fID,'%i %i\n',arraySize(1),arraySize(2));
-    fprintf(fID,'1\n');
-    fprintf(fID,'1 1 1');
+    for ii=1:length(arraySize(:,1))
+        fprintf(fID,'%i %i\n',arraySize(ii,1),arraySize(ii,2));
+    end
+    if (cellRef(1))~=0
+        fprintf(fID,'%i\n',length(cellRef(:,1)));
+        
+        for ii=1:length(cellRef(:,1))
+            fprintf(fID,'%i %i ',cellRef(1),ii);
+            for jj=1:length(cellRef(ii,:)-1)
+                fprintf(fID,'%i ',cellRef(1+jj));
+            end
+            fprintf(fID,'\n');
+        end
+    else
+        fprintf(fID,'0\n');
+    end
     
 end
 
-function [unstructured]=Initialisation_Square(typDat)
+function [unstructured]=Initialisation_Square(param)
     % Initialise a nGridSteps*nGridSteps dataset
     
-    global nDim nGridSteps domainBounds
-    parametrisation.fill=InputData(typDat);
+    global nGridSteps domainBounds
+    varExtract={'typDat'};
+    [typDat]=ExtractVariables(varExtract,param);
+    
+    switch typDat
+        case 'optimInit'
+            [parametrisation,cellRef]=OptimInit(param);
+            
+        otherwise
+            parametrisation.fill=InputData(typDat);
+            cellRef=[0];
+    end
+    
     arraySize=nGridSteps;
     
-    WriteCellGridDat(arraySize);
+    WriteCellGridDat(arraySize,cellRef);
     [unstructReshape]=GridInit_MEX;
     clear GridInit_MEX
+    
     for ii=1:length(unstructReshape.cell)
         unstructReshape.cell(ii).fill=parametrisation.fill(ii);
+        unstructReshape.cell(ii).isactive=parametrisation.isactive(ii);
     end
+    
     for ii=1:length(unstructReshape.edge)
         unstructReshape.edge(ii).cellindex(unstructReshape.edge(ii).cellindex<0)=0;
     end
+    
     domMultiplier=(domainBounds(:,2)-domainBounds(:,1))';
     domAdd=domainBounds(:,1)';
+    
     for ii=1:length(unstructReshape.vertex)
         unstructReshape.vertex(ii).coord=unstructReshape.vertex(ii).coord.*domMultiplier+domAdd;
     end
@@ -246,137 +201,32 @@ function [unstructured]=Initialisation_Square(typDat)
     
 end
 
-function [unstructured]=CellVertexIndex(unstructured)
-    % connect information from cell to vertices
-    
-    global nDim
-    
-    ranges=[zeros(nDim,1),ones(nDim,1)];
-    movVecs=PointGeneration(ranges,2);
-    
-    cellIndex=unstructured.cell.index;
-    sizCellDat=ones(1,nDim)*length(cellIndex)^(1/nDim);
-    arraySub=ind2subWrap(sizCellDat,cellIndex);
-    indexCellVertex=zeros(length(cellIndex),2^nDim);
-    parfor ii=1:length(cellIndex)
-        
-        arrayCellVertSub=ones(2^nDim,1)*arraySub(ii,:)+movVecs;
-        cellCellVertSub=mat2cell(arrayCellVertSub,2^nDim,ones(1,nDim));
-        indexCellVertexInterm(ii,:)=sub2ind(sizCellDat+1,cellCellVertSub{:})';
-    end
-    
-    indexCellVertex=indexCellVertexInterm(cellIndex,:);
-    unstructured.cell.vertexindex=indexCellVertex;
-end
+%% Optimisation Input
 
-function [arraySub]=ind2subWrap(arraySize,workInd)
-    % wrapper function such that ind2sub does what I need it for
+function [parametrisation,cellRef]=OptimInit(param)
     
-    global nDim
+    global nGridSteps
     
-    subCell{nDim}=0;
-    [subCell{:}]=ind2sub(arraySize,workInd);
-    arraySub=cell2mat(subCell);
-    
-end
-
-function [segmentColumns]=EdgeBuildTemplate(unstructured)
-    % builds an edge building template for each cell depending on the number of
-    % dimensions
-    
-    global nDim
-    
-    % Define edge building template
-    possibleSegments=zeros(sum(1:((2^nDim)-1)),2);
-    jj=1;
-    
-    for ii=1:2^nDim-1
-        possibleSegments(jj:(jj+(2^nDim-(ii))-1),:)=...
-            [ones(2^nDim-(ii),1)*ii,(ii+1:2^nDim)'];
-        jj=jj+2^nDim-(ii);
-    end
-    
-    % Extract vertex data for 1 cell for analysis
-    templateCellVertex=unstructured.cell.vertexindex(1,:);
-    vertCoord=unstructured.vertex.coord(templateCellVertex,:);
+    varExtract={'defaultfill','cellLevels','refineCellLvl','defaultCorner','corneractive'};
+    [defaultfill,cellLevels,refineCellLvl,defaultCorner,corneractive]=ExtractVariables(varExtract,param);
     
     
-    % Calculate middle of segment (average of two coordinates)
-    centroid=mean(vertCoord);
-    centroidVector=zeros(length(possibleSegments(:,1)),nDim);
-    normalVector=zeros(length(possibleSegments(:,1)),nDim);
-    tanVector=zeros(length(possibleSegments(:,1)),nDim);
-    midPoints=zeros(length(possibleSegments(:,1)),nDim);
-    isSegment=zeros(1,length(possibleSegments(:,1)));
+    nGridSteps=cellLevels;
+    nGridSteps(1,:)=nGridSteps(1,:)+2;
     
-    for ii=1:length(possibleSegments(:,1))
-        midPoints(ii,:)=(vertCoord(possibleSegments(ii,1),:)+vertCoord(possibleSegments(ii,2),:))/2;
-        centroidVector(ii,:)=midPoints(ii,:)-centroid;
-        % Calculate normal vectors (only works in 2D)
-        tanVector(ii,:)=(vertCoord(possibleSegments(ii,1),:)-vertCoord(possibleSegments(ii,2),:));
-        normalVector(ii,:)=CalcNormVec2D(tanVector(ii,:));
-        
-        % check wether all points are in same half plane
-        
-        checkSide=(vertCoord*normalVector(ii,:)')<=(midPoints(ii,:)*normalVector(ii,:)');
-        isSegment(ii)=(sum(checkSide)==(length(vertCoord(:,1))))|(sum(checkSide)==2);
-        
-    end
+    cellRef=refineCellLvl;
+    parametrisation.fill=zeros(nGridSteps);
+    parametrisation.isactive=zeros(nGridSteps);
     
-    % Extract valid column combinations
-    segIndex=find(isSegment);
-    segmentColumns=possibleSegments(segIndex,:);
+    parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=defaultfill;
+    parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
     
-end
-
-function normalVector=CalcNormVec2D(tanVector)
-    % Calculates a vector normal to another in 2D
+    parametrisation.fill([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=defaultCorner;
+    parametrisation.isactive([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=corneractive;
     
-    if tanVector(2)~=0
-        normalVector(1)=1;
-        normalVector(2)=-normalVector(1)*tanVector(1)/tanVector(2);
-    elseif tanVector(1)~=0
-        normalVector(2)=1;
-        normalVector(1)=-normalVector(2)*tanVector(2)/tanVector(1);
-    end
-    normalVector=normalVector/norm(normalVector);
+    parametrisation.fill=parametrisation.fill;
     
-end
-
-function [edge]=CreateEdges(unstructured,edgeTemplate)
-    % Constructs the edges from the vertex and cell data combined with the
-    % edge template.
     
-    % Breaking down structure
-    indexCellVertex=unstructured.cell.vertexindex;
-    indexCell=unstructured.cell.index;
-    % Saving Lengths of arrays
-    
-    [mIC,nIC]=size(indexCellVertex);
-    [mET,nET]=size(edgeTemplate);
-    
-    segmentInfo=zeros(mET*mIC,nET+1);
-    for ii=1:mET
-        iStart=(ii-1)*mIC+1;
-        iEnd=(ii)*mIC;
-        segmentInfo(iStart:iEnd,:)=[indexCellVertex(:,edgeTemplate(ii,:)),indexCell];
-    end
-    
-    cellSimilar=FindIdenticalVector(segmentInfo(:,1:end-1));
-    indexEdge=zeros(length(cellSimilar),1);
-    cellIndexEdge=zeros(length(cellSimilar),2);
-    parfor ii=1:length(cellSimilar)
-        %nCell(ii)=length(cellSimilar{ii});
-        indexEdge(ii,1)=ii;
-        %cellInfo=cellSimilar{ii};
-        
-        cellIndexEdge(ii,:)=...
-            [segmentInfo(cellSimilar{ii},end),zeros(2-length(cellSimilar{ii}))];
-        vertexindexEdge(ii,:)=segmentInfo(cellSimilar{ii}(1),1:end-1);
-    end
-    edge.index=indexEdge;
-    edge.cellindex=cellIndexEdge;
-    edge.vertexindex=vertexindexEdge;
     
 end
 
@@ -433,17 +283,6 @@ function [imageDat]=ProcessType(imType,imageDat)
     
     imageDat=abs(imageDat-imBackground);
     
-end
-
-function [array]=SquareArray(array)
-    % transform a rectangular array into a square by padding with zeros
-    
-    [m,n]=size(array);
-    if n>m
-        array=[array;zeros(n-m,n)];
-    elseif n<m
-        array=[array,zeros(m,m-n)];
-    end
 end
 
 function [finishedImage]=ResizeImage(procImage)
@@ -543,50 +382,3 @@ function [array]=AddZeroLayer(array,nPad,n)
         array=newArray;
     end
 end
-
-%% General Utility Functions
-
-function []=template()
-    
-end
-
-
-%% Do not Remove function development in progress
-function normVector=CalcNormalNDOptim()
-    % Doesn't work In Progress
-    centroid=mean(vertCoord);
-    centroidVector=zeros(length(possibleSegments(:,1)),nDim);
-    normalVector=zeros(length(possibleSegments(:,1)),nDim);
-    tanVector=zeros(length(possibleSegments(:,1)),nDim);
-    midPoints=zeros(length(possibleSegments(:,1)),nDim);
-    
-    for ii=1:length(possibleSegments(:,1))
-        midPoints(ii,:)=(vertCoord(possibleSegments(ii,1),:)+vertCoord(possibleSegments(ii,2),:))/2;
-        centroidVector(ii,:)=midPoints(ii,:)-centroid;
-        
-        % Optimisation parameters
-        tanVector(ii,:)=(vertCoord(possibleSegments(ii,1),:)-vertCoord(possibleSegments(ii,2),:));
-        % tanVector(ii,:)=tanVector(ii,:)/tanVector(ii,1);
-        if norm(tanVector(ii,:))~=0
-            tanVector(ii,:)=tanVector(ii,:)/norm(tanVector(ii,:));
-        end
-        [cij,cji]=meshgrid(centroidVector(ii,:),centroidVector(ii,:));
-        
-        H=(cij.*cji).*(eye(nDim)+1);
-        A=-ones(1,nDim);
-        
-        b=-1e-8;
-        intermVec=quadprog(-H,[],A,b,tanVector(ii,:),0,zeros(1,nDim),ones(1,nDim));
-        if isempty(intermVec)
-            disp('in if loop')
-            A=ones(1,nDim);
-            A(1)=-A(1);
-            b=1e-8;
-            intermVec=quadprog(-H,zeros(1,nDim),A,b,tanVector(ii,:),0,zeros(1,nDim),ones(1,nDim));
-        end
-        intermVec
-        normalVector(ii,:)=intermVec;
-    end
-    
-end
-% Do not Remove function development in progress

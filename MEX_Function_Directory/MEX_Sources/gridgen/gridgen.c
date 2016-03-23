@@ -182,11 +182,11 @@ void ClearWorkSpace(){
 	free(celldatstruct);
 	
 	// Grid Structures
-	
+	/*
 	free(edgestruct);
 	free(vertstruct);
 	for(ii=0;ii<nCellGrid;ii++){free(cellstruct[ii].refineVec);}
-	free(cellstruct);
+	free(cellstruct);*/
 }
 // EXECUTION FUNCTIONS
 
