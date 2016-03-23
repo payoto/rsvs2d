@@ -284,8 +284,8 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     vSnax=[snaxel(:).v];
     currentConvVelocity=(sqrt(sum(vSnax.^2))/length(vSnax));
     conditionVelocity=currentConvVelocity<convLevel;
-    
-    diffVolFrac=[volumefraction(:).targetfill]-[volumefraction(:).volumefraction];
+    isCellSnax=[ volumefraction(:).isSnax];
+    diffVolFrac=[volumefraction(isCellSnax).targetfill]-[volumefraction(isCellSnax).volumefraction];
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
     conditionVolume=currentConvVolume<convLevel;
     
@@ -1159,7 +1159,16 @@ function [volumefraction]=ExtractVolumeFractions(cellCentredGrid,volfracconnec)
         if volumefraction(ii).volumefraction-1>10^-12 || volumefraction(ii).volumefraction<-10^-12
             warning('volumefraction>1')
         end
-        
+        volumefraction(ii).isSnax=false;
+        jj=1;
+        nSearch=length(newSubs);
+        while (~volumefraction(ii).isSnax && jj<nSearch)
+            
+            volumefraction(ii).isSnax=volumefraction(ii).isSnax  ...
+                || ~isempty(cellCentredGrid(newSubs(jj)).snaxel);
+            
+            jj=jj+1;
+        end
         
     end
     

@@ -21,7 +21,9 @@ function [] = HeaderActivation(funcHandles,funcDir)
     pattern='@\w*';
     
     funcHandlesNamesCell=regexp(c,pattern,'match');
-    system(['mkdir "',funcDir,'"']);
+    if ~isdir(funcDir)
+        system(['mkdir "',funcDir,'"']);
+    end
     for ii=1:length(funcHandlesNamesCell)
         funcName=funcHandlesNamesCell{ii}(2:end);
         funcHandleVarname=[funcHandlesNamesCell{ii}(2:end),'_Handle'];

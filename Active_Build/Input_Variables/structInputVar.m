@@ -15,7 +15,7 @@
 
 function [param]=structInputVar(caseStr)
     % Main function that allows changes
-    include_Utilities
+    
     [param]=eval(caseStr);
     param.general.case=caseStr;
     
@@ -37,7 +37,7 @@ function paramgeneral=default_general()
     paramgeneral.passPadding=1;
     paramgeneral.typDat='vvlofoil';
     paramgeneral.typeBound='snaxel'; % 'vertex' or 'snaxel'
-    paramgeneral.subdivType='bspline';
+    paramgeneral.subdivType='area';
     paramgeneral.loadLogical=false;
     paramgeneral.useSnakes=true;
     paramgeneral.execTest=false;
@@ -112,6 +112,15 @@ function paramsnakes=default_snakes()
     paramsnakes.force=default_snakes_force();
 end
 
+function paramoptiminit=default_optimInit()
+    
+    paramoptiminit.cellLevels=[8,2];
+    paramoptiminit.refineCellLvl=[0];
+    paramoptiminit.defaultfill=0.5;
+    paramoptiminit.defaultCorner=1e-3;
+    paramoptiminit.corneractive=true;
+end
+
 %% Standard Parameter sub sections
 
 
@@ -131,6 +140,7 @@ function param=AvoidLocalOptim(param)
     param.snakes.step.arrivalTolerance=10e-2;
     
 end
+
 function param=SmoothFEDynamic(param)
     
 
@@ -169,39 +179,8 @@ function [param]=DefaultCase()
     param.results=default_results();
     param.plotting=default_plotting();
     param.snakes=default_snakes();
-    
-    % Potential modifications
-    % General
-    %     param.general.passDomBounds=[-1,1;-1,1];
-    %     param.general.passGridSteps=3; 
-    %     param.general.refineSteps=1;
-    %     param.general.passPadding=1;
-    %     param.general.typDat='vvlofoil';
-    %     param.general.typeBound='snaxel'; % 'vertex' or 'snaxel'
-    %     param.general.loadLogical=false;
-    %     param.general.useSnakes=true;
-    %     param.general.execTest=false;
-    % Plotting
-    %     param.plotting.isCheckRes=true;
-    %     param.plotting.snakesPlotInterval=0;
-    %     param.plotting.makeMov=false;
-    %     param.plotting.debugPlot=[0];
-    % Snakes
-    %     param.snakes.refine.refineGrid=4;
-    %     param.snakes.refine.typeRefine='grey';
-    % 
-    %     param.snakes.step.snakesSteps=100;
-    %     param.snakes.step.mergeTopo=true;
-    %     param.snakes.step.maxStep=0.5;
-    %     param.snakes.step.maxDt=0.1;
-    %     param.snakes.step.convLevel=10^-8;
-    % 
-    %     param.snakes.force.maxForceVel=2.5;
-    %     param.snakes.force.bendingVelInfluence=0;
-    %     param.snakes.force.tensVelInfluence=1;
-    %     param.snakes.force.maxVelRatio=4;
-    %     param.snakes.force.dampBase=1;
-    %     param.snakes.force.dampSides=0;
+    param.optiminit=default_optimInit();
+   
 
 end
 
@@ -294,6 +273,24 @@ function [param]=Snakestestsmooth4()
     
 end
 
+% Optimisation Cases
+
+function [param]=optimDefault()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='grey';
+    param.general.passDomBounds=[-1,1;-0.5,0.5];
+    param.general.refineSteps=2;
+    param.snakes.step.mergeTopo=false;
+    param.general.typDat='optimInit';
+    
+end
+
 % Small Shapes
 
 function [param]=SnakesFoilVVSmall()
@@ -302,11 +299,11 @@ function [param]=SnakesFoilVVSmall()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
-    param.snakes.step.snakesSteps=5;
+    param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     param.general.passDomBounds=[-1,1;-0.5,0.5];
-    param.general.refineSteps=4;
+    param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
     
 end
