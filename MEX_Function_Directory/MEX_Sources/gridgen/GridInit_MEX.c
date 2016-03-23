@@ -71,13 +71,13 @@ void InitialiseGridFromFile_MEX(mxArray **plhs){
 	GridInitialisation();
 	printf("\n    ACTION: Starting Grid Generated");
 	OutputGrid(1);
-	printf("\nMex Output . . .");
+	printf("\n    Mex Output . ");
 	OutputGridStruct(&plhs[0]);
 	printf("done !\n");
 	RefineGrid();
-	printf("\nMex Output . . .");
+	printf("\n    Mex Output . ");
 	OutputGridStruct(&plhs[1]);
-	printf("done !\n");
+	
 	//Checks
 	/*
 	int ii, jj;

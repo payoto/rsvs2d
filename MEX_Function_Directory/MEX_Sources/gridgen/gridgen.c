@@ -429,8 +429,6 @@ void RefineGrid(){
 	int nCellRefine=0, nEdgeRefine=0;
 	
 	
-	printf("\n\n");
-	
 	/*
 	printf("\n Edge Orientation\n");
 	for(jj=0;jj<nEdgeGrid;jj++){
@@ -488,7 +486,7 @@ void RefineGrid(){
 		free(indEdgeRefine);
 		DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
 		OutputGrid(ii);
-		printf("\n\n");
+		
 	}
 	
 	

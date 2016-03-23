@@ -19,13 +19,25 @@ function [param]=structInputVar(caseStr)
     [param]=eval(caseStr);
     param.general.case=caseStr;
     
-    [param.structdat]=ExploreStructureTree(param);
+    [param.structdat]=GetStructureData(param);
     param.structdat.vardat.names=[param.structdat.vars(:).name];
     param.structdat.vardat.varmatch=zeros(size(param.structdat.vardat.names));
     for ii=1:length(param.structdat.vars)
         jj=regexp(param.structdat.vardat.names,param.structdat.vars(ii).name);
         param.structdat.vardat.varmatch(jj)=ii;
     end
+end
+
+function structdat=GetStructureData(param)
+        
+    [structdat]=ExploreStructureTree(param);
+    structdat.vardat.names=[structdat.vars(:).name];
+    structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
+    for ii=1:length(structdat.vars)
+        jj=regexp(structdat.vardat.names,structdat.vars(ii).name);
+        structdat.vardat.varmatch(jj)=ii;
+    end
+    
 end
 
 %% Default Inputs
@@ -44,7 +56,7 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{1}='boundaryis0'; %'boundaryis0'
     paramgeneral.boundstr{2}='solidnotIn0';
     paramgeneral.boundstr{3}='0bound';
-    paramgeneral.restart=false;
+    paramgeneral.restart=true;
     
 end
 
@@ -75,8 +87,8 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=2e-1;
     paramsnakesstep.subStep=1;
-    paramsnakesstep.restartFlag=false;
     paramsnakesstep.snakesMinSteps=5;
+    paramsnakesstep.snakData='all';
 end
 
 function paramsnakesrefine=default_snakes_refine()
@@ -118,11 +130,10 @@ function paramoptiminit=default_optimInit()
     paramoptiminit.refineCellLvl=[0];
     paramoptiminit.defaultfill=0.5;
     paramoptiminit.defaultCorner=1e-3;
-    paramoptiminit.corneractive=true;
+    paramoptiminit.corneractive=false;
 end
 
 %% Standard Parameter sub sections
-
 
 function param=OptimConvergence(param)
     
@@ -169,6 +180,7 @@ function param=LinOptimSmoothing(param)
     param.snakes.force.vel.Type={'velMinLin'};
     
 end
+
 %% Callable functions
 
 % Default
@@ -278,16 +290,31 @@ end
 function [param]=optimDefault()
     
     [param]=DefaultCase();
+    
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
-    param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=4;
-    param.snakes.refine.typeRefine='grey';
-    param.general.passDomBounds=[-1,1;-0.5,0.5];
-    param.general.refineSteps=2;
-    param.snakes.step.mergeTopo=false;
     param.general.typDat='optimInit';
+    param.general.restart=true;
+    param.general.refineSteps=2;
+    
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='actgrey';
+    
+    param.snakes.step.mergeTopo=false;
+    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakData='light';
+    
+    param.results.archiveName='Optimisation';
+    param.results.resultRoot=[cd,'\..\results\'];
+    param.results.noteFiles={'CurrentBuild'};
+    param.results.tags={'snakes','optimisation'};
+    
+    
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
     
 end
 

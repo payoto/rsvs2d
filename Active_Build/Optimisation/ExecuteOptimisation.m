@@ -12,9 +12,43 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function []=ExecuteOptimisation(caseStr)
-    %% Initialise Workspace
     close all
     clc
+    
+    [paramoptim,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
+        =InitialiseOptimisation(caseStr);
+    
+    [~,~,snakSave,loop,~]=ExecuteSnakes(unstrRef,restartsnake,...
+        unstrGrid,connectstructinfo,paramoptim.parametrisation);
+    
+    % Specify starting population
+    
+    %% Star optimisation Loop
+    %
+    % Assign design variables to grid
+    
+    % Compute Shape using snakes
+    
+    % Evaluate Objective Function
+    
+    % create new population
+    
+    %% Finish Optimisation
+    
+    
+    newFill=ones([paramoptim.general.nDesVar,1]);
+    [newGrid,newRefGrid]=ReFillGrids(baseGrid,gridrefined,connectstructinfo,newFill);
+    diary off
+end
+
+%%  Optimisation Operation Blocks
+
+function [paramoptim,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
+        =InitialiseOptimisation(caseStr)
+    
+    procStr='INITIALISE OPTIMISATION PROCESS';
+    [tStart]=PrintStart(procStr,1);
+    % Initialise Workspace
     
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
     fidDiary=fopen(diaryFile,'w');
@@ -30,58 +64,68 @@ function []=ExecuteOptimisation(caseStr)
     
     
     
-    %% Initialise Optimisation
+    % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
     % Initialise Grid
-    [unstructured,unstructReshape,gridrefined,connectstructinfo,unstructuredrefined,loop]...
+    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
     
-    % Specify starting population
-    %% Star optimisation Loop
+    paramoptim.general.nDesVar=sum([baseGrid.cell(:).isactive]);
     
-    % Assign design variables to grid
-    
-    % Compute Shape using snakes
-    
-    % Evaluate Objective Function
-    
-    % create new population
-    
-    %% Finish Optimisation
+    [~,~,~,~,restartsnake]=ExecuteSnakes(unstrRef,loop,...
+        unstrGrid,connectstructinfo,paramoptim.initparam);
     
     
     
     
-    diary off
+    [~]=PrintEnd(procStr,1,tStart);
 end
 
 
-%% Parametrisation
+%% Parametrisation Interface
 
 function [unstructured,unstructReshape,gridrefined,connectstructinfo,unstructuredrefined,loop]...
         =GridInitAndRefine(param)
     % Executes the Grid Initialisation process
-    disp('  ')
-    disp('----------------------------------------------------------------------')
-    disp('INITIAL GRID OPERATIONS')
-    t1=now;
+    procStr='INITIAL GRID OPERATIONS';
+    [tStart]=PrintStart(procStr,2);
+    
+    
     [unstructured,~,unstructReshape]=...
         GridInitialisationV2(param);
     [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
         GridRefinement(unstructReshape,param);
-    t2=now;
-    disp(['    Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
-    disp('GENERATION PROCESS end')
     
-    disp('----------------------------------------------------------------------')
-    disp('  ')
+    
+    [~]=PrintEnd(procStr,2,tStart);
     
 end
 
+function [snaxel,snakposition,snakSave,looprestart,restartsnake]=ExecuteSnakes(unstrRef,looprestart,...
+        unstrGrid,connectstructinfo,param)
+    % Executes the snakes edge detection process
+    %
+    procStr='SNAKE PROCESS';
+    [tStart]=PrintStart(procStr,2);
+    
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(unstrRef,looprestart,...
+        unstrGrid,connectstructinfo,param);
 
+    if length(loopsnaxel)==length(looprestart)
+        for ii=1:length(loopsnaxel)
+            looprestart(ii).snaxel=loopsnaxel(ii).snaxel;
+        end
+    else
+        looprestart=loopsnaxel;
+    end
+    
+    
+    
+    [~]=PrintEnd(procStr,2,tStart);
+end
 
-function []=ReFillGrids(baseGrid,refineGrid,connectstructinfo,newFill)
+function [newGrid,newRefGrid]=ReFillGrids(baseGrid,refinedGrid,connectstructinfo,newFill)
     
     activeCell=logical([baseGrid.cell(:).isactive]);
     activeInd=[baseGrid.cell((activeCell)).index];
@@ -96,23 +140,73 @@ function []=ReFillGrids(baseGrid,refineGrid,connectstructinfo,newFill)
     end
     
     newGrid=baseGrid;
-    newRefGrid=refineGrid;
+    newRefGrid=refinedGrid;
     
     for ii=1:length(activeCellSub)
         newGrid.cell(activeCellSub(ii)).fill=newFill(ii);
         
-        newSub=FindObjNum([],connectstructinfo.cell(activConnecSub).old,refCellInd);
+        newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
         [newRefGrid.cell(newSub).fill]=deal(newFill(ii));
     end
     
 end
 
+%% Print to screen functions
 
+function [tStart]=PrintStart(procStr,lvl)
+    
+    procStart=[procStr,' start'];
+    tStart=now;
+    switch lvl
+        case 1
+            disp('  ')
+            disp('--------------------------------------------------------------------------------------------')
+            disp('--------------------------------------------------------------------------------------------')
+            disp(procStart)
+            disp(datestr(tStart,0))
+            disp('--------------------------------------------------------------------------------------------')
+            disp('  ')
+            
+        case 2
+            disp('  ')
+            disp('-----------------------')
+            disp(procStart)
+            
+        case 3
+            disp('----------')
+            disp(procStart)
+    end
+    
+end
 
-
-
-
-
+function [tElapsed]=PrintEnd(procStr,lvl,tStart)
+    
+    procStart=[procStr,' end'];
+    tEnd=now;
+    tElapsed=tEnd-tStart;
+    switch lvl
+        case 1
+            disp('  ')
+            disp('--------------------------------------------------------------------------------------------')
+            disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            disp(procStart)
+            disp('--------------------------------------------------------------------------------------------')
+            disp('--------------------------------------------------------------------------------------------')
+            disp('  ')
+            
+        case 2
+            
+            
+            disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            disp(procStart)
+            disp('-----------------------')
+            disp('  ')
+        case 3
+            disp('----------')
+            
+    end
+    
+end
 
 
 

@@ -55,7 +55,7 @@ function [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine)
     % Identifies which cell need to be refined based on the type of
     % refinement call required
     % Returns the indices of the cells that must be refined
-    
+   
     switch typeRefine
         case 'all'
             cellRefine=[gridreshape.cell(:).index];
@@ -64,6 +64,17 @@ function [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine)
             cellRefineLog=[gridreshape.cell(:).fill]~=1 & [gridreshape.cell(:).fill]~=0;
             cellRefine=[gridreshape.cell(cellRefineLog).index];
             cellRefinePos=find(cellRefineLog);
+        case 'actgrey'
+            cellRefineLog=([gridreshape.cell(:).fill]~=1 & [gridreshape.cell(:).fill]~=0)...
+                | logical([gridreshape.cell(:).isactive]);
+            cellRefine=[gridreshape.cell(cellRefineLog).index];
+            cellRefinePos=find(cellRefineLog);
+            
+        case 'active'
+            cellRefineLog=logical([gridreshape.cell(:).isactive]);
+            cellRefine=[gridreshape.cell(cellRefineLog).index];
+            cellRefinePos=find(cellRefineLog);
+            
         otherwise 
             error('Unsupported refinement type')
     end

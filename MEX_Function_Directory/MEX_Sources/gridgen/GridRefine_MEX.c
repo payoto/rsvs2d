@@ -95,7 +95,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	/*Do stuff*/
 	printf("\nCalculations Started . . .");
 	RefineGrid_MEX(nRefine,cellrefineInd,cellrefinePos);
-	printf("done !\n");
+	
 	OutputGridStruct(&plhs[0]);
 	OutputConnectStruct(&plhs[1]);
 	//free(levelSize);
@@ -398,7 +398,6 @@ void RefineGrid_MEX(int nCellRefine, int *indCellRefine,int *posCellRefine){
 	int nEdgeRefine=0;
 	
 	ii=nLevels;
-	printf("\n\n");
 	printf("\n***** START GRID REFINEMENT %i of %i *****\n",ii-1,nLevels-1);
 	GenerateTemplateGrid(ii);
 	
@@ -421,7 +420,6 @@ void RefineGrid_MEX(int nCellRefine, int *indCellRefine,int *posCellRefine){
 	DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
 	
 	OutputGrid(ii);
-	printf("\n\n");
 	
 	
 	
