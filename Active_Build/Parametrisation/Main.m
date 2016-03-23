@@ -34,10 +34,10 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     
     if ~restart
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-            ,snakSave,unstructReshape]=StandardRun(caseString);
+            ,snakSave,unstructReshape,restartsnake]=StandardRun(caseString);
     else
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-            ,snakSave,unstructReshape]=RestartRun(caseString);
+            ,snakSave,unstructReshape,restartsnake]=RestartRun(caseString);
     end
     varExtract={'useSnakes','typeBound','refineSteps'};
     [useSnakes,typeBound,refineSteps]=ExtractVariables(varExtract,param);
@@ -48,9 +48,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     restartstruct.connectstructinfo=connectstructinfo;
     restartstruct.unstructured=unstructured;
     if useSnakes
-        restartstruct.snakrestart.snaxel=snakSave(end).snaxel;
-        restartstruct.snakrestart.cellCentredGid=snakSave(end).cellCentredGrid;
-        restartstruct.snakrestart.insideContourInfo=snakSave(end).insideContourInfo;
+        restartstruct.snakrestart=restartsnake;
     end
     % Post processes
     loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
@@ -70,7 +68,7 @@ end
 %% Top Level Execution processes
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-        ,snakSave,unstructReshape]...
+        ,snakSave,unstructReshape,restartsnake]...
         =StandardRun(caseString)
     
     [param]=structInputVar(caseString);
@@ -87,14 +85,14 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
         ExecuteGridRefinement(unstructReshape,param);
     snakSave=[];
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructuredrefined,looprefined,...
+        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstructuredrefined,looprefined,...
             unstructured,connectstructinfo,param);
     end
     
 end
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-        ,snakSave,unstructReshape]....
+        ,snakSave,unstructReshape,restartsnake]....
         =RestartRun(caseStr)
     
     load([caseStr,'.mat'])
@@ -114,7 +112,7 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     varExtract={'useSnakes'};
     [useSnakes]=ExtractVariables(varExtract,param);
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructuredrefined,snakrestart,...
+        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstructuredrefined,snakrestart,...
             unstructured,connectstructinfo,param);
     end
     unstructReshape=ModifUnstructured(unstructured);
@@ -152,14 +150,14 @@ function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
     
 end
 
-function [snaxel,snakposition,snakSave,loop,cellCentredGrid]=ExecuteSnakes(unstructured,loop,...
+function [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstructured,loop,...
         oldGrid,connectionInfo,param)
     % Executes the snakes edge detection process
     %
     
     t1=now;
     disp('SNAKE PROCESS START')
-    [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(unstructured,loop,...
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(unstructured,loop,...
         oldGrid,connectionInfo,param);
 
     t2=now;

@@ -12,7 +12,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Main execution functions
-function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refinedGriduns,loop,...
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGriduns,looprestart,...
         oldGridUns,connectionInfo,param)
     % JUST DECLARING VARIABLES FOR LATER
     
@@ -28,8 +28,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     [refinedGrid]=ModifUnstructured(refinedGriduns);
     [oldGrid]=ModifUnstructured(oldGridUns);
     %profile on
-    [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
-        RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+        RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param);
     %profile viewer
     
@@ -40,8 +40,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=Snakes(refine
     xlabel('number of iterations')
 end
 
-function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
-        RunSnakesProcess(refinedGriduns,refinedGrid,loop,...
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+        RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param)
     % Main execution container for Snakes
     
@@ -56,23 +56,24 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
     trigCount=0;
     
     % Starting process
-    disp(['    Start initialisation'])
+    disp(['  Start initialisation'])
     tStepStart=now;
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,loop,oldGrid,connectionInfo,mergeTopo,boundstr,param);
+        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param);
     
     [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid);
     
     tStepEnd=now;
-    disp(['   Initialisation time:',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF')]);
+    disp(['  Initialisation time:',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF')]);
     tStart=now;
     
     movFrame=struct([]);
+    disp(['  Start Time Stepping'])
     for ii=1:snakesSteps
         %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
-        disp(' ')
-        disp(['Start step ',num2str(ii)])
+        
+        fprintf('     Step %i  -',ii);
         tStepStart=now;
         %snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]),ones([1,length(snaxel)]));
         %arrivalTolerance=arrivalTolerance1*exp(-decayCoeff*ii);
@@ -87,8 +88,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
             ConvergenceTest(snaxel,volumefraction,convLevel);
         [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,ii,currentConvVolume,trigCount);
         if convergenceCondition && ii>snakesMinSteps && lastAlgo
+            fprintf(' -  Snakes Converged!\n')
             break
         end
+        
         
         
         [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
@@ -101,18 +104,11 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         end
         
         [dt,dtSnax,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin);
-        
+    
         % Save and exit conditions
-        snakSave(ii).snaxel=snaxel;
-        snakSave(ii).dt=dt;
-        snakSave(ii).snakposition=snakposition;
-        snakSave(ii).volumefraction=volumefraction;
-        snakSave(ii).cellCentredGrid=cellCentredGridSnax;
-        snakSave(ii).currentConvVelocity=currentConvVelocity;
-        snakSave(ii).currentConvVolume=currentConvVolume;
-        snakSave(ii).movFrame=movFrame;
-        snakSave(ii).velcalcinfo=velcalcinfo;
-        snakSave(ii).insideContourInfo=insideContourInfo;
+        [snakSave(ii)]=WriteSnakSave(param,snaxel,dt,snakposition,...
+                volumefraction,cellCentredGridSnax,currentConvVelocity,...
+                currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
         
         for subStep=1:subStep
              snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist);
@@ -158,7 +154,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         nSnax=length(snaxel);
         frozen=sum([snaxel(:).isfreeze]);
         tStepEnd=now;
-        disp(['   Step time:',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF')]);
+        
+        fprintf(['  Time Taken: ',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF'),'\n']);
         
         if nSnax==frozen
             break
@@ -166,28 +163,32 @@ function [snaxel,snakposition,snakSave,loopsnaxel,cellCentredGrid]=...
         
     end
     tEnd=now;
-    disp(['Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
-    disp(['Volume converged to ',num2str(currentConvVolume,'%.5e')])
+    disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
+    disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns);
     
-    %[snakSave]=ReformatSnakSave(snakSave);
+    restartsnake.snaxel=snaxel;
+    restartsnake.insideContourInfo=insideContourInfo;
+    restartsnake.cellCentredGrid=cellCentredGrid;
+    restartsnake.volfracconnec=volfracconnec;
+    restartsnake.borderVertices=borderVertices;
+    
 end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,loop,oldGrid,connectionInfo,mergeTopo,boundstr,param)
+        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param)
     
     varExtract={'restart'};
     [restart]=ExtractVariables(varExtract,param);
     if ~restart
         [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-            StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
+            StartSnakeProcess(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,connectionInfo,mergeTopo,boundstr);
     else
         [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-            RestartSnakeProcess(refinedGriduns,refinedGrid,loop,...
-            oldGrid,connectionInfo,mergeTopo,boundstr);
+            RestartSnakeProcess(looprestart);
     end
     
     
@@ -196,16 +197,17 @@ end
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
         oldGrid,connectionInfo,mergeTopo,boundstr)
-    
+    disp('    Generate Cell Centred Grid')
     [cellCentredGrid]=CellCentredGridInformation(refinedGrid);
+    disp('    Establish Cell Colume Information')
     [volfracconnec]=VolumeFractionConnectivity(oldGrid,...
         connectionInfo,cellCentredGrid,refinedGrid);
     
     
     insideContourInfo=refinedGriduns.edge.(boundstr{2});
-    disp('Find Border Vertices')
+    disp('    Find Border Vertices')
     [borderVertices]=FindBorderVertex(refinedGriduns);
-    disp('Initialise Snaxel Grid')
+    disp('    Initialise Snaxel Grid')
     
     % Inside contour info will change depending on the type of contour under
     % consideration (0 contour or 1 contour)
@@ -219,28 +221,15 @@ end
 
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-        RestartSnakeProcess(refinedGriduns,refinedGrid,restartsnake,...
-        oldGrid,connectionInfo,mergeTopo,boundstr)
+        RestartSnakeProcess(restartsnake)
     
-    [cellCentredGrid]=CellCentredGridInformation(refinedGrid);
-    [volfracconnec]=VolumeFractionConnectivity(oldGrid,...
-        connectionInfo,cellCentredGrid,refinedGrid);
-    
-    
-    insideContourInfo=refinedGriduns.edge.(boundstr{2});
-    disp('Find Border Vertices')
-    [borderVertices]=FindBorderVertex(refinedGriduns);
-    disp('Initialise Snaxel Grid')
-    
-    % Inside contour info will change depending on the type of contour under
-    % consideration (0 contour or 1 contour)
+    [cellCentredGrid]=restartsnake.cellCentredGrid;
+    [volfracconnec]=restartsnake.volfracconnec;
+    [borderVertices]=restartsnake.borderVertices;
+
     snaxel=restartsnake.snaxel;
     insideContourInfo=restartsnake.insideContourInfo;
     
-    [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
-    [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-    [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
-    [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
 end
 
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
@@ -253,19 +242,6 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     disp('Creating Snaxel Loops')
     [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
     
-end
-
-function [snakSave]=ReformatSnakSave(snakSave)
-    % Reformats the normal vectors in snak Save
-    
-    for ii=1:length(snakSave)
-        for jj=1:length(snakSave(ii).snakposition)
-            snakSave(ii).snakposition(jj).normvector=...
-                [snakSave(ii).snakposition(jj).normvector{1};...
-                snakSave(ii).snakposition(jj).normvector{2}];
-        end
-        
-    end
 end
 
 function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
@@ -284,7 +260,7 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     vSnax=[snaxel(:).v];
     currentConvVelocity=(sqrt(sum(vSnax.^2))/length(vSnax));
     conditionVelocity=currentConvVelocity<convLevel;
-    isCellSnax=[ volumefraction(:).isSnax];
+    isCellSnax=[volumefraction(:).isSnax];
     diffVolFrac=[volumefraction(isCellSnax).targetfill]-[volumefraction(isCellSnax).volumefraction];
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
     conditionVolume=currentConvVolume<convLevel;
@@ -323,6 +299,76 @@ function [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forcepara
     
     forceparam.velType=forceparam.vel.Type{typSub};
     lastAlgo=typSub==maxTypeSub;
+end
+
+%% Return Data
+
+function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
+                volumefraction,cellCentredGridSnax,currentConvVelocity,...
+                currentConvVolume,movFrame,velcalcinfo,insideContourInfo)
+    
+    varExtract={'snakData'};
+    [snakData]=ExtractVariables(varExtract,param);
+    
+    switch snakData
+        case 'all'
+            [snakSave]=WriteSnakSaveHeavy(snaxel,dt,snakposition,...
+                volumefraction,cellCentredGridSnax,currentConvVelocity,...
+                currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+            
+        case 'light'
+            [snakSave]=WriteSnakSaveLight(dt,volumefraction,currentConvVelocity,...
+                currentConvVolume);
+            
+    end
+    
+    
+
+
+    function [snakSave]=WriteSnakSaveHeavy(snaxel,dt,snakposition,...
+            volumefraction,cellCentredGridSnax,currentConvVelocity,...
+            currentConvVolume,movFrame,velcalcinfo,insideContourInfo)
+
+        snakSave.snaxel=snaxel;
+        snakSave.dt=dt;
+        snakSave.snakposition=snakposition;
+        snakSave.volumefraction=volumefraction;
+        snakSave.cellCentredGrid=cellCentredGridSnax;
+        snakSave.currentConvVelocity=currentConvVelocity;
+        snakSave.currentConvVolume=currentConvVolume;
+        snakSave.movFrame=movFrame;
+        snakSave.velcalcinfo=velcalcinfo;
+        snakSave.insideContourInfo=insideContourInfo;
+
+    end
+
+    function [snakSave]=WriteSnakSaveLight(dt,volumefraction,currentConvVelocity,...
+            currentConvVolume)
+
+        snakSave.dt=dt;
+
+        snakSave.volumefraction.targetfill=[volumefraction(:).targetfill];
+        snakSave.volumefraction.currentfraction=[volumefraction(:).volumefraction];
+        snakSave.volumefraction.totVolume=[volumefraction(:).totalvolume];
+
+        snakSave.currentConvVelocity=currentConvVelocity;
+        snakSave.currentConvVolume=currentConvVolume;
+
+
+    end
+end
+
+function [snakSave]=ReformatSnakSave(snakSave)
+    % Reformats the normal vectors in snak Save
+    
+    for ii=1:length(snakSave)
+        for jj=1:length(snakSave(ii).snakposition)
+            snakSave(ii).snakposition(jj).normvector=...
+                [snakSave(ii).snakposition(jj).normvector{1};...
+                snakSave(ii).snakposition(jj).normvector{2}];
+        end
+        
+    end
 end
 
 %% Snaxel Initialisation
@@ -494,7 +540,8 @@ end
 
 function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex)
-    global arrivalTolerance
+    
+    
     numSE=length(snaxelEdges); % provides information about snaxel from same vertex
     snaxelEdgesSub=FindObjNum([],snaxelEdges,edgeIndex);
     kkLocal=0;
@@ -553,245 +600,6 @@ function [snaxel]=SnaxelStructure(index,dist,velocity,vertexOrig,...
     snaxel.snaxprec=snaxPrec;
     snaxel.snaxnext=snaxNext;
     snaxel.isfreeze=0;
-end
-
-
-%% Visualisation functions
-
-function [movFrame]=CheckResults(iter,unstructured,oldGrid,snakposition,snaxel,makeMovie,volumefraction,borderVertices)
-    global nDim domainBounds
-    movFrame=[];
-    if nDim==2
-        figh=figure('Position',[100 100 1000 900]);
-        axh=axes;
-        hold on
-        title(['Iteration  ',int2str(iter)],'fontsize',16)
-        colString='bgcmyk';
-        
-        isEdgeSub=find(unstructured.edge.boundaryis1);
-        for ii=1:length(isEdgeSub)
-            PlotEdge(figh,axh,unstructured,isEdgeSub(ii),'bo')
-        end
-        
-        isEdgeSub=find(unstructured.edge.boundaryis1);
-        for ii=1:length(isEdgeSub)
-            PlotEdge(figh,axh,unstructured,isEdgeSub(ii),'b-')
-        end
-        if exist('borderVertices','var')
-            subVert=FindObjNum([],borderVertices,unstructured.vertex.index);
-            for ii=1:length(subVert)
-                PlotVert(figh,axh,unstructured,subVert(ii),'ro')
-            end
-        end
-        isCellFull=find(unstructured.cell.fill);
-        for ii=1:length( isCellFull)
-            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
-        end
-        PlotSnaxel(figh,axh,snakposition,snaxel)
-        %PlotSnaxelLoop(figh,axh,snakposition,snaxel)
-        PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
-        PlotSnaxelIndex(figh,axh,snakposition)
-        
-        if exist('volumefraction','var')
-            oldCellIndUnstructInd=[oldGrid.cell(:).index];
-            
-            oldCellIndUnstructSub=FindObjNum(oldGrid.cell,oldCellIndUnstructInd);
-            oldCellIndVolFracSub=FindObjNum(volumefraction,...
-                oldCellIndUnstructInd,[volumefraction(:).oldCellInd]);
-            for ii=1:length(oldCellIndUnstructInd)
-                
-               % coord=oldGrid.cell(oldCellIndUnstructSub(ii)).coord;
-               % frac=volumefraction(oldCellIndVolFracSub(ii)).volumefraction...
-               %     -volumefraction(oldCellIndVolFracSub(ii)).targetfill;
-                %frac=volumefraction(oldCellIndVolFracSub(ii)).oldCellInd;
-               % PlotVolFrac(figh,axh,coord,frac)
-            end
-        end
-        
-%         [normalcontourvec]=ContourNormal2(snaxel,snakposition);
-%         PlotContVec(figh,axh,snakposition,normalcontourvec)
-        
-        
-        axis equal
-        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
-        if makeMovie
-            movFrame=getframe(figh);
-        end
-    end
-    
-end
-
-function []=CheckResultsLight(unstructured,snakposition,snaxel)
-    global nDim domainBounds
-    
-    if nDim==2
-        figh=figure;
-        axh=axes;
-        hold on
-        
-        colString='bgcmyk';
-        
-        isEdgeIndex=find(unstructured.edge.boundaryis1);
-        for ii=1:length(isEdgeIndex)
-            %PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'bo')
-        end
-        
-        isEdgeIndex=find(unstructured.edge.boundaryis0);
-        for ii=1:length(isEdgeIndex)
-            %PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'b-')
-        end
-        
-        
-        isCellFull=find(unstructured.cell.fill);
-        for ii=1:length( isCellFull)
-            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
-        end
-        %PlotSnaxel(figh,axh,snakposition)
-        PlotSnaxelLoop(figh,axh,snakposition,snaxel)
-        %PlotSnaxelIndex(figh,axh,snakposition)
-        
-        %[normalcontourvec]=ContourNormal(snaxel,snakposition);
-        %PlotContVec(figh,axh,snakposition,normalcontourvec)
-        
-        axis equal
-        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
-    end
-    
-end
-
-function []=PlotEdge(figh,axh,unstructured,subEdge,format)
-    figure(figh)
-    %axes(axh)
-    
-    vertices=unstructured.edge.vertexindex(subEdge,:);
-    vertsub(1)=find(unstructured.vertex.index==vertices(1));
-    vertsub(2)=find(unstructured.vertex.index==vertices(2));
-    coord=unstructured.vertex.coord(vertsub,:);
-    
-    
-    plot(coord(:,1),coord(:,2),format)
-    
-end
-
-function []=PlotVert(figh,axh,unstructured,subVert,format)
-    figure(figh)
-    %axes(axh)
-    
-    coord=unstructured.vertex.coord(subVert,:);
-    
-    plot(coord(:,1),coord(:,2),format)
-    
-end
-
-function []=PlotSnaxel(figh,axh,snakposition,snaxel)
-    % Plots the snaxels as arrows on the plot
-    if numel(snaxel(1).v)==1
-        for ii=1:length(snakposition)
-            X(ii)=snakposition(ii).coord(1);
-            Y(ii)=snakposition(ii).coord(2);
-            U(ii)=snakposition(ii).vector(1)*snaxel(ii).v/40;
-            V(ii)=snakposition(ii).vector(2)*snaxel(ii).v/40;
-        end
-    else
-        for ii=1:length(snakposition)
-            X(ii)=snakposition(ii).coord(1);
-            Y(ii)=snakposition(ii).coord(2);
-            U(ii)=snaxel(ii).v(1)/1000;
-            V(ii)=snaxel(ii).v(2)/1000;
-        end
-    end
-    figure(figh)
-    axes(axh)
-    quiver(X,Y,U,V,0,'r-')
-    
-end
-
-function []=PlotContVec(figh,axh,snakposition,normalContVec)
-    % Plots the snaxels as arrows on the plot
-    snaxIndex=[snakposition(:).index];
-    for ii=1:length(normalContVec)
-        for jj=1:2
-            workInd=normalContVec(ii).(['index',int2str(jj)]);
-            %workInd=normalContVec(ii).vertex(jj);
-            workSub(jj)=FindObjNum(snakposition,workInd,snaxIndex);
-            coord(jj,1:2)=snakposition(workSub(jj)).coord;
-        end
-        coord=mean(coord);
-        X(ii)=coord(1);
-        Y(ii)=coord(2);
-        U(ii)=normalContVec(ii).vector(1)/20;
-        V(ii)=normalContVec(ii).vector(2)/20;
-    end
-    figure(figh)
-    axes(axh)
-    quiver(X,Y,U,V,0,'r-')
-    
-end
-
-function []=PlotSnaxelIndex(figh,axh,snakposition)
-    % Plots the snaxels as arrows on the plot
-    figure(figh)
-    axes(axh)
-    for ii=1:length(snakposition)
-        X(ii)=snakposition(ii).coord(1);
-        Y(ii)=snakposition(ii).coord(2);
-        U(ii)=snakposition(ii).vector(1)/80;
-        V(ii)=snakposition(ii).vector(2)/80;
-        str=num2str(snakposition(ii).index);
-        text(X(ii)+U(ii),Y(ii)+V(ii),str)
-    end
-    
-    
-    
-end
-
-function []=PlotSnaxelLoop(figh,axh,snakposition,snaxel)
-    % Plots the snaxels as arrows on the plot
-    figure(figh)
-    axes(axh)
-    snaxInd=[snaxel(:).index];
-    for jj=1:length(snaxel)
-        line=[snaxel(jj).index,snaxel(jj).snaxnext];
-        for ii=1:length(line)
-            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
-            X(ii)=snakposition(currSnaxSub).coord(1);
-            Y(ii)=snakposition(currSnaxSub).coord(2);
-        end
-        plot(X,Y,'ro--')
-    end
-
-end
-
-function []=PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
-    % Plots the snaxels as arrows on the plot
-    figure(figh)
-    axes(axh)
-    snaxInd=[snaxel(:).index];
-    for jj=1:length(snaxel)
-        line=[snaxel(jj).index,snaxel(jj).snaxnext];
-        for ii=1:length(line)
-            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
-            X(ii)=snakposition(currSnaxSub).coord(1);
-            Y(ii)=snakposition(currSnaxSub).coord(2);
-            
-        end
-        U=X(2)-X(1);
-        
-        V=Y(2)-Y(1);
-        quiver(X(1),Y(1),U,V,0)
-    end
-
-end
-
-function []=PlotVolFrac(figh,axh,coord,frac)
-    figure(figh)
-    axes(axh)
-    if frac==0
-        text(coord(:,1),coord(:,2),num2str(frac),'HorizontalAlignment','center')
-    else
-    text(coord(:,1),coord(:,2),num2str(frac,'%.1e'),'HorizontalAlignment','center')
-    end
-    hold on
 end
 
 
@@ -1162,7 +970,7 @@ function [volumefraction]=ExtractVolumeFractions(cellCentredGrid,volfracconnec)
         volumefraction(ii).isSnax=false;
         jj=1;
         nSearch=length(newSubs);
-        while (~volumefraction(ii).isSnax && jj<nSearch)
+        while (~volumefraction(ii).isSnax && jj<=nSearch)
             
             volumefraction(ii).isSnax=volumefraction(ii).isSnax  ...
                 || ~isempty(cellCentredGrid(newSubs(jj)).snaxel);
@@ -2137,19 +1945,19 @@ function [delIndex]=FindBadSnaxels(snaxel,insideContourInfo)
     [delIndex]=RemoveIdenticalEntries(delIndex);
 end
 
-function [delIndex]=FindInsideSnaxels(snakes,insideContourInfo)
+function [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo)
     % Finds Snaxels on an edge inside the contour
     delIndex=[];
     global unstructglobal
     edgeInd=unstructglobal.edge.index;
-    edgeSnakes=[snakes(:).edge];
+    edgeSnakes=[snaxel(:).edge];
     
     edgeSub=FindObjNum([],edgeSnakes,edgeInd);
     
-    for ii=1:length(snakes)
+    for ii=1:length(snaxel)
         
         if insideContourInfo(edgeSub(ii))
-            delIndex=[delIndex;snakes(ii).index];
+            delIndex=[delIndex;snaxel(ii).index];
         end
     end
     
@@ -2480,6 +2288,244 @@ function [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid)
    borderVertices=sort([refinedGrid.edge(borderEdges).vertexindex]); 
    freezeVertex=RemoveIdenticalEntries(borderVertices);
     
+end
+
+%% Visualisation functions
+
+function [movFrame]=CheckResults(iter,unstructured,oldGrid,snakposition,snaxel,makeMovie,volumefraction,borderVertices)
+    global nDim domainBounds
+    movFrame=[];
+    if nDim==2
+        figh=figure('Position',[100 100 1000 900]);
+        axh=axes;
+        hold on
+        title(['Iteration  ',int2str(iter)],'fontsize',16)
+        colString='bgcmyk';
+        
+        isEdgeSub=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeSub)
+            PlotEdge(figh,axh,unstructured,isEdgeSub(ii),'bo')
+        end
+        
+        isEdgeSub=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeSub)
+            PlotEdge(figh,axh,unstructured,isEdgeSub(ii),'b-')
+        end
+        if exist('borderVertices','var')
+            subVert=FindObjNum([],borderVertices,unstructured.vertex.index);
+            for ii=1:length(subVert)
+                PlotVert(figh,axh,unstructured,subVert(ii),'ro')
+            end
+        end
+        isCellFull=find(unstructured.cell.fill);
+        for ii=1:length( isCellFull)
+            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
+        end
+        PlotSnaxel(figh,axh,snakposition,snaxel)
+        %PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+        PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
+        PlotSnaxelIndex(figh,axh,snakposition)
+        
+        if exist('volumefraction','var')
+            oldCellIndUnstructInd=[oldGrid.cell(:).index];
+            
+            oldCellIndUnstructSub=FindObjNum(oldGrid.cell,oldCellIndUnstructInd);
+            oldCellIndVolFracSub=FindObjNum(volumefraction,...
+                oldCellIndUnstructInd,[volumefraction(:).oldCellInd]);
+            for ii=1:length(oldCellIndUnstructInd)
+                
+               % coord=oldGrid.cell(oldCellIndUnstructSub(ii)).coord;
+               % frac=volumefraction(oldCellIndVolFracSub(ii)).volumefraction...
+               %     -volumefraction(oldCellIndVolFracSub(ii)).targetfill;
+                %frac=volumefraction(oldCellIndVolFracSub(ii)).oldCellInd;
+               % PlotVolFrac(figh,axh,coord,frac)
+            end
+        end
+        
+%         [normalcontourvec]=ContourNormal2(snaxel,snakposition);
+%         PlotContVec(figh,axh,snakposition,normalcontourvec)
+        
+        
+        axis equal
+        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
+        if makeMovie
+            movFrame=getframe(figh);
+        end
+    end
+    
+end
+
+function []=CheckResultsLight(unstructured,snakposition,snaxel)
+    global nDim domainBounds
+    
+    if nDim==2
+        figh=figure;
+        axh=axes;
+        hold on
+        
+        colString='bgcmyk';
+        
+        isEdgeIndex=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeIndex)
+            %PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'bo')
+        end
+        
+        isEdgeIndex=find(unstructured.edge.boundaryis0);
+        for ii=1:length(isEdgeIndex)
+            %PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'b-')
+        end
+        
+        
+        isCellFull=find(unstructured.cell.fill);
+        for ii=1:length( isCellFull)
+            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
+        end
+        %PlotSnaxel(figh,axh,snakposition)
+        PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+        %PlotSnaxelIndex(figh,axh,snakposition)
+        
+        %[normalcontourvec]=ContourNormal(snaxel,snakposition);
+        %PlotContVec(figh,axh,snakposition,normalcontourvec)
+        
+        axis equal
+        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
+    end
+    
+end
+
+function []=PlotEdge(figh,axh,unstructured,subEdge,format)
+    figure(figh)
+    %axes(axh)
+    
+    vertices=unstructured.edge.vertexindex(subEdge,:);
+    vertsub(1)=find(unstructured.vertex.index==vertices(1));
+    vertsub(2)=find(unstructured.vertex.index==vertices(2));
+    coord=unstructured.vertex.coord(vertsub,:);
+    
+    
+    plot(coord(:,1),coord(:,2),format)
+    
+end
+
+function []=PlotVert(figh,axh,unstructured,subVert,format)
+    figure(figh)
+    %axes(axh)
+    
+    coord=unstructured.vertex.coord(subVert,:);
+    
+    plot(coord(:,1),coord(:,2),format)
+    
+end
+
+function []=PlotSnaxel(figh,axh,snakposition,snaxel)
+    % Plots the snaxels as arrows on the plot
+    if numel(snaxel(1).v)==1
+        for ii=1:length(snakposition)
+            X(ii)=snakposition(ii).coord(1);
+            Y(ii)=snakposition(ii).coord(2);
+            U(ii)=snakposition(ii).vector(1)*snaxel(ii).v/40;
+            V(ii)=snakposition(ii).vector(2)*snaxel(ii).v/40;
+        end
+    else
+        for ii=1:length(snakposition)
+            X(ii)=snakposition(ii).coord(1);
+            Y(ii)=snakposition(ii).coord(2);
+            U(ii)=snaxel(ii).v(1)/1000;
+            V(ii)=snaxel(ii).v(2)/1000;
+        end
+    end
+    figure(figh)
+    axes(axh)
+    quiver(X,Y,U,V,0,'r-')
+    
+end
+
+function []=PlotContVec(figh,axh,snakposition,normalContVec)
+    % Plots the snaxels as arrows on the plot
+    snaxIndex=[snakposition(:).index];
+    for ii=1:length(normalContVec)
+        for jj=1:2
+            workInd=normalContVec(ii).(['index',int2str(jj)]);
+            %workInd=normalContVec(ii).vertex(jj);
+            workSub(jj)=FindObjNum(snakposition,workInd,snaxIndex);
+            coord(jj,1:2)=snakposition(workSub(jj)).coord;
+        end
+        coord=mean(coord);
+        X(ii)=coord(1);
+        Y(ii)=coord(2);
+        U(ii)=normalContVec(ii).vector(1)/20;
+        V(ii)=normalContVec(ii).vector(2)/20;
+    end
+    figure(figh)
+    axes(axh)
+    quiver(X,Y,U,V,0,'r-')
+    
+end
+
+function []=PlotSnaxelIndex(figh,axh,snakposition)
+    % Plots the snaxels as arrows on the plot
+    figure(figh)
+    axes(axh)
+    for ii=1:length(snakposition)
+        X(ii)=snakposition(ii).coord(1);
+        Y(ii)=snakposition(ii).coord(2);
+        U(ii)=snakposition(ii).vector(1)/80;
+        V(ii)=snakposition(ii).vector(2)/80;
+        str=num2str(snakposition(ii).index);
+        text(X(ii)+U(ii),Y(ii)+V(ii),str)
+    end
+    
+    
+    
+end
+
+function []=PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+    % Plots the snaxels as arrows on the plot
+    figure(figh)
+    axes(axh)
+    snaxInd=[snaxel(:).index];
+    for jj=1:length(snaxel)
+        line=[snaxel(jj).index,snaxel(jj).snaxnext];
+        for ii=1:length(line)
+            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
+            X(ii)=snakposition(currSnaxSub).coord(1);
+            Y(ii)=snakposition(currSnaxSub).coord(2);
+        end
+        plot(X,Y,'ro--')
+    end
+
+end
+
+function []=PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
+    % Plots the snaxels as arrows on the plot
+    figure(figh)
+    axes(axh)
+    snaxInd=[snaxel(:).index];
+    for jj=1:length(snaxel)
+        line=[snaxel(jj).index,snaxel(jj).snaxnext];
+        for ii=1:length(line)
+            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
+            X(ii)=snakposition(currSnaxSub).coord(1);
+            Y(ii)=snakposition(currSnaxSub).coord(2);
+            
+        end
+        U=X(2)-X(1);
+        
+        V=Y(2)-Y(1);
+        quiver(X(1),Y(1),U,V,0)
+    end
+
+end
+
+function []=PlotVolFrac(figh,axh,coord,frac)
+    figure(figh)
+    axes(axh)
+    if frac==0
+        text(coord(:,1),coord(:,2),num2str(frac),'HorizontalAlignment','center')
+    else
+    text(coord(:,1),coord(:,2),num2str(frac,'%.1e'),'HorizontalAlignment','center')
+    end
+    hold on
 end
 
 %% Various

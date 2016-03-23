@@ -173,6 +173,7 @@ function [unstructured]=Initialisation_Square(param)
             
         otherwise
             parametrisation.fill=InputData(typDat);
+            parametrisation.isactive=ones(size(parametrisation.fill));
             cellRef=[0];
     end
     
