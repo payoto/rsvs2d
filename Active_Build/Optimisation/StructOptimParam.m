@@ -48,9 +48,11 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.optimMethod='DE';
     paroptimgeneral.desVarRange=[0,1];
     paroptimgeneral.nDesVar=[0];
-    paroptimgeneral.nPop=[10];
-    paroptimgeneral.maxIter=10;
-    
+    paroptimgeneral.nPop=6;
+    paroptimgeneral.startPop='rand';
+    paroptimgeneral.maxIter=1;
+    paroptimgeneral.worker=6; % Max 4 on this computer
+    paroptimgeneral.objectiveName='LengthArea';
 end
 
 

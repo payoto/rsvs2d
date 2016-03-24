@@ -48,10 +48,11 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     
     % Unpacking NECESSARY variables
     global maxStep maxDt
+    
     varExtract={'snakesSteps','mergeTopo','makeMov','boundstr','convLevel','debugPlot','plotInterval',...
-        'subStep','snakesMinSteps'};
+        'subStep','snakesMinSteps','snakesConsole'};
     [snakesSteps,mergeTopo,makeMov,boundstr,convLevel,debugPlot,...
-        plotInterval,subStep,snakesMinSteps]=ExtractVariables(varExtract,param);
+        plotInterval,subStep,snakesMinSteps,snakesConsole]=ExtractVariables(varExtract,param);
     forceparam=param.snakes.force;
     dtMin=maxDt/1;
     trigCount=0;
@@ -71,6 +72,28 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     
     movFrame=struct([]);
     disp(['  Start Time Stepping'])
+    
+    if snakesConsole
+        ii=IterSnakes;
+    else
+       [t,ii]=evalc('IterSnakes;');
+    end
+    
+    tEnd=now;
+    disp(['  ',int2str(ii),' Steps Performed'])
+    disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
+    disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
+    [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
+        borderVertices,refinedGriduns);
+    
+    restartsnake.snaxel=snaxel;
+    restartsnake.insideContourInfo=insideContourInfo;
+    restartsnake.cellCentredGrid=cellCentredGrid;
+    restartsnake.volfracconnec=volfracconnec;
+    restartsnake.borderVertices=borderVertices;
+    
+function [ii]=IterSnakes()
+    
     for ii=1:snakesSteps
         %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
         
@@ -163,18 +186,9 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
         end
         
     end
-    tEnd=now;
-    disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
-    disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
-    [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
-        borderVertices,refinedGriduns);
     
-    restartsnake.snaxel=snaxel;
-    restartsnake.insideContourInfo=insideContourInfo;
-    restartsnake.cellCentredGrid=cellCentredGrid;
-    restartsnake.volfracconnec=volfracconnec;
-    restartsnake.borderVertices=borderVertices;
-    
+end
+
 end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
@@ -236,11 +250,11 @@ end
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns)
     
-    disp('Finished Iterations , starting Post Process')
+    %disp('Finished Iterations , starting Post Process')
     [snaxel]=FreezingFunction(snaxel,borderVertices);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     CheckResultsLight(refinedGriduns,snakposition,snaxel)
-    disp('Creating Snaxel Loops')
+    %disp('Creating Snaxel Loops')
     [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
     
 end
@@ -1819,7 +1833,7 @@ function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin)
     dtMax=min(dtSnax);
     dt=min([dtStep, dtMax, maxDt]);
     if dt==0
-        warning('Time Step was forced to minimum set by user')
+        fprintf(' - Dt forced to Minimum - ')
         dt=dtMin;
     end
     if dt<0

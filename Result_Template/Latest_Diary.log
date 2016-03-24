@@ -39,27 +39,81 @@ Calculations Started . . .
 			Start Cell 16 of 16 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:208
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:109
 INITIAL GRID OPERATIONS end
 -----------------------
   
-{Undefined function or variable 'param'.
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:00:359
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:05:042
+  Volume converged to 2.51755e-03
+Time Elapsed:00:00:05:806
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:06:369
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+24-Mar-2016 17:33:59
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:13:478
+  Volume converged to 6.44321e-04
+Time Elapsed:00:00:13:964
+SNAKE PROCESS end
+-----------------------
+  
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',273,1)">273 </a>    [A]=CalculatePolyArea(points);
+[0.549989822924583,0.100000000000000;0.550000000000000,0.0999772404067212]
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseIterationStruct', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 193)" style="font-weight:bold">ExecuteOptimisation>InitialiseIterationStruct</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',193,0)">line 193</a>)
-    [nPop,nIter]=ExtractVariables(varExtract,param);
+ans =
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 75)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',75,0)">line 75</a>)
-    [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
+    0.5500    0.1000
+    0.5500    0.1000
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 18)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',18,0)">line 18</a>)
-    [paramoptim,outinfo,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...} 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',193,1)">193 </a>    [nPop,nIter]=ExtractVariables(varExtract,param);
+if system_dependent('IsDebugMode')==1, dbstep; end
+A
+
+A =
+
+   -0.2027
+
+CalculatePolyArea(points(end:-1:1,:))
+
+ans =
+
+    0.2027
+
 ExecuteOptimisation('StandardOptim')
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-23-Mar-2016 17:04:45
+24-Mar-2016 17:37:32
 --------------------------------------------------------------------------------------------
   
   
@@ -103,22 +157,127 @@ Calculations Started . . .
 			Start Cell 16 of 16 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:200
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:093
 INITIAL GRID OPERATIONS end
 -----------------------
   
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_Utilities>ExtractVariables', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m', 66)" style="font-weight:bold">include_Utilities>ExtractVariables</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m',66,0)">line 66</a>)
-nIter is an invalid variable name
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:00:344
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:04:907
+  Volume converged to 2.51755e-03
+Time Elapsed:00:00:05:641
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:06:125
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+24-Mar-2016 17:37:38
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:12:557
+  Volume converged to 8.76788e-04
+Time Elapsed:00:00:13:199
+SNAKE PROCESS end
+-----------------------
+  
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',277,1)">277 </a>    objValue=-A/L;
+L
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExtractVariables', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractVariables.m', 6)" style="font-weight:bold">ExtractVariables</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractVariables.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=ExtractVariables_Handle(varargin{:});
+L =
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseIterationStruct', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 193)" style="font-weight:bold">ExecuteOptimisation>InitialiseIterationStruct</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',193,0)">line 193</a>)
-    [nPop,nIter]=ExtractVariables(varExtract,paroptim);
+    2.7187
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 75)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',75,0)">line 75</a>)
-    [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
+vec
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 18)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',18,0)">line 18</a>)
-    [paramoptim,outinfo,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...} 
-<a href="matlab: opentoline('C:\Users\ap1949\Loc
+vec =
+
+         0         0
+    0.0500    0.0000
+    0.0500    0.0339
+    0.0000    0.0000
+    0.0436    0.0500
+    0.0064    0.0314
+    0.0043    0.0186
+   -0.0043    0.0186
+   -0.0271    0.0314
+   -0.0229    0.0181
+   -0.0500    0.0236
+   -0.0500    0.0083
+   -0.0000    0.0000
+   -0.0500    0.0000
+   -0.0000   -0.0000
+   -0.0500   -0.0118
+   -0.0500   -0.0077
+   -0.0500   -0.0037
+   -0.0500    0.0002
+   -0.0500   -0.0003
+   -0.0500   -0.0053
+   -0.0500   -0.0104
+   -0.0363   -0.0109
+   -0.0137   -0.0049
+   -0.0500   -0.0110
+   -0.0500    0.0029
+   -0.0403    0.0129
+   -0.0097    0.0046
+   -0.0500    0.0366
+   -0.0091    0.0088
+   -0.0409    0.0246
+   -0.0500    0.0072
+   -0.0500   -0.0138
+   -0.0259   -0.0180
+   -0.0241   -0.0306
+   -0.0113   -0.0194
+   -0.0387   -0.0366
+   -0.0500   -0.0134
+         0         0
+   -0.0500         0
+         0         0
+   -0.0500    0.0090
+   -0.0089   -0.0090
+    0.0089   -0.0090
+    0.0500   -0.0253
+    0.0500   -0.0141
+    0.0096   -0.0016
+    0.0404   -0.0036
+    0.0499    0.0036
+    0.0001    0.0000
+    0.0500   -0.0000
+    0.0001   -0.0000
+    0.0499   -0.0103
+    0.0500   -0.0234
+    0.0227   -0.0163
+    0.0273   -0.0265
+    0.0259   -0.0235
+    0.0241   -0.0139
+    0.0500   -0.0130
+    0.0500    0.0041
+    0.0500    0.0229
+    0.0000    0.0000
+    0.0500    0.0343
+    0.0299    0.0157
+    0.020

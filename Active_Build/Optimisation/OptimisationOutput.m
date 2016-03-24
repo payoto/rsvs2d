@@ -19,9 +19,9 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
             [out.marker,out.tOutput,out.rootDir]=OptimisationOutput_Init(paramoptim);
         case 'profile'
             out=varargin{1};
-            OptimisationOutput_profile(varargin{:});
+            out.dirprofile=OptimisationOutput_profile(varargin{:});
         case 'iteration'
-            
+            out=OptimisationOutput_iteration(varargin{:});
     end
     
     
@@ -59,7 +59,7 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     fclose(fidIndexFile);
 end
 
-function []=OptimisationOutput_profile(out,nIter,nProf,loop,restartsnak,snakSave)
+function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restartsnak,snakSave)
     
     marker=out.marker;
     t=out.tOutput;
@@ -76,14 +76,25 @@ function []=OptimisationOutput_profile(out,nIter,nProf,loop,restartsnak,snakSave
     
     savStruct.restartsnak=restartsnak;
     savStruct.snakSave=snakSave;
+    savStruct.loop=loop;
     GenerateProfileBinary(writeDirectory,marker,savStruct)
 end
 
 
-function []=OptimisationOutput_iteration(paramoptim)
+function [out]=OptimisationOutput_iteration(nIter,out,population)
+    
+    t=out.tOutput;
+    rootDir=out.rootDir;
+    marker=['iteration_',int2str(nIter),datestr(t,'_yyyy-mm-ddTHHMM')];
+    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yyyy-mm-ddTHHMM')];
+    writeDirectory=[rootDir,iterStr];
     
     CopyDiary(writeDirectory,marker)
-    
+    GeneratePopulationBinary(writeDirectory,marker,population)
+    h=CheckOptimProfile('iter_all',writeDirectory);
+   %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+   hgsave(h,[writeDirectory,'\profiles_',marker,'.fig']);
+    close(h);
 end
 
 %% 
@@ -95,3 +106,9 @@ function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
     
 end
 
+function []=GeneratePopulationBinary(resultDirectory,marker,population)
+    
+    fileName=[resultDirectory,'\population_',marker,'.mat'];
+    save(fileName,'population');
+    
+end

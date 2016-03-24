@@ -14,29 +14,30 @@
 function []=ExecuteOptimisation(caseStr)
     close all
     clc
-    
-    [paramoptim,outinfo,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
+    %clusterObj=parcluster('OptimSnakes');
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
-    
+    varExtract={'maxIter'};
+    [maxIter]=ExtractVariables(varExtract,paramoptim);
     
     
     % Specify starting population
     
-    %% Star optimisation Loop
-    %
-    % Assign design variables to grid
-    
-    % Compute Shape using snakes
-    
-    % Evaluate Objective Function
-    
-    % create new population
-    
+    % Start optimisation Loop
+    for nIter=1:maxIter
+        % Assign design variables to grid
+
+        % Compute Shape using snakes
+        [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
+            baseGrid,connectstructinfo);
+        % Evaluate Objective Function
+
+        % create new population
+
+    end
     %% Finish Optimisation
     
     
-    newFill=ones([paramoptim.general.nDesVar,1]);
-    [newGrid,newRefGrid,newrestart]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,newFill);
     diary off
 end
 
@@ -71,12 +72,22 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
     
+    % Start Parallel Pool
+    
+    if numel(gcp('nocreate'))==0
+        
+        clusterObj=parcluster('OptimSnakes');
+        clusterObj.NumWorkers=paramoptim.general.worker;
+        saveProfile(clusterObj);
+        parpool('OptimSnakes')
+    end
+   
     paramoptim.general.nDesVar=sum([baseGrid.cell(:).isactive]);
     [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
-    [~,~,~,~,restartsnake]=ExecuteSnakes(gridrefined,loop,...
+    [iterstruct]=InitialisePopulation(paramoptim,iterstruct);
+    
+    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,outinfo,0,0);
-    
-    
     
     [~]=PrintEnd(procStr,1,tStart);
 end
@@ -86,19 +97,23 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     procStr=['ITERATION ',int2str(nIter)];
     [tStart]=PrintStart(procStr,1);
     
-    varExtract={'nPop'};
-    [nPop]=ExtractVariables(varExtract,param);
+    varExtract={'nPop','objectiveName'};
+    [nPop,objectiveName]=ExtractVariables(varExtract,paramoptim);
+    
+    param=paramoptim.parametrisation;
     
     for ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         
-        [~,~,snakSave,loop,~]=ExecuteSnakes(newRefGrid,newrestartsnake,...
-            newGrid,connectstructinfo,paramoptim.parametrisation,outinfo,nIter,1);
-
+        [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
+            newGrid,connectstructinfo,param,outinfo,nIter,ii);
+        population(ii).location=outTemp.dirprofile;
+        population(ii).objective=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
     end
     
+    [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population);
     [~]=PrintEnd(procStr,1,tStart);
 end
 
@@ -119,35 +134,6 @@ function [unstructured,unstructReshape,gridrefined,connectstructinfo,unstructure
     
     [~]=PrintEnd(procStr,2,tStart);
     
-end
-
-function [snaxel,snakposition,snakSave,looprestart,restartsnake]...
-        =ExecuteSnakes(gridrefined,looprestart,baseGrid,connectstructinfo,param,outinfo,nIter,nProf)
-    % Executes the snakes edge detection process
-    %
-    procStr='SNAKE PROCESS';
-    [tStart]=PrintStart(procStr,2);
-    
-    varExtract={'refineSteps'};
-    [refineSteps]=ExtractVariables(varExtract,param);
-    
-    
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(gridrefined,looprestart,...
-        baseGrid,connectstructinfo,param);
-
-    if length(loopsnaxel)==length(looprestart)
-        for ii=1:length(loopsnaxel)
-            looprestart(ii).snaxel=loopsnaxel(ii).snaxel;
-        end
-    else
-        looprestart=loopsnaxel;
-    end
-    
-    
-    looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param);
-    
-    OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,restartsnake,snakSave);
-    [~]=PrintEnd(procStr,2,tStart);
 end
 
 function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,restartsnake,connectstructinfo,newFill)
@@ -182,14 +168,28 @@ end
 
 %% Optimisation Specific Operations
 
-function []=InitialisePopulation()
+function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
+    
+    varExtract={'nDesVar','nPop','startPop'};
+    [nDesVar,nPop,startPop]=ExtractVariables(varExtract,paroptim);
+    
+    switch startPop
+        case 'rand'
+           origPop=rand([nPop,nDesVar]);
+        case 'randuniform'
+            
+           origPop=rand([nPop,1])*ones([1 nDesVar]);
+    end
     
     
+    for ii=1:nPop
+        iterstruct(1).population(ii).fill=origPop(ii,:);
+    end
 end
 
 function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
     
-    varExtract={'nPop','nIter'};
+    varExtract={'nPop','maxIter'};
     [nPop,nIter]=ExtractVariables(varExtract,paroptim);
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
@@ -257,23 +257,44 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
     
 end
 
-%% Subdivision process
+%% Objective Function
 
-function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
-    % Function taking in a closed loop of vertices and applying the subdivision
-    % process
-    % typBOund is te type of boundary that is expected, it can either be the
-    % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
-    % process has been used
-     varExtract={'typeBound','subdivType'};
-    [typeBound,subdivType]=ExtractVariables(varExtract,param);
-    if ~exist('typeBound','var'), typeBound='vertex'; end
+function [objValue]=EvaluateObjective(objectiveName,paramoptim,member,loop)
     
-    for ii=1:length(loop)
-        startPoints=loop(ii).(typeBound).coord;
-        loop(ii).isccw=CCWLoop(startPoints);
-        newPoints=SubDivision(startPoints,refineSteps,subdivType);
-        %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
-        loop(ii).subdivision=newPoints;
+    objValue=[];
+    objValue=eval([objectiveName,'(paramoptim,member,loop);']);
+    
+    
+end
+
+function [objValue]=LengthArea(paramoptim,member,loop)
+    
+    points=loop.snaxel.coord(1:end-1,:);
+    [A]=abs(CalculatePolyArea(points));
+    vec=points([end,1:end-1],:)-points;
+    L=sum(sqrt(sum(vec.^2,2)));
+    
+    objValue=-A/L;
+    
+end
+
+function [A]=CalculatePolyArea(points)
+    
+    pointsVec=points';
+    pointsVec=pointsVec(:);
+    plot(points(:,1),points(:,2));
+    n=length(points(:,1));
+    centreMat=eye(2*n);
+    centreMat=(centreMat+centreMat(:,[end-1:end,1:end-2]))*0.5;
+    
+    [rotDif]=[0 -1 0 1; 1 0 -1 0];
+    normMat=zeros(2*n);
+    for ii=1:n-1
+        normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+4))=rotDif;
     end
+    ii=n;
+    normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+2))=rotDif(:,1:2);
+    normMat((2*(ii-1)+1):(2*(ii-1)+2),1:2)=rotDif(:,3:4);
+    A=0.5*(normMat*pointsVec)'*(centreMat*pointsVec);
+    
 end

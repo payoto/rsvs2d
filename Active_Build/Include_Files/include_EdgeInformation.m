@@ -33,7 +33,7 @@ function [loop]=OrderSurfaceVertexReshape(gridreshape,isEdge,cond)
             fillCell(:,1)=fillCell(:,1)>fillCell(:,2);
             fillCell(:,2)=fillCell(:,2)>fillCell(:,1); 
     end
-    parfor ii=1:length(fillCell(:,1))
+    for ii=1:length(fillCell(:,1))
         %colNum=find(fillCell(ii,:));
         blockCellTrunc(ii)=blockCell(ii,find(fillCell(ii,:)));
         
@@ -139,7 +139,7 @@ function [loop]=OrderSurfaceVertex(unstructured,isEdge,cond)
             fillCell(:,1)=fillCell(:,1)>fillCell(:,2);
             fillCell(:,2)=fillCell(:,2)>fillCell(:,1); 
     end
-    parfor ii=1:length(fillCell(:,1))
+    for ii=1:length(fillCell(:,1))
         %colNum=find(fillCell(ii,:));
         blockCellTrunc(ii)=blockCell(ii,find(fillCell(ii,:)));
         

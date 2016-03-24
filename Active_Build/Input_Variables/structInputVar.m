@@ -49,7 +49,7 @@ function paramgeneral=default_general()
     paramgeneral.passPadding=1;
     paramgeneral.typDat='vvlofoil';
     paramgeneral.typeBound='snaxel'; % 'vertex' or 'snaxel'
-    paramgeneral.subdivType='area';
+    paramgeneral.subdivType='chaikin';
     paramgeneral.loadLogical=false;
     paramgeneral.useSnakes=true;
     paramgeneral.execTest=false;
@@ -89,6 +89,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.subStep=1;
     paramsnakesstep.snakesMinSteps=5;
     paramsnakesstep.snakData='all';
+    paramsnakesstep.snakesConsole=true;
 end
 
 function paramsnakesrefine=default_snakes_refine()
@@ -302,8 +303,9 @@ function [param]=optimDefault()
     param.snakes.refine.typeRefine='actgrey';
     
     param.snakes.step.mergeTopo=false;
-    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakesSteps=50;
     param.snakes.step.snakData='light';
+    param.snakes.step.snakesConsole=false;
     
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
