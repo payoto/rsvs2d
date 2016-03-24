@@ -12,21 +12,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Main execution functions
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGriduns,looprestart,...
-        oldGridUns,connectionInfo,param)
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGrid,looprestart,...
+        oldGrid,connectionInfo,param)
     % JUST DECLARING VARIABLES FOR LATER
     
     % plotInterval,numSteps,makeMov,boundstr
     global arrivalTolerance unstructglobal maxStep maxDt
     
-    unstructglobal=refinedGriduns;
+    
     varExtract={'arrivalTolerance','maxStep','maxDt'};
     [arrivalTolerance,maxStep,maxDt]=ExtractVariables(varExtract,param);
     
-    
     % ACTUALLY DOING STUFF
-    [refinedGrid]=ModifUnstructured(refinedGriduns);
-    [oldGrid]=ModifUnstructured(oldGridUns);
+    refinedGriduns=ModifReshape(refinedGrid);
+    oldGridUns=ModifReshape(oldGrid);
+    
+    unstructglobal=refinedGriduns;
     %profile on
     [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
