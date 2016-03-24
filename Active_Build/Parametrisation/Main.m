@@ -34,19 +34,19 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     
     if ~restart
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-            ,snakSave,unstructReshape,restartsnake]=StandardRun(caseString);
+            ,snakSave,unstructReshape,gridrefined,restartsnake]=StandardRun(caseString);
     else
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-            ,snakSave,unstructReshape,restartsnake]=RestartRun(caseString);
+            ,snakSave,unstructReshape,gridrefined,restartsnake]=RestartRun(caseString);
     end
     varExtract={'useSnakes','typeBound','refineSteps'};
     [useSnakes,typeBound,refineSteps]=ExtractVariables(varExtract,param);
     
     % Restart structure generation
-    restartstruct.unstructuredrefined=unstructuredrefined;
+    restartstruct.gridrefined=gridrefined;
     restartstruct.param=param;
     restartstruct.connectstructinfo=connectstructinfo;
-    restartstruct.unstructured=unstructured;
+    restartstruct.unstructReshape=unstructReshape;
     if useSnakes
         restartstruct.snakrestart=restartsnake;
     end
@@ -68,7 +68,7 @@ end
 %% Top Level Execution processes
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-        ,snakSave,unstructReshape,restartsnake]...
+        ,snakSave,unstructReshape,gridrefined,restartsnake]...
         =StandardRun(caseString)
     
     [param]=structInputVar(caseString);
@@ -85,14 +85,14 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
         ExecuteGridRefinement(unstructReshape,param);
     snakSave=[];
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstructuredrefined,looprefined,...
-            unstructured,connectstructinfo,param);
+        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(gridrefined,looprefined,...
+            unstructReshape,connectstructinfo,param);
     end
     
 end
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-        ,snakSave,unstructReshape,restartsnake]....
+        ,snakSave,unstructReshape,gridrefined,restartsnake]....
         =RestartRun(caseStr)
     
     load([caseStr,'.mat'])
@@ -112,10 +112,11 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     varExtract={'useSnakes'};
     [useSnakes]=ExtractVariables(varExtract,param);
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstructuredrefined,snakrestart,...
-            unstructured,connectstructinfo,param);
+        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(gridrefined,snakrestart,...
+            unstructReshape,connectstructinfo,param);
     end
     unstructReshape=ModifUnstructured(unstructured);
+    unstructuredrefined=ModifReshape(gridrefined);
 end
 
 function [unstructured,loop,unstructReshape]...

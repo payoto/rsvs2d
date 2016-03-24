@@ -15,11 +15,10 @@ function []=ExecuteOptimisation(caseStr)
     close all
     clc
     
-    [paramoptim,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
+    [paramoptim,outinfo,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
     
-    [~,~,snakSave,loop,~]=ExecuteSnakes(unstrRef,restartsnake,...
-        unstrGrid,connectstructinfo,paramoptim.parametrisation);
+    
     
     % Specify starting population
     
@@ -37,13 +36,13 @@ function []=ExecuteOptimisation(caseStr)
     
     
     newFill=ones([paramoptim.general.nDesVar,1]);
-    [newGrid,newRefGrid]=ReFillGrids(baseGrid,gridrefined,connectstructinfo,newFill);
+    [newGrid,newRefGrid,newrestart]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,newFill);
     diary off
 end
 
 %%  Optimisation Operation Blocks
 
-function [paramoptim,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
+function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr)
     
     procStr='INITIALISE OPTIMISATION PROCESS';
@@ -67,21 +66,41 @@ function [paramoptim,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,r
     % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
+    [outinfo]=OptimisationOutput('init',paramoptim);
     % Initialise Grid
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
     
     paramoptim.general.nDesVar=sum([baseGrid.cell(:).isactive]);
-    
-    [~,~,~,~,restartsnake]=ExecuteSnakes(unstrRef,loop,...
-        unstrGrid,connectstructinfo,paramoptim.initparam);
-    
+    [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
+    [~,~,~,~,restartsnake]=ExecuteSnakes(gridrefined,loop,...
+        baseGrid,connectstructinfo,paramoptim.initparam,outinfo,0,0);
     
     
     
     [~]=PrintEnd(procStr,1,tStart);
 end
 
+function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridrefined,restartsnake,...
+        baseGrid,connectstructinfo)
+    procStr=['ITERATION ',int2str(nIter)];
+    [tStart]=PrintStart(procStr,1);
+    
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,param);
+    
+    for ii=1:nPop
+        
+        currentMember=population(ii).fill;
+        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
+        
+        [~,~,snakSave,loop,~]=ExecuteSnakes(newRefGrid,newrestartsnake,...
+            newGrid,connectstructinfo,paramoptim.parametrisation,outinfo,nIter,1);
+
+    end
+    
+    [~]=PrintEnd(procStr,1,tStart);
+end
 
 %% Parametrisation Interface
 
@@ -102,15 +121,19 @@ function [unstructured,unstructReshape,gridrefined,connectstructinfo,unstructure
     
 end
 
-function [snaxel,snakposition,snakSave,looprestart,restartsnake]=ExecuteSnakes(unstrRef,looprestart,...
-        unstrGrid,connectstructinfo,param)
+function [snaxel,snakposition,snakSave,looprestart,restartsnake]...
+        =ExecuteSnakes(gridrefined,looprestart,baseGrid,connectstructinfo,param,outinfo,nIter,nProf)
     % Executes the snakes edge detection process
     %
     procStr='SNAKE PROCESS';
     [tStart]=PrintStart(procStr,2);
     
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(unstrRef,looprestart,...
-        unstrGrid,connectstructinfo,param);
+    varExtract={'refineSteps'};
+    [refineSteps]=ExtractVariables(varExtract,param);
+    
+    
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(gridrefined,looprestart,...
+        baseGrid,connectstructinfo,param);
 
     if length(loopsnaxel)==length(looprestart)
         for ii=1:length(loopsnaxel)
@@ -121,11 +144,13 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake]=ExecuteSnakes(u
     end
     
     
+    looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param);
     
+    OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,restartsnake,snakSave);
     [~]=PrintEnd(procStr,2,tStart);
 end
 
-function [newGrid,newRefGrid]=ReFillGrids(baseGrid,refinedGrid,connectstructinfo,newFill)
+function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,restartsnake,connectstructinfo,newFill)
     
     activeCell=logical([baseGrid.cell(:).isactive]);
     activeInd=[baseGrid.cell((activeCell)).index];
@@ -135,19 +160,43 @@ function [newGrid,newRefGrid]=ReFillGrids(baseGrid,refinedGrid,connectstructinfo
     activeCellSub=find(activeCell);
     refCellInd=[refinedGrid.cell(:).index];
     
+    cellCentreInd=[restartsnake.cellCentredGrid(:).index];
+    
     if numel(newFill)~=numel(activeCellSub)
         error('Fill and Active Set do not match in size')
     end
     
     newGrid=baseGrid;
     newRefGrid=refinedGrid;
-    
+    newRestart=restartsnake;
     for ii=1:length(activeCellSub)
         newGrid.cell(activeCellSub(ii)).fill=newFill(ii);
-        
+        newRestart.volfracconnec.cell(activeCellSub(ii)).targetfill=newFill(ii);
         newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
         [newRefGrid.cell(newSub).fill]=deal(newFill(ii));
+        newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],cellCentreInd);
+        [newRestart.cellCentredGrid(newSub).fill]=deal(newFill(ii));
     end
+    
+end
+
+%% Optimisation Specific Operations
+
+function []=InitialisePopulation()
+    
+    
+end
+
+function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
+    
+    varExtract={'nPop','nIter'};
+    [nPop,nIter]=ExtractVariables(varExtract,paroptim);
+    
+    [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
+    
+    population=struct('fill',valFill,'location','','objective',[],'contraint',true);
+    
+    [iterstruct(1:nIter).population]=deal(population);
     
 end
 
@@ -208,5 +257,23 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
     
 end
 
+%% Subdivision process
 
-
+function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
+    % Function taking in a closed loop of vertices and applying the subdivision
+    % process
+    % typBOund is te type of boundary that is expected, it can either be the
+    % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
+    % process has been used
+     varExtract={'typeBound','subdivType'};
+    [typeBound,subdivType]=ExtractVariables(varExtract,param);
+    if ~exist('typeBound','var'), typeBound='vertex'; end
+    
+    for ii=1:length(loop)
+        startPoints=loop(ii).(typeBound).coord;
+        loop(ii).isccw=CCWLoop(startPoints);
+        newPoints=SubDivision(startPoints,refineSteps,subdivType);
+        %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
+        loop(ii).subdivision=newPoints;
+    end
+end
