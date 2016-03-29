@@ -121,7 +121,7 @@ function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
         end
         newPoints=subMask*startPoints;
         startPoints=newPoints;
-        
+        subMaskCell{nIter}=subMask;
     end
     
     limCurvMat=LimitCurve(subMask,3);
@@ -142,7 +142,7 @@ function [newPoints]=SubSurfBSpline(startPoints,refineSteps)
     newPoints=startPoints;
     for nIter=1:refineSteps
         numPoints=length(startPoints(:,1));
-        isCorner=DetectTrailingEdge(startPoints,TEisLeft);
+        isCorner=DetectTrailingEdge(startPoints,TEisLeft)*0;
         cumCorner=cumsum(isCorner);
         numNewPoints=(numPoints*2);
         subMask=zeros(numNewPoints,numPoints);
@@ -170,9 +170,13 @@ function [newPoints]=SubSurfBSpline(startPoints,refineSteps)
             subMask(indY,indX)=bSplineMask+subMask(indY,indX);
         end
         newPoints=subMask*startPoints;
+        startPointsCell{nIter}=startPoints;
         startPoints=newPoints;
         
+        subMaskCell{nIter}=subMask;
     end
+    
+    limCurvMat=LimitCurve(subMask,5);
 end
 
 function [newPoints]=SubSurfinterp1(startPoints,refineSteps)
