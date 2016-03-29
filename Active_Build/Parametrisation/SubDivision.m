@@ -8,15 +8,15 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function newPoints=SubDivision(startPoints,nSteps,refineMethod)
+function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod)
     
     
     switch refineMethod
         case 'chaikin'
-            [newPoints]=SubSurfChainkin(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps);
         case 'bspline'
             
-            [newPoints]=SubSurfBSpline(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
         case 'test'
             figure
             hold on
@@ -37,13 +37,13 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
             newPoints.newInterp2=newInterp2;
             newPoints.newcube=newcube;
         case 'interp1'
-            [newPoints]=SubSurfinterp1(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurfinterp1(startPoints,nSteps);
         case 'interp2'
-            [newPoints]=SubSurfinterp2(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurfinterp2(startPoints,nSteps);
         case 'cubic'
-            [newPoints]=SubSurfCubic(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurfCubic(startPoints,nSteps);
         case 'area'
-            [newPoints]=SubSurf_AreaConserv(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurf_AreaConserv(startPoints,nSteps);
         otherwise
             
             error('Invalid method');
@@ -53,30 +53,9 @@ function newPoints=SubDivision(startPoints,nSteps,refineMethod)
     
 end
 
-function [newPoints]=SubSurfChainkin2(startPoints,refineSteps)
-    % Implements a Chainkin subdivision process
-    
-    
-    chainkinMask=[0.25,0.75,0.75,0.25]';
-    newPoints=startPoints;
-    for nIter=1:refineSteps
-        numPoints=length(startPoints(:,1));
-        subMask=zeros((numPoints*2+2),numPoints);
-        
-        % create the right sized mask
-        for ii=1:numPoints
-            jj=(1+(ii-1)*2);
-            subMask(jj:jj+3,ii)=chainkinMask;
-        end
-        
-        newPoints=subMask*startPoints;
-        newPoints(1:2,:)=[];
-        newPoints(end-1:end,:)=[];
-        startPoints=newPoints;
-    end
-end
+%% Different subdivision processes
 
-function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
     TEisLeft=0;
     chainkinNoCorn=zeros([4,3]);
@@ -120,14 +99,16 @@ function [newPoints]=SubSurfChainkin(startPoints,refineSteps)
             subMask(indY,indX)=chainkinMask+subMask(indY,indX);
         end
         newPoints=subMask*startPoints;
+        startPointsCell{nIter}=startPoints;
         startPoints=newPoints;
         subMaskCell{nIter}=subMask;
     end
     
     limCurvMat=LimitCurve(subMask,3);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1/sqrt(2));
 end
 
-function [newPoints]=SubSurfBSpline(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurfBSpline(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
     TEisLeft=0;
     bsplineNoCorn=zeros([7,7]);
@@ -177,9 +158,10 @@ function [newPoints]=SubSurfBSpline(startPoints,refineSteps)
     end
     
     limCurvMat=LimitCurve(subMask,5);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,-1/sqrt(2));
 end
 
-function [newPoints]=SubSurfinterp1(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurfinterp1(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
     TEisLeft=0;
     bsplineNoCorn=zeros([7,1]);
@@ -224,9 +206,11 @@ function [newPoints]=SubSurfinterp1(startPoints,refineSteps)
         startPoints=newPoints;
         
     end
+    limCurvMat=LimitCurve(subMask,5);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
-function [newPoints]=SubSurfCubic(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurfCubic(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
     TEisLeft=0;
     bsplineNoCorn=zeros([4,1]);
@@ -271,9 +255,11 @@ function [newPoints]=SubSurfCubic(startPoints,refineSteps)
         startPoints=newPoints;
         
     end
+    limCurvMat=LimitCurve(subMask,5);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
-function [newPoints]=SubSurfinterp2(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurfinterp2(startPoints,refineSteps)
     % Implements a Chainkin subdivision process
     TEisLeft=0;
     bsplineNoCorn=zeros([7,1]);
@@ -320,9 +306,11 @@ function [newPoints]=SubSurfinterp2(startPoints,refineSteps)
         startPoints=newPoints;
         
     end
+    limCurvMat=LimitCurve(subMask,5);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
-function [newPoints]=SubSurf_AreaConserv(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurf_AreaConserv(startPoints,refineSteps)
     
     newStencilInfo.varStencil=[0
         -1/40
@@ -338,11 +326,14 @@ function [newPoints]=SubSurf_AreaConserv(startPoints,refineSteps)
         0];
     
     newStencilInfo.nNew=3;
-    [newPoints]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencilInfo);
-    
+    [newPoints,subMask]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencilInfo);
+    limCurvMat=LimitCurve(subMask,7);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1/1.261436458122615);
 end
 
-function [newPoints]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencilInfo)
+%% General functions
+
+function [newPoints,subMask]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencilInfo)
     % Implements a Chainkin subdivision process
     
     varStencil=newStencilInfo.varStencil;
@@ -374,9 +365,13 @@ function [newPoints]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,newStencil
             subMask(indY,indX)=bSplineMask+subMask(indY,indX);
         end
         newPoints=subMask*startPoints;
+        startPointsCell{nIter}=startPoints;
         startPoints=newPoints;
         
+        subMaskCell{nIter}=subMask;
     end
+    
+    limCurvMat=LimitCurve(subMask,7);
 end
 
 function isCorner=DetectTrailingEdge(coord,TEisLeft)
@@ -386,7 +381,7 @@ function isCorner=DetectTrailingEdge(coord,TEisLeft)
     isCorner=testLocMin;
 end
 
-function [limCurvMat]=LimitCurve(subMask,nStencil)
+function [limCurvMat,eigVal]=LimitCurve(subMask,nStencil)
     
     [nNew,nOld]=size(subMask);
     locStencil=cumsum(subMask~=0,2);
@@ -396,11 +391,18 @@ function [limCurvMat]=LimitCurve(subMask,nStencil)
     iEnd=nOld-sum(locStencil==0,2);
     nStencLoc=iEnd-(iStart-1);
     [~,iCentre]=max(subMask,[],2);
+    [~,iCentreRev]=max(subMask(:,end:-1:1),[],2);
+    iCentreRev=nOld+1-iCentreRev;
+    iCentreComp=abs(iCentre-iCentreRev);
+    iCentreInverse=find(iCentreComp>2);
+    for ii=1:length(iCentreInverse)
+        iCentre(iCentreInverse(ii))=iCentreRev(iCentreInverse(ii));
+    end
     nI=nStencil;
     nJ=nStencil;
     
     limCurvMat=zeros(nNew);
-    
+    eigVal=zeros(nNew,1);
     for ii=1:nNew
         iStart=-1+iCentre(ii)-floor(nStencil/2);
         jStart=-1+ii-floor(nStencil/2);
@@ -417,9 +419,39 @@ function [limCurvMat]=LimitCurve(subMask,nStencil)
         [w,d]=eig([subMask(indY,indX)]');
         
         limCurvMat(ii,indY)=w(:,1)';
+        eigVal(ii)=d(1);
     end
+
+end
+
+function [projPoints]=ProjectPoints(points,eigMat,convFactor)
     
-    
-    
+    projPoints=convFactor*eigMat*points;
     
 end
+%% OLD
+
+%{
+function [newPoints]=SubSurfChainkin2(startPoints,refineSteps)
+    % Implements a Chainkin subdivision process
+    
+    
+    chainkinMask=[0.25,0.75,0.75,0.25]';
+    newPoints=startPoints;
+    for nIter=1:refineSteps
+        numPoints=length(startPoints(:,1));
+        subMask=zeros((numPoints*2+2),numPoints);
+        
+        % create the right sized mask
+        for ii=1:numPoints
+            jj=(1+(ii-1)*2);
+            subMask(jj:jj+3,ii)=chainkinMask;
+        end
+        
+        newPoints=subMask*startPoints;
+        newPoints(1:2,:)=[];
+        newPoints(end-1:end,:)=[];
+        startPoints=newPoints;
+    end
+end
+%}
