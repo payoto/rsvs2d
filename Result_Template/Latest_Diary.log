@@ -280,4 +280,22 @@ vec =
     0.0000    0.0000
     0.0500    0.0343
     0.0299    0.0157
-    0.020
+    0.0201    0.0087
+    0.0500    0.0162
+    0.0500    0.0092
+    0.0500    0.0023
+    0.0500   -0.0046
+    0.0500   -0.0119
+    0.0500   -0.0199
+    0.0000   -0.0000
+    0.0500   -0.0339
+
+if system_dependent('IsDebugMode')==1, dbstep; end
+clc
+objValue
+
+objValue =
+
+   -0.0709
+
+if system_dependent('IsDebugMode')==1, dbquit; end
