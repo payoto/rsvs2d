@@ -81,6 +81,27 @@ function [varargout]=ExtractVariables(varNames,param)
     end
     
 end
+
+function [lengthParam,edgeLength]=LengthProfile(points)
+    
+    points=points([1,1:end],:);
+    pointsVec=points(1:end-1,:)-points(2:end,:);
+    edgeLength=sqrt(sum(pointsVec.^2,2));
+    lengthParam=cumsum(edgeLength);
+    
+    
+end
+
+function trimmedPoints=RemoveIdenticalConsecutivePoints(points)
+    
+    [~,edgeLength]=LengthProfile(points);
+    indRmv=find(edgeLength<1e-10);
+    indRmv(1)=[]; % remove first point which has 0 distance.
+    trimmedPoints=points;
+    trimmedPoints(indRmv,:)=[];
+    
+end
+
 %{
 function [A]=CalculatePolyArea(points)
     

@@ -87,7 +87,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     [iterstruct]=InitialisePopulation(paramoptim,iterstruct);
     
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
-        baseGrid,connectstructinfo,paramoptim.initparam,outinfo,0,0);
+        baseGrid,connectstructinfo,paramoptim.initparam,paramoptim.spline,outinfo,0,0);
     
     [~]=PrintEnd(procStr,1,tStart);
 end
@@ -100,15 +100,16 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     varExtract={'nPop','objectiveName'};
     [nPop,objectiveName]=ExtractVariables(varExtract,paramoptim);
     
-    param=paramoptim.parametrisation;
+    paramsnake=paramoptim.parametrisation;
+    paramspline=paramoptim.spline;
     
-    for ii=1:nPop
+    parfor ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         
         [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
-            newGrid,connectstructinfo,param,outinfo,nIter,ii);
+            newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
         population(ii).location=outTemp.dirprofile;
         population(ii).objective=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
     end

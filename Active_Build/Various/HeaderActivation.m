@@ -29,14 +29,19 @@ function [] = HeaderActivation(funcHandles,funcDir)
         funcHandleVarname=[funcHandlesNamesCell{ii}(2:end),'_Handle'];
         eval(['global ',funcHandleVarname])
         eval([funcHandleVarname,'=funcHandles{ii};']);
-        WriteConatainerFunctionFile(funcName,funcDir);
+        WriteContainerFunctionFile(funcName,funcDir);
     end
     addpath(funcDir);
 end
 
-function []=WriteConatainerFunctionFile(funcName,funcDir)
-    
-    fID=fopen([funcDir,'\',funcName,'.m'],'w');
+function []=WriteContainerFunctionFile(funcName,funcDir)
+    fID=-1;
+    t=now;
+    Dt=0;
+    while(fID<0 && Dt<0.01)
+        fID=fopen([funcDir,'\',funcName,'.m'],'w');
+        Dt=now-t;
+    end
     
     funcText{1}=['function [varargout]=',funcName,'(varargin)'];
     funcText{2}=['global ',funcName,'_Handle'];

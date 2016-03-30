@@ -112,7 +112,11 @@ function []=CheckOptimProfile_singleloopin(loop,h,subPlotSize,subPos)
     plot(c(:,1),c(:,2))
     axis equal
     hold on
-    c=loop.subdivision;
+    try
+        c=loop.subdivspline;
+    catch % backwards compatibility
+        c=loop.subdivision;
+    end
     plot(c(:,1),c(:,2))
     
     for ii=0:2:6,

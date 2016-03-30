@@ -38,7 +38,7 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     varExtract={'optimCase','typDat','resultRoot','archiveName'};
     [typDat,resultRoot,archiveName]=ExtractVariables(varExtract(2:end),paramoptim.parametrisation);
     
-    [marker,t]=GenerateResultMarker([optimCase,'_',typDat]);
+    [marker,t]=GenerateResultMarker([optimCase]);
     [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
     
     % Parameter Data
@@ -64,19 +64,24 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     marker=out.marker;
     t=out.tOutput;
     rootDir=out.rootDir;
-    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yyyy-mm-ddTHHMM')];
-    profStr=['\profile_',int2str(nProf),'_',datestr(t,'yyyy-mm-ddTHHMMSS')];
+    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
+    profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
     writeDirectory=[rootDir,iterStr,profStr];
     system(['md "',writeDirectory,'"']);
-    
-     % Output boundary data file
-    [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
-    BoundaryOutput(loop,fidBoundary);
-    fclose(fidBoundary);
     
     savStruct.restartsnak=restartsnak;
     savStruct.snakSave=snakSave;
     savStruct.loop=loop;
+    
+     % Output boundary data file
+    [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
+    for ii=1:length(loop)
+        loop(ii).subdivision=loop(ii).subdivspline;
+    end
+    BoundaryOutput(loop,fidBoundary);
+    fclose(fidBoundary);
+    
+    
     GenerateProfileBinary(writeDirectory,marker,savStruct)
 end
 
@@ -85,8 +90,8 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     
     t=out.tOutput;
     rootDir=out.rootDir;
-    marker=['iteration_',int2str(nIter),datestr(t,'_yyyy-mm-ddTHHMM')];
-    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yyyy-mm-ddTHHMM')];
+    marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
+    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     writeDirectory=[rootDir,iterStr];
     
     CopyDiary(writeDirectory,marker)
