@@ -1,3 +1,50 @@
+action,coeffstructure,forceparam);
+
+In Snakes>RunSnakesProcess (line 79)
+       [t,ii]=evalc('IterSnakes;');
+
+In Snakes (line 32)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+In ExecuteSnakes_Optim (line 28)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+
+In ExecuteOptimisation>(parfor body) (line 111)
+        [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
+
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
+
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
+
+clc
+clear
+close all
+Parallel pool using the 'OptimSnakes' profile is shutting down.
+parpool('OptimSnakes')
+Starting parallel pool (parpool) using the 'OptimSnakes' profile ... connected to 6 workers.
+
+ans = 
+
+ <a href="matlab: help parallel.Pool">Pool</a> with properties: 
+
+            Connected: true
+           NumWorkers: 6
+              Cluster: <a href="matlab: parallel.internal.display.Displayer.displayObject('1F8B0800000000000000AD53CD4EC24010DE9662F420D198181EC153034613F18618A384C6043070D8A42EB8C1EAD2DDB4F5C08D238FE1D1A3471F858B771FC31DBBA54B2D41A3934CA6DF74E69B9FDD45C69583A494A43E4BDD90BA297517C5622CAC859CC67507F081544102C21865B6E74734F009B3EFBC503032B11BEC29942E878EA91F71E0BDD478B7155F51E10D5523A903B81C7FBE9BDABF44816F66A57C5B193E88E95B299FA930D2E67C2BA4F9664EBEDE4F51CE5D54182CEC20E111859FED0B66BEF018ED0544081AB8AECAAF68F969BD182735133FC4978DD5737F64E24DE5030BE3DF4A9D2A7D953A57FF13E94E0445E7242268F9FC561F34CA15A855C8FFB524460ED67D26FA3E4F3646979266F5FB6629BF7EBEFB1ACF8EC28B3187F1F8768B0F098BF9E6E877F7654F61B04D3EE8443C20230A8491C7FDB4CFE99A3E9B993E01374EF14D4883101351AD1DD5705D083835DCE664ECF923EC90E8BEC783C7103BF56EAB7E8619CCE1AAA9DC073E0871FBB0523D26691F2F68F53DCCEE1DE24FD6EC0365F6F1DFF933B4E6FDA3E57BD3FF224CDFBF7E3FFEF2FE413E01A3CD16DC40050000')">OptimSnakes</a>
+        AttachedFiles: ...ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\Parallel\taskStartup.m
+          IdleTimeout: Inf (no automatic shut down)
+          SpmdEnabled: true
+
+clc
+ExecuteOptimisation('StandardOptim')
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+30-Mar-2016 17:03:48
+--------------------------------------------------------------------------------------------
+  
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -54,15 +101,15 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:359
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:05:042
+  Iteration Time:00:00:04:813
   Volume converged to 2.51755e-03
-Time Elapsed:00:00:05:806
+Time Elapsed:00:00:06:493
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:06:369
+    Time Elapsed:00:00:07:054
 INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -71,7 +118,7 @@ INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 ITERATION 1 start
-24-Mar-2016 17:33:59
+30-Mar-2016 17:03:55
 --------------------------------------------------------------------------------------------
   
   
@@ -81,117 +128,8 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:13:478
-  Volume converged to 6.44321e-04
-Time Elapsed:00:00:13:964
-SNAKE PROCESS end
------------------------
-  
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',273,1)">273 </a>    [A]=CalculatePolyArea(points);
-[0.549989822924583,0.100000000000000;0.550000000000000,0.0999772404067212]
-
-ans =
-
-    0.5500    0.1000
-    0.5500    0.1000
-
-if system_dependent('IsDebugMode')==1, dbstep; end
-A
-
-A =
-
-   -0.2027
-
-CalculatePolyArea(points(end:-1:1,:))
-
-ans =
-
-    0.2027
-
-ExecuteOptimisation('StandardOptim')
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-INITIALISE OPTIMISATION PROCESS start
-24-Mar-2016 17:37:32
---------------------------------------------------------------------------------------------
-  
-  
------------------------
-INITIAL GRID OPERATIONS start
-
-Calculations Started . . .
-***** START GRID INITIALISATION *****
-
-     OUTPUT:Skipped
-    ACTION: Starting Grid Generated
-     OUTPUT:Skipped
-    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
-
-    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Reshaping
-
-     OUTPUT:Skipped
-Calculations Started . . .
-***** START GRID REFINEMENT 1 of 1 *****
-
-     OUTPUT:Skipped
-    ACTION: Template Generated
-    ACTION: Refinement Targets Identified
-    ACTION: Edges Refined
-			Start Cell 1 of 16 
-			Start Cell 2 of 16 
-			Start Cell 3 of 16 
-			Start Cell 4 of 16 
-			Start Cell 5 of 16 
-			Start Cell 6 of 16 
-			Start Cell 7 of 16 
-			Start Cell 8 of 16 
-			Start Cell 9 of 16 
-			Start Cell 10 of 16 
-			Start Cell 11 of 16 
-			Start Cell 12 of 16 
-			Start Cell 13 of 16 
-			Start Cell 14 of 16 
-			Start Cell 15 of 16 
-			Start Cell 16 of 16 
-    ACTION: Cells Refined
-     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:093
-INITIAL GRID OPERATIONS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:00:344
-  Start Time Stepping
-  20 Steps Performed
-  Iteration Time:00:00:04:907
-  Volume converged to 2.51755e-03
-Time Elapsed:00:00:05:641
-SNAKE PROCESS end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:06:125
-INITIALISE OPTIMISATION PROCESS end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 1 start
-24-Mar-2016 17:37:38
---------------------------------------------------------------------------------------------
-  
+  Iteration Time:00:00:18:223
+  Volume converged to 4.61965e-04
   
 -----------------------
 SNAKE PROCESS start
@@ -199,103 +137,72 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:12:557
-  Volume converged to 8.76788e-04
-Time Elapsed:00:00:13:199
+  Iteration Time:00:00:18:420
+  Volume converged to 2.20585e-07
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:644
+  Volume converged to 8.44248e-04
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:088
+  Volume converged to 1.43107e-04
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:982
+  Volume converged to 4.87034e-04
+Time Elapsed:00:00:23:419
 SNAKE PROCESS end
 -----------------------
   
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',277,1)">277 </a>    objValue=-A/L;
-L
-
-L =
-
-    2.7187
-
-vec
-
-vec =
-
-         0         0
-    0.0500    0.0000
-    0.0500    0.0339
-    0.0000    0.0000
-    0.0436    0.0500
-    0.0064    0.0314
-    0.0043    0.0186
-   -0.0043    0.0186
-   -0.0271    0.0314
-   -0.0229    0.0181
-   -0.0500    0.0236
-   -0.0500    0.0083
-   -0.0000    0.0000
-   -0.0500    0.0000
-   -0.0000   -0.0000
-   -0.0500   -0.0118
-   -0.0500   -0.0077
-   -0.0500   -0.0037
-   -0.0500    0.0002
-   -0.0500   -0.0003
-   -0.0500   -0.0053
-   -0.0500   -0.0104
-   -0.0363   -0.0109
-   -0.0137   -0.0049
-   -0.0500   -0.0110
-   -0.0500    0.0029
-   -0.0403    0.0129
-   -0.0097    0.0046
-   -0.0500    0.0366
-   -0.0091    0.0088
-   -0.0409    0.0246
-   -0.0500    0.0072
-   -0.0500   -0.0138
-   -0.0259   -0.0180
-   -0.0241   -0.0306
-   -0.0113   -0.0194
-   -0.0387   -0.0366
-   -0.0500   -0.0134
-         0         0
-   -0.0500         0
-         0         0
-   -0.0500    0.0090
-   -0.0089   -0.0090
-    0.0089   -0.0090
-    0.0500   -0.0253
-    0.0500   -0.0141
-    0.0096   -0.0016
-    0.0404   -0.0036
-    0.0499    0.0036
-    0.0001    0.0000
-    0.0500   -0.0000
-    0.0001   -0.0000
-    0.0499   -0.0103
-    0.0500   -0.0234
-    0.0227   -0.0163
-    0.0273   -0.0265
-    0.0259   -0.0235
-    0.0241   -0.0139
-    0.0500   -0.0130
-    0.0500    0.0041
-    0.0500    0.0229
-    0.0000    0.0000
-    0.0500    0.0343
-    0.0299    0.0157
-    0.0201    0.0087
-    0.0500    0.0162
-    0.0500    0.0092
-    0.0500    0.0023
-    0.0500   -0.0046
-    0.0500   -0.0119
-    0.0500   -0.0199
-    0.0000   -0.0000
-    0.0500   -0.0339
-
-if system_dependent('IsDebugMode')==1, dbstep; end
-clc
-objValue
-
-objValue =
-
-   -0.0709
-
-if system_dependent('IsDebugMode')==1, dbquit; end
+Time Elapsed:00:00:23:839
+SNAKE PROCESS end
+-----------------------
+  
+Time Elapsed:00:00:23:949
+SNAKE PROCESS end
+-----------------------
+  
+Time Elapsed:00:00:24:419
+SNAKE PROCESS end
+-----------------------
+  
+Time Elapsed:00:00:25:219
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:619
+  Volume converged to 7.93907e-06
+Time Elapsed:00:00:26:723
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:28:660
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  

@@ -13,10 +13,9 @@
 
 
 function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
-        =ExecuteSnakes_Optim(gridrefined,looprestart,baseGrid,connectstructinfo,param,outinfo,nIter,nProf)
+        =ExecuteSnakes_Optim(gridrefined,looprestart,baseGrid,connectstructinfo,param,paramspline,outinfo,nIter,nProf)
     % Executes the snakes edge detection process
     %
-   
     
     procStr='SNAKE PROCESS';
     [tStart]=PrintStart(procStr,2);
@@ -36,7 +35,7 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     end
     
     
-    looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param);
+    looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
     
     outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,restartsnake,snakSave);
     [~]=PrintEnd(procStr,2,tStart);
@@ -102,7 +101,7 @@ end
 
 %% Subdivision process
 
-function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
+function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
     % Function taking in a closed loop of vertices and applying the subdivision
     % process
     % typBOund is te type of boundary that is expected, it can either be the
@@ -115,8 +114,10 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
     for ii=1:length(loop)
         startPoints=loop(ii).(typeBound).coord;
         loop(ii).isccw=CCWLoop(startPoints);
-        newPoints=SubDivision(startPoints,refineSteps,subdivType);
+        [newPoints,projPoints]=SubDivision(startPoints,refineSteps,subdivType);
+        resampPoints=ResampleSpline(projPoints,paramspline);
         %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
         loop(ii).subdivision=newPoints;
+        loop(ii).subdivspline=resampPoints;
     end
 end

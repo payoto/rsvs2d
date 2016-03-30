@@ -297,7 +297,8 @@ function [param]=optimDefault()
     
     param.general.typDat='optimInit';
     param.general.restart=true;
-    param.general.refineSteps=2;
+    param.general.refineSteps=4;
+    param.general.subdivType='area';
     
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='actgrey';

@@ -37,6 +37,7 @@ end
 function [paroptim]=DefaultOptim()
     
     paroptim.general=DefaultOptimGeneral();
+    [paroptim.spline]=DefaultOptimSpline();
     paroptim.structdat=GetStructureData(paroptim);
     
 end
@@ -55,7 +56,12 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.objectiveName='LengthArea';
 end
 
-
+function [paroptimspline]=DefaultOptimSpline()
+    
+    
+    paroptimspline.splineCase='snake';
+    paroptimspline.domain='normalizeX';
+end
 
 %% Standard Modifications
 

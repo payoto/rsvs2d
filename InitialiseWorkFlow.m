@@ -54,11 +54,11 @@ end
 
 function []=AddFoldersToPath(addFolders)
     % adds a set of paths to the active path
-    
-    for ii=1:length(addFolders)
-        addpath(addFolders{ii})
+    newPaths=addFolders{1};
+    for ii=2:length(addFolders)
+        newPaths=[newPaths,pathsep,addFolders{ii}];
     end
-    
+    addpath(newPaths);
     
 end
 

@@ -9,8 +9,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod)
-    
-    
+    include_Utilities
+    startPoints=RemoveIdenticalConsecutivePoints(startPoints);
     switch refineMethod
         case 'chaikin'
             [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps);
@@ -104,8 +104,8 @@ function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
         subMaskCell{nIter}=subMask;
     end
     
-    limCurvMat=LimitCurve(subMask,3);
-    [projPoints]=ProjectPoints(newPoints,limCurvMat,1/sqrt(2));
+    limCurvMat=LimitCurve(subMask,4);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
 function [newPoints,projPoints]=SubSurfBSpline(startPoints,refineSteps)
@@ -157,8 +157,8 @@ function [newPoints,projPoints]=SubSurfBSpline(startPoints,refineSteps)
         subMaskCell{nIter}=subMask;
     end
     
-    limCurvMat=LimitCurve(subMask,5);
-    [projPoints]=ProjectPoints(newPoints,limCurvMat,-1/sqrt(2));
+    limCurvMat=LimitCurve(subMask,3);
+    [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
 function [newPoints,projPoints]=SubSurfinterp1(startPoints,refineSteps)
@@ -417,9 +417,13 @@ function [limCurvMat,eigVal]=LimitCurve(subMask,nStencil)
         end
         
         [w,d]=eig([subMask(indY,indX)]');
-        
-        limCurvMat(ii,indY)=w(:,1)';
-        eigVal(ii)=d(1);
+        [iEig,~]=find(d==1,1);
+        if numel(iEig)==0
+            [iEig,~]=find(1-d<1e-10);
+        end
+        limCurvMat(ii,indY)=w(:,iEig)';
+         limCurvMat(ii,indY)= limCurvMat(ii,indY)/sum( limCurvMat(ii,indY));
+        eigVal(ii)=d(iEig);
     end
 
 end
