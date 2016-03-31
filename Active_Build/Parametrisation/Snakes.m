@@ -20,8 +20,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     global arrivalTolerance unstructglobal maxStep maxDt
     
     
-    varExtract={'arrivalTolerance','maxStep','maxDt'};
-    [arrivalTolerance,maxStep,maxDt]=ExtractVariables(varExtract,param);
+    varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole'};
+    [arrivalTolerance,maxStep,maxDt,snakesConsole]=ExtractVariables(varExtract,param);
     
     % ACTUALLY DOING STUFF
     refinedGriduns=ModifReshape(refinedGrid);
@@ -34,11 +34,12 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
         oldGrid,oldGridUns,connectionInfo,param);
     %profile viewer
     
-    
-    figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
-    title('Volume error')
-    ylabel('Root Mean squared error on volume convergence')
-    xlabel('number of iterations')
+    if snakesConsole
+        figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
+        title('Volume error')
+        ylabel('Root Mean squared error on volume convergence')
+        xlabel('number of iterations')
+    end
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
@@ -76,7 +77,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     if snakesConsole
         ii=IterSnakes;
     else
-       [t,ii]=evalc('IterSnakes;');
+       [~,ii]=evalc('IterSnakes;');
     end
     
     tEnd=now;
@@ -85,7 +86,9 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns);
-    
+    if snakesConsole
+        CheckResultsLight(refinedGriduns,snakposition,snaxel)
+    end
     restartsnake.snaxel=snaxel;
     restartsnake.insideContourInfo=insideContourInfo;
     restartsnake.cellCentredGrid=cellCentredGrid;
@@ -253,7 +256,7 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     %disp('Finished Iterations , starting Post Process')
     [snaxel]=FreezingFunction(snaxel,borderVertices);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-    CheckResultsLight(refinedGriduns,snakposition,snaxel)
+    
     %disp('Creating Snaxel Loops')
     [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
     

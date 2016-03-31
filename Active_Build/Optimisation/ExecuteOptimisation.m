@@ -11,9 +11,11 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function []=ExecuteOptimisation(caseStr)
+function [iterstruct]=ExecuteOptimisation(caseStr)
     close all
     clc
+    procStr=['OPTIMISATION - ',caseStr];
+    [tStart]=PrintStart(procStr,1);
     %clusterObj=parcluster('OptimSnakes');
     [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
@@ -26,18 +28,20 @@ function []=ExecuteOptimisation(caseStr)
     % Start optimisation Loop
     for nIter=1:maxIter
         % Assign design variables to grid
-
+        procStr=['ITERATION ',int2str(nIter)];
+        [tStart]=PrintStart(procStr,1);
         % Compute Shape using snakes
         [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
             baseGrid,connectstructinfo);
         % Evaluate Objective Function
-
+        [iterstruct]=GenerateNewPop(paramoptim,iterstruct,nIter);
         % create new population
-
+        [~]=PrintEnd(procStr,1,tStart);
     end
     %% Finish Optimisation
     
     
+    [~]=PrintEnd(procStr,1,tStart);
     diary off
 end
 
@@ -94,8 +98,7 @@ end
 
 function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridrefined,restartsnake,...
         baseGrid,connectstructinfo)
-    procStr=['ITERATION ',int2str(nIter)];
-    [tStart]=PrintStart(procStr,1);
+    
     
     varExtract={'nPop','objectiveName'};
     [nPop,objectiveName]=ExtractVariables(varExtract,paramoptim);
@@ -115,8 +118,26 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     end
     
     [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population);
-    [~]=PrintEnd(procStr,1,tStart);
+    
 end
+
+function [iterstruct]=GenerateNewPop(paramoptim,iterstruct,nIter)
+    procStr=['Generate New Population'];
+    [tStart]=PrintStart(procStr,2);
+    
+    varExtract={'nPop',};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
+    
+    [newPop,iterstruct(nIter).population]=OptimisationMethod(paramoptim,iterstruct(nIter).population,...
+        iterstruct(max([nIter-1,1])).population);
+    
+    for ii=1:nPop
+        iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+    end
+    
+    [~]=PrintEnd(procStr,2,tStart);
+end
+
 
 %% Parametrisation Interface
 
