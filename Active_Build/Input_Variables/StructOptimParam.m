@@ -37,6 +37,7 @@ end
 function [paroptim]=DefaultOptim()
     
     paroptim.general=DefaultOptimGeneral();
+    [paroptim.optim.DE]=DefaultOptimDE();
     [paroptim.spline]=DefaultOptimSpline();
     paroptim.structdat=GetStructureData(paroptim);
     
@@ -49,11 +50,18 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.optimMethod='DE';
     paroptimgeneral.desVarRange=[0,1];
     paroptimgeneral.nDesVar=[0];
-    paroptimgeneral.nPop=6;
+    paroptimgeneral.nPop=12;
     paroptimgeneral.startPop='rand';
-    paroptimgeneral.maxIter=1;
+    paroptimgeneral.maxIter=10;
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea';
+    paroptimgeneral.direction='min';
+end
+
+function [paroptimDE]=DefaultOptimDE()
+    
+    paroptimDE.diffAmplification=0.5; %[0,2]
+    paroptimDE.xOverRatio=0.5;
 end
 
 function [paroptimspline]=DefaultOptimSpline()

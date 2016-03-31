@@ -18,14 +18,15 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     %
     
     procStr='SNAKE PROCESS';
-    [tStart]=PrintStart(procStr,2);
+    
+    [textOut1,tStart]=evalc('PrintStart(procStr,2);');
     
     varExtract={'refineSteps'};
     [refineSteps]=ExtractVariables(varExtract,param);
     
     callerString='Snakes(gridrefined,looprestart,baseGrid,connectstructinfo,param);';
     [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
-    fprintf(textOut);
+    
     if length(loopsnaxel)==length(looprestart)
         for ii=1:length(loopsnaxel)
             looprestart(ii).snaxel=loopsnaxel(ii).snaxel;
@@ -38,7 +39,8 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
     
     outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,restartsnake,snakSave);
-    [~]=PrintEnd(procStr,2,tStart);
+    [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
+    fprintf([textOut1,textOut,textOut2])
 end
 
 

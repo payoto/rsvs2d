@@ -22,6 +22,8 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
             out.dirprofile=OptimisationOutput_profile(varargin{:});
         case 'iteration'
             out=OptimisationOutput_iteration(varargin{:});
+        case 'final'
+            out=OptimisationOutput_Final(varargin{:});
     end
     
     
@@ -85,7 +87,6 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     GenerateProfileBinary(writeDirectory,marker,savStruct)
 end
 
-
 function [out]=OptimisationOutput_iteration(nIter,out,population)
     
     t=out.tOutput;
@@ -101,6 +102,23 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
    hgsave(h,[writeDirectory,'\profiles_',marker,'.fig']);
     close(h);
 end
+
+function [out]=OptimisationOutput_Final(nIter,out,population)
+    
+    t=out.tOutput;
+    rootDir=out.rootDir;
+    marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
+    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
+    writeDirectory=[rootDir,iterStr];
+    
+    CopyDiary(writeDirectory,marker)
+    GeneratePopulationBinary(writeDirectory,marker,population)
+    h=CheckOptimProfile('iter_all',writeDirectory);
+   %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+   hgsave(h,[writeDirectory,'\profiles_',marker,'.fig']);
+    close(h);
+end
+
 
 %% 
 
