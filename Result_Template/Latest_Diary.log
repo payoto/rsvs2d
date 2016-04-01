@@ -1,3 +1,21 @@
+ral\addpath.m',86,0)">line 86</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('InitialiseWorkFlow>AddFoldersToPath', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m', 61)" style="font-weight:bold">InitialiseWorkFlow>AddFoldersToPath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m',61,0)">line 61</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('InitialiseWorkFlow', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m', 23)" style="font-weight:bold">InitialiseWorkFlow</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m',23,0)">line 23</a>)] 
+ExecuteOptimisation('StandardOptim')
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+OPTIMISATION - StandardOptim start
+01-Apr-2016 11:38:38
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+01-Apr-2016 11:38:38
+--------------------------------------------------------------------------------------------
+  
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -39,147 +57,64 @@ Calculations Started . . .
 			Start Cell 16 of 16 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:110
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:100
 INITIAL GRID OPERATIONS end
 -----------------------
   
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:00:343
-  Start Time Stepping
-  20 Steps Performed
-  Iteration Time:00:00:04:864
-  Volume converged to 2.51755e-03
-Time Elapsed:00:00:06:395
-SNAKE PROCESS end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:07:863
-INITIALISE OPTIMISATION PROCESS end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 1 start
-01-Apr-2016 11:33:23
---------------------------------------------------------------------------------------------
-  
-{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('distcomp.remoteparfor/getCompleteIntervals', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\distcomp\+distcomp\remoteparfor.m', 127)" style="font-weight:bold">distcomp.remoteparfor/getCompleteIntervals</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\distcomp\+distcomp\remoteparfor.m',127,0)">line 127</a>)
-
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>distributed_execution', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p', 820)" style="font-weight:bold">parallel_function>distributed_execution</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',820,0)">line 820</a>)
-        [tags, out] = P.getCompleteIntervals(chunkSize);
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p', 587)" style="font-weight:bold">parallel_function</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',587,0)">line 587</a>)
-        R = distributed_execution(...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>PerformIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 109)" style="font-weight:bold">ExecuteOptimisation>PerformIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',109,0)">line 109</a>)
-    parfor ii=1:nPop
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 34)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',34,0)">line 34</a>)
-        [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...} 
-<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',587,1)">587 </a>        R = distributed_execution(...
 clc
-if system_dependent('IsDebugMode')==1, dbquit; end
-Operation terminated by user during Snakes>ExtractBorderStructure (line 1153)
-
-
-In Snakes>ExtractCellFillInformation (line 1052)
-        [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
-
-In Snakes>VolumeFraction (line 961)
-        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
-
-In Snakes>RunSnakesProcess/IterSnakes (line 111)
-        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-
-In Snakes>RunSnakesProcess (line 80)
-       [~,ii]=evalc('IterSnakes;');
-
-In Snakes (line 32)
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-
-In ExecuteSnakes_Optim (line 28)
-    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
-
-In ExecuteOptimisation>(parfor body) (line 114)
-        [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
-
-In parallel_function>make_general_channel/channel_general (line 914)
-                    O = F(C{:});
-
-In remoteParallelFunction (line 38)
-        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
-
-Operation terminated by user during FindObjNum (line 21)
-
-
-In Snakes>ContourEdgeNormal (line 707)
-    snaxSubPos=FindObjNum(snaxel,indices,snaxIndPos);
-
-In Snakes>ContourNormal2 (line 667)
-        [contourStruct(ii).vector]=ContourEdgeNormal(snakposition,snaxel,...
-
-In Snakes>SnaxelNormal2 (line 630)
-    [contourStruct]=ContourNormal2(snaxel,snakposition);
-
-In Snakes>RunSnakesProcess/IterSnakes (line 110)
-        [snakposition]=SnaxelNormal2(snaxel,snakposition);
-
-In Snakes>RunSnakesProcess (line 80)
-       [~,ii]=evalc('IterSnakes;');
-
-In Snakes (line 32)
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-
-In ExecuteSnakes_Optim (line 28)
-    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
-
-In ExecuteOptimisation>(parfor body) (line 114)
-        [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
-
-In parallel_function>make_general_channel/channel_general (line 914)
-                    O = F(C{:});
-
-In remoteParallelFunction (line 38)
-        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
-
-Operation terminated by user during mean (line 77)
-
-
-In Snakes>AddEdgeSnaxelBorders (line 1110)
-    bordStruct=BorderStructure(norm(actCoord(1,:)-actCoord(2,:)),...
-
-In Snakes>ExtractBorderStructure (line 1162)
-        [bordstruct2,activeFromVertex,activeSnaxEdge]=...
-
-In Snakes>ExtractCellFillInformation (line 1052)
-        [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
-
-In Snakes>VolumeFraction (line 961)
-        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
-
-In Snakes>RunSnakesProcess/IterSnakes (line 111)
-        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-
-In Snakes>RunSnakesProcess (line 80)
-       [~,ii]=evalc('IterSnakes;');
-
-In Snakes (line 32)
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-
-In ExecuteSnakes_Optim (line 28)
-    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
-
-In ExecuteOptimisation>(parfor body) (line 114)
-        [~,~,snakSave,loop,~,outTemp]=ExecuteS
+help fopen
+ <strong>fopen</strong>  Open file.
+    FID = <strong>fopen</strong>(FILENAME) opens the file FILENAME for read access.
+    FILENAME is a string containing the name of the file to be opened.  
+    (On PC systems, <strong>fopen</strong> opens files for binary read access.)
+ 
+    FILENAME can be a MATLABPATH relative partial pathname.  If the
+    file is not found in the current working directory, <strong>fopen</strong> searches for 
+    it on the MATLAB search path.  On UNIX systems, FILENAME may also start
+    with a "~/" or a "~username/", which <strong>fopen</strong> expands to the current
+    user's home directory or the specified user's home directory,
+    respectively.
+ 
+    FID is a scalar MATLAB integer valued double, called a file identifier. 
+    You use FID as the first argument to other file input/output
+    routines, such as FREAD and FCLOSE. If <strong>fopen</strong> cannot open the file, it 
+    returns -1.
+ 
+    FID = <strong>fopen</strong>(FILENAME,PERMISSION) opens the file FILENAME in the
+    mode specified by PERMISSION:
+    
+        'r'     open file for reading
+        'w'     open file for writing; discard existing contents
+        'a'     open or create file for writing; append data to end of file
+        'r+'    open (do not create) file for reading and writing
+        'w+'    open or create file for reading and writing; discard 
+                existing contents
+        'a+'    open or create file for reading and writing; append data 
+                to end of file
+        'W'     open file for writing without automatic flushing
+        'A'     open file for appending without automatic flushing
+    
+    FILENAME can be a MATLABPATH relative partial pathname only if the file
+    is opened for reading.
+ 
+    You can open files in binary mode (the default) or in text mode.
+    In binary mode, no characters get singled out for special treatment.
+    In text mode on the PC, the carriage return character preceding
+    a newline character is deleted on input and added before the newline
+    character on output.  To open a file in text mode, append 't' to the
+    permission string, for example 'rt' and 'w+t'.  (On Unix, text and
+    binary mode are the same, so this has no effect.  On PC systems
+    this is critical.)
+ 
+    If the file is opened in update mode ('+'), you must use an FSEEK or 
+    FREWIND between an input command like FREAD, FSCANF, FGETS, or FGETL 
+    and an output command like FWRITE or FPRINTF.  You must also use an 
+    FSEEK or FREWIND between an output command and an input command.
+ 
+    Two file identifiers are automatically available and need not be
+    opened.  They are FID=1 (standard output) and FID=2 (standard error).
+    
+    [FID, MESSAGE] = <strong>fopen</strong>(FILENAME,...) returns a system dependent error 
+    message if the open is not successful.
+ 
+    [FID, MESSAGE] = <strong>fopen</strong>(FILENAME,PERMISSION,MACHINEFORMAT) op
