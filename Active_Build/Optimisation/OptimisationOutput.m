@@ -69,7 +69,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
     writeDirectory=[rootDir,iterStr,profStr];
-    system(['md "',writeDirectory,'"']);
+    mkdir(writeDirectory);
     
     savStruct.restartsnak=restartsnak;
     savStruct.snakSave=snakSave;

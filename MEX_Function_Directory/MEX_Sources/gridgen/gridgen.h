@@ -29,8 +29,8 @@ typedef struct {
 /* Macros */
 #if defined(__GNUC__) || defined(__GNUG__)
 	/* GNU GCC/G++. --------------------------------------------- */
-#define max(a,b) ({ typeof(a) _a = (a);  typeof(b) _b = (b);  _a > _b ? _a : _b; })
-#define min(a,b) ({ typeof(a) _a = (a);  typeof(b) _b = (b);  _a < _b ? _a : _b; })
+#define max(a,b) ({ __typeof__(a) _a = (a);  __typeof__(b) _b = (b);  _a > _b ? _a : _b; })
+#define min(a,b) ({ __typeof__(a) _a = (a);  __typeof__(b) _b = (b);  _a < _b ? _a : _b; })
 
 #elif defined(_MSC_VER)
 	/* Microsoft Visual Studio. --------------------------------- */

@@ -22,7 +22,7 @@ function [] = HeaderActivation(funcHandles,funcDir)
     
     funcHandlesNamesCell=regexp(c,pattern,'match');
     if ~isdir(funcDir)
-        system(['mkdir "',funcDir,'"']);
+        mkdir(funcDir);
     end
     for ii=1:length(funcHandlesNamesCell)
         funcName=funcHandlesNamesCell{ii}(2:end);

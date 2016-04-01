@@ -30,7 +30,7 @@ function [resultDirectory]=GenerateResultDirectoryName(marker,resultRoot,archive
     dateSubFolders=['Archive_',datestr(now,'yyyy_mm'),'\Day_',datestr(t,29)];
     resultDirectory=[resultRoot,'\',archiveName,'\',dateSubFolders,...
         '\','Dir_',marker];
-    system(['md "',resultDirectory,'"']);
+    mkdir(resultDirectory)
 end
 
 function []=WriteToFile(cellLoops,FID)
@@ -79,6 +79,19 @@ function []=ReorganiseSubPlots(ax,sizSubPlot,outerPad,interPad,fontSizes)
         
     end
     
+end
+
+function []=CreateValidFolder(pathName)
+    error('replace this shit by mkdir')
+    
+%     if strcmp(compStr(1:2),'PC')
+%         pathName=regexprep(pathName,'/','\\');
+%         system(['md "',pathName,'"']);
+%     else
+%         
+%         pathName=regexprep(pathName,'\\','/');
+%         system(['mkdir ''',pathName,''''])
+%     end
 end
 
 %% Parameter File
