@@ -9,7 +9,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod)
-    include_Utilities
+    %include_Utilities
     startPoints=RemoveIdenticalConsecutivePoints(startPoints);
     switch refineMethod
         case 'chaikin'
