@@ -2,13 +2,13 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <stdbool.h>
+/* #include <stdbool.h> */
 
 
 #include "mex.h" /* Always include this */
 #include "matrix.h"
-// Constant declaration
-//int dim() = 2;
+/* Constant declaration */
+/* int dim() = 2; */
 #define MEX_COMPILE
 
 #include "gridgen.h"
@@ -18,30 +18,30 @@
 #define GRIDGEN_VAR_INCLUDED
 int plotFlag=0;
 int outCount=0;
-// Global Variables declaration
+/* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;
-// File data Arrays
+/* File data Arrays */
 int *levelSize=NULL,*cells=NULL;
-cellTemplate *celldatstruct=NULL; // Array containing data from File
-// Array for active template
+cellTemplate *celldatstruct=NULL; /* Array containing data from File */
+/* Array for active template */
 cellTemplate *cellCurrentTemplate=NULL;
 vertexTemplate *vertCurrentTemplate=NULL;
 edgeTemplate *edgeCurrentTemplate=NULL;
-// Arrays for final grid storage
+/* Arrays for final grid storage */
 cellTemplate *cellstruct=NULL;
 vertexTemplate *vertstruct=NULL;
 edgeTemplate *edgestruct=NULL;
-// Array for template creation
+/* Array for template creation */
 cellTemplate *cellstructTemp=NULL;
 vertexTemplate *vertstructTemp=NULL;
 edgeTemplate *edgestructTemp=NULL;
-// Dependancy Arrays
+/* Dependancy Arrays */
 int **newEdgesInd=NULL, *nNewEdges=NULL, *splitEdgesInd=NULL, nSplitEdges=0;
 int **newCellsInd=NULL, *nNewCells=NULL, *splitCellsInd=NULL, nSplitCells=0;
 #endif
-// Function Declarations
+/* Function Declarations */
 
-// Main text body
+/* Main text body */
 mxArray *OutputEdgestruct(mxArray *outLHS);
 mxArray *OutputCellstruct(mxArray *outLHS);
 mxArray *OutputVertstruct(mxArray *outLHS);
@@ -61,8 +61,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
 }
 
 void InitialiseGridFromFile_MEX(mxArray **plhs){
-	 //Arrays
-	//printf("%i\n",sizeof(edgeTemplate));
+	 /*Arrays */
+	/*printf("%i\n",sizeof(edgeTemplate)); */
 	DataIn();
 	Allocatecelldatstruct();
 	DataArrayToStruct();
@@ -78,7 +78,7 @@ void InitialiseGridFromFile_MEX(mxArray **plhs){
 	printf("\n    Mex Output . ");
 	OutputGridStruct(&plhs[1]);
 	
-	//Checks
+	/*Checks */
 	/*
 	int ii, jj;
 	printf("Check Data: nLevels = %i; nCells = %i\n",nLevels,nCells);
@@ -113,14 +113,14 @@ void OutputGridStruct(mxArray **outLHS){
 	fields[2]=(char*)malloc(7*sizeof(char));
 	sprintf(fields[2],"cell");
 	
-	//plhs2=(mxArray**)malloc(3*sizeof(mxArray*));
+	/*plhs2=(mxArray**)malloc(3*sizeof(mxArray*)); */
 	
 	(*outLHS) = mxCreateStructMatrix(1, 1, nFields, (const char **)fields);
-	//plhs2[0]=mxGetField((*outLHS),1,fields[0]);
-	//plhs2[1]=mxGetField((*outLHS),1,fields[1]);
-	//plhs2[2]=mxGetField((*outLHS),1,fields[2]);
-	//OutputEdgestruct(&plhs2);
-	//printf("is Struct? %s\n",mxGetFieldNameByNumber(*outLHS,1));
+	/*plhs2[0]=mxGetField((*outLHS),1,fields[0]); */
+	/*plhs2[1]=mxGetField((*outLHS),1,fields[1]); */
+	/*plhs2[2]=mxGetField((*outLHS),1,fields[2]); */
+	/*OutputEdgestruct(&plhs2); */
+	/*printf("is Struct? %s\n",mxGetFieldNameByNumber(*outLHS,1)); */
 	printf("Grid . . .");
 	plhs2[0]=OutputEdgestruct(plhs2[0]);
 	printf("Edge . . .");
@@ -137,7 +137,7 @@ void OutputGridStruct(mxArray **outLHS){
 		free(fields[ii]);
 	}
 	free(fields);
-	//free(plhs2);
+	/*free(plhs2); */
 }
 
 mxArray *OutputEdgestruct(mxArray *outLHS){
@@ -163,10 +163,10 @@ mxArray *OutputEdgestruct(mxArray *outLHS){
 	edgeOut1=(mxArray**)malloc(nEdgeGrid*sizeof(mxArray*));
 	edgeOut2=(mxArray**)malloc(nEdgeGrid*sizeof(mxArray*));
 	(outLHS) = mxCreateStructMatrix(nEdgeGrid, 1, nFields, (const char **)fields);
-	//edgeOut=mxGetPr(plhs[0]);
-	//memcpy(&(edgeOut[0].index),&(edgestruct[0].index),nEdgeGrid*sizeof(edgeTemplate));
-	//edgeOut=(mxCreateDoubleMatrix(2,1,mxREAL));
-	//outArray=mxGetPr(edgeOut);
+	/*edgeOut=mxGetPr(plhs[0]); */
+	/*memcpy(&(edgeOut[0].index),&(edgestruct[0].index),nEdgeGrid*sizeof(edgeTemplate)); */
+	/*edgeOut=(mxCreateDoubleMatrix(2,1,mxREAL)); */
+	/*outArray=mxGetPr(edgeOut); */
 	for(ii=0;ii<nEdgeGrid;ii++){
 	
 		edgeOut1[ii]=(mxCreateDoubleMatrix(1,2,mxREAL));
@@ -218,10 +218,10 @@ mxArray *OutputCellstruct(mxArray *outLHS){
 	
 	edgeOut1=(mxArray**)malloc(nEdgeGrid*sizeof(mxArray*));
 	(outLHS) = mxCreateStructMatrix(nCellGrid, 1, nFields, (const char **)fields);
-	//edgeOut=mxGetPr(plhs[0]);
-	//memcpy(&(edgeOut[0].index),&(edgestruct[0].index),nEdgeGrid*sizeof(edgeTemplate));
-	//edgeOut=(mxCreateDoubleMatrix(2,1,mxREAL));
-	//outArray=mxGetPr(edgeOut);
+	/*edgeOut=mxGetPr(plhs[0]); */
+	/*memcpy(&(edgeOut[0].index),&(edgestruct[0].index),nEdgeGrid*sizeof(edgeTemplate)); */
+	/*edgeOut=(mxCreateDoubleMatrix(2,1,mxREAL)); */
+	/*outArray=mxGetPr(edgeOut); */
 	for(ii=0;ii<nCellGrid;ii++){
 	
 		edgeOut1[ii]=(mxCreateDoubleMatrix(1,nLevels,mxREAL));
@@ -283,5 +283,5 @@ mxArray *OutputVertstruct(mxArray *outLHS){
 	}
 	free(fields);
 	return(outLHS);
-	//free(edgeOut1);
+	/*free(edgeOut1); */
 }
