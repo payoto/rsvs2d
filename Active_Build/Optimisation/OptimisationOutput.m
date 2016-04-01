@@ -69,6 +69,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
     writeDirectory=[rootDir,iterStr,profStr];
+    writeDirectory=MakePathCompliant(writeDirectory);
     mkdir(writeDirectory);
     
     savStruct.restartsnak=restartsnak;
@@ -99,7 +100,9 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     GeneratePopulationBinary(writeDirectory,marker,population)
     h=CheckOptimProfile('iter_all',writeDirectory);
    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-   hgsave(h,[writeDirectory,'\profiles_',marker,'.fig']);
+   figName=[writeDirectory,'\profiles_',marker,'.fig'];
+    figName=MakePathCompliant(figName);
+   hgsave(h,figName);
     close(h);
 end
 
@@ -119,7 +122,9 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct)
     [h]=OptimHistory(optimstruct,knownOptim,direction);
     %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-    hgsave(h,[writeDirectory,'\Optimisation_',marker,'.fig']);
+    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
+    figName=MakePathCompliant(figName);
+    hgsave(h,figName);
    
 end
 
