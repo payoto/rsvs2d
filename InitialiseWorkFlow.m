@@ -12,7 +12,7 @@
 
 function []=InitialiseWorkFlow()
     singleFolder={''};
-    rootTreeFolders={'Active_Build','MEX_Function_Directory\MEX_Executables','Automated_Function_Directory'};
+    rootTreeFolders={'Active_Build',['MEX_Function_Directory',filesep,'MEX_Executables'],'Automated_Function_Directory'};
     
     [addSingleDir]=FormulateValidFolders(singleFolder);
     [rootTreeDirs]=FormulateValidFolders(rootTreeFolders);
@@ -27,7 +27,7 @@ function [addFolders]=FormulateValidFolders(folders)
     % adds a set of paths to the active path
     addFolders={};
     for ii=1:length(folders)
-        addFolders{ii}=[cd,'\',folders{ii}];
+        addFolders{ii}=[cd,filesep,folders{ii}];
     end
 
 end
@@ -42,7 +42,7 @@ function [addFolders]=ExploreFolderTree(rootDir)
         if numel(dirNames)>0
             branchDir={''};
             for jj=1:length(dirNames)
-                branchDir{jj}=[rootDir{ii},'\',dirNames{jj}];
+                branchDir{jj}=[rootDir{ii},filesep,dirNames{jj}];
             end
 
             [addSubFolders]=ExploreFolderTree(branchDir);
