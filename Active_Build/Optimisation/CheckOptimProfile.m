@@ -95,7 +95,7 @@ function [returnPath]=FindDir(rootDir,strDir,isTargDir)
     
     
     for ii=1:length(returnSub)
-        returnPath{ii}=[rootDir,'\',subDir(returnSub(ii)).name];
+        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
         
     end
       

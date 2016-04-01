@@ -81,7 +81,12 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     % Start Parallel Pool
     
     if numel(gcp('nocreate'))==0
-        poolName=parallel.importProfile('ExportOptimSnakes.settings');
+        comStr=computer;
+        if strcmp(comStr(1:2),'PC')
+            poolName=parallel.importProfile('ExportOptimSnakes.settings');
+        else
+            poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+        end
         clusterObj=parcluster(poolName);
         clusterObj.NumWorkers=paramoptim.general.worker;
         saveProfile(clusterObj);

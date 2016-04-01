@@ -95,6 +95,7 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     writeDirectory=[rootDir,iterStr];
+    writeDirectory=MakePathCompliant(writeDirectory);
     
     CopyDiary(writeDirectory,marker)
     GeneratePopulationBinary(writeDirectory,marker,population)
@@ -116,6 +117,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     marker=out.marker;
     markerSmall=datestr(t,'_yymmddTHHMM');
     writeDirectory=[rootDir];
+    writeDirectory=MakePathCompliant(writeDirectory);
     
     CopyDiary(writeDirectory,marker)
     GenerateIterResultBinary(writeDirectory,marker,optimstruct)
@@ -164,6 +166,7 @@ end
 function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
     
     fileName=[resultDirectory,'\restart_',marker,'.mat'];
+    fileName=MakePathCompliant(fileName);
     save(fileName,'-struct','restartstruct');
     
 end
@@ -171,6 +174,7 @@ end
 function []=GeneratePopulationBinary(resultDirectory,marker,population)
     
     fileName=[resultDirectory,'\population_',marker,'.mat'];
+    fileName=MakePathCompliant(fileName);
     save(fileName,'population');
     
 end
@@ -178,6 +182,7 @@ end
 function []=GenerateIterResultBinary(resultDirectory,marker,optimstruct)
     
     fileName=[resultDirectory,'\OptimRes_',marker,'.mat'];
+    fileName=MakePathCompliant(fileName);
     save(fileName,'optimstruct');
     
 end
@@ -187,6 +192,7 @@ function []=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,opt
     [~,posOpt]=eval([optimDirection,'([optimstruct(end).population(:).objective])']);
     optimsolution=optimstruct(end).population(posOpt);
     resultDirectory=[resultDirectory,'\Optimal_',markerSmall];
+    resultDirectory=MakePathCompliant(resultDirectory);
     profileDir=optimsolution.location;
     
     copyfile(profileDir,resultDirectory);
@@ -200,8 +206,9 @@ function []=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,opt
     end
     load([resultDirectory,filesep,c(ii).name])
     h=CheckOptimProfile('loop',loop);
-    hgsave(h,[resultDirectory,'\OptProf_',markerSmall,'.fig']);
+    hgsave(h,MakePathCompliant([resultDirectory,'\OptProf_',markerSmall,'.fig']));
     fileName=[resultDirectory,'\OptProf_',markerSmall,'.mat'];
+    fileName=MakePathCompliant(fileName);
     save(fileName,'optimsolution');
     
 end

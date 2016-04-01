@@ -119,9 +119,9 @@ function [paroptim]=TestParOptim_HPC()
     
     paroptim.parametrisation=structInputVar(paramCase);
     paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
-    paroptim.general.nPop=16;
+    paroptim.general.nPop=12;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=16; 
+    paroptim.general.worker=12; 
 end
 
 function [paroptim]=HPC_LengthArea()
@@ -135,7 +135,7 @@ function [paroptim]=HPC_LengthArea()
     paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
     paroptim.general.nPop=48;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=16;
+    paroptim.general.worker=12;
     paroptim.general.objectiveName='LengthArea';
     paroptim.general.direction='max';
     paroptim.general.knownOptim=[0.2*(8+pi)/(8+2*pi)];
