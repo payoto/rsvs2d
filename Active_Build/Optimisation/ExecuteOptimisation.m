@@ -14,8 +14,8 @@
 function [iterstruct]=ExecuteOptimisation(caseStr)
     close all
     clc
-    procStr=['OPTIMISATION - ',caseStr];
-    [tStart]=PrintStart(procStr,1);
+    procStr2=['OPTIMISATION - ',caseStr];
+    [tStartOpt]=PrintStart(procStr2,0);
     %clusterObj=parcluster('OptimSnakes');
     [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
@@ -39,9 +39,10 @@ function [iterstruct]=ExecuteOptimisation(caseStr)
         [~]=PrintEnd(procStr,1,tStart);
     end
     %% Finish Optimisation
+    iterstruct(end)=[];
+    OptimisationOutput('final',paramoptim,outinfo,iterstruct);
     
-    
-    [~]=PrintEnd(procStr,1,tStart);
+    [~]=PrintEnd(procStr2,0,tStartOpt);
     diary off
 end
 
@@ -79,11 +80,11 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     % Start Parallel Pool
     
     if numel(gcp('nocreate'))==0
-        
-        clusterObj=parcluster('OptimSnakes');
+        poolName=parallel.importProfile('ExportOptimSnakes.settings');
+        clusterObj=parcluster(poolName);
         clusterObj.NumWorkers=paramoptim.general.worker;
         saveProfile(clusterObj);
-        parpool('OptimSnakes')
+        parpool(poolName)
     end
    
     paramoptim.general.nDesVar=sum([baseGrid.cell(:).isactive]);
@@ -229,6 +230,15 @@ function [tStart]=PrintStart(procStr,lvl)
     procStart=[procStr,' start'];
     tStart=now;
     switch lvl
+        case 0
+            disp('  ')
+            disp('--------------------------------------------------------------------------------------------')
+            disp('********************************************************************************************')
+            disp('--------------------------------------------------------------------------------------------')
+            disp(procStart)
+            disp(datestr(tStart,0))
+            disp('--------------------------------------------------------------------------------------------')
+            disp('  ')
         case 1
             disp('  ')
             disp('--------------------------------------------------------------------------------------------')
@@ -256,6 +266,16 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
     tEnd=now;
     tElapsed=tEnd-tStart;
     switch lvl
+        case 0
+            disp('  ')
+            disp('--------------------------------------------------------------------------------------------')
+            disp(procStart)
+            disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            disp(datestr(tStart,0))
+            disp('--------------------------------------------------------------------------------------------')
+            disp('********************************************************************************************')
+            disp('--------------------------------------------------------------------------------------------')
+            disp('  ')
         case 1
             disp('  ')
             disp('--------------------------------------------------------------------------------------------')
@@ -296,7 +316,7 @@ function [objValue]=LengthArea(paramoptim,member,loop)
     vec=points([end,1:end-1],:)-points;
     L=sum(sqrt(sum(vec.^2,2)));
     
-    objValue=-A/L;
+    objValue=A/L;
     
 end
 

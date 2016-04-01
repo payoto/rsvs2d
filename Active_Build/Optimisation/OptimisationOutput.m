@@ -23,7 +23,7 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
         case 'iteration'
             out=OptimisationOutput_iteration(varargin{:});
         case 'final'
-            out=OptimisationOutput_Final(varargin{:});
+            out=OptimisationOutput_Final(paramoptim,varargin{:});
     end
     
     
@@ -103,24 +103,58 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     close(h);
 end
 
-function [out]=OptimisationOutput_Final(nIter,out,population)
+function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
+    
+    varExtract={'direction','knownOptim'};
+    [direction,knownOptim]=ExtractVariables(varExtract,paroptim);
     
     t=out.tOutput;
     rootDir=out.rootDir;
-    marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
-    iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
-    writeDirectory=[rootDir,iterStr];
+    marker=out.marker;
+    markerSmall=datestr(t,'_yymmddTHHMM');
+    writeDirectory=[rootDir];
     
     CopyDiary(writeDirectory,marker)
-    GeneratePopulationBinary(writeDirectory,marker,population)
-    h=CheckOptimProfile('iter_all',writeDirectory);
-   %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-   hgsave(h,[writeDirectory,'\profiles_',marker,'.fig']);
-    close(h);
+    GenerateIterResultBinary(writeDirectory,marker,optimstruct)
+    GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct)
+    [h]=OptimHistory(optimstruct,knownOptim,direction);
+    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+    hgsave(h,[writeDirectory,'\Optimisation_',marker,'.fig']);
+   
 end
 
 
 %% 
+
+function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
+    
+    
+    h=figure('Name','Optimisation Result','Position',[20 100 1300 800]);
+    subplot(1,2,1)
+    nVar=length(optimstruct(1).population);
+    nIter=length(optimstruct);
+    iterRes=zeros([nIter,nVar]);
+    hold on
+    for ii=1:nIter
+        iterRes(ii,:)=[optimstruct(ii).population(:).objective];
+        plot(ones(1,nVar)*ii,iterRes(ii,:),'b*')
+    end
+    minRes=min(iterRes,[],2);
+    plot(1:nIter,minRes,'r-')
+    
+    
+    plot([0,nIter],[knownOptim knownOptim],'r--')
+    subplot(1,2,2)
+    
+    switch dirOptim
+        case 'min'
+            errMeasure=-(knownOptim-minRes);
+        case 'max'
+            errMeasure=knownOptim-minRes;
+    end
+    semilogy(1:nIter,errMeasure)
+    
+end
 
 function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
     
@@ -133,5 +167,36 @@ function []=GeneratePopulationBinary(resultDirectory,marker,population)
     
     fileName=[resultDirectory,'\population_',marker,'.mat'];
     save(fileName,'population');
+    
+end
+
+function []=GenerateIterResultBinary(resultDirectory,marker,optimstruct)
+    
+    fileName=[resultDirectory,'\OptimRes_',marker,'.mat'];
+    save(fileName,'optimstruct');
+    
+end
+
+function []=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,optimstruct)
+    
+    [~,posOpt]=eval([optimDirection,'([optimstruct(end).population(:).objective])']);
+    optimsolution=optimstruct(end).population(posOpt);
+    resultDirectory=[resultDirectory,'\Optimal_',markerSmall];
+    profileDir=optimsolution.location;
+    
+    copyfile(profileDir,resultDirectory);
+    
+    c=dir(resultDirectory);
+    isFileName=false;
+    ii=0;
+    while(~isFileName)
+        ii=ii+1;
+        isFileName=~isempty(regexp(c(ii).name,'restart', 'once'));
+    end
+    load([resultDirectory,filesep,c(ii).name])
+    h=CheckOptimProfile('loop',loop);
+    hgsave(h,[resultDirectory,'\OptProf_',markerSmall,'.fig']);
+    fileName=[resultDirectory,'\OptProf_',markerSmall,'.mat'];
+    save(fileName,'optimsolution');
     
 end

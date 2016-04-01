@@ -19,8 +19,7 @@ function [resampPoints,splineblock]=ResampleSpline(points,paramspline)
     [normPoints,parList,domSize]=GenerateParameterList(parspline,points);
     [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList);
     [resampPoints,splineblock]=ResampleSplinePatches(splineblock,parspline,nPoints);
-    %figure
-    %plot(normPoints(:,1),normPoints(:,2),resampPoints(:,1),resampPoints(:,2))
+    
     
 end
 
