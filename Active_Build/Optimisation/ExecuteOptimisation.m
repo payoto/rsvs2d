@@ -54,6 +54,12 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     procStr='INITIALISE OPTIMISATION PROCESS';
     [tStart]=PrintStart(procStr,1);
     % Initialise Workspace
+    include_EdgeInformation
+    include_SnakeParam
+    include_EdgeInformation
+    include_Utilities
+    include_PostProcessing
+    include_Mex_Wrapper
     
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
     diaryFile=MakePathCompliant(diaryFile);
@@ -61,12 +67,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     fclose(fidDiary);
     diary(diaryFile);
     
-    include_EdgeInformation
-    include_SnakeParam
-    include_EdgeInformation
-    include_Utilities
-    include_PostProcessing
-    include_Mex_Wrapper
+    
     
     
     
