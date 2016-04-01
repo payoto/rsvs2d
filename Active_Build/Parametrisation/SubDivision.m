@@ -105,6 +105,7 @@ function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
     end
     
     limCurvMat=LimitCurve(subMask,4);
+    limCurvMat=limCurvMat./(sum(limCurvMat,2)*ones([1 length(limCurvMat(:,1))]));
     [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
@@ -158,6 +159,7 @@ function [newPoints,projPoints]=SubSurfBSpline(startPoints,refineSteps)
     end
     
     limCurvMat=LimitCurve(subMask,3);
+    limCurvMat=limCurvMat./(sum(limCurvMat,2)*ones([1 length(limCurvMat(:,1))]));
     [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
 
@@ -422,7 +424,6 @@ function [limCurvMat,eigVal]=LimitCurve(subMask,nStencil)
             [iEig,~]=find(1-d<1e-10);
         end
         limCurvMat(ii,indY)=w(:,iEig)';
-         limCurvMat(ii,indY)= limCurvMat(ii,indY)/sum( limCurvMat(ii,indY));
         eigVal(ii)=d(iEig);
     end
 

@@ -55,7 +55,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea';
-    paroptimgeneral.direction='min';
+    paroptimgeneral.direction='max';
+    paroptimgeneral.knownOptim=[0.2*(8+pi)/(8+2*pi)];
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -68,7 +69,7 @@ function [paroptimspline]=DefaultOptimSpline()
     
     
     paroptimspline.splineCase='snake';
-    paroptimspline.domain='normalizeX';
+    paroptimspline.domain='none';
 end
 
 %% Standard Modifications
@@ -86,7 +87,7 @@ function [paroptim]=StandardOptim()
     
     [paroptim]=DefaultOptim();
     
-    varExtract={'paramCase',};
+    varExtract={'paramCase'};
     [paramCase]=ExtractVariables(varExtract,paroptim);
     
     paroptim.parametrisation=structInputVar(paramCase);
@@ -94,3 +95,49 @@ function [paroptim]=StandardOptim()
     
 end
 
+function [paroptim]=TestParOptim_desktop()
+    
+    [paroptim]=DefaultOptim();
+    
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    
+    paroptim.parametrisation=structInputVar(paramCase);
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.nPop=6;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=6; 
+    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
+end
+
+function [paroptim]=TestParOptim_HPC()
+    
+    [paroptim]=DefaultOptim();
+    
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    
+    paroptim.parametrisation=structInputVar(paramCase);
+    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
+    paroptim.general.nPop=16;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=16; 
+end
+
+function [paroptim]=HPC_LengthArea()
+    
+    [paroptim]=DefaultOptim();
+    
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    
+    paroptim.parametrisation=structInputVar(paramCase);
+    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=16;
+    paroptim.general.objectiveName='LengthArea';
+    paroptim.general.direction='max';
+    paroptim.general.knownOptim=[0.2*(8+pi)/(8+2*pi)];
+    
+end

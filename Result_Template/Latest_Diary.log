@@ -1,22 +1,29 @@
-         
-ExecuteFunctions.m  Optimisation        TestCode            Velocity            
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Input_Variables\StructOptimParam.m',107,1)">107 </a>    paroptim.parametrisation.general.subdivType='chaikin';
+if system_dependent('IsDebugMode')==1, dbstep; end
+paroptim.parametrisation.general.subdivType
 
-clc
-ExecuteOptimisation('StandardOptim')
+ans =
+
+chaikin
+
+ExecuteOptimisation('TestParOptim_desktop')
   
 --------------------------------------------------------------------------------------------
+********************************************************************************************
 --------------------------------------------------------------------------------------------
-OPTIMISATION - StandardOptim start
-01-Apr-2016 12:58:26
+OPTIMISATION - TestParOptim_desktop start
+01-Apr-2016 16:56:22
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-01-Apr-2016 12:58:26
+01-Apr-2016 16:56:22
 --------------------------------------------------------------------------------------------
   
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Input_Variables\StructOptimParam.m',106,1)">106 </a>    paroptim.parametrisation.general.subdivType='chaikin';
+if system_dependent('IsDebugMode')==1, dbcont; end
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -62,6 +69,9 @@ Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:110
 INITIAL GRID OPERATIONS end
 -----------------------
   
+figure
+plot(newPoints(:,1),newPoints(:,2),projPoints(:,1),projPoints(:,2))
+if system_dependent('IsDebugMode')==1, dbcont; end
   
 -----------------------
 SNAKE PROCESS start
@@ -70,18 +80,18 @@ SNAKE PROCESS start
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:00:405
+  Initialisation time:00:00:00:343
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:04:893
+  Iteration Time:00:00:04:750
   Volume converged to 2.51755e-03
-Time Elapsed:00:00:06:674
+Time Elapsed:00:01:06:196
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:08:351
+    Time Elapsed:00:01:11:370
 INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -90,7 +100,7 @@ INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 ITERATION 1 start
-01-Apr-2016 12:58:35
+01-Apr-2016 16:57:34
 --------------------------------------------------------------------------------------------
   
   
@@ -100,22 +110,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:21:687
-  Volume converged to 4.70201e-05
-Time Elapsed:00:00:23:842
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:031
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:297
-  Volume converged to 2.99881e-04
-Time Elapsed:00:00:24:594
+  Iteration Time:00:00:19:542
+  Volume converged to 3.20778e-05
+Time Elapsed:00:00:20:207
 SNAKE PROCESS end
 -----------------------
   
@@ -126,9 +123,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:22:968
-  Volume converged to 6.39669e-04
-Time Elapsed:00:00:25:046
+  Iteration Time:00:00:19:614
+  Volume converged to 9.57150e-04
+Time Elapsed:00:00:20:300
 SNAKE PROCESS end
 -----------------------
   
@@ -139,9 +136,220 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:23:888
-  Volume converged to 8.57680e-04
-Time Elapsed:00:00:25:796
+  Iteration Time:00:00:19:862
+  Volume converged to 1.83355e-03
+Time Elapsed:00:00:20:550
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:905
+  Volume converged to 6.43220e-04
+Time Elapsed:00:00:20:581
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:220
+  Volume converged to 1.73597e-03
+Time Elapsed:00:00:21:799
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:820
+  Volume converged to 2.37060e-03
+Time Elapsed:00:00:22:287
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:24:352
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+01-Apr-2016 16:57:58
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:113
+  Volume converged to 1.78041e-05
+Time Elapsed:00:00:19:848
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:540
+  Volume converged to 4.97998e-05
+Time Elapsed:00:00:20:182
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:607
+  Volume converged to 1.48797e-03
+Time Elapsed:00:00:20:235
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:732
+  Volume converged to 7.98717e-05
+Time Elapsed:00:00:20:333
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:847
+  Volume converged to 1.94754e-03
+Time Elapsed:00:00:20:374
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:20:559
+  Volume converged to 1.78233e-03
+Time Elapsed:00:00:21:019
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:22:762
+ITERATION 2 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 3 start
+01-Apr-2016 16:58:21
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:358
+  Volume converged to 3.28799e-07
+Time Elapsed:00:00:19:190
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:939
+  Volume converged to 7.24706e-04
+Time Elapsed:00:00:19:644
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:846
+  Volume converged to 4.74266e-06
+Time Elapsed:00:00:20:393
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:893
+  Volume converged to 2.34930e-03
+Time Elapsed:00:00:20:439
 SNAKE PROCESS end
 -----------------------
   
@@ -152,9 +360,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:001
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:25:202
-  Volume converged to 3.36145e-03
-Time Elapsed:00:00:27:017
+  Iteration Time:00:00:20:091
+  Volume converged to 6.10082e-04
+Time Elapsed:00:00:20:611
 SNAKE PROCESS end
 -----------------------
   
@@ -165,9 +373,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:016
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:24:967
-  Volume converged to 1.12458e-03
-Time Elapsed:00:00:27:017
+  Iteration Time:00:00:20:657
+  Volume converged to 1.00026e-03
+Time Elapsed:00:00:21:110
 SNAKE PROCESS end
 -----------------------
   
@@ -180,205 +388,7 @@ Generate New Population end
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:28:825
-ITERATION 1 end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 2 start
-01-Apr-2016 12:59:04
---------------------------------------------------------------------------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:414
-  Volume converged to 2.10282e-03
-Time Elapsed:00:00:24:757
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:492
-  Volume converged to 1.17817e-03
-Time Elapsed:00:00:24:850
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:23:336
-  Volume converged to 3.69854e-03
-Time Elapsed:00:00:25:584
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:23:289
-  Volume converged to 1.16551e-03
-Time Elapsed:00:00:25:646
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:23:477
-  Volume converged to 8.68543e-04
-Time Elapsed:00:00:25:709
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:26:177
-  Volume converged to 3.39560e-03
-Time Elapsed:00:00:27:900
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Generate New Population start
-    Time Elapsed:00:00:00:000
-Generate New Population end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:29:712
-ITERATION 2 end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 3 start
-01-Apr-2016 12:59:33
---------------------------------------------------------------------------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:21:967
-  Volume converged to 1.35567e-04
-Time Elapsed:00:00:23:889
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:856
-  Volume converged to 2.22604e-03
-Time Elapsed:00:00:24:982
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:23:028
-  Volume converged to 4.74834e-04
-Time Elapsed:00:00:25:217
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:015
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:23:732
-  Volume converged to 1.48329e-03
-Time Elapsed:00:00:25:716
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:25:202
-  Volume converged to 2.55161e-03
-Time Elapsed:00:00:26:779
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:25:951
-  Volume converged to 2.51785e-03
-Time Elapsed:00:00:27:622
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Generate New Population start
-    Time Elapsed:00:00:00:000
-Generate New Population end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:29:386
+    Time Elapsed:00:00:23:065
 ITERATION 3 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -387,7 +397,7 @@ ITERATION 3 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 ITERATION 4 start
-01-Apr-2016 13:00:03
+01-Apr-2016 16:58:44
 --------------------------------------------------------------------------------------------
   
   
@@ -397,9 +407,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:20:610
-  Volume converged to 3.05242e-04
-Time Elapsed:00:00:22:579
+  Iteration Time:00:00:19:083
+  Volume converged to 2.69398e-05
+Time Elapsed:00:00:19:864
 SNAKE PROCESS end
 -----------------------
   
@@ -410,9 +420,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:21:609
-  Volume converged to 1.82786e-03
-Time Elapsed:00:00:23:708
+  Iteration Time:00:00:19:364
+  Volume converged to 2.80055e-07
+Time Elapsed:00:00:20:019
 SNAKE PROCESS end
 -----------------------
   
@@ -423,9 +433,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:21:700
-  Volume converged to 2.36152e-05
-Time Elapsed:00:00:23:723
+  Iteration Time:00:00:19:707
+  Volume converged to 1.36425e-03
+Time Elapsed:00:00:20:348
 SNAKE PROCESS end
 -----------------------
   
@@ -436,9 +446,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:22:642
-  Volume converged to 2.28642e-03
-Time Elapsed:00:00:24:521
+  Iteration Time:00:00:19:879
+  Volume converged to 4.91361e-04
+Time Elapsed:00:00:20:489
 SNAKE PROCESS end
 -----------------------
   
@@ -449,9 +459,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:24:475
-  Volume converged to 1.32426e-03
-Time Elapsed:00:00:26:143
+  Iteration Time:00:00:20:364
+  Volume converged to 1.69383e-03
+Time Elapsed:00:00:20:863
 SNAKE PROCESS end
 -----------------------
   
@@ -462,108 +472,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:24:730
-  Volume converged to 5.32718e-03
-Time Elapsed:00:00:26:315
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Generate New Population start
-    Time Elapsed:00:00:00:016
-Generate New Population end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:28:289
-ITERATION 4 end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 5 start
-01-Apr-2016 13:00:31
---------------------------------------------------------------------------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:20:950
-  Volume converged to 3.38517e-07
-Time Elapsed:00:00:22:808
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:324
-  Volume converged to 6.59395e-05
-Time Elapsed:00:00:24:327
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:558
-  Volume converged to 6.87717e-06
-Time Elapsed:00:00:24:686
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:22:874
-  Volume converged to 1.69398e-03
-Time Elapsed:00:00:24:967
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:23:718
-  Volume converged to 1.77372e-03
-Time Elapsed:00:00:25:919
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:24:421
-  Volume converged to 3.37962e-06
-Time Elapsed:00:00:26:170
+  Iteration Time:00:00:20:754
+  Volume converged to 2.25906e-03
+Time Elapsed:00:00:21:315
 SNAKE PROCESS end
 -----------------------
   
@@ -576,15 +487,17 @@ Generate New Population end
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:27:948
-ITERATION 5 end
+    Time Elapsed:00:00:23:079
+ITERATION 4 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:27:948
-ITERATION 5 end
+OPTIMISATION - TestParOptim_desktop end
+    Time Elapsed:00:02:45:233
+01-Apr-2016 16:56:22
 --------------------------------------------------------------------------------------------
+********************************************************************************************
 --------------------------------------------------------------------------------------------
   
