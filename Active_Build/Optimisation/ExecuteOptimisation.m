@@ -56,6 +56,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     % Initialise Workspace
     
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
+    diaryFile=MakePathCompliant(diaryFile);
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
     diary(diaryFile);

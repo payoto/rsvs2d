@@ -198,7 +198,12 @@ void DataIn(){
 	int ii,jj;
 	
 	#if defined(MEX_COMPILE)
-		cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
+		#if __unix__ 
+			
+			cellgridFID=fopen("MEX_Function_Directory/MEX_Executables/gridgen/cellgrid.dat","r");
+		#elif _WIN32
+			cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
+		#endif
 	#else
 		cellgridFID=fopen("cellgrid.dat","r");
 	#endif

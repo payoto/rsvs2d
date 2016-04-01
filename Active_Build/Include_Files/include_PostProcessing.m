@@ -28,9 +28,23 @@ end
 function [resultDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t)
     if ~exist('t','var'),t=now;end
     dateSubFolders=['Archive_',datestr(now,'yyyy_mm'),'\Day_',datestr(t,29)];
-    resultDirectory=[resultRoot,'\',archiveName,'\',dateSubFolders,...
-        '\','Dir_',marker];
+    resultDirectory=[resultRoot,filesep,archiveName,filesep,dateSubFolders,...
+        filesep,'Dir_',marker];
+    
+    resultDirectory=MakePathCompliant(resultDirectory);
+    
     mkdir(resultDirectory)
+end
+
+function pathName=MakePathCompliant(pathName)
+    
+    compStr=computer;
+    if strcmp(compStr(1:2),'PC')
+        pathName=regexprep(pathName,'/','\\');
+    else
+        
+        pathName=regexprep(pathName,'\\','/');
+    end
 end
 
 function []=WriteToFile(cellLoops,FID)
@@ -211,7 +225,8 @@ function []=CopyDiary(writeDirectory,marker)
     
     fileName=['diary_',marker,'.log'];
     originalLayFile=[cd,'\Result_Template\Latest_Diary.log'];
-    copyfile(originalLayFile,[writeDirectory,'\',fileName])
+    originalLayFile=MakePathCompliant(originalLayFile);
+    copyfile(originalLayFile,MakePathCompliant([writeDirectory,filesep,fileName]))
     
 end
 
@@ -306,59 +321,66 @@ end
 
 function [FID]=OpenBoundaryFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
-    
+    writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['boundary_',marker,'.dat'];
-    FID=fopen([writeDirectory,'\',fileName],'w+');
+    FID=fopen([writeDirectory,filesep,fileName],'w+');
     
 end
 
 function [FID,fileName]=OpenTecPLTFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
+    writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['tec360dat_',marker,'.plt'];
-    FID=fopen([writeDirectory,'\',fileName],'w+');
+    FID=fopen([writeDirectory,filesep,fileName],'w+');
     
 end
 
 function [FID]=OpenTecLayFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
+    writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['tec360lay_',marker,'.lay'];
     originalLayFile=[cd,'\Result_Template\Layout_Template.lay'];
-    copyfile(originalLayFile,[writeDirectory,'\',fileName])
-    FID=fopen([writeDirectory,'\',fileName],'r+');
+    originalLayFile=MakePathCompliant(originalLayFile);
+    copyfile(originalLayFile,[writeDirectory,filesep,fileName])
+    FID=fopen([writeDirectory,filesep,fileName],'r+');
     
 end
 
 function [FID]=OpenParamFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
+    writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['param_',marker,'.dat'];
-    FID=fopen([writeDirectory,'\',fileName],'w+');
+    FID=fopen([writeDirectory,filesep,fileName],'w+');
     
 end
 
 function [FID]=OpenCommentsFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
+    writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['Comments_',marker,'.txt'];
-    FID=fopen([writeDirectory,'\',fileName],'w+');
+    FID=fopen([writeDirectory,filesep,fileName],'w+');
     
 end
 
 function [FID]=OpenIndexFile(resultRoot,archiveName)
     % Creates a file in the current directory to write data to.
     
+    resultRoot=MakePathCompliant(resultRoot);
     fileName=['Index_',archiveName,'.txt'];
-    FID=fopen([resultRoot,'\',archiveName,'\',fileName],'a');
+    FID=fopen([resultRoot,filesep,archiveName,filesep,fileName],'a');
     
 end
 
 function [FID]=NameVideoFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
     
+    writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['Video_',marker,'.avi'];
-    FID=[writeDirectory,'\',fileName];
+    FID=[writeDirectory,filesep,fileName];
     
 end
 
@@ -392,7 +414,7 @@ end
 function automatedComments=ConcatenateAutomaticComments(noteFiles)
     
     for ii=length(noteFiles):-1:1
-        noteFileName{ii}=[cd,'\Result_Template\Notes_',noteFiles{ii},'.txt'];
+        noteFileName{ii}=MakePathCompliant([cd,'\Result_Template\Notes_',noteFiles{ii},'.txt']);
         fidNote=fopen(noteFileName{ii},'r');
         rawComments(ii)=textscan(fidNote,'%s','Delimiter','\n');
         fclose(fidNote);

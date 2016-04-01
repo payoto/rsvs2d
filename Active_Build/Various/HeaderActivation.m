@@ -21,7 +21,9 @@ function [] = HeaderActivation(funcHandles,funcDir)
     pattern='@\w*';
     
     funcHandlesNamesCell=regexp(c,pattern,'match');
+    funcDir=MakePathCompliant(funcDir);
     if ~isdir(funcDir)
+        
         mkdir(funcDir);
     end
     for ii=1:length(funcHandlesNamesCell)
@@ -34,12 +36,23 @@ function [] = HeaderActivation(funcHandles,funcDir)
     addpath(funcDir);
 end
 
+function pathName=MakePathCompliant(pathName)
+    
+    compStr=computer;
+    if strcmp(compStr(1:2),'PC')
+        pathName=regexprep(pathName,'/','\\');
+    else
+        
+        pathName=regexprep(pathName,'\\','/');
+    end
+end
+
 function []=WriteContainerFunctionFile(funcName,funcDir)
     fID=-1;
     t=now;
     Dt=0;
     while(fID<0 && Dt<0.01)
-        fID=fopen([funcDir,'\',funcName,'.m'],'w');
+        fID=fopen(MakePathCompliant([funcDir,'\',funcName,'.m']),'w');
         Dt=now-t;
     end
     

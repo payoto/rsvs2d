@@ -138,6 +138,7 @@ end
 function []=WriteCellGridDat(arraySize,cellRef)
     
     fileName=[cd,'\MEX_Function_Directory\MEX_Executables\gridgen\cellgrid.dat'];
+    fileName=MakePathCompliant(fileName);
     fID=fopen(fileName,'w');
     
     fprintf(fID,'1\n');
