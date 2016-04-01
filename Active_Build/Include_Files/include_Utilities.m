@@ -102,6 +102,8 @@ function trimmedPoints=RemoveIdenticalConsecutivePoints(points)
     
 end
 
+
+
 %{
 function [A]=CalculatePolyArea(points)
     

@@ -1,19 +1,20 @@
-ral\addpath.m',86,0)">line 86</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('InitialiseWorkFlow>AddFoldersToPath', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m', 61)" style="font-weight:bold">InitialiseWorkFlow>AddFoldersToPath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m',61,0)">line 61</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('InitialiseWorkFlow', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m', 23)" style="font-weight:bold">InitialiseWorkFlow</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseWorkFlow.m',23,0)">line 23</a>)] 
+         
+ExecuteFunctions.m  Optimisation        TestCode            Velocity            
+
+clc
 ExecuteOptimisation('StandardOptim')
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 OPTIMISATION - StandardOptim start
-01-Apr-2016 11:38:38
+01-Apr-2016 12:58:26
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-01-Apr-2016 11:38:38
+01-Apr-2016 12:58:26
 --------------------------------------------------------------------------------------------
   
   
@@ -57,64 +58,533 @@ Calculations Started . . .
 			Start Cell 16 of 16 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:100
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:110
 INITIAL GRID OPERATIONS end
 -----------------------
   
-clc
-help fopen
- <strong>fopen</strong>  Open file.
-    FID = <strong>fopen</strong>(FILENAME) opens the file FILENAME for read access.
-    FILENAME is a string containing the name of the file to be opened.  
-    (On PC systems, <strong>fopen</strong> opens files for binary read access.)
- 
-    FILENAME can be a MATLABPATH relative partial pathname.  If the
-    file is not found in the current working directory, <strong>fopen</strong> searches for 
-    it on the MATLAB search path.  On UNIX systems, FILENAME may also start
-    with a "~/" or a "~username/", which <strong>fopen</strong> expands to the current
-    user's home directory or the specified user's home directory,
-    respectively.
- 
-    FID is a scalar MATLAB integer valued double, called a file identifier. 
-    You use FID as the first argument to other file input/output
-    routines, such as FREAD and FCLOSE. If <strong>fopen</strong> cannot open the file, it 
-    returns -1.
- 
-    FID = <strong>fopen</strong>(FILENAME,PERMISSION) opens the file FILENAME in the
-    mode specified by PERMISSION:
-    
-        'r'     open file for reading
-        'w'     open file for writing; discard existing contents
-        'a'     open or create file for writing; append data to end of file
-        'r+'    open (do not create) file for reading and writing
-        'w+'    open or create file for reading and writing; discard 
-                existing contents
-        'a+'    open or create file for reading and writing; append data 
-                to end of file
-        'W'     open file for writing without automatic flushing
-        'A'     open file for appending without automatic flushing
-    
-    FILENAME can be a MATLABPATH relative partial pathname only if the file
-    is opened for reading.
- 
-    You can open files in binary mode (the default) or in text mode.
-    In binary mode, no characters get singled out for special treatment.
-    In text mode on the PC, the carriage return character preceding
-    a newline character is deleted on input and added before the newline
-    character on output.  To open a file in text mode, append 't' to the
-    permission string, for example 'rt' and 'w+t'.  (On Unix, text and
-    binary mode are the same, so this has no effect.  On PC systems
-    this is critical.)
- 
-    If the file is opened in update mode ('+'), you must use an FSEEK or 
-    FREWIND between an input command like FREAD, FSCANF, FGETS, or FGETL 
-    and an output command like FWRITE or FPRINTF.  You must also use an 
-    FSEEK or FREWIND between an output command and an input command.
- 
-    Two file identifiers are automatically available and need not be
-    opened.  They are FID=1 (standard output) and FID=2 (standard error).
-    
-    [FID, MESSAGE] = <strong>fopen</strong>(FILENAME,...) returns a system dependent error 
-    message if the open is not successful.
- 
-    [FID, MESSAGE] = <strong>fopen</strong>(FILENAME,PERMISSION,MACHINEFORMAT) op
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:00:405
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:04:893
+  Volume converged to 2.51755e-03
+Time Elapsed:00:00:06:674
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:08:351
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+01-Apr-2016 12:58:35
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:687
+  Volume converged to 4.70201e-05
+Time Elapsed:00:00:23:842
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:297
+  Volume converged to 2.99881e-04
+Time Elapsed:00:00:24:594
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:968
+  Volume converged to 6.39669e-04
+Time Elapsed:00:00:25:046
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:888
+  Volume converged to 8.57680e-04
+Time Elapsed:00:00:25:796
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:001
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:25:202
+  Volume converged to 3.36145e-03
+Time Elapsed:00:00:27:017
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:24:967
+  Volume converged to 1.12458e-03
+Time Elapsed:00:00:27:017
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:28:825
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+01-Apr-2016 12:59:04
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:414
+  Volume converged to 2.10282e-03
+Time Elapsed:00:00:24:757
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:492
+  Volume converged to 1.17817e-03
+Time Elapsed:00:00:24:850
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:336
+  Volume converged to 3.69854e-03
+Time Elapsed:00:00:25:584
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:289
+  Volume converged to 1.16551e-03
+Time Elapsed:00:00:25:646
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:477
+  Volume converged to 8.68543e-04
+Time Elapsed:00:00:25:709
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:26:177
+  Volume converged to 3.39560e-03
+Time Elapsed:00:00:27:900
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:29:712
+ITERATION 2 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 3 start
+01-Apr-2016 12:59:33
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:967
+  Volume converged to 1.35567e-04
+Time Elapsed:00:00:23:889
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:856
+  Volume converged to 2.22604e-03
+Time Elapsed:00:00:24:982
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:028
+  Volume converged to 4.74834e-04
+Time Elapsed:00:00:25:217
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:732
+  Volume converged to 1.48329e-03
+Time Elapsed:00:00:25:716
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:25:202
+  Volume converged to 2.55161e-03
+Time Elapsed:00:00:26:779
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:25:951
+  Volume converged to 2.51785e-03
+Time Elapsed:00:00:27:622
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:29:386
+ITERATION 3 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 4 start
+01-Apr-2016 13:00:03
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:20:610
+  Volume converged to 3.05242e-04
+Time Elapsed:00:00:22:579
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:609
+  Volume converged to 1.82786e-03
+Time Elapsed:00:00:23:708
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:700
+  Volume converged to 2.36152e-05
+Time Elapsed:00:00:23:723
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:642
+  Volume converged to 2.28642e-03
+Time Elapsed:00:00:24:521
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:24:475
+  Volume converged to 1.32426e-03
+Time Elapsed:00:00:26:143
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:24:730
+  Volume converged to 5.32718e-03
+Time Elapsed:00:00:26:315
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:28:289
+ITERATION 4 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 5 start
+01-Apr-2016 13:00:31
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:20:950
+  Volume converged to 3.38517e-07
+Time Elapsed:00:00:22:808
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:324
+  Volume converged to 6.59395e-05
+Time Elapsed:00:00:24:327
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:558
+  Volume converged to 6.87717e-06
+Time Elapsed:00:00:24:686
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:874
+  Volume converged to 1.69398e-03
+Time Elapsed:00:00:24:967
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:23:718
+  Volume converged to 1.77372e-03
+Time Elapsed:00:00:25:919
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:24:421
+  Volume converged to 3.37962e-06
+Time Elapsed:00:00:26:170
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:27:948
+ITERATION 5 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:27:948
+ITERATION 5 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
