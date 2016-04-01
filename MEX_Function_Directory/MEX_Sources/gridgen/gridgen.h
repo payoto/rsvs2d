@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #ifndef TEMPLATEGRID_H_INCLUDED
 #define TEMPLATEGRID_H_INCLUDED
-// Type Definitions
+/* Type Definitions */
 typedef struct {
 	int index;
 	double fill;
 	int refineLvl;
-	int *refineVec; // This has to be allocated 
+	int *refineVec; /* This has to be allocated  */
 	
 } cellTemplate;
 
@@ -15,18 +15,18 @@ typedef struct {
 	int index;
 	int cellind[2];
 	int vertex[2];
-	int orientation; // 1 is vertical 0 is Horizontal
+	int orientation; /* 1 is vertical 0 is Horizontal */
 } edgeTemplate;
 
 typedef struct {
 	int index;
-	double coord[2]; // needs to be changed wiht dim
+	double coord[2]; /* needs to be changed wiht dim */
 	
 } vertexTemplate;
 
-// Global Extern Variables
-//extern int 2;
-// Macros
+/* Global Extern Variables */
+/*extern int 2; */
+/* Macros */
 #if defined(__GNUC__) || defined(__GNUG__)
 	/* GNU GCC/G++. --------------------------------------------- */
 #define max(a,b) ({ typeof(a) _a = (a);  typeof(b) _b = (b);  _a > _b ? _a : _b; })
@@ -38,7 +38,7 @@ typedef struct {
 #endif
 
 #define dim() (2)
-// Function prototypes
+/* Function prototypes */
 void ClearWorkSpace();
 void Allocatecelldatstruct();
 void AllocateGridStruct(int domSize[dim()],
@@ -120,8 +120,8 @@ int CompareDouble(double elem1, double elem2);
 void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLevelsAct,
 		cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
 
-//void OutputTemplateGrid(int domSize[2], int lvlGrid);
-//void GenerateTemplateGrids();
+/*void OutputTemplateGrid(int domSize[2], int lvlGrid); */
+/*void GenerateTemplateGrids(); */
 
 #endif
 
