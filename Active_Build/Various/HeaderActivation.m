@@ -19,7 +19,7 @@ function [] = HeaderActivation(funcHandles,funcDir)
     
     c=evalc('display(funcHandles)');
     pattern='@\w*';
-    
+    disp('WRITING AUTOMATIC FUNCTIONS')
     funcHandlesNamesCell=regexp(c,pattern,'match');
     funcDir=MakePathCompliant(funcDir);
     if ~isdir(funcDir)

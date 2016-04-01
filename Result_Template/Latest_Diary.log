@@ -1,29 +1,22 @@
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Input_Variables\StructOptimParam.m',107,1)">107 </a>    paroptim.parametrisation.general.subdivType='chaikin';
-if system_dependent('IsDebugMode')==1, dbstep; end
-paroptim.parametrisation.general.subdivType
-
-ans =
-
-chaikin
-
-ExecuteOptimisation('TestParOptim_desktop')
-  
---------------------------------------------------------------------------------------------
-********************************************************************************************
+****
 --------------------------------------------------------------------------------------------
 OPTIMISATION - TestParOptim_desktop start
-01-Apr-2016 16:56:22
+01-Apr-2016 20:12:31
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-01-Apr-2016 16:56:22
+01-Apr-2016 20:12:31
 --------------------------------------------------------------------------------------------
   
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Input_Variables\StructOptimParam.m',106,1)">106 </a>    paroptim.parametrisation.general.subdivType='chaikin';
-if system_dependent('IsDebugMode')==1, dbcont; end
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -65,13 +58,10 @@ Calculations Started . . .
 			Start Cell 16 of 16 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:110
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:140
 INITIAL GRID OPERATIONS end
 -----------------------
   
-figure
-plot(newPoints(:,1),newPoints(:,2),projPoints(:,1),projPoints(:,2))
-if system_dependent('IsDebugMode')==1, dbcont; end
   
 -----------------------
 SNAKE PROCESS start
@@ -80,18 +70,18 @@ SNAKE PROCESS start
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:00:343
+  Initialisation time:00:00:00:350
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:04:750
+  Iteration Time:00:00:04:775
   Volume converged to 2.51755e-03
-Time Elapsed:00:01:06:196
+Time Elapsed:00:00:05:621
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:01:11:370
+    Time Elapsed:00:00:06:266
 INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -100,131 +90,19 @@ INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 ITERATION 1 start
-01-Apr-2016 16:57:34
+01-Apr-2016 20:12:38
 --------------------------------------------------------------------------------------------
   
   
 -----------------------
 SNAKE PROCESS start
   Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:19:542
-  Volume converged to 3.20778e-05
-Time Elapsed:00:00:20:207
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:19:614
-  Volume converged to 9.57150e-04
-Time Elapsed:00:00:20:300
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:19:862
-  Volume converged to 1.83355e-03
-Time Elapsed:00:00:20:550
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:19:905
-  Volume converged to 6.43220e-04
-Time Elapsed:00:00:20:581
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:21:220
-  Volume converged to 1.73597e-03
-Time Elapsed:00:00:21:799
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:21:820
-  Volume converged to 2.37060e-03
-Time Elapsed:00:00:22:287
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Generate New Population start
-    Time Elapsed:00:00:00:000
-Generate New Population end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:24:352
-ITERATION 1 end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 2 start
-01-Apr-2016 16:57:58
---------------------------------------------------------------------------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:19:113
-  Volume converged to 1.78041e-05
-Time Elapsed:00:00:19:848
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
+  Initialisation time:00:00:00:010
   Start Time Stepping
   50 Steps Performed
   Iteration Time:00:00:19:540
-  Volume converged to 4.97998e-05
-Time Elapsed:00:00:20:182
+  Volume converged to 8.39167e-04
+Time Elapsed:00:00:20:391
 SNAKE PROCESS end
 -----------------------
   
@@ -235,9 +113,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:607
-  Volume converged to 1.48797e-03
-Time Elapsed:00:00:20:235
+  Iteration Time:00:00:20:003
+  Volume converged to 7.16532e-04
+Time Elapsed:00:00:20:977
 SNAKE PROCESS end
 -----------------------
   
@@ -248,22 +126,37 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:732
-  Volume converged to 7.98717e-05
-Time Elapsed:00:00:20:333
+  Iteration Time:00:00:19:978
+  Volume converged to 4.96048e-06
+Time Elapsed:00:00:20:875
 SNAKE PROCESS end
 -----------------------
   
+Warning: Control Character '\U' is not valid. See 'doc sprintf' for control characters valid in the format string.
+[> In ExecuteSnakes_Optim (line 43)
+  In ExecuteOptimisation>makeF%1/F% (line 122)
+  In parallel_function>make_general_channel/channel_general (line 914)
+  In remoteParallelFunction (line 38)] 
   
 -----------------------
 SNAKE PROCESS start
   Start initialisation
-  Initialisation time:00:00:00:000
+  Initialisation time:00:00:00:010
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:847
-  Volume converged to 1.94754e-03
-Time Elapsed:00:00:20:374
+  Iteration Time:00:00:20:398
+  Volume converged to 1.26291e-03
+[Warning: More than 2 snaxels on the same edge] 
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:224
+  Volume converged to 5.37301e-04
+Time Elapsed:00:00:22:126
 SNAKE PROCESS end
 -----------------------
   
@@ -274,12 +167,13 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:010
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:20:559
-  Volume converged to 1.78233e-03
-Time Elapsed:00:00:21:019
+  Iteration Time:00:00:21:752
+  Volume converged to 1.17979e-03
+Time Elapsed:00:00:22:615
 SNAKE PROCESS end
 -----------------------
   
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:
   
 -----------------------
 Generate New Population start
@@ -289,7 +183,112 @@ Generate New Population end
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:22:762
+    Time Elapsed:00:00:27:374
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+01-Apr-2016 20:13:05
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:716
+  Volume converged to 7.75813e-04
+Time Elapsed:00:00:19:357
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:20:543
+  Volume converged to 6.82668e-04
+Time Elapsed:00:00:21:074
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:21:059
+  Volume converged to 2.57926e-03
+Time Elapsed:00:00:21:604
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:22:073
+  Volume converged to 2.16371e-03
+Time Elapsed:00:00:22:557
+SNAKE PROCESS end
+-----------------------
+  
+Warning: Control Character '\U' is not valid. See 'doc sprintf' for control characters valid in the format string.
+[> In ExecuteSnakes_Optim (line 43)
+  In ExecuteOptimisation>makeF%1/F% (line 122)
+  In parallel_function>make_general_channel/channel_general (line 914)
+  In remoteParallelFunction (line 38)] 
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:24:216
+  Volume converged to 8.26220e-02
+[Warning: More than 2 snaxels on the same edge] 
+Warning: Control Character '\U' is not valid. See 'doc sprintf' for control characters valid in the format string.
+[> In ExecuteSnakes_Optim (line 43)
+  In ExecuteOptimisation>makeF%1/F% (line 122)
+  In parallel_function>make_general_channel/channel_general (line 914)
+  In remoteParallelFunction (line 38)] 
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:25:875
+  Volume converged to 8.67481e-02
+[Warning: More than 2 snaxels on the same edge] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:28:249
 ITERATION 2 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -298,8 +297,21 @@ ITERATION 2 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 ITERATION 3 start
-01-Apr-2016 16:58:21
+01-Apr-2016 20:13:33
 --------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:204
+  Volume converged to 4.58569e-03
+Time Elapsed:00:00:18:766
+SNAKE PROCESS end
+-----------------------
   
   
 -----------------------
@@ -308,9 +320,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:015
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:18:358
-  Volume converged to 3.28799e-07
-Time Elapsed:00:00:19:190
+  Iteration Time:00:00:19:284
+  Volume converged to 1.32980e-03
+Time Elapsed:00:00:19:877
 SNAKE PROCESS end
 -----------------------
   
@@ -321,9 +333,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:18:939
-  Volume converged to 7.24706e-04
-Time Elapsed:00:00:19:644
+  Iteration Time:00:00:21:300
+  Volume converged to 1.03067e-03
+Time Elapsed:00:00:21:787
 SNAKE PROCESS end
 -----------------------
   
@@ -334,9 +346,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:846
-  Volume converged to 4.74266e-06
-Time Elapsed:00:00:20:393
+  Iteration Time:00:00:21:661
+  Volume converged to 3.49945e-03
+Time Elapsed:00:00:22:147
 SNAKE PROCESS end
 -----------------------
   
@@ -347,9 +359,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:893
-  Volume converged to 2.34930e-03
-Time Elapsed:00:00:20:439
+  Iteration Time:00:00:22:163
+  Volume converged to 6.03359e-04
+Time Elapsed:00:00:22:600
 SNAKE PROCESS end
 -----------------------
   
@@ -357,25 +369,12 @@ SNAKE PROCESS end
 -----------------------
 SNAKE PROCESS start
   Start initialisation
-  Initialisation time:00:00:00:001
+  Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:20:091
-  Volume converged to 6.10082e-04
-Time Elapsed:00:00:20:611
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:016
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:20:657
-  Volume converged to 1.00026e-03
-Time Elapsed:00:00:21:110
+  Iteration Time:00:00:22:319
+  Volume converged to 4.60841e-03
+Time Elapsed:00:00:22:787
 SNAKE PROCESS end
 -----------------------
   
@@ -388,7 +387,7 @@ Generate New Population end
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:23:065
+    Time Elapsed:00:00:24:524
 ITERATION 3 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -397,7 +396,7 @@ ITERATION 3 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 ITERATION 4 start
-01-Apr-2016 16:58:44
+01-Apr-2016 20:13:58
 --------------------------------------------------------------------------------------------
   
   
@@ -407,9 +406,22 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:083
-  Volume converged to 2.69398e-05
-Time Elapsed:00:00:19:864
+  Iteration Time:00:00:19:976
+  Volume converged to 2.38119e-03
+Time Elapsed:00:00:20:525
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:010
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:20:052
+  Volume converged to 4.38805e-04
+Time Elapsed:00:00:20:713
 SNAKE PROCESS end
 -----------------------
   
@@ -420,9 +432,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:364
-  Volume converged to 2.80055e-07
-Time Elapsed:00:00:20:019
+  Iteration Time:00:00:20:088
+  Volume converged to 1.10651e-04
+Time Elapsed:00:00:20:730
 SNAKE PROCESS end
 -----------------------
   
@@ -433,9 +445,9 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:707
-  Volume converged to 1.36425e-03
-Time Elapsed:00:00:20:348
+  Iteration Time:00:00:20:625
+  Volume converged to 1.12749e-03
+Time Elapsed:00:00:21:105
 SNAKE PROCESS end
 -----------------------
   
@@ -446,12 +458,17 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:19:879
-  Volume converged to 4.91361e-04
-Time Elapsed:00:00:20:489
+  Iteration Time:00:00:21:459
+  Volume converged to 1.73317e-03
+Time Elapsed:00:00:21:852
 SNAKE PROCESS end
 -----------------------
   
+Warning: Control Character '\U' is not valid. See 'doc sprintf' for control characters valid in the format string.
+[> In ExecuteSnakes_Optim (line 43)
+  In ExecuteOptimisation>makeF%1/F% (line 122)
+  In parallel_function>make_general_channel/channel_general (line 914)
+  In remoteParallelFunction (line 38)] 
   
 -----------------------
 SNAKE PROCESS start
@@ -459,25 +476,10 @@ SNAKE PROCESS start
   Initialisation time:00:00:00:000
   Start Time Stepping
   50 Steps Performed
-  Iteration Time:00:00:20:364
-  Volume converged to 1.69383e-03
-Time Elapsed:00:00:20:863
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:000
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:20:754
-  Volume converged to 2.25906e-03
-Time Elapsed:00:00:21:315
-SNAKE PROCESS end
------------------------
-  
+  Iteration Time:00:00:21:953
+  Volume converged to 2.22451e-03
+[Warning: More than 2 snaxels on the same edge] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:
   
 -----------------------
 Generate New Population start
@@ -487,7 +489,7 @@ Generate New Population end
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:23:079
+    Time Elapsed:00:00:24:151
 ITERATION 4 end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -495,8 +497,8 @@ ITERATION 4 end
   
 --------------------------------------------------------------------------------------------
 OPTIMISATION - TestParOptim_desktop end
-    Time Elapsed:00:02:45:233
-01-Apr-2016 16:56:22
+    Time Elapsed:00:01:51:235
+01-Apr-2016 20:12:31
 --------------------------------------------------------------------------------------------
 ********************************************************************************************
 --------------------------------------------------------------------------------------------
