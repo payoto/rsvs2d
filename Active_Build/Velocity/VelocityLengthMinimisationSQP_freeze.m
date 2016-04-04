@@ -13,7 +13,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [snaxel,snakposition,snaxelmodvel,velcalcinfostruct]=VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
+function [snaxel,snakposition,snaxelmodvel,velcalcinfostruct]=VelocityLengthMinimisationSQP_freeze(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
     [snaxeltensvel,snakposition,velcalcinfostruct]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
     [snaxel]=AssignVelocityToSnaxel(snaxel,snaxeltensvel);
@@ -578,8 +578,12 @@ function [d2fiddim]=Calc_D2FiDdim_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
     
 end
 
+%% Calculate position derivatives versus constraints
 
-
-
+function []=SnaxelSensitivity()
+    
+    
+    
+end
 
 
