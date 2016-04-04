@@ -1,10 +1,11 @@
+function [fill]=test_Convergence(snakSave)
 
 %% Volume
 errorFill=zeros([length(snakSave) length(snakSave(1).volumefraction)]);
 for ii=1:length(snakSave),
     errorFill(ii,1:length(snakSave(ii).volumefraction))=([snakSave(ii).volumefraction(:).targetfill]-[snakSave(ii).volumefraction(:).volumefraction])./[snakSave(ii).volumefraction(:).targetfill];
 end
-
+fill=[snakSave(1).volumefraction(:).targetfill];
 statError=[mean(errorFill);std(errorFill);mean(errorFill)-3*std(errorFill);mean(errorFill)+3*std(errorFill)];
 
 figure
@@ -56,3 +57,4 @@ subplot(2,2,4)
 plot(log10(abs(errorVel)))
 
 ylabel('Logarithm of the mean absolute velocity')
+end

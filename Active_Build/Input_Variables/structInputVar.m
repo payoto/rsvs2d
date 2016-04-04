@@ -165,9 +165,9 @@ function param=DualOptimSmoothing(param)
     
     
     param.snakes.force.velType='default';
-    param.snakes.force.vel.Type={'velAreaOnly','default'};
-    param.snakes.force.vel.ChangeStep=[0, 30];
-    param.snakes.force.vel.ChangeConv=[10,1e-4];
+    param.snakes.force.vel.Type={'default','velAreaOnly'};
+    param.snakes.force.vel.ChangeStep=[0, 100];
+    param.snakes.force.vel.ChangeConv=[10,1e-6];
     param.snakes.force.vel.ChangeTrigger='both'; 
     
     
@@ -318,6 +318,18 @@ function [param]=optimDefault()
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
     
+    
+end
+
+function [param]=optimTest()
+    
+    [param]=optimDefault();
+    param.snakes.step.snakData='all';
+    param.snakes.step.snakesConsole=true;
+    param.snakes.step.snakesSteps=150;
+    param.general.typDat='optimRand';
+    param.results.archiveName='Standard_Execution';
+    %param=DualOptimSmoothing(param);
     
 end
 

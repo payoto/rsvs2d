@@ -162,7 +162,7 @@ function []=WriteCellGridDat(arraySize,cellRef)
 end
 
 function [unstructured]=Initialisation_Square(param)
-    % Initialise a nGridSteps*nGridSteps dataset
+    % 
     
     global nGridSteps domainBounds
     varExtract={'typDat'};
@@ -170,8 +170,9 @@ function [unstructured]=Initialisation_Square(param)
     
     switch typDat
         case 'optimInit'
-            [parametrisation,cellRef]=OptimInit(param);
-            
+            [parametrisation,cellRef]=OptimInit(param,false);
+        case 'optimRand'
+            [parametrisation,cellRef]=OptimInit(param,true);
         otherwise
             parametrisation.fill=InputData(typDat);
             parametrisation.isactive=ones(size(parametrisation.fill));
@@ -205,7 +206,9 @@ end
 
 %% Optimisation Input
 
-function [parametrisation,cellRef]=OptimInit(param)
+function [parametrisation,cellRef]=OptimInit(param,isRand)
+    
+    if ~exist('isRand','var'),isRand=false;end
     
     global nGridSteps
     
@@ -219,8 +222,12 @@ function [parametrisation,cellRef]=OptimInit(param)
     cellRef=refineCellLvl;
     parametrisation.fill=zeros(nGridSteps);
     parametrisation.isactive=zeros(nGridSteps);
-    
-    parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=defaultfill;
+    if ~isRand
+        parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=defaultfill;
+    else
+        parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=...
+            rand(size(parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)));
+    end
     parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
     
     parametrisation.fill([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=defaultCorner;
