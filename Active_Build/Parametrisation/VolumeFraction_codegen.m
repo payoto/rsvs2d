@@ -11,6 +11,8 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%#codegen
+
 %% Volume fraction calculation
 
 function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
@@ -18,8 +20,8 @@ function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snak
     % Calculates teh volume fraction in the old cells
     
     
-    insideContourInfoIndex=[refinedGrid.edge(logical(insideContourInfo)).index];
-%     [insideContourInfoIndex]=ReferenceCompArray(refinedGrid.edge,logical(insideContourInfo),'log','index');
+    %insideContourInfoIndex=[refinedGrid.edge(logical(insideContourInfo)).index];
+    [insideContourInfoIndex]=ReferenceCompArray(refinedGrid.edge,logical(insideContourInfo),'log','index');
     [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid,snakposition);
     
     for ii=1:length(cellCentredGrid)
@@ -106,17 +108,17 @@ function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid
     
     cellCentredGrid(1).snaxel=struct([]);
     
-%     [snakPosInd]=ReferenceCompArray(snakposition,inf,'inf','index');
-%     [edgeInd]=ReferenceCompArray(refinedGrid.edge,inf,'inf','index');
-%     [cellInd]=ReferenceCompArray(cellCentredGrid,inf,'inf','index');
-%     [vertIndex]=ReferenceCompArray(refinedGrid.vertex,inf,'inf','index');
-%     [vertCoord]=ReferenceCompArrayVertCat(refinedGrid.vertex,inf,'inf','coord');
+    [snakPosInd]=ReferenceCompArray(snakposition,inf,'inf','index');
+    [edgeInd]=ReferenceCompArray(refinedGrid.edge,inf,'inf','index');
+    [cellInd]=ReferenceCompArray(cellCentredGrid,inf,'inf','index');
+    [vertIndex]=ReferenceCompArray(refinedGrid.vertex,inf,'inf','index');
+    [vertCoord]=ReferenceCompArrayVertCat(refinedGrid.vertex,inf,'inf','coord');
     
-    snakPosInd=[snakposition(:).index];
-    edgeInd=[refinedGrid.edge(:).index];
-    cellInd=[cellCentredGrid(:).index];
-    vertIndex=[refinedGrid.vertex(:).index];
-    vertCoord=vertcat(refinedGrid.vertex(:).coord);
+%     snakPosInd=[snakposition(:).index];
+%     edgeInd=[refinedGrid.edge(:).index];
+%     cellInd=[cellCentredGrid(:).index];
+%     vertIndex=[refinedGrid.vertex(:).index];
+%     vertCoord=vertcat(refinedGrid.vertex(:).coord);
     
     
     

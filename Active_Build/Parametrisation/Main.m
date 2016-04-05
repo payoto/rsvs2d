@@ -115,7 +115,7 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
         [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(gridrefined,snakrestart,...
             unstructReshape,connectstructinfo,param);
     end
-    unstructReshape=ModifUnstructured(unstructured);
+    unstructured=ModifReshape(unstructReshape);
     unstructuredrefined=ModifReshape(gridrefined);
 end
 

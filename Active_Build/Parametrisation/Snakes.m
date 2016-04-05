@@ -30,11 +30,11 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     oldGridUns=ModifReshape(oldGrid);
     
     unstructglobal=refinedGriduns;
-    %profile on
+   profile on
     [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param);
-    %profile viewer
+    profile viewer
     
     if snakesConsole
         figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
@@ -86,6 +86,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     disp(['  ',int2str(ii),' Steps Performed'])
     disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
     disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
+    GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+        cellCentredGrid,insideContourInfo,forceparam);
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns);
     if snakesConsole
@@ -112,18 +114,18 @@ function [ii]=IterSnakes()
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
-        
         [convergenceCondition,currentConvVelocity,currentConvVolume]=...
             ConvergenceTest(snaxel,volumefraction,convLevel);
         [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,ii,currentConvVolume,trigCount);
+        [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+        
+        
+        
         if convergenceCondition && ii>snakesMinSteps && lastAlgo
             fprintf(' -  Snakes Converged!\n')
             break
         end
         
-        
-        
-        [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         % visualise results
         
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
@@ -262,6 +264,16 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     %disp('Creating Snaxel Loops')
     [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
     
+end
+
+function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
+    
+    [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+    [snakposition]=SnaxelNormal2(snaxel,snakposition);
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+        cellCentredGrid,insideContourInfo);
+    forceparam.isLast=true;
+    [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
 end
 
 function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
@@ -642,7 +654,7 @@ function [snakposition]=SnaxelNormal2(snaxel,snakposition)
         contourVecSub(contourVecSub==0)=[];
         
         snakposition(ii).normvector=...
-            {contourStruct(contourVecSub).vector};
+            vertcat(contourStruct(contourVecSub).vector);
         
         indexMat=[[contourStruct(contourVecSub).index1]',...
             [contourStruct(contourVecSub).index2]'];
@@ -812,13 +824,13 @@ end
 
 %% Velocity Calculation (External Function)
 
-function [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction...
+function [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=VelocityCalculationVolumeFraction...
         (snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     velcalcinfo=[];
-    
+    sensSnax=[];
     switch forceparam.velType
         case 'default'
-            [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=...
                 VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'force'
             [snaxel,snakposition,snaxelmodvel]=...
@@ -849,7 +861,7 @@ function [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolum
             snaxelmodvel=snaxel;
         
         otherwise %'default'
-            [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=...
                 VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
     end
 
@@ -1962,11 +1974,15 @@ function [movFrame]=CheckResults(iter,unstructured,oldGrid,snakposition,snaxel,m
     
 end
 
-function []=CheckResultsLight(unstructured,snakposition,snaxel)
+function [figh]=CheckResultsLight(unstructured,snakposition,snaxel,figh)
     global nDim domainBounds
     
     if nDim==2
-        figh=figure;
+        if nargin==3
+            figh=figure;
+        else
+            figure(figh)
+        end
         axh=axes;
         hold on
         
@@ -2098,7 +2114,7 @@ function []=PlotSnaxelLoop(figh,axh,snakposition,snaxel)
             X(ii)=snakposition(currSnaxSub).coord(1);
             Y(ii)=snakposition(currSnaxSub).coord(2);
         end
-        plot(X,Y,'ro--')
+        plot(X,Y,'o--')
     end
 
 end

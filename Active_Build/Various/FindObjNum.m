@@ -1,7 +1,7 @@
 
 function sub=FindObjNum(object,index,objInd)
     % finds the array index from a snaxel number
-    if ~exist('objInd','var')
+    if nargin==2
         objInd=[object(:).index];
     end
     
