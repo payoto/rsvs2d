@@ -345,7 +345,7 @@ function [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposit
         derivtenscalc(ii).d_m=snaxel(neighSub).d;
         % calculating data
 
-        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum( (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum((derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
 
     end
        
@@ -470,7 +470,7 @@ function [DeltaxFin]=SQPStep(Df,Hf,Dh,h_vec,isFreeze)
     Deltax=-Bkinv*(Df+Dh*u_kp1);
     
     DeltaxFin=zeros(size(isFreeze));
-    DeltaxFin(~isFreeze)=Deltax
+    DeltaxFin(~isFreeze)=Deltax;
 end
 %% Derivative calculations - Length Smearing
 
@@ -579,6 +579,27 @@ function [d2fiddim]=Calc_D2FiDdim_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
 end
 
 %% Calculate position derivatives versus constraints
+
+function []=SnaxelSensitivity()
+    
+    
+    
+end
+
+
+function []=BuildDAdd2()
+    
+    
+    
+end
+
+
+function []=SnaxelSensitivity()
+    
+    
+    
+end
+
 
 function []=SnaxelSensitivity()
     

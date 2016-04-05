@@ -110,6 +110,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.vectorMagAveraging=true;
     paramsnakesforce.lengthEpsilon=1e-5;
     paramsnakesforce.typeSmear='length';
+    paramsnakesforce.isLast=false;
     
     paramsnakesforce.velType='default';
     paramsnakesforce.vel.Type={'default'};
@@ -326,7 +327,7 @@ function [param]=optimTest()
     [param]=optimDefault();
     param.snakes.step.snakData='all';
     param.snakes.step.snakesConsole=true;
-    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakesSteps=30;
     param.general.typDat='optimRand';
     param.results.archiveName='Standard_Execution';
     %param=DualOptimSmoothing(param);
