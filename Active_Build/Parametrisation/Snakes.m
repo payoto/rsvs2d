@@ -11,7 +11,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%#codegen
+% %#codegen
 
 %% Main execution functions
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGrid,looprestart,...
@@ -273,7 +273,9 @@ function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconn
     [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo);
     forceparam.isLast=true;
+    forceparam.lengthEpsilon=1e-8;
     [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+    testSensitivity(snaxel,snakposition,sensSnax)
 end
 
 function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
@@ -2149,6 +2151,124 @@ function []=PlotVolFrac(figh,axh,coord,frac)
     text(coord(:,1),coord(:,2),num2str(frac,'%.1e'),'HorizontalAlignment','center')
     end
     hold on
+end
+
+%% Check sensitivity
+function []=testSensitivity(snaxel,snakposition,sensSnax)
+    
+    global unstructglobal
+    sensSnax(:,find(sum(abs(sensSnax))==0))=[];
+    dCurr=[snaxel(:).d];
+    kk=1;
+    for ii=1:length(snaxel)
+        snaxOrd(ii)=FindObjNum([],[snaxel(kk).snaxnext],[snaxel(:).index]);
+        kk=snaxOrd(ii);
+    end
+    snaxOrd(end+1)=snaxOrd(1);
+    coord1=vertcat(snakposition(:).coord);
+    [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
+        ones([length(snaxel), 1])*2],2);
+    [testPos1]=CreateComparisonMatrix(coord1);
+    
+    for ii=1:length(sensSnax(1,:)),
+        snaxCopy=snaxel;
+        e1=(1)./sensSnax(:,ii);
+        e2=(-1)./sensSnax(:,ii);
+        e1_sel=min(e1(e1>0));
+        e2_sel=min(e2(e2>0));
+        e_sel(ii)=min([e1_sel,e2_sel]);
+        dChange{ii}=sensSnax(:,ii)/max(abs(sensSnax(:,ii)));
+        %dChange{ii}=-sensSnax(:,ii)/100;
+        dAct=dCurr'+dChange{ii};
+        
+        for jj=1:length(snaxel)
+            snaxCopy(jj).d=dAct(jj);
+        end
+        [snakposition2]=PositionSnakes(snaxCopy,unstructglobal);
+   
+        
+        coord2=vertcat(snakposition2(:).coord);
+        [testPos2]=CreateComparisonMatrix(coord2);
+        [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
+        figure
+        plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'o-',coord2(newOrd,1),coord2(newOrd,2),'o-')
+        hold on
+        for jj=1:length(newOrd)
+            plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+        end
+        title(['mode ',int2str(ii)])
+        axis equal
+        
+    end
+    
+    
+end
+
+function [testPos]=CreateComparisonMatrix(coord)
+    
+    [m,n]=size(coord);
+    testPos{n}=[];
+    for jj=1:n
+        testPos{jj}=zeros(m);
+        for ii=1:m
+            testPos{jj}(:,ii)=(coord(ii,jj)>coord(:,jj));
+        end
+    end
+    
+    
+end
+
+function [newOrd]=CompareTestpos(t1,t2,ord,dir)
+    
+    for ii=1:length(t1)
+        tD{ii}=t1{ii}~=t2{ii};
+    end
+    tX=true(size(tD{1}));
+    tDel=zeros(size(tD{1}));
+    for ii=1:length(tD)
+        tX=tX & tD{ii};
+
+    end
+    for ii=1:length(tD)
+        tDel=tDel+ii*(tD{ii} & ~tX);
+    end
+    
+    newOrd=ord;
+    for ii=1:length(ord)-1
+        if tX(newOrd(ii+1),newOrd(ii))
+            tX(newOrd(ii+1),newOrd(ii))=false;
+            tX(newOrd(ii),newOrd(ii+1))=false;
+            interim=newOrd(ii);
+            newOrd(ii)=newOrd(ii+1);
+            if ii==1
+                newOrd(end)=newOrd(ii+1);
+            end
+            newOrd(ii+1)=interim;
+        end
+    end
+    newOrd=newOrd(end:-1:1);
+    for ii=1:length(ord)-1
+        if tX(newOrd(ii+1),newOrd(ii))
+            interim=newOrd(ii);
+            newOrd(ii)=newOrd(ii+1);
+            if ii==1
+                newOrd(end)=newOrd(ii+1);
+            end
+            newOrd(ii+1)=interim;
+        end
+    end
+    kk=1;
+    newOrd=[newOrd(end-1),newOrd];
+    rmSnak=[];
+    for ii=2:length(newOrd)-1
+        tTest=tDel([newOrd(ii-1),newOrd(ii),newOrd(ii+1)],[newOrd(ii)]);
+        if (sum(tTest~=dir(newOrd(ii)) & tTest~=0))
+            rmSnak(kk)=ii;
+            kk=kk+1;
+        end
+    end
+    newOrd(rmSnak)=[];
+    
 end
 
 %% Various
