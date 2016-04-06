@@ -695,7 +695,7 @@ end
 
 function [sensSnax]=SnaxelSensitivity(snaxel,coeffstructure,volumefraction,lagMultiplier,derivtenscalc,...
         Hf,areaConstrMat)
-    
+    %lagMultiplier=abs(lagMultiplier);
     [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMultiplier,derivtenscalc);
     [sensSnax]=CalculateSensitivity(Hf,hessA,areaConstrMat,lagMultiplier);
     
@@ -780,31 +780,42 @@ function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,Ja_x,lagMulti)
     
     actCol=find(sum(abs(Ja_x),2)~=0);
     
-    Ja_x=Ja_x(actCol,:);
-    lagMulti=lagMulti(actCol);
+    [Ja_xSmall,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol);
     
-    nCondAct=length(lagMulti);
-    
-    Ja_p=eye(nCondAct);
-    
-    for ii=1:nCondAct
-        Ja_p(ii,ii)=-lagMulti(ii);
+    matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
+    if rcond(matToInv)<1e-15
+        actCol=find(abs(lagMulti)>1e-15);
+        [Ja_xSmall,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol);
+        matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
     end
-    
-    matToInv=-[HL,Ja_x';Ja_x,zeros(nCondAct)];
     matMultiplier=[zeros([nSnax,nCondAct]);Ja_p];
     
-    resSens=matToInv\matMultiplier;
+    resSens=-matToInv\matMultiplier;
     
     sensSnax=zeros([nSnax,nCond]);
     sensLagMulti=zeros([nCond,nCond]);
     
     sensSnax(:,actCol)=resSens(1:nSnax,:);
+    for ii=find(lagMulti)'
+        
+        sensSnax(:,ii)=sensSnax(:,ii)*sign(lagMulti(ii));
+    end
     sensLagMulti(actCol,actCol)=resSens(nSnax+1:end,:);
     
     
 end
-
+function [Ja_x,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol)
+    Ja_x=Ja_x(actCol,:);
+    lagMultiSmall=lagMulti(actCol);
+    
+    nCondAct=length(lagMultiSmall);
+    
+    Ja_p=eye(nCondAct);
+    
+    for ii=1:nCondAct
+        Ja_p(ii,ii)=-(lagMultiSmall(ii));
+    end
+end
 function []=CheckSensitivity
     
     figure

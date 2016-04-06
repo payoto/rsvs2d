@@ -209,7 +209,7 @@ function [param]=Snakestestsmooth1()
     param.general.typDat='testsmooth1';
     
     param.snakes.step.snakesSteps=200;
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
     
 end
@@ -238,9 +238,10 @@ function [param]=Snakestestsmooth2()
     param.general.typDat='testsmooth2';
 
     param.snakes.step.snakesSteps=100;
-    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
+    param.general.passDomBounds=[-1,1;-0.75,0.75];
 end
 
 function [param]=Snakestestsmooth3()
@@ -269,8 +270,8 @@ function [param]=Snakestestsmooth3_1()
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     
-    param.snakes.force.velType='velMinLin';
-    param=DualOptimSmoothing(param);
+    param.general.passDomBounds=[-1,1;-0.6,0.6];
+    param=AvoidLocalOptim(param);
 end
 
 function [param]=Snakestestsmooth4()
@@ -327,9 +328,11 @@ function [param]=optimTest()
     [param]=optimDefault();
     param.snakes.step.snakData='all';
     param.snakes.step.snakesConsole=true;
-    param.snakes.step.snakesSteps=30;
+    param.snakes.step.snakesSteps=100;
     param.general.typDat='optimRand';
     param.results.archiveName='Standard_Execution';
+    
+    param.general.passDomBounds=[-1,1;-0.5,0.5];
     %param=DualOptimSmoothing(param);
     
 end
