@@ -86,8 +86,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     disp(['  ',int2str(ii),' Steps Performed'])
     disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
     disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
-    GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-        cellCentredGrid,insideContourInfo,forceparam);
+%     GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+%         cellCentredGrid,insideContourInfo,forceparam);
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns);
     if snakesConsole
@@ -112,6 +112,7 @@ function [ii]=IterSnakes()
         % snaxel properties calculation
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
+       
         [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo);
         [convergenceCondition,currentConvVelocity,currentConvVolume]=...
@@ -122,12 +123,12 @@ function [ii]=IterSnakes()
         
         
         if convergenceCondition && ii>snakesMinSteps && lastAlgo
+            
             fprintf(' -  Snakes Converged!\n')
             break
         end
-        
+        disp(['current volume error is ', num2str(currentConvVolume)]);
         % visualise results
-        
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
             [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxelmodvel,makeMov,volumefraction);
             %[movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxel,makeMov,volumefraction);
@@ -444,15 +445,22 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     edgeVertIndex=unstructured.edge.vertexindex;
     edgeIndex=unstructured.edge.index;
     loopEdgeIndex=loop.edge.index;
-    
-    [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,loopEdgeIndex,snaxelIndexStart);
-    
-    [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
     switch boundstr{3}
         case '1bound'
-            loopEdgeSubs=FindObjNum([],loopEdgeIndex,edgeIndex);
+            isInside=false;
         case '0bound'
+            isInside=true;
+        otherwise
+            error('Invalid boundstr flag')
+            
+    end
+    [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
+        edgeIndex,loopEdgeIndex,snaxelIndexStart,isInside);
+    
+    [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
+    if ~isInside
+            loopEdgeSubs=FindObjNum([],loopEdgeIndex,edgeIndex);
+    else
             snaxInd=[snaxel(:).index];
             keepIndex=delIndex;
             keepSub=FindObjNum([],keepIndex,snaxInd);
@@ -461,9 +469,6 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
             delIndex=snaxInd(logDelInd);
             loopEdgeSubs=[];
             snaxel=ReverseSnakes(snaxel);
-        otherwise
-            error('Invalid boundstr flag')
-            
     end
     
     snaxel=DeleteSnaxel(snaxel,delIndex);
@@ -515,7 +520,7 @@ function [snaxel]=TestSnaxelLoopDirection(snaxel)
 end
 
 function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,invalidEdgeIndex,snaxelIndexStart,connectivity)
+        edgeIndex,invalidEdgeIndex,snaxelIndexStart,isInside,connectivity)
     % Creates the basic snaxel structure, no removal of unworthy snaxels is
     % performed
     
@@ -551,7 +556,9 @@ function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertI
             
             connecOrder=CCWOrderAroundNode(snaxelNotOrdered,invalidEdgeIndex(baseEdgeExploit));
             generateOrder=FindObjNum(snaxelNotOrdered,connecOrder);
-            
+            if isInside
+                generateOrder=generateOrder(end:-1:1);
+            end
             [kk2,cellSimVertex{ii},newsnaxel]=GenerateVertexSnaxel...
                 (snaxelEdges(generateOrder),kk2,snaxelIndexStart,initVertexIndex(ii),...
                 edgeVertIndex,edgeIndex);
@@ -1276,8 +1283,8 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
         
         % Generate the new Snaxels
         snaxelRepop=InitialSnaxelStructure(snaxel(breedSub).tovertex,edgeVertIndex,...
-            edgeIndex,snaxel(breedSub).edge,snaxelIndexStart,...
-            connec);
+            edgeIndex,snaxel(breedSub).edge,snaxelIndexStart,false,connec);
+        
         previousV=snaxel(breedSub).v;
         previousACC=snaxel(breedSub).acc;
         for ii=1:length(snaxelRepop)
