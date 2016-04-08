@@ -345,12 +345,47 @@ function [param]=SnakesFoilVVSmall()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
+    paramgeneral.typDat='vvlofoil';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     param.general.passDomBounds=[-1,1;-0.5,0.5];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
+    
+end
+
+function [param]=SnakesFoilVVSmall2()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='vvlofoil2';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.6,0.6];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.plotting.debugPlot=[1];
+    
+end
+
+function [param]=SnakesFoilVVSmall3()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='vvlofoil3';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.6,0.6];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.plotting.debugPlot=[1];
     
 end
 
