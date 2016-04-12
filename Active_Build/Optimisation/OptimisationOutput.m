@@ -68,6 +68,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     rootDir=out.rootDir;
     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
+    markerShort=[int2str(nIter),'_',int2str(nProf)];
     writeDirectory=[rootDir,iterStr,profStr];
     writeDirectory=MakePathCompliant(writeDirectory);
     mkdir(writeDirectory);
@@ -77,7 +78,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     savStruct.loop=loop;
     
      % Output boundary data file
-    [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
+    [fidBoundary]=OpenBoundaryFile(writeDirectory,markerShort);
     for ii=1:length(loop)
         loop(ii).subdivision=loop(ii).subdivspline;
     end
@@ -85,7 +86,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     fclose(fidBoundary);
     
     
-    GenerateProfileBinary(writeDirectory,marker,savStruct)
+    GenerateProfileBinary(writeDirectory,markerShort,savStruct)
 end
 
 function [out]=OptimisationOutput_iteration(nIter,out,population)

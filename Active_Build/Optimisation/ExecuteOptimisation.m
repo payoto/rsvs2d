@@ -310,10 +310,13 @@ end
 
 function [objValue]=EvaluateObjective(objectiveName,paramoptim,member,loop)
     
+    procStr=['Calculate Objective - ',objectiveName];
+    [tStart]=PrintStart(procStr,3);
+    
     objValue=[];
     objValue=eval([objectiveName,'(paramoptim,member,loop);']);
     
-    
+    [tElapsed]=PrintEnd(procStr,3,tStart);
 end
 
 function [objValue]=LengthArea(paramoptim,member,loop)
@@ -324,6 +327,15 @@ function [objValue]=LengthArea(paramoptim,member,loop)
     L=sum(sqrt(sum(vec.^2,2)));
     
     objValue=A/L;
+    
+end
+
+function objValue=CutCellFlow(paramoptim,member,loop)
+    boundaryLoc=member.location;
+    
+    [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc);
+    
+    objValue=obj.cd;
     
 end
 

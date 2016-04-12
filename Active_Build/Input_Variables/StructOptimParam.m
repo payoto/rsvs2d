@@ -39,6 +39,7 @@ function [paroptim]=DefaultOptim()
     paroptim.general=DefaultOptimGeneral();
     [paroptim.optim.DE]=DefaultOptimDE();
     [paroptim.spline]=DefaultOptimSpline();
+    paroptim.obj.flow=DefaultCutCell_Flow();
     paroptim.structdat=GetStructureData(paroptim);
     
 end
@@ -65,11 +66,21 @@ function [paroptimDE]=DefaultOptimDE()
     paroptimDE.xOverRatio=0.5;
 end
 
+function paroptimobjflow=DefaultCutCell_Flow()
+    
+    paroptimobjflow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogive'];
+    paroptimobjflow.stoponerror=false;
+    paroptimobjflow.targConv=-6;
+    paroptimobjflow.lengthConvTest=100;
+    paroptimobjflow.restartIter=1000;
+    paroptimobjflow.maxRestart=5;
+end
+
 function [paroptimspline]=DefaultOptimSpline()
     
     
     paroptimspline.splineCase='snake';
-    paroptimspline.domain='none';
+    paroptimspline.domain='normalizeX';
 end
 
 %% Standard Modifications
@@ -109,6 +120,14 @@ function [paroptim]=TestParOptim_desktop()
     paroptim.general.worker=6; 
     paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
 end
+
+function [paroptim]=TestParOptimAero_desktop()
+    
+    [paroptim]=TestParOptim_desktop();
+    paroptim.general.objectiveName='CutCellFlow';
+    paroptim.general.direction='min';
+end
+
 
 function [paroptim]=TestParOptim_HPC()
     
