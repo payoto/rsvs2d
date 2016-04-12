@@ -345,7 +345,7 @@ function [param]=SnakesFoilVVSmall()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
-    paramgeneral.typDat='vvlofoil';
+    param.general.typDat='vvlofoil';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
@@ -353,6 +353,39 @@ function [param]=SnakesFoilVVSmall()
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
     
+end
+
+function [param]=Supersonic()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='supersonic';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='grey';
+    param.general.passDomBounds=[-1,1;-0.5,0.5];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=false;
+    
+end
+
+function [param]=Line()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='line';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='grey';
+    param.general.passDomBounds=[-1,1;-0.5,0.5];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=false;
+    
+    param.general.subdivType='area';
 end
 
 function [param]=SnakesFoilVVSmall2()
@@ -382,10 +415,27 @@ function [param]=SnakesFoilVVSmall3()
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
-    param.general.passDomBounds=[-1,1;-0.6,0.6];
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=true;
     param.plotting.debugPlot=[1];
+    
+end
+
+function [param]=SnakesFoilVVSmall4()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='vvlofoil4';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.25,0.25];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.plotting.debugPlot=[0];
     
 end
 
@@ -423,7 +473,7 @@ function [param]=WeirdShape2()
     param.snakes.refine.refineGrid=4;
     param.general.typDat='low5shape2';
     param.snakes.refine.typeRefine='all';
-    param.snakes.step.snakesSteps=50;
+    param.snakes.step.snakesSteps=500;
    
     
 

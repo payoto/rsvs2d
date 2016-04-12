@@ -1,4 +1,6 @@
-GENERATION PROCESS START
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
@@ -10,10 +12,6 @@ Calculations Started . . .
 
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:156
-GENERATION PROCESS end
-GRID REFINEMENT START
 
      OUTPUT:Skipped
 Calculations Started . . .
@@ -23,1045 +21,526 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 364 
-			Start Cell 2 of 364 
-			Start Cell 3 of 364 
-			Start Cell 4 of 364 
-			Start Cell 5 of 364 
-			Start Cell 6 of 364 
-			Start Cell 7 of 364 
-			Start Cell 8 of 364 
-			Start Cell 9 of 364 
-			Start Cell 10 of 364 
-			Start Cell 11 of 364 
-			Start Cell 12 of 364 
-			Start Cell 13 of 364 
-			Start Cell 14 of 364 
-			Start Cell 15 of 364 
-			Start Cell 16 of 364 
-			Start Cell 17 of 364 
-			Start Cell 18 of 364 
-			Start Cell 19 of 364 
-			Start Cell 20 of 364 
-			Start Cell 21 of 364 
-			Start Cell 22 of 364 
-			Start Cell 23 of 364 
-			Start Cell 24 of 364 
-			Start Cell 25 of 364 
-			Start Cell 26 of 364 
-			Start Cell 27 of 364 
-			Start Cell 28 of 364 
-			Start Cell 29 of 364 
-			Start Cell 30 of 364 
-			Start Cell 31 of 364 
-			Start Cell 32 of 364 
-			Start Cell 33 of 364 
-			Start Cell 34 of 364 
-			Start Cell 35 of 364 
-			Start Cell 36 of 364 
-			Start Cell 37 of 364 
-			Start Cell 38 of 364 
-			Start Cell 39 of 364 
-			Start Cell 40 of 364 
-			Start Cell 41 of 364 
-			Start Cell 42 of 364 
-			Start Cell 43 of 364 
-			Start Cell 44 of 364 
-			Start Cell 45 of 364 
-			Start Cell 46 of 364 
-			Start Cell 47 of 364 
-			Start Cell 48 of 364 
-			Start Cell 49 of 364 
-			Start Cell 50 of 364 
-			Start Cell 51 of 364 
-			Start Cell 52 of 364 
-			Start Cell 53 of 364 
-			Start Cell 54 of 364 
-			Start Cell 55 of 364 
-			Start Cell 56 of 364 
-			Start Cell 57 of 364 
-			Start Cell 58 of 364 
-			Start Cell 59 of 364 
-			Start Cell 60 of 364 
-			Start Cell 61 of 364 
-			Start Cell 62 of 364 
-			Start Cell 63 of 364 
-			Start Cell 64 of 364 
-			Start Cell 65 of 364 
-			Start Cell 66 of 364 
-			Start Cell 67 of 364 
-			Start Cell 68 of 364 
-			Start Cell 69 of 364 
-			Start Cell 70 of 364 
-			Start Cell 71 of 364 
-			Start Cell 72 of 364 
-			Start Cell 73 of 364 
-			Start Cell 74 of 364 
-			Start Cell 75 of 364 
-			Start Cell 76 of 364 
-			Start Cell 77 of 364 
-			Start Cell 78 of 364 
-			Start Cell 79 of 364 
-			Start Cell 80 of 364 
-			Start Cell 81 of 364 
-			Start Cell 82 of 364 
-			Start Cell 83 of 364 
-			Start Cell 84 of 364 
-			Start Cell 85 of 364 
-			Start Cell 86 of 364 
-			Start Cell 87 of 364 
-			Start Cell 88 of 364 
-			Start Cell 89 of 364 
-			Start Cell 90 of 364 
-			Start Cell 91 of 364 
-			Start Cell 92 of 364 
-			Start Cell 93 of 364 
-			Start Cell 94 of 364 
-			Start Cell 95 of 364 
-			Start Cell 96 of 364 
-			Start Cell 97 of 364 
-			Start Cell 98 of 364 
-			Start Cell 99 of 364 
-			Start Cell 100 of 364 
-			Start Cell 101 of 364 
-			Start Cell 102 of 364 
-			Start Cell 103 of 364 
-			Start Cell 104 of 364 
-			Start Cell 105 of 364 
-			Start Cell 106 of 364 
-			Start Cell 107 of 364 
-			Start Cell 108 of 364 
-			Start Cell 109 of 364 
-			Start Cell 110 of 364 
-			Start Cell 111 of 364 
-			Start Cell 112 of 364 
-			Start Cell 113 of 364 
-			Start Cell 114 of 364 
-			Start Cell 115 of 364 
-			Start Cell 116 of 364 
-			Start Cell 117 of 364 
-			Start Cell 118 of 364 
-			Start Cell 119 of 364 
-			Start Cell 120 of 364 
-			Start Cell 121 of 364 
-			Start Cell 122 of 364 
-			Start Cell 123 of 364 
-			Start Cell 124 of 364 
-			Start Cell 125 of 364 
-			Start Cell 126 of 364 
-			Start Cell 127 of 364 
-			Start Cell 128 of 364 
-			Start Cell 129 of 364 
-			Start Cell 130 of 364 
-			Start Cell 131 of 364 
-			Start Cell 132 of 364 
-			Start Cell 133 of 364 
-			Start Cell 134 of 364 
-			Start Cell 135 of 364 
-			Start Cell 136 of 364 
-			Start Cell 137 of 364 
-			Start Cell 138 of 364 
-			Start Cell 139 of 364 
-			Start Cell 140 of 364 
-			Start Cell 141 of 364 
-			Start Cell 142 of 364 
-			Start Cell 143 of 364 
-			Start Cell 144 of 364 
-			Start Cell 145 of 364 
-			Start Cell 146 of 364 
-			Start Cell 147 of 364 
-			Start Cell 148 of 364 
-			Start Cell 149 of 364 
-			Start Cell 150 of 364 
-			Start Cell 151 of 364 
-			Start Cell 152 of 364 
-			Start Cell 153 of 364 
-			Start Cell 154 of 364 
-			Start Cell 155 of 364 
-			Start Cell 156 of 364 
-			Start Cell 157 of 364 
-			Start Cell 158 of 364 
-			Start Cell 159 of 364 
-			Start Cell 160 of 364 
-			Start Cell 161 of 364 
-			Start Cell 162 of 364 
-			Start Cell 163 of 364 
-			Start Cell 164 of 364 
-			Start Cell 165 of 364 
-			Start Cell 166 of 364 
-			Start Cell 167 of 364 
-			Start Cell 168 of 364 
-			Start Cell 169 of 364 
-			Start Cell 170 of 364 
-			Start Cell 171 of 364 
-			Start Cell 172 of 364 
-			Start Cell 173 of 364 
-			Start Cell 174 of 364 
-			Start Cell 175 of 364 
-			Start Cell 176 of 364 
-			Start Cell 177 of 364 
-			Start Cell 178 of 364 
-			Start Cell 179 of 364 
-			Start Cell 180 of 364 
-			Start Cell 181 of 364 
-			Start Cell 182 of 364 
-			Start Cell 183 of 364 
-			Start Cell 184 of 364 
-			Start Cell 185 of 364 
-			Start Cell 186 of 364 
-			Start Cell 187 of 364 
-			Start Cell 188 of 364 
-			Start Cell 189 of 364 
-			Start Cell 190 of 364 
-			Start Cell 191 of 364 
-			Start Cell 192 of 364 
-			Start Cell 193 of 364 
-			Start Cell 194 of 364 
-			Start Cell 195 of 364 
-			Start Cell 196 of 364 
-			Start Cell 197 of 364 
-			Start Cell 198 of 364 
-			Start Cell 199 of 364 
-			Start Cell 200 of 364 
-			Start Cell 201 of 364 
-			Start Cell 202 of 364 
-			Start Cell 203 of 364 
-			Start Cell 204 of 364 
-			Start Cell 205 of 364 
-			Start Cell 206 of 364 
-			Start Cell 207 of 364 
-			Start Cell 208 of 364 
-			Start Cell 209 of 364 
-			Start Cell 210 of 364 
-			Start Cell 211 of 364 
-			Start Cell 212 of 364 
-			Start Cell 213 of 364 
-			Start Cell 214 of 364 
-			Start Cell 215 of 364 
-			Start Cell 216 of 364 
-			Start Cell 217 of 364 
-			Start Cell 218 of 364 
-			Start Cell 219 of 364 
-			Start Cell 220 of 364 
-			Start Cell 221 of 364 
-			Start Cell 222 of 364 
-			Start Cell 223 of 364 
-			Start Cell 224 of 364 
-			Start Cell 225 of 364 
-			Start Cell 226 of 364 
-			Start Cell 227 of 364 
-			Start Cell 228 of 364 
-			Start Cell 229 of 364 
-			Start Cell 230 of 364 
-			Start Cell 231 of 364 
-			Start Cell 232 of 364 
-			Start Cell 233 of 364 
-			Start Cell 234 of 364 
-			Start Cell 235 of 364 
-			Start Cell 236 of 364 
-			Start Cell 237 of 364 
-			Start Cell 238 of 364 
-			Start Cell 239 of 364 
-			Start Cell 240 of 364 
-			Start Cell 241 of 364 
-			Start Cell 242 of 364 
-			Start Cell 243 of 364 
-			Start Cell 244 of 364 
-			Start Cell 245 of 364 
-			Start Cell 246 of 364 
-			Start Cell 247 of 364 
-			Start Cell 248 of 364 
-			Start Cell 249 of 364 
-			Start Cell 250 of 364 
-			Start Cell 251 of 364 
-			Start Cell 252 of 364 
-			Start Cell 253 of 364 
-			Start Cell 254 of 364 
-			Start Cell 255 of 364 
-			Start Cell 256 of 364 
-			Start Cell 257 of 364 
-			Start Cell 258 of 364 
-			Start Cell 259 of 364 
-			Start Cell 260 of 364 
-			Start Cell 261 of 364 
-			Start Cell 262 of 364 
-			Start Cell 263 of 364 
-			Start Cell 264 of 364 
-			Start Cell 265 of 364 
-			Start Cell 266 of 364 
-			Start Cell 267 of 364 
-			Start Cell 268 of 364 
-			Start Cell 269 of 364 
-			Start Cell 270 of 364 
-			Start Cell 271 of 364 
-			Start Cell 272 of 364 
-			Start Cell 273 of 364 
-			Start Cell 274 of 364 
-			Start Cell 275 of 364 
-			Start Cell 276 of 364 
-			Start Cell 277 of 364 
-			Start Cell 278 of 364 
-			Start Cell 279 of 364 
-			Start Cell 280 of 364 
-			Start Cell 281 of 364 
-			Start Cell 282 of 364 
-			Start Cell 283 of 364 
-			Start Cell 284 of 364 
-			Start Cell 285 of 364 
-			Start Cell 286 of 364 
-			Start Cell 287 of 364 
-			Start Cell 288 of 364 
-			Start Cell 289 of 364 
-			Start Cell 290 of 364 
-			Start Cell 291 of 364 
-			Start Cell 292 of 364 
-			Start Cell 293 of 364 
-			Start Cell 294 of 364 
-			Start Cell 295 of 364 
-			Start Cell 296 of 364 
-			Start Cell 297 of 364 
-			Start Cell 298 of 364 
-			Start Cell 299 of 364 
-			Start Cell 300 of 364 
-			Start Cell 301 of 364 
-			Start Cell 302 of 364 
-			Start Cell 303 of 364 
-			Start Cell 304 of 364 
-			Start Cell 305 of 364 
-			Start Cell 306 of 364 
-			Start Cell 307 of 364 
-			Start Cell 308 of 364 
-			Start Cell 309 of 364 
-			Start Cell 310 of 364 
-			Start Cell 311 of 364 
-			Start Cell 312 of 364 
-			Start Cell 313 of 364 
-			Start Cell 314 of 364 
-			Start Cell 315 of 364 
-			Start Cell 316 of 364 
-			Start Cell 317 of 364 
-			Start Cell 318 of 364 
-			Start Cell 319 of 364 
-			Start Cell 320 of 364 
-			Start Cell 321 of 364 
-			Start Cell 322 of 364 
-			Start Cell 323 of 364 
-			Start Cell 324 of 364 
-			Start Cell 325 of 364 
-			Start Cell 326 of 364 
-			Start Cell 327 of 364 
-			Start Cell 328 of 364 
-			Start Cell 329 of 364 
-			Start Cell 330 of 364 
-			Start Cell 331 of 364 
-			Start Cell 332 of 364 
-			Start Cell 333 of 364 
-			Start Cell 334 of 364 
-			Start Cell 335 of 364 
-			Start Cell 336 of 364 
-			Start Cell 337 of 364 
-			Start Cell 338 of 364 
-			Start Cell 339 of 364 
-			Start Cell 340 of 364 
-			Start Cell 341 of 364 
-			Start Cell 342 of 364 
-			Start Cell 343 of 364 
-			Start Cell 344 of 364 
-			Start Cell 345 of 364 
-			Start Cell 346 of 364 
-			Start Cell 347 of 364 
-			Start Cell 348 of 364 
-			Start Cell 349 of 364 
-			Start Cell 350 of 364 
-			Start Cell 351 of 364 
-			Start Cell 352 of 364 
-			Start Cell 353 of 364 
-			Start Cell 354 of 364 
-			Start Cell 355 of 364 
-			Start Cell 356 of 364 
-			Start Cell 357 of 364 
-			Start Cell 358 of 364 
-			Start Cell 359 of 364 
-			Start Cell 360 of 364 
-			Start Cell 361 of 364 
-			Start Cell 362 of 364 
-			Start Cell 363 of 364 
-			Start Cell 364 of 364 
+			Start Cell 1 of 16 
+			Start Cell 2 of 16 
+			Start Cell 3 of 16 
+			Start Cell 4 of 16 
+			Start Cell 5 of 16 
+			Start Cell 6 of 16 
+			Start Cell 7 of 16 
+			Start Cell 8 of 16 
+			Start Cell 9 of 16 
+			Start Cell 10 of 16 
+			Start Cell 11 of 16 
+			Start Cell 12 of 16 
+			Start Cell 13 of 16 
+			Start Cell 14 of 16 
+			Start Cell 15 of 16 
+			Start Cell 16 of 16 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:01:593
-GRID REFINEMENT end
-SNAKE PROCESS START
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:125
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
   Start initialisation
     Generate Cell Centred Grid
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:09:375
+  Initialisation time:00:00:00:359
   Start Time Stepping
-     Step 1  -current volume error is 0.12073
-  Time Taken: 00:00:04:545
-     Step 2  -current volume error is 0.097026
-  Time Taken: 00:00:01:857
-     Step 3  -current volume error is 0.094208
-  Time Taken: 00:00:02:628
-     Step 4  -current volume error is 0.090674
-  Time Taken: 00:00:01:842
-     Step 5  -current volume error is 0.076622
-  Time Taken: 00:00:01:874
-     Step 6  -current volume error is 0.074438
-  Time Taken: 00:00:01:940
-     Step 7  -current volume error is 0.068752
-  Time Taken: 00:00:02:654
-     Step 8  -current volume error is 0.060151
-  Time Taken: 00:00:01:806
-     Step 9  -current volume error is 0.046188
-  Time Taken: 00:00:01:946
-     Step 10  -current volume error is 0.041745
-  Time Taken: 00:00:01:844
-     Step 11  -current volume error is 0.039311
-  Time Taken: 00:00:01:862
-     Step 12  -current volume error is 0.034586
-  Time Taken: 00:00:02:669
-     Step 13  -current volume error is 0.029929
-  Time Taken: 00:00:01:784
-     Step 14  -current volume error is 0.026807
-  Time Taken: 00:00:01:762
-     Step 15  -current volume error is 0.023587
-  Time Taken: 00:00:01:771
-     Step 16  -current volume error is 0.032329
-  Time Taken: 00:00:01:864
-     Step 17  -current volume error is 0.044618
-  Time Taken: 00:00:01:826
-     Step 18  -current volume error is 0.04244
-  Time Taken: 00:00:01:829
-     Step 19  -current volume error is 0.041628
- - Breeding Snaxel Ignored - 8 Problems with snaxel update
-  Time Taken: 00:00:01:877
-     Step 20  -current volume error is 0.04149
- - Breeding Snaxel Ignored - 4 Problems with snaxel update
-  Time Taken: 00:00:01:842
-     Step 21  -current volume error is 0.041121
-  Time Taken: 00:00:01:862
-     Step 22  -current volume error is 0.040677
-  Time Taken: 00:00:01:873
-     Step 23  -current volume error is 0.040322
-  Time Taken: 00:00:01:876
-     Step 24  -current volume error is 0.039112
-  Time Taken: 00:00:01:862
-     Step 25  -current volume error is 0.037811
-  Time Taken: 00:00:01:875
-     Step 26  -current volume error is 0.037103
-  Time Taken: 00:00:01:931
-     Step 27  -current volume error is 0.036869
-  Time Taken: 00:00:01:921
-     Step 28  -current volume error is 0.034098
-  Time Taken: 00:00:01:954
-     Step 29  -current volume error is 0.033147
-  Time Taken: 00:00:01:998
-     Step 30  -current volume error is 0.038609
- - Breeding Snaxel Ignored - 4 Problems with snaxel update
-  Time Taken: 00:00:01:987
-     Step 31  -current volume error is 0.037211
- - Breeding Snaxel Ignored - 2 Problems with snaxel update
-  Time Taken: 00:00:01:967
-     Step 32  -current volume error is 0.033589
- - Breeding Snaxel Ignored - 2 Problems with snaxel update
-  Time Taken: 00:00:01:892
-     Step 33  -current volume error is 0.035595
- - Breeding Snaxel Ignored - 2 Problems with snaxel update
-  Time Taken: 00:00:01:900
-     Step 34  -current volume error is 0.033434
- - Breeding Snaxel Ignored - 3 Problems with snaxel update
-  Time Taken: 00:00:01:872
-     Step 35  -current volume error is 0.030412
- - Breeding Snaxel Ignored - 3 Problems with snaxel update
-  Time Taken: 00:00:01:927
-     Step 36  -current volume error is 0.031471
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:01:889
-     Step 37  -current volume error is 0.032789
-  Time Taken: 00:00:01:951
-     Step 38  -current volume error is 0.038454
-  Time Taken: 00:00:01:969
-     Step 39  -current volume error is 0.045646
-  Time Taken: 00:00:02:019
-     Step 40  -current volume error is 0.045439
-  Time Taken: 00:00:01:998
-     Step 41  -current volume error is 0.045317
-  Time Taken: 00:00:02:018
-     Step 42  -current volume error is 0.045276
- - Breeding Snaxel Ignored - 8 Problems with snaxel update
-  Time Taken: 00:00:01:998
-     Step 43  -current volume error is 0.044866
- - Breeding Snaxel Ignored - 8 Problems with snaxel update
-  Time Taken: 00:00:02:032
-     Step 44  -current volume error is 0.044055
- - Breeding Snaxel Ignored - 16 Problems with snaxel update
-  Time Taken: 00:00:02:096
-     Step 45  -current volume error is 0.042638
-  Time Taken: 00:00:02:079
-     Step 46  -current volume error is 0.042364
-  Time Taken: 00:00:02:045
-     Step 47  -current volume error is 0.042017
-  Time Taken: 00:00:02:046
-     Step 48  -current volume error is 0.041585
-  Time Taken: 00:00:02:034
-     Step 49  -current volume error is 0.040554
-  Time Taken: 00:00:02:108
-     Step 50  -current volume error is 0.040112
-  Time Taken: 00:00:02:123
-     Step 51  -current volume error is 0.042665
-  Time Taken: 00:00:02:175
-     Step 52  -current volume error is 0.041529
-  Time Taken: 00:00:02:142
-     Step 53  -current volume error is 0.04156
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:02:107
-     Step 54  -current volume error is 0.041348
-  Time Taken: 00:00:02:129
-     Step 55  -current volume error is 0.040789
-  Time Taken: 00:00:02:187
-     Step 56  -current volume error is 0.039451
-  Time Taken: 00:00:02:139
-     Step 57  -current volume error is 0.042431
-  Time Taken: 00:00:02:174
-     Step 58  -current volume error is 0.042004
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:02:186
-     Step 59  -current volume error is 0.040699
- - Breeding Snaxel Ignored - 2 Problems with snaxel update
-  Time Taken: 00:00:02:252
-     Step 60  -current volume error is 0.042931
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:02:290
-     Step 61  -current volume error is 0.042732
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:02:259
-     Step 62  -current volume error is 0.042728
-  Time Taken: 00:00:02:263
-     Step 63  -current volume error is 0.042318
-  Time Taken: 00:00:02:254
-     Step 64  -current volume error is 0.041684
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:02:201
-     Step 65  -current volume error is 0.042287
- - Breeding Snaxel Ignored - 4 Problems with snaxel update
-  Time Taken: 00:00:02:205
-     Step 66  -current volume error is 0.04107
-  Time Taken: 00:00:02:201
-     Step 67  -current volume error is 0.041061
-  Time Taken: 00:00:02:330
-     Step 68  -current volume error is 0.039904
-  Time Taken: 00:00:02:356
-     Step 69  -current volume error is 0.039447
-  Time Taken: 00:00:02:371
-     Step 70  -current volume error is 0.038859
-  Time Taken: 00:00:02:296
-     Step 71  -current volume error is 0.038169
-  Time Taken: 00:00:02:346
-     Step 72  -current volume error is 0.038232
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-  Time Taken: 00:00:02:451
-     Step 73  -current volume error is 0.041545
-  Time Taken: 00:00:02:347
-     Step 74  -current volume error is 0.041251
- - Breeding Snaxel Ignored - 4 Problems with snaxel update
-  Time Taken: 00:00:02:351
-     Step 75  -current volume error is 0.038269
- - Breeding Snaxel Ignored - 3 Problems with snaxel update
-  Time Taken: 00:00:02:358
-     Step 76  -current volume error is 0.038753
- - Breeding Snaxel Ignored - 2 Problems with snaxel update
-  Time Taken: 00:00:02:469
-     Step 77  -current volume error is 0.037216
-  Time Taken: 00:00:02:377
-     Step 78  -current volume error is 0.037084
-  Time Taken: 00:00:02:341
-     Step 79  -current volume error is 0.040734
-  Time Taken: 00:00:02:409
-     Step 80  -current volume error is 0.040196
- - Breeding Snaxel Ignored - 1 Problems with snaxel update
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-  Time Taken: 00:00:02:482
-     Step 81  -current volume error is 0.039682
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-  Time Taken: 00:00:02:531
-     Step 82  -current volume error is 0.039642
- - Breeding Snaxel Ignored - 5 Problems with snaxel update
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-  Time Taken: 00:00:02:564
-     Step 83  -current volume error is 0.039045
- - Breeding Snaxel Ignored - 11 Problems with snaxel update
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1832)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1832,0)">line 1832</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-[Warning: Snaxels are adjacent and moving in same direction Impact condition is invalid] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>EdgeImpactCondition', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1748)" style="font-weight:bold">Snakes>EdgeImpactCondition</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1748,0)">line 1748</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>FreezeEdgeContact', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1728)" style="font-weight:bold">Snakes>FreezeEdgeContact</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1728,0)">line 1728</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>TopologyMergingProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1849)" style="font-weight:bold">Snakes>TopologyMergingProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1849,0)">line 1849</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 183)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',183,0)">line 183</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-  Time Taken: 00:00:02:592
-     Step 84  -[Warning: You're fucking up] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractCellSnaxelConnectedPairs', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 338)" style="font-weight:bold">VolumeFraction>ExtractCellSnaxelConnectedPairs</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',338,0)">line 338</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractCellFillInformation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 163)" style="font-weight:bold">VolumeFraction>ExtractCellFillInformation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',163,0)">line 163</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 26)" style="font-weight:bold">VolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',26,0)">line 26</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 116)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',116,0)">line 116</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
-{Subscript indices must either be real positive integers or logicals.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>AddSnaxelBorders', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 192)" style="font-weight:bold">VolumeFraction>AddSnaxelBorders</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',192,0)">line 192</a>)
-    isCCWOrder=cellStruct.snaxel(edgeSnakSub(1)).snaxnext==cellStruct.snaxel(edgeSnakSub(2)).index;
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractBorderStructure', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 277)" style="font-weight:bold">VolumeFraction>ExtractBorderStructure</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',277,0)">line 277</a>)
-        [bordstruct1,edgeSnakSub(ii,:)]=AddSnaxelBorders(cellStruct,edgeSnakSub(ii,:));
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractCellFillInformation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 164)" style="font-weight:bold">VolumeFraction>ExtractCellFillInformation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',164,0)">line 164</a>)
-        [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 26)" style="font-weight:bold">VolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',26,0)">line 26</a>)
-        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 116)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',116,0)">line 116</a>)
-        [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
-        
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-        ii=IterSnakes;
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(unstructured,loop,...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(gridrefined,looprefined,...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)
-        [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-} 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',192,1)">192 </a>    isCCWOrder=cellStruct.snaxel(edgeSnakSub(1)).snaxnext==cellStruct.snaxel(edgeSnakSub(2)).index;
-assignin('base','snakSave',snakSave)
-save(snakSave)
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('save')" style="font-weight:bold">save</a>
-Argument must contain a string.
-} 
-help save
- <strong>save</strong> Save workspace variables to file. 
-    <strong>save</strong>(FILENAME) stores all variables from the current workspace in a
-    MATLAB formatted binary file (MAT-file) called FILENAME.
- 
-    <strong>save</strong>(FILENAME,VARIABLES) stores only the specified variables.
- 
-    <strong>save</strong>(FILENAME,'-struct',STRUCTNAME,FIELDNAMES) stores the fields of the
-    specified scalar structure as individual variables in the file. If you 
-    include the optional FIELDNAMES, the <strong>save</strong> function stores only the
-    specified fields of the structure.  You cannot specify VARIABLES and 
-    the '-struct' keyword in the same call to <strong>save</strong>.
- 
-    <strong>save</strong>(FILENAME, ..., '-append') adds new variables to an existing file.
-    You can specify '-append' with additional inputs such as VARIABLES,
-    '-struct', FORMAT, or VERSION.
- 
-    <strong>save</strong>(FILENAME, ..., FORMAT) saves in the specified format: '-mat' or
-    '-ascii'.
-    You can specify FORMAT with additional inputs such as VARIABLES,
-    '-struct', '-append', or VERSION.
- 
-    <strong>save</strong>(FILENAME, ..., VERSION) saves to MAT-files in the specified
-    version: '-v4', '-v6', '-v7', or '-v7.3'.
-    You can specify VERSION with additional inputs such as VARIABLES,
-    '-struct', '-append', or FORMAT.
- 
-    <strong>save</strong> FILENAME ... is the command form of the syntax, for convenient 
-    saving from the command line.  With command syntax, you do not need to
-    enclose strings in single quotation marks.  Separate inputs with spaces
-    instead of commas.  Do not use command syntax if inputs such as 
-    FILENAME are variables.
- 
-    Inputs:
- 
-    FILENAME: If you do not specify FILENAME, the <strong>save</strong> function saves to a
-    file named matlab.mat.  If FILENAME does not include an extension and 
-    the value of format is '-mat' (the default), MATLAB appends .mat. If 
-    filename does not include a full path, MATLAB saves in the current
-    folder. You must have permission to write to the file.
- 
-    VARIABLES:  Save only selected variables from the workspace.
-    Use one of the following forms:
- 
-        V1, V2, ...              Save the listed variables. Use the '*'
-                                 wildcard to match patterns.  For example,
-                                 save('A*') saves all variables that start
-                                 with A.
-        '-regexp', EXPRESSIONS   Save only the variables that match the
-                                 specified regular expressions. <strong>save</strong> treats
-                                 all inputs as regular expressions except
-                                 the optional FILENAME and STRUCTNAME.  The
-                                 FILENAME input must appear first.  For
-                                 more information on regular expressions,
-                                 type "doc regexp" at the command prompt.
- 
-    '-struct', STRUCTNAME, FIELDNAMES:  Save the fields of a scalar
-    structure as individual variables in the file.  FIELDNAMES is optional; 
-    specify to save only selected fields.  FIELDNAMES use the same forms as
-    VARIABLES.
- 
-    '-append': Add data to an existing file.  For MAT-files, '-append' adds
-    new variables to the file or replaces the saved values of existing
-    variables with values in the workspace.  For ASCII files, '-append'
-    adds data to the end of the file.
- 
-    FORMAT: Specify the format of the file, regardless of any specified
-    extension.  Use one of the following combinations:
- 
-        '-mat'                        Binary MAT-file format (default).
-        '-ascii'                      8-digit ASCII format.
-        '-ascii', '-tabs'             Tab-delimited 8-digit ASCII format.
-        '-ascii', '-double'           16-digit ASCII format.
-        '-ascii', '-double', '-tabs'  Tab-delimited 16-digit ASCII format.
- 
-        For ASCII file formats, the <strong>save</strong> function has the following
-        limitations:
-        * Each variable must be a two-dimensional double or char array.
-        * MATLAB translates characters to their corresponding internal
-          ASCII codes.  For example, 'abc' appears in an ASCII file as:
-              9.7000000e+001  9.8000000e+001  9.9000000e+001
-        * The output includes only the real component of complex numbers.
-        * If you plan to use the LOAD function to read the file, all
-          variables must have the same number of columns.
- 
-    VERSION: Create a MAT-file that you can load into an earlier version of
-    MATLAB or that supports specific features.  The following table shows 
-    the available MAT-file version options and the corresponding supported
-    features.
- 
-             | Can Load in  |
-    Option   | Versions     | Supported Features
-    ---------+--------------+----------------------------------------------
-    '-v7.3'  | 7.3 or later | Version 7.0 features plus support for
-             |              | data items greater than or equal to 2GB on
-             |              | 64-bit systems
-    ---------+--------------+----------------------------------------------
-    '-v7'    | 7.0 or later | Version 6 features plus data compression and
-             |              | Unicode character encoding
-    ---------+--------------+----------------------------------------------
-    '-v6'    | 5 or later   | Version 4 features plus N-dimensional arrays,
-             |              | cell and structure arrays, and variable names
-             |              | greater than 19 characters
-    ---------+--------------+----------------------------------------------
-    '-v4'    | all          | Two-dimensional double, character, and
-             |              | sparse arrays
- 
-    If any data items require features that the specified version does not
-    support, MATLAB does not save those items and issues a warning. You 
-    cannot specify a version later than your version of MATLAB software.
- 
-    To view or set the default version for MAT-files, select
-    File > Preferences > General > MAT-Files.
- 
-    Examples:
- 
-    % Save all variables from the workspace to test.mat:
-    save test.mat
- 
-    % Save two variables, where FILENAME is a variable:
-    savefile = 'pqfile.mat';
-    p = rand(1, 10);
-    q = ones(10);
-    save(savefile, 'p', 'q');
- 
-    % Save the fields of a structure as individual variables:
-    s1.a = 12.7;
-    s1.b = {'abc', [4 5; 6 7]};
-    s1.c = 'Hello!';
-    save('newstruct.mat', '-struct', 's1');
- 
-    % Save variables whose names contain digits:
-    save myfile.mat -regexp \d
- 
-    See also <a href="matlab:help load">load</a>, <a href="matlab:help matfile">matfile</a>, <a href="matlab:help whos">whos</a>, <a href="matlab:help regexp">regexp</a>, <a href="matlab:help hgsave">hgsave</a>, <a href="matlab:help saveas">saveas</a>, <a href="matlab:help workspace">workspace</a>, <a href="matlab:help clear">clear</a>.
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('save')">Other functions named save</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc save">doc save</a>
-
-save('data_bigaerofoil',snakSave)
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('save')" style="font-weight:bold">save</a>
-Argument must contain a string.
-} 
-save('data_bigaerofoil','snakSave')
-[Warning: Variable 'snakSave' cannot be saved to a MAT-file whose version is older than 7.3.
-To save this variable, use the -v7.3 switch.
-Skipping...] 
-[  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>AddSnaxelBorders', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 192)" style="font-weight:bold">VolumeFraction>AddSnaxelBorders</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',192,0)">line 192</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractBorderStructure', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 277)" style="font-weight:bold">VolumeFraction>ExtractBorderStructure</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',277,0)">line 277</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractCellFillInformation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 164)" style="font-weight:bold">VolumeFraction>ExtractCellFillInformation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',164,0)">line 164</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 26)" style="font-weight:bold">VolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',26,0)">line 26</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess/IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 116)" style="font-weight:bold">Snakes>RunSnakesProcess/IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',116,0)">line 116</a>)
-> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 80)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',80,0)">line 80</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes
+  20 Steps Performed
+  Iteration Time:00:00:03:593
+  Volume converged to 2.07920e-03
+Time Elapsed:00:00:04:279
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:04:936
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+12-Apr-2016 17:33:04
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:346
+  Volume converged to 1.85401e-04
+Time Elapsed:00:00:17:939
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:189
+  Volume converged to 7.86790e-03
+Time Elapsed:00:00:18:860
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:799
+  Volume converged to 1.58340e-02
+Time Elapsed:00:00:18:407
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:376
+  Volume converged to 1.88300e-02
+Time Elapsed:00:00:19:048
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:783
+  Volume converged to 3.76934e-05
+Time Elapsed:00:00:18:516
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:344
+  Volume converged to 2.98530e-04
+Time Elapsed:00:00:20:281
+SNAKE PROCESS end
+-----------------------
+  
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:03:42:430
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+12-Apr-2016 17:36:47
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:107
+  Volume converged to 8.83058e-03
+Time Elapsed:00:00:17:746
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:075
+  Volume converged to 1.83810e-02
+Time Elapsed:00:00:17:811
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:731
+  Volume converged to 3.37707e-05
+Time Elapsed:00:00:17:403
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:045
+  Volume converged to 1.72828e-02
+Time Elapsed:00:00:18:811
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:655
+  Volume converged to 1.64384e-03
+Time Elapsed:00:00:19:403
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:718
+  Volume converged to 1.62163e-03
+Time Elapsed:00:00:19:435
+SNAKE PROCESS end
+-----------------------
+  
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:03:44:715
+ITERATION 2 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 3 start
+12-Apr-2016 17:40:32
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:592
+  Volume converged to 4.00003e-05
+Time Elapsed:00:00:18:217
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:013
+  Volume converged to 1.36413e-06
+Time Elapsed:00:00:18:656
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:624
+  Volume converged to 1.26394e-02
+Time Elapsed:00:00:19:279
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:001
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:872
+  Volume converged to 3.02041e-03
+Time Elapsed:00:00:19:609
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:247
+  Volume converged to 3.51559e-04
+Time Elapsed:00:00:19:951
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:216
+  Volume converged to 6.68791e-04
+Time Elapsed:00:00:19:826
+SNAKE PROCESS end
+-----------------------
+  
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:03:45:612
+ITERATION 3 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 4 start
+12-Apr-2016 17:44:17
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:17:891
+  Volume converged to 4.58628e-08
+Time Elapsed:00:00:18:516
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:395
+  Volume converged to 6.54465e-07
+Time Elapsed:00:00:20:098
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:19:030
+  Volume converged to 1.88370e-02
+Time Elapsed:00:00:19:645
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:719
+  Volume converged to 1.86574e-02
+Time Elapsed:00:00:19:389
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:18:734
+  Volume converged to 5.48273e-04
+Time Elapsed:00:00:19:436
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:20:191
+  Volume converged to 1.67081e-02
+Time Elapsed:00:00:20:909
+SNAKE PROCESS end
+-----------------------
+  
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+----------
+Calculate Objective - CutCellFlow start
+----------
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:03:34:549
+ITERATION 4 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+OPTIMISATION - TestParOptimAero_desktop end
+    Time Elapsed:00:14:52:931
+12-Apr-2016 17:33:00
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+  

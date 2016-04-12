@@ -816,18 +816,6 @@ function [Ja_x,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol)
         Ja_p(ii,ii)=-(lagMultiSmall(ii));
     end
 end
-function []=CheckSensitivity
-    
-    figure
-    for ii=1:length(sensSnax(1,:))
-        plot(sensSnax(:,ii))
-        hold on,
-    end
-    figure
-    for ii=1:length(sensSnax(:,1))
-        plot(sensSnax(ii,:))
-        hold on
-    end
-end
+
 
 

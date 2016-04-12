@@ -30,11 +30,11 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     oldGridUns=ModifReshape(oldGrid);
     
     unstructglobal=refinedGriduns;
-   profile on
+   %profile on
     [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param);
-    profile viewer
+    %profile viewer
     
     if snakesConsole
         figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
@@ -127,7 +127,7 @@ function [ii]=IterSnakes()
             fprintf(' -  Snakes Converged!\n')
             break
         end
-        disp(['current volume error is ', num2str(currentConvVolume)]);
+        fprintf([' DVol = ', num2str(currentConvVolume)]);
         % visualise results
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
             [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxelmodvel,makeMov,volumefraction);
@@ -148,7 +148,12 @@ function [ii]=IterSnakes()
             %[snakposition]=SnaxelNormal2(snaxel,snakposition);
             %[snaxel,~,~]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         end
+        % Topology Trimming, Merging and Freezing
+        [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
+        [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
+        
         % Snaxel Repopulation In both directions
         suba=ArrivalCondition(snaxel);
         [savTest(ii).finishedSnakes]=[snaxel(suba).index];
@@ -591,7 +596,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         kkLocal=kkLocal+1;
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
-        dist=0;%arrivalTolerance^2; % Snaxel initialisation, it starts at the vertex
+        dist=1e-4;%arrivalTolerance^2; % Snaxel initialisation, it starts at the vertex
         velocity=0; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);
@@ -2176,7 +2181,7 @@ function []=testSensitivity(snaxel,snakposition,sensSnax)
     [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
         ones([length(snaxel), 1])*2],2);
     [testPos1]=CreateComparisonMatrix(coord1);
-    
+    l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
     for ii=1:length(sensSnax(1,:)),
         snaxCopy=snaxel;
         e1=(1)./sensSnax(:,ii);

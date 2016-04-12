@@ -580,31 +580,3 @@ end
 
 %% Calculate position derivatives versus constraints
 
-function []=SnaxelSensitivity()
-    
-    
-    
-end
-
-
-function []=BuildDAdd2()
-    
-    
-    
-end
-
-
-function []=SnaxelSensitivity()
-    
-    
-    
-end
-
-
-function []=SnaxelSensitivity()
-    
-    
-    
-end
-
-
