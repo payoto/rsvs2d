@@ -37,7 +37,7 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     obj.err=data(2);
     obj.cl=data(3);
     obj.cd=data(4);
-    
+    iterN=obj.iter;
     % test convergence
     
     [isfinished,restartNormal,restartCFL,theoretConvIter]=...
@@ -72,11 +72,29 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
             obj.cd=data(4);
             [isfinished,restartNormal,restartCFL,theoretConvIter]=...
                 TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
+            iterN=iterN+obj.iter;
         end
     end
-    
+    [obj]=ExtractFinalData(targFolder,iterN);
 end
 
+function [obj]=ExtractFinalData(targFolder,iter)
+    
+    resFile=[targFolder,filesep,'res_hist.dat'];
+    
+    fid=fopen(resFile,'r');
+    fseek(fid,-200,1); % Seek the end of file
+    fgetl(fid);
+    data=num2str(fgetl(fid));
+    
+    structName={'iter','res','cl','cm','cd','cx','cy'};
+    for ii=1:length(structName)
+        obj.(structName{ii})=data(ii);
+    end
+    
+    obj.iter=iter;
+    
+end
 
 function endstr=RunFlowSolverOnly(compType,targFolder)
     
@@ -113,7 +131,6 @@ function []=CopyBoundaryFile(boundaryLoc,targFolder)
 end
 
 %% Error handling
-
 
 function [errFlag]=CutCellErrorHandling(endstr,stoponerror)
     

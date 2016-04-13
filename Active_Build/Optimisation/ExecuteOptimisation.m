@@ -114,7 +114,8 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
     
-    parfor ii=1:nPop
+    %parfor ii=1:nPop
+    for ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
@@ -122,7 +123,7 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
         [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
             newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
         population(ii).location=outTemp.dirprofile;
-        population(ii).objective=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
+        [population(ii).objective,population(ii).additional]=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
     end
     
     [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population);
@@ -224,7 +225,8 @@ function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
     
-    population=struct('fill',valFill,'location','','objective',[],'contraint',true);
+    population=struct('fill',valFill,'location','','objective',[],'contraint'...
+        ,true,'additional',struct([]));
     
     [iterstruct(1:nIter).population]=deal(population);
     
@@ -308,18 +310,18 @@ end
 
 %% Objective Function
 
-function [objValue]=EvaluateObjective(objectiveName,paramoptim,member,loop)
+function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,member,loop)
     
     procStr=['Calculate Objective - ',objectiveName];
-    [tStart]=PrintStart(procStr,3);
+    [tStart]=PrintStart(procStr,2);
     
     objValue=[];
-    objValue=eval([objectiveName,'(paramoptim,member,loop);']);
+    [objValue,additional]=eval([objectiveName,'(paramoptim,member,loop);']);
     
-    [tElapsed]=PrintEnd(procStr,3,tStart);
+    [tElapsed]=PrintEnd(procStr,2,tStart);
 end
 
-function [objValue]=LengthArea(paramoptim,member,loop)
+function [objValue,additional]=LengthArea(paramoptim,member,loop)
     
     points=loop.snaxel.coord(1:end-1,:);
     [A]=abs(CalculatePolyArea(points));
@@ -328,14 +330,20 @@ function [objValue]=LengthArea(paramoptim,member,loop)
     
     objValue=A/L;
     
+    additional.A=A;
+    additional.A=L;
+    
 end
 
-function objValue=CutCellFlow(paramoptim,member,loop)
+function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
     boundaryLoc=member.location;
     
     [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc);
-    
+    [~,areaAdd]=LengthArea(paramoptim,member,loop);
     objValue=obj.cd;
+    additional=obj;
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
     
 end
 

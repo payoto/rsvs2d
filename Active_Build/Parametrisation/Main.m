@@ -104,9 +104,9 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     disp(' ')
     disp('Edit Parameter File in Notepad++, press Any key in the MATLAB command window')
     disp(' once it is saved to resume execution.')
-%     system(['"C:\Program Files (x86)\Notepad++\notepad++.exe"  ',...
-%         '"',[cd,'\param_Restart.m'],'"']);
-%     pause
+    system(['"C:\Program Files (x86)\Notepad++\notepad++.exe"  ',...
+        '"',[cd,'\param_Restart.m'],'"']);
+    pause
     
     param_Restart
     varExtract={'useSnakes'};
