@@ -76,7 +76,11 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
     isFreeze=[snaxel(:).isfreeze];
     %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
+    
     [Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
+    [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
+    
     sensSnax=[];
     if forceparam.isLast
         sensSnax=SnaxelSensitivity(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2,...
@@ -702,6 +706,7 @@ function [sensSnax]=SnaxelSensitivity(snaxel,coeffstructure,volumefraction,lagMu
 end
 
 function [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMultiplier,derivtenscalc)
+    
     [snaxtocell]=MatchSnaxtoCell(snaxel,coeffstructure,volumefraction);
     
     oldIndCell=[volumefraction(:).oldCellInd];
@@ -804,6 +809,7 @@ function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,Ja_x,lagMulti)
     
     
 end
+
 function [Ja_x,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol)
     Ja_x=Ja_x(actCol,:);
     lagMultiSmall=lagMulti(actCol);

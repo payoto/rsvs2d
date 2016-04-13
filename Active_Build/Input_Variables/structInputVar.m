@@ -82,7 +82,7 @@ function paramsnakesstep=default_snakes_step()
     
     paramsnakesstep.snakesSteps=100;
     paramsnakesstep.mergeTopo=true;
-    paramsnakesstep.maxStep=0.9;
+    paramsnakesstep.maxStep=0.4;
     paramsnakesstep.maxDt=0.5;
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=2e-1;
@@ -90,6 +90,13 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.snakesMinSteps=5;
     paramsnakesstep.snakData='all';
     paramsnakesstep.snakesConsole=true;
+    paramsnakesstep.stepType='indiv'; % 'strict' 'bounded' 'indiv' 'mixed'
+    paramsnakesstep.vSwitch=1e-5;
+    paramsnakesstep.dtRatio=5;
+    
+    paramsnakesstep.convCheckRate=5;
+    paramsnakesstep.convCheckRange=10;
+    paramsnakesstep.convDistance=50;
 end
 
 function paramsnakesrefine=default_snakes_refine()
@@ -303,7 +310,7 @@ function [param]=optimDefault()
     param.general.subdivType='area';
     
     param.snakes.refine.refineGrid=4;
-    param.snakes.refine.typeRefine='actgrey';
+    param.snakes.refine.typeRefine='all';
     
     param.snakes.step.mergeTopo=false;
     param.snakes.step.snakesSteps=120;
@@ -326,9 +333,11 @@ end
 function [param]=optimTest()
     
     [param]=optimDefault();
+    
+    param.general.restart=false;
     param.snakes.step.snakData='all';
     param.snakes.step.snakesConsole=true;
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=50;
     param.general.typDat='optimRand';
     param.results.archiveName='Standard_Execution';
     
@@ -352,7 +361,7 @@ function [param]=SnakesFoilVVSmall()
     param.general.passDomBounds=[-1,1;-0.5,0.5];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
-    
+    param.snakes.step.convLevel=10^-8;
 end
 
 function [param]=Supersonic()
