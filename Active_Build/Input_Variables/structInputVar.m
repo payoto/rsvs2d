@@ -306,7 +306,7 @@ function [param]=optimDefault()
     param.snakes.refine.typeRefine='actgrey';
     
     param.snakes.step.mergeTopo=false;
-    param.snakes.step.snakesSteps=50;
+    param.snakes.step.snakesSteps=120;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     

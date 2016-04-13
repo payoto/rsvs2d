@@ -57,7 +57,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea';
     paroptimgeneral.direction='max';
-    paroptimgeneral.knownOptim=[0.2*(8+pi)/(8+2*pi)];
+    paroptimgeneral.knownOptim=[0];
 end
 
 function [paroptimDE]=DefaultOptimDE()
