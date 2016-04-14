@@ -91,7 +91,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     %     GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
     %         cellCentredGrid,insideContourInfo,forceparam);
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
-        borderVertices,refinedGriduns);
+        borderVertices,refinedGriduns,param);
     if snakesConsole
         CheckResultsLight(refinedGriduns,snakposition,snaxel)
     end
@@ -112,17 +112,17 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     
     varExtract={'snakesSteps','mergeTopo','makeMov','convLevel','debugPlot','plotInterval',...
         'subStep','snakesMinSteps','stepType','vSwitch','convCheckRate',...
-        'convCheckRange','convDistance'};
+        'convCheckRange','convDistance','dtRatio'};
     [snakesSteps,mergeTopo,makeMov,convLevel,debugPlot,...
         plotInterval,subStep,snakesMinSteps,stepType,vSwitch,convCheckRate,...
-        convCheckRange,convDistance]...
+        convCheckRange,convDistance,dtRatio]...
         =ExtractVariables(varExtract,param);
     trigCount=0;
     movFrame=struct([]);
     isConvergingPast=true;
     isChangeddtMax=false;
     lastConvCheck=0;
-    
+    dtMinStart=dtMin;
     for ii=1:snakesSteps
         %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
         
@@ -168,6 +168,8 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             [maxDt,isConvergingPast,isChangeddtMax]=TestConvergenceRate(...
                 [snakSave((end-convCheckRange):end).currentConvVolume],convLevel,maxDt,...
                 convDistance,isConvergingPast);
+            maxDt=max([maxDt,dtMinStart]);
+            dtMin=maxDt/dtRatio;
             lastConvCheck=ii;
         end
         
@@ -285,7 +287,10 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
 end
 
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
-        borderVertices,refinedGriduns)
+        borderVertices,refinedGriduns,param)
+    
+    varExtract={'edgeFinish','TEShrink','LEShrink'};
+    [edgeFinish,TEShrink,LEShrink]=ExtractVariables(varExtract,param);
     
     %disp('Finished Iterations , starting Post Process')
     [snaxel]=FreezingFunction(snaxel,borderVertices);
@@ -294,7 +299,22 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     %disp('Creating Snaxel Loops')
     [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
     
+    switch edgeFinish
+        case 'shrink'
+            for ii=1:length(loopsnaxel)
+                loopsnaxel(ii).snaxel.coord=ShrinkEdges(loopsnaxel(ii).snaxel.coord,LEShrink,TEShrink);
+            end
+        case 'sharpen'
+            for ii=1:length(loopsnaxel)
+                [loopsnaxel(ii).snaxel.coord]=SharpenEdges(loopsnaxel(ii).snaxel.coord,TEShrink,LEShrink);
+            end
+        case 'none'
+            
+    end
+    
 end
+
+
 
 function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
     
@@ -1337,6 +1357,7 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
     newInsideEdges=[];
     kk=0;
     delIndex=[];
+    rePopInd=[];
     while ~isempty(finishedSnakes)
         kk=kk+1;
         breedSub=finishedSnakes(1);
@@ -1356,10 +1377,13 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
         
         previousV=snaxel(breedSub).v;
         previousACC=snaxel(breedSub).acc;
+        stepL=snaxelRepop(1).d;
         for ii=1:length(snaxelRepop)
+            snaxelRepop(ii).d=0;
             snaxelRepop(ii).v=0;%previousV;
             snaxelRepop(ii).acc=previousACC;
         end
+        rePopInd=[rePopInd,[snaxelRepop(:).index]];
         [snaxel]=AddSnaxel(snaxel,snaxelRepop);
         % Remove breeding snaxels snaxels
         delIndex(kk,1:2)=[snaxel(breedSub).index,indexDoubled]; %#ok<AGROW>
@@ -1369,7 +1393,31 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
             finishedSnakes(rmvFinSnakes)=[];
         end
     end
+    if kk>0
+        [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL);
+    end
+end
+
+function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL)
+    vSnax=[snaxel(:).v];
     
+    [snaxel(:).v]=deal(0);
+    snaxInd=[snaxel(:).index];
+    
+    repopSub=FindObjNum([],rePopInd,snaxInd);
+    rePopInd=rePopInd(repopSub~=0);
+    repopSub=repopSub(repopSub~=0);
+    
+    [snaxel(repopSub).v]=deal(stepL);
+    
+    maxDist=MaxTravelDistance(snaxel);
+    
+    for ii=1:length(repopSub)
+        snaxel(repopSub(ii)).d=min([maxDist(repopSub(ii)),stepL]);
+    end
+    for ii=1:length(snaxel)
+        snaxel(ii).v=vSnax(ii);
+    end
 end
 
 function [snaxel,indexDoubled,snaxelIndexStart]=...
@@ -1456,6 +1504,7 @@ function maxDist=MaxTravelDistance(snaxel)
     % Calculates the maximum distance that can be travelled by a snaxel
     dSnax=[snaxel(:).d];
     vSnax=[snaxel(:).v];
+    fromvertSnax=[snaxel(:).fromvertex];
     edgeSnax=[snaxel(:).edge];
     nSnax=length(edgeSnax);
     
@@ -1472,11 +1521,19 @@ function maxDist=MaxTravelDistance(snaxel)
         end
         if numel(sameEdgeSnax)==1
             
-            [~,deltaV]=EdgeImpactCondition(dSnax,vSnax,fromvertSnax,ii,sameEdgeSnax);
+            dSnaxOther=dSnax(sameEdgeSnax);
+            vSnaxOther=vSnax(sameEdgeSnax);
+            sameDir=fromvertSnax(ii)==fromvertSnax(sameEdgeSnax);
+            if sameDir
+                %disp('Turning Snaxel for impact distance calculation')
+                dSnaxOther=1-dSnaxOther;
+                vSnaxOther=-vSnaxOther;
+            end
             
-            impactDist=(1-dSnax(ii)-dSnax(sameEdgeSnax))/...
-                (vSnax(ii)+vSnax(sameEdgeSnax))*vSnax(ii);
-            if vSnax(ii)+vSnax(sameEdgeSnax)==0
+            impactDist=(1-dSnax(ii)-dSnaxOther)/...
+                (vSnax(ii)+vSnaxOther)*vSnax(ii);
+            
+            if vSnax(ii)+vSnaxOther==0
                 impactDist=1;
             end
             
@@ -1506,6 +1563,12 @@ function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
     
     canMove=[snaxel(:).isfreeze]==0;
     maxDist=MaxTravelDistance(snaxel);
+    
+    maxDist(maxDist>maxStep)=maxStep;
+    maxDist=-maxDist;
+    maxDist(maxDist>maxStep)=maxStep;
+    maxDist=-maxDist;
+    
     vSnax=[snaxel(:).v];
     dtSnax=maxDist./vSnax;
     dtSnax2=dtSnax;
@@ -1591,13 +1654,15 @@ function snaxel=TimeInaccurateDistanceUpdate(snaxel,dtSnax,maxDist)
     for ii=1:length(snaxel)
         movDist=snaxel(ii).v*dtSnax(ii);
         if abs(movDist)>abs(maxDist(ii))
-            count=count+1;
+            if (abs(movDist)-abs(maxDist(ii))) > 1e-15
+                count=count+1;
+            end
             movDist=maxDist(ii);
         end
         snaxel(ii).d=movDist+snaxel(ii).d;
     end
     if count>0
-        fprintf(' - %i Problems with snaxel update',count);
+        fprintf(' - %i Problems with snaxel update ',count);
     end
 end
 
@@ -1886,7 +1951,7 @@ function [freezeIndex,pairs]=FreezeEdgeContact(snaxel,saveSingleVal)
     freezeIndex=indexSnax(isImpact);
 end
 
-function [isImpact,deltaV]=EdgeImpactCondition(dSnax,vSnax,fromvertSnax,sub1,sub2)
+function [isImpact]=EdgeImpactCondition(dSnax,vSnax,fromvertSnax,sub1,sub2)
     % edge Impact condition
     
     global arrivalTolerance
@@ -2495,6 +2560,102 @@ function [snaxelrev]=ReverseSnakesConnection(snaxel)
     
     
 end
+
+function [points]=ShrinkEdges(points,LEShrink,TEShrink)
+    % Function which allows to make sharp trailing edges and leading edges
+    [~,iLE]=min(points(:,1));
+    [~,iTE]=max(points(:,1));
+    
+    [m,~]=size(points);
+    
+    iLEm1=iLE-1;
+    [iLEm1]=IndexMod(iLEm1,m);
+    iLEp1=iLE+1;
+    [iLEp1]=IndexMod(iLEp1,m);
+    
+    iTEm1=iTE-1;
+    [iTEm1]=IndexMod(iTEm1,m);
+    iTEp1=iTE+1;
+    [iTEp1]=IndexMod(iTEp1,m);
+    
+    points(iLEm1,2)=points(iLEm1,2)-LEShrink;
+    points(iLEp1,2)=points(iLEp1,2)+LEShrink;
+    
+    points(iTEm1,2)=points(iTEm1,2)+TEShrink;
+    points(iTEp1,2)=points(iTEp1,2)-TEShrink;
+    
+    if points(iLEm1,2)<=points(iLE+1,2)
+         points([iLEm1,iLE+1],:)=[];
+    end
+    if points(iTEm1,2)>=points(iTEp1,2)
+         points([iTEm1,iTEp1],:)=[];
+    end
+    
+end
+
+function [points]=SharpenEdges(points,TEShrink,LEShrink)
+    % Function which allows to make sharp trailing edges and leading edges
+    [~,iLE]=min(points(:,1));
+    [~,iTE]=max(points(:,1));
+    
+    [m,~]=size(points);
+    
+    iLEm1=iLE-1;
+    [iLEm1]=IndexMod(iLEm1,m);
+    iLEp1=iLE+1;
+    [iLEp1]=IndexMod(iLEp1,m);
+    iLEm2=iLE-2;
+    [iLEm2]=IndexMod(iLEm2,m);
+    iLEp2=iLE+2;
+    [iLEp2]=IndexMod(iLEp2,m);
+    
+    iTEm1=iTE-1;
+    [iTEm1]=IndexMod(iTEm1,m);
+    iTEp1=iTE+1;
+    [iTEp1]=IndexMod(iTEp1,m);
+    iTEm2=iTE-2;
+    [iTEm2]=IndexMod(iTEm2,m);
+    iTEp2=iTE+2;
+    [iTEp2]=IndexMod(iTEp2,m);
+    
+    if LEShrink
+        [points(iLEm1,:)]=Align3points(points([iLE,iLEm2],:),points(iLEm1,:));
+        [points(iLEp1,:)]=Align3points(points([iLE,iLEp2],:),points(iLEp1,:));
+    end
+    if TEShrink
+        [points(iTEm1,:)]=Align3points(points([iTE,iTEm2],:),points(iTEm1,:));
+        [points(iTEp1,:)]=Align3points(points([iTE,iTEp2],:),points(iTEp1,:));
+    end
+    
+%     if points(iLEm1,2)<=points(iLE+1,2)
+%          points([iLEm1,iLE+1],:)=[];
+%     end
+%     if points(iTEm1,2)>=points(iTEp1,2)
+%          points([iTEm1,iTEp1],:)=[];
+%     end
+    
+end
+
+function [pointAlign]=Align3points(line,point)
+    
+    pointAlign=point;
+    
+    pointAlign(2)=(line(1,2)-line(2,2))/(line(1,1)-line(2,1))...
+        *(point(1)-line(2,1))+line(2,2);
+    
+    if isnan(pointAlign(2)) || ~isfinite(pointAlign(2))
+        pointAlign=point;
+    end
+    
+    
+end
+
+function [indMod]=IndexMod(ind,m)
+    
+    indMod=mod(ind-1,m)+1;
+    
+end
+
 
 %% Copied/Modified from main
 

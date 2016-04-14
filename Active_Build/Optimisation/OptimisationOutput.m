@@ -59,6 +59,10 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     [fidIndexFile]=OpenIndexFile(resultRoot,archiveName);
     WriteToFile(indexEntry,fidIndexFile);
     fclose(fidIndexFile);
+    
+    % Iter Index
+    [FIDIter]=OpenIterIndexFile(writeDirectory,marker);
+    GenerateIterIndexFile(t,marker,FIDIter)
 end
 
 function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restartsnak,snakSave)
@@ -98,6 +102,10 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     writeDirectory=[rootDir,iterStr];
     writeDirectory=MakePathCompliant(writeDirectory);
     
+    % iter entry
+    [FIDIter]=OpenIterIndexFile(rootDir,out.marker);
+    GenerateIterIndexEntry(FIDIter,nIter,population);
+    
     CopyDiary(writeDirectory,marker)
     GeneratePopulationBinary(writeDirectory,marker,population)
     h=CheckOptimProfile('iter_all',writeDirectory);
@@ -106,6 +114,8 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     figName=MakePathCompliant(figName);
    hgsave(h,figName);
     close(h);
+    
+    
 end
 
 function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
@@ -131,6 +141,58 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
    
 end
 
+
+%% Index File ops
+
+
+function []=GenerateIterIndexFile(t,marker,FID)
+    
+    paramCell{1}='# Parameter File';
+    paramCell{2}=['# ',datestr(t)];
+    paramCell{3}=['# ',marker];
+    paramCell{4}=[' '];
+    
+    WriteToFile(paramCell,FID);
+    fclose(FID);
+end
+
+function []=GenerateIterIndexEntry(FID,nIter,population)
+    
+    fieldsAdd=fieldnames(population(1).additional);
+    nAdditional=length(fieldsAdd);
+    entryCell{length(population)}={};
+    entryCell{1}='# iter , member , objective , constraint, fill';
+    for ii=1:nAdditional
+        entryCell{1}=[entryCell{1},' , ',fieldsAdd{ii}];
+    end
+    
+    for ii=1:length(population)
+        
+        str=[int2str(nIter)];
+        str=[str,' , ', int2str(ii)];
+        str=[str,' , ', num2str(population(ii).objective,' %12.7e ')];
+        str=[str,' , ', int2str(population(ii).constraint)];
+        str=[str,' , ', num2str(population(ii).fill,' %12.7e ')];
+        
+        for jj=1:nAdditional
+            str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %12.7e ')];
+        end
+        
+        entryCell{ii+1}=str;
+    end
+    
+    WriteToFile(entryCell,FID);
+    fclose(FID);
+end
+
+function [FID]=OpenIterIndexFile(rootOptim,marker)
+    % Creates a file in the current directory to write data to.
+    
+    rootOptim=MakePathCompliant(rootOptim);
+    fileName=['Index_',marker,'.txt'];
+    FID=fopen([rootOptim,filesep,fileName],'a');
+    
+end
 
 %% 
 

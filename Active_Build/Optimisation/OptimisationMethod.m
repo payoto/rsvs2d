@@ -4,11 +4,11 @@
 %      Department of Aerospace Engineering
 %                     2016
 %
-%            Optimisation Using 
+%            Optimisation Using
 %          Parametric Snakes for
 %         for Aerodynamic shape
 %         parametrisation
-%         
+%
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -21,7 +21,11 @@ function [newPop,iterCurr]=OptimisationMethod(paramoptim,varargin)
     
     switch optimMethod
         case 'DE'
-            [newPop,iterCurr]=DifferentialEvolution(paramoptim,varargin{1},varargin{2});
+            proj='cut';
+            [newPop,iterCurr]=DifferentialEvolution(paramoptim,proj,varargin{1},varargin{2});
+        case 'DEtan'
+            proj='tan';
+            [newPop,iterCurr]=DifferentialEvolution(paramoptim,proj,varargin{1},varargin{2});
         case 'GA'
             
         case 'GSA'
@@ -29,16 +33,21 @@ function [newPop,iterCurr]=OptimisationMethod(paramoptim,varargin)
         case 'SQP'
             
     end
-
+    
 end
 
 
 %% Optimisation Methods
 
-function [newPop,iterCurr]=DifferentialEvolution(paramoptim,iterCurr,iterm1)
-    
-    projFunc=@(x) x;%(atan(x)/pi+1/2);
-    projInv=@(x) x;%(tan((x-1/2)*pi));
+function [newPop,iterCurr]=DifferentialEvolution(paramoptim,proj,iterCurr,iterm1)
+    switch proj
+        case 'cut'
+            projFunc=@(x) x;%(atan(x)/pi+1/2);
+            projInv=@(x) x;%(tan((x-1/2)*pi));
+        case 'tan'
+            projFunc=@(x) (atan(x)/pi+1/2);
+            projInv=@(x) (tan((x-1/2)*pi));
+    end
     
     nPop=length(iterCurr);
     DEstruct=paramoptim.optim.DE;

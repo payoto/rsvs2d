@@ -113,9 +113,9 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
-    
-    %parfor ii=1:nPop
-    for ii=1:nPop
+    [population]=ConstraintMethod('DesVar',paramoptim,population);
+    parfor ii=1:nPop
+    %for ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
@@ -124,7 +124,11 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
             newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
         population(ii).location=outTemp.dirprofile;
         [population(ii).objective,population(ii).additional]=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
+        population(ii).additional.snaxelVolRes=snakSave(end).currentConvVolume;
+        population(ii).additional.snaxelVelResV=snakSave(end).currentConvVelocity;
     end
+    
+    [population]=ConstraintMethod('Res',paramoptim,population);
     
     [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population);
     
@@ -225,7 +229,7 @@ function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
     
-    population=struct('fill',valFill,'location','','objective',[],'contraint'...
+    population=struct('fill',valFill,'location','','objective',[],'constraint'...
         ,true,'additional',struct([]));
     
     [iterstruct(1:nIter).population]=deal(population);
@@ -331,7 +335,7 @@ function [objValue,additional]=LengthArea(paramoptim,member,loop)
     objValue=A/L;
     
     additional.A=A;
-    additional.A=L;
+    additional.L=L;
     
 end
 

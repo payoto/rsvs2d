@@ -91,19 +91,22 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.snakData='all';
     paramsnakesstep.snakesConsole=true;
     paramsnakesstep.stepType='indiv'; % 'strict' 'bounded' 'indiv' 'mixed'
-    paramsnakesstep.vSwitch=1e-5;
+    paramsnakesstep.vSwitch=1e-15;
     paramsnakesstep.dtRatio=5;
     
-    paramsnakesstep.convCheckRate=5;
-    paramsnakesstep.convCheckRange=10;
-    paramsnakesstep.convDistance=50;
+    paramsnakesstep.convCheckRate=20;
+    paramsnakesstep.convCheckRange=15;
+    paramsnakesstep.convDistance=500;
 end
 
 function paramsnakesrefine=default_snakes_refine()
     
     paramsnakesrefine.refineGrid=4;
     paramsnakesrefine.typeRefine='grey';
-    
+    paramsnakesrefine.LEShrink=0;
+    paramsnakesrefine.TEShrink=0.008175297200000/2;
+    paramsnakesrefine.edgeFinish='none'; % 'none' 'sharpen' 'shrink'
+    paramsnakesrefine.resampleSnak=false;
 end
 
 function paramsnakesforce=default_snakes_force()
@@ -311,9 +314,12 @@ function [param]=optimDefault()
     
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
+    param.snakes.refine.LEShrink=0.008175297200000/2;
+    param.snakes.refine.TEShrink=0.008175297200000/2;
+    param.snakes.refine.resampleSnak=true;
     
     param.snakes.step.mergeTopo=false;
-    param.snakes.step.snakesSteps=120;
+    param.snakes.step.snakesSteps=50;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     
@@ -321,6 +327,7 @@ function [param]=optimDefault()
     param.results.resultRoot=[cd,'\..\results\'];
     param.results.noteFiles={'CurrentBuild'};
     param.results.tags={'snakes','optimisation'};
+    
     
     
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -337,12 +344,24 @@ function [param]=optimTest()
     param.general.restart=false;
     param.snakes.step.snakData='all';
     param.snakes.step.snakesConsole=true;
-    param.snakes.step.snakesSteps=50;
+    param.snakes.step.snakesSteps=150;
     param.general.typDat='optimRand';
     param.results.archiveName='Standard_Execution';
     
     param.general.passDomBounds=[-1,1;-0.5,0.5];
     %param=DualOptimSmoothing(param);
+    
+end
+
+function [param]=optimSupersonic()
+   
+    [param]=optimDefault();
+    
+    param.general.subdivType='chaikin';
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.resampleSnak=false;
     
 end
 
@@ -362,6 +381,9 @@ function [param]=SnakesFoilVVSmall()
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
     param.snakes.step.convLevel=10^-8;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
 end
 
 function [param]=Supersonic()
@@ -375,9 +397,12 @@ function [param]=Supersonic()
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
     param.general.passDomBounds=[-1,1;-0.5,0.5];
-    param.general.refineSteps=5;
+    param.general.refineSteps=1;
     param.snakes.step.mergeTopo=false;
     
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.edgeFinish='sharpen';
 end
 
 function [param]=Line()
