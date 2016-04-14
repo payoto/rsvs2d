@@ -158,6 +158,17 @@ function [paroptim]=TestParOptimAero_desktop()
     paroptim.parametrisation.general.refineSteps=3;
 end
 
+function [paroptim]=FullSupersonicOptim_Desktop()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
+    paroptim.general.nPop=32;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=8; 
+    
+end
+
+
 
 function [paroptim]=TestParOptim_HPC()
     
