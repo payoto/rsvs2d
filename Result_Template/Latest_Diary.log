@@ -1,29 +1,10 @@
-kResults(jj,refinedGriduns,unstructglobal,snakSave(jj).snakposition,...
-snakSave(jj).snaxel,0,snakSave(jj).volumefraction,borderVertices)
-
-ans =
-
-     []
-
-jj=3;
-CheckResults(jj,refinedGriduns,unstructglobal,snakSave(jj).snakposition,...
-snakSave(jj).snaxel,0,snakSave(jj).volumefraction,borderVertices)
-
-ans =
-
-     []
-
-jj=4;
-CheckResults(jj,refinedGriduns,unstructglobal,snakSave(jj).snakposition,...
-snakSave(jj).snaxel,0,snakSave(jj).volumefraction,borderVertices)
-
-ans =
-
-     []
-
-if system_dependent('IsDebugMode')==1, dbquit; end
-clc
-[unstructured,loop,unstructReshape,snakSave]=Main('optimTest')
+------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+14-Apr-2016 17:58:18
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS

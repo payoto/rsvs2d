@@ -24,74 +24,83 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     endstr=stdout(end-200:end);
     errFlag=CutCellErrorHandling(endstr,stoponerror);
-    
-    while sum(errFlag)
+    kk=0;
+    iterN=0;
+    while sum(errFlag) && kk<10
         RestartModifiedSettings(targFolder,'cfl',8)
         endstr=RunFlowSolverOnly(compType,targFolder);
         errFlag=CutCellErrorHandling(endstr,stoponerror);
-    end
-    
-    datastr=endstr(end-60:end);
-    data=str2num(datastr); %#ok<ST2NM>
-    obj.iter=data(1);
-    obj.err=data(2);
-    obj.cl=data(3);
-    obj.cd=data(4);
-    iterN=obj.iter;
-    % test convergence
-    
-    [isfinished,restartNormal,restartCFL,theoretConvIter]=...
-        TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
-    kk=0;
-    while ~isfinished && kk<maxRestart
-        theoretConvIter(theoretConvIter<=0)=Inf;
-        theoretConvIter(theoretConvIter<=20)=20;
-        if restartNormal || restartCFL
-            RestartModifiedSettings(targFolder,'restart',12,1);
-            RestartModifiedSettings(targFolder,'iter',7,...
-                min([restartIter,theoretConvIter]));
-        end
-        
-        if restartCFL
-            RestartModifiedSettings(targFolder,'cfl',8);
-        end
-        
-        endstr=RunFlowSolverOnly(compType,targFolder);
         kk=kk+1;
-        errFlag=CutCellErrorHandling(endstr,stoponerror);
-        if sum(errFlag)
-            isfinished=false;
-            restartNormal=false;
-            restartCFL=true;
-        else
-            datastr=endstr(end-60:end);
-            data=str2num(datastr); %#ok<ST2NM>
-            obj.iter=data(1);
-            obj.err=data(2);
-            obj.cl=data(3);
-            obj.cd=data(4);
-            [isfinished,restartNormal,restartCFL,theoretConvIter]=...
-                TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
-            iterN=iterN+obj.iter;
+    end
+    if kk<10
+        datastr=endstr(end-60:end);
+        data=str2num(datastr); %#ok<ST2NM>
+        obj.iter=data(1);
+        obj.err=data(2);
+        obj.cl=data(3);
+        obj.cd=data(4);
+        iterN=obj.iter;
+        % test convergence
+        
+        [isfinished,restartNormal,restartCFL,theoretConvIter]=...
+            TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
+        kk=0;
+        while ~isfinished && kk<maxRestart
+            theoretConvIter(theoretConvIter<=0)=Inf;
+            theoretConvIter(theoretConvIter<=20)=20;
+            if restartNormal || restartCFL
+                RestartModifiedSettings(targFolder,'restart',12,1);
+                RestartModifiedSettings(targFolder,'iter',7,...
+                    min([restartIter,theoretConvIter]));
+            end
+            
+            if restartCFL
+                RestartModifiedSettings(targFolder,'cfl',8);
+            end
+            
+            endstr=RunFlowSolverOnly(compType,targFolder);
+            kk=kk+1;
+            errFlag=CutCellErrorHandling(endstr,stoponerror);
+            if sum(errFlag)
+                isfinished=false;
+                restartNormal=false;
+                restartCFL=true;
+            else
+                datastr=endstr(end-60:end);
+                data=str2num(datastr); %#ok<ST2NM>
+                obj.iter=data(1);
+                obj.err=data(2);
+                obj.cl=data(3);
+                obj.cd=data(4);
+                [isfinished,restartNormal,restartCFL,theoretConvIter]=...
+                    TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
+                iterN=iterN+obj.iter;
+            end
         end
     end
-    [obj]=ExtractFinalData(targFolder,iterN);
+    [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
 end
 
-function [obj]=ExtractFinalData(targFolder,iter)
+function [obj]=ExtractFinalData(targFolder,iter,isErr)
     
     resFile=[targFolder,filesep,'res_hist.dat'];
     
     fid=fopen(resFile,'r');
-    fseek(fid,-200,1); % Seek the end of file
-    fgetl(fid);
-    data=num2str(fgetl(fid));
-    
     structName={'iter','res','cl','cm','cd','cx','cy'};
-    for ii=1:length(structName)
-        obj.(structName{ii})=data(ii);
-    end
     
+    if ~isErr
+        fseek(fid,-200,1); % Seek the end of file
+        fgetl(fid);
+        data=str2num(fgetl(fid)); %#ok<ST2NM>
+        for ii=1:length(structName)
+            obj.(structName{ii})=data(ii);
+        end
+    else
+        for ii=1:length(structName)
+            obj.(structName{ii})=1000;
+        end
+    end
+    fclose('all');
     obj.iter=iter;
     
 end

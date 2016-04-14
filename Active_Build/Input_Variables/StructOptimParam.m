@@ -40,6 +40,7 @@ function [paroptim]=DefaultOptim()
     [paroptim.optim.DE]=DefaultOptimDE();
     [paroptim.spline]=DefaultOptimSpline();
     paroptim.obj.flow=DefaultCutCell_Flow();
+    [paroptim.constraint]=DefaultConstraint();
     paroptim.structdat=GetStructureData(paroptim);
     
 end
@@ -79,8 +80,17 @@ end
 function [paroptimspline]=DefaultOptimSpline()
     
     
-    paroptimspline.splineCase='snake';
+    paroptimspline.splineCase='aerosnake';
     paroptimspline.domain='normalizeX';
+end
+
+function [paroptimconstraint]=DefaultConstraint()
+    
+    paroptimconstraint.desVarConstr={' '};
+    paroptimconstraint.desVarVal={[0]};
+    paroptimconstraint.resConstr={' '};
+    paroptimconstraint.resVal={[0]};
+    
 end
 
 %% Standard Modifications
@@ -91,7 +101,14 @@ function [paraminit]=ChangeSnakeInit(paraminit)
     paraminit.general.restart=false;
 end
 
-
+function [paroptim]=VolumeConstraint(paroptim)
+    
+    paroptim.constraint.desVarConstr={'MeanVolFrac'};
+    paroptim.constraint.desVarVal={0.4};
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[0]};
+    
+end
 %% Callable functions
 
 function [paroptim]=StandardOptim()
@@ -114,6 +131,7 @@ function [paroptim]=TestParOptim_desktop()
     [paramCase]=ExtractVariables(varExtract,paroptim);
     
     paroptim.parametrisation=structInputVar(paramCase);
+    
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.nPop=6;
     paroptim.general.maxIter=4;
@@ -123,9 +141,21 @@ end
 
 function [paroptim]=TestParOptimAero_desktop()
     
+    
     [paroptim]=TestParOptim_desktop();
+    paroptim.general.paramCase='optimSupersonic';
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    paroptim.parametrisation=structInputVar(paramCase);
+    
+    [paroptim]=VolumeConstraint(paroptim);
+    
     paroptim.general.objectiveName='CutCellFlow';
     paroptim.general.direction='min';
+    paroptim.general.optimMethod='DEtan';
+     
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.general.refineSteps=3;
 end
 
 
