@@ -94,16 +94,16 @@ end
 
 function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal)
     isConstr=true;
-    ratio=mean(fill);
+    ratio=constrVal/mean(fill);
     kk=0;
     n=length(fill);
     while ratio~=constrVal && kk<=n+1;
         maxFill=max(desVarRange);
         
-        fillBound=fill*ratio>=maxFill;
+        fillBound=((fill*ratio)>=maxFill);
         fill(fillBound)=maxFill;
         fill(~fillBound)=fill(~fillBound)*ratio;
-        ratio=mean(fill);
+        ratio=constrVal/mean(fill);
         kk=kk+1;
     end
     if kk>n+1
