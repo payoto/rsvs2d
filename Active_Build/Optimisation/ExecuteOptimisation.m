@@ -108,24 +108,36 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
         baseGrid,connectstructinfo)
     
     
-    varExtract={'nPop','objectiveName'};
-    [nPop,objectiveName]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'nPop','objectiveName','direction'};
+    [nPop,objectiveName,direction]=ExtractVariables(varExtract,paramoptim);
     
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
     [population]=ConstraintMethod('DesVar',paramoptim,population);
+    switch direction
+        case 'max'
+            defaultVal=-10000;
+        case 'min'
+            defaultVal=10000;
+    end
+    
     parfor ii=1:nPop
     %for ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        
-        [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
-            newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
-        population(ii).location=outTemp.dirprofile;
-        [population(ii).objective,population(ii).additional]=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
-        population(ii).additional.snaxelVolRes=snakSave(end).currentConvVolume;
-        population(ii).additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+        try
+            
+            [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
+                newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
+            population(ii).location=outTemp.dirprofile;
+            [population(ii).objective,population(ii).additional]=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
+            population(ii).additional.snaxelVolRes=snakSave(end).currentConvVolume;
+            population(ii).additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+        catch
+            population(ii).objective=defaultVal;
+            population(ii).constraint=false;
+        end
     end
     
     [population]=ConstraintMethod('Res',paramoptim,population);
@@ -228,9 +240,9 @@ function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
     [nPop,nIter]=ExtractVariables(varExtract,paroptim);
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
-    
+    addstruct=struct('iter',[],'res',[],'cl',[],'cm',[],'cd',[],'cx',[],'cy',[],'A',[],'L',[],'snaxelVolRes',[],'snaxelVelResV',[]);
     population=struct('fill',valFill,'location','','objective',[],'constraint'...
-        ,true,'additional',struct([]));
+        ,true,'additional',addstruct);
     
     [iterstruct(1:nIter).population]=deal(population);
     

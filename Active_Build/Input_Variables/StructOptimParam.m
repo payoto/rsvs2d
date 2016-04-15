@@ -58,7 +58,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea';
     paroptimgeneral.direction='max';
-    paroptimgeneral.knownOptim=[0];
+    paroptimgeneral.knownOptim=[0.146088675];
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -162,8 +162,8 @@ function [paroptim]=FullSupersonicOptim_Desktop()
     
     [paroptim]=TestParOptimAero_desktop();
     
-    paroptim.general.nPop=32;
-    paroptim.general.maxIter=50;
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=100;
     paroptim.general.worker=8; 
     
 end
