@@ -161,7 +161,7 @@ function []=GenerateIterIndexEntry(FID,nIter,population)
     fieldsAdd=fieldnames(population(1).additional);
     nAdditional=length(fieldsAdd);
     entryCell{length(population)}={};
-    entryCell{1}='# iter , member , objective , constraint, fill';
+    entryCell{1}=['# ',datestr(now),', iter , member , objective , constraint, fill'];
     for ii=1:nAdditional
         entryCell{1}=[entryCell{1},' , ',fieldsAdd{ii}];
     end

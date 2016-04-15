@@ -49,6 +49,8 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
         case 'SumVolFrac'
             
         case 'Naca0012'
+        
+        case ' '
             
         otherwise
             error('Design Variable Constraint Not Recognised')

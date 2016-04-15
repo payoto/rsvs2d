@@ -7,10 +7,21 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
         'maxRestart'};
     [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart]...
         =ExtractVariables(varExtract,paramoptim);
+    
+    compType=computer;
+    boundaryLoc=MakePathCompliant(boundaryLoc);
+    CFDfolder=MakePathCompliant(CFDfolder);
     inDir=what(boundaryLoc);
     boundaryLoc=inDir.path;
     targFolder=[boundaryLoc,filesep,'CFD'];
-    copyfile(CFDfolder,targFolder)
+    targFolder=MakePathCompliant(targFolder);
+    if strcmp(compType(1:2),'PC')
+        copyfile(CFDfolder,targFolder)
+    else
+        flowCommand=['cp -rp ''',CFDfolder,''' ''',targFolder,''''];
+        [status,stdout]=system(flowCommand);
+    end
+    
     CopyBoundaryFile(boundaryLoc,targFolder);
     % Run system command
     compType=computer;
