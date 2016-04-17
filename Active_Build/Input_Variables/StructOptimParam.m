@@ -164,9 +164,18 @@ function [paroptim]=FullSupersonicOptim_Desktop()
     
     [paroptim]=TestParOptimAero_desktop();
     
+    paroptim.general.nPop=32;
+    paroptim.general.maxIter=45;
+    paroptim.general.worker=8; 
+    
+end
+function [paroptim]=FullSupersonicOptim_HPC()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
     paroptim.general.nPop=48;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=12; 
     
 end
 
