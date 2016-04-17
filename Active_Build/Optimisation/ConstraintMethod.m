@@ -33,7 +33,8 @@ function [population]=ConstraintMethod(entryPoint,paramoptim,population,varargin
             [resConstr,resVal]=ExtractVariables(varExtract,paramoptim);
             
             for ii=1:length(resConstr)
-                
+                [population]=ResultVariableConsCaller(resConstr{ii},resVal{ii},...
+                    paramoptim,population,varargin{:});
             end
     end
     
@@ -117,9 +118,39 @@ end
 
 %% Results cases
 
+function [population]=ResultVariableConsCaller(constrName,constrVal,paroptim,population,varargin)
+    
+    switch constrName
+        case 'AeroResidual'
+            population=CheckAerodynamicResidual(constrVal,population);
+        case 'AeroLift'
+            
+        case 'Volume'
+        
+        case ' '
+            
+        otherwise
+            error('Design Variable Constraint Not Recognised')
+    end
+            
+    
+    
+end
 
-
-
+function population=CheckAerodynamicResidual(constrVal,population)
+    
+    for ii=1:length(population)
+        
+        if population(ii).constraint
+           constrViolation= (population(ii).additional.res>constrVal) && ...
+               (population(ii).additional.res~=0);
+           population(ii).constraint=~constrViolation;
+        end
+        
+    end
+    
+    
+end
 
 
 

@@ -11,6 +11,7 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     compType=computer;
     boundaryLoc=MakePathCompliant(boundaryLoc);
     CFDfolder=MakePathCompliant(CFDfolder);
+    
     inDir=what(boundaryLoc);
     boundaryLoc=inDir.path;
     targFolder=[boundaryLoc,filesep,'CFD'];
