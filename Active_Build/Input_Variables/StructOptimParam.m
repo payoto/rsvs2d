@@ -58,6 +58,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea';
     paroptimgeneral.direction='max';
+    paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675];
 end
 
@@ -105,8 +106,8 @@ function [paroptim]=VolumeConstraint(paroptim)
     
     paroptim.constraint.desVarConstr={'MeanVolFrac'};
     paroptim.constraint.desVarVal={0.4};
-    paroptim.constraint.resConstr={' '};
-    paroptim.constraint.resVal={[0]};
+    paroptim.constraint.resConstr={'AeroResidual'};
+    paroptim.constraint.resVal={-3.5};
     
 end
 %% Callable functions
@@ -152,6 +153,7 @@ function [paroptim]=TestParOptimAero_desktop()
     
     paroptim.general.objectiveName='CutCellFlow';
     paroptim.general.direction='min';
+    paroptim.general.defaultVal=1e3;
     paroptim.general.optimMethod='DEtan';
      
     paroptim.parametrisation.general.subdivType='chaikin';

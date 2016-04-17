@@ -63,6 +63,10 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     % Iter Index
     [FIDIter]=OpenIterIndexFile(writeDirectory,marker);
     GenerateIterIndexFile(t,marker,FIDIter)
+    
+    % Error Report
+    [FIDError]=OpenErrorReportFile(writeDirectory,marker);
+    GenerateErrorReportFile(t,marker,FIDError)
 end
 
 function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restartsnak,snakSave)
@@ -93,7 +97,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     GenerateProfileBinary(writeDirectory,markerShort,savStruct)
 end
 
-function [out]=OptimisationOutput_iteration(nIter,out,population)
+function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
     
     t=out.tOutput;
     rootDir=out.rootDir;
@@ -104,7 +108,10 @@ function [out]=OptimisationOutput_iteration(nIter,out,population)
     
     % iter entry
     [FIDIter]=OpenIterIndexFile(rootDir,out.marker);
-    GenerateIterIndexEntry(FIDIter,nIter,population);
+    returnEntries=GenerateIterIndexEntry(FIDIter,nIter,population);
+    % Error Info
+    [FIDError]=OpenErrorReportFile(rootDir,out.marker);
+    GenerateErrorReportEntries(FIDError,nIter,errorReports,returnEntries)
     
     CopyDiary(writeDirectory,marker)
     GeneratePopulationBinary(writeDirectory,marker,population)
@@ -147,7 +154,7 @@ end
 
 function []=GenerateIterIndexFile(t,marker,FID)
     
-    paramCell{1}='# Parameter File';
+    paramCell{1}='# Iteration Index File';
     paramCell{2}=['# ',datestr(t)];
     paramCell{3}=['# ',marker];
     paramCell{4}=[' '];
@@ -156,15 +163,16 @@ function []=GenerateIterIndexFile(t,marker,FID)
     fclose(FID);
 end
 
-function []=GenerateIterIndexEntry(FID,nIter,population)
+function [returnEntries]=GenerateIterIndexEntry(FID,nIter,population)
     
     fieldsAdd=fieldnames(population(1).additional);
     nAdditional=length(fieldsAdd);
-    entryCell{length(population)}={};
-    entryCell{1}=['# ',datestr(now),', iter , member , objective , constraint, fill'];
+    entryCell{1+length(population)}={};
+    entryCell{1}=['# ',datestr(now),', iter , member , objective , constraint '];
     for ii=1:nAdditional
         entryCell{1}=[entryCell{1},' , ',fieldsAdd{ii}];
     end
+    entryCell{1}=[entryCell{1},', exception , fill '];
     
     for ii=1:length(population)
         
@@ -172,17 +180,18 @@ function []=GenerateIterIndexEntry(FID,nIter,population)
         str=[str,' , ', int2str(ii)];
         str=[str,' , ', num2str(population(ii).objective,' %12.7e ')];
         str=[str,' , ', int2str(population(ii).constraint)];
-        str=[str,' , ', num2str(population(ii).fill,' %12.7e ')];
         
         for jj=1:nAdditional
             str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %12.7e ')];
         end
-        
+        str=[str,' , ', population(ii).exception];
+        str=[str,' , ', num2str(population(ii).fill,' %12.7e ')];
         entryCell{ii+1}=str;
     end
     
     WriteToFile(entryCell,FID);
     fclose(FID);
+    returnEntries=entryCell(2:end);
 end
 
 function [FID]=OpenIterIndexFile(rootOptim,marker)
@@ -193,6 +202,49 @@ function [FID]=OpenIterIndexFile(rootOptim,marker)
     FID=fopen([rootOptim,filesep,fileName],'a');
     
 end
+
+function [FID]=OpenErrorReportFile(rootOptim,marker)
+    % Creates a file in the current directory to write data to.
+    
+    rootOptim=MakePathCompliant(rootOptim);
+    fileName=['ErrorReport_',marker,'.txt'];
+    FID=fopen([rootOptim,filesep,fileName],'a');
+    
+end
+
+function []=GenerateErrorReportFile(t,marker,FID)
+    
+    paramCell{1}='# Error Report File';
+    paramCell{2}=['# ',datestr(t)];
+    paramCell{3}=['# ',marker];
+    paramCell{4}=[' '];
+    
+    WriteToFile(paramCell,FID);
+    fclose(FID);
+end
+
+function []=GenerateErrorReportEntries(fID,nIter,errorReports,indexEntries)
+    
+    writeReport{1}='------------------------------------------------------------';
+    writeReport{2}=['   ITERATION ',int2str(nIter)];
+    writeReport{3}='------------------------------------------------------------';
+    kk=4;
+    for ii=1:length(errorReports)
+        
+        if ~isempty(errorReports{ii})
+            writeReport{kk}=indexEntries{ii};
+            kk=kk+1;
+            writeReport{kk}=errorReports{ii};
+            kk=kk+1;
+        end
+        
+    end
+
+    WriteToFile(writeReport,fID);
+    fclose(fID);
+    
+end
+
 
 %% 
 
