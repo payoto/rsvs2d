@@ -362,6 +362,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
+    param.general.refineSteps=4;
     
 end
 
@@ -396,8 +397,8 @@ function [param]=Supersonic()
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='grey';
-    param.general.passDomBounds=[-1,1;-0.5,0.5];
-    param.general.refineSteps=1;
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    param.general.refineSteps=4;
     param.snakes.step.mergeTopo=false;
     
     param.snakes.refine.TEShrink=true;
