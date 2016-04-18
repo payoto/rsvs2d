@@ -60,6 +60,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.direction='max';
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675];
+    paroptimgeneral.restartSource='';
 end
 
 function [paroptimDE]=DefaultOptimDE()

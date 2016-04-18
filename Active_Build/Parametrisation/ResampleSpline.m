@@ -103,7 +103,7 @@ function parList=ExtractParameterList(parType,points)
             parList=points(:,1);
         case 'Dx'
             parList=(abs(points(:,1)-points([1,1:end-1],1)));
-            parList(parList==0)=min(parList(parList~=0))/10;
+            parList([false;parList(2:end)==0])=min(parList(parList~=0))/10;
             parList=cumsum(parList);
         case 'y'
             parList=points(:,2);
@@ -422,14 +422,14 @@ function [parspline]=CaseSpline_aerosnake()
     
     parspline.TEisLeft=0;
     
-    parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.parameter='Dx'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
     parspline.typCurve='closed';
     
     parspline.distribution='calc';
     parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
     
     parspline.samplingParam='param';
-    parspline.samplingN=151;
+    parspline.samplingN=301;
     parspline.samplingDistrib='even';
     
 end

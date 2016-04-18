@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [iterstruct]=ExecuteOptimisation(caseStr)
+function [iterstruct]=ExecuteOptimisation(caseStr,restartFromPop)
     close all
     clc
     procStr2=['OPTIMISATION - ',caseStr];
@@ -19,14 +19,29 @@ function [iterstruct]=ExecuteOptimisation(caseStr)
     %clusterObj=parcluster('OptimSnakes');
     [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
-    varExtract={'maxIter'};
-    [maxIter]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'maxIter','restartSource'};
+    [maxIter,restartSource]=ExtractVariables(varExtract,paramoptim);
+    startIter=1;
     
+    % Restart
+    in2Flag=nargin==2;
+    if in2Flag || ~isempty(restartSource)
+        if in2Flag
+            restartSource=restartFromPop;
+        end
+        load(restartSource)
+        startIter=length(optimstruct);
+        maxIter=startIter+maxIter;
+        iterstruct=[optimstruct,iterstruct];
+        [iterstruct]=GenerateNewPop(paramoptim,iterstruct,startIter);
+       paramoptim.general.restartSource=restartSource;
+       startIter=startIter+1;
+    end
     
     % Specify starting population
     
     % Start optimisation Loop
-    for nIter=1:maxIter
+    for nIter=startIter:maxIter
         % Assign design variables to grid
         procStr=['ITERATION ',int2str(nIter)];
         [tStart]=PrintStart(procStr,1);

@@ -148,10 +148,14 @@ function [varStr]=GenerateVariableString(startVar)
             
             openStr='[';
             closeStr=']';
-            for ii=1:m
-                varStrCell{ii,1}=['''',startVar(ii,:),''''];
+            if ~isempty(startVar)
+                for ii=1:m
+                    varStrCell{ii,1}=['''',startVar(ii,:),''''];
+                end
+                [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,1);
+                else
+                varStr='''''';
             end
-            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,1);
         case 'cell'
             
             openStr='{';
