@@ -289,8 +289,8 @@ end
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns,param)
     
-    varExtract={'edgeFinish','TEShrink','LEShrink'};
-    [edgeFinish,TEShrink,LEShrink]=ExtractVariables(varExtract,param);
+    varExtract={'edgeFinish','TEShrink','LEShrink','axisRatio'};
+    [edgeFinish,TEShrink,LEShrink,axisRatio]=ExtractVariables(varExtract,param);
     
     %disp('Finished Iterations , starting Post Process')
     [snaxel]=FreezingFunction(snaxel,borderVertices);
@@ -298,6 +298,9 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     
     %disp('Creating Snaxel Loops')
     [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
+    for ii=1:length(loopsnaxel)
+        loopsnaxel(ii).snaxel.coord(:,2)=loopsnaxel(ii).snaxel.coord(:,2)*axisRatio;
+    end
     
     switch edgeFinish
         case 'shrink'
