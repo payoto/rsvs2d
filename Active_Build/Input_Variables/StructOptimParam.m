@@ -170,6 +170,20 @@ function [paroptim]=FullSupersonicOptim_Desktop()
     paroptim.general.worker=8; 
     
 end
+
+
+function [paroptim]=FullSupersonicOptimSym_Desktop()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
+    paroptim.general.nPop=32;
+    paroptim.general.maxIter=45;
+    paroptim.general.worker=8; 
+    paroptim.general.optimMethod='DESym';
+    
+end
+
+
 function [paroptim]=FullSupersonicOptim_HPC()
     
     [paroptim]=TestParOptimAero_desktop();
@@ -179,7 +193,6 @@ function [paroptim]=FullSupersonicOptim_HPC()
     paroptim.general.worker=12; 
     
 end
-
 
 
 function [paroptim]=TestParOptim_HPC()

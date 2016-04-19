@@ -107,6 +107,7 @@ function paramsnakesrefine=default_snakes_refine()
     paramsnakesrefine.TEShrink=0.008175297200000/2;
     paramsnakesrefine.edgeFinish='none'; % 'none' 'sharpen' 'shrink'
     paramsnakesrefine.resampleSnak=false;
+    paramsnakesrefine.axisRatio=1; % y/x ratio
 end
 
 function paramsnakesforce=default_snakes_force()
@@ -317,6 +318,7 @@ function [param]=optimDefault()
     param.snakes.refine.LEShrink=0.008175297200000/2;
     param.snakes.refine.TEShrink=0.008175297200000/2;
     param.snakes.refine.resampleSnak=true;
+    param.snakes.refine.axisRatio=0.25;
     
     param.snakes.step.mergeTopo=false;
     param.snakes.step.snakesSteps=50;
@@ -328,7 +330,7 @@ function [param]=optimDefault()
     param.results.noteFiles={'CurrentBuild'};
     param.results.tags={'snakes','optimisation'};
     
-    
+    param.snakes.refine.axisRatio=0.25;
     
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
@@ -400,7 +402,7 @@ function [param]=Supersonic()
     param.general.passDomBounds=[-1,1;-0.4,0.4];
     param.general.refineSteps=4;
     param.snakes.step.mergeTopo=false;
-    
+     param.snakes.refine.axisRatio=0.25;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='sharpen';
@@ -513,6 +515,27 @@ function [param]=WeirdShape2()
     
 
 end
+
+
+function [param]=Square()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    %param=LinOptimSmoothing(param);
+    param=AvoidLocalOptim(param);
+    param.general.typDat='sqare';
+    
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    
+    param.snakes.step.maxStep=0.2;
+    param.snakes.step.maxDt=0.25;
+    
+    param.snakes.step.mergeTopo=false;
+    
+end
+
 
 %% Not updated yet
 function [param]=SnakesFoilVSmall()
