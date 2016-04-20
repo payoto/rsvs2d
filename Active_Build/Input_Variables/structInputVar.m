@@ -85,7 +85,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.maxStep=0.4;
     paramsnakesstep.maxDt=0.5;
     paramsnakesstep.convLevel=10^-8;
-    paramsnakesstep.arrivalTolerance=2e-1;
+    paramsnakesstep.arrivalTolerance=1e-2;
     paramsnakesstep.subStep=1;
     paramsnakesstep.snakesMinSteps=5;
     paramsnakesstep.snakData='all';
@@ -97,6 +97,10 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convCheckRate=20;
     paramsnakesstep.convCheckRange=15;
     paramsnakesstep.convDistance=500;
+    
+    paramsnakesstep.fillLooseStep=20;
+    paramsnakesstep.fillLooseCut=0.75;
+    
 end
 
 function paramsnakesrefine=default_snakes_refine()
@@ -529,13 +533,82 @@ function [param]=Square()
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
-    param.snakes.step.maxStep=0.2;
-    param.snakes.step.maxDt=0.25;
+    param.snakes.step.maxStep=0.4;
+    param.snakes.step.maxDt=0.5;
     
-    param.snakes.step.mergeTopo=false;
+    param.snakes.step.mergeTopo=true;
+    
+    param.snakes.step.fillLooseStep=40;
+    param.snakes.step.fillLooseCut=0.90;
+end
+
+function [param]=HalfWedge()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    %param=LinOptimSmoothing(param);
+    param=AvoidLocalOptim(param);
+    param.general.typDat='halfwedge';
+    
+    param.snakes.step.snakesSteps=250;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    
+    param.snakes.step.maxStep=0.4;
+    param.snakes.step.maxDt=0.5;
+    
+    param.snakes.step.mergeTopo=true;
+    
+    param.snakes.step.fillLooseStep=40;
+    param.snakes.step.fillLooseCut=0.90;
+    
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=true;
+    
+    param.snakes.refine.edgeFinish='sharpen';
+end
+
+function [param]=BuzmanBiplane()
+    
+    [param]=HalfWedge();
+    
+    param.general.typDat='buzmanbiplane';
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.axisRatio=0.135;
+    param.optiminit.cellLevels=[4,9];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
     
 end
 
+function [param]=BuzmanBiplane2()
+    
+    [param]=HalfWedge();
+    
+    param.general.typDat='buzmanbiplane2';
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.axisRatio=0.05;
+    param.optiminit.cellLevels=[4,14];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
+end
+
+function [param]=BuzmanBiplane3()
+    
+    [param]=HalfWedge();
+    
+    param.general.typDat='buzmanbiplane3';
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.axisRatio=0.2;
+    param.optiminit.cellLevels=[6,9];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
+end
 
 %% Not updated yet
 function [param]=SnakesFoilVSmall()
