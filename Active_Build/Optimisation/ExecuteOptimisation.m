@@ -83,9 +83,6 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     diary(diaryFile);
     
     
-    
-    
-    
     % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
@@ -109,10 +106,10 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
         parpool(poolName)
     end
    
-    paramoptim.general.nDesVar=sum([baseGrid.cell(:).isactive]);
+    [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
     [iterstruct]=InitialisePopulation(paramoptim,iterstruct);
-    
+    iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,paramoptim.spline,outinfo,0,0);
     
@@ -183,7 +180,7 @@ function [iterstruct]=GenerateNewPop(paramoptim,iterstruct,nIter)
     for ii=1:nPop
         iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
     end
-    
+    iterstruct(nIter+1).population=ApplySymmetry(paramoptim,iterstruct(nIter+1).population);
     [~]=PrintEnd(procStr,2,tStart);
 end
 
@@ -234,6 +231,68 @@ function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,restar
         newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],cellCentreInd);
         [newRestart.cellCentredGrid(newSub).fill]=deal(newFill(ii));
     end
+    
+end
+
+function population=ApplySymmetry(paramoptim,population)
+    
+    varExtract={'symDesVarList'};
+    [symDesVarList]=ExtractVariables(varExtract,paramoptim);
+    
+    for ii=1:length(population)
+        population(ii).fill(symDesVarList(2,:))=...
+            population(ii).fill(symDesVarList(1,:));
+    end
+    
+    
+end
+
+function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
+    
+    varExtract={'symType'};
+    [symType]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'cellLevels','corneractive'};
+    [cellLevels,corneractive]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    
+    nDesVar=sum([baseGrid.cell(:).isactive]);
+    paramoptim.general.nDesVar=nDesVar;
+    
+    switch symType
+        case 'none'
+            paramoptim.general.symDesVarList=[];
+        case 'horz'
+            
+            nRows=cellLevels(2);
+            rowMatch=zeros([2,floor(nRows/2)]);
+            for ii=1:floor(nRows/2)
+                rowMatch(:,ii)=[ii;(nRows-ii+1)];
+            end
+            
+             % Section to deal with inactive corners
+            rowLength=ones([1,nRows])*cellLevels(1);
+            if ~corneractive
+                rowLength(1)=rowLength(1)-2;
+                rowLength(end)=rowLength(end)-2;
+            end
+            indStart=cumsum([0,rowLength]);
+            % Section to build index matching lists
+            cellMatch=zeros([2,indStart(floor(nRows/2)+1)]);
+            for ii=1:floor(nRows/2)
+                for jj=1:rowLength(ii)
+                     rootInd=jj+indStart(ii);
+                     mirrorInd=jj+indStart(cellLevels(2)-(ii-1));
+                    
+                    cellMatch(:,rootInd)=[rootInd,mirrorInd];
+                end
+            end
+            
+            paramoptim.general.symDesVarList=cellMatch;
+            
+        case 'vert'
+            error('Not coded yet')
+            
+    end
+            
     
 end
 

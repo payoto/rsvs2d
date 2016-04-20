@@ -61,6 +61,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675];
     paroptimgeneral.restartSource='';
+    paroptimgeneral.symType='none'; % 'horz'
+    paroptimgeneral.symDesVarList=[];
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -141,6 +143,24 @@ function [paroptim]=TestParOptim_desktop()
     paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
 end
 
+function [paroptim]=TestParOptimSym_desktop()
+    
+    [paroptim]=DefaultOptim();
+    
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    
+    paroptim.parametrisation=structInputVar(paramCase);
+    
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.nPop=6;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=6; 
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
+end
+
 function [paroptim]=TestParOptimAero_desktop()
     
     
@@ -156,6 +176,7 @@ function [paroptim]=TestParOptimAero_desktop()
     paroptim.general.direction='min';
     paroptim.general.defaultVal=1e3;
     paroptim.general.optimMethod='DEtan';
+    paroptim.general.symType='horz'; % 'horz'
      
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.general.refineSteps=3;
