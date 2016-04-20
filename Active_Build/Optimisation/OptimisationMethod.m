@@ -145,7 +145,7 @@ function [newPop,iterCurr]=DifferentialEvolutionSym(paramoptim,proj,iterCurr,ite
         
         crossVec(fromMutVecLog)=mutVec(fromMutVecLog);
         crossVec(~fromMutVecLog)=iterCurr(ii).fill(~fromMutVecLog);
-        crossVec(floor(nFill/2)-end:end)=crossVec(1:floor(nFill/2));
+        crossVec(end-floor(nFill/2):end)=crossVec(1:floor(nFill/2));
         newPop(ii,:)=crossVec;
         
     end

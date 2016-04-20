@@ -221,6 +221,12 @@ function [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n)
     for jj=1:n-1
         varStr=[varStr,varStrCell{m,jj},','];
     end
+    if m==0
+        m=1;
+    end
+    if n==0
+        n=1;
+    end
     varStr=[varStr,varStrCell{m,n},closeStr];
 end
 
