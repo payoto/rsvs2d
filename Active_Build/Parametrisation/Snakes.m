@@ -138,7 +138,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
             currentConvVelocity,currentConvVolume,forceparam,lastAlgo,trigCount,...
             snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
-            VelocityAndVolumeProcess(snaxel,snakposition,refinedGrid,volfracconnec,...
+            VelocityAndVolumeProcess(param,snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,trigCount);
         
         
@@ -319,7 +319,8 @@ end
 
 
 
-function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
+function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
+        volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     [snakposition]=SnaxelNormal2(snaxel,snakposition);
@@ -402,9 +403,11 @@ end
 function [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
         currentConvVelocity,currentConvVolume,forceparam,lastAlgo,trigCount,...
         snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
-        VelocityAndVolumeProcess(snaxel,snakposition,refinedGrid,volfracconnec,...
+        VelocityAndVolumeProcess(param,snaxel,snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,trigCount)
     
+    [volfracconnec,cellCentredGrid]=ModifyFillInformation...
+        (cellCentredGrid,volfracconnec,param,ii-1);
     [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo);
     [convergenceCondition,currentConvVelocity,currentConvVolume]=...
@@ -414,7 +417,35 @@ function [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition
     
 end
 
-
+function [volfraconnec,cellCentredGrid]=ModifyFillInformation...
+        (cellCentredGrid,volfraconnec,param,nStep)
+    
+    varExtract={'fillLooseStep','fillLooseCut'};
+    [fillLooseStep,fillLooseCut]=ExtractVariables(varExtract,param);
+    
+    newInd=[cellCentredGrid(:).index];
+    fill=[volfraconnec.cell(:).targetfill];
+    if nStep<fillLooseStep
+        modifFillPos=find(fill<fillLooseCut & fill~=0);
+        for ii=modifFillPos
+            fillDelta=(fillLooseCut-volfraconnec.cell(ii).targetfill)-...
+                nStep*(fillLooseCut-volfraconnec.cell(ii).targetfill)/fillLooseStep;
+            volfraconnec.cell(ii).targetfill=fillDelta+volfraconnec.cell(ii).targetfill;
+            
+            currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
+            [cellCentredGrid(currSub).fill]=deal(fillDelta+volfraconnec.cell(ii).targetfill);
+        end
+        
+        modifFillPos=find(fill<=0);
+        for ii=modifFillPos
+            fillDelta=-0.01;
+            volfraconnec.cell(ii).targetfill=fillDelta;
+            
+            currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
+            [cellCentredGrid(currSub).fill]=deal(fillDelta);
+        end
+    end
+end
 
 function [dtMax,isConvergingPast,isChangeddtMax]=TestConvergenceRate(resArray,targConv,dtMax,...
         convDistance,isConvergingPast)
@@ -693,6 +724,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex)
     
     
+    
     numSE=length(snaxelEdges); % provides information about snaxel from same vertex
     snaxelEdgesSub=FindObjNum([],snaxelEdges,edgeIndex);
     kkLocal=0;
@@ -701,7 +733,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         kkLocal=kkLocal+1;
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
-        dist=1e-4;%arrivalTolerance^2; % Snaxel initialisation, it starts at the vertex
+        dist=1e-4; % Snaxel initialisation, it starts at the vertex
         velocity=0; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);

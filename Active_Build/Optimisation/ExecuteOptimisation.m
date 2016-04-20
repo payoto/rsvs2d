@@ -259,7 +259,7 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     
     switch symType
         case 'none'
-            paramoptim.general.symDesVarList=[];
+            paramoptim.general.symDesVarList=zeros([2,0]);
         case 'horz'
             
             nRows=cellLevels(2);
