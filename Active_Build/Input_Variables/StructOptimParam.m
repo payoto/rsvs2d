@@ -202,8 +202,9 @@ function [paroptim]=FullSupersonicOptimSym_Desktop()
     paroptim.general.worker=8; 
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
+    
     paroptim.general.symType='horz'; % 'horz'
-    paroptim.parametrisation.snakes.refine.axisRatio=0.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=0.4;
     
 end
 
