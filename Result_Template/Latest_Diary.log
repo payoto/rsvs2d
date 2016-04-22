@@ -1,59 +1,35 @@
-olume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',111,0)">line 111</a>)
-    [iterstruct]=InitialisePopulation(paramoptim,iterstruct);
+ecuteOptimisation>CutCellFlow (line 460)
+    [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc);
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)
-    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...} 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',329,1)">329 </a>                origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
-6*9
+In ExecuteOptimisation>EvaluateObjective (line 437)
+    [objValue,additional]=eval([objectiveName,'(paramoptim,member,loop);']);
 
-ans =
+In ExecuteOptimisation>(parfor body) (line 143)
+            [population(ii).objective,population(ii).additional]=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
 
-    54
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
 
-help reshape
- <strong>reshape</strong> Reshape array.
-    <strong>reshape</strong>(X,M,N) or <strong>reshape</strong>(X,[M,N]) returns the M-by-N matrix 
-    whose elements are taken columnwise from X. An error results 
-    if X does not have M*N elements.
- 
-    <strong>reshape</strong>(X,M,N,P,...) or <strong>reshape</strong>(X,[M,N,P,...]) returns an 
-    N-D array with the same elements as X but reshaped to have 
-    the size M-by-N-by-P-by-.... The product of the specified
-    dimensions, M*N*P*..., must be the same as NUMEL(X).
- 
-    <strong>reshape</strong>(X,...,[],...) calculates the length of the dimension
-    represented by [], such that the product of the dimensions 
-    equals NUMEL(X). The value of NUMEL(X) must be evenly divisible 
-    by the product of the specified dimensions. You can use only one 
-    occurrence of [].
- 
-    See also <a href="matlab:help squeeze">squeeze</a>, <a href="matlab:help shiftdim">shiftdim</a>, <a href="matlab:help colon">colon</a>.
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
 
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('reshape')">Other functions named reshape</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc reshape">doc reshape</a>
-
-reshape([1 1;2 2],[1 4])
-
-ans =
-
-     1     2     1     2
-
-ExecuteOptimisation('TestSupersonicOptimMultiTopSym_Desktop')
+clc
+clear
+Parallel pool using the 'OptimSnakes_Import_4' profile is shutting down.
+ExecuteOptimisation('FullSupersonicOptimSym_bp2_1')
   
 --------------------------------------------------------------------------------------------
 ********************************************************************************************
 --------------------------------------------------------------------------------------------
-OPTIMISATION - TestSupersonicOptimMultiTopSym_Desktop start
-22-Apr-2016 17:51:19
+OPTIMISATION - FullSupersonicOptimSym_bp2_1 start
+22-Apr-2016 17:57:41
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-22-Apr-2016 17:51:19
+22-Apr-2016 17:57:41
 --------------------------------------------------------------------------------------------
   
 WRITING AUTOMATIC FUNCTIONS
@@ -62,3 +38,115 @@ WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
+
+Calculations Started . . .
+***** START GRID INITIALISATION *****
+
+     OUTPUT:Skipped
+    ACTION: Starting Grid Generated
+     OUTPUT:Skipped
+    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
+
+    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Reshaping
+
+     OUTPUT:Skipped
+Calculations Started . . .
+***** START GRID REFINEMENT 1 of 1 *****
+
+     OUTPUT:Skipped
+    ACTION: Template Generated
+    ACTION: Refinement Targets Identified
+    ACTION: Edges Refined
+			Start Cell 1 of 40 
+			Start Cell 2 of 40 
+			Start Cell 3 of 40 
+			Start Cell 4 of 40 
+			Start Cell 5 of 40 
+			Start Cell 6 of 40 
+			Start Cell 7 of 40 
+			Start Cell 8 of 40 
+			Start Cell 9 of 40 
+			Start Cell 10 of 40 
+			Start Cell 11 of 40 
+			Start Cell 12 of 40 
+			Start Cell 13 of 40 
+			Start Cell 14 of 40 
+			Start Cell 15 of 40 
+			Start Cell 16 of 40 
+			Start Cell 17 of 40 
+			Start Cell 18 of 40 
+			Start Cell 19 of 40 
+			Start Cell 20 of 40 
+			Start Cell 21 of 40 
+			Start Cell 22 of 40 
+			Start Cell 23 of 40 
+			Start Cell 24 of 40 
+			Start Cell 25 of 40 
+			Start Cell 26 of 40 
+			Start Cell 27 of 40 
+			Start Cell 28 of 40 
+			Start Cell 29 of 40 
+			Start Cell 30 of 40 
+			Start Cell 31 of 40 
+			Start Cell 32 of 40 
+			Start Cell 33 of 40 
+			Start Cell 34 of 40 
+			Start Cell 35 of 40 
+			Start Cell 36 of 40 
+			Start Cell 37 of 40 
+			Start Cell 38 of 40 
+			Start Cell 39 of 40 
+			Start Cell 40 of 40 
+    ACTION: Cells Refined
+     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:172
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+Starting parallel pool (parpool) using the 'OptimSnakes_Import_5' profile ... connected to 8 workers.
+
+ans = 
+
+ <a href="matlab: help parallel.Pool">Pool</a> with properties: 
+
+            Connected: true
+           NumWorkers: 8
+              Cluster: <a href="matlab: parallel.internal.display.Displayer.displayObject('1F8B0800000000000000AD53CD4EC24010DE9662F420D198181EC153034613F18618A384C6043070D8A42EB8C1EAD2DDB4F5C08D238FE1D1A3471F858B771FC31DBBA54B2D41A3934CA6DF74E69B9FDD45C69583A494A43E4BDD90BA297517C5622CAC859CC67507F081544102C21865B6E74734F009B3EFBC503032B11BEC29942E878EA91F71E0BDD478B7155F51E10D5523A903B81C7FBE9BDABF44816F66A57C5B193E88E95B299FA930D2E67C2BA4F9664EBEDE4F51CE5D54182CEC20E111859FED0B66BEF018ED0544081AB8AECAAF68F969BD182735133FC4978DD5737F64E24DE5030BE3DF4A9D2A7D953A57FF13E94E0445E7242268F9FC561F34CA15A855C8FFB524460ED67D26FA3E4F3646979266F5FB6629BF7EBEFB1ACF8EC28B3187F1F8768B0F098BF9E6E877F7654F61B04D3EE8443C20230A8491C7FDB4CFE99A3E9B993E01374EF14D4883101351AD1DD5705D083835DCE664ECF923EC90E8BEC783C7103BF56EAB7E8619CCE1AAA9DC073E0871FBB0523D26691F2F68F53DCCEE1DE24FD6EC0365F6F1DFF933B4E6FDA3E57BD3FF224CDFBF7E3FFEF2FE413E01A3CD16DC40050000')">OptimSnakes_Import_5</a>
+        AttachedFiles: ... Parametrisation\source\Active_Build\Optimisation\Parallel\taskStartup.m
+          IdleTimeout: Inf (no automatic shut down)
+          SpmdEnabled: true
+
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:00:749
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:04:992
+  Volume converged to 2.53039e-02
+Time Elapsed:00:00:06:256
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:23:611
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+22-Apr-2016 17:58:05
+-----
