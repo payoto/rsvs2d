@@ -133,8 +133,8 @@ end
 
 function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
-    varExtract={'direction','knownOptim'};
-    [direction,knownOptim]=ExtractVariables(varExtract,paroptim);
+    varExtract={'direction','knownOptim','objectiveName'};
+    [direction,knownOptim,objectiveName]=ExtractVariables(varExtract,paroptim);
     
     t=out.tOutput;
     rootDir=out.rootDir;
@@ -145,7 +145,13 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
     CopyDiary(writeDirectory,marker)
     GenerateIterResultBinary(writeDirectory,marker,optimstruct)
-    GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct)
+    dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
+    
+    if strcmp(objectiveName,'CutCellFlow')
+        [knownOptim]=SupersonicOptimLinRes(paroptim,rootFolder,...,
+            dat.xMin,dat.xMax,dat.A,nPoints);
+    end
+    
     [h]=OptimHistory(optimstruct,knownOptim,direction);
     %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
     figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
@@ -271,14 +277,14 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     h=figure('Name','Optimisation Result','Position',[20 100 1000 600]);
     
     % Plot 1
-    subplot(1,2,1)
+    subplot(1,2,1,'ticklabelinterpreter','latex')
     nVar=length(optimstruct(1).population);
     nIter=length(optimstruct);
     iterRes=zeros([nIter,nVar]);
     hold on
     for ii=1:nIter
         iterRes(ii,:)=[optimstruct(ii).population(:).objective];
-        lSub1(1)=plot(ones(1,nVar)*ii,iterRes(ii,:),'b*');
+        lSub1(1)=plot(ones(1,nVar)*ii,iterRes(ii,:),'b.','markersize',5);
     end
     switch dirOptim
         case 'min'
@@ -291,15 +297,14 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     stdRes=std(iterRes,0,2);
     lSub1(2)=plot(1:nIter,minRes,'r-');
     lSub1(3)=plot(1:nIter,meanRes,'color',[0.7 0 0]);
-    
-    
     lSub1(4)=plot([0,nIter],[knownOptim knownOptim],'r--');
     
     legend(lSub1,{'Population',['Population ',dirOptim,'imum'],'Population mean',...
         'Theoretical Optimum'},'Location','NorthEast', 'interpreter','latex');
     
-    xlabel('Iteration', 'interpreter','latex')
-    ylabel('$J(\mathbf{x})$', 'interpreter','latex')
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('$J(\mathbf{x})$', 'interpreter','latex','fontsize',12)
+    
     switch dirOptim
         case 'min'
             testOrder=max(minRes);
@@ -319,8 +324,17 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     
     axis(box);
     
+    xT=box(2)-(box(2)-box(1))*0.05;
+    yT=min(minRes)-(box(4)-box(3))*0.05;
+    strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
+    strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
+
+    strT=regexprep(strT,'\ ','\\space');
+    text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
+    
+    
     % Plot 2
-    subplot(1,2,2)
+    axh=subplot(1,2,2,'ticklabelinterpreter','latex');
     
     switch dirOptim
         case 'min'
@@ -337,14 +351,14 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     
     for ii=1:nIter
         stdline=[errMean(ii)-stdRes(ii),errMean(ii)+stdRes(ii)];
-        lSub2(3)=semilogy([ii ii],stdline,'g--+');
+        lSub2(3)=semilogy([ii ii],stdline,'g:+');
     end
     legend(lSub2,{['Population ',dirOptim,'imum'],'Population mean',...
         'Standard Deviation'},'Location','NorthEast', 'interpreter','latex');
     
-    xlabel('Iteration', 'interpreter','latex')
-    ylabel('$J^*_T-J(\mathbf{x})$', 'interpreter','latex')
-    
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('$J^*_T-J(\mathbf{x})$', 'interpreter','latex','fontsize',12)
+    set(axh,'ticklabelinterpreter','latex')
     
 end
 
@@ -372,7 +386,7 @@ function []=GenerateIterResultBinary(resultDirectory,marker,optimstruct)
     
 end
 
-function []=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,optimstruct)
+function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,optimstruct)
     
     [~,posOpt]=eval([optimDirection,'([optimstruct(end).population(:).objective])']);
     optimsolution=optimstruct(end).population(posOpt);
@@ -395,5 +409,10 @@ function []=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,opt
     fileName=[resultDirectory,'\OptProf_',markerSmall,'.mat'];
     fileName=MakePathCompliant(fileName);
     save(fileName,'optimsolution');
+    
+    dat.A=optimstruct(end).population(posOpt).additional.A;
+    dat.xMin=min(loop.subdivision(:,1));
+    dat.xMax=max(loop.subdivision(:,1));
+    dat.t=max(loop.subdivision(:,2))-min(loop.subdivision(:,2));
     
 end

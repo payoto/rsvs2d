@@ -4,8 +4,8 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     varExtract={'CFDfolder','stoponerror','targConv','restartIter','lengthConvTest',...
-        'maxRestart'};
-    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart]...
+        'maxRestart','nMach'};
+    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart,nMach]...
         =ExtractVariables(varExtract,paramoptim);
     
     compType=computer;
@@ -22,8 +22,9 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
         flowCommand=['cp -rp ''',CFDfolder,''' ''',targFolder,''''];
         [status,stdout]=system(flowCommand);
     end
-    
+    RestartModifiedSettings(targFolder,'mach',1,nMach);
     CopyBoundaryFile(boundaryLoc,targFolder);
+    
     % Run system command
     compType=computer;
     if strcmp(compType(1:2),'PC')
@@ -271,6 +272,8 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
             cfloutstr=ReplaceIter(cflLine,varargin{1});
         case 'restart'
             cfloutstr=ReplaceRestart(cflLine,varargin{1});
+        case 'mach'
+            cfloutstr=ReplaceMachNum(cflLine,varargin{1});
     end
     
     fprintf(fidSetW,cfloutstr);
@@ -288,6 +291,15 @@ function strOut=ReplaceCFLNum(strIn)
     cflNum=str2double(cflStr);
     cflNum=cflNum/2;
     strOut=sprintf([strOut,'\n'],cflNum);
+    
+end
+
+function strOut=ReplaceMachNum(strIn,nMach)
+    
+   cflStr=regexp(strIn,'\d*\.\d*','match','once');
+    strOut=regexprep(strIn,cflStr,'%.2f');
+    
+    strOut=sprintf([strOut,'\n'],nMach);
     
 end
 

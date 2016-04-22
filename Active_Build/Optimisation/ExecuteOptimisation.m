@@ -302,6 +302,8 @@ function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
     
     varExtract={'nDesVar','nPop','startPop'};
     [nDesVar,nPop,startPop]=ExtractVariables(varExtract,paroptim);
+    varExtract={'cellLevels'};
+    [cellLevels]=ExtractVariables(varExtract,paroptim.parametrisation);
     
     switch startPop
         case 'rand'
@@ -309,6 +311,23 @@ function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
         case 'randuniform'
             
            origPop=rand([nPop,1])*ones([1 nDesVar]);
+           
+        case 'horzstrip'
+            nStrips=cellLevels(2);
+            origPop=zeros([nPop,nDesVar]);
+            for ii=1:nPop
+                pop=zeros(cellLevels);
+                
+                nAct=randi(nStrips);
+                stripAct=randperm(nStrips,nAct);
+                
+                for jj=stripAct
+                    
+                    pop(:,jj)=rand;
+                    
+                end
+                origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
+            end
     end
     
     
@@ -421,17 +440,18 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,member
 end
 
 function [objValue,additional]=LengthArea(paramoptim,member,loop)
+    for ii=1:length(loop)
+        points=loop(ii).snaxel.coord(1:end-1,:);
+        [A(ii)]=abs(CalculatePolyArea(points));
+        vec=points([end,1:end-1],:)-points;
+        L(ii)=sum(sqrt(sum(vec.^2,2)));
     
-    points=loop.snaxel.coord(1:end-1,:);
-    [A]=abs(CalculatePolyArea(points));
-    vec=points([end,1:end-1],:)-points;
-    L=sum(sqrt(sum(vec.^2,2)));
-    
-    objValue=A/L;
-    
-    additional.A=A;
-    additional.L=L;
-    
+        
+    end
+    objValue=sum(A)/sum(L);
+
+    additional.A=sum(A);
+    additional.L=sum(L);
 end
 
 function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
