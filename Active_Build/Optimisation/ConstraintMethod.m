@@ -47,7 +47,7 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
     switch constrName
         case 'MeanVolFrac'
             [population]=MeanVolumeFraction(constrVal,paroptim,population);
-        case 'SumVolFrac'
+        case 'MinSumVolFrac'
             
         case 'Naca0012'
         
@@ -115,7 +115,56 @@ function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal)
 end
 
 
-
+function [population]=MinSumVolumeFraction(constrVal,paroptim,population)
+    
+    varExtract={'desVarRange'};
+    [desVarRange]=ExtractVariables(varExtract,paroptim);
+    
+    
+    for ii=1:length(population)
+       
+        fillStart=population(ii).fill;
+        
+        sumFill=sum(fillStart);
+        ratio=constrVal/sumFill;
+        if ratio<=1
+            population(ii).fill=fillStart;
+        else
+            maxFill=max(fillStart);
+            if maxFill*ratio<=max(desVarRange)
+                population(ii).fill=fillStart*ratio;
+            else
+                
+                [population(ii).fill,population(ii).constraint]=...
+                    IterativeMinFill(fillStart,desVarRange,constrVal);
+                
+            end
+        end
+        
+        
+    end
+    
+    
+    
+end
+function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal)
+    isConstr=true;
+    ratio=constrVal/sum(fill);
+    kk=0;
+    n=length(fill);
+    while ratio~=constrVal && kk<=n+1;
+        maxFill=max(desVarRange);
+        
+        fillBound=((fill*ratio)>=maxFill);
+        fill(fillBound)=maxFill;
+        fill(~fillBound)=fill(~fillBound)*ratio;
+        ratio=constrVal/sum(fill);
+        kk=kk+1;
+    end
+    if kk>n+1
+        isConstr=false;
+    end
+end
 %% Results cases
 
 function [population]=ResultVariableConsCaller(constrName,constrVal,paroptim,population,varargin)

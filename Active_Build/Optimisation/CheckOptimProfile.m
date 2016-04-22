@@ -107,18 +107,21 @@ function []=CheckOptimProfile_singleloopin(loop,h,subPlotSize,subPos)
     
     figure(h)
     subplot(subPlotSize(1),subPlotSize(2),subPos)
-    
-    c=loop.snaxel.coord;
-    plot(c(:,1),c(:,2))
-    axis equal
     hold on
-    try
-        c=loop.subdivspline;
-    catch % backwards compatibility
-        c=loop.subdivision;
+    for ii=1:length(loop)
+        c=loop(ii).snaxel.coord;
+        plot(c(:,1),c(:,2))
+        
+        
+        
+        axis equal
+        try
+            c=loop(ii).subdivspline;
+        catch % backwards compatibility
+            c=loop(ii).subdivision;
+        end
+        plot(c(:,1),c(:,2))
     end
-    plot(c(:,1),c(:,2))
-    
     for ii=0:2:6,
         plot([ii*1e-1 ii*1e-1],[-0.5 0.5],'k--'),
         plot(-[ii*1e-1 ii*1e-1],[-0.5 0.5],'k--'),

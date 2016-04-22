@@ -79,6 +79,8 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.lengthConvTest=100;
     paroptimobjflow.restartIter=1000;
     paroptimobjflow.maxRestart=5;
+    paroptimobjflow.nMach=2;
+    
 end
 
 function [paroptimspline]=DefaultOptimSpline()
@@ -105,7 +107,7 @@ function [paraminit]=ChangeSnakeInit(paraminit)
     paraminit.general.restart=false;
 end
 
-function [paroptim]=VolumeConstraint(paroptim)
+function [paroptim]=MeanVolumeConstraint(paroptim)
     
     paroptim.constraint.desVarConstr={'MeanVolFrac'};
     paroptim.constraint.desVarVal={0.4};
@@ -113,6 +115,16 @@ function [paroptim]=VolumeConstraint(paroptim)
     paroptim.constraint.resVal={-3.5};
     
 end
+
+function [paroptim]=SumVolumeConstraint(paroptim)
+    
+    paroptim.constraint.desVarConstr={'MinSumVolFrac'};
+    paroptim.constraint.desVarVal={4};
+    paroptim.constraint.resConstr={'AeroResidual'};
+    paroptim.constraint.resVal={-3.5};
+    
+end
+
 %% Callable functions
 
 function [paroptim]=StandardOptim()
@@ -138,7 +150,7 @@ function [paroptim]=TestParOptim_desktop()
     
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.nPop=6;
-    paroptim.general.maxIter=4;
+    paroptim.general.maxIter=2;
     paroptim.general.worker=6; 
     paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
 end
@@ -161,6 +173,16 @@ function [paroptim]=TestParOptimSym_desktop()
     paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
 end
 
+function [paroptim]=TestSupersonicOptimMultiTopSym_Desktop()
+    
+    [paroptim]=FullSupersonicOptimMultiTopSym_Desktop();
+    paroptim.general.nPop=6;
+    paroptim.general.maxIter=2;
+    paroptim.general.worker=6; 
+
+ 
+end
+
 function [paroptim]=TestParOptimAero_desktop()
     
     
@@ -170,7 +192,7 @@ function [paroptim]=TestParOptimAero_desktop()
     [paramCase]=ExtractVariables(varExtract,paroptim);
     paroptim.parametrisation=structInputVar(paramCase);
     
-    [paroptim]=VolumeConstraint(paroptim);
+    [paroptim]=MeanVolumeConstraint(paroptim);
     
     paroptim.general.objectiveName='CutCellFlow';
     paroptim.general.direction='min';
@@ -182,6 +204,23 @@ function [paroptim]=TestParOptimAero_desktop()
     paroptim.parametrisation.general.refineSteps=3;
 end
 
+function [paroptim]=TestParOptim_HPC()
+    
+    [paroptim]=DefaultOptim();
+    
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    
+    paroptim.parametrisation=structInputVar(paramCase);
+    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=12; 
+end
+
+%% Full Aero Optimisations
+
+% Desktop
 function [paroptim]=FullSupersonicOptim_Desktop()
     
     [paroptim]=TestParOptimAero_desktop();
@@ -191,7 +230,6 @@ function [paroptim]=FullSupersonicOptim_Desktop()
     paroptim.general.worker=8; 
     
 end
-
 
 function [paroptim]=FullSupersonicOptimSym_Desktop()
     
@@ -208,7 +246,31 @@ function [paroptim]=FullSupersonicOptimSym_Desktop()
     
 end
 
+function [paroptim]=FullSupersonicOptimMultiTopSym_Desktop()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    paroptim.general.paramCase='optimSupersonicMultiTopo';
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    paroptim.parametrisation=structInputVar(paramCase);
+    
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=8; 
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=0;
+    
+    paroptim.general.startPop='horzstrip';
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=0.4;
+    
+    [paroptim]=SumVolumeConstraint(paroptim);
+end
 
+
+
+% bp3
 function [paroptim]=FullSupersonicOptim_HPC()
     
     [paroptim]=TestParOptimAero_desktop();
@@ -220,18 +282,53 @@ function [paroptim]=FullSupersonicOptim_HPC()
 end
 
 
-function [paroptim]=TestParOptim_HPC()
+
+% bp2
+
+
+function [paroptim]=FullSupersonicOptimSym_bp2_025()
     
-    [paroptim]=DefaultOptim();
+    [paroptim]=TestParOptimAero_desktop();
     
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=8; 
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.parametrisation=structInputVar(paramCase);
-    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
-    paroptim.general.nPop=12;
-    paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=0.25;
+    
+end
+
+function [paroptim]=FullSupersonicOptimSym_bp2_05()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=8; 
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=8.82356428E-03;
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+end
+
+function [paroptim]=FullSupersonicOptimSym_bp2_1()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=8; 
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=8.82356428E-03;
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
 end
 
 function [paroptim]=HPC_LengthArea()
