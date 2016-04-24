@@ -16,17 +16,18 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
     varExtract={'desVarConstr','nMach'};
     
     [desVarConstr,nMach]=ExtractVariables(varExtract,paramoptim);
-    
-    switch desVarConstr
-        case 'MeanVolFrac'
-            [loop(1)]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
-            [loop(2)]=ConstantArea_Wedge(xMin,xMax,A);
-            resTag={'LinRes_ogive','LinRes_wedge'};
-            
-            parfor ii=1:length(loop)
-                [obj(ii)]=OutputAndRunFlowSolve(loop(ii),rootFolder,tag{ii},paramoptim);
-            end
-            linTheoryOptim=([obj(:).cd]);
+    for ii=1:length(desVarConstr)
+        switch desVarConstr{ii}
+            case 'MeanVolFrac'
+                [loop(1)]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
+                [loop(2)]=ConstantArea_Wedge(xMin,xMax,A);
+                resTag={'LinRes_ogive','LinRes_wedge'};
+                
+                for jj=1:length(loop)
+                    [obj(jj)]=OutputAndRunFlowSolve(loop(jj),rootFolder,resTag{jj},paramoptim);
+                end
+                linTheoryOptim=min([obj(:).cd]);
+        end
     end
     
     %[loop]=ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints);
@@ -43,7 +44,7 @@ function [obj]=OutputAndRunFlowSolve(loop,rootFolder,tag,paramoptim)
     loop.subdivision(end+1,:)=loop.subdivision(1,:);
     BoundaryOutput(loop,fid);
     
-    [obj]=CutCellFlow_Handler(paramoptim,boundaryPath);
+    [obj]=CutCellFlow_Handler(paramoptim,boundaryFolder);
 end
 
 %% Area Constraint - Profile Generation

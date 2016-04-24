@@ -290,7 +290,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_025()
     
     [paroptim]=TestParOptimAero_desktop();
     
-    paroptim.general.nPop=48;
+    paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
     paroptim.general.worker=8; 
     paroptim.general.optimMethod='DEtan';
@@ -305,7 +305,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_05()
     
     [paroptim]=TestParOptimAero_desktop();
     
-    paroptim.general.nPop=48;
+    paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
     paroptim.general.worker=8; 
     paroptim.general.optimMethod='DEtan';

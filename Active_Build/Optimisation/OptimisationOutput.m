@@ -148,8 +148,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
     
     if strcmp(objectiveName,'CutCellFlow')
-        [knownOptim]=SupersonicOptimLinRes(paroptim,rootFolder,...,
-            dat.xMin,dat.xMax,dat.A,nPoints);
+        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
+            dat.xMin,dat.xMax,dat.A,dat.nPoints);
     end
     
     [h]=OptimHistory(optimstruct,knownOptim,direction);
@@ -414,5 +414,6 @@ function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,
     dat.xMin=min(loop.subdivision(:,1));
     dat.xMax=max(loop.subdivision(:,1));
     dat.t=max(loop.subdivision(:,2))-min(loop.subdivision(:,2));
+    dat.nPoints=length(loop.subdivision(:,1));
     
 end
