@@ -117,6 +117,18 @@ end
 
 %% Surface Identification functions
 
+function [loop]=GenerateEdgeLoop(grid,boundstr,isReshape)
+    
+    isEdge=grid.edge.(boundstr{1});
+    cond=boundstr{3};
+    if isReshape
+        [loop]=OrderSurfaceVertexReshape(grid,isEdge,cond);
+    else
+        
+        [loop]=OrderSurfaceVertex(grid,isEdge,cond);
+    end
+end
+
 function [loop]=OrderSurfaceVertex(unstructured,isEdge,cond)
     % function ordering the surface vertices in counter-clockwise order
     % isEdge is a logical indexing arraying informing which edges are on the

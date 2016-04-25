@@ -41,7 +41,7 @@ function []=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
     snakSave=tecoutstruct.snakSave;
     connectstructinfo=tecoutstruct.connectstructinfo;
     
-    TecplotOutput(fidTecPLT,baseGrid,fineGrid,snakSave,connectstructinfo)
+    TecplotOutput('snakes',fidTecPLT,baseGrid,fineGrid,snakSave,connectstructinfo)
     
     % Parameter Data
     [fidParam]=OpenParamFile(writeDirectory,marker);

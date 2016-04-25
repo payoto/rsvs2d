@@ -11,7 +11,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function []=TecplotOutput(FID,baseGrid,fineGrid,snakSave,connectstructinfo)
+function []=TecplotOutput(entryPoint,varargin)
+    
+    switch entryPoint
+        case 'snakes'
+            TecplotOutput_snakes(varargin{:});
+        case 'optim'
+            
+    end
+        
+    
+end
+
+function []=TecplotOutput_snakes(FID,baseGrid,fineGrid,snakSave,connectstructinfo)
     
     [baseCellCentredGrid]=CellCentredGridInformationReduced(baseGrid);
     
@@ -41,7 +53,7 @@ function []=TecplotOutput(FID,baseGrid,fineGrid,snakSave,connectstructinfo)
     fclose(FID);
 end
 
-
+function []=TecplotOutput_Optim(FID,stagePoint,)
 
 %% Open File
 

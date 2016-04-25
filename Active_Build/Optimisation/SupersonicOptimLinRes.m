@@ -21,9 +21,10 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
             case 'MeanVolFrac'
                 [loop(1)]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
                 [loop(2)]=ConstantArea_Wedge(xMin,xMax,A);
-                resTag={'LinRes_ogive','LinRes_wedge'};
+                [loop(3)]=ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints);
+                resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker'};
                 
-                for jj=1:length(loop)
+                parfor jj=1:length(loop)
                     [obj(jj)]=OutputAndRunFlowSolve(loop(jj),rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);
@@ -81,13 +82,16 @@ function [loop]=ConstantArea_Wedge(xMin,xMax,A)
 end
 
 function [loop]=ConstantArea_Klunker(xMin,xMax,A,M,nPoints)
+    ratio=xMax-xMin;
+    
+    Acalc=A;
     
     m = sqrt(M^2-1); %
-    Pb = -4; % stagnation cp
+    Pb = 0.7/-(M^2-1); % base cp
     
-    xl=(1-(m*Pb)/(12*A))/(1-(m*Pb)/(4*A));
+    xl=(1-(m*Pb)/(12*Acalc))/(1-(m*Pb)/(4*Acalc));
     
-    t=3/2*A*xl*(1-m*Pb/(12*A));
+    t=3/2*Acalc*xl*(1-m*Pb/(12*Acalc));
     
    xCoord=linspace(0,1,ceil(nPoints/2))';
    yCoord=t/2*xCoord/xl.*(2-xCoord/xl);
@@ -98,6 +102,7 @@ function [loop]=ConstantArea_Klunker(xMin,xMax,A,M,nPoints)
    points(:,1)=points(:,1)*ratio+xMin;
    points(:,2)=points(:,2)/ratio;
    
+   [A2]=CalculatePolyArea(points);
    loop.subdivision=points;
     loop.isccw=true;
 end
