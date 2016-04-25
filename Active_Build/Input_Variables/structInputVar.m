@@ -559,7 +559,6 @@ function [param]=WeirdShape2()
 
 end
 
-
 function [param]=Square()
     
     [param]=DefaultCase();
@@ -642,6 +641,20 @@ function [param]=BuzmanBiplane3()
     param.general.typDat='buzmanbiplane3';
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.axisRatio=0.2;
+    param.optiminit.cellLevels=[6,9];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
+end
+
+function [param]=BuzmanBiplane4()
+    
+    [param]=HalfWedge();
+    
+    param.general.typDat='buzmanbiplane4';
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.axisRatio=0.23;
     param.optiminit.cellLevels=[6,9];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);

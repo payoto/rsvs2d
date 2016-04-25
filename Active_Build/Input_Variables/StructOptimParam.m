@@ -125,6 +125,14 @@ function [paroptim]=SumVolumeConstraint(paroptim)
     
 end
 
+function paroptim=FullOpt_bp3(paroptim)
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12; 
+    
+end
+
+
 %% Callable functions
 
 function [paroptim]=StandardOptim()
@@ -281,6 +289,46 @@ function [paroptim]=FullSupersonicOptim_HPC()
     
 end
 
+
+function [paroptim]=FullSupersonicOptimSym_bp3_025()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
+    paroptim=FullOpt_bp3(paroptim);
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=8.82356428E-03;
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=0.25;
+    
+end
+
+
+function [paroptim]=FullSupersonicOptimSym_bp3_05()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    paroptim=FullOpt_bp3(paroptim);
+    
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=8.82356428E-03;
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+end
+
+function [paroptim]=FullSupersonicOptimSym_bp3_1()
+    
+    [paroptim]=TestParOptimAero_desktop();
+    
+    paroptim=FullOpt_bp3(paroptim);
+    paroptim.general.optimMethod='DEtan';
+    paroptim.general.knownOptim=8.82356428E-03;
+    
+    paroptim.general.symType='horz'; % 'horz'
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+end
 
 
 % bp2

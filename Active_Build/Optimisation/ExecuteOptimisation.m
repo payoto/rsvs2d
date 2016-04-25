@@ -137,12 +137,8 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         try
             % Normal Execution
-            [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
-                newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
-            population(ii).location=outTemp.dirprofile;
-            [population(ii).objective,population(ii).additional]=EvaluateObjective(objectiveName,paramoptim,population(ii),loop);
-            population(ii).additional.snaxelVolRes=snakSave(end).currentConvVolume;
-            population(ii).additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+            population(ii)=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim)
             
             
         catch MEexception
@@ -156,6 +152,26 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     [population]=ConstraintMethod('Res',paramoptim,population);
     population=EnforceConstraintViolation(population,defaultVal);
     [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population,captureErrors);
+    
+end
+
+function population=NormalExecutionIteration(population,newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim)
+    
+    varExtract={'restart','boundstr'};
+    [isRestart]=ExtractVariables(varExtract,paramsnake);
+    
+    if ~isRestart
+        [newrestartsnake]=GenerateEdgeLoop(newRefGrid,boundstr,true);
+    end
+    
+    [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
+    population.location=outTemp.dirprofile;
+    [population.objective,population.additional]=EvaluateObjective(objectiveName,paramoptim,population,loop);
+    population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
+    population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+    
     
 end
 

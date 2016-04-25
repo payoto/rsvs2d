@@ -262,10 +262,25 @@ function [loopout]=TrimLoops(loop)
     nLoop=length(loop);
     
     for ii=1:nLoop
-        if loop(ii).isccw
-            loopout.surf(ii).coord=loop(ii).subdivision(1:end-2,:);
+        endInd=length(loop(ii).subdivision(:,1));
+        
+        isNeg2=sum(sum(loop(ii).subdivision(1:2,:)==loop(ii).subdivision(end-1:end,:)))...
+            ==numel(loop(ii).subdivision(1:2,:));
+        isNeg1=sum(loop(ii).subdivision(1,:)==loop(ii).subdivision(end,:))...
+            ==numel(loop(ii).subdivision(1,:));
+        
+        if isNeg2
+            endInd=endInd-2;
+        elseif isNeg1
+            endInd=endInd-1;
         else
-            loopout.surf(ii).coord=loop(ii).subdivision(end-2:-1:1,:);
+        
+        end
+        
+        if loop(ii).isccw
+            loopout.surf(ii).coord=loop(ii).subdivision(1:endInd,:);
+        else
+            loopout.surf(ii).coord=loop(ii).subdivision(endInd:-1:1,:);
         end
         loopout.surf(ii).nvertex=length(loopout.surf(ii).coord(:,1));
         loopout.surf(ii).nfaces=loopout.surf(ii).nvertex;

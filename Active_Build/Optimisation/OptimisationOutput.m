@@ -118,7 +118,9 @@ function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
     % Error Info
     [FIDError]=OpenErrorReportFile(rootDir,out.marker);
     GenerateErrorReportEntries(FIDError,nIter,errorReports,returnEntries)
-    
+    if ~isdir(writeDirectory)
+        mkdir(writeDirectory);
+    end
     CopyDiary(writeDirectory,marker)
     GeneratePopulationBinary(writeDirectory,marker,population)
     h=CheckOptimProfile('iter_all',writeDirectory);
