@@ -580,12 +580,15 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     else
         %initVertexIndex=loop.vertex.index(end-2:-1:1);
         initVertexIndex=loopVertInd(end:-1:1);
+        vertCoord=vertCoord(end:-1:1);
     end
     %initVertexIndex=loop.vertex.index(1:end-2);
     %initVertexIndex=loop.vertex.index([2:3,5:end-3]);
     edgeVertIndex=unstructured.edge.vertexindex;
     edgeIndex=unstructured.edge.index;
     loopEdgeIndex=loop.edge.index;
+    vertCoordFull=unstructured.vertex.coord;
+    vertIndex=unstructured.vertex.index;
     switch boundstr{3}
         case '1bound'
             isInside=false;
@@ -596,7 +599,8 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     end
     
     
-    
+    isInside=CheckInsideFill(vertCoordFull,edgeVertIndex,initVertexIndex,...
+        edgeIndex,vertIndex,insideContourInfo);
     
     [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
         edgeIndex,loopEdgeIndex,snaxelIndexStart,isInside);
@@ -620,6 +624,58 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     [snaxel]=TestSnaxelLoopDirection(snaxel);
     
     insideContourInfo(loopEdgeSubs)=1;
+    
+end
+
+function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
+        edgeIndex,vertIndex,insideContourInfo)
+    
+    
+    rootVert=initVertexIndex(1);
+    vertexEdges=FindEdgesIndex(rootVert,edgeVertIndex,edgeIndex);
+    vertexEdgesSub=FindObjNum([],vertexEdges,edgeIndex);
+    neighboursInd=sort(edgeVertIndex(vertexEdgesSub,:),2);
+    
+    rootEdge=[initVertexIndex(end) rootVert];
+    exitEdge=[rootVert initVertexIndex(2)];
+    
+    [posExit]=FindMatchingVectors(neighboursInd,sort(exitEdge));
+    [posRoot]=FindMatchingVectors(neighboursInd,sort(rootEdge));
+    
+    for ii=1:length(vertexEdges)
+        neighbourVert(ii)=neighboursInd(ii,find(neighboursInd(ii,:)~=rootVert));
+    end
+    
+    neighbourVertSub=FindObjNum([],neighbourVert,vertIndex);
+    rootVertSub=FindObjNum([],rootVert,vertIndex);
+    
+    rootCoord=vertCoord(rootVertSub,:);
+    neighCoord=vertCoord(neighbourVertSub,:);
+    
+    vectors=neighCoord-(ones([length(vertexEdges),1])*rootCoord);
+    angles=ExtractAngle360(vectors(posRoot,:),vectors);
+    
+    indNoEx=1:length(angles);
+    indNoEx([posExit,posRoot])=[];
+    anglesExt=angles(indNoEx);
+    
+    indOut=indNoEx(find((anglesExt>=angles(posRoot)) & (anglesExt<=angles(posExit))));
+    
+    testIsOut=insideContourInfo(vertexEdgesSub(indOut));
+    
+    if sum(testIsOut)==0
+        isInside=true;
+    elseif sum(testIsOut)==numel(testIsOut)
+        isInside=false;
+    else
+        error('Cannot decide if is inside or not')
+    end
+    
+end
+
+function [pos]=FindMatchingVectors(vecList,vec)
+    
+    pos=find(sum(abs(vecList-(ones([length(vecList(:,1)),1])*vec)),2)==0);
     
 end
 

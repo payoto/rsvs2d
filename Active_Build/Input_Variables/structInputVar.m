@@ -544,9 +544,12 @@ function [param]=WeirdShape()
     
     param.snakes.refine.refineGrid=4;
     param.general.typDat='low5shape';
-    param.snakes.refine.typeRefine='grey';
+    param.snakes.refine.typeRefine='all';
     param.snakes.step.snakesSteps=100;
    
+    param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
+    param.general.boundstr{2}='solidisIn1';
+    param.general.boundstr{3}='1bound';
 
 end
 
