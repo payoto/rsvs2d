@@ -67,9 +67,16 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     % Error Report
     [FIDError]=OpenErrorReportFile(writeDirectory,marker);
     GenerateErrorReportFile(t,marker,FIDError)
+    
+    % Lay File
+    [FID]=OpenOptimLayFile(writeDirectory,marker);
+    pltFile=[writeDirectory,filesep,'TecPlot_',marker,'.plt'];
+    PersnaliseLayFile(FID,pltFile);
 end
 
-function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restartsnak,snakSave)
+function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,...
+        restartsnak,snakSave,tecStruct)
+    
     
     marker=out.marker;
     t=out.tOutput;
@@ -95,7 +102,14 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,restar
     end
     BoundaryOutput(loop,fidBoundary);
     fclose(fidBoundary);
-    
+    if nIter>0
+    TecplotPortion_Profile(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
+        snakSave(end).volumefraction,restartsnak.snaxel,tecStruct.snakposition);
+    else
+        TecplotPortion_Init(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
+        tecStruct.fineGrid,snakSave(end).volumefraction,restartsnak.snaxel,...
+        tecStruct.snakposition);
+    end
     
     GenerateProfileBinary(writeDirectory,markerShort,savStruct)
     WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
@@ -105,31 +119,39 @@ function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
     
     t=out.tOutput;
     rootDir=out.rootDir;
+    fullMark=out.marker;
 %     marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
 %     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     marker=['iteration_',int2str(nIter)];
     iterStr=['\iteration_',int2str(nIter)];
     writeDirectory=[rootDir,iterStr];
     writeDirectory=MakePathCompliant(writeDirectory);
-    
-    % iter entry
-    [FIDIter]=OpenIterIndexFile(rootDir,out.marker);
-    returnEntries=GenerateIterIndexEntry(FIDIter,nIter,population);
-    % Error Info
-    [FIDError]=OpenErrorReportFile(rootDir,out.marker);
-    GenerateErrorReportEntries(FIDError,nIter,errorReports,returnEntries)
-    if ~isdir(writeDirectory)
-        mkdir(writeDirectory);
+    tecFilePath=[rootDir,filesep,'TecPlot_',fullMark,'.plt'];
+    tecFilePath=MakePathCompliant(tecFilePath);
+        ConcatenateTecplotFile(writeDirectory,tecFilePath)
+        
+    if nIter~=0
+        % iter entry
+        [FIDIter]=OpenIterIndexFile(rootDir,out.marker);
+        returnEntries=GenerateIterIndexEntry(FIDIter,nIter,population);
+        % Error Info
+        [FIDError]=OpenErrorReportFile(rootDir,out.marker);
+        GenerateErrorReportEntries(FIDError,nIter,errorReports,returnEntries)
+        if ~isdir(writeDirectory)
+            mkdir(writeDirectory);
+        end
+        CopyDiary(writeDirectory,marker)
+        GeneratePopulationBinary(writeDirectory,marker,population)
+        
+        
+        
+        h=CheckOptimProfile('iter_all',writeDirectory);
+        %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+        figName=[writeDirectory,'\profiles_',marker,'.fig'];
+        figName=MakePathCompliant(figName);
+        hgsave(h,figName);
+        close(h);
     end
-    CopyDiary(writeDirectory,marker)
-    GeneratePopulationBinary(writeDirectory,marker,population)
-    h=CheckOptimProfile('iter_all',writeDirectory);
-   %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-   figName=[writeDirectory,'\profiles_',marker,'.fig'];
-    figName=MakePathCompliant(figName);
-   hgsave(h,figName);
-    close(h);
-    
     
 end
 
@@ -270,6 +292,87 @@ function []=WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
     
     WriteToFile(cellDat,fid);
     fclose(fid);
+end
+
+%% Output tecplot video
+
+function []=TecplotPortion_Profile(nIter,nPop,nProf,profPath,baseGrid,...
+        cellCentredGrid,snaxel,snakposition)
+    
+    time=(nIter-1)*(nPop)+nProf;
+    fName=[profPath,filesep,'tecsubfile_',int2str(nIter),'_',int2str(nProf),'.dat'];
+    FID=fopen(fName,'w');
+    TecplotOutput('optim',FID,baseGrid,cellCentredGrid,snaxel,snakposition,time)
+    
+end
+
+function []=TecplotPortion_Init(nIter,nPop,nProf,profPath,baseGrid,fineGrid,...
+        cellCentredGrid,snaxel,snakposition)
+    
+    time=nIter*(nPop+1)+nProf;
+    fName=[profPath,filesep,'tecsubfile_',int2str(nIter),'_',int2str(nProf),'.dat'];
+    FID=fopen(fName,'w');
+    TecplotOutput('optiminit',FID,baseGrid,fineGrid,cellCentredGrid,snaxel,snakposition)
+    
+end
+
+function []=ConcatenateTecplotFile(iterDir,tecFilePath)
+    [profPaths]=FindProfile(iterDir);
+    
+    for ii=1:length(profPaths)
+        system(['type "',profPaths{ii},'" >> "',tecFilePath,'"']);
+    end
+    
+    
+end
+
+function [profPaths]=FindProfile(iterDir)
+    
+    [returnPath]=FindDir(iterDir,'profile',true);
+    
+    for ii=1:length(returnPath)
+        
+        profPaths(ii)=FindDir(returnPath{ii},'tecsubfile',false);
+        
+    end
+
+end
+
+function [returnPath]=FindDir(rootDir,strDir,isTargDir)
+    
+    subDir=dir(rootDir);
+    subDir(1:2)=[];
+    nameCell={subDir(:).name};
+    isprofileDirCell=strfind(nameCell,strDir);
+    for ii=1:length(subDir)
+        subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
+            ~xor(subDir(ii).isdir,isTargDir);
+    end
+    
+    returnSub=find([subDir(:).isProfile]);
+    
+    
+    
+    for ii=1:length(returnSub)
+        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+        
+    end
+      
+    
+    
+end
+
+
+function [FID]=OpenOptimLayFile(writeDirectory,marker)
+    % Creates a file in the current directory to write data to.
+    
+    writeDirectory=MakePathCompliant(writeDirectory);
+    fileName=['tec360lay_',marker,'.lay'];
+    originalLayFile=[cd,'\Result_Template\Layout_ViewIterOptim.lay'];
+    originalLayFile=MakePathCompliant(originalLayFile);
+    copyfile(originalLayFile,[writeDirectory,filesep,fileName])
+    FID=fopen([writeDirectory,filesep,fileName],'r+');
+    
 end
 
 %% 
@@ -413,9 +516,12 @@ function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,
     save(fileName,'optimsolution');
     
     dat.A=optimstruct(end).population(posOpt).additional.A;
-    dat.xMin=min(loop.subdivision(:,1));
-    dat.xMax=max(loop.subdivision(:,1));
-    dat.t=max(loop.subdivision(:,2))-min(loop.subdivision(:,2));
-    dat.nPoints=length(loop.subdivision(:,1));
+    coord=vertcat(loop(:).subdivision);
+    dat.xMin=min(coord(:,1));
+    dat.xMax=max(coord(:,1));
+    dat.t=max(coord(:,2))-min(coord(:,2));
+    dat.nPoints=length(coord(:,1));
     
 end
+
+

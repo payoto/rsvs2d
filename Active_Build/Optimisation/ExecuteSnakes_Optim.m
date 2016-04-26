@@ -13,7 +13,7 @@
 
 
 function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
-        =ExecuteSnakes_Optim(gridrefined,looprestart,baseGrid,connectstructinfo,param,paramspline,outinfo,nIter,nProf)
+        =ExecuteSnakes_Optim(gridrefined,looprestart,baseGrid,connectstructinfo,param,paramspline,outinfo,nIter,nProf,nPop)
     % Executes the snakes edge detection process
     %
     
@@ -37,8 +37,13 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     
     
     looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
+    tecStruct.snakposition=snakposition;
+    tecStruct.baseGrid=baseGrid;
+    tecStruct.nPop=nPop;
+    tecStruct.fineGrid=gridrefined;
     
-    outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,restartsnake,snakSave);
+    outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,...
+        restartsnake,snakSave,tecStruct);
     [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
     fprintf([textOut1,textOut,textOut2])
 end

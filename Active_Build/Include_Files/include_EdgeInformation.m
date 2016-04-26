@@ -43,7 +43,7 @@ function [loop]=OrderSurfaceVertexReshape(gridreshape,isEdge,cond)
     vertexIndex=[gridreshape.vertex(:).index];
     % Order edges into closed loops
     %[cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
-    [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges);
+    [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
     
     for ii=1:length(cellOrderedVertex)
         loop(ii).vertex.index=[cellOrderedVertex{ii}(:,1);cellOrderedVertex{ii}(1:2,1)];
@@ -119,12 +119,13 @@ end
 
 function [loop]=GenerateEdgeLoop(grid,boundstr,isReshape)
     
-    isEdge=grid.edge.(boundstr{1});
+    
     cond=boundstr{3};
     if isReshape
+        isEdge=[grid.edge(:).(boundstr{1})];
         [loop]=OrderSurfaceVertexReshape(grid,isEdge,cond);
     else
-        
+        isEdge=grid.edge.(boundstr{1});
         [loop]=OrderSurfaceVertex(grid,isEdge,cond);
     end
 end
@@ -161,7 +162,7 @@ function [loop]=OrderSurfaceVertex(unstructured,isEdge,cond)
     
     % Order edges into closed loops
     %[cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
-    [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges);
+    [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
     
     for ii=1:length(cellOrderedVertex)
         loop(ii).vertex.index=[cellOrderedVertex{ii}(:,1);cellOrderedVertex{ii}(1:2,1)];

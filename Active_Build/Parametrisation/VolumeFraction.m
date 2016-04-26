@@ -19,7 +19,7 @@ function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snak
     
     
     insideContourInfoIndex=[refinedGrid.edge(logical(insideContourInfo)).index];
-%     [insideContourInfoIndex]=ReferenceCompArray(refinedGrid.edge,logical(insideContourInfo),'log','index');
+    %     [insideContourInfoIndex]=ReferenceCompArray(refinedGrid.edge,logical(insideContourInfo),'log','index');
     [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid,snakposition);
     
     for ii=1:length(cellCentredGrid)
@@ -98,7 +98,7 @@ function strVert=VerticalStringArray(str,delim)
         strVert(ii,1:wL(ii))=str(wS(ii):wE(ii)-1);
     end
     
-
+    
 end
 
 function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid,snakposition)
@@ -106,11 +106,11 @@ function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid
     
     cellCentredGrid(1).snaxel=struct([]);
     
-%     [snakPosInd]=ReferenceCompArray(snakposition,inf,'inf','index');
-%     [edgeInd]=ReferenceCompArray(refinedGrid.edge,inf,'inf','index');
-%     [cellInd]=ReferenceCompArray(cellCentredGrid,inf,'inf','index');
-%     [vertIndex]=ReferenceCompArray(refinedGrid.vertex,inf,'inf','index');
-%     [vertCoord]=ReferenceCompArrayVertCat(refinedGrid.vertex,inf,'inf','coord');
+    %     [snakPosInd]=ReferenceCompArray(snakposition,inf,'inf','index');
+    %     [edgeInd]=ReferenceCompArray(refinedGrid.edge,inf,'inf','index');
+    %     [cellInd]=ReferenceCompArray(cellCentredGrid,inf,'inf','index');
+    %     [vertIndex]=ReferenceCompArray(refinedGrid.vertex,inf,'inf','index');
+    %     [vertCoord]=ReferenceCompArrayVertCat(refinedGrid.vertex,inf,'inf','coord');
     
     snakPosInd=[snakposition(:).index];
     edgeInd=[refinedGrid.edge(:).index];
@@ -120,8 +120,8 @@ function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid
     
     
     
-%     snakPosFields='coord,vector,vectorprec,vectornext,normvector,edgelength';
-%     snakPosFields=VerticalStringArray(snakPosFields,',');
+    %     snakPosFields='coord,vector,vectorprec,vectornext,normvector,edgelength';
+    %     snakPosFields=VerticalStringArray(snakPosFields,',');
     snakPosFields={'coord','vector','vectorprec','vectornext','normvector','edgelength'};
     for ii=1:length(snaxel)
         snaxEdge=snaxel(ii).edge;
@@ -159,11 +159,20 @@ function [areablock,volume]=ExtractCellFillInformation(cellStruct,insideContourI
     % Extracts the contour information to calculate the area
     
     nBordBlocks=length(cellStruct.snaxel)/2;
+    errFlag=false;
     if nBordBlocks>0
         [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct);
-        [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
-        [volume,areablock]=CalculateCellVolume(areablock,cellStruct.volume);
-    else
+        if sum(edgeSnak==0)==2
+            warning('Snaxels are in an unconventional configuration')
+            errFlag=true;
+        else
+            [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
+            [volume,areablock]=CalculateCellVolume(areablock,cellStruct.volume);
+        end
+    end
+    
+    if nBordBlocks<=0 || errFlag
+        
         areablock.border=[0,1];
         isFullCell=prod(FindObjNum([],[cellStruct.edge(:).index],...
             insideContourInfoIndex)>0);
@@ -189,7 +198,8 @@ function [bordstruct,edgeSnakSub]=AddSnaxelBorders(cellStruct,edgeSnakSub)
     % Calculates snaxel-snaxel border
     % in CCW order
     
-    isCCWOrder=cellStruct.snaxel(edgeSnakSub(1)).snaxnext==cellStruct.snaxel(edgeSnakSub(2)).index;
+    isCCWOrder=cellStruct.snaxel(edgeSnakSub(1)).snaxnext==...
+        cellStruct.snaxel(edgeSnakSub(2)).index;
     if ~isCCWOrder
         edgeSnakSub=edgeSnakSub(2:-1:1);
     end
@@ -272,7 +282,7 @@ function [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
     areablockTemp=struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0]));
     areablock=repmat(areablockTemp,[1 nBordBlocks]);
     for ii=nBordBlocks:-1:1
-
+        
         % Calculate snaxel to snaxel border
         [bordstruct1,edgeSnakSub(ii,:)]=AddSnaxelBorders(cellStruct,edgeSnakSub(ii,:));
         % First snax-edge bord
@@ -320,7 +330,7 @@ function [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct)
     % Extract the connected snaxels from cell information
     snaxNext=vertcat(cellStruct.snaxel(:).snaxnext);
     snaxInd=[cellStruct.snaxel(:).index];
-
+    
     edgeSnak=zeros([nBordBlocks,2]);
     kk=0;
     for ii=1:length(snaxInd)
@@ -328,7 +338,7 @@ function [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct)
         if nextIsInCell
             kk=kk+1;
             edgeSnak(kk,:)=[snaxInd(ii),snaxNext(ii)];
-           
+            
         end
     end
     
@@ -399,11 +409,19 @@ function [coeffblock]=ExtractCellDerivInformation(cellStruct)
     % Extracts the contour information to calculate the area
     
     nBordBlocks=length(cellStruct.snaxel)/2;
+    errFlag=false;
     if nBordBlocks>0
         [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct);
-        [coeffblock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks);
-        
-    else
+        if sum(edgeSnak==0)==2
+            warning('Snaxels are in an unconventional configuration')
+            errFlag=true;
+        end
+        if edgeSnak~=0
+            [coeffblock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks);
+        end
+    end
+    
+    if nBordBlocks<=0 || errFlag
         coeffblock=struct([]);
     end
     

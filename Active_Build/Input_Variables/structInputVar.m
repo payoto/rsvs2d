@@ -343,6 +343,14 @@ function [param]=optimDefault()
     
 end
 
+function [param]=OptimNoRestart()
+    
+    [param]=optimDefault();
+    param.general.restart=false;
+    param.snakes.step.snakesSteps=3;
+end
+
+
 function [param]=optimTest()
     
     [param]=optimDefault();
@@ -368,7 +376,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
-    param.general.refineSteps=4;
+    param.general.refineSteps=3;
     
 end
 
@@ -380,8 +388,8 @@ function [param]=optimSupersonicMultiTopo()
     param=AvoidLocalOptim(param);
     
     param.general.typDat='optimInit';
-    param.general.restart=true;
-    param.general.refineSteps=4;
+    param.general.restart=false;
+    param.general.refineSteps=3;
     param.general.subdivType='chaikin';
     
     param.snakes.refine.refineGrid=4;
@@ -393,9 +401,13 @@ function [param]=optimSupersonicMultiTopo()
     param.snakes.refine.axisRatio=0.2;
     
     param.snakes.step.mergeTopo=true;
-    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakesSteps=2;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
+    param.snakes.step.maxStep=0.4;
+    param.snakes.step.maxDt=0.5;
+    param.snakes.step.fillLooseStep=30;
+    param.snakes.step.fillLooseCut=0.90;
     
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
@@ -653,6 +665,20 @@ function [param]=BuzmanBiplane4()
     [param]=HalfWedge();
     
     param.general.typDat='buzmanbiplane4';
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.axisRatio=0.23;
+    param.optiminit.cellLevels=[6,9];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
+end
+
+function [param]=Donught()
+    
+    [param]=HalfWedge();
+    
+    param.general.typDat='donught';
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.axisRatio=0.23;
     param.optiminit.cellLevels=[6,9];
