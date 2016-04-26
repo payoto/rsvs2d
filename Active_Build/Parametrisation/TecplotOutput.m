@@ -16,8 +16,10 @@ function []=TecplotOutput(entryPoint,varargin)
     switch entryPoint
         case 'snakes'
             TecplotOutput_snakes(varargin{:});
+        case 'optiminit'
+            TecplotOutput_OptimInit(varargin{:});
         case 'optim'
-            
+            TecplotOutput_Optim(varargin{:});
     end
         
     
@@ -53,8 +55,56 @@ function []=TecplotOutput_snakes(FID,baseGrid,fineGrid,snakSave,connectstructinf
     fclose(FID);
 end
 
-function []=TecplotOutput_Optim(FID,stagePoint,)
+function []=TecplotOutput_OptimInit(FID,baseGrid,fineGrid,cellCentredGrid,...
+        snaxel,snakposition)
+    
+    [cellBaseGrid]=GridStructToCellOut(baseGrid,1);
+    [cellFineGrid]=GridStructToCellOut(fineGrid,2);
+    
+    [cellMesh]=CellCentredMeshDataExtraction_Optim(baseGrid,cellCentredGrid,[],[],[],[]);
+    [cellSnax]=SnaxelToCellOut(snaxel,snakposition,3,0);   
+    [cellVol]=CellCentredMeshDataExtraction_Optim(baseGrid,cellCentredGrid,4,...
+        0,[],[]);
+    
+    cellWrite=[cellBaseGrid,cellFineGrid,cellMesh,cellSnax,cellVol];
+    
+    WriteToFile(cellWrite,FID);
+    fclose(FID);
+end
 
+function []=TecplotOutput_Optim(FID,baseGrid,cellCentredGrid,snaxel,snakposition,time)
+    
+    [cellSnax]=SnaxelToCellOut(snaxel,snakposition,3,time);
+        connShare=5;
+        varshare.zone=connShare;
+        varshare.vars=[1,2];
+   
+    [cellVol]=CellCentredMeshDataExtraction_Optim(baseGrid,cellCentredGrid,4,...
+        time,connShare,varshare);
+    
+    cellWrite=[cellSnax,cellVol];
+    
+    WriteToFile(cellWrite,FID);
+    fclose(FID);
+end
+
+function []=TecplotOutput_Final()
+    
+    % Will need to be built
+    [cellConv]=ConvergenceStructToCellOut(snakSave,5:8);
+    
+end
+
+function [cellMesh]=CellCentredMeshDataExtraction_Optim(gridStruct,cellCentredGrid,strandID,time,connShare,varshare)
+    
+%     cellcentredstruct=repmat(struct('targetfill',[],'volumefraction',[]),...
+%         1,length(cellCentredGrid));
+    for ii=1:length(cellCentredGrid.targetfill)
+            cellcentredstruct(ii).targetfill=cellCentredGrid.targetfill(ii);
+            cellcentredstruct(ii).volumefraction=cellCentredGrid.targetfill(ii);
+    end
+   [cellMesh]=CellCentredMeshDataExtraction(gridStruct,cellcentredstruct,strandID,time,connShare,varshare);
+end
 %% Open File
 
 function []=WriteToFile(cellData,FID)

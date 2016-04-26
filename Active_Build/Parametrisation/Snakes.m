@@ -593,8 +593,11 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
             isInside=true;
         otherwise
             error('Invalid boundstr flag')
-            
     end
+    
+    
+    
+    
     [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
         edgeIndex,loopEdgeIndex,snaxelIndexStart,isInside);
     

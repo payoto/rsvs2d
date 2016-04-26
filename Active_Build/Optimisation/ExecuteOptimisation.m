@@ -109,9 +109,11 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
     [iterstruct]=InitialisePopulation(paramoptim,iterstruct);
+    
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
-        baseGrid,connectstructinfo,paramoptim.initparam,paramoptim.spline,outinfo,0,0);
+        baseGrid,connectstructinfo,paramoptim.initparam,paramoptim.spline,outinfo,0,0,0);
+    [outinfo]=OptimisationOutput('iteration',paramoptim,0,outinfo,iterstruct(1),{});
     
     [~]=PrintEnd(procStr,1,tStart);
 end
@@ -130,23 +132,23 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     
     [captureErrors{1:nPop}]=deal('');
     
-    parfor ii=1:nPop
+    for ii=1:nPop
     %for ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        try
+        %try
             % Normal Execution
             population(ii)=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
-        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim)
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim);
             
             
-        catch MEexception
-            % Error Capture
-            population(ii).constraint=false;
-            population(ii).exception=['error: ',MEexception.identifier];
-            captureErrors{ii}=MEexception.getReport;
-        end
+%         catch MEexception
+%             % Error Capture
+%             population(ii).constraint=false;
+%             population(ii).exception=['error: ',MEexception.identifier];
+%             captureErrors{ii}=MEexception.getReport;
+%         end
     end
     
     [population]=ConstraintMethod('Res',paramoptim,population);
@@ -156,17 +158,23 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
 end
 
 function population=NormalExecutionIteration(population,newRefGrid,newrestartsnake,...
-        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim)
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,...
+        objectiveName,paramoptim)
     
     varExtract={'restart','boundstr'};
-    [isRestart]=ExtractVariables(varExtract,paramsnake);
+    [isRestart,boundstr]=ExtractVariables(varExtract,paramsnake);
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
     
     if ~isRestart
+        [newRefGrid]=EdgePropertiesReshape(newRefGrid);
+        [newGrid]=EdgePropertiesReshape(newGrid);
         [newrestartsnake]=GenerateEdgeLoop(newRefGrid,boundstr,true);
     end
     
-    [~,~,snakSave,loop,~,outTemp]=ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
-        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii);
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+        ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,nPop);
     population.location=outTemp.dirprofile;
     [population.objective,population.additional]=EvaluateObjective(objectiveName,paramoptim,population,loop);
     population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
@@ -234,6 +242,9 @@ function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,restar
     
     if numel(newFill)~=numel(activeCellSub)
         error('Fill and Active Set do not match in size')
+    end
+    if sum(abs(newFill))==0
+        newFill(round(numel(newFill)/2))=1e-3;
     end
     
     newGrid=baseGrid;
@@ -333,14 +344,15 @@ function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
             origPop=zeros([nPop,nDesVar]);
             for ii=1:nPop
                 pop=zeros(cellLevels);
-                
-                nAct=randi(nStrips);
-                stripAct=randperm(nStrips,nAct);
-                
-                for jj=stripAct
-                    
-                    pop(:,jj)=rand;
-                    
+                while sum(sum(pop))==0
+                    nAct=randi(nStrips);
+                    stripAct=randperm(nStrips,nAct);
+
+                    for jj=stripAct
+
+                        pop(:,jj)=rand;
+
+                    end
                 end
                 origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
             end
@@ -354,11 +366,19 @@ end
 
 function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
     
-    varExtract={'nPop','maxIter'};
-    [nPop,nIter]=ExtractVariables(varExtract,paroptim);
+    varExtract={'nPop','maxIter','objectiveName'};
+    [nPop,nIter,objectiveName]=ExtractVariables(varExtract,paroptim);
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
-    addstruct=struct('iter',[],'res',[],'cl',[],'cm',[],'cd',[],'cx',[],'cy',[],'A',[],'L',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+    switch objectiveName
+        case 'CutCellFlow'
+            addstruct=struct('iter',[],'res',[],'cl',[],'cm',[],'cd',[],...
+                'cx',[],'cy',[],'A',[],'L',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+    
+        case 'LengthArea'
+            addstruct=struct('A',[],'L',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+    
+    end
     population=struct('fill',valFill,'location','','objective',[],'constraint'...
         ,true,'additional',addstruct,'exception','none');
     

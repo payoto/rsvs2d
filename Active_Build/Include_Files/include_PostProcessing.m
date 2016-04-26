@@ -333,8 +333,6 @@ end
 
 function []=PersnaliseLayFile(FID,pltFile)
     
-    
-    
     frewind(FID);
     layData{1}='#!MC 1410';
     layData{2}=['$!VarSet |LFDSFN1| = ''"',pltFile,'"'''];

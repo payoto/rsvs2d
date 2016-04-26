@@ -164,12 +164,15 @@ end
 % Order BlockEdges might cause problems as the different versions were not
 % consistant.
 function [cellOrderedVertex,cellOrderedEdges]=...
-        OrderBlockEdges(blockEdges,discardInput)
+        OrderBlockEdges(blockEdges,blockCellTrunc)
     
+    if ~exist('blockCellTrunc','var')
+        blockCellTrunc=ones([length(blockEdges(:,1)),1]);
+    end
     
     [mBE,~]=size(blockEdges);
     blockEdgesWorking=blockEdges;
-    
+    blockCellTruncWorking=blockCellTrunc;
     edgeList=1:mBE;
     
     % New array counters
@@ -191,14 +194,17 @@ function [cellOrderedVertex,cellOrderedEdges]=...
         % Delete current edge and edgeList entry from working set
         edgeList(ii)=[];
         blockEdgesWorking(ii,:)=[];
-        
+        currBlockCell=blockCellTruncWorking(ii);
         %Increment the counter variables
         
+        blockCellTruncWorking(ii)=[];
         [ii,jj]=find(blockEdgesWorking==nextVertex);
         if length(ii)>1
+            nAct=find(blockCellTruncWorking(ii)==currBlockCell);
+            ii=ii(nAct);
+            jj=jj(nAct);
             warning('ii is empty after cell identification this is an unlikely event in normal operations')
         end
-        
         if isempty(ii) % reset loop if ii is not found
             % restart from the first unassigned edge
             ii=1;

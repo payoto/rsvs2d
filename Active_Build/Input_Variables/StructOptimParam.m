@@ -43,6 +43,11 @@ function [paroptim]=DefaultOptim()
     [paroptim.constraint]=DefaultConstraint();
     paroptim.structdat=GetStructureData(paroptim);
     
+    varExtract={'paramCase'};
+    [paramCase]=ExtractVariables(varExtract,paroptim);
+    paroptim.parametrisation=structInputVar(paramCase);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
 function [paroptimgeneral]=DefaultOptimGeneral()
@@ -68,7 +73,7 @@ end
 function [paroptimDE]=DefaultOptimDE()
     
     paroptimDE.diffAmplification=0.5; %[0,2]
-    paroptimDE.xOverRatio=0.5;
+    paroptimDE.xOverRatio=0.2;
 end
 
 function paroptimobjflow=DefaultCutCell_Flow()
@@ -99,14 +104,23 @@ function [paroptimconstraint]=DefaultConstraint()
     
 end
 
-%% Standard Modifications
-
-function [paraminit]=ChangeSnakeInit(paraminit)
+function [paraminit]=DefaultSnakeInit(paraminit)
     
     paraminit.snakes.step.snakesSteps=20;
     paraminit.general.restart=false;
 end
 
+function paroptim=ModifySnakesParam(paroptim,paramCase)
+    
+    
+    paroptim.general.paramCase=paramCase;
+    paroptim.parametrisation=structInputVar(paramCase);
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
+
+%% Standard Modifications
+
+% Constraints
 function [paroptim]=MeanVolumeConstraint(paroptim)
     
     paroptim.constraint.desVarConstr={'MeanVolFrac'};
@@ -125,13 +139,75 @@ function [paroptim]=SumVolumeConstraint(paroptim)
     
 end
 
+function [paroptim]=SumVolumeConstraint2(paroptim)
+    
+    paroptim.constraint.desVarConstr={'MinSumVolFrac'};
+    paroptim.constraint.desVarVal={4};
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    
+end
+% Objectives
+function paroptim=CutCellObjective(paroptim)
+    
+    paroptim.general.objectiveName='CutCellFlow';
+    paroptim.general.direction='min';
+    paroptim.general.defaultVal=1e3;
+end
+
+function paroptim=LengthAreaObjective(paroptim)
+    
+    paroptim.general.objectiveName='LengthArea';
+    paroptim.general.direction='max';
+    paroptim.general.defaultVal=-1e3;
+end
+
+% Run Sizes
 function paroptim=FullOpt_bp3(paroptim)
+    
     paroptim.general.nPop=48;
     paroptim.general.maxIter=100;
     paroptim.general.worker=12; 
     
 end
 
+function paroptim=FullOpt_bp2(paroptim)
+    
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=8; 
+    
+end
+
+function paroptim=FullOpt_Desktop(paroptim)
+    
+    paroptim.general.nPop=32;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=8; 
+    
+end
+
+function paroptim=Test_bp3(paroptim)
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=3;
+    paroptim.general.worker=12; 
+    
+end
+
+function paroptim=Test_bp2(paroptim)
+    paroptim.general.nPop=8;
+    paroptim.general.maxIter=3;
+    paroptim.general.worker=8; 
+    
+end
+
+function paroptim=Test_Desktop(paroptim)
+    
+    paroptim.general.nPop=6;
+    paroptim.general.maxIter=3;
+    paroptim.general.worker=6; 
+    
+end
 
 %% Callable functions
 
@@ -139,92 +215,76 @@ function [paroptim]=StandardOptim()
     
     [paroptim]=DefaultOptim();
     
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    
-    paroptim.parametrisation=structInputVar(paramCase);
-    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
-    
 end
 
 function [paroptim]=TestParOptim_desktop()
     
     [paroptim]=DefaultOptim();
     
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    
-    paroptim.parametrisation=structInputVar(paramCase);
-    
+    paroptim=Test_Desktop(paroptim);
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.nPop=6;
-    paroptim.general.maxIter=2;
-    paroptim.general.worker=6; 
-    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
 end
 
 function [paroptim]=TestParOptimSym_desktop()
     
     [paroptim]=DefaultOptim();
-    
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    
-    paroptim.parametrisation=structInputVar(paramCase);
+    paroptim=Test_Desktop(paroptim);
     
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.nPop=6;
-    paroptim.general.maxIter=4;
-    paroptim.general.worker=6; 
-    
     paroptim.general.symType='horz'; % 'horz'
-    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
 end
 
-function [paroptim]=TestSupersonicOptimMultiTopSym_Desktop()
+function [paroptim]=Test_MultiTopo_M2_D()
     
-    [paroptim]=FullSupersonicOptimMultiTopSym_Desktop();
-    paroptim.general.nPop=6;
-    paroptim.general.maxIter=2;
-    paroptim.general.worker=6; 
+    [paroptim]=Full_MultiTopo_M2_D();
+    paroptim=Test_Desktop(paroptim);
 
  
 end
 
+function [paroptim]=Test_MultiTopo_Init_D()
+    
+    [paroptim]=Full_MultiTopo_M2_D();
+    paroptim=Test_Desktop(paroptim);
+    paroptim=LengthAreaObjective(paroptim);
+    [paroptim]=SumVolumeConstraint2(paroptim);
+    paroptim.general.maxIter=2;
+end
+
 function [paroptim]=TestParOptimAero_desktop()
     
-    
-    [paroptim]=TestParOptim_desktop();
-    paroptim.general.paramCase='optimSupersonic';
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    paroptim.parametrisation=structInputVar(paramCase);
-    
+    % Root param
+    [paroptim]=DefaultOptim();
+    % Standard Modifications
+    paroptim=Test_Desktop(paroptim);
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
     [paroptim]=MeanVolumeConstraint(paroptim);
+    paroptim=CutCellObjective(paroptim);
     
-    paroptim.general.objectiveName='CutCellFlow';
-    paroptim.general.direction='min';
-    paroptim.general.defaultVal=1e3;
     paroptim.general.optimMethod='DEtan';
     paroptim.general.symType='horz'; % 'horz'
      
-    paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.parametrisation.general.refineSteps=3;
 end
 
 function [paroptim]=TestParOptim_HPC()
     
     [paroptim]=DefaultOptim();
+    paroptim=Test_bp3(paroptim);
     
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    
-    paroptim.parametrisation=structInputVar(paramCase);
-    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
-    paroptim.general.nPop=12;
-    paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
 end
+
+function [paroptim]=HPC_LengthArea()
+    
+    [paroptim]=DefaultOptim();
+    paroptim=LengthAreaObjective(paroptim);
+    paroptim=FullOpt_bp3(paroptim);
+    
+    
+    paroptim.general.knownOptim=[0.2*(8+pi)/(8+2*pi)];
+    
+end
+
+
 
 %% Full Aero Optimisations
 
@@ -254,28 +314,22 @@ function [paroptim]=FullSupersonicOptimSym_Desktop()
     
 end
 
-function [paroptim]=FullSupersonicOptimMultiTopSym_Desktop()
+function [paroptim]=Full_MultiTopo_M2_D()
     
-    [paroptim]=TestParOptimAero_desktop();
-    paroptim.general.paramCase='optimSupersonicMultiTopo';
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    paroptim.parametrisation=structInputVar(paramCase);
+    % Root param
+    [paroptim]=DefaultOptim();
+    % Standard Modifications
+    paroptim=Test_Desktop(paroptim);
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
+    [paroptim]=SumVolumeConstraint(paroptim);
+    paroptim=CutCellObjective(paroptim);
     
-    paroptim.general.nPop=48;
-    paroptim.general.maxIter=100;
-    paroptim.general.worker=8; 
     paroptim.general.optimMethod='DEtan';
-    paroptim.general.knownOptim=0;
+    paroptim.general.symType='horz'; % 'horz'
     
     paroptim.general.startPop='horzstrip';
     
-    paroptim.general.symType='horz'; % 'horz'
-    paroptim.parametrisation.snakes.refine.axisRatio=0.4;
-    
-    [paroptim]=SumVolumeConstraint(paroptim);
 end
-
 
 
 % bp3
@@ -289,7 +343,6 @@ function [paroptim]=FullSupersonicOptim_HPC()
     
 end
 
-
 function [paroptim]=FullSupersonicOptimSym_bp3_025()
     
     [paroptim]=TestParOptimAero_desktop();
@@ -302,7 +355,6 @@ function [paroptim]=FullSupersonicOptimSym_bp3_025()
     paroptim.parametrisation.snakes.refine.axisRatio=0.25;
     
 end
-
 
 function [paroptim]=FullSupersonicOptimSym_bp3_05()
     
@@ -368,7 +420,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_1()
     
     [paroptim]=TestParOptimAero_desktop();
     
-    paroptim.general.nPop=48;
+    paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
     paroptim.general.worker=8; 
     paroptim.general.optimMethod='DEtan';
@@ -376,23 +428,5 @@ function [paroptim]=FullSupersonicOptimSym_bp2_1()
     
     paroptim.general.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    
-end
-
-function [paroptim]=HPC_LengthArea()
-    
-    [paroptim]=DefaultOptim();
-    
-    varExtract={'paramCase'};
-    [paramCase]=ExtractVariables(varExtract,paroptim);
-    
-    paroptim.parametrisation=structInputVar(paramCase);
-    paroptim.initparam=ChangeSnakeInit(paroptim.parametrisation);
-    paroptim.general.nPop=48;
-    paroptim.general.maxIter=100;
-    paroptim.general.worker=12;
-    paroptim.general.objectiveName='LengthArea';
-    paroptim.general.direction='max';
-    paroptim.general.knownOptim=[0.2*(8+pi)/(8+2*pi)];
     
 end
