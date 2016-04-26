@@ -132,23 +132,23 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     
     [captureErrors{1:nPop}]=deal('');
     
-    for ii=1:nPop
+    parfor ii=1:nPop
     %for ii=1:nPop
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        %try
+        try
             % Normal Execution
             population(ii)=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
         newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim);
             
             
-%         catch MEexception
-%             % Error Capture
-%             population(ii).constraint=false;
-%             population(ii).exception=['error: ',MEexception.identifier];
-%             captureErrors{ii}=MEexception.getReport;
-%         end
+        catch MEexception
+            % Error Capture
+            population(ii).constraint=false;
+            population(ii).exception=['error: ',MEexception.identifier];
+            captureErrors{ii}=MEexception.getReport;
+        end
     end
     
     [population]=ConstraintMethod('Res',paramoptim,population);
