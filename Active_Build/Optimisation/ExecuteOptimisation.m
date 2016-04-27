@@ -327,8 +327,8 @@ end
 
 function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
     
-    varExtract={'nDesVar','nPop','startPop'};
-    [nDesVar,nPop,startPop]=ExtractVariables(varExtract,paroptim);
+    varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal'};
+    [nDesVar,nPop,startPop,desVarConstr,desVarVal]=ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels'};
     [cellLevels]=ExtractVariables(varExtract,paroptim.parametrisation);
     
@@ -356,11 +356,63 @@ function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
                 end
                 origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
             end
+        case 'initbusemann'
+            [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
+                desVarVal);
     end
     
     
     for ii=1:nPop
         iterstruct(1).population(ii).fill=origPop(ii,:);
+    end
+end
+
+function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
+        desVarVal)
+    
+    minTargFill=0;
+    for ii=1:length(desVarConstr)
+        if strcmp(desVarConstr{ii},'MinSumVolFrac')
+            minTargFill=desVarVal{ii};
+            
+        end
+    end
+    
+    
+    nStrips=cellLevels(2);
+    origPop=zeros([nPop,nDesVar]);
+    for ii=1:nPop
+        pop=zeros(cellLevels);
+        while sum(sum(pop))==0
+            nAct=randi(ceil(nStrips/4));
+            stripAct=randperm(ceil(nStrips/2),ceil(nAct/2));
+            stripAct=[stripAct,stripAct+1];
+            stripAct(stripAct>nStrips)=nStrips;
+            posPeak=randi(cellLevels(1)-1);
+            for jj=stripAct
+                
+                hPeak=rand;
+                totFrac=hPeak*cellLevels(1)/2;
+                volLine=zeros([cellLevels(1)-2+1,1]);
+                
+                for kk=2:length(volLine)-1
+                    if kk<=posPeak+1
+                        volLine(kk)=hPeak*(kk-1)/posPeak;
+                    else
+                        volLine(kk)=hPeak-hPeak*((kk-1)-posPeak)...
+                            /(length(volLine)-1-posPeak);
+                    end
+                end
+                volFrac=zeros([cellLevels(1)-2,1]);
+                for kk=1:length(volFrac)
+                    volFrac(kk)=mean(volLine(kk:kk+1));
+                end
+                volFrac=[1e-3;volFrac;1e-3];
+                pop(:,jj)=volFrac;
+                
+            end
+        end
+        origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
     end
 end
 

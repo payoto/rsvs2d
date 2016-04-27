@@ -248,7 +248,10 @@ function [paroptim]=Test_MultiTopo_Init_D()
     paroptim=Test_Desktop(paroptim);
     paroptim=LengthAreaObjective(paroptim);
     [paroptim]=SumVolumeConstraint2(paroptim);
-    paroptim.general.maxIter=2;
+    paroptim.general.nPop=16;
+    paroptim.general.maxIter=1;
+    
+    paroptim.general.worker=8; 
 end
 
 function [paroptim]=TestParOptimAero_desktop()
@@ -327,7 +330,7 @@ function [paroptim]=Full_MultiTopo_M2_D()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.symType='horz'; % 'horz'
     
-    paroptim.general.startPop='horzstrip';
+    paroptim.general.startPop='initbusemann';
     
 end
 
