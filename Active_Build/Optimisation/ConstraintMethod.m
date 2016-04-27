@@ -48,7 +48,7 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
         case 'MeanVolFrac'
             [population]=MeanVolumeFraction(constrVal,paroptim,population);
         case 'MinSumVolFrac'
-            
+            [population]=MinSumVolumeFraction(constrVal,paroptim,population);
         case 'Naca0012'
         
         case ' '

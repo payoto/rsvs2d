@@ -98,8 +98,8 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convCheckRange=15;
     paramsnakesstep.convDistance=500;
     
-    paramsnakesstep.fillLooseStep=20;
-    paramsnakesstep.fillLooseCut=0.75;
+    param.snakes.step.fillLooseStep=5;
+    param.snakes.step.fillLooseCut=1e-3;
     
 end
 
@@ -350,7 +350,6 @@ function [param]=OptimNoRestart()
     param.snakes.step.snakesSteps=3;
 end
 
-
 function [param]=optimTest()
     
     [param]=optimDefault();
@@ -398,16 +397,16 @@ function [param]=optimSupersonicMultiTopo()
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
-    param.snakes.refine.axisRatio=0.2;
+    param.snakes.refine.axisRatio=0.17;
     
     param.snakes.step.mergeTopo=true;
-    param.snakes.step.snakesSteps=2;
+    param.snakes.step.snakesSteps=100;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     param.snakes.step.maxStep=0.4;
     param.snakes.step.maxDt=0.5;
-    param.snakes.step.fillLooseStep=30;
-    param.snakes.step.fillLooseCut=0.90;
+    param.snakes.step.fillLooseStep=5;
+    param.snakes.step.fillLooseCut=1e-3;
     
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
@@ -415,7 +414,7 @@ function [param]=optimSupersonicMultiTopo()
     param.results.tags={'snakes','optimisation'};
     
     param.optiminit.corneractive=true;
-    param.optiminit.cellLevels=[6,9];
+    param.optiminit.cellLevels=[6,10];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
@@ -660,7 +659,8 @@ function [param]=BuzmanBiplane3()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
-    
+    param.snakes.step.fillLooseStep=30;
+    param.snakes.step.fillLooseCut=0.5;
 end
 
 function [param]=BuzmanBiplane4()
@@ -674,6 +674,8 @@ function [param]=BuzmanBiplane4()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.snakes.step.fillLooseStep=30;
+    param.snakes.step.fillLooseCut=1e-4;
     
 end
 
@@ -681,14 +683,33 @@ function [param]=Donught()
     
     [param]=HalfWedge();
     
-    param.general.typDat='donught';
+    param.general.typDat='donught2';
     param.snakes.refine.edgeFinish='sharpen';
-    param.snakes.refine.axisRatio=0.23;
-    param.optiminit.cellLevels=[6,9];
+    param.snakes.refine.axisRatio=1;
+    param.optiminit.cellLevels=[3,3];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=0.5;
     
+end
+
+function [param]=TestInit()
+    
+    [param]=HalfWedge();
+    
+    param.snakes.step.snakesSteps=150;
+    param.general.typDat='testinit';
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.axisRatio=1;
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=1e-3;
+    param.general.passDomBounds=param.general.passDomBounds*1.4;
+    param.optiminit.cellLevels=[9,5];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(1)/sizeRatio(2);
+    param.general.passDomBounds(1,:)=param.general.passDomBounds(1,:)*sizeRatio;
 end
 
 %% Not updated yet

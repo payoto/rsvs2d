@@ -4,7 +4,7 @@
 %      Department of Aerospace Engineering
 %                     2015
 %
-%       Optimisation Using 
+%       Optimisation Using
 %          Parametric Snakes for
 %      for Aerodynamic shape
 %         parametrisation
@@ -21,8 +21,8 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     
     [textOut1,tStart]=evalc('PrintStart(procStr,2);');
     
-    varExtract={'refineSteps'};
-    [refineSteps]=ExtractVariables(varExtract,param);
+    varExtract={'refineSteps','snakData'};
+    [refineSteps,snakData]=ExtractVariables(varExtract,param);
     
     callerString='Snakes(gridrefined,looprestart,baseGrid,connectstructinfo,param);';
     [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
@@ -42,8 +42,13 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     tecStruct.nPop=nPop;
     tecStruct.fineGrid=gridrefined;
     
-    outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,...
-        restartsnake,snakSave,tecStruct);
+    if strcmp('all',snakData)
+        [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,baseGrid,...
+            snakSave,param,outinfo,nIter,nProf,looprestart,restartsnake,tecStruct);
+    else
+        outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,...
+            restartsnake,snakSave,tecStruct);
+    end
     [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
     fprintf([textOut1,textOut,textOut2])
 end
@@ -114,7 +119,7 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
     % typBOund is te type of boundary that is expected, it can either be the
     % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
     % process has been used
-     varExtract={'typeBound','subdivType','resampleSnak'};
+    varExtract={'typeBound','subdivType','resampleSnak'};
     [typeBound,subdivType,resampleSnak]=ExtractVariables(varExtract,param);
     if ~exist('typeBound','var'), typeBound='vertex'; end
     
@@ -131,4 +136,34 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
         %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
         
     end
+end
+
+
+%% Handle full results request
+
+function [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,baseGrid,...
+        snakSave,param,outinfo,nIter,nProf,looprestart,restartsnake,tecStruct)
+    snakSave2=snakSave;
+    volfra=snakSave(end).volumefraction;
+    snakSave(end).volumefraction=struct('targetfill',[],'currentfraction'...
+        ,[],'totVolume',[]);
+    snakSave(end).volumefraction.targetfill=[volfra(:).targetfill];
+    snakSave(end).volumefraction.currentfraction=[volfra(:).volumefraction];
+    snakSave(end).volumefraction.totVolume=[volfra(:).totalvolume];
+    
+    outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,...
+        restartsnake,snakSave,tecStruct);
+    
+    
+    writeDirectory=outinfo.dirprofile;
+    marker=[int2str(nIter),'_',int2str(nProf)];
+    
+    % TecPlot Data
+    [fidTecPLT,pltFileName]=OpenTecPLTFile(writeDirectory,marker);
+    fidTecLAY=OpenTecLayFile(writeDirectory,marker);
+    PersnaliseLayFile(fidTecLAY,pltFileName)
+    
+    TecplotOutput('snakes',fidTecPLT,baseGrid,gridrefined,snakSave2,connectstructinfo)
+    
+    
 end

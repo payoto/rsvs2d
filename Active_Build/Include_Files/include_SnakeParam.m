@@ -203,7 +203,7 @@ function [cellOrderedVertex,cellOrderedEdges]=...
             nAct=find(blockCellTruncWorking(ii)==currBlockCell);
             ii=ii(nAct);
             jj=jj(nAct);
-            warning('ii is empty after cell identification this is an unlikely event in normal operations')
+            disp('Loops neighbouring at corner')
         end
         if isempty(ii) % reset loop if ii is not found
             % restart from the first unassigned edge

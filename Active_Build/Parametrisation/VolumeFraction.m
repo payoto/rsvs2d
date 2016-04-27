@@ -343,7 +343,8 @@ function [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct)
     end
     
     % test statements
-    testEdgeSnak=numel(RemoveIdenticalEntries(edgeSnak(:)))~=numel(RemoveIdenticalEntries(snaxInd));
+    testEdgeSnak=numel(RemoveIdenticalEntries(edgeSnak(:)))...
+        ~=numel(RemoveIdenticalEntries(snaxInd));
     if kk~=nBordBlocks || testEdgeSnak
         warning('You''re fucking up')
     end
