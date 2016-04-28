@@ -1,3 +1,64 @@
+----------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+Generate New Population start
+
+ans =
+
+     0
+
+
+ans =
+
+     0
+
+
+ans =
+
+     0
+
+    Time Elapsed:00:00:00:094
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 4 start
+28-Apr-2016 17:17:31
+--------------------------------------------------------------------------------------------
+  
+
+ans =
+
+     0
+
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',133,1)">133 </a>    [captureErrors{1:nPop}]=deal('');
+if system_dependent('IsDebugMode')==1, dbquit; end
+ExecuteOptimisation('Test_MultiTopo_Init_D2','OptimRes_2016-04-28T131004_Test_MultiTopo_Init_D2.mat')
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - Test_MultiTopo_Init_D2 start
+28-Apr-2016 17:17:37
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+28-Apr-2016 17:17:37
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -119,7 +180,7 @@ Calculations Started . . .
 			Start Cell 96 of 96 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:468
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:437
 INITIAL GRID OPERATIONS end
 -----------------------
   
@@ -144,433 +205,17 @@ ans =
 
   Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-  Initialisation time:00:00:01:997
+  Initialisation time:00:00:01:908
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:09:345
-  Volume converged to 5.63206e-04
-Time Elapsed:00:00:14:009
+  Iteration Time:00:00:10:234
+  Volume converged to 1.75774e-02
+Time Elapsed:00:00:14:311
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:15:242
+    Time Elapsed:00:00:15:310
 INITIALISE OPTIMISATION PROCESS end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-ITERATION 1 start
-27-Apr-2016 17:49:31
---------------------------------------------------------------------------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:120
-  Start Time Stepping
-  64 Steps Performed
-  Iteration Time:00:00:33:151
-  Volume converged to 4.02637e-09
-Time Elapsed:00:00:38:128
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:016
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:089
-  Start Time Stepping
-  71 Steps Performed
-  Iteration Time:00:00:34:353
-  Volume converged to 6.44277e-10
-Time Elapsed:00:00:39:127
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:229
-  Start Time Stepping
-  71 Steps Performed
-  Iteration Time:00:00:46:647
-  Volume converged to 6.70345e-10
-Time Elapsed:00:00:52:840
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:016
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:245
-  Start Time Stepping
-  72 Steps Performed
-  Iteration Time:00:00:47:442
-  Volume converged to 5.06003e-10
-Time Elapsed:00:00:53:183
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:000
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:214
-  Start Time Stepping
-  72 Steps Performed
-  Iteration Time:00:00:49:579
-  Volume converged to 6.18547e-10
-Time Elapsed:00:00:54:681
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:016
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:229
-  Start Time Stepping
-  76 Steps Performed
-  Iteration Time:00:00:52:481
-  Volume converged to 2.03331e-10
-Time Elapsed:00:00:57:551
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:230
-  Start Time Stepping
-  77 Steps Performed
-  Iteration Time:00:00:53:074
-  Volume converged to 4.92835e-10
-Time Elapsed:00:00:58:144
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:136
-  Start Time Stepping
-  100 Steps Performed
-  Iteration Time:00:01:03:042
-  Volume converged to 1.66806e-03
-Time Elapsed:00:01:08:317
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:229
-  Start Time Stepping
-  72 Steps Performed
-  Iteration Time:00:00:50:437
-  Volume converged to 5.03707e-10
-Time Elapsed:00:00:55:631
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:007
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:016
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:386
-  Start Time Stepping
-  72 Steps Performed
-  Iteration Time:00:01:03:985
-  Volume converged to 4.21748e-10
-Time Elapsed:00:01:09:198
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:015
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:167
-  Start Time Stepping
-  99 Steps Performed
-  Iteration Time:00:01:00:184
-  Volume converged to 2.43050e-09
-Time Elapsed:00:01:04:989
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:000
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:016
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:198
-  Start Time Stepping
-  100 Steps Performed
-  Iteration Time:00:00:58:639
-  Volume converged to 2.40703e-02
-Time Elapsed:00:01:03:459
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:001
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:039
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:472
-  Start Time Stepping
-  94 Steps Performed
-  Iteration Time:00:00:49:757
-  Volume converged to 5.42751e-09
-Time Elapsed:00:00:54:851
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:005
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:323
-  Start Time Stepping
-  100 Steps Performed
-  Iteration Time:00:01:14:203
-  Volume converged to 7.17623e-06
-Time Elapsed:00:01:19:037
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:016
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:015
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:292
-  Start Time Stepping
-  100 Steps Performed
-  Iteration Time:00:01:12:659
-  Volume converged to 2.68174e-02
-Time Elapsed:00:01:17:449
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:000
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:03:261
-  Start Time Stepping
-  100 Steps Performed
-  Iteration Time:00:01:18:150
-  Volume converged to 1.20777e-02
-Time Elapsed:00:01:22:956
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-Calculate Objective - LengthArea start
-    Time Elapsed:00:00:00:015
-Calculate Objective - LengthArea end
------------------------
-  
-  
------------------------
-Generate New Population start
-    Time Elapsed:00:00:00:003
-Generate New Population end
------------------------
-  
-  
---------------------------------------------------------------------------------------------
-    Time Elapsed:00:02:28:211
-ITERATION 1 end
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
-OPTIMISATION - Test_MultiTopo_Init_D end
-    Time Elapsed:00:02:44:939
-27-Apr-2016 17:49:16
---------------------------------------------------------------------------------------------
-********************************************************************************************
---------------------------------------------------------------------------------------------
-  
+----------------------------

@@ -50,10 +50,10 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     % Main execution container for Snakes
     
     % Unpacking NECESSARY variables
-    global maxStep maxDt
+    global maxStep maxDt snaxInitPos
     
-    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio'};
-    [mergeTopo,boundstr,snakesConsole,dtRatio]=ExtractVariables(varExtract,param);
+    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos'};
+    [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos]=ExtractVariables(varExtract,param);
     
     forceparam=param.snakes.force;
     dtMin=maxDt/dtRatio;
@@ -802,7 +802,7 @@ end
 function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex)
     
-    
+    global snaxInitPos
     
     numSE=length(snaxelEdges); % provides information about snaxel from same vertex
     snaxelEdgesSub=FindObjNum([],snaxelEdges,edgeIndex);
@@ -812,7 +812,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         kkLocal=kkLocal+1;
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
-        dist=1e-4; % Snaxel initialisation, it starts at the vertex
+        dist=snaxInitPos; % Snaxel initialisation, it starts at the vertex
         velocity=0; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);
@@ -862,6 +862,183 @@ function [snaxel]=SnaxelStructure(index,dist,velocity,vertexOrig,...
     snaxel.snaxprec=snaxPrec;
     snaxel.snaxnext=snaxNext;
     snaxel.isfreeze=0;
+end
+
+%% Snaxel Repopulation
+
+function [snaxel,insideContourInfo]=...
+        SnaxelRepopulate(unstructured,snaxel,insideContourInfo)
+    
+    global unstructglobal
+    % adds snaxels once a corner has been reached
+    [finishedSnakes]=ArrivalCondition(snaxel);
+    edgeSnaxel=[snaxel(:).edge];
+    edgeVertIndex=unstructured.edge.vertexindex;
+    edgeIndex=unstructured.edge.index;
+    
+    %newInsideEdges=[snaxel(finishedSnakes).edge];
+    %insideContourInfo(newInsideEdges)=1;
+    
+    [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal);
+    
+    % Removing from repopulation list snaxels that would hit a vertex
+    % which has already bred
+    [delIndex]=RemoveIdenticalEntries(delIndex(:));
+    snaxel=DeleteSnaxel(snaxel,delIndex);
+    
+    
+    [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
+        newInsideEdges,snaxel);
+    
+    
+end
+
+function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal)
+    % Iterative Breeding process for the breeding of edges
+    
+    newInsideEdges=[];
+    kk=0;
+    delIndex=[];
+    rePopInd=[];
+    while ~isempty(finishedSnakes)
+        kk=kk+1;
+        breedSub=finishedSnakes(1);
+        finishedSnakes(1)=[];
+        newInsideEdges(kk)=snaxel(breedSub).edge; %#ok<AGROW>
+        %insideContourInfo(newInsideEdgesSub(kk))=1;
+        snaxelIndexStart=max([snaxel(:).index])+1;
+        % Doubling the snaxel to be removed
+        [snaxel,indexDoubled,snaxelIndexStart]=...
+            RepopAddDuplicateSnaxel(snaxel,snaxelIndexStart,breedSub);
+        % Find CCW order of two same snax
+        [connec]=RepopExtractConnectionOrder(snaxel,breedSub,indexDoubled,unstructglobal);
+        
+        % Generate the new Snaxels
+        snaxelRepop=InitialSnaxelStructure(snaxel(breedSub).tovertex,edgeVertIndex,...
+            edgeIndex,snaxel(breedSub).edge,snaxel(breedSub).edge,snaxelIndexStart,false,connec);
+        
+        previousV=snaxel(breedSub).v;
+        previousACC=snaxel(breedSub).acc;
+        stepL=snaxelRepop(1).d;
+        for ii=1:length(snaxelRepop)
+            snaxelRepop(ii).d=0;
+            snaxelRepop(ii).v=0;%previousV;
+            snaxelRepop(ii).acc=previousACC;
+        end
+        rePopInd=[rePopInd,[snaxelRepop(:).index]];
+        [snaxel]=AddSnaxel(snaxel,snaxelRepop);
+        % Remove breeding snaxels snaxels
+        delIndex(kk,1:2)=[snaxel(breedSub).index,indexDoubled]; %#ok<AGROW>
+        
+        for jj=1:length(snaxelRepop)
+            rmvFinSnakes=(edgeSnaxel(finishedSnakes)==snaxelRepop(jj).edge);
+            finishedSnakes(rmvFinSnakes)=[];
+        end
+    end
+    if kk>0
+        [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL);
+    end
+end
+
+function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL)
+    vSnax=[snaxel(:).v];
+    
+    [snaxel(:).v]=deal(0);
+    snaxInd=[snaxel(:).index];
+    
+    repopSub=FindObjNum([],rePopInd,snaxInd);
+    rePopInd=rePopInd(repopSub~=0);
+    repopSub=repopSub(repopSub~=0);
+    
+    [snaxel(repopSub).v]=deal(stepL);
+    
+    maxDist=MaxTravelDistance(snaxel);
+    
+    for ii=1:length(repopSub)
+        snaxel(repopSub(ii)).d=min([maxDist(repopSub(ii)),stepL]);
+    end
+    for ii=1:length(snaxel)
+        snaxel(ii).v=vSnax(ii);
+    end
+end
+
+function [snaxel,indexDoubled,snaxelIndexStart]=...
+        RepopAddDuplicateSnaxel(snaxel,snaxelIndexStart,ii)
+    additionalsnaxel=snaxel(ii);
+    additionalsnaxel.index=snaxelIndexStart;
+    connecRemove=additionalsnaxel.connectivity(1);
+    additionalsnaxel.connectivity(1)=snaxel(ii).index;
+    isNextRmv=additionalsnaxel.snaxnext==connecRemove;
+    if isNextRmv
+        additionalsnaxel.snaxnext=snaxel(ii).index;
+    else
+        additionalsnaxel.snaxprec=snaxel(ii).index;
+    end
+    
+    indexDoubled=snaxelIndexStart;
+    snaxelIndexStart=snaxelIndexStart+1;
+    [snaxel]=AddSnaxel(snaxel,additionalsnaxel);
+end
+
+function [connec]=RepopExtractConnectionOrder(snaxel,ii,indexDoubled,unstructglobal)
+    % orders the connectivity indices in CCW order for the repopulation stage
+    snaxelIndices=[snaxel(:).index];
+    [posSnaxSub]=FindObjNum(snaxel,[snaxel(ii).index,indexDoubled],snaxelIndices);
+    [posSnaxSub1]=FindObjNum(snaxel,[snaxel(posSnaxSub).connectivity],snaxelIndices);
+    [posSnaxSub2]=FindObjNum(snaxel,[snaxel(posSnaxSub1).connectivity],snaxelIndices);
+    [posSnaxSub3]=FindObjNum(snaxel,[snaxel(posSnaxSub2).connectivity],snaxelIndices);
+    posSnaxSub=[posSnaxSub',posSnaxSub1',posSnaxSub2',posSnaxSub3'];
+    posSnaxSub=RemoveIdenticalEntries(posSnaxSub);
+    [snakposition]=PositionSnakes(snaxel(posSnaxSub),unstructglobal);
+    
+    [precSnax,nextSnax]=CCWNeighbours(snaxel,snaxel(ii).index,snakposition);
+    if precSnax==indexDoubled
+        connec=[indexDoubled,snaxel(ii).index];
+    elseif nextSnax==indexDoubled
+        connec=[snaxel(ii).index,indexDoubled];
+    end
+end
+
+function [snaxel]=AddSnaxel(snaxel,additionsnaxel)
+    % [snaxel]=AddSnaxel(snaxel,additionsnaxel)
+    % adds a snaxel defined in the standard way and connects it up in between
+    % the specified connection snaxels
+    
+    [connection,indexSnaxCon]=ExtractConnection(additionsnaxel);
+    %connection=additionsnaxel.connectivity;
+    subConnection=FindObjNum(snaxel,connection);
+    for ii=1:length(connection)
+        % in the iith connected snaxel find the index to the other connection
+        singlesnaxel=snaxel(subConnection(ii));
+        connecReplace=indexSnaxCon(ii);
+        connecRemove=connection(connection~=connection(ii));
+        [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace);
+        snaxel(subConnection(ii))=singlesnaxel;
+    end
+    snaxel=[snaxel,additionsnaxel];
+end
+
+function [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace)
+    % Removes a connection to a snaxel from another snaxel and replaces
+    % it with the replacement connection
+    refresh=singlesnaxel.connectivity==connecRemove;
+    isNext=singlesnaxel.snaxnext==connecRemove;
+    isPrec=singlesnaxel.snaxprec==connecRemove;
+    if sum(refresh)==0
+        error('invalid connection to break');
+    end
+    if isNext && isPrec
+        warning('Topology Collapsing');
+    end
+    % then replace that number to the snaxel that is being introduced
+    singlesnaxel.connectivity(refresh)=connecReplace;
+    if isNext
+        singlesnaxel.snaxnext=connecReplace;
+    elseif isPrec
+        singlesnaxel.snaxprec=connecReplace;
+    end
 end
 
 
@@ -1432,183 +1609,6 @@ function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInside
     insideContourInfo=logical(insideContourInfo);
     insideContourInfo(newInsideEdgesSub)=true;
     
-end
-
-%% Snaxel Repopulation
-
-function [snaxel,insideContourInfo]=...
-        SnaxelRepopulate(unstructured,snaxel,insideContourInfo)
-    
-    global unstructglobal
-    % adds snaxels once a corner has been reached
-    [finishedSnakes]=ArrivalCondition(snaxel);
-    edgeSnaxel=[snaxel(:).edge];
-    edgeVertIndex=unstructured.edge.vertexindex;
-    edgeIndex=unstructured.edge.index;
-    
-    %newInsideEdges=[snaxel(finishedSnakes).edge];
-    %insideContourInfo(newInsideEdges)=1;
-    
-    [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal);
-    
-    % Removing from repopulation list snaxels that would hit a vertex
-    % which has already bred
-    [delIndex]=RemoveIdenticalEntries(delIndex(:));
-    snaxel=DeleteSnaxel(snaxel,delIndex);
-    
-    
-    [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
-        newInsideEdges,snaxel);
-    
-    
-end
-
-function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal)
-    % Iterative Breeding process for the breeding of edges
-    
-    newInsideEdges=[];
-    kk=0;
-    delIndex=[];
-    rePopInd=[];
-    while ~isempty(finishedSnakes)
-        kk=kk+1;
-        breedSub=finishedSnakes(1);
-        finishedSnakes(1)=[];
-        newInsideEdges(kk)=snaxel(breedSub).edge; %#ok<AGROW>
-        %insideContourInfo(newInsideEdgesSub(kk))=1;
-        snaxelIndexStart=max([snaxel(:).index])+1;
-        % Doubling the snaxel to be removed
-        [snaxel,indexDoubled,snaxelIndexStart]=...
-            RepopAddDuplicateSnaxel(snaxel,snaxelIndexStart,breedSub);
-        % Find CCW order of two same snax
-        [connec]=RepopExtractConnectionOrder(snaxel,breedSub,indexDoubled,unstructglobal);
-        
-        % Generate the new Snaxels
-        snaxelRepop=InitialSnaxelStructure(snaxel(breedSub).tovertex,edgeVertIndex,...
-            edgeIndex,snaxel(breedSub).edge,snaxel(breedSub).edge,snaxelIndexStart,false,connec);
-        
-        previousV=snaxel(breedSub).v;
-        previousACC=snaxel(breedSub).acc;
-        stepL=snaxelRepop(1).d;
-        for ii=1:length(snaxelRepop)
-            snaxelRepop(ii).d=0;
-            snaxelRepop(ii).v=0;%previousV;
-            snaxelRepop(ii).acc=previousACC;
-        end
-        rePopInd=[rePopInd,[snaxelRepop(:).index]];
-        [snaxel]=AddSnaxel(snaxel,snaxelRepop);
-        % Remove breeding snaxels snaxels
-        delIndex(kk,1:2)=[snaxel(breedSub).index,indexDoubled]; %#ok<AGROW>
-        
-        for jj=1:length(snaxelRepop)
-            rmvFinSnakes=(edgeSnaxel(finishedSnakes)==snaxelRepop(jj).edge);
-            finishedSnakes(rmvFinSnakes)=[];
-        end
-    end
-    if kk>0
-        [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL);
-    end
-end
-
-function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL)
-    vSnax=[snaxel(:).v];
-    
-    [snaxel(:).v]=deal(0);
-    snaxInd=[snaxel(:).index];
-    
-    repopSub=FindObjNum([],rePopInd,snaxInd);
-    rePopInd=rePopInd(repopSub~=0);
-    repopSub=repopSub(repopSub~=0);
-    
-    [snaxel(repopSub).v]=deal(stepL);
-    
-    maxDist=MaxTravelDistance(snaxel);
-    
-    for ii=1:length(repopSub)
-        snaxel(repopSub(ii)).d=min([maxDist(repopSub(ii)),stepL]);
-    end
-    for ii=1:length(snaxel)
-        snaxel(ii).v=vSnax(ii);
-    end
-end
-
-function [snaxel,indexDoubled,snaxelIndexStart]=...
-        RepopAddDuplicateSnaxel(snaxel,snaxelIndexStart,ii)
-    additionalsnaxel=snaxel(ii);
-    additionalsnaxel.index=snaxelIndexStart;
-    connecRemove=additionalsnaxel.connectivity(1);
-    additionalsnaxel.connectivity(1)=snaxel(ii).index;
-    isNextRmv=additionalsnaxel.snaxnext==connecRemove;
-    if isNextRmv
-        additionalsnaxel.snaxnext=snaxel(ii).index;
-    else
-        additionalsnaxel.snaxprec=snaxel(ii).index;
-    end
-    
-    indexDoubled=snaxelIndexStart;
-    snaxelIndexStart=snaxelIndexStart+1;
-    [snaxel]=AddSnaxel(snaxel,additionalsnaxel);
-end
-
-function [connec]=RepopExtractConnectionOrder(snaxel,ii,indexDoubled,unstructglobal)
-    % orders the connectivity indices in CCW order for the repopulation stage
-    snaxelIndices=[snaxel(:).index];
-    [posSnaxSub]=FindObjNum(snaxel,[snaxel(ii).index,indexDoubled],snaxelIndices);
-    [posSnaxSub1]=FindObjNum(snaxel,[snaxel(posSnaxSub).connectivity],snaxelIndices);
-    [posSnaxSub2]=FindObjNum(snaxel,[snaxel(posSnaxSub1).connectivity],snaxelIndices);
-    [posSnaxSub3]=FindObjNum(snaxel,[snaxel(posSnaxSub2).connectivity],snaxelIndices);
-    posSnaxSub=[posSnaxSub',posSnaxSub1',posSnaxSub2',posSnaxSub3'];
-    posSnaxSub=RemoveIdenticalEntries(posSnaxSub);
-    [snakposition]=PositionSnakes(snaxel(posSnaxSub),unstructglobal);
-    
-    [precSnax,nextSnax]=CCWNeighbours(snaxel,snaxel(ii).index,snakposition);
-    if precSnax==indexDoubled
-        connec=[indexDoubled,snaxel(ii).index];
-    elseif nextSnax==indexDoubled
-        connec=[snaxel(ii).index,indexDoubled];
-    end
-end
-
-function [snaxel]=AddSnaxel(snaxel,additionsnaxel)
-    % [snaxel]=AddSnaxel(snaxel,additionsnaxel)
-    % adds a snaxel defined in the standard way and connects it up in between
-    % the specified connection snaxels
-    
-    [connection,indexSnaxCon]=ExtractConnection(additionsnaxel);
-    %connection=additionsnaxel.connectivity;
-    subConnection=FindObjNum(snaxel,connection);
-    for ii=1:length(connection)
-        % in the iith connected snaxel find the index to the other connection
-        singlesnaxel=snaxel(subConnection(ii));
-        connecReplace=indexSnaxCon(ii);
-        connecRemove=connection(connection~=connection(ii));
-        [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace);
-        snaxel(subConnection(ii))=singlesnaxel;
-    end
-    snaxel=[snaxel,additionsnaxel];
-end
-
-function [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace)
-    % Removes a connection to a snaxel from another snaxel and replaces
-    % it with the replacement connection
-    refresh=singlesnaxel.connectivity==connecRemove;
-    isNext=singlesnaxel.snaxnext==connecRemove;
-    isPrec=singlesnaxel.snaxprec==connecRemove;
-    if sum(refresh)==0
-        error('invalid connection to break');
-    end
-    if isNext && isPrec
-        warning('Topology Collapsing');
-    end
-    % then replace that number to the snaxel that is being introduced
-    singlesnaxel.connectivity(refresh)=connecReplace;
-    if isNext
-        singlesnaxel.snaxnext=connecReplace;
-    elseif isPrec
-        singlesnaxel.snaxprec=connecReplace;
-    end
 end
 
 
