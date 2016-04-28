@@ -14,7 +14,7 @@
 function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,A,nPoints)
     
     varExtract={'desVarConstr','nMach'};
-    
+    linTheoryOptim=0;
     [desVarConstr,nMach]=ExtractVariables(varExtract,paramoptim);
     for ii=1:length(desVarConstr)
         switch desVarConstr{ii}
@@ -28,6 +28,18 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                     [obj(jj)]=OutputAndRunFlowSolve(loop(jj),rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);
+            case 'MinSumVolFrac'
+                
+                [loop(1)]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
+                [loop(2)]=ConstantArea_Wedge(xMin,xMax,A);
+                [loop(3)]=ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints);
+                resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker'};
+                
+                parfor jj=1:length(loop)
+                    [obj(jj)]=OutputAndRunFlowSolve(loop(jj),rootFolder,resTag{jj},paramoptim);
+                end
+                linTheoryOptim=min([obj(:).cd]);
+                
         end
     end
     

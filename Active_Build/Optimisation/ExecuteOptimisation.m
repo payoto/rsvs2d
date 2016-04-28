@@ -129,7 +129,6 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     paramspline=paramoptim.spline;
     [population]=ConstraintMethod('DesVar',paramoptim,population);
     
-    
     [captureErrors{1:nPop}]=deal('');
     
     parfor ii=1:nPop
@@ -200,9 +199,12 @@ function [iterstruct]=GenerateNewPop(paramoptim,iterstruct,nIter)
     
     [newPop,iterstruct(nIter).population]=OptimisationMethod(paramoptim,iterstruct(nIter).population,...
         iterstruct(max([nIter-1,1])).population);
+   
     
     for ii=1:nPop
+        
         iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+        
     end
     iterstruct(nIter+1).population=ApplySymmetry(paramoptim,iterstruct(nIter+1).population);
     [~]=PrintEnd(procStr,2,tStart);
@@ -389,17 +391,25 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
             stripAct=[stripAct,stripAct+1];
             stripAct(stripAct>nStrips)=nStrips;
             posPeak=randi(cellLevels(1)-1);
+            hPeak=rand([length(stripAct),1]);
+            ratio=minTargFill/(2*sum(hPeak));
+            if ratio>1
+                hPeak=ratio*hPeak;
+            end
+            
+            ll=1;
             for jj=stripAct
                 
-                hPeak=rand;
-                totFrac=hPeak*cellLevels(1)/2;
+                currPeak=hPeak(ll);
+                ll=ll+1;
+                totFrac=currPeak*cellLevels(1)/2;
                 volLine=zeros([cellLevels(1)-2+1,1]);
                 
                 for kk=2:length(volLine)-1
                     if kk<=posPeak+1
-                        volLine(kk)=hPeak*(kk-1)/posPeak;
+                        volLine(kk)=currPeak*(kk-1)/posPeak;
                     else
-                        volLine(kk)=hPeak-hPeak*((kk-1)-posPeak)...
+                        volLine(kk)=currPeak-currPeak*((kk-1)-posPeak)...
                             /(length(volLine)-1-posPeak);
                     end
                 end
@@ -408,6 +418,7 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                     volFrac(kk)=mean(volLine(kk:kk+1));
                 end
                 volFrac=[1e-3;volFrac;1e-3];
+                volFrac(volFrac>1)=1;
                 pop(:,jj)=volFrac;
                 
             end
@@ -425,10 +436,10 @@ function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
     switch objectiveName
         case 'CutCellFlow'
             addstruct=struct('iter',[],'res',[],'cl',[],'cm',[],'cd',[],...
-                'cx',[],'cy',[],'A',[],'L',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+                'cx',[],'cy',[],'A',[],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
     
         case 'LengthArea'
-            addstruct=struct('A',[],'L',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+            addstruct=struct('A',[],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
     
     end
     population=struct('fill',valFill,'location','','objective',[],'constraint'...
@@ -533,13 +544,18 @@ function [objValue,additional]=LengthArea(paramoptim,member,loop)
         [A(ii)]=abs(CalculatePolyArea(points));
         vec=points([end,1:end-1],:)-points;
         L(ii)=sum(sqrt(sum(vec.^2,2)));
-    
+        t(ii)=max(points(:,2))-min(points(:,2));
+        xMin(ii)=min(points(:,1));
+        xMax(ii)=max(points(:,1));
         
     end
     objValue=sum(A)/sum(L);
 
     additional.A=sum(A);
     additional.L=sum(L);
+    additional.t=sum(t);
+    additional.c=max(xMax)-min(xMin);
+    additional.tc=additional.t/additional.c;
 end
 
 function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
@@ -548,9 +564,13 @@ function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
     [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc);
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
     objValue=obj.cd;
+ 
     additional=obj;
     additional.A=areaAdd.A;
     additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
     
 end
 

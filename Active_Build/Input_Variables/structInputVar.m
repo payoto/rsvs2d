@@ -93,13 +93,14 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.stepType='indiv'; % 'strict' 'bounded' 'indiv' 'mixed'
     paramsnakesstep.vSwitch=1e-15;
     paramsnakesstep.dtRatio=5;
+    paramsnakesstep.snaxInitPos=1e-4;
     
     paramsnakesstep.convCheckRate=20;
     paramsnakesstep.convCheckRange=15;
     paramsnakesstep.convDistance=500;
     
-    param.snakes.step.fillLooseStep=5;
-    param.snakes.step.fillLooseCut=1e-3;
+    paramsnakesstep.fillLooseStep=5;
+    paramsnakesstep.fillLooseCut=1e-3;
     
 end
 
@@ -163,10 +164,10 @@ end
 function param=AvoidLocalOptim(param)
     
 
-    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=10e-2;
-    
+    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
 end
 
 function param=SmoothFEDynamic(param)
@@ -400,14 +401,15 @@ function [param]=optimSupersonicMultiTopo()
     param.snakes.refine.axisRatio=0.17;
     
     param.snakes.step.mergeTopo=true;
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=150;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
-    param.snakes.step.maxStep=0.4;
+    param.snakes.step.maxStep=0.2;
     param.snakes.step.maxDt=0.5;
     param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
-    
+    param.snakes.step.stepType='indiv';
+     
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
     param.results.noteFiles={'CurrentBuild'};

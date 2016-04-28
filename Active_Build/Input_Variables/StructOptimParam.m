@@ -73,7 +73,8 @@ end
 function [paroptimDE]=DefaultOptimDE()
     
     paroptimDE.diffAmplification=0.5; %[0,2]
-    paroptimDE.xOverRatio=0.2;
+    paroptimDE.xOverRatio=0.5;
+    paroptimDE.geneType='single'; % 'horz' 'vert'
 end
 
 function paroptimobjflow=DefaultCutCell_Flow()
@@ -120,6 +121,16 @@ end
 
 %% Standard Modifications
 
+% Optimisation Method
+
+
+function [paroptim]=OptimDE_horiz(paroptim)
+    paroptim.general.optimMethod='DEtan';
+    paroptim.optim.DE.diffAmplification=0.5; %[0,2]
+    paroptim.optim.DE.xOverRatio=0.5;
+    paroptim.optim.DE.geneType='horz'; % 'single' 'horz' 'vert'
+end
+
 % Constraints
 function [paroptim]=MeanVolumeConstraint(paroptim)
     
@@ -130,10 +141,11 @@ function [paroptim]=MeanVolumeConstraint(paroptim)
     
 end
 
+
 function [paroptim]=SumVolumeConstraint(paroptim)
     
     paroptim.constraint.desVarConstr={'MinSumVolFrac'};
-    paroptim.constraint.desVarVal={4};
+    paroptim.constraint.desVarVal={3.8};
     paroptim.constraint.resConstr={'AeroResidual'};
     paroptim.constraint.resVal={-3.5};
     
@@ -238,7 +250,10 @@ function [paroptim]=Test_MultiTopo_M2_D()
     
     [paroptim]=Full_MultiTopo_M2_D();
     paroptim=Test_Desktop(paroptim);
-
+    paroptim.general.nPop=48;
+    paroptim.general.maxIter=22;
+    
+    paroptim.general.worker=8; 
  
 end
 
@@ -246,14 +261,27 @@ function [paroptim]=Test_MultiTopo_Init_D()
     
     [paroptim]=Full_MultiTopo_M2_D();
     paroptim=Test_Desktop(paroptim);
-    paroptim=LengthAreaObjective(paroptim);
     [paroptim]=SumVolumeConstraint2(paroptim);
-    paroptim.general.nPop=16;
-    paroptim.general.maxIter=1;
+    paroptim=LengthAreaObjective(paroptim);
+    [paroptim]=OptimDE_horiz(paroptim);
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=3;
+    
+    paroptim.general.worker=6; 
+end
+
+function [paroptim]=Test_MultiTopo_Init_D2()
+    
+    [paroptim]=Full_MultiTopo_M2_D();
+    paroptim=Test_Desktop(paroptim);
+    [paroptim]=OptimDE_horiz(paroptim);
+    
+    paroptim.general.nPop=32;
+    paroptim.general.maxIter=3;
     
     paroptim.general.worker=8; 
 end
-
 function [paroptim]=TestParOptimAero_desktop()
     
     % Root param
@@ -326,8 +354,8 @@ function [paroptim]=Full_MultiTopo_M2_D()
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     [paroptim]=SumVolumeConstraint(paroptim);
     paroptim=CutCellObjective(paroptim);
+    [paroptim]=OptimDE_horiz(paroptim);
     
-    paroptim.general.optimMethod='DEtan';
     paroptim.general.symType='horz'; % 'horz'
     
     paroptim.general.startPop='initbusemann';

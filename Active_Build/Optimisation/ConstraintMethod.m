@@ -127,9 +127,12 @@ function [population]=MinSumVolumeFraction(constrVal,paroptim,population)
         
         sumFill=sum(fillStart);
         ratio=constrVal/sumFill;
-        if ratio<=1
+        if ~isfinite(ratio)
             population(ii).fill=fillStart;
-        else
+            population(ii).constraint=false;
+        elseif ratio<=1
+            population(ii).fill=fillStart;
+        elseif ratio>1
             maxFill=max(fillStart);
             if maxFill*ratio<=max(desVarRange)
                 population(ii).fill=fillStart*ratio;
@@ -139,6 +142,7 @@ function [population]=MinSumVolumeFraction(constrVal,paroptim,population)
                     IterativeMinFill(fillStart,desVarRange,constrVal);
                 
             end
+    
         end
         
         
@@ -152,7 +156,7 @@ function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal)
     ratio=constrVal/sum(fill);
     kk=0;
     n=length(fill);
-    while ratio~=constrVal && kk<=n+1;
+    while ratio>1 && kk<=n+1;
         maxFill=max(desVarRange);
         
         fillBound=((fill*ratio)>=maxFill);
