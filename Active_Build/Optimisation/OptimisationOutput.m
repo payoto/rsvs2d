@@ -24,6 +24,8 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
             out=OptimisationOutput_iteration(varargin{:});
         case 'final'
             out=OptimisationOutput_Final(paramoptim,varargin{:});
+        case 'finalpost'
+            out=OptimisationOutput_Final_Post(paramoptim,varargin{:});
     end
     
     
@@ -103,12 +105,12 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,...
     BoundaryOutput(loop,fidBoundary);
     fclose(fidBoundary);
     if nIter>0
-    TecplotPortion_Profile(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
-        snakSave(end).volumefraction,restartsnak.snaxel,tecStruct.snakposition);
+        TecplotPortion_Profile(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
+            snakSave(end).volumefraction,restartsnak.snaxel,tecStruct.snakposition);
     else
         TecplotPortion_Init(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
-        tecStruct.fineGrid,snakSave(end).volumefraction,restartsnak.snaxel,...
-        tecStruct.snakposition);
+            tecStruct.fineGrid,snakSave(end).volumefraction,restartsnak.snaxel,...
+            tecStruct.snakposition);
     end
     
     GenerateProfileBinary(writeDirectory,markerShort,savStruct)
@@ -126,7 +128,7 @@ function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
     iterStr=['\iteration_',int2str(nIter)];
     writeDirectory=[rootDir,iterStr];
     writeDirectory=MakePathCompliant(writeDirectory);
-    tecFilePath=[rootDir,filesep,'TecPlot_',fullMark,'.plt'];
+    tecFilePath=[rootDir,filesep,'Tec360PLT_',fullMark,'.plt'];
     tecFilePath=MakePathCompliant(tecFilePath);
         ConcatenateTecplotFile(writeDirectory,tecFilePath)
         
@@ -174,6 +176,10 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     if strcmp(objectiveName,'CutCellFlow')
         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
             dat.xMin,dat.xMax,dat.A,dat.nPoints);
+        
+        tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile);
     end
     
     [h]=OptimHistory(optimstruct,knownOptim,direction);
@@ -184,6 +190,31 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
    
 end
 
+function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
+    
+    varExtract={'direction','knownOptim','objectiveName'};
+    [direction,knownOptim,objectiveName]=ExtractVariables(varExtract,paroptim);
+    
+    t=out.tOutput;
+    rootDir=out.rootDir;
+    marker=out.marker;
+    markerSmall=datestr(t,'_yymmddTHHMM');
+    writeDirectory=[rootDir];
+    writeDirectory=MakePathCompliant(writeDirectory);
+    
+    
+    
+    if strcmp(objectiveName,'CutCellFlow')
+
+        tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile);
+    end
+    
+    [h]=OptimHistory(optimstruct,knownOptim,direction);
+    
+   
+end
 
 %% Index File ops
 
@@ -299,7 +330,7 @@ end
 function []=TecplotPortion_Profile(nIter,nPop,nProf,profPath,baseGrid,...
         cellCentredGrid,snaxel,snakposition)
     
-    time=(nIter-1)*(nPop)+nProf;
+    time=nIter+nProf/10^(ceil(log10(nPop)));
     fName=[profPath,filesep,'tecsubfile_',int2str(nIter),'_',int2str(nProf),'.dat'];
     FID=fopen(fName,'w');
     TecplotOutput('optim',FID,baseGrid,cellCentredGrid,snaxel,snakposition,time)
@@ -319,8 +350,16 @@ end
 function []=ConcatenateTecplotFile(iterDir,tecFilePath)
     [profPaths]=FindProfile(iterDir);
     
-    for ii=1:length(profPaths)
-        system(['type "',profPaths{ii},'" >> "',tecFilePath,'"']);
+    compType=computer;
+    
+    if strcmp(compType(1:2),'PC')
+        for ii=1:length(profPaths)
+            system(['type "',profPaths{ii},'" >> "',tecFilePath,'"']);
+        end
+    else
+        for ii=1:length(profPaths)
+            system(['cat ''',profPaths{ii},''' >> ''',tecFilePath,'''']);
+        end
     end
     
     
@@ -338,8 +377,9 @@ function [profPaths]=FindProfile(iterDir)
 
 end
 
-function [returnPath]=FindDir(rootDir,strDir,isTargDir)
-    
+function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
+    returnPath={};
+    returnName={};
     subDir=dir(rootDir);
     subDir(1:2)=[];
     nameCell={subDir(:).name};
@@ -352,16 +392,18 @@ function [returnPath]=FindDir(rootDir,strDir,isTargDir)
     returnSub=find([subDir(:).isProfile]);
     
     
-    
+    if isempty(returnSub)
+        warning('Could not find requested item')
+    end
     for ii=1:length(returnSub)
         returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+        returnName{ii}=subDir(returnSub(ii)).name;
         
     end
       
     
     
 end
-
 
 function [FID]=OpenOptimLayFile(writeDirectory,marker)
     % Creates a file in the current directory to write data to.
@@ -373,6 +415,111 @@ function [FID]=OpenOptimLayFile(writeDirectory,marker)
     copyfile(originalLayFile,[writeDirectory,filesep,fileName])
     FID=fopen([writeDirectory,filesep,fileName],'r+');
     
+end
+
+function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile)
+    
+    [~,iterFolders]=FindDir( rootFolder,'iteration',true);
+    isIter0=regexp(iterFolders,'_0');
+    
+    for ii=1:length(isIter0)
+        isIter0Log(ii)=~isempty(isIter0{ii});
+    end
+    iter0Path=[rootFolder,filesep,iterFolders{isIter0Log}];
+    [initTecFolderFile]=FindDir( iter0Path,'profile',true);
+    [initTecFile]=FindDir(initTecFolderFile{1},'tecsubfile',false);
+    
+    compType=computer;
+    if strcmp(compType(1:2),'PC')
+        system(['type "',initTecFile{1},'" > "',tecPlotFile{2},'"']);
+    else
+        system(['cat ''',initTecFile{1},''' > ''',tecPlotFile{2},'''']);
+    end
+    
+    nVar=length(optimstruct(1).population);
+    nIter=length(optimstruct);
+    iterRes=zeros([nIter,nVar]);
+
+    for ii=1:nIter
+        iterRes(ii,:)=[optimstruct(ii).population(:).objective];
+    end
+    
+    switch dirOptim
+        case 'min'
+            [minRes,minPos]=min(iterRes,[],2);
+        case 'max'
+            [minRes,minPos]=max(iterRes,[],2);
+    end
+    
+    for ii=1:nIter
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        RunCFDPostProcessing(minIterPos);
+        
+        [~,filename]=FindDir( minIterPos,'tecsubfile',false);
+        jj=1;
+        while ~isempty(regexp(filename{jj},'copy', 'once'))
+            jj=jj+1;
+        end
+        [snakPlt]=EditPLTTimeStrand(ii,2,2,minIterPos,filename{jj});
+        [flowPlt]=EditPLTTimeStrand(ii,1,1,[minIterPos,filesep,'CFD'],...
+            'flowplt.plt');
+        if strcmp(compType(1:2),'PC')
+            [~,~]=system(['type "',flowPlt,'" >> "',tecPlotFile{1},'"']);
+            [~,~]=system(['type "',snakPlt,'" >> "',tecPlotFile{2},'"']);
+        else
+            [~,~]=system(['cat ''',flowPlt,''' >> ''',tecPlotFile{1},'''']);
+            [~,~]=system(['cat ''',snakPlt,''' >> ''',tecPlotFile{2},'''']);
+        end
+    end
+    
+    
+    
+    
+end
+
+function RunCFDPostProcessing(profilePath)
+    
+    compType=computer;
+    profilePath=MakePathCompliant(profilePath);
+    
+    cfdPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
+    if strcmp(compType(1:2),'PC')
+        [~,~]=system(['"',cfdPath,'.bat"']);
+    else
+        [~,~]=system(['''',cfdPath,'.sh''']);
+        
+    end
+    
+end
+
+function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
+    
+    cfdPath=MakePathCompliant(cfdPath);
+    sourceF=fopen([cfdPath,filesep,filename],'r');
+    destPath=[cfdPath,filesep,'copy_',filename];
+    destF=fopen(destPath,'w');
+    
+    flagFinished=false;
+    flagTime=0;
+    flagStrand=0;
+    while (~feof(sourceF)) && ~flagFinished
+        str=fgetl(sourceF);
+        if ~isempty(regexp(str,'SOLUTIONTIME', 'once'))
+            str=['SOLUTIONTIME=',num2str(time)];
+            flagTime=flagTime+1;
+        end
+        if ~isempty(regexp(str,'STRANDID', 'once'))
+            str=['STRANDID=',int2str(strand+flagStrand)];
+            flagStrand=flagStrand+1;
+        end
+        fprintf(destF,[str,'\n']);
+        flagFinished=flagTime>=nOccur && flagStrand>=nOccur;
+    end
+    while (~feof(sourceF)) 
+        str=fgetl(sourceF);
+        fprintf(destF,[str,'\n']);
+    end
+    fclose('all');
 end
 
 %% 

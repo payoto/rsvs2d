@@ -369,7 +369,39 @@ end
 
 function [param]=optimSupersonic()
    
-    [param]=optimDefault();
+    [param]=DefaultCase();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='optimInit';
+    param.general.restart=true;
+    param.general.refineSteps=4;
+    param.general.subdivType='area';
+    
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.resampleSnak=true;
+    param.snakes.refine.axisRatio=0.25;
+    
+    param.snakes.step.mergeTopo=false;
+    param.snakes.step.snakesSteps=50;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesConsole=false;
+    
+    param.results.archiveName='Optimisation';
+    param.results.resultRoot=[cd,'\..\results\'];
+    param.results.noteFiles={'CurrentBuild'};
+    param.results.tags={'snakes','optimisation'};
+    
+    param.snakes.refine.axisRatio=0.25;
+    
+    param.optiminit.cellLevels=[14,2];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
     
     param.general.subdivType='chaikin';
     param.snakes.refine.TEShrink=true;

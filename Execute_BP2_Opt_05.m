@@ -12,4 +12,4 @@
 
 InitialiseWorkFlow;
 
-ExecuteOptimisation('FullSupersonicOptimSym_bp2_05');
+ExecuteOptimisation('FullSupersonicOptimSym_bp3_05');

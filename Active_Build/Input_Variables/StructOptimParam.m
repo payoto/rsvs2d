@@ -123,7 +123,6 @@ end
 
 % Optimisation Method
 
-
 function [paroptim]=OptimDE_horiz(paroptim)
     paroptim.general.optimMethod='DEtan';
     paroptim.optim.DE.diffAmplification=0.5; %[0,2]
@@ -250,8 +249,10 @@ function [paroptim]=Test_MultiTopo_M2_D()
     
     [paroptim]=Full_MultiTopo_M2_D();
     paroptim=Test_Desktop(paroptim);
+    [paroptim]=OptimDE_horiz(paroptim);
+    
     paroptim.general.nPop=48;
-    paroptim.general.maxIter=22;
+    paroptim.general.maxIter=20;
     
     paroptim.general.worker=8; 
  
@@ -282,6 +283,7 @@ function [paroptim]=Test_MultiTopo_Init_D2()
     
     paroptim.general.worker=8; 
 end
+
 function [paroptim]=TestParOptimAero_desktop()
     
     % Root param
@@ -356,6 +358,10 @@ function [paroptim]=Full_MultiTopo_M2_D()
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
     
+    paroptim.general.nPop=80;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=8; 
+    
     paroptim.general.symType='horz'; % 'horz'
     
     paroptim.general.startPop='initbusemann';
@@ -383,7 +389,7 @@ function [paroptim]=FullSupersonicOptimSym_bp3_025()
     paroptim.general.knownOptim=8.82356428E-03;
     
     paroptim.general.symType='horz'; % 'horz'
-    paroptim.parametrisation.snakes.refine.axisRatio=0.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
 end
 
@@ -396,7 +402,7 @@ function [paroptim]=FullSupersonicOptimSym_bp3_05()
     paroptim.general.knownOptim=8.82356428E-03;
     
     paroptim.general.symType='horz'; % 'horz'
-    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
 end
 
@@ -409,7 +415,7 @@ function [paroptim]=FullSupersonicOptimSym_bp3_1()
     paroptim.general.knownOptim=8.82356428E-03;
     
     paroptim.general.symType='horz'; % 'horz'
-    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.snakes.refine.axisRatio=2;
     
 end
 

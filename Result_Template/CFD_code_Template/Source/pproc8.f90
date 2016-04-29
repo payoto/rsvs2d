@@ -177,6 +177,8 @@
 
       
       write(unitno,*) 'ZONE t="1" N=',nvert,'E=',nedge
+	  write(unitno,*) 'STRANDID=1 '
+	  write(unitno,*) 'SOLUTIONTIME=1 '
       write(unitno,*) 'DATAPACKING=POINT,'
       write(unitno,*) 'ZONETYPE=FELINESEG'
 
