@@ -177,7 +177,7 @@ end
 function paroptim=FullOpt_bp3(paroptim)
     
     paroptim.general.nPop=48;
-    paroptim.general.maxIter=100;
+    paroptim.general.maxIter=150;
     paroptim.general.worker=12; 
     
 end
@@ -358,8 +358,8 @@ function [paroptim]=Full_MultiTopo_M2_D()
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
     
-    paroptim.general.nPop=80;
-    paroptim.general.maxIter=100;
+    paroptim.general.nPop=56;
+    paroptim.general.maxIter=150;
     paroptim.general.worker=8; 
     
     paroptim.general.symType='horz'; % 'horz'
