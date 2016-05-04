@@ -82,14 +82,34 @@ function [loop]=ConstantArea_Parabola(xMin,xMax,A,nPoints)
     
 end
 
-function [loop]=ConstantArea_Wedge(xMin,xMax,A)
+function [loop]=ConstantArea_Wedge(xMin,xMax,A,M)
     
     h=2*A/2/(xMax-xMin);
+    Dx=xMax-xMin;
+    tanDel=h/Dx;
     
     points=[xMin,0;xMin+(xMax-xMin)/2,-h;xMax,0;xMin+(xMax-xMin)/2,h];
     
     loop.subdivision=points;
     loop.isccw=true;
+    
+end
+
+
+function [loop]=ConstantArea_Busemann(xMin,xMax,A)
+    
+    h=A/2/(xMax-xMin);
+    
+    points=[xMin,0;xMax,0;xMin+(xMax-xMin)/2,h];
+    
+    loop.subdivision=points;
+    loop.isccw=true;
+    
+end
+
+function [tanDel]=CalcTanDel(M,B)
+    
+    tanDel=2/tan(B)*(M^2*(sin(B)^2)-1)/(M^2*(1.4+cos(2*B))+2);
     
 end
 

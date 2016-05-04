@@ -161,6 +161,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
     varExtract={'direction','knownOptim','objectiveName'};
     [direction,knownOptim,objectiveName]=ExtractVariables(varExtract,paroptim);
+    varExtract={'axisRatio'};
+    [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
     
     t=out.tOutput;
     rootDir=out.rootDir;
@@ -179,7 +181,10 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         
         tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
-        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile);
+        [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
+        PersnaliseLayFile(FID,tecPlotFile(2:-1:1));
+        
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile,axisRatio);
     end
     
     [h]=OptimHistory(optimstruct,knownOptim,direction);
@@ -417,7 +422,19 @@ function [FID]=OpenOptimLayFile(writeDirectory,marker)
     
 end
 
-function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile)
+function [FID]=OpenOptimumFlowLayFile(writeDirectory,marker)
+    % Creates a file in the current directory to write data to.
+    
+    writeDirectory=MakePathCompliant(writeDirectory);
+    fileName=['EvolOptim_',marker,'.lay'];
+    originalLayFile=[cd,'\Result_Template\Layout_EvolOptim.lay'];
+    originalLayFile=MakePathCompliant(originalLayFile);
+    copyfile(originalLayFile,[writeDirectory,filesep,fileName])
+    FID=fopen([writeDirectory,filesep,fileName],'r+');
+    
+end
+
+function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio)
     
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
     isIter0=regexp(iterFolders,'_0');
@@ -427,13 +444,18 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile)
     end
     iter0Path=[rootFolder,filesep,iterFolders{isIter0Log}];
     [initTecFolderFile]=FindDir( iter0Path,'profile',true);
-    [initTecFile]=FindDir(initTecFolderFile{1},'tecsubfile',false);
-    
+    [initTecFile,initTecFileName]=FindDir(initTecFolderFile{1},'tecsubfile',false);
+    jj=1;
+    while ~isempty(regexp(initTecFileName{jj},'copy', 'once'))
+        jj=jj+1;
+    end
+    [destPath]=EditVariablePLT_FEPOLYGON(1:2,[1,ratio],[0.001*pi,0.001*pi],...
+        regexprep(initTecFile{jj},initTecFileName{jj},''),initTecFileName{jj},2);
     compType=computer;
     if strcmp(compType(1:2),'PC')
-        system(['type "',initTecFile{1},'" > "',tecPlotFile{2},'"']);
+        system(['type "',destPath,'" > "',tecPlotFile{2},'"']);
     else
-        system(['cat ''',initTecFile{1},''' > ''',tecPlotFile{2},'''']);
+        system(['cat ''',destPath,''' > ''',tecPlotFile{2},'''']);
     end
     
     nVar=length(optimstruct(1).population);
@@ -486,6 +508,7 @@ function RunCFDPostProcessing(profilePath)
     if strcmp(compType(1:2),'PC')
         [~,~]=system(['"',cfdPath,'.bat"']);
     else
+        system(['echo 1 > ''',profilePath,filesep,'CFD',filesep,'nstep.txt''']);
         [~,~]=system(['''',cfdPath,'.sh''']);
         
     end
@@ -514,6 +537,80 @@ function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
         end
         fprintf(destF,[str,'\n']);
         flagFinished=flagTime>=nOccur && flagStrand>=nOccur;
+    end
+    while (~feof(sourceF)) 
+        str=fgetl(sourceF);
+        fprintf(destF,[str,'\n']);
+    end
+    fclose('all');
+end
+
+function [destPath]=EditVariablePLT_FELINESEG(varList,ratio,cfdPath,filename)
+    
+    cfdPath=MakePathCompliant(cfdPath);
+    sourceF=fopen([cfdPath,filesep,filename],'r');
+    destPath=[cfdPath,filesep,'copy_',filename];
+    destF=fopen(destPath,'w');
+    
+    flagFinished=false;
+    flagTime=0;
+    flagStrand=0;
+    while (~feof(sourceF)) && ~flagFinished
+        str=fgetl(sourceF);
+        
+        fprintf(destF,[str,'\n']);
+        if ~isempty(regexp(str,'NODES', 'once'))
+            nNodes=regexp(str,'\d*',match);
+        end
+        if ~isempty(regexp(str,'FELINESEG', 'once'))
+            flagFinished=true;
+        end
+            
+    end
+    for ii=1:nNodes
+        str=fgetl(sourceF);
+        num=str2num(str); %#ok<ST2NM>
+        num(varList)=num(varList).*ratio;
+        str=num2str(num);
+        fprintf(destF,[str,'\n']);
+    end
+    while (~feof(sourceF)) 
+        str=fgetl(sourceF);
+        fprintf(destF,[str,'\n']);
+    end
+    fclose('all');
+end
+
+function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,filename,nZone)
+    
+    cfdPath=MakePathCompliant(cfdPath);
+    sourceF=fopen([cfdPath,filesep,filename],'r');
+    destPath=[cfdPath,filesep,'copy_',filename];
+    destF=fopen(destPath,'w');
+    for jj=1:nZone
+        flagFinished=false;
+        flagTime=0;
+        flagStrand=0;
+        while (~feof(sourceF)) && ~flagFinished
+            str=fgetl(sourceF);
+            if ~isempty(regexp(str,'FEPOLYGON', 'once'))
+                flagFinished=true;
+                
+            end
+            fprintf(destF,[str,'\n']);
+        end
+        
+        for ii=1:max(varList)
+            str=fgetl(sourceF);
+            isvar=ii==varList;
+            if sum(isvar)
+                
+                num=str2num(str); %#ok<ST2NM>
+                num=num*ratio(isvar)+offsets(isvar);
+                str=num2str(num);
+            end
+            fprintf(destF,[str,'\n']);
+        end
     end
     while (~feof(sourceF)) 
         str=fgetl(sourceF);

@@ -102,7 +102,17 @@ function trimmedPoints=RemoveIdenticalConsecutivePoints(points)
     
 end
 
-
+function structdat=GetStructureData(paroptim)
+        
+    [structdat]=ExploreStructureTree(paroptim);
+    structdat.vardat.names=[structdat.vars(:).name];
+    structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
+    for ii=1:length(structdat.vars)
+        jj=regexp(structdat.vardat.names,structdat.vars(ii).name);
+        structdat.vardat.varmatch(jj)=ii;
+    end
+    
+end
 
 %{
 function [A]=CalculatePolyArea(points)
