@@ -55,10 +55,11 @@ function [iterstruct]=ExecuteOptimisation(caseStr,restartFromPop)
     end
     %% Finish Optimisation
     iterstruct(end)=[];
-    OptimisationOutput('final',paramoptim,outinfo,iterstruct);
-    
     [~]=PrintEnd(procStr2,0,tStartOpt);
     diary off
+    OptimisationOutput('final',paramoptim,outinfo,iterstruct);
+    
+    
 end
 
 %%  Optimisation Operation Blocks

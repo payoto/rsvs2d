@@ -20,12 +20,7 @@ function [param]=structInputVar(caseStr)
     param.general.case=caseStr;
     
     [param.structdat]=GetStructureData(param);
-    param.structdat.vardat.names=[param.structdat.vars(:).name];
-    param.structdat.vardat.varmatch=zeros(size(param.structdat.vardat.names));
-    for ii=1:length(param.structdat.vars)
-        jj=regexp(param.structdat.vardat.names,param.structdat.vars(ii).name);
-        param.structdat.vardat.varmatch(jj)=ii;
-    end
+    
 end
 
 function structdat=GetStructureData(param)
