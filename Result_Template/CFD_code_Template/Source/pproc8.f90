@@ -55,6 +55,8 @@
 
       unitno=222
       open(unitno,file="flowplt.plt",status='unknown')
+      unitno2=223
+      open(unitno2,file="flowplt2.plt",status='unknown')
       write(unitno,*) 'variables = "x" "y" "rho" "u" "v" "M" "cp" '
 
       do t=1,nstep
