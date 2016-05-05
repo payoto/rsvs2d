@@ -213,7 +213,10 @@ function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
 
         tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
-        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile);
+        [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
+        PersnaliseLayFile(FID,tecPlotFile(2:-1:1));
+        
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile,axisRatio);
     end
     
     [h]=OptimHistory(optimstruct,knownOptim,direction);
