@@ -100,8 +100,8 @@
       SF=103
       MEM=104 
 
-      verb=0
-      verbfile=0   
+      verb=1
+      verbfile=1   
 
       pi=4.0*atan(1.0) 
 
