@@ -1,7 +1,7 @@
 % Function for the postreatment of incomplete optimisation run
 % The goal is to reconstruct enough information to take the run through 
 
-function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter)
+function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iterstruct)
     include_Utilities
     include_PostProcessing
     
@@ -11,7 +11,9 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter)
     % iterstruct paramoptim
     [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
     % Reconstruct iterstruct
-    [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim);
+    if nargin<3
+        [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim);
+    end
     
     
     OptimisationOutput('final',paramoptim,outinfo,iterstruct);

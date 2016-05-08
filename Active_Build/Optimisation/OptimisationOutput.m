@@ -176,15 +176,15 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
     
     if strcmp(objectiveName,'CutCellFlow')
-        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
-            dat.xMin,dat.xMax,dat.A,dat.nPoints);
-        
+%         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
+%             dat.xMin,dat.xMax,dat.A,dat.nPoints);
+        knownOptim=0;
         tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
         [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
         PersnaliseLayFile(FID,tecPlotFile(2:-1:1));
         
-        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile,axisRatio);
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile,axisRatio,paroptim);
     end
     
     [h]=OptimHistory(optimstruct,knownOptim,direction);
@@ -437,7 +437,7 @@ function [FID]=OpenOptimumFlowLayFile(writeDirectory,marker)
     
 end
 
-function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio)
+function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio,paramoptim)
     
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
     isIter0=regexp(iterFolders,'_0');
@@ -475,27 +475,68 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
         case 'max'
             [minRes,minPos]=max(iterRes,[],2);
     end
-    
+    % Prepare CFD file with newest version
     for ii=1:nIter
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-        RunCFDPostProcessing(minIterPos);
+        PrepareCFDPostProcessing(minIterPos);
         
+    end
+    
+    kk=1;
+    needRerun(kk)=1;
+    for ii=2:nIter
+        
+        precIterPos=optimstruct(ii-1).population(minPos(ii-1)).location;
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        if ~strcmp(precIterPos,minIterPos)
+            kk=kk+1;
+            needRerun(kk)=ii;
+            
+        end
+        
+    end
+    disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
+    parfor jj=1:kk
+        
+        ii=needRerun(jj)
+
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+            CutCellFlow_Handler(paramoptim,minIterPos)
+            RunCFDPostProcessing(minIterPos);
+        end
+        
+    end
+    
+    for ii=1:nIter
+        
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
         [~,filename]=FindDir( minIterPos,'tecsubfile',false);
         jj=1;
         while ~isempty(regexp(filename{jj},'copy', 'once'))
             jj=jj+1;
         end
-        [snakPlt]=EditPLTTimeStrand(ii,2,2,minIterPos,filename{jj});
-        [flowPlt]=EditPLTTimeStrand(ii,1,1,[minIterPos,filesep,'CFD'],...
-            'flowplt.plt');
+        
+        copyfile([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
+        
+        copyfile([[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt'],...
+            [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
+        
+        [snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
+        [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'CFD'],...
+            ['flowplt_cell.plt',int2str(ii)]);
+    end
+    
+    for ii=1:nIter
         if strcmp(compType(1:2),'PC')
-            [~,~]=system(['type "',flowPlt,'" >> "',tecPlotFile{1},'"']);
-            [~,~]=system(['type "',snakPlt,'" >> "',tecPlotFile{2},'"']);
+            [~,~]=system(['type "',flowPlt{ii},'" >> "',tecPlotFile{1},'"']);
+            [~,~]=system(['type "',snakPlt{ii},'" >> "',tecPlotFile{2},'"']);
         else
-            [~,~]=system(['cat ''',flowPlt,''' >> ''',tecPlotFile{1},'''']);
-            [~,~]=system(['cat ''',snakPlt,''' >> ''',tecPlotFile{2},'''']);
+            [~,~]=system(['cat ''',flowPlt{ii},''' >> ''',tecPlotFile{1},'''']);
+            [~,~]=system(['cat ''',snakPlt{ii},''' >> ''',tecPlotFile{2},'''']);
         end
     end
+    
     
     
     
@@ -506,18 +547,51 @@ function RunCFDPostProcessing(profilePath)
     
     compType=computer;
     profilePath=MakePathCompliant(profilePath);
-    
-    cfdPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
+
+    postPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
     if strcmp(compType(1:2),'PC')
-        [~,~]=system(['"',cfdPath,'.bat"']);
+
+        [~,~]=system(['"',postPath,'.bat"']);
     else
+        
         system(['echo 1 > ''',profilePath,filesep,'CFD',filesep,'nstep.txt''']);
-        [~,~]=system(['''',cfdPath,'.sh''']);
+        [~,~]=system(['''',postPath,'.sh''']);
         
     end
     
 end
 
+function PrepareCFDPostProcessing(profilePath)
+    
+    compType=computer;
+    profilePath=MakePathCompliant(profilePath);
+    
+    cfdPath=[profilePath,filesep,'CFD',filesep];
+    rootCode=['.',filesep,'Result_Template',filesep,'CFD_code_Template',...
+        filesep,'supersonic_biplane',filesep];
+    
+    
+    
+    postPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
+    if strcmp(compType(1:2),'PC')
+        try
+            rmdir([cfdPath], 's')
+        catch ME
+            disp(ME.getReport)
+        end
+        copyfile([rootCode],[cfdPath])
+        
+    else
+        try
+            rmdir([cfdPath], 's')
+        catch ME
+            disp(ME.getReport)
+        end
+        CopyFileLinux([rootCode],[cfdPath])
+        
+    end
+    
+end
 function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
     
     cfdPath=MakePathCompliant(cfdPath);
