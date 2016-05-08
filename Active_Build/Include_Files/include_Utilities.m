@@ -114,6 +114,11 @@ function structdat=GetStructureData(paroptim)
     
 end
 
+function CopyFileLinux(p1,p2)
+
+    system(['cp -rp ''',p1,''' ''',p2,'''']);
+end
+
 %{
 function [A]=CalculatePolyArea(points)
     

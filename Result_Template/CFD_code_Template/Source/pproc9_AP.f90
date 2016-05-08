@@ -4,7 +4,7 @@
 
       integer::ncells,nedge,nvert,i,boundmax
       integer,allocatable,dimension(:,:)::edge,bound,edgept
-      integer,allocatable,dimension(:)::nbound,blanking,nmeet
+      integer,allocatable,dimension(:)::nbound,blanking,nmeet,edgeList
       real,allocatable,dimension(:,:)::grd
       real,allocatable,dimension(:)::rho,rhov,mach,machv,cp,cpv,u,v,    &
      &  uv,vv
@@ -12,7 +12,8 @@
 
       integer::point,nmeetmax,ed,j,nquad,no1,no2,nc,bd,fileno
       integer::possiblenextpt,possiblenexted,nv,unitno,unitno2,np,      &
-	 &  nstep,t,ii,jj,nLines,lineLength,lStart,lEnd,ordV,ordE,ordC
+	 &  nstep,t,ii,jj,nLines,lineLength,lStart,lEnd,ordV,ordE,ordC,     &
+	 &  nEdgeBound
 
       real::x
 
@@ -30,7 +31,7 @@
       open(101,file='flow.dat',status='unknown')
       open(303,file='coords.dat',status='unknown')
       read(100,*) ncells,nedge,nvert
-
+		
       allocate(edge(nedge,4))
       allocate(grd(nvert,2))
       allocate(bound(ncells,boundmax))
@@ -49,6 +50,7 @@
       allocate(uv(nvert))
       allocate(v(ncells))
       allocate(vv(nvert))
+	  allocate(edgeList(nedge))
 
       do i=1,nedge
         read(100,*) (edge(i,j),j=1,4)
@@ -166,18 +168,7 @@
 		
       enddo
 	 
-	  do i=1,nedge
-        if(edge(i,3).gt.0)then
-          edge(i,3)=(edge(i,3))         
-        else
-          edge(i,3)=0
-        endif
-        if(edge(i,4).gt.0)then
-         edge(i,4)=(edge(i,4))
-       else
-         edge(i,4)=0
-        endif  
-      enddo
+	  
 	  
       do i=1,nvert
         !if(i.eq.381) then
@@ -189,11 +180,25 @@
         if(m(i).gt.0) machv(i)=machv(i)/float(m(i))
         if(m(i).gt.0) rhov(i)=rhov(i)/float(m(i))
       enddo
-
+	
+	  jj=0;
+	  do ed=1,nedge
+		if(edge(ed,3).eq.(-1))then
+			jj=jj+1;
+			edgeList(jj)=ed
+        endif
+        if(edge(ed,4).eq.(-1))then
+			jj=jj+1;
+			edgeList(jj)=ed
+        endif
+      enddo
+		
+		
+		
       write(strT,*) t
       write(unitno,*) 'ZONE t="1" N=',nvert,'E=',nedge
 	  write(unitno,*) 'STRANDID=1 '
-	  write(unitno,*) 'SOLUTIONTIME=' trim(adjustl(strT))
+	  write(unitno,*) 'SOLUTIONTIME=',trim(adjustl(strT))
       write(unitno,*) 'DATAPACKING=POINT,'
       write(unitno,*) 'ZONETYPE=FELINESEG'
 
@@ -208,6 +213,7 @@
 	  
       !close(unitno)
 	  
+	  
 	  ordV=ceiling(log10(dble(nvert)))
 	  ordE=ceiling(log10(dble(nedge)))
 	  ordC=ceiling(log10(dble(ncells)))
@@ -219,11 +225,24 @@
 	 formE = adjustl(formE)
 	 write(formC,"(I15)") ncells
 	 formC = adjustl(formC)
+	 
+	  do i=1,nedge
+        if(edge(i,3).gt.0)then
+          edge(i,3)=(edge(i,3))         
+        else
+          edge(i,3)=0
+        endif
+        if(edge(i,4).gt.0)then
+         edge(i,4)=(edge(i,4))
+       else
+         edge(i,4)=0
+        endif  
+      enddo
 	  
 	  !write(unitno2,*) VARLOCATION=([1-2]=NODAL ,[3-5]=CELLCENTERED)
-	  write(unitno2,*) 'ZONE'
+	  write(unitno2,*) 'ZONE '
 	  write(unitno2,*) 'STRANDID=1 '
-	  write(unitno,*) 'SOLUTIONTIME=' trim(adjustl(strT))
+	  write(unitno2,*) 'SOLUTIONTIME=', trim(adjustl(strT))
 	  write(unitno2,*) 'VARLOCATION=([1-2]=NODAL,[3-7]=CELLCENTERED)'
 	  write(unitno2,"(A,A)") 'NODES=', trim(formV)
 	  write(unitno2,"(A,A)") 'ELEMENTS=', trim(formC)
@@ -276,19 +295,19 @@
 		enddo
       enddo
 	  
-	  write(unitno2,*) 'ZONE'
+	  write(unitno2,*) 'ZONE t="Surface Data" N=',nvert
 	  write(unitno2,*) 'STRANDID=2 '
-	  write(unitno,*) 'SOLUTIONTIME=' trim(adjustl(strT))
+	  write(unitno2,*) 'SOLUTIONTIME=',trim(adjustl(strT))
 	  write(unitno2,*) 'DATAPACKING=POINT'
 	  write(unitno2,*) 'ZONETYPE=FELINESEG'
+	  do np=1,nvert
+        write(unitno2,*) (grd(np,j),j=1,2),rhov(np),uv(np),vv(np),       &
+     &  machv(np),cpv(np)
+      enddo
 	  
-      !close(unitno2)
-	  
-	  ! write left cell connectivity
-	  !write(unitno2,*) (edge(j,3),j=1,nedge)
-	  ! write right cell connectivity
-	  !write(unitno2,*) (edge(j,4),j=1,nedge)
-      !close(unitno)
+	  do ed=1,jj
+          write(unitno2,*) (edge(edgeList(ed),j),j=1,2)
+      enddo
       
       
       fileno=5
