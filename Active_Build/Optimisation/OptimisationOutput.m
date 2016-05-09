@@ -478,7 +478,7 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
     % Prepare CFD file with newest version
     for ii=1:nIter
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-        PrepareCFDPostProcessing(minIterPos);
+%         PrepareCFDPostProcessing(minIterPos);
         
     end
     

@@ -63,10 +63,11 @@ function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)
     
     for ii=1:nIter
         
-        iterPath=[pathStr,filesep,'iteration_',int2str(ii)];
-        datName=['population_iteration_',int2str(ii),'.mat'];
+        [iterPath,~]=FindDir(pathStr,['iteration_',int2str(ii)],true);
         
-        load([iterPath,filesep,datName],'population');
+        datName=['population_iteration_',int2str(ii)];
+        [returnPath,~]=FindDir(iterPath{1},datName,false);
+        load(returnPath{1},'population');
         iterstruct(ii).population=population;
         
     end
