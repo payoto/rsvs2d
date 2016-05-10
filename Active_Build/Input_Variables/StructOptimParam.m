@@ -38,6 +38,7 @@ function [paroptim]=DefaultOptim()
     
     paroptim.general=DefaultOptimGeneral();
     [paroptim.optim.DE]=DefaultOptimDE();
+    [paroptim.optim.CG]=DefaultOptimCG();
     [paroptim.spline]=DefaultOptimSpline();
     paroptim.obj.flow=DefaultCutCell_Flow();
     [paroptim.constraint]=DefaultConstraint();
@@ -56,7 +57,6 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.paramCase='optimDefault';
     paroptimgeneral.optimMethod='DE';
     paroptimgeneral.desVarRange=[0,1];
-    paroptimgeneral.nDesVar=[0];
     paroptimgeneral.nPop=6;
     paroptimgeneral.startPop='rand';
     paroptimgeneral.maxIter=5;
@@ -67,7 +67,10 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.knownOptim=[0.146088675];
     paroptimgeneral.restartSource='';
     paroptimgeneral.symType='none'; % 'horz'
+    paroptimgeneral.nDesVar=[0];
     paroptimgeneral.symDesVarList=[];
+    paroptimgeneral.notDesInd=[];
+    paroptimgeneral.iterGap=1;
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -75,6 +78,14 @@ function [paroptimDE]=DefaultOptimDE()
     paroptimDE.diffAmplification=0.5; %[0,2]
     paroptimDE.xOverRatio=0.5;
     paroptimDE.geneType='single'; % 'horz' 'vert'
+end
+function [paroptimoptimCG]=DefaultOptimCG()
+    
+    paroptimoptimCG.diffStepSize=1e-2; %[0,2]
+    paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
+    paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
+    paroptimoptimCG.lineSearch=false;
+    
 end
 
 function paroptimobjflow=DefaultCutCell_Flow()
@@ -128,6 +139,12 @@ function [paroptim]=OptimDE_horiz(paroptim)
     paroptim.optim.DE.diffAmplification=0.5; %[0,2]
     paroptim.optim.DE.xOverRatio=0.5;
     paroptim.optim.DE.geneType='horz'; % 'single' 'horz' 'vert'
+end
+
+function [paroptim]=OptimCG_horiz(paroptim)
+    paroptim.general.optimMethod='conjgrad';
+    paroptim.general.startPop='randuniform';
+    
 end
 
 % Constraints
@@ -226,6 +243,17 @@ function [paroptim]=StandardOptim()
     
     [paroptim]=DefaultOptim();
     
+end
+
+function [paroptim]=Test_CG_desktop()
+    
+    [paroptim]=DefaultOptim();
+    [paroptim]=OptimCG_horiz(paroptim);
+    paroptim=Test_Desktop(paroptim);
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.nPop=6;
+    
+    paroptim.general.maxIter=6;
 end
 
 function [paroptim]=TestParOptim_desktop()

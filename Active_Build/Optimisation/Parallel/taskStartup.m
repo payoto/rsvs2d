@@ -43,4 +43,5 @@ function taskStartup(task)
      include_EdgeInformation
      include_Utilities
      include_PostProcessing
+     include_Optimisation
 %     include_Mex_Wrapper
