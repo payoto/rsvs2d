@@ -1,104 +1,516 @@
-{Reference to non-existent field 'structdat'.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_Utilities>ExtractVariables', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m', 58)" style="font-weight:bold">include_Utilities>ExtractVariables</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m',58,0)">line 58</a>)
-    varInStruct=param.structdat.vardat.names;
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExtractVariables', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractVariables.m', 6)" style="font-weight:bold">ExtractVariables</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractVariables.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=ExtractVariables_Handle(varargin{:});
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput_OptimisationOutput_Init', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 41)" style="font-weight:bold">OptimisationOutput_OptimisationOutput_Init</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',41,0)">line 41</a>)
-    [optimCase]=ExtractVariables(varExtract(1),paramoptim);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 19)" style="font-weight:bold">OptimisationOutput</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',19,0)">line 19</a>)
-            [out.marker,out.tOutput,out.rootDir]=OptimisationOutput_Init(paramoptim);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 90)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',90,0)">line 90</a>)
-    [outinfo]=OptimisationOutput('init',paramoptim);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)
-    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
-} 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m',58,1)">58  </a>    varInStruct=param.structdat.vardat.names;
-if system_dependent('IsDebugMode')==1, dbquit; end
-clc 
-close all
-[outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,135,optimstruct)
+57:09
+--------------------------------------------------------------------------------------------
+  
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
-40 Reruns needed, stop bitching and be patient
-[Warning: Negative data ignored] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('is2D', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\graphics\is2D.m', 12)" style="font-weight:bold">is2D</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\graphics\is2D.m',12,0)">line 12</a>)
-  In legendHGUsingMATLABClasses>make_legend (line 285)
-  In legendHGUsingMATLABClasses (line 244)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('legend', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\scribe\legend.p', 118)" style="font-weight:bold">legend</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\scribe\legend.p',118,0)">line 118</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput>OptimHistory', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 782)" style="font-weight:bold">OptimisationOutput>OptimHistory</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',782,0)">line 782</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput_OptimisationOutput_Final', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 190)" style="font-weight:bold">OptimisationOutput_OptimisationOutput_Final</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',190,0)">line 190</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 26)" style="font-weight:bold">OptimisationOutput</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',26,0)">line 26</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PostTreatIncomplete', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\PostTreatIncomplete.m', 19)" style="font-weight:bold">PostTreatIncomplete</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\PostTreatIncomplete.m',19,0)">line 19</a>)] 
-
-outinfo = 
-
-    rootDir: 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation...'
-    tOutput: 7.3645e+05
-     marker: '2016-04-29T172535_Full_MultiTopo_M2_D'
-
-
-paramoptim = 
-
-            general: [1x1 struct]
-              optim: [1x1 struct]
-             spline: [1x1 struct]
-                obj: [1x1 struct]
-         constraint: [1x1 struct]
-          structdat: [1x1 struct]
-    parametrisation: [1x1 struct]
-
-
-iterstruct = 
-
-1x135 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
-
-    population
-
-[outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,135,optimstruct)
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
-40 Reruns needed, stop bitching and be patient
-[Warning: Negative data ignored] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('is2D', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\graphics\is2D.m', 12)" style="font-weight:bold">is2D</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\graphics\is2D.m',12,0)">line 12</a>)
-  In legendHGUsingMATLABClasses>make_legend (line 285)
-  In legendHGUsingMATLABClasses (line 244)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('legend', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\scribe\legend.p', 118)" style="font-weight:bold">legend</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\scribe\legend.p',118,0)">line 118</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput>OptimHistory', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 782)" style="font-weight:bold">OptimisationOutput>OptimHistory</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',782,0)">line 782</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput_OptimisationOutput_Final', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 190)" style="font-weight:bold">OptimisationOutput_OptimisationOutput_Final</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',190,0)">line 190</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 26)" style="font-weight:bold">OptimisationOutput</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',26,0)">line 26</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('PostTreatIncomplete', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\PostTreatIncomplete.m', 19)" style="font-weight:bold">PostTreatIncomplete</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\PostTreatIncomplete.m',19,0)">line 19</a>)] 
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
-outinfo = 
+Calculations Started . . .
+***** START GRID INITIALISATION *****
 
-    rootDir: 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisati...'
-    tOutput: 7.3645e+05
-     marker: '2016-04-29T172535_Full_MultiTopo_M2_D'
+     OUTPUT:Skipped
+    ACTION: Starting Grid Generated
+     OUTPUT:Skipped
+    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 
+    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Reshaping
 
-paramoptim = 
+     OUTPUT:Skipped
+Calculations Started . . .
+***** START GRID REFINEMENT 1 of 1 *****
 
-            general: [1x1 struct]
-              optim: [1x1 struct]
-             spline: [1x1 struct]
-                obj: [1x1 struct]
-         constraint: [1x1 struct]
-          structdat: [1x1 struct]
-    parametrisation: [1x1 struct]
+     OUTPUT:Skipped
+    ACTION: Template Generated
+    ACTION: Refinement Targets Identified
+    ACTION: Edges Refined
+			Start Cell 1 of 40 
+			Start Cell 2 of 40 
+			Start Cell 3 of 40 
+			Start Cell 4 of 40 
+			Start Cell 5 of 40 
+			Start Cell 6 of 40 
+			Start Cell 7 of 40 
+			Start Cell 8 of 40 
+			Start Cell 9 of 40 
+			Start Cell 10 of 40 
+			Start Cell 11 of 40 
+			Start Cell 12 of 40 
+			Start Cell 13 of 40 
+			Start Cell 14 of 40 
+			Start Cell 15 of 40 
+			Start Cell 16 of 40 
+			Start Cell 17 of 40 
+			Start Cell 18 of 40 
+			Start Cell 19 of 40 
+			Start Cell 20 of 40 
+			Start Cell 21 of 40 
+			Start Cell 22 of 40 
+			Start Cell 23 of 40 
+			Start Cell 24 of 40 
+			Start Cell 25 of 40 
+			Start Cell 26 of 40 
+			Start Cell 27 of 40 
+			Start Cell 28 of 40 
+			Start Cell 29 of 40 
+			Start Cell 30 of 40 
+			Start Cell 31 of 40 
+			Start Cell 32 of 40 
+			Start Cell 33 of 40 
+			Start Cell 34 of 40 
+			Start Cell 35 of 40 
+			Start Cell 36 of 40 
+			Start Cell 37 of 40 
+			Start Cell 38 of 40 
+			Start Cell 39 of 40 
+			Start Cell 40 of 40 
+    ACTION: Cells Refined
+     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:192
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
 
+ans = 
 
-iterstruct = 
+  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
 
-1x135 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+      Number: 1
+        Name: ''
+       Color: [0.9400 0.9400 0.9400]
+    Position: [680 558 560 420]
+       Units: 'pixels'
 
-    population
+  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-close all
-clc
-clear
-quit
+  Initialisation time:00:00:00:827
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:04:493
+  Volume converged to 1.06615e-03
+Time Elapsed:00:00:07:065
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:07:849
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+10-May-2016 17:57:17
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:439
+  Volume converged to 1.30510e-08
+Time Elapsed:00:00:16:530
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:595
+  Volume converged to 1.30139e-08
+Time Elapsed:00:00:16:658
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:688
+  Volume converged to 1.32463e-08
+Time Elapsed:00:00:16:689
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:015
+  Volume converged to 1.32463e-08
+Time Elapsed:00:00:17:063
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:781
+  Volume converged to 1.30510e-08
+Time Elapsed:00:00:16:751
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:953
+  Volume converged to 1.30139e-08
+Time Elapsed:00:00:16:969
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:704
+  Volume converged to 1.30139e-08
+Time Elapsed:00:00:16:662
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:016
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:486
+  Volume converged to 1.30139e-08
+Time Elapsed:00:00:16:503
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:563
+  Volume converged to 1.30510e-08
+Time Elapsed:00:00:16:832
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:739
+  Volume converged to 1.30510e-08
+Time Elapsed:00:00:16:802
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:015
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:051
+  Volume converged to 1.32463e-08
+Time Elapsed:00:00:17:160
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:833
+  Volume converged to 1.32241e-08
+Time Elapsed:00:00:16:941
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:10:152
+  Volume converged to 1.32463e-08
+Time Elapsed:00:00:10:871
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:015
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:51:425
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+10-May-2016 17:58:08
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:081
+  Volume converged to 7.84027e-09
+Time Elapsed:00:00:16:192
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:644
+  Volume converged to 1.32241e-08
+Time Elapsed:00:00:16:615
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:722
+  Volume converged to 3.70829e-08
+Time Elapsed:00:00:16:709
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:15:956
+  Volume converged to 4.55949e-08
+Time Elapsed:00:00:16:896
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:000
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:081
+  Volume converged to 8.15336e-08
+Time Elapsed:00:00:16:974
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:016
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:847
+  Volume converged to 8.98495e-08
+Time Elapsed:00:00:17:660
+SNAKE PROCESS end
+-----------------------

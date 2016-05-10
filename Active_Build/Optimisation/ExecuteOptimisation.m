@@ -49,16 +49,15 @@ function [iterstruct]=ExecuteOptimisation(caseStr,restartFromPop)
         [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
             baseGrid,connectstructinfo);
         % Evaluate Objective Function
-        [iterstruct]=GenerateNewPop(paramoptim,iterstruct,nIter);
+        [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter);
         % create new population
         [~]=PrintEnd(procStr,1,tStart);
     end
     %% Finish Optimisation
     iterstruct(end)=[];
     [~]=PrintEnd(procStr2,0,tStartOpt);
-    diary off
     OptimisationOutput('final',paramoptim,outinfo,iterstruct);
-    
+    diary off
     
 end
 
@@ -76,6 +75,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     include_Utilities
     include_PostProcessing
     include_Mex_Wrapper
+    include_Optimisation
     
     diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
     diaryFile=MakePathCompliant(diaryFile);
@@ -108,8 +108,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     end
    
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
-    [iterstruct]=InitialiseIterationStruct(paramoptim,paramoptim.general.nDesVar);
-    [iterstruct]=InitialisePopulation(paramoptim,iterstruct);
+    [iterstruct,paramoptim]=InitialisePopulation(paramoptim);
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
@@ -191,22 +190,23 @@ function population=EnforceConstraintViolation(population,defaultVal)
     
 end
 
-function [iterstruct]=GenerateNewPop(paramoptim,iterstruct,nIter)
+function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter)
     procStr=['Generate New Population'];
     [tStart]=PrintStart(procStr,2);
     
-    varExtract={'nPop',};
+    varExtract={'nPop','iterGap'};
+    [nPop,iterGap]=ExtractVariables(varExtract,paramoptim);
+    
+    [newPop,iterstruct(nIter).population,paramoptim]=OptimisationMethod(paramoptim,...
+        iterstruct(nIter).population,...
+        iterstruct(max([nIter-iterGap,1])).population);
+   varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
-    
-    [newPop,iterstruct(nIter).population]=OptimisationMethod(paramoptim,iterstruct(nIter).population,...
-        iterstruct(max([nIter-1,1])).population);
-   
-    
     for ii=1:nPop
-        
         iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
         
     end
+    
     iterstruct(nIter+1).population=ApplySymmetry(paramoptim,iterstruct(nIter+1).population);
     [~]=PrintEnd(procStr,2,tStart);
 end
@@ -287,9 +287,33 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     nDesVar=sum([baseGrid.cell(:).isactive]);
     paramoptim.general.nDesVar=nDesVar;
     
+    paramoptim.general.symDesVarList...
+        =BuildSymmetryLists(symType,cellLevels,corneractive);
+            
+    paroptim.general.notDesInd...
+        =BuildExclusionList(paramoptim.general.symDesVarList);
+    
+    [paramoptim]=CheckiterGap(paramoptim);
+end
+
+function [paramoptim]=CheckiterGap(paramoptim)
+    varExtract={'optimMethod'};
+    [optimMethod]=ExtractVariables(varExtract,paramoptim);
+    
+    switch optimMethod
+        case 'conjgrad'
+             paramoptim.general.iterGap=2;
+        otherwise
+            
+             paramoptim.general.iterGap=1;
+    end
+end
+
+function [symDesVarList]=BuildSymmetryLists(symType,cellLevels,corneractive)
+    
     switch symType
         case 'none'
-            paramoptim.general.symDesVarList=zeros([2,0]);
+            symDesVarList=zeros([2,0]);
         case 'horz'
             
             nRows=cellLevels(2);
@@ -316,22 +340,32 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
                 end
             end
             
-            paramoptim.general.symDesVarList=cellMatch;
+            symDesVarList=cellMatch;
             
         case 'vert'
             error('Not coded yet')
             
     end
-            
+    
+end
+
+function notDesInd=BuildExclusionList(symDesVarList)
+    
+    notDesInd=[];
+    notDesInd=[notDesInd,symDesVarList(2,:)];
+    
+    
+    notDesInd=sort(RemoveIdenticalEntries(notDesInd));
     
 end
 
 %% Optimisation Specific Operations
 
-function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
+function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     
-    varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal'};
-    [nDesVar,nPop,startPop,desVarConstr,desVarVal]=ExtractVariables(varExtract,paroptim);
+    varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal','optimMethod'};
+    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod]...
+        =ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels'};
     [cellLevels]=ExtractVariables(varExtract,paroptim.parametrisation);
     
@@ -365,9 +399,49 @@ function [iterstruct]=InitialisePopulation(paroptim,iterstruct)
     end
     
     
+    [isGradient]=CheckIfGradient(optimMethod);
+    if isGradient
+        [origPop,nPop]=InitialiseGradientBased(origPop(1,:),paroptim);
+    end
+    paroptim.general.nPop=nPop;
+    
+    [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar);
     for ii=1:nPop
         iterstruct(1).population(ii).fill=origPop(ii,:);
     end
+end
+
+function [isGradient]=CheckIfGradient(optimMethod)
+    
+    switch optimMethod
+        
+        case 'DE'
+            isGradient=false;
+        case 'DEtan'
+            isGradient=false;
+        case 'conjgrad'
+            isGradient=true;
+        otherwise
+            isGradient=false;
+            warning('Optimisation method is not known as gradient based or otherwise, no gradient is assumed')
+            
+    end
+end
+
+function [origPop,nPop]=InitialiseGradientBased(rootPop,paroptim)
+    varExtract={'notDesInd','nPop','diffStepSize','desVarRange'};
+    [notDesInd,nPop,diffStepSize,desVarRange]=ExtractVariables(varExtract,paroptim);
+    inactiveVar=[];
+    [desVarList]=ExtractActiveVariable(length(rootPop),notDesInd,inactiveVar);
+    nPop=length(desVarList)+1;
+    
+    origPop=ones(nPop,1)*rootPop;
+    origPop(2:end,desVarList)=origPop(2:end,desVarList)+eye(nPop-1)*diffStepSize;
+    
+    overFlowDiff=false(size(origPop));
+    overFlowDiff(:,desVarList)=origPop(:,desVarList)>max(desVarRange);
+    origPop(overFlowDiff)=max(desVarRange);
+    
 end
 
 function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
