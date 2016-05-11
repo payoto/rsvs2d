@@ -709,7 +709,8 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     iterRes=zeros([nIter,nVar]);
     hold on
     for ii=1:nIter
-        iterRes(ii,:)=[optimstruct(ii).population(:).objective];
+        nVarLoc=length(optimstruct(ii).population);
+        iterRes(ii,1:nVarLoc)=[optimstruct(ii).population(:).objective];
         lSub1(1)=plot(ones(1,nVar)*ii,iterRes(ii,:),'b.','markersize',5);
     end
     switch dirOptim

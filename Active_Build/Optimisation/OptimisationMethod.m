@@ -29,6 +29,8 @@ function [newPop,iterCurr,paramoptim]=OptimisationMethod(paramoptim,varargin)
             
         case 'conjgrad'
             [newPop,iterCurr,paramoptim]=ConjugateGradient(paramoptim,varargin{1},varargin{2});
+        case 'conjgradls'
+            [newPop,iterCurr,paramoptim]=ConjugateGradientLS(paramoptim,varargin{1},varargin{2});
         case 'DEStrip'
             
         case 'GA'
@@ -133,6 +135,7 @@ function [fromMutVecLog]=ExtractDEIndices(nDes,nFill,CR,indexmap)
     fromMutVecLog([indexmap{fromMutVecLogDes}])=true;
 end
 
+% Conjugate Gradient Method
 
 function [newPop,iterCurr,paramoptim]=ConjugateGradient(paramoptim,iterCurr,iterm1)
     % To build more functionality need a universal design variable to fill
@@ -142,9 +145,53 @@ function [newPop,iterCurr,paramoptim]=ConjugateGradient(paramoptim,iterCurr,iter
         'lineSearch','worker','nPop'};
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,worker,nPop]...
         =ExtractVariables(varExtract,paramoptim);
+    [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,[]);
     
+    
+    [gradFt]=ExtractFiniteGradient(iterCurr,desVarList);
+    [gradFm1]=ExtractFiniteGradient(iterm1,desVarList);
+    Dxtm1=iterCurr(1).fill(desVarList)-iterm1(1).fill(desVarList);
+    switch direction
+        case 'min'
+            DxT=-gradFt+(sum(gradFt.^2)/sum(gradFm1.^2))*Dxtm1;
+        case 'max'
+            DxT=gradFt+(sum(gradFt.^2)/sum(gradFm1.^2))*Dxtm1;
+    end
+    
+    
+    newRootPop=iterCurr(1).fill(desVarList)+DxT;
+    newRootFill=iterCurr(1).fill;
+    newRootFill(desVarList)=newRootPop;
+    [newRootFill,desVarList]=OverflowHandling(paramoptim,desVarList,newRootFill);
+    
+    newDiffFill=(ones(length(desVarList),1)*newRootFill);
+    negMov=find(newRootFill(desVarList)>=max(desVarRange));
+    signMat=eye(length(desVarList));
+    signMat(:,negMov)=signMat(:,negMov)*-1;
+    newDiffFill(:,desVarList)=newDiffFill(:,desVarList)+signMat...
+        *diffStepSize;
+    overFlowDiff=false(size(newDiffFill));
+    overFlowDiff(:,desVarList)=newDiffFill(:,desVarList)>max(desVarRange);
+    newDiffFill(overFlowDiff)=max(desVarRange);
+    
+    newPop=[newRootFill;newDiffFill];
+    
+    [nPop,nFill]=size(newPop);
+    paramoptim.general.nPop=nPop;
+    paramoptim.optim.CG.lineSearch=~lineSearch;
+end
+
+function [newPop,iterCurr,paramoptim]=ConjugateGradientLS(paramoptim,iterCurr,iterm1)
+    % To build more functionality need a universal design variable to fill
+    % process construction
+    
+    varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
+        'lineSearch','worker','nPop'};
+    [diffStepSize,direction,notDesInd,desVarRange,lineSearch,worker,nPop]...
+        =ExtractVariables(varExtract,paramoptim);
+    [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,[]);
     if ~lineSearch
-        [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,[]);
+        
         [gradFt]=ExtractFiniteGradient(iterCurr,desVarList);
         [gradFm1]=ExtractFiniteGradient(iterm1,desVarList);
         Dxtm1=iterCurr(1).fill(desVarList)-iterm1(1).fill(desVarList);
@@ -161,13 +208,16 @@ function [newPop,iterCurr,paramoptim]=ConjugateGradient(paramoptim,iterCurr,iter
     
     if lineSearch
         
-        newRootPop=iterCurr(1).fill(desVarList)+DxT;
+        newRootPop=iterCurr(1).fill(desVarList)+DxT(desVarList);
         newRootFill=iterCurr(1).fill;
         newRootFill(desVarList)=newRootPop;
         [newRootFill,desVarList]=OverflowHandling(paramoptim,desVarList,newRootFill);
-
+        
         newDiffFill=(ones(length(desVarList),1)*newRootFill);
-        newDiffFill(:,desVarList)=newDiffFill(:,desVarList)+eye(length(desVarList))...
+        negMov=find(newRootFill(desVarList)>=max(desVarRange));
+        signMat=eye(length(desVarList));
+        signMat(:,negMov)=signMat(:,negMov)*-1;
+        newDiffFill(:,desVarList)=newDiffFill(:,desVarList)+signMat...
             *diffStepSize;
         overFlowDiff=false(size(newDiffFill));
         overFlowDiff(:,desVarList)=newDiffFill(:,desVarList)>max(desVarRange);
@@ -222,38 +272,53 @@ function [newRootFill,desVarList]=OverflowHandling(paramoptim,desVarList,newRoot
 end
 
 function [gradF]=ExtractFiniteGradient(popstruct,desVarList)
-
+    
     nPop=length(popstruct);
     nFill=length(desVarList);
     
     Dx=vertcat(popstruct(2:end).fill)-(ones((nPop-1),1)*popstruct(1).fill);
     Dx=Dx(:,desVarList);
     isDeriv=Dx~=0;
-    flag=false;
+    flag1=false;
+    flag2=false;
     % Checks
     if ~sum(sum(isDeriv,1)~=1)==0
-        warning('Conjugate gradient checksums not true')
-        flag=true;
+        if ~sum(sum(isDeriv,1)~=1)==nFill
+            warning('Conjugate gradient checksums not true')
+            flag1=true;
+        end
+        flag2=true;
     end
-    if ~sum(sum(isDeriv,2)~=1)==0
-        warning('Conjugate gradient checksums not true')
-        flag=true;
+    if sum(sum(isDeriv,2)~=1)~=0
+        if sum(sum(isDeriv,2)~=2)~=(nPop-1)
+            warning('Conjugate gradient checksums not true')
+            flag1=true;
+        end
+        flag2=true;
     end
-    [rowPos,colPos]=find(isDeriv);
-    % 
-
+    if ~flag2 && ~flag1
+        [rowPos,colPos]=find(isDeriv);
+    else
+        rowPos=1:(nFill);
+        colPos=1:(nFill);
+    end
+    %
+    
     Df=vertcat(popstruct(2:end).objective)-popstruct(1).objective;
     
     
     gradFMat=Df*ones(1,nFill)./Dx;
     gradF=zeros(1,nFill);
     
-    if ~flag
+    if ~flag1
         for ii=1:length(colPos)
             gradF(colPos(ii))=gradFMat(rowPos(ii),colPos(ii));
         end
     else
-        error('Backup not coded yet')
+        warning('Backup not coded yet')
+        for ii=1:length(colPos)
+            gradF(colPos(ii))=gradFMat(rowPos(ii),colPos(ii));
+        end
     end
     
 end
@@ -262,25 +327,22 @@ function [DxT]=FindStepLength(popstruct,direction,nPop)
     
     Dx=vertcat(popstruct(2:nPop).fill)-(ones((nPop-1),1)*popstruct(1).fill);
     
-    normDx=sqrt(sum(Dx.^2,2));
+    f=vertcat(popstruct(1:end).objective);
+    pp=spline(1:nPop,f);
     
-    kk=1;
-    while normDx(kk)==0
-        kk=kk+1;
-    end
-    vec=popstruct(kk+1).fill-popstruct(1).fill;
-    normDx=normDx/normDx(kk);
-    f=vertcat(popstruct(2:end).objective);
-    pp=spline(normDx,f);
+    iTest=linspace(1,nPop,1000);
     
-    xTest=linspace(0,max(normDx),1000);
     switch direction
         case 'min'
-            [targObj,indexLoc]=min(ppval(pp,xTest));
+            [targObj,indexLoc]=min(ppval(pp,iTest));
         case 'max'
-            [targObj,indexLoc]=max(ppval(pp,xTest));
+            [targObj,indexLoc]=max(ppval(pp,iTest));
     end
-
-    DxT=vec*xTest(indexLoc);
+    
+    iNew=iTest(indexLoc);
+    prec=floor(iNew);
+    next=ceil(iNew);
+    vec=popstruct(next).fill-popstruct(prec).fill;
+    DxT=vec*(iNew-prec)+popstruct(prec).fill;
     
 end
