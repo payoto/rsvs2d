@@ -85,6 +85,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
+    paroptimoptimCG.validVol=0.3; % Interval of validity of the derivatives
     
 end
 
@@ -260,23 +261,15 @@ end
 
 function [paroptim]=Test_CG_Aero_desktop()
     
-    [paroptim]=DefaultOptim();
-    % Standard Modifications
-    paroptim=Test_Desktop(paroptim);
-    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
-    paroptim.constraint.desVarConstr={'MeanVolFrac'};
-    paroptim.constraint.desVarVal={0.4};
-    paroptim.constraint.resConstr={' '};
-    paroptim.constraint.resVal={[]};
+    
     
     [paroptim]=OptimCG_horiz(paroptim);
-    paroptim=Test_Desktop(paroptim);
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.nPop=6;
     paroptim.general.symType='horz'; % 'horz'
     
-    paroptim.general.maxIter=6;
-    paroptim.general.worker=6; 
+    paroptim.general.maxIter=60;
+    paroptim.general.worker=8; 
 end
 
 function [paroptim]=TestParOptim_desktop()

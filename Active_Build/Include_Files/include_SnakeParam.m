@@ -145,7 +145,7 @@ function cellSimilar=FindIdenticalVector(blockSegments)
     %compares neighbouring segments
     blockSegTrunc1=blockSegments(1:end-1,:);
     blockSegTrunc2=blockSegments(2:end,:);
-    isPrecedent=[0;(sum(blockSegTrunc1==blockSegTrunc2,2)>1)];
+    isPrecedent=[0;(sum(blockSegTrunc1==blockSegTrunc2,2)==n)];
     % creates a cell array wih as many elements as there are different edges
     cellSimilar{-sum((isPrecedent-1))}=[];
     kk=0;
@@ -161,6 +161,37 @@ function cellSimilar=FindIdenticalVector(blockSegments)
     
 end
 
+function cellSimilar=FindIdenticalVectorOrd(blockSegments)
+    % this function takes in a group of Segments and returns the indices of
+    % those identical grouped within a cell array. blockSegments should be a
+    % vertical array of horizontal vectors to be compared.
+    
+    [m,n]=size(blockSegments);
+    preSortIndex=1:m; % save the index before shuffling
+    % Shuffles edges such that similar edges are side by side
+    
+    for ii=1:n
+        [blockSegments,sortIndex]=SortVecColumn(blockSegments,ii);
+        preSortIndex=preSortIndex(sortIndex);
+    end
+    %compares neighbouring segments
+    blockSegTrunc1=blockSegments(1:end-1,:);
+    blockSegTrunc2=blockSegments(2:end,:);
+    isPrecedent=[0;(sum(blockSegTrunc1==blockSegTrunc2,2)==n)];
+    % creates a cell array wih as many elements as there are different edges
+    cellSimilar{-sum((isPrecedent-1))}=[];
+    kk=0;
+    for ii=1:m
+        if ~isPrecedent(ii)
+            kk=kk+1;
+            jj=0;
+        end
+        jj=jj+1;
+        % assigns the presorted index to the similarity array
+        cellSimilar{kk}(jj)=preSortIndex(ii);
+    end
+    
+end
 % Order BlockEdges might cause problems as the different versions were not
 % consistant.
 function [cellOrderedVertex,cellOrderedEdges]=...

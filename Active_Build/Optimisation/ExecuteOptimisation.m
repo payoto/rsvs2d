@@ -194,18 +194,30 @@ function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter)
     procStr=['Generate New Population'];
     [tStart]=PrintStart(procStr,2);
     
-    varExtract={'nPop','iterGap'};
-    [nPop,iterGap]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'nPop','iterGap','optimMethod'};
+    [nPop,iterGap,optimMethod]=ExtractVariables(varExtract,paramoptim);
     
-    [newPop,iterstruct(nIter).population,paramoptim]=OptimisationMethod(paramoptim,...
+    [isGradient]=CheckIfGradient(optimMethod);
+    
+    [newPop,iterstruct(nIter).population,paramoptim,deltas]=OptimisationMethod(paramoptim,...
         iterstruct(nIter).population,...
         iterstruct(max([nIter-iterGap,1])).population);
    varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
     [iterstruct(nIter+1).population]=GeneratePopulationStruct(paramoptim);
-    for ii=1:nPop
-        iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+    
+    
+    if ~isGradient
+        for ii=1:nPop
+            iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+        end
+    else
+        for ii=1:nPop
+            iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+            iterstruct(nIter+1).population(ii).optimdat.var=deltas{ii}(1,:);
+            iterstruct(nIter+1).population(ii).optimdat.value=deltas{ii}(2,:);
         
+        end
     end
     
     iterstruct(nIter+1).population=ApplySymmetry(paramoptim,iterstruct(nIter+1).population);
@@ -452,7 +464,7 @@ function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
     
     origPop=ones(nPop,1)*rootPop;
     origPop(2:end,desVarList)=origPop(2:end,desVarList)+eye(nPop-1)*diffStepSize;
-    deltas{1}=[0;0];
+    deltas{1}=[1;0];
     for ii=nPop:-1:2
         deltas{ii}=[desVarList(ii-1);diffStepSize];
     end
