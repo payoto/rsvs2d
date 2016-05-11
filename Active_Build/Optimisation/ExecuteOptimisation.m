@@ -202,6 +202,7 @@ function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter)
         iterstruct(max([nIter-iterGap,1])).population);
    varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
+    [iterstruct(nIter+1).population]=GeneratePopulationStruct(paramoptim);
     for ii=1:nPop
         iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
         
@@ -290,7 +291,7 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     paramoptim.general.symDesVarList...
         =BuildSymmetryLists(symType,cellLevels,corneractive);
             
-    paroptim.general.notDesInd...
+    paramoptim.general.notDesInd...
         =BuildExclusionList(paramoptim.general.symDesVarList);
     
     [paramoptim]=CheckiterGap(paramoptim);
@@ -301,7 +302,7 @@ function [paramoptim]=CheckiterGap(paramoptim)
     [optimMethod]=ExtractVariables(varExtract,paramoptim);
     
     switch optimMethod
-        case 'conjgrad'
+        case 'conjgradls'
              paramoptim.general.iterGap=2;
         otherwise
             
@@ -401,13 +402,23 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     
     [isGradient]=CheckIfGradient(optimMethod);
     if isGradient
-        [origPop,nPop]=InitialiseGradientBased(origPop(1,:),paroptim);
-    end
-    paroptim.general.nPop=nPop;
-    
-    [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar);
-    for ii=1:nPop
-        iterstruct(1).population(ii).fill=origPop(ii,:);
+        [origPop,nPop,deltas]=InitialiseGradientBased(origPop(1,:),paroptim);
+        paroptim.general.nPop=nPop;
+        [iterstruct]=InitialiseIterationStruct(paroptim);
+        
+        for ii=1:nPop
+            iterstruct(1).population(ii).fill=origPop(ii,:);
+            iterstruct(1).population(ii).optimdat.var=deltas{ii}(1,:);
+            iterstruct(1).population(ii).optimdat.value=deltas{ii}(2,:);
+        end
+        
+    else
+        paroptim.general.nPop=nPop;
+        [iterstruct]=InitialiseIterationStruct(paroptim);
+        
+        for ii=1:nPop
+            iterstruct(1).population(ii).fill=origPop(ii,:);
+        end
     end
 end
 
@@ -421,6 +432,8 @@ function [isGradient]=CheckIfGradient(optimMethod)
             isGradient=false;
         case 'conjgrad'
             isGradient=true;
+        case 'conjgradls'
+            isGradient=true;
         otherwise
             isGradient=false;
             warning('Optimisation method is not known as gradient based or otherwise, no gradient is assumed')
@@ -428,7 +441,9 @@ function [isGradient]=CheckIfGradient(optimMethod)
     end
 end
 
-function [origPop,nPop]=InitialiseGradientBased(rootPop,paroptim)
+function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
+    
+    
     varExtract={'notDesInd','nPop','diffStepSize','desVarRange'};
     [notDesInd,nPop,diffStepSize,desVarRange]=ExtractVariables(varExtract,paroptim);
     inactiveVar=[];
@@ -437,7 +452,10 @@ function [origPop,nPop]=InitialiseGradientBased(rootPop,paroptim)
     
     origPop=ones(nPop,1)*rootPop;
     origPop(2:end,desVarList)=origPop(2:end,desVarList)+eye(nPop-1)*diffStepSize;
-    
+    deltas{1}=[0;0];
+    for ii=nPop:-1:2
+        deltas{ii}=[desVarList(ii-1);diffStepSize];
+    end
     overFlowDiff=false(size(origPop));
     overFlowDiff(:,desVarList)=origPop(:,desVarList)>max(desVarRange);
     origPop(overFlowDiff)=max(desVarRange);
@@ -502,10 +520,20 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
     end
 end
 
-function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
+function [iterstruct]=InitialiseIterationStruct(paramoptim)
     
-    varExtract={'nPop','maxIter','objectiveName'};
-    [nPop,nIter,objectiveName]=ExtractVariables(varExtract,paroptim);
+    varExtract={'maxIter'};
+    [maxIter]=ExtractVariables(varExtract,paramoptim);
+    
+    [popstruct]=GeneratePopulationStruct(paramoptim);
+    
+    [iterstruct(1:maxIter).population]=deal(popstruct);
+    
+end
+
+function [popstruct]=GeneratePopulationStruct(paroptim)
+    varExtract={'nPop','nDesVar','objectiveName'};
+    [nPop,nDesVar,objectiveName]=ExtractVariables(varExtract,paroptim);
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
     switch objectiveName
@@ -517,10 +545,9 @@ function [iterstruct]=InitialiseIterationStruct(paroptim,nDesVar)
             addstruct=struct('A',[],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
     
     end
-    population=struct('fill',valFill,'location','','objective',[],'constraint'...
-        ,true,'additional',addstruct,'exception','none');
-    
-    [iterstruct(1:nIter).population]=deal(population);
+    optimdatstruct=struct('var',[],'value',[]);
+    popstruct=struct('fill',valFill,'location','','objective',[],'constraint'...
+        ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','none');
     
 end
 

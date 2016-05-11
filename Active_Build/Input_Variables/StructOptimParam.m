@@ -142,7 +142,7 @@ function [paroptim]=OptimDE_horiz(paroptim)
 end
 
 function [paroptim]=OptimCG_horiz(paroptim)
-    paroptim.general.optimMethod='conjgrad';
+    paroptim.general.optimMethod='conjgradls';
     paroptim.general.startPop='randuniform';
     
 end
@@ -252,8 +252,31 @@ function [paroptim]=Test_CG_desktop()
     paroptim=Test_Desktop(paroptim);
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.nPop=6;
+    paroptim.general.symType='horz'; % 'horz'
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    paroptim.general.maxIter=20;
+end
+
+function [paroptim]=Test_CG_Aero_desktop()
+    
+    [paroptim]=DefaultOptim();
+    % Standard Modifications
+    paroptim=Test_Desktop(paroptim);
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
+    paroptim.constraint.desVarConstr={'MeanVolFrac'};
+    paroptim.constraint.desVarVal={0.4};
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    
+    [paroptim]=OptimCG_horiz(paroptim);
+    paroptim=Test_Desktop(paroptim);
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.nPop=6;
+    paroptim.general.symType='horz'; % 'horz'
     
     paroptim.general.maxIter=6;
+    paroptim.general.worker=6; 
 end
 
 function [paroptim]=TestParOptim_desktop()
