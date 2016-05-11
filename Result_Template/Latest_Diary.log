@@ -1,20 +1,23 @@
-tstructinfo,unstrRef,restartsnake]...
+struct(nIter).population,paramoptim,deltas]=OptimisationMethod(paramoptim,...
+    
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 52)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',52,0)">line 52</a>)
+        [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter);
 } 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',411,1)">411 </a>            iterstruct(1).population(ii).optimdat.var=deltas(1,ii);
-ExecuteOptimisation('Test_CG_Aero_desktop')
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',391,1)">391 </a>        [stepLengths]=StepLengthsForLS(rootPop,stepVector,worker,validVol,desVarRange);
+ExecuteOptimisation('Test_CG_desktop')
   
 --------------------------------------------------------------------------------------------
 ********************************************************************************************
 --------------------------------------------------------------------------------------------
-OPTIMISATION - Test_CG_Aero_desktop start
-11-May-2016 11:56:28
+OPTIMISATION - Test_CG_desktop start
+11-May-2016 17:21:27
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-11-May-2016 11:56:28
+11-May-2016 17:21:27
 --------------------------------------------------------------------------------------------
   
 WRITING AUTOMATIC FUNCTIONS
@@ -24,3 +27,269 @@ WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
 WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
+
+Calculations Started . . .
+***** START GRID INITIALISATION *****
+
+     OUTPUT:Skipped
+    ACTION: Starting Grid Generated
+     OUTPUT:Skipped
+    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
+
+    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Reshaping
+
+     OUTPUT:Skipped
+Calculations Started . . .
+***** START GRID REFINEMENT 1 of 1 *****
+
+     OUTPUT:Skipped
+    ACTION: Template Generated
+    ACTION: Refinement Targets Identified
+    ACTION: Edges Refined
+			Start Cell 1 of 40 
+			Start Cell 2 of 40 
+			Start Cell 3 of 40 
+			Start Cell 4 of 40 
+			Start Cell 5 of 40 
+			Start Cell 6 of 40 
+			Start Cell 7 of 40 
+			Start Cell 8 of 40 
+			Start Cell 9 of 40 
+			Start Cell 10 of 40 
+			Start Cell 11 of 40 
+			Start Cell 12 of 40 
+			Start Cell 13 of 40 
+			Start Cell 14 of 40 
+			Start Cell 15 of 40 
+			Start Cell 16 of 40 
+			Start Cell 17 of 40 
+			Start Cell 18 of 40 
+			Start Cell 19 of 40 
+			Start Cell 20 of 40 
+			Start Cell 21 of 40 
+			Start Cell 22 of 40 
+			Start Cell 23 of 40 
+			Start Cell 24 of 40 
+			Start Cell 25 of 40 
+			Start Cell 26 of 40 
+			Start Cell 27 of 40 
+			Start Cell 28 of 40 
+			Start Cell 29 of 40 
+			Start Cell 30 of 40 
+			Start Cell 31 of 40 
+			Start Cell 32 of 40 
+			Start Cell 33 of 40 
+			Start Cell 34 of 40 
+			Start Cell 35 of 40 
+			Start Cell 36 of 40 
+			Start Cell 37 of 40 
+			Start Cell 38 of 40 
+			Start Cell 39 of 40 
+			Start Cell 40 of 40 
+    ACTION: Cells Refined
+     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:206
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+
+ans = 
+
+  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
+
+      Number: 1
+        Name: ''
+       Color: [0.9400 0.9400 0.9400]
+    Position: [680 558 560 420]
+       Units: 'pixels'
+
+  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
+
+  Initialisation time:00:00:00:855
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:04:570
+  Volume converged to 1.06615e-03
+Time Elapsed:00:00:07:358
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:08:227
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+11-May-2016 17:21:35
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:014
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:298
+  Volume converged to 2.77684e-08
+Time Elapsed:00:00:17:451
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:004
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:026
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:475
+  Volume converged to 2.78805e-08
+Time Elapsed:00:00:17:501
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:004
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:014
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:443
+  Volume converged to 2.77684e-08
+Time Elapsed:00:00:17:503
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:004
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:019
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:629
+  Volume converged to 2.75952e-08
+Time Elapsed:00:00:17:658
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:003
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:021
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:847
+  Volume converged to 2.84031e-08
+Time Elapsed:00:00:17:797
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:003
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:014
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:16:909
+  Volume converged to 2.78805e-08
+Time Elapsed:00:00:17:866
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:003
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:011
+  Start Time Stepping
+  50 Steps Performed
+  Iteration Time:00:00:10:805
+  Volume converged to 2.84031e-08
+Time Elapsed:00:00:11:612
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - LengthArea start
+    Time Elapsed:00:00:00:003
+Calculate Objective - LengthArea end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+{Improper assignment with rectangular empty matrix.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>StepLengthsForLS', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 534)" style="font-weight:bold">OptimisationMethod>StepLengthsForLS</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',534,0)">line 534</a>)
+    stepLengths(end)=stepHigh;
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>ConjugateGradient2', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 392)" style="font-weight:bold">OptimisationMethod>ConjugateGradient2</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',392,0)">line 392</a>)
+        [stepLengths]=StepLengthsForLS(rootPop,stepVector,worker,validVol,desVarRange);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 33)" style="font-weight:bold">OptimisationMethod</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',33,0)">line 33</a>)
+            [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,varargin{1},va
