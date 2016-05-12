@@ -16,12 +16,12 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     boundaryLoc=inDir.path;
     targFolder=[boundaryLoc,filesep,'CFD'];
     targFolder=MakePathCompliant(targFolder);
-%     if strcmp(compType(1:2),'PC')
-%         copyfile(CFDfolder,targFolder)
-%     else
-%         flowCommand=['cp -rp ''',CFDfolder,''' ''',targFolder,''''];
-%         [status,stdout]=system(flowCommand);
-%     end
+    if strcmp(compType(1:2),'PC')
+        copyfile(CFDfolder,targFolder)
+    else
+        flowCommand=['cp -rp ''',CFDfolder,''' ''',targFolder,''''];
+        [status,stdout]=system(flowCommand);
+    end
     RestartModifiedSettings(targFolder,'mach',1,nMach);
     CopyBoundaryFile(boundaryLoc,targFolder);
     

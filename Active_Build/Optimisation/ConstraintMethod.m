@@ -176,6 +176,8 @@ function [population]=ResultVariableConsCaller(constrName,constrVal,paroptim,pop
     switch constrName
         case 'AeroResidual'
             population=CheckAerodynamicResidual(constrVal,population);
+        case 'AeroResidualBarrier'
+            population=BarrierAerodynamicResidual(constrVal,population);
         case 'AeroLift'
             
         case 'Volume'
@@ -198,6 +200,29 @@ function population=CheckAerodynamicResidual(constrVal,population)
            constrViolation= (population(ii).additional.res>constrVal) && ...
                (population(ii).additional.res~=0);
            population(ii).constraint=~constrViolation;
+        end
+        
+    end
+    
+    
+end
+
+function population=BarrierAerodynamicResidual(constrVal,population)
+    
+    for ii=1:length(population)
+        
+        if population(ii).constraint>0
+            if population(ii).additional.res<constrVal(1) ... % Constraint fully satisfied
+                    || population(ii).additional.res==0
+                population(ii).constraint=1;
+
+            elseif population(ii).additional.res>constrVal(2) % Constraint fully violated
+                population(ii).constraint=0;
+
+            else
+                population(ii).constraint=1-(0.5+0.5*tanh(3/(-(constrVal(1)-constrVal(2))/2)...
+                    *population(ii).additional.res));
+            end
         end
         
     end

@@ -54,8 +54,8 @@ end
 
 function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)
     
-    varExtract={'direction'};
-    [direction]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'direction','optimMethod'};
+    [direction,optimMethod]=ExtractVariables(varExtract,paramoptim);
     
     
     iterstruct=struct([]);
@@ -72,6 +72,7 @@ function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)
         
     end
     
+    if TestGreed(optimMethod)
     for ii=2:nIter
         iterPrecedent=[iterstruct(ii-1).population(:).objective];
         iterCurr=[iterstruct(ii).population(:).objective];
@@ -86,6 +87,25 @@ function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)
        
         
     end
+    end
+    
+end
+
+function [isgreedy]=TestGreed(optimMethod)
+    
+   isgreedy=true;
+   switch optimMethod
+       case 'DE'
+       case 'DEtan'
+       case 'conjgrad'
+           isgreedy=false;
+       case 'conjgradls'
+           isgreedy=false;
+       otherwise
+           error('Need to say if optimisation method is greedy or not')
+   end
+    
+    
     
 end
 

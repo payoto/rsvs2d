@@ -325,6 +325,7 @@ function [DxT]=FindStepLength(popstruct,direction,nPop)
     DxT=vec*(iNew-prec)+popstruct(prec).fill;
     
 end
+
 function [newRootFill,desVarList]=OverflowHandling(paramoptim,desVarList,newRootFill)
     % Function which handles steps overflowing the fill constraint
     
@@ -362,11 +363,12 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterC
     [gradstruct_curr]=GetIterationInformation(iterCurr);
     [gradstruct_m1]=GetIterationInformation(iterm1);
     
+    rootPop=iterCurr(1).fill;
     
     % Case dependant statements
     if lineSearch
-        [stepVector]=FindOptimalStepVector(iterstruct,worker,direction);
-       [newRoot,deltaRoot]=GenerateNewRootFill(rootFill,stepVector);
+        [stepVector]=FindOptimalStepVector(iterCurr,worker,direction);
+       [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
        % Need to build function for activation and deactivation of variables
        [inactiveVar]=SelectInactiveVariables(newRoot,varActive);
        [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,inactiveVar);
@@ -448,6 +450,7 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
     modestruct=repmat(modestruct,[1,nModes]);
     
     for ii=1:nModes
+        modestruct(ii).mode=allModes(modeSimilarity{ii}(1),:);
         for jj=1:length(modeSimilarity{ii})
             if modeSimilarity{ii}(jj)<=nCurr
                 modestruct(ii).curr=[modestruct(ii).curr,modeSimilarity{ii}(jj)];
@@ -505,9 +508,14 @@ function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,d
         case 'max'
             signD=1;
     end
+    scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
+    
+    if ~isfinite(scale)
+        scale=1;
+    end
     
     stepVector=signD*gradDes_curr...
-        +(normVec(gradDes_curr)/normVec(prevStep))^2*prevStep;
+        +scale*prevStep;
     
     
 end
@@ -588,7 +596,7 @@ end
 function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
     f=[iterstruct(:).objective];
-    stepLengths=1./[inf,(worker-1):-1:1];
+    stepLengths=1./2.^[inf,(worker-2):-1:0];
     vec=zeros(size(iterstruct(1).fill));
     vec(iterstruct(end).optimdat.var)=iterstruct(end).optimdat.value;
     
@@ -610,7 +618,7 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
 end
 
-function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector)
+function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim)
     
     newRoot=rootFill+stepVector;
     [newRoot]=OverflowHandling2(paramoptim,newRoot);
