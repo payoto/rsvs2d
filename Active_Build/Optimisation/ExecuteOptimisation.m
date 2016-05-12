@@ -183,10 +183,22 @@ function population=NormalExecutionIteration(population,newRefGrid,newrestartsna
 end
 
 function population=EnforceConstraintViolation(population,defaultVal)
+    % constraint is now something that will go from 1 (no violation) to 0
+    % full violation numbers in between will be used as a ratio of the
+    % default value that must be added.
     
-    isConstraint=[population(:).constraint];
-    
-    [population(~isConstraint).objective]=deal(defaultVal);
+    isConstraint=1-[population(:).constraint];
+    for ii=1:length(population)
+        if ~isempty(population(ii).objective)
+            
+            [population(ii).objective]=population(ii).objective+...
+            isConstraint(ii)*(defaultVal);
+            
+        else
+            [population(ii).objective]=isConstraint(ii)*(defaultVal);
+        end
+        
+    end
     
 end
 
@@ -388,7 +400,17 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         case 'randuniform'
             
            origPop=rand([nPop,1])*ones([1 nDesVar]);
+       
+        case 'randuniformsharp'
+          
+           LEind=1+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+           TEind=cellLevels(1)-2+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+            
+           origPop=rand([nPop,1])*ones([1 nDesVar]);
            
+           origPop(:,LEind)=origPop(:,LEind)/2;
+           origPop(:,TEind)=origPop(:,TEind)/2;
+        
         case 'horzstrip'
             nStrips=cellLevels(2);
             origPop=zeros([nPop,nDesVar]);
@@ -476,6 +498,8 @@ end
 
 function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
         desVarVal)
+    % Initialises a random number of aerodynamic looking strips in the
+    % domain
     
     minTargFill=0;
     for ii=1:length(desVarConstr)

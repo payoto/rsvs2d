@@ -72,7 +72,7 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     
     % Lay File
     [FID]=OpenOptimLayFile(writeDirectory,marker);
-    pltFile=[writeDirectory,filesep,'TecPlot_',marker,'.plt'];
+    pltFile=[writeDirectory,filesep,'Tec360PLT_',marker,'.plt'];
     PersnaliseLayFile(FID,pltFile);
 end
 
@@ -254,7 +254,7 @@ function [returnEntries]=GenerateIterIndexEntry(FID,nIter,population)
         str=[int2str(nIter)];
         str=[str,' , ', int2str(ii)];
         str=[str,' , ', num2str(population(ii).objective,' %12.7e ')];
-        str=[str,' , ', int2str(population(ii).constraint)];
+        str=[str,' , ', num2str(population(ii).constraint)];
         
         for jj=1:nAdditional
             str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %12.7e ')];
@@ -401,7 +401,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     
     
     if isempty(returnSub)
-        warning('Could not find requested item')
+        disp('FindDir Could not find requested item')
     end
     for ii=1:length(returnSub)
         returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
@@ -439,6 +439,11 @@ end
 
 function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio,paramoptim)
     
+    
+    varExtract={'defaultVal'};
+    [defaultVal]=ExtractVariables(varExtract,paramoptim);
+    
+    
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
     isIter0=regexp(iterFolders,'_0');
     
@@ -463,17 +468,18 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
     
     nVar=length(optimstruct(1).population);
     nIter=length(optimstruct);
-    iterRes=zeros([nIter,nVar]);
+    iterRes=zeros([nIter,nVar])+defaultVal;
 
     for ii=1:nIter
-        iterRes(ii,:)=[optimstruct(ii).population(:).objective];
+        nAct=length(optimstruct(ii).population);
+        iterRes(ii,1:nAct)=[optimstruct(ii).population(:).objective];
     end
     
     switch dirOptim
         case 'min'
-            [minRes,minPos]=min(iterRes,[],2);
+            [minRes,minPos]=min(iterRes(iterRes~=0),[],2);
         case 'max'
-            [minRes,minPos]=max(iterRes,[],2);
+            [minRes,minPos]=max(iterRes(iterRes~=0),[],2);
     end
     % Prepare CFD file with newest version
     for ii=1:nIter
@@ -496,14 +502,18 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
         
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
-    parfor jj=1:kk
+    for jj=1:kk
         
-        ii=needRerun(jj)
+        ii=needRerun(jj);
 
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-            CutCellFlow_Handler(paramoptim,minIterPos)
+            
             RunCFDPostProcessing(minIterPos);
+            if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                CutCellFlow_Handler(paramoptim,minIterPos)
+                RunCFDPostProcessing(minIterPos);
+            end
         end
         
     end
@@ -592,6 +602,7 @@ function PrepareCFDPostProcessing(profilePath)
     end
     
 end
+
 function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
     
     cfdPath=MakePathCompliant(cfdPath);
@@ -715,8 +726,10 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     end
     switch dirOptim
         case 'min'
+            iterRes(iterRes==0)=1000;
             minRes=min(iterRes,[],2);
         case 'max'
+            iterRes(iterRes==0)=-1000;
             minRes=max(iterRes,[],2);
     end
     
