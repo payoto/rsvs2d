@@ -65,153 +65,155 @@
 
       do t=1,nstep
 
-      do nv=1,nvert
-        read(303,*) (grd(nv,j),j=1,2)
-      enddo
-      !close(100)
+	  do nv=1,nvert
+		read(303,*) (grd(nv,j),j=1,2)
+	  enddo
+	  !close(100)
 
-      do i=1,ncells
-        read(101,*) rho(i),u(i),v(i),mach(i),cp(i)
-      enddo
-      !close(101)
+	  do i=1,ncells
+		read(101,*) rho(i),u(i),v(i),mach(i),cp(i)
+	  enddo
+	  !close(101)
 
-     
+	 
 
-      cpv=0.0
-      uv=0.0
-      vv=0.0
-      machv=0.0
-      rhov=0.0
-      m=0.0
+	  cpv=0.0
+	  uv=0.0
+	  vv=0.0
+	  machv=0.0
+	  rhov=0.0
+	  m=0.0
 
-      do i=1,nedge
+	  do i=1,nedge
 
-        m(edge(i,1))=m(edge(i,1))+1
-        m(edge(i,2))=m(edge(i,2))+1
+		m(edge(i,1))=m(edge(i,1))+1
+		m(edge(i,2))=m(edge(i,2))+1
 
-        if(edge(i,3).gt.0)then
-          cpl=cp(edge(i,3))         
-        else
-          cpl=cp(edge(i,4))
-        endif
+		if(edge(i,3).gt.0)then
+		  cpl=cp(edge(i,3))         
+		else
+		  cpl=cp(edge(i,4))
+		endif
 		
-        if(edge(i,4).gt.0)then
-          cpr=cp(edge(i,4))
-        else
-          cpr=cp(edge(i,3))
-        endif  
-        cpf=0.5*(cpl+cpr)
+		if(edge(i,4).gt.0)then
+		  cpr=cp(edge(i,4))
+		else
+		  cpr=cp(edge(i,3))
+		endif  
+		cpf=0.5*(cpl+cpr)
 
-        if(edge(i,3).gt.0)then
-          machl=mach(edge(i,3))
-        else
-          machl=mach(edge(i,4))
-        endif
-        if(edge(i,4).gt.0)then
-          machr=mach(edge(i,4))
-        else
-          machr=mach(edge(i,3))
-        endif  
-        machf=0.5*(machl+machr)
+		if(edge(i,3).gt.0)then
+		  machl=mach(edge(i,3))
+		else
+		  machl=mach(edge(i,4))
+		endif
+		if(edge(i,4).gt.0)then
+		  machr=mach(edge(i,4))
+		else
+		  machr=mach(edge(i,3))
+		endif  
+		machf=0.5*(machl+machr)
 
-        if(edge(i,3).gt.0)then
-          rhol=rho(edge(i,3))
-        else
-          rhol=rho(edge(i,4))
-        endif
-        if(edge(i,4).gt.0)then
-          rhor=rho(edge(i,4))
-        else
-          rhor=rho(edge(i,3))
-        endif  
-        rhof=0.5*(rhol+rhor)
+		if(edge(i,3).gt.0)then
+		  rhol=rho(edge(i,3))
+		else
+		  rhol=rho(edge(i,4))
+		endif
+		if(edge(i,4).gt.0)then
+		  rhor=rho(edge(i,4))
+		else
+		  rhor=rho(edge(i,3))
+		endif  
+		rhof=0.5*(rhol+rhor)
 
-        if(edge(i,3).gt.0)then
-          ul=u(edge(i,3))
-        else
-          ul=u(edge(i,4))
-        endif
-        if(edge(i,4).gt.0)then
-          ur=u(edge(i,4))
-        else
-          ur=u(edge(i,3))
-        endif  
-        uf=0.5*(ul+ur)
+		if(edge(i,3).gt.0)then
+		  ul=u(edge(i,3))
+		else
+		  ul=u(edge(i,4))
+		endif
+		if(edge(i,4).gt.0)then
+		  ur=u(edge(i,4))
+		else
+		  ur=u(edge(i,3))
+		endif  
+		uf=0.5*(ul+ur)
 
-        if(edge(i,3).gt.0)then
-          vl=v(edge(i,3))
-        else
-          vl=v(edge(i,4))
-        endif
-        if(edge(i,4).gt.0)then
-          vr=v(edge(i,4))
-        else
-          vr=v(edge(i,3))
-        endif  
-        vf=0.5*(vl+vr)
+		if(edge(i,3).gt.0)then
+		  vl=v(edge(i,3))
+		else
+		  vl=v(edge(i,4))
+		endif
+		if(edge(i,4).gt.0)then
+		  vr=v(edge(i,4))
+		else
+		  vr=v(edge(i,3))
+		endif  
+		vf=0.5*(vl+vr)
 
 
-          cpv(edge(i,1))=cpv(edge(i,1))+cpf
-          cpv(edge(i,2))=cpv(edge(i,2))+cpf
+		  cpv(edge(i,1))=cpv(edge(i,1))+cpf
+		  cpv(edge(i,2))=cpv(edge(i,2))+cpf
 
-          machv(edge(i,1))=machv(edge(i,1))+machf
-          machv(edge(i,2))=machv(edge(i,2))+machf
+		  machv(edge(i,1))=machv(edge(i,1))+machf
+		  machv(edge(i,2))=machv(edge(i,2))+machf
 
-          rhov(edge(i,1))=rhov(edge(i,1))+rhof
-          rhov(edge(i,2))=rhov(edge(i,2))+rhof
+		  rhov(edge(i,1))=rhov(edge(i,1))+rhof
+		  rhov(edge(i,2))=rhov(edge(i,2))+rhof
 
-          uv(edge(i,1))=uv(edge(i,1))+uf
-          uv(edge(i,2))=uv(edge(i,2))+uf
+		  uv(edge(i,1))=uv(edge(i,1))+uf
+		  uv(edge(i,2))=uv(edge(i,2))+uf
 
-          vv(edge(i,1))=vv(edge(i,1))+vf
-          vv(edge(i,2))=vv(edge(i,2))+vf
+		  vv(edge(i,1))=vv(edge(i,1))+vf
+		  vv(edge(i,2))=vv(edge(i,2))+vf
 		
-      enddo
+	  enddo
 	 
 	  
 	  
-      do i=1,nvert
-        !if(i.eq.381) then
-        !  print *,m(i),rhov(i)
-        !endif
-        if(m(i).gt.0) cpv(i)=cpv(i)/float(m(i))
-        if(m(i).gt.0) uv(i)=uv(i)/float(m(i))
-        if(m(i).gt.0) vv(i)=vv(i)/float(m(i))
-        if(m(i).gt.0) machv(i)=machv(i)/float(m(i))
-        if(m(i).gt.0) rhov(i)=rhov(i)/float(m(i))
+	  do i=1,nvert
+		!if(i.eq.381) then
+		!  print *,m(i),rhov(i)
+		!endif
+		if(m(i).gt.0) cpv(i)=cpv(i)/float(m(i))
+		if(m(i).gt.0) uv(i)=uv(i)/float(m(i))
+		if(m(i).gt.0) vv(i)=vv(i)/float(m(i))
+		if(m(i).gt.0) machv(i)=machv(i)/float(m(i))
+		if(m(i).gt.0) rhov(i)=rhov(i)/float(m(i))
       enddo
-	
-	  jj=0;
-	  do ed=1,nedge
-		if(edge(ed,3).eq.(-1))then
-			jj=jj+1;
-			edgeList(jj)=ed
-        endif
-        if(edge(ed,4).eq.(-1))then
-			jj=jj+1;
-			edgeList(jj)=ed
-        endif
-      enddo
+	    
+      if(t==1)then
+	      jj=0;
+	      do ed=1,nedge
+		    if(edge(ed,3).eq.(-1))then
+			    jj=jj+1;
+			    edgeList(jj)=ed
+		    endif
+		    if(edge(ed,4).eq.(-1))then
+			    jj=jj+1;
+			    edgeList(jj)=ed
+		    endif
+          enddo
+      endif
 		
 		
 		
-      write(strT,*) t
-      write(unitno,*) 'ZONE t="1" N=',nvert,'E=',nedge
+	  write(strT,*) t
+	  write(unitno,*) 'ZONE t="1" N=',nvert,'E=',nedge
 	  write(unitno,*) 'STRANDID=1 '
 	  write(unitno,*) 'SOLUTIONTIME=',trim(adjustl(strT))
-      write(unitno,*) 'DATAPACKING=POINT,'
-      write(unitno,*) 'ZONETYPE=FELINESEG'
+	  write(unitno,*) 'DATAPACKING=POINT,'
+	  write(unitno,*) 'ZONETYPE=FELINESEG'
 
-      do np=1,nvert
-        write(unitno,*) (grd(np,j),j=1,2),rhov(np),uv(np),vv(np),       &
-     &  machv(np),cpv(np)
-      enddo
-      
-      do ed=1,nedge
-          write(unitno,*) (edge(ed,j),j=1,2)
-      enddo
+	  do np=1,nvert
+		write(unitno,*) (grd(np,j),j=1,2),rhov(np),uv(np),vv(np),       &
+	 &  machv(np),cpv(np)
+	  enddo
 	  
-      !close(unitno)
+	  do ed=1,nedge
+		  write(unitno,*) (edge(ed,j),j=1,2)
+	  enddo
+	  
+	  !close(unitno)
 	  
 	  
 	  ordV=ceiling(log10(dble(nvert)))
@@ -227,17 +229,17 @@
 	 formC = adjustl(formC)
 	 
 	  do i=1,nedge
-        if(edge(i,3).gt.0)then
-          edge(i,3)=(edge(i,3))         
-        else
-          edge(i,3)=0
-        endif
-        if(edge(i,4).gt.0)then
-         edge(i,4)=(edge(i,4))
-       else
-         edge(i,4)=0
-        endif  
-      enddo
+		if(edge(i,3).gt.0)then
+		  edge(i,3)=(edge(i,3))         
+		else
+		  edge(i,3)=0
+		endif
+		if(edge(i,4).gt.0)then
+		 edge(i,4)=(edge(i,4))
+	   else
+		 edge(i,4)=0
+		endif  
+	  enddo
 	  
 	  !write(unitno2,*) VARLOCATION=([1-2]=NODAL ,[3-5]=CELLCENTERED)
 	  write(unitno2,*) 'ZONE '
@@ -267,18 +269,18 @@
 			enddo
 			write(unitno2,"(ES14.6E2) ") (grd(lEnd,j))
 		enddo
-      enddo
+	  enddo
 	  lineLength=floor(30000.0/(14.0+1.0))
 	  nLines=ceiling(dble(ncells)/dble(lineLength))
-    call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,rho)
-    call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,u)
-    call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,v)
-    call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,mach)
-    call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,cp)
+	call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,rho)
+	call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,u)
+	call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,v)
+	call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,mach)
+	call GENBLOCKVARIABLEREAL(unitno2,lineLength,nLines,ncells,cp)
 	  
-      do ed=1,nedge
-          write(unitno2,*) (edge(ed,j),j=1,2)
-      enddo
+	  do ed=1,nedge
+		  write(unitno2,*) (edge(ed,j),j=1,2)
+	  enddo
 	  lineLength=floor(30000.0/(14.0+1.0))
 	  nLines=ceiling(dble(nedge)/dble(lineLength))
 	  
@@ -293,7 +295,7 @@
 			enddo
 			write(unitno2,"(I14) ") (edge(lEnd,j))
 		enddo
-      enddo
+	  enddo
 	  
 	  write(unitno2,*) 'ZONE t="Surface Data" N=',nvert
 	  write(unitno2,*) 'STRANDID=2 '
@@ -301,19 +303,19 @@
 	  write(unitno2,*) 'DATAPACKING=POINT'
 	  write(unitno2,*) 'ZONETYPE=FELINESEG'
 	  do np=1,nvert
-        write(unitno2,*) (grd(np,j),j=1,2),rhov(np),uv(np),vv(np),       &
-     &  machv(np),cpv(np)
-      enddo
+		write(unitno2,*) (grd(np,j),j=1,2),rhov(np),uv(np),vv(np),       &
+	 &  machv(np),cpv(np)
+	  enddo
 	  
 	  do ed=1,jj
-          write(unitno2,*) (edge(edgeList(ed),j),j=1,2)
-      enddo
-      
-      
-      fileno=5
-      blanking=0
-      call DUMPMESHVTK(nvert,nvert,nedge,nedge,edge,grd,                 &
-     &  blanking,fileno,rhov,uv,vv,machv,cpv)
+		  write(unitno2,*) (edge(edgeList(ed),j),j=1,2)
+	  enddo
+	  
+	  
+	  fileno=5
+	  blanking=0
+	  call DUMPMESHVTK(nvert,nvert,nedge,nedge,edge,grd,                 &
+	 &  blanking,fileno,rhov,uv,vv,machv,cpv)
 
       enddo
         

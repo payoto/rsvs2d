@@ -17,3 +17,28 @@ function [desVarList]=ExtractActiveVariable(nFill,notDesInd,inactiveVar)
     desVarList([notDesInd,inactiveVar])=[];
     
 end
+
+
+
+
+function [inactiveVar]=SelectInactiveVariables(newFill,varActive)
+    
+    switch varActive
+        case 'all'
+            inactiveVar=[];
+        case 'border'
+            is0=newFill==0;
+            is1=newFill==1;
+            
+            inactiveVar=find(is0);
+            inactiveVar=[inactiveVar,find(is1)];
+            
+        case 'wideborder'
+            error('Not coded yet')
+            
+        otherwise
+            error('unrecognised variable activation criterion')
+    end
+    
+    
+end

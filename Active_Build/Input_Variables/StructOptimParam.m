@@ -82,7 +82,7 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=1e-2; %[0,2]
+    paroptimoptimCG.diffStepSize=1e-3; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
@@ -332,10 +332,10 @@ function [paroptim]=Test_CG_Aero()
     
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=2.5;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.general.nPop=6;
-    paroptim.general.maxIter=10;
+    paroptim.general.maxIter=50;
     paroptim.general.worker=6; 
 end
 

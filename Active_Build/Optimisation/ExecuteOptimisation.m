@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [iterstruct]=ExecuteOptimisation(caseStr,restartFromPop)
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     close all
     clc
     procStr2=['OPTIMISATION - ',caseStr];
@@ -24,19 +24,9 @@ function [iterstruct]=ExecuteOptimisation(caseStr,restartFromPop)
     startIter=1;
     
     % Restart
-    in2Flag=nargin==2;
-    if in2Flag || ~isempty(restartSource)
-        if in2Flag
-            restartSource=restartFromPop;
-        end
-        load(restartSource)
-        startIter=length(optimstruct);
-        maxIter=startIter+maxIter;
-        iterstruct=[optimstruct,iterstruct];
-        [iterstruct]=GenerateNewPop(paramoptim,iterstruct,startIter);
-       paramoptim.general.restartSource=restartSource;
-       startIter=startIter+1;
-    end
+    inNFlag=nargin;
+    [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
+        restartSource,restartFromPop,maxIter,iterstruct);
     
     % Specify starting population
     
@@ -58,6 +48,66 @@ function [iterstruct]=ExecuteOptimisation(caseStr,restartFromPop)
     [~]=PrintEnd(procStr2,0,tStartOpt);
     OptimisationOutput('final',paramoptim,outinfo,iterstruct);
     diary off
+    
+end
+
+function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
+        restartSource,restartFromPop,maxIter,iterstruct)
+    
+    if inNFlag==2 || ~isempty(restartSource)
+        if inNFlag==2
+            restartSource=restartFromPop;
+        end
+        load(restartSource)
+        
+        startIter=length(optimstruct);
+        maxIter=startIter+maxIter;
+        iterstruct=[optimstruct,iterstruct];
+        
+        [iterstruct]=GenerateRestartPop(paramoptim,iterstruct,startIter);
+        
+       paramoptim.general.restartSource=restartSource;
+       startIter=startIter+1;
+    end
+    
+    
+    
+end
+
+function [iterstruct]=GenerateRestartPop(paroptim,iterstruct,startIter)
+    
+    varExtract={'optimMethod','direction'};
+    [optimMethod,direction]=ExtractVariables(varExtract,paroptim);
+    
+    
+    [isGradient]=CheckIfGradient(optimMethod);
+    
+    if isGradient
+        switch direction
+            case 'min'
+                [~,rootInd]=min([iterstruct(startIter).population(:).objective]);
+            case 'max'
+                [~,rootInd]=max([iterstruct(startIter).population(:).objective]);
+        end
+        
+        [origPop,nPop,deltas]=InitialiseGradientBased(...
+            iterstruct(startIter).population(rootInd).fill,paroptim);
+        
+        paroptim.general.nPop=nPop;
+        
+        varExtract={'nPop'};
+        [nPop]=ExtractVariables(varExtract,paroptim);
+        [iterstruct(startIter+1).population]=GeneratePopulationStruct(paroptim);
+        for ii=1:nPop
+            iterstruct(startIter+1).population(ii).fill=origPop(ii,:);
+            iterstruct(startIter+1).population(ii).optimdat.var=deltas{ii}(1,:);
+            iterstruct(startIter+1).population(ii).optimdat.value=deltas{ii}(2,:);
+            
+        end
+        
+    else
+        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter);
+    end
     
 end
 
@@ -478,9 +528,10 @@ end
 function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
     
     
-    varExtract={'notDesInd','nPop','diffStepSize','desVarRange'};
-    [notDesInd,nPop,diffStepSize,desVarRange]=ExtractVariables(varExtract,paroptim);
-    inactiveVar=[];
+    varExtract={'notDesInd','varActive','diffStepSize','desVarRange'};
+    [notDesInd,varActive,diffStepSize,desVarRange]=ExtractVariables(varExtract,paroptim);
+    
+    [inactiveVar]=SelectInactiveVariables(rootPop,varActive);
     [desVarList]=ExtractActiveVariable(length(rootPop),notDesInd,inactiveVar);
     nPop=length(desVarList)+1;
     
