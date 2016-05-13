@@ -176,8 +176,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
     
     if strcmp(objectiveName,'CutCellFlow')
-%         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
-%             dat.xMin,dat.xMax,dat.A,dat.nPoints);
+        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
+            dat.xMin,dat.xMax,dat.A,dat.nPoints);
         knownOptim=0;
         tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
@@ -443,6 +443,8 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
     varExtract={'defaultVal'};
     [defaultVal]=ExtractVariables(varExtract,paramoptim);
     
+    delete(tecPlotFile{1});
+    delete(tecPlotFile{2});
     
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
     isIter0=regexp(iterFolders,'_0');
@@ -473,13 +475,14 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
     for ii=1:nIter
         nAct=length(optimstruct(ii).population);
         iterRes(ii,1:nAct)=[optimstruct(ii).population(:).objective];
+        
     end
     
     switch dirOptim
         case 'min'
-            [minRes,minPos]=min(iterRes(iterRes~=0),[],2);
+            [minRes,minPos]=min(iterRes,[],2);
         case 'max'
-            [minRes,minPos]=max(iterRes(iterRes~=0),[],2);
+            [minRes,minPos]=max(iterRes,[],2);
     end
     % Prepare CFD file with newest version
     for ii=1:nIter
@@ -507,14 +510,15 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
         ii=needRerun(jj);
 
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-            
+        %if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+        
+        
             RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 CutCellFlow_Handler(paramoptim,minIterPos)
                 RunCFDPostProcessing(minIterPos);
             end
-        end
+        %end
         
     end
     
@@ -557,7 +561,10 @@ function RunCFDPostProcessing(profilePath)
     
     compType=computer;
     profilePath=MakePathCompliant(profilePath);
-
+    
+    postRootPath='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Result_Template\CFD_code_Template\Source\postproc.exe';    
+    copyfile(postRootPath,[profilePath,filesep,'CFD',filesep,'postproc.exe']);
+    
     postPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
     if strcmp(compType(1:2),'PC')
 
