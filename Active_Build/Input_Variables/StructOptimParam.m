@@ -186,6 +186,7 @@ function [paroptim]=SumVolumeConstraint2(paroptim)
     paroptim.constraint.resVal={[]};
     
 end
+
 % Objectives
 function paroptim=CutCellObjective(paroptim)
     
@@ -545,6 +546,35 @@ function [paroptim]=FullSupersonicOptimSym_bp3_1()
     
 end
 
+function [paroptim]=bp3_Aero_CG_20()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=2.5;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12; 
+end
+
+function [paroptim]=bp3_Aero_CG_10()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12; 
+end
+
+function [paroptim]=bp3_Aero_CG_05()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=0.6;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12; 
+end
 
 % bp2
 

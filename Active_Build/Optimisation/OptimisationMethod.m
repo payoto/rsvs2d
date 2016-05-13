@@ -352,7 +352,7 @@ end
 
 function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterCurr,iterm1)
     
-     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
+    varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','worker','nPop','validVol','varActive'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,worker,...
@@ -368,15 +368,15 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterC
     % Case dependant statements
     if lineSearch
         [stepVector]=FindOptimalStepVector(iterCurr,worker,direction);
-       [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
-       % Need to build function for activation and deactivation of variables
-       [inactiveVar]=SelectInactiveVariables(newRoot,varActive);
-       [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,inactiveVar);
-       [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
-       newPop=[newRoot;newGradPop];
-       deltas=[deltaRoot,deltaGrad];
-       
-       paramoptim.optim.CG.lineSearch=false;
+        [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
+        % Need to build function for activation and deactivation of variables
+        [inactiveVar]=SelectInactiveVariables(newRoot,varActive);
+        [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,inactiveVar);
+        [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
+        newPop=[newRoot;newGradPop];
+        deltas=[deltaRoot,deltaGrad];
+        
+        paramoptim.optim.CG.lineSearch=false;
     else % Direction Search
         
         % Get component change
@@ -393,7 +393,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterC
         rootPop=iterCurr(1).fill;
         [stepLengths]=StepLengthsForLS(rootPop,stepVector,worker,validVol,desVarRange);
         [newPop,deltas]=...
-        GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim);
+            GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim);
         % Population trimming for invalid values
         
         % Declare linesearch
@@ -557,7 +557,7 @@ end
 
 function [newPop,deltas]=...
         GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim)
-
+    
     nNew=length(stepLengths);
     nFill=length(rootPop);
     deltaDes=(stepLengths'*stepVector);
@@ -596,17 +596,35 @@ end
 function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
     f=[iterstruct(:).objective];
-    stepLengths=1./2.^[inf,(worker-2):-1:0];
+    g=[iterstruct(:).constraint];
     vec=zeros(size(iterstruct(1).fill));
     vec(iterstruct(end).optimdat.var)=iterstruct(end).optimdat.value;
     
-    pp=spline(stepLengths,f);
-    iTest=linspace(0,1,1000);
+    invalidPoints=g<0.9;
+    
+    [~,bestPoint]=min(f);
+    stepLengths=1./2.^[inf,(worker-2):-1:0];
+    
+    if bestPoint==1
+        bestPoint=2;
+    end
+    if bestPoint==worker
+        bestPoint=worker-1;
+    end
+    prevPoint=bestPoint-1;
+    nextPoint=bestPoint+1;
+    
+    indSearch=[prevPoint,bestPoint,nextPoint];
+    
+    
+    %pp=spline(stepLengths(indSearch),f(indSearch));
+    [pp]=ParabolicFit(stepLengths(indSearch),f(indSearch));
+    iTest=linspace(stepLengths(indSearch(1)),stepLengths(indSearch(3)),1000);
     switch direction
         case 'min'
-            [targObj,indexLoc]=min(ppval(pp,iTest));
+            [targObj,indexLoc]=min(ParabolicVal(pp,iTest));
         case 'max'
-            [targObj,indexLoc]=max(ppval(pp,iTest));
+            [targObj,indexLoc]=max(ParabolicVal(pp,iTest));
     end
     stepLength=iTest(indexLoc);
     
@@ -616,6 +634,33 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
     stepVector=vec*stepLength;
     
+end
+
+
+function [coeff]=ParabolicFit(xI,yI)
+    
+    parabola=@(x) [x.^2, x ,ones(size(x))];
+    
+    xI=reshape(xI,[numel(xI),1]);
+    yI=reshape(yI,[numel(yI),1]);
+    R=parabola(xI);
+    
+    if numel(xI)==3
+        coeff=R\yI;
+    else
+        warning('Least Square fit used')
+        coeff=(R'*R)\R'*yI;
+        
+    end
+    
+end
+
+function [yy]=ParabolicVal(coeff,xx)
+    parabola=@(x) [x.^2, x ,ones(size(x))];
+    
+    xx=reshape(xx,[numel(xx),1]);
+    
+    yy=parabola(xx)*coeff;
 end
 
 function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim)

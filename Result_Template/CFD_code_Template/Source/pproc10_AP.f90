@@ -260,7 +260,7 @@
 		lEnd=0
 		do ii=1,nLines
 			lStart=lEnd+1
-			lEnd=min(lStart+lineLength,nvert)
+			lEnd=min(lStart+lineLength-1,nvert)
 			
 			do np=(lStart),(lEnd-1)
 				write(unitno2,"(ES14.6E2) ",advance="no") (grd(np,j))
@@ -286,7 +286,7 @@
 		lEnd=0
 		do ii=1,nLines
 			lStart=lEnd+1
-			lEnd=min(lStart+lineLength,nedge)
+			lEnd=min(lStart+lineLength-1,nedge)
 			
 			do np=(lStart),(lEnd-1)
 				write(unitno2,"(I14) ",advance="no") (edge(np,j))
