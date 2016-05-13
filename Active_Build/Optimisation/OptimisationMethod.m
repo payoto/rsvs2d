@@ -675,24 +675,6 @@ function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim)
     
 end
 
-function [inactiveVar]=SelectInactiveVariables(newFill,varActive)
-    
-    switch varActive
-        case 'all'
-            inactiveVar=[];
-        case 'border'
-            error('Not coded yet')
-            
-        case 'wideborder'
-            error('Not coded yet')
-            
-        otherwise
-            error('unrecognised variable activation criterion')
-    end
-    
-    
-end
-
 function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSize,desVarList)
     
     nActVar=length(desVarList);
