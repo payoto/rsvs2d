@@ -82,11 +82,11 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=1e-3; %[0,2]
+    paroptimoptimCG.diffStepSize=1e-4; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
-    paroptimoptimCG.validVol=0.3; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0.05; % Interval of validity of the derivatives
     
 end
 
@@ -335,8 +335,8 @@ function [paroptim]=Test_CG_Aero()
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.general.nPop=6;
-    paroptim.general.maxIter=50;
-    paroptim.general.worker=6; 
+    paroptim.general.maxIter=30;
+    paroptim.general.worker=8; 
 end
 
 function [paroptim]=TestParOptim_desktop()

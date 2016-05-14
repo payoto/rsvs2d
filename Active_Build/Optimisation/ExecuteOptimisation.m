@@ -39,7 +39,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
             baseGrid,connectstructinfo);
         % Evaluate Objective Function
-        [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter);
+        [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,startIter);
         % create new population
         [~]=PrintEnd(procStr,1,tStart);
     end
@@ -252,7 +252,7 @@ function population=EnforceConstraintViolation(population,defaultVal)
     
 end
 
-function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter)
+function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,iterStart)
     procStr=['Generate New Population'];
     [tStart]=PrintStart(procStr,2);
     
@@ -263,7 +263,7 @@ function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter)
     
     [newPop,iterstruct(nIter).population,paramoptim,deltas]=OptimisationMethod(paramoptim,...
         iterstruct(nIter).population,...
-        iterstruct(max([nIter-iterGap,1])).population);
+        iterstruct(max([nIter-iterGap,iterStart])).population);
    varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
     [iterstruct(nIter+1).population]=GeneratePopulationStruct(paramoptim);

@@ -440,8 +440,8 @@ end
 function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio,paramoptim)
     
     
-    varExtract={'defaultVal'};
-    [defaultVal]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'defaultVal','worker'};
+    [defaultVal,worker]=ExtractVariables(varExtract,paramoptim);
     
     delete(tecPlotFile{1});
     delete(tecPlotFile{2});
@@ -468,7 +468,7 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
         system(['cat ''',destPath,''' > ''',tecPlotFile{2},'''']);
     end
     
-    nVar=length(optimstruct(1).population);
+    nVar=max([worker,length(optimstruct(1).population)]);
     nIter=length(optimstruct);
     iterRes=zeros([nIter,nVar])+defaultVal;
 
@@ -508,17 +508,22 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
     for jj=1:kk
         
         ii=needRerun(jj);
-
+        
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-        %if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-        
-        
+        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+            
+            
             RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 CutCellFlow_Handler(paramoptim,minIterPos)
                 RunCFDPostProcessing(minIterPos);
+                if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                    PrepareCFDPostProcessing(minIterPos);
+                    CutCellFlow_Handler(paramoptim,minIterPos)
+                    RunCFDPostProcessing(minIterPos);
+                end
             end
-        %end
+        end
         
     end
     
@@ -726,7 +731,7 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     for ii=1:nIter
         nVarLoc=length(optimstruct(ii).population);
         iterRes(ii,1:nVarLoc)=[optimstruct(ii).population(:).objective];
-        lSub1(1)=plot(ones(1,nVar)*ii,iterRes(ii,:),'b.','markersize',5);
+        lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
     end
     switch dirOptim
         case 'min'

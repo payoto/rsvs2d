@@ -1,44 +1,3 @@
-(line 753)
-    [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc);
-
-In ExecuteOptimisation>EvaluateObjective (line 725)
-    [objValue,additional]=eval([objectiveName,'(paramoptim,member,loop);']);
-
-In ExecuteOptimisation>NormalExecutionIteration (line 228)
-    [population.objective,population.additional]=EvaluateObjective(objectiveName,paramoptim,population,loop);
-
-In ExecuteOptimisation>(parfor body) (line 191)
-            population(ii)=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
-
-In parallel_function>make_general_channel/channel_general (line 914)
-                    O = F(C{:});
-
-In remoteParallelFunction (line 38)
-        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
-
-ExecuteOptimisation('Test_CG_Aero',restartMat)
-  
---------------------------------------------------------------------------------------------
-********************************************************************************************
---------------------------------------------------------------------------------------------
-OPTIMISATION - Test_CG_Aero start
-13-May-2016 17:00:32
---------------------------------------------------------------------------------------------
-  
-  
---------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------
-INITIALISE OPTIMISATION PROCESS start
-13-May-2016 17:00:32
---------------------------------------------------------------------------------------------
-  
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -104,7 +63,7 @@ Calculations Started . . .
 			Start Cell 40 of 40 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:234
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:924
 INITIAL GRID OPERATIONS end
 -----------------------
   
@@ -124,23 +83,23 @@ ans =
       Number: 1
         Name: ''
        Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
+    Position: [402 246 560 420]
        Units: 'pixels'
 
   Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-  Initialisation time:00:00:00:874
+  Initialisation time:00:00:02:062
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:04:994
-  Volume converged to 1.06615e-03
-Time Elapsed:00:00:06:913
+  Iteration Time:00:00:05:583
+  Volume converged to 1.09816e-03
+Time Elapsed:00:00:09:250
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:08:395
+    Time Elapsed:00:00:19:996
 INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -148,8 +107,1201 @@ INITIALISE OPTIMISATION PROCESS end
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
-ITERATION 91 start
-13-May-2016 17:00:41
+ITERATION 51 start
+14-May-2016 17:02:39
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:18:798
+  Volume converged to 2.24501e-09
+Time Elapsed:00:00:20:156
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:109
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:19:375
+  Volume converged to 2.24313e-09
+Time Elapsed:00:00:20:779
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:19:360
+  Volume converged to 2.24036e-09
+Time Elapsed:00:00:20:936
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:202
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:19:423
+  Volume converged to 2.23880e-09
+Time Elapsed:00:00:20:936
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:19:251
+  Volume converged to 2.24395e-09
+Time Elapsed:00:00:21:138
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:171
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:20:343
+  Volume converged to 2.24321e-09
+Time Elapsed:00:00:22:137
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:140
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:25:538
+  Volume converged to 2.24393e-09
+Time Elapsed:00:00:27:425
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:11:634
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:14:317
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:13:210
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:13:351
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:24:629
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:26:766
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:29:590
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:062
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:04:129
+ITERATION 51 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 52 start
+14-May-2016 17:06:43
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  57 Steps Performed
+  Iteration Time:00:00:20:826
+  Volume converged to 3.54074e-09
+Time Elapsed:00:00:22:324
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:793
+  Volume converged to 2.24778e-09
+Time Elapsed:00:00:23:136
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:684
+  Volume converged to 2.23479e-09
+Time Elapsed:00:00:22:980
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  57 Steps Performed
+  Iteration Time:00:00:20:874
+  Volume converged to 2.77234e-09
+Time Elapsed:00:00:22:340
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:201
+  Volume converged to 2.86974e-09
+Time Elapsed:00:00:22:402
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:216
+  Volume converged to 2.24313e-09
+Time Elapsed:00:00:22:667
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:388
+  Volume converged to 2.70846e-09
+Time Elapsed:00:00:22:823
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:250
+  Start Time Stepping
+  69 Steps Performed
+  Iteration Time:00:00:33:697
+  Volume converged to 1.37928e-09
+Time Elapsed:00:00:37:206
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:14:127
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:13:628
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:13:534
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:13:862
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:05:594
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:53:269
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:05:57:793
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:06:15:671
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:858
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:07:58:025
+ITERATION 52 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 53 start
+14-May-2016 17:14:41
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:01:217
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:447
+  Volume converged to 2.74946e-09
+Time Elapsed:00:00:26:926
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:01:014
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:367
+  Volume converged to 2.75982e-09
+Time Elapsed:00:00:28:783
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:01:014
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:260
+  Volume converged to 2.75900e-09
+Time Elapsed:00:00:27:191
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:577
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:618
+  Volume converged to 2.75863e-09
+Time Elapsed:00:00:32:277
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:905
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:993
+  Volume converged to 2.75655e-09
+Time Elapsed:00:00:30:607
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:858
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:835
+  Volume converged to 2.75681e-09
+Time Elapsed:00:00:31:638
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:843
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:757
+  Volume converged to 2.74404e-09
+Time Elapsed:00:00:33:697
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:14:770
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:20:261
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:15:175
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:29:886
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:29:668
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:31:618
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:31:649
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:156
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:26:266
+ITERATION 53 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 54 start
+14-May-2016 17:19:08
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:20:405
+  Volume converged to 2.68513e-09
+Time Elapsed:00:00:21:544
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:372
+  Volume converged to 2.26918e-09
+Time Elapsed:00:00:22:464
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:263
+  Volume converged to 2.83918e-09
+Time Elapsed:00:00:22:449
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:388
+  Volume converged to 2.84826e-09
+Time Elapsed:00:00:22:683
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:482
+  Volume converged to 2.75655e-09
+Time Elapsed:00:00:22:776
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:028
+  Volume converged to 2.78415e-09
+Time Elapsed:00:00:23:665
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:028
+  Volume converged to 2.81542e-09
+Time Elapsed:00:00:23:494
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:250
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:180
+  Volume converged to 2.75614e-09
+Time Elapsed:00:00:28:393
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:41:727
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:42:617
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:52:413
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:57:952
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:01:664
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:00:697
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:02:101
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:56:594
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:094
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:39:776
+ITERATION 54 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 55 start
+14-May-2016 17:23:47
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:18:720
+  Volume converged to 2.93496e-09
+Time Elapsed:00:00:19:937
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:501
+  Volume converged to 2.92347e-09
+Time Elapsed:00:00:20:670
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:313
+  Volume converged to 2.93776e-09
+Time Elapsed:00:00:20:546
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:735
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:20:733
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:703
+  Volume converged to 2.93444e-09
+Time Elapsed:00:00:21:669
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:500
+  Volume converged to 2.91453e-09
+Time Elapsed:00:00:21:030
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:734
+  Volume converged to 2.93374e-09
+Time Elapsed:00:00:24:649
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:18:171
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:19:200
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:24:301
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:31:165
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:33:366
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:35:472
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:39:964
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:10:822
+ITERATION 55 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 56 start
+14-May-2016 17:27:58
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:934
+  Volume converged to 2.07870e-09
+Time Elapsed:00:00:23:026
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:279
+  Volume converged to 3.00461e-09
+Time Elapsed:00:00:22:526
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:856
+  Volume converged to 2.46625e-09
+Time Elapsed:00:00:22:995
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:575
+  Volume converged to 3.04606e-09
+Time Elapsed:00:00:22:761
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:168
+  Volume converged to 2.67313e-09
+Time Elapsed:00:00:23:431
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:215
+  Volume converged to 2.35174e-09
+Time Elapsed:00:00:23:400
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:825
+  Volume converged to 2.80300e-09
+Time Elapsed:00:00:23:307
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:902
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:23:338
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:40:635
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:44:099
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:47:406
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:59:964
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:58:794
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:01:601
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:00:978
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:02:600
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+[Warning: Step Length is stagnant this iteration] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>FindOptimalStepVector', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 632)" style="font-weight:bold">OptimisationMethod>FindOptimalStepVector</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',632,0)">line 632</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>ConjugateGradient2', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 370)" style="font-weight:bold">OptimisationMethod>ConjugateGradient2</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',370,0)">line 370</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 33)" style="font-weight:bold">OptimisationMethod</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',33,0)">line 33</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>GenerateNewPop', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 264)" style="font-weight:bold">ExecuteOptimisation>GenerateNewPop</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',264,0)">line 264</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 42)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',42,0)">line 42</a>)] 
+    Time Elapsed:00:00:00:436
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:37:186
+ITERATION 56 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 57 start
+14-May-2016 17:32:35
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:18:845
+  Volume converged to 2.93776e-09
+Time Elapsed:00:00:19:952
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:250
+  Volume converged to 2.93444e-09
+Time Elapsed:00:00:20:546
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:656
+  Volume converged to 2.91452e-09
+Time Elapsed:00:00:20:608
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:750
+  Volume converged to 2.92347e-09
+Time Elapsed:00:00:21:076
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:501
+  Volume converged to 2.93497e-09
+Time Elapsed:00:00:20:561
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:563
+  Volume converged to 2.93374e-09
+Time Elapsed:00:00:20:935
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:984
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:21:107
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:16:267
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:31:759
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:32:991
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:33:584
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:33:771
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:34:489
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:35:534
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:04:753
+ITERATION 57 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 58 start
+14-May-2016 17:36:40
 --------------------------------------------------------------------------------------------
   
   
@@ -158,10 +1310,23 @@ SNAKE PROCESS start
   Start initialisation
   Initialisation time:00:00:00:031
   Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:15:555
-  Volume converged to 2.92262e-08
-Time Elapsed:00:00:16:788
+  58 Steps Performed
+  Iteration Time:00:00:21:716
+  Volume converged to 2.08417e-09
+Time Elapsed:00:00:22:823
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:762
+  Volume converged to 3.00524e-09
+Time Elapsed:00:00:22:854
 SNAKE PROCESS end
 -----------------------
   
@@ -171,36 +1336,10 @@ SNAKE PROCESS start
   Start initialisation
   Initialisation time:00:00:00:016
   Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:15:524
-  Volume converged to 2.94885e-08
-Time Elapsed:00:00:16:507
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:031
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:15:821
-  Volume converged to 2.94226e-08
-Time Elapsed:00:00:16:898
-SNAKE PROCESS end
------------------------
-  
-  
------------------------
-SNAKE PROCESS start
-  Start initialisation
-  Initialisation time:00:00:00:031
-  Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:15:243
-  Volume converged to 2.93856e-08
-Time Elapsed:00:00:16:507
+  58 Steps Performed
+  Iteration Time:00:00:21:903
+  Volume converged to 3.04736e-09
+Time Elapsed:00:00:22:995
 SNAKE PROCESS end
 -----------------------
   
@@ -210,10 +1349,10 @@ SNAKE PROCESS start
   Start initialisation
   Initialisation time:00:00:00:016
   Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:15:336
-  Volume converged to 2.92771e-08
-Time Elapsed:00:00:16:320
+  59 Steps Performed
+  Iteration Time:00:00:22:183
+  Volume converged to 2.68052e-09
+Time Elapsed:00:00:23:292
 SNAKE PROCESS end
 -----------------------
   
@@ -221,34 +1360,26 @@ SNAKE PROCESS end
 -----------------------
 SNAKE PROCESS start
   Start initialisation
-  Initialisation time:00:00:00:031
+  Initialisation time:00:00:00:015
   Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:16:148
-  Volume converged to 2.93995e-08
-Time Elapsed:00:00:17:662
+  58 Steps Performed
+  Iteration Time:00:00:21:763
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:23:026
 SNAKE PROCESS end
 -----------------------
   
   
 -----------------------
-Calculate Objective - CutCellFlow start
-    Time Elapsed:00:02:48:956
-Calculate Objective - CutCellFlow end
------------------------
-  
-  
------------------------
-Calculate Objective - CutCellFlow start
-    Time Elapsed:00:02:50:891
-Calculate Objective - CutCellFlow end
------------------------
-  
-  
------------------------
-Calculate Objective - CutCellFlow start
-    Time Elapsed:00:02:52:623
-Calculate Objective - CutCellFlow end
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:199
+  Volume converged to 2.46989e-09
+Time Elapsed:00:00:23:213
+SNAKE PROCESS end
 -----------------------
   
   
@@ -257,51 +1388,782 @@ SNAKE PROCESS start
   Start initialisation
   Initialisation time:00:00:00:016
   Start Time Stepping
-  50 Steps Performed
-  Iteration Time:00:00:12:312
-  Volume converged to 2.94046e-08
-Time Elapsed:00:00:13:233
+  58 Steps Performed
+  Iteration Time:00:00:22:059
+  Volume converged to 2.80521e-09
+Time Elapsed:00:00:23:089
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:246
+  Volume converged to 2.35382e-09
+Time Elapsed:00:00:23:510
 SNAKE PROCESS end
 -----------------------
   
   
 -----------------------
 Calculate Objective - CutCellFlow start
-    Time Elapsed:00:03:07:947
+    Time Elapsed:00:03:47:016
 Calculate Objective - CutCellFlow end
 -----------------------
   
   
 -----------------------
 Calculate Objective - CutCellFlow start
-    Time Elapsed:00:03:16:593
+    Time Elapsed:00:03:47:530
 Calculate Objective - CutCellFlow end
 -----------------------
   
   
 -----------------------
 Calculate Objective - CutCellFlow start
-    Time Elapsed:00:03:18:388
+    Time Elapsed:00:03:49:231
 Calculate Objective - CutCellFlow end
 -----------------------
   
   
 -----------------------
 Calculate Objective - CutCellFlow start
-    Time Elapsed:00:01:40:955
+    Time Elapsed:00:03:48:872
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:00:947
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:10:837
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:13:193
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:21:320
 Calculate Objective - CutCellFlow end
 -----------------------
   
   
 -----------------------
 Generate New Population start
-{Reference to non-existent field 'optimdat'.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>GetIterationInformation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 423)" style="font-weight:bold">OptimisationMethod>GetIterationInformation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',423,0)">line 423</a>)
-        gradientopt(ii).design(population(ii+1).optimdat.var)...
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>ConjugateGradient2', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 364)" style="font-weight:bold">OptimisationMethod>ConjugateGradient2</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',364,0)">line 364</a>)
-    [gradstruct_m1]=GetIterationInformation(iterm1);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 33)" style="font-weight:bold">OptimisationMethod</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',33,0)">line 33</a>)
-            [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(para
+[Warning: Step Length is stagnant this iteration] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>FindOptimalStepVector', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 632)" style="font-weight:bold">OptimisationMethod>FindOptimalStepVector</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',632,0)">line 632</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>ConjugateGradient2', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 370)" style="font-weight:bold">OptimisationMethod>ConjugateGradient2</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',370,0)">line 370</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 33)" style="font-weight:bold">OptimisationMethod</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',33,0)">line 33</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>GenerateNewPop', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 264)" style="font-weight:bold">ExecuteOptimisation>GenerateNewPop</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',264,0)">line 264</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 42)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',42,0)">line 42</a>)] 
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:56:639
+ITERATION 58 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 59 start
+14-May-2016 17:41:37
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:547
+  Volume converged to 2.92347e-09
+Time Elapsed:00:00:20:623
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:376
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:20:561
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:609
+  Volume converged to 2.93444e-09
+Time Elapsed:00:00:20:702
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:953
+  Volume converged to 2.91452e-09
+Time Elapsed:00:00:21:482
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:625
+  Volume converged to 2.93497e-09
+Time Elapsed:00:00:21:419
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:749
+  Volume converged to 2.93776e-09
+Time Elapsed:00:00:21:434
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:469
+  Volume converged to 2.93374e-09
+Time Elapsed:00:00:21:513
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:19:871
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:27:640
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:34:036
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:35:425
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:35:970
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:37:499
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:37:687
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:04:941
+ITERATION 59 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 60 start
+14-May-2016 17:45:42
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:809
+  Volume converged to 2.08417e-09
+Time Elapsed:00:00:23:026
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:919
+  Volume converged to 3.00524e-09
+Time Elapsed:00:00:23:136
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:654
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:22:932
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:106
+  Volume converged to 2.80521e-09
+Time Elapsed:00:00:23:401
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:105
+  Volume converged to 3.04736e-09
+Time Elapsed:00:00:23:354
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:511
+  Volume converged to 2.68052e-09
+Time Elapsed:00:00:23:712
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:355
+  Volume converged to 2.35382e-09
+Time Elapsed:00:00:23:572
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:449
+  Volume converged to 2.46989e-09
+Time Elapsed:00:00:23:713
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:41:898
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:47:749
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:47:889
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:50:526
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:02:273
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:11:914
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:13:895
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:04:21:071
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+[Warning: Step Length is stagnant this iteration] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>FindOptimalStepVector', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 632)" style="font-weight:bold">OptimisationMethod>FindOptimalStepVector</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',632,0)">line 632</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>ConjugateGradient2', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 370)" style="font-weight:bold">OptimisationMethod>ConjugateGradient2</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',370,0)">line 370</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 33)" style="font-weight:bold">OptimisationMethod</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',33,0)">line 33</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>GenerateNewPop', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 264)" style="font-weight:bold">ExecuteOptimisation>GenerateNewPop</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',264,0)">line 264</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 42)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',42,0)">line 42</a>)] 
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:58:044
+ITERATION 60 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 61 start
+14-May-2016 17:50:40
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:18:705
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:19:781
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:064
+  Volume converged to 2.92347e-09
+Time Elapsed:00:00:20:250
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:251
+  Volume converged to 2.93497e-09
+Time Elapsed:00:00:20:515
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:110
+  Volume converged to 2.91452e-09
+Time Elapsed:00:00:20:468
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:656
+  Volume converged to 2.93776e-09
+Time Elapsed:00:00:20:904
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:921
+  Volume converged to 2.93374e-09
+Time Elapsed:00:00:21:091
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:19:687
+  Volume converged to 2.93444e-09
+Time Elapsed:00:00:22:043
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:08:592
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:27:593
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:28:701
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:32:055
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:33:833
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:33:958
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:03:33:210
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:04:051
+ITERATION 61 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 62 start
+14-May-2016 17:54:44
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:544
+  Volume converged to 2.46989e-09
+Time Elapsed:00:00:22:683
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:575
+  Volume converged to 2.08417e-09
+Time Elapsed:00:00:22:823
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:294
+  Volume converged to 3.00524e-09
+Time Elapsed:00:00:22:448
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:000
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:794
+  Volume converged to 2.93261e-09
+Time Elapsed:00:00:23:042
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:21:684
+  Volume converged to 3.04736e-09
+Time Elapsed:00:00:22:933
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:22:153
+  Volume converged to 2.68052e-09
+Time Elapsed:00:00:23:572
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  59 Steps Performed
+  Iteration Time:00:00:21:903
+  Volume converged to 2.35382e-09
+Time Elapsed:00:00:23:354
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:184
+  Volume converged to 2.80521e-09
+Time Elapsed:00:00:25:600
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:07:41:473
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:07:40:677
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:07:41:831
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:07:42:907
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:08:05:029
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:08:18:039
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:08:30:098
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - CutCellFlow start
+    Time Elapsed:00:08:47:773
+Calculate Objective - CutCellFlow end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+[Warning: Step Length is stagnant this iteration] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>FindOptimalStepVector', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 632)" style="font-weight:bold">OptimisationMethod>FindOptimalStepVector</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',632,0)">line 632</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod>ConjugateGradient2', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 370)" style="font-weight:bold">OptimisationMethod>ConjugateGradient2</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',370,0)">line 370</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationMethod', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m', 33)" style="font-weight:bold">OptimisationMethod</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\Opti
