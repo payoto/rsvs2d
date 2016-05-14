@@ -142,7 +142,7 @@ function paramoptiminit=default_optimInit()
     paramoptiminit.cellLevels=[8,2];
     paramoptiminit.refineCellLvl=[0];
     paramoptiminit.defaultfill=0.5;
-    paramoptiminit.defaultCorner=1e-3;
+    paramoptiminit.defaultCorner=1e-4;
     paramoptiminit.corneractive=false;
 end
 
@@ -382,7 +382,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.axisRatio=0.25;
     
     param.snakes.step.mergeTopo=true;
-    param.snakes.step.snakesSteps=50;
+    param.snakes.step.snakesSteps=100;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     
