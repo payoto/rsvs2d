@@ -86,7 +86,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
-    paroptimoptimCG.validVol=0.05; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0.1; % Interval of validity of the derivatives
     
 end
 
@@ -332,10 +332,10 @@ function [paroptim]=Test_CG_Aero()
     
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.snakes.refine.axisRatio=2.2;
     
-    paroptim.general.nPop=6;
-    paroptim.general.maxIter=30;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=120;
     paroptim.general.worker=8; 
 end
 
