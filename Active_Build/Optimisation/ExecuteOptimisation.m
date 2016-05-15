@@ -25,8 +25,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     
     % Restart
     inNFlag=nargin;
-    [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
-        restartSource,restartFromPop,maxIter,iterstruct);
+    if inNFlag==2 || ~isempty(restartSource)
+        [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
+            restartSource,restartFromPop,maxIter,iterstruct);
+    end
     
     % Specify starting population
     
@@ -54,7 +56,7 @@ end
 function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
         restartSource,restartFromPop,maxIter,iterstruct)
     
-    if inNFlag==2 || ~isempty(restartSource)
+    
         if inNFlag==2
             restartSource=restartFromPop;
         end
@@ -68,7 +70,7 @@ function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
         
        paramoptim.general.restartSource=restartSource;
        startIter=startIter+1;
-    end
+   
     
     
     

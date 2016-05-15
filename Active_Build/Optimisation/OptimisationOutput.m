@@ -178,7 +178,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     if strcmp(objectiveName,'CutCellFlow')
         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
             dat.xMin,dat.xMax,dat.A,dat.nPoints);
-        knownOptim=0;
+        
         tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
         [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
