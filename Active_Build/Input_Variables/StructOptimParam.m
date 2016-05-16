@@ -82,11 +82,11 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=1e-4; %[0,2]
+    paroptimoptimCG.diffStepSize=1e-2; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
-    paroptimoptimCG.validVol=0.1; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0.05; % Interval of validity of the derivatives
     
 end
 
@@ -164,10 +164,9 @@ function [paroptim]=MeanVolumeConstraint(paroptim)
     paroptim.constraint.desVarConstr={'MeanVolFrac'};
     paroptim.constraint.desVarVal={0.4};
     paroptim.constraint.resConstr={'AeroResidualBarrier'};
-    paroptim.constraint.resVal={[-3.5,-0.5]};
+    paroptim.constraint.resVal={[-1.5,-0.0]};
     
 end
-
 
 function [paroptim]=SumVolumeConstraint(paroptim)
     
@@ -335,8 +334,8 @@ function [paroptim]=Test_CG_Aero()
     paroptim.parametrisation.snakes.refine.axisRatio=2.2;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=120;
-    paroptim.general.worker=8; 
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=5; 
 end
 
 function [paroptim]=TestParOptim_desktop()
