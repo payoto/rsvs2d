@@ -509,7 +509,7 @@ function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,d
             signD=1;
     end
     scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
-    
+    %scale=dot(gradDes_curr,gradDes_curr-gradDes_m1)/dot(gradDes_m1,gradDes_m1);
     if ~isfinite(scale)
         scale=1;
     end
@@ -636,7 +636,6 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
 end
 
-
 function [coeff]=ParabolicFit(xI,yI)
     
     parabola=@(x) [x.^2, x ,ones(size(x))];
@@ -681,8 +680,8 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     
     newGradPop=(ones(nActVar,1)*rootFill);
     
-    negMov=find(rootFill(desVarList)>=(max(desVarRange)-stepSize));
-    signMat=eye(nActVar);
+    negMov=find(rootFill(desVarList)<=(min(desVarRange)+stepSize));
+    signMat=-eye(nActVar);
     signMat(:,negMov)=signMat(:,negMov)*-1;
     
     partialSteps=signMat*stepSize;
@@ -694,3 +693,5 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     end
     
 end
+
+
