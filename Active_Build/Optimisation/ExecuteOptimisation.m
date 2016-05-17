@@ -462,6 +462,16 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
            
            origPop(:,LEind)=origPop(:,LEind)/2;
            origPop(:,TEind)=origPop(:,TEind)/2;
+           
+       case 'halfuniformsharp'
+          
+           LEind=1+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+           TEind=cellLevels(1)-2+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+            
+           origPop=ones([nPop nDesVar])*0.5;
+           
+           origPop(:,LEind)=origPop(:,LEind)/2;
+           origPop(:,TEind)=origPop(:,TEind)/2;
         
         case 'horzstrip'
             nStrips=cellLevels(2);
@@ -535,13 +545,19 @@ function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
     
     [inactiveVar]=SelectInactiveVariables(rootPop,varActive);
     [desVarList]=ExtractActiveVariable(length(rootPop),notDesInd,inactiveVar);
-    nPop=length(desVarList)+1;
+    nPop=length(desVarList)*length(diffStepSize)+1;
     
     origPop=ones(nPop,1)*rootPop;
-    origPop(2:end,desVarList)=origPop(2:end,desVarList)+eye(nPop-1)*diffStepSize;
+    deltas{nPop}=[];
     deltas{1}=[1;0];
-    for ii=nPop:-1:2
-        deltas{ii}=[desVarList(ii-1);diffStepSize];
+    for jj=1:length(diffStepSize)
+        origPop(2+((jj-1)*length(desVarList)):1+((jj)*length(desVarList)),desVarList)...
+            =origPop(2+((jj-1)*length(desVarList)):1+((jj)*length(desVarList)),desVarList)...
+            +eye(length(desVarList))*diffStepSize(jj);
+        
+        for ii=1:length(desVarList)
+            deltas{1+ii+((jj-1)*length(desVarList))}=[desVarList(ii);diffStepSize(jj)];
+        end
     end
     overFlowDiff=false(size(origPop));
     overFlowDiff(:,desVarList)=origPop(:,desVarList)>max(desVarRange);
