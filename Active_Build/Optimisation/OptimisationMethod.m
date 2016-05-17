@@ -373,8 +373,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterC
         [inactiveVar]=SelectInactiveVariables(newRoot,varActive);
         [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,inactiveVar);
         [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
-        newPop=[newRoot;newGradPop];
-        deltas=[deltaRoot,deltaGrad];
+        newPop=[newRoot;vertcat(newGradPop{:})];
+        deltas=[deltaRoot,deltaGrad{:}];
         
         paramoptim.optim.CG.lineSearch=false;
     else % Direction Search
@@ -433,19 +433,30 @@ end
 
 function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
     
+    normVec=@(v) sqrt(sum(v.^2,2));
+    
     nCurr=length(gradstruct_curr);
     desModes_curr=vertcat(gradstruct_curr(:).design);
     nM1=length(gradstruct_m1);
     desModes_m1=vertcat(gradstruct_m1(:).design);
     
     allModes=[desModes_curr;desModes_m1];
-    
+    modeCoeff=zeros([(nCurr+nM1),1]);
+    for ii=1:length(allModes(:,1))
+        modeCoeff(ii)=allModes(ii,find(allModes(ii,:)~=0,1,'first'));
+    end
+    modeMultiplier=modeCoeff*ones(size(allModes(1,:)));
+    allModes=allModes./modeMultiplier;
+    modeCoeffNorm=normVec(allModes);
+    modeMultiplier=modeCoeffNorm*ones(size(allModes(1,:)));
+    allModes=allModes./modeMultiplier;
+    modeCoeff=modeCoeff.*modeCoeffNorm;
     modeSimilarity=FindIdenticalVectorOrd(allModes);
     
     nModes=length(modeSimilarity);
     
     modestruct=struct('mode',zeros(size(gradstruct_curr(1).design)),...
-        'curr',[],'m1',[]);
+        'curr',struct('ind',[],'coeff',[]),'m1',struct('ind',[],'coeff',[]));
     
     modestruct=repmat(modestruct,[1,nModes]);
     
@@ -453,9 +464,11 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
         modestruct(ii).mode=allModes(modeSimilarity{ii}(1),:);
         for jj=1:length(modeSimilarity{ii})
             if modeSimilarity{ii}(jj)<=nCurr
-                modestruct(ii).curr=[modestruct(ii).curr,modeSimilarity{ii}(jj)];
+                modestruct(ii).curr.ind=[modestruct(ii).curr.ind,modeSimilarity{ii}(jj)];
+                modestruct(ii).curr.coeff(end+1)=modeCoeff(modeSimilarity{ii}(jj));
             elseif modeSimilarity{ii}(jj)<=(nCurr+nM1)
-                modestruct(ii).m1=[modestruct(ii).m1,modeSimilarity{ii}(jj)-nCurr];
+                modestruct(ii).m1.ind=[modestruct(ii).m1.ind,modeSimilarity{ii}(jj)-nCurr];
+                modestruct(ii).m1.coeff(end+1)=modeCoeff(modeSimilarity{ii}(jj));
             else
                 error('Invalid Index was produced by the mode identification')
             end
@@ -463,11 +476,17 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
     end
     
     
+    
+    
 end
 
 function [gradF_curr,gradF_m1]=...
         BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct)
     
+    FDO2= @(fi,fm,fp,dxm,dxp) (fp.*dxm.^2-fm.*dxp.^2+fi.*(dxp.^2-dxm.^2))...
+        ./((dxm*dxp.^2)+(dxm.^2*dxp)); % assumes dxm and dxp are on different sides and absolute
+    FDO2V2= @(Dfm,Dfp,dxm,dxp) (Dfp.*dxm.^2-Dfm.*dxp.^2)...
+        ./((dxp*dxm.^2)-(dxp.^2*dxm));
     
     nModes=length(modestruct);
     
@@ -476,17 +495,34 @@ function [gradF_curr,gradF_m1]=...
     
     for ii=1:nModes
         
-        currInd=modestruct(ii).curr;
-        m1Ind=modestruct(ii).curr;
-        if ~isempty(currInd)
-            gradF_curr(ii)=gradstruct_curr(currInd(1)).objective;
-        end
-        if ~isempty(m1Ind)
-            gradF_m1(ii)=gradstruct_m1(m1Ind(1)).objective;
-        end
+        currInd=modestruct(ii).curr.ind;
+        currCoeff=modestruct(ii).curr.coeff;
+        [gradF_curr(ii)]=GenerateGradientEntry(currInd,currCoeff,...
+            gradstruct_curr,FDO2V2);
+        
+        m1Ind=modestruct(ii).m1.ind;
+        m1Coeff=modestruct(ii).m1.coeff;
+        [gradF_m1(ii)]=GenerateGradientEntry(m1Ind,m1Coeff,...
+            gradstruct_m1,FDO2V2);
     end
     
+end
+
+function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2)
     
+    gradF=0;
+    if ~isempty(ind)
+        if numel(ind)==1
+            gradF=gradstruct(ind(1)).objective/coeff(1);
+        else % Additional functionality would be to build recursive process
+            % to find right indices of currInd
+            Dfm=gradstruct(ind(1)).objective;
+            Dfp=gradstruct(ind(2)).objective;
+            dxm=coeff(1);
+            dxp=coeff(2);
+            gradF=FDO2V2(Dfm,Dfp,dxm,dxp);
+        end
+    end
     
 end
 
@@ -508,8 +544,8 @@ function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,d
         case 'max'
             signD=1;
     end
-    scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
-    %scale=dot(gradDes_curr,gradDes_curr-gradDes_m1)/dot(gradDes_m1,gradDes_m1);
+    %scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
+    scale=dot(gradDes_curr,gradDes_curr-gradDes_m1)/dot(gradDes_m1,gradDes_m1);
     if ~isfinite(scale)
         scale=1;
     end
@@ -678,18 +714,19 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     
     nActVar=length(desVarList);
     
-    newGradPop=(ones(nActVar,1)*rootFill);
-    
-    negMov=find(rootFill(desVarList)<=(min(desVarRange)+stepSize));
-    signMat=-eye(nActVar);
-    signMat(:,negMov)=signMat(:,negMov)*-1;
-    
-    partialSteps=signMat*stepSize;
-    newGradPop(:,desVarList)=newGradPop(:,desVarList)+partialSteps;
-    
-    for ii=nActVar:-1:1
-        actVar=find(partialSteps(ii,:)~=0);
-        deltas{ii}=[desVarList(actVar);partialSteps(ii,actVar)];
+    for jj=1:length(stepSize)
+        newGradPop{jj}=(ones(nActVar,1)*rootFill);
+        negMov=find(rootFill(desVarList)<=(min(desVarRange)+stepSize(jj)));
+        signMat=-eye(nActVar);
+        signMat(:,negMov)=signMat(:,negMov)*-1;
+
+        partialSteps=signMat*stepSize(jj);
+        newGradPop{jj}(:,desVarList)=newGradPop{jj}(:,desVarList)+partialSteps;
+
+        for ii=nActVar:-1:1
+            actVar=find(partialSteps(ii,:)~=0);
+            deltas{jj}{ii}=[desVarList(actVar);partialSteps(ii,actVar)];
+        end
     end
     
 end

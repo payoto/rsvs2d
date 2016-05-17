@@ -72,7 +72,7 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     
     % Lay File
     [FID]=OpenOptimLayFile(writeDirectory,marker);
-    pltFile=[writeDirectory,filesep,'Tec360PLT_',marker,'.plt'];
+    pltFile=['Tec360PLT_',marker,'.plt'];
     PersnaliseLayFile(FID,pltFile);
 end
 
@@ -176,18 +176,24 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
     
     if strcmp(objectiveName,'CutCellFlow')
-        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
-            dat.xMin,dat.xMax,dat.A,dat.nPoints);
+        [knownOptim]=4.20732424E-02;%SupersonicOptimLinRes(paroptim,rootDir,...,
+            %dat.xMin,dat.xMax,dat.A,dat.nPoints);
         
-        tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
-        tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
+        tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
+        tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
+        tecPlotPre{2}=['Tec360plt_Snak_',marker,'_pre.plt'];
         [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
-        PersnaliseLayFile(FID,tecPlotFile(2:-1:1));
+        PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
+        tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
+        tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
+            tecPlotFile,axisRatio,paroptim);
         
-        ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile,axisRatio,paroptim);
+       
     end
     
-    [h]=OptimHistory(optimstruct,knownOptim,direction);
+    [h]=OptimHistory_grad(optimstruct,knownOptim,direction);
     %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
     figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
     figName=MakePathCompliant(figName);
@@ -211,10 +217,12 @@ function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
     
     if strcmp(objectiveName,'CutCellFlow')
 
-        tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
-        tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
+        tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
         [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
         PersnaliseLayFile(FID,tecPlotFile(2:-1:1));
+        tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
+        tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{2}];
         
         ExtractOptimalFlow(optimstruct,writeDirectory,direction,tecPlotFile,axisRatio);
     end
@@ -437,7 +445,7 @@ function [FID]=OpenOptimumFlowLayFile(writeDirectory,marker)
     
 end
 
-function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio,paramoptim)
+function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio,paramoptim)
     
     
     varExtract={'defaultVal','worker'};
@@ -555,7 +563,11 @@ function []=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio
             [~,~]=system(['cat ''',snakPlt{ii},''' >> ''',tecPlotFile{2},'''']);
         end
     end
-    
+    tecPlotPre=regexprep(tecPlotFile,'\.plt','_pre.plt');
+    if strcmp(compType(1:2),'PC')
+        [d,c]=system(['preplot "',tecPlotFile{1},'" "',tecPlotPre{1},'"']);
+        [d,c]=system(['preplot "',tecPlotFile{2},'" "',tecPlotPre{2},'"']);
+    end
     
     
     
@@ -810,6 +822,123 @@ function [h]=OptimHistory(optimstruct,knownOptim,dirOptim)
     set(axh,'ticklabelinterpreter','latex')
     
 end
+
+function [h]=OptimHistory_grad(optimstruct,knownOptim,dirOptim)
+    
+    h=figure('Name','Optimisation Result','Position',[20 100 1000 600]);
+    
+    % Plot 1
+    subplot(1,2,1,'ticklabelinterpreter','latex')
+    nVar=length(optimstruct(1).population);
+    nIter=length(optimstruct);
+    iterRes=zeros([nIter,nVar]);
+    hold on
+    for ii=1:nIter
+        nVarLoc=length(optimstruct(ii).population);
+        iterRes(ii,1:nVarLoc)=[optimstruct(ii).population(:).objective];
+        %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
+    end
+    for ii=1:2:nIter
+        nVarLoc=length(optimstruct(ii+1).population);
+        lSub1(1)=plot(ones(1,nVarLoc)*(ii+1)/2,iterRes(ii,1:nVarLoc),'b.','markersize',5);
+    end
+    switch dirOptim
+        case 'min'
+            iterRes(iterRes==0)=1000;
+            minRes=iterRes(1:2:end,1);
+        case 'max'
+            iterRes(iterRes==0)=-1000;
+            minRes=iterRes(1:2:end,1);
+    end
+    
+    meanRes=mean(iterRes,2);
+    stdRes=std(iterRes,0,2);
+    lSub1(2)=plot([2:2:nIter]/2,minRes,'r-');
+    %lSub1(3)=plot(1:2:nIter,meanRes,'color',[0.7 0 0]);
+    lSub1(3)=plot([0,nIter],[knownOptim knownOptim],'r--');
+    
+    legend(lSub1,{'Population',['Root Member'],...
+        'Theoretical Optimum'},'Location','NorthEast', 'interpreter','latex');
+    
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('$J(\mathbf{x})$', 'interpreter','latex','fontsize',12)
+    
+    switch dirOptim
+        case 'min'
+            testOrder=max(minRes);
+            orderSol=ceil(-log10(abs(testOrder)));
+            box(4)=ceil(testOrder*10^orderSol)*10^(-orderSol);
+            testOrder=min([minRes;knownOptim]);
+            box(3)=floor(testOrder*10^orderSol)*10^(-orderSol);
+        case 'max'
+            testOrder=min(minRes);
+            orderSol=ceil(-log10(abs(testOrder)));
+            box(3)=floor(testOrder*10^orderSol)*10^(-orderSol);
+            testOrder=max([minRes;knownOptim]);
+            box(4)=ceil(testOrder*10^orderSol)*10^(-orderSol);
+    end
+    box(1:2)=[0,nIter+1];
+    
+    
+    axis(box);
+    
+    xT=box(2)-(box(2)-box(1))*0.05;
+    yT=min(minRes)-(box(4)-box(3))*0.05;
+    strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
+    strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
+
+    strT=regexprep(strT,'\ ','\\space');
+    text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
+    
+    
+    % Plot 2
+    axh=subplot(1,2,2,'ticklabelinterpreter','latex');
+    
+    switch dirOptim
+        case 'min'
+            errMeasure=-(knownOptim-minRes);
+        case 'max'
+            errMeasure=knownOptim-minRes;
+    end
+    
+    
+    for ii=1:nIter
+        nPop=length(optimstruct(ii).population);
+        for jj=1:nPop
+            plot3(ones(size(optimstruct(ii).population(jj).fill))*((ii+1)/2),...
+                1:numel(optimstruct(ii).population(jj).fill),...
+                optimstruct(ii).population(jj).fill)
+            hold on
+        end
+    end
+    
+    popNominal=zeros([ceil(nIter/2),numel(optimstruct(1).population(1).fill)]);
+    objNominal=zeros([ceil(nIter/2),1]);
+    kk=0;
+    for ii=1:2:nIter
+        kk=kk+1;
+        popNominal(kk,:)=optimstruct(ii).population(1).fill;
+        objNominal(kk)=optimstruct(ii).population(1).objective;
+    end
+    
+    
+    iterVec=((2:2:length(optimstruct))-1)/2;
+    varVec=1:length(popNominal);
+    
+    [iterGrid,varGrid]=meshgrid(iterVec,varVec);
+    [objGrid,~]=meshgrid(objNominal,varVec);
+    
+    surf(iterGrid,varGrid,popNominal',objGrid)
+    
+    colorbar;
+    
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('Variable Index', 'interpreter','latex','fontsize',12)
+    zlabel('Variable Value', 'interpreter','latex','fontsize',12)
+    set(axh,'ticklabelinterpreter','latex')
+    
+end
+
 
 function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
     

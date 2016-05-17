@@ -82,7 +82,7 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=1e-2; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
@@ -154,7 +154,7 @@ end
 function [paroptim]=OptimCG(paroptim)
     
     paroptim.general.optimMethod='conjgradls';
-    paroptim.general.startPop='randuniformsharp';
+    paroptim.general.startPop='halfuniformsharp';
     
 end
 
@@ -250,7 +250,6 @@ end
 
 %% Standard Blocks (No Iter, pop, worker included)
 
-
 function [paroptim]=CG_Aero()
     
     [paroptim]=DefaultOptim();
@@ -259,6 +258,22 @@ function [paroptim]=CG_Aero()
     
     [paroptim]=MeanVolumeConstraint(paroptim);
     paroptim=CutCellObjective(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='horz'; % 'horz'
+   
+end
+
+function [paroptim]=CG_Area()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimDefault');
+    
+    [paroptim]=SumVolumeConstraint2(paroptim);
     
     [paroptim]=OptimCG(paroptim);
     
@@ -334,8 +349,19 @@ function [paroptim]=Test_CG_Aero()
     paroptim.parametrisation.snakes.refine.axisRatio=2.2;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=10;
     paroptim.general.worker=5; 
+end
+
+function [paroptim]=Test_CG_Area()
+    
+    [paroptim]=CG_Area();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=3;
+    paroptim.general.worker=8; 
 end
 
 function [paroptim]=TestParOptim_desktop()
