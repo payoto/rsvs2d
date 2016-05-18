@@ -353,9 +353,9 @@ end
 function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterCurr,iterm1)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
-        'lineSearch','worker','nPop','validVol','varActive'};
+        'lineSearch','nLineSearch','nPop','validVol','varActive'};
     
-    [diffStepSize,direction,notDesInd,desVarRange,lineSearch,worker,...
+    [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
         nPop,validVol,varActive]=ExtractVariables(varExtract,paramoptim);
     
     
@@ -367,7 +367,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterC
     
     % Case dependant statements
     if lineSearch
-        [stepVector]=FindOptimalStepVector(iterCurr,worker,direction);
+        [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,direction);
         [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
         % Need to build function for activation and deactivation of variables
         [inactiveVar]=SelectInactiveVariables(newRoot,varActive);
@@ -391,7 +391,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterC
             (gradF_curr,gradF_m1,modestruct,iterCurr,direction);
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
-        [stepLengths]=StepLengthsForLS(rootPop,stepVector,worker,validVol,desVarRange);
+        [stepLengths]=StepLengthsForLS(rootPop,stepVector,nLineSearch,validVol,desVarRange);
         [newPop,deltas]=...
             GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim);
         % Population trimming for invalid values
