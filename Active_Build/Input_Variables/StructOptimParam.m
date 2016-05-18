@@ -32,6 +32,7 @@ function structdat=GetStructureData(paroptim)
     end
     
 end
+
 %% Deafult Optimisation Inputs
 
 function [paroptim]=DefaultOptim()
@@ -82,11 +83,11 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-2]; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
-    paroptimoptimCG.validVol=0.05; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0.1; % Interval of validity of the derivatives
     
 end
 
@@ -164,7 +165,7 @@ function [paroptim]=MeanVolumeConstraint(paroptim)
     paroptim.constraint.desVarConstr={'MeanVolFrac'};
     paroptim.constraint.desVarVal={0.4};
     paroptim.constraint.resConstr={'AeroResidualBarrier'};
-    paroptim.constraint.resVal={[-1.5,-0.0]};
+    paroptim.constraint.resVal={[-0.5,0.5]};
     
 end
 
@@ -346,11 +347,11 @@ function [paroptim]=Test_CG_Aero()
     
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=2.2;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=10;
-    paroptim.general.worker=5; 
+    paroptim.general.maxIter=1;
+    paroptim.general.worker=4; 
 end
 
 function [paroptim]=Test_CG_Area()
@@ -360,8 +361,8 @@ function [paroptim]=Test_CG_Area()
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=3;
-    paroptim.general.worker=8; 
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=4; 
 end
 
 function [paroptim]=TestParOptim_desktop()

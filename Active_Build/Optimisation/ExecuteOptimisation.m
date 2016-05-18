@@ -48,9 +48,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     %% Finish Optimisation
     iterstruct(end)=[];
     [~]=PrintEnd(procStr2,0,tStartOpt);
-    OptimisationOutput('final',paramoptim,outinfo,iterstruct);
+    pause(0.01)
     diary off
-    
+    OptimisationOutput('final',paramoptim,outinfo,iterstruct);
 end
 
 function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
@@ -204,6 +204,7 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     
     [population]=ConstraintMethod('Res',paramoptim,population);
     population=EnforceConstraintViolation(population,defaultVal);
+    
     [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population,captureErrors);
     
 end

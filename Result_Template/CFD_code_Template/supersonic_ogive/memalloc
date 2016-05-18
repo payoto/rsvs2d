@@ -1,10 +1,10 @@
-500000     !Max total edges
-500000     !Max number of points in mesh 
+200000     !Max total edges
+200000     !Max number of points in mesh 
 100       !Max edges per cell  
-20000      !Max total intersects 
-1000       !Max background edge cuts
+2000      !Max total intersects 
+100       !Max background edge cuts
 1000       !Max surface cuts
-100000     !Max cells
+50000     !Max cells
 20        !Max edges meeting at a point
      
      

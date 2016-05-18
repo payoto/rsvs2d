@@ -108,6 +108,26 @@ function []=CreateValidFolder(pathName)
 %     end
 end
 
+%% Plotting 
+
+function [datCol]=ProjectColormap(cMap,cDat,cBounds)
+    
+    if nargin==2
+        cBounds=[min(cDat),max(cDat)];
+    end
+    
+    nCol=length(cMap(:,1));
+    
+    cDat(cDat>max(cBounds))=max(cBounds);
+    cDat(cDat<min(cBounds))=min(cBounds);
+    
+    datMap=linspace(cBounds(1),cBounds(2),nCol)';
+    
+    
+    datCol=interp1(datMap,cMap,cDat);
+    
+end
+
 %% Parameter File
 
 function []=GenerateParameterFile(FID,param,t,marker)
@@ -411,7 +431,6 @@ function [FID]=NameVideoFile(writeDirectory,marker)
     FID=[writeDirectory,filesep,fileName];
     
 end
-
 
 
 %% Comments File
