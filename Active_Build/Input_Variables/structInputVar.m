@@ -393,7 +393,7 @@ function [param]=optimSupersonic()
     
     param.snakes.refine.axisRatio=0.25;
     
-    param.optiminit.cellLevels=[14,2];
+    param.optiminit.cellLevels=[9,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
@@ -489,6 +489,30 @@ function [param]=Supersonic()
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='sharpen';
+end
+
+function [param]=Klunker()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='klunker';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.refineSteps=4;
+    param.snakes.step.mergeTopo=false;
+     param.snakes.refine.axisRatio=2.2;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.edgeFinish='sharpen';
+    
+    param.optiminit.cellLevels=[13,2];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
 end
 
 function [param]=Line()
