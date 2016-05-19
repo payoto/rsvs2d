@@ -94,7 +94,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convCheckRange=15;
     paramsnakesstep.convDistance=500;
     
-    paramsnakesstep.fillLooseStep=5;
+    paramsnakesstep.fillLooseStep=10;
     paramsnakesstep.fillLooseCut=1e-3;
     
 end
@@ -602,6 +602,39 @@ function [param]=WeirdShape()
     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
     param.general.boundstr{2}='solidisIn1';
     param.general.boundstr{3}='1bound';
+
+end
+
+function [param]=InitTest_in()
+    
+    % Load defaults
+    [param]=InitTest_out();
+   
+    param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
+    param.general.boundstr{2}='solidisIn1';
+    param.general.boundstr{3}='1bound';
+
+end
+
+function [param]=InitTest_out()
+    
+    % Load defaults
+    param.general=default_general();
+    param.results=default_results();
+    param.plotting=default_plotting();
+    param.snakes=default_snakes();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.snakes.refine.refineGrid=4;
+    param.general.typDat='inittest';
+    param.snakes.refine.typeRefine='all';
+    param.snakes.step.snakesSteps=100;
+   
+%     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
+%     param.general.boundstr{2}='solidisIn1';
+%     param.general.boundstr{3}='1bound';
 
 end
 

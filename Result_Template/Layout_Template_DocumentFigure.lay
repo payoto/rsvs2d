@@ -1,5 +1,5 @@
 #!MC 1410
-$!VarSet |LFDSFN1| = '"..\..\results\Standard_Execution\Archive_2016_02\Day_2016-02-25\Dir_2016-02-25T135532_testsmooth1\tec360dat_2016-02-25T135532_testsmooth1.plt"'
+$!VarSet |LFDSFN1| = '"LinearSmooth_testSmooth1.plt"'
 $!VarSet |LFDSVL1| = '"X" "Y" "U" "V" "MAG"'
 $!SETSTYLEBASE FACTORY
 $!PLOTOPTIONS 
@@ -86,11 +86,11 @@ $!FRAMELAYOUT
   HEADERCOLOR = RED
   XYPOS
     {
-    X = -1.5
-    Y = 0.45
+    X = -1
+    Y = 0.5
     }
-  WIDTH = 9
-  HEIGHT = 7.5
+  WIDTH = 6
+  HEIGHT = 7
 $!THREEDAXIS 
   ASPECTRATIOLIMIT = 25
   BOXASPECTRATIOLIMIT = 25
@@ -106,55 +106,59 @@ $!GLOBALRGB
   RANGEMIN = 0
   RANGEMAX = 1
 $!GLOBALCONTOUR  1
-  VAR = 5
-  DEFNUMLEVELS = 21
+  VAR = 3
+  COLORMAPNAME = 'GrayScale'
+  DEFNUMLEVELS = 6
   LEGEND
     {
     SHOW = YES
+    SHOWHEADER = NO
     XYPOS
       {
-      X = 95
+      X = 68.4
+      Y = 14.031
+      }
+    ISVERTICAL = NO
+    HEADERTEXTSHAPE
+      {
+      FONTFAMILY = 'Times New Roman'
+      }
+    NUMBERTEXTSHAPE
+      {
+      FONTFAMILY = 'Times New Roman'
+      SIZEUNITS = POINT
+      HEIGHT = 16
+      }
+    BOX
+      {
+      BOXTYPE = NONE
       }
     }
   COLORCUTOFF
     {
-    RANGEMIN = 0.260124049525
-    RANGEMAX = 1.13363345318
+    RANGEMIN = -0.84003532775
+    RANGEMAX = 0.58820745675
     }
   COLORMAPFILTER
     {
     COLORMAPDISTRIBUTION = CONTINUOUS
     CONTINUOUSCOLOR
       {
-      CMIN = -2
-      CMAX = 2
+      CMIN = 0
+      CMAX = 1
       }
+    REVERSECOLORMAP = YES
     }
 $!CONTOURLEVELS NEW
   CONTOURGROUP = 1
   RAWDATA
-21
--2
--1.8
--1.6
--1.4
--1.2
--1
--0.8
--0.6
--0.4
--0.2
+6
 0
 0.2
 0.4
 0.6
 0.8
 1
-1.2
-1.4
-1.6
-1.8
-2
 $!GLOBALCONTOUR  2
   VAR = 5
   DEFNUMLEVELS = 17
@@ -469,8 +473,8 @@ $!CONTOURLEVELS NEW
 $!GLOBALTWODVECTOR 
   UVAR = 3
   VVAR = 4
-  RELATIVELENGTH = 0.554087924541
-  UNIFORMLENGTH = 10
+  RELATIVELENGTH = 2.6
+  UNIFORMLENGTH = 12
   USERELATIVE = NO
   RELATIVELENGTHINGRIDUNITS = NO
 $!GLOBALSCATTER 
@@ -492,7 +496,6 @@ $!FIELDMAP  [1]
   MESH
     {
     COLOR = BLACK
-    LINEPATTERN = DASHED
     }
   CONTOUR
     {
@@ -549,7 +552,8 @@ $!FIELDMAP  [2]
   MESH
     {
     COLOR = BLACK
-    LINEPATTERN = DOTTED
+    LINEPATTERN = DASHED
+    PATTERNLENGTH = 0.5
     }
   CONTOUR
     {
@@ -663,7 +667,7 @@ $!FIELDMAP  [4]
   MESH
     {
     COLOR = RED
-    LINETHICKNESS = 0.2
+    LINETHICKNESS = 0.4
     }
   CONTOUR
     {
@@ -675,9 +679,9 @@ $!FIELDMAP  [4]
   VECTOR
     {
     VECTORTYPE = HEADONLY
-    COLOR = MULTI
-    PATTERNLENGTH = 5
-    LINETHICKNESS = 0.2
+    ARROWHEADSTYLE = FILLED
+    COLOR = CUSTOM37
+    LINETHICKNESS = 0.02
     }
   SCATTER
     {
@@ -727,7 +731,6 @@ $!FIELDMAP  [5]
   CONTOUR
     {
     CONTOURTYPE = PRIMARYVALUE
-    FLOODCOLORING = RGB
     COLOR = BLACK
     USELIGHTINGEFFECT = YES
     }
@@ -925,31 +928,34 @@ $!TWODAXIS
   DEPXTOYRATIO = 1
   VIEWPORTPOSITION
     {
-    Y1 = 9.4259
-    X2 = 82.959
-    Y2 = 93.377
+    X1 = 5
+    Y1 = 20
+    X2 = 95
+    Y2 = 95
     }
-  VIEWPORTTOPSNAPTARGET = 93.377
+  VIEWPORTTOPSNAPTARGET = 95
 $!TWODAXIS 
   XDETAIL
     {
-    RANGEMIN = -0.5
-    RANGEMAX = 0.49999999999999978
+    SHOWAXIS = NO
+    RANGEMIN = -0.54505832857083258
+    RANGEMAX = 0.58270454583863018
     GRSPACING = 0.2
     }
 $!TWODAXIS 
   YDETAIL
     {
-    RANGEMIN = -0.5
-    RANGEMAX = 0.50000357352163394
+    SHOWAXIS = NO
+    RANGEMIN = -0.50138817090776677
+    RANGEMAX = 0.59504795699032198
     GRSPACING = 0.2
     }
 $!ISOSURFACEATTRIBUTES  1
   OBEYSOURCEZONEBLANKING = NO
   ISOSURFACESELECTION = ONESPECIFICVALUE
-  ISOVALUE1 = 0.260124049525
-  ISOVALUE2 = 0.69687875135
-  ISOVALUE3 = 1.13363345318
+  ISOVALUE1 = -0.84003532775
+  ISOVALUE2 = -0.1259139355
+  ISOVALUE3 = 0.58820745675
   EFFECTS
     {
     LIGHTINGEFFECT = GOURAUD
@@ -1216,10 +1222,16 @@ $!LINKING
 $!ATTACHTEXT 
   ANCHORPOS
     {
-    X = 38.85795860099929
-    Y = 93.54032833690221
+    X = 34.28354746609564
+    Y = 14.95788722341176
     }
-  TEXT = 'Iteration Pseudo-Time: &(SOLUTIONTIME%.2f) s'
+  TEXTSHAPE
+    {
+    FONTFAMILY = 'Times New Roman'
+    ISBOLD = NO
+    HEIGHT = 16
+    }
+  TEXT = 'Volume Fraction'
 ### Frame Number 2 ###
 $!CREATENEWFRAME 
 $!FRAMELAYOUT 
@@ -1228,11 +1240,11 @@ $!FRAMELAYOUT
   HEADERCOLOR = RED
   XYPOS
     {
-    X = 7.5728
-    Y = 0.42986
+    X = 5.2
+    Y = 0.5
     }
-  WIDTH = 4.6424
-  HEIGHT = 7.5289
+  WIDTH = 6
+  HEIGHT = 7
 $!THREEDAXIS 
   ASPECTRATIOLIMIT = 25
   BOXASPECTRATIOLIMIT = 25
@@ -1866,21 +1878,35 @@ $!TWODAXIS
   DEPXTOYRATIO = 1
   VIEWPORTPOSITION
     {
-    X1 = 26.469
-    Y1 = 20.87
-    Y2 = 80.559
+    X1 = 22
+    Y1 = 12
+    X2 = 95
+    Y2 = 90
     }
-  VIEWPORTTOPSNAPTARGET = 80.5589391761
+  VIEWPORTTOPSNAPTARGET = 90
 $!TWODAXIS 
   XDETAIL
     {
     RANGEMIN = 0
     RANGEMAX = 80
     GRSPACING = 20
+    TICKLABEL
+      {
+      TEXTSHAPE
+        {
+        FONTFAMILY = 'Times New Roman'
+        }
+      }
     TITLE
       {
       TITLEMODE = USETEXT
-      TEXT = 'ITERATION'
+      TEXT = 'Iteration'
+      TEXTSHAPE
+        {
+        FONTFAMILY = 'Times New Roman'
+        SIZEUNITS = POINT
+        HEIGHT = 16
+        }
       }
     }
 $!TWODAXIS 
@@ -1889,6 +1915,13 @@ $!TWODAXIS
     RANGEMIN = -10
     RANGEMAX = 0
     GRSPACING = 2
+    TICKLABEL
+      {
+      TEXTSHAPE
+        {
+        FONTFAMILY = 'Times New Roman'
+        }
+      }
     TITLE
       {
       SHOWONAXISLINE = NO
@@ -1993,8 +2026,6 @@ $!SLICEATTRIBUTES  8
     {
     SHOW = NO
     }
-$!FIELDLAYERS 
-  SHOWSCATTER = YES
 $!STREAMTRACELAYERS 
   SHOW = NO
 $!LINKING 
@@ -2005,24 +2036,14 @@ $!LINKING
 $!ATTACHTEXT 
   ANCHORPOS
     {
-    X = 29.24354086954231
-    Y = 93.29919097295843
-    }
-  TEXTSHAPE
-    {
-    HEIGHT = 16
-    }
-  TEXT = 'Convergence History'
-$!ATTACHTEXT 
-  ANCHORPOS
-    {
     X = 8.243540869542198
     Y = 39.43684303259924
     }
   COLOR = RED
   TEXTSHAPE
     {
-    HEIGHT = 13
+    FONTFAMILY = 'Times New Roman'
+    HEIGHT = 16
     }
   ANGLE = 90
   TEXT = 'log(Velocity Error)'
@@ -2034,7 +2055,8 @@ $!ATTACHTEXT
     }
   TEXTSHAPE
     {
-    HEIGHT = 13
+    FONTFAMILY = 'Times New Roman'
+    HEIGHT = 16
     }
   ANGLE = 90
   TEXT = 'log(Volume Errror)'
