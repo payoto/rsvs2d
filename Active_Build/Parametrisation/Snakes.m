@@ -449,6 +449,15 @@ function [volfraconnec,cellCentredGrid]=ModifyFillInformation...
             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
             [cellCentredGrid(currSub).fill]=deal(fillDelta);
         end
+        
+        modifFillPos=find(fill>=1);
+        for ii=modifFillPos
+            fillDelta=1.1;
+            volfraconnec.cell(ii).targetfill=fillDelta;
+            
+            currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
+            [cellCentredGrid(currSub).fill]=deal(fillDelta);
+        end
     end
 end
 
