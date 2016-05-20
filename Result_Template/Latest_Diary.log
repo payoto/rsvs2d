@@ -11,7 +11,7 @@ Calculations Started . . .
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
 Grid Initialisation exited
-Time taken:00:00:00:031
+Time taken:00:00:00:020
 GENERATION PROCESS end
 GRID REFINEMENT START
 
@@ -23,25 +23,24 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 16 
-			Start Cell 2 of 16 
-			Start Cell 3 of 16 
-			Start Cell 4 of 16 
-			Start Cell 5 of 16 
-			Start Cell 6 of 16 
-			Start Cell 7 of 16 
-			Start Cell 8 of 16 
-			Start Cell 9 of 16 
-			Start Cell 10 of 16 
-			Start Cell 11 of 16 
-			Start Cell 12 of 16 
-			Start Cell 13 of 16 
-			Start Cell 14 of 16 
-			Start Cell 15 of 16 
-			Start Cell 16 of 16 
+			Start Cell 1 of 15 
+			Start Cell 2 of 15 
+			Start Cell 3 of 15 
+			Start Cell 4 of 15 
+			Start Cell 5 of 15 
+			Start Cell 6 of 15 
+			Start Cell 7 of 15 
+			Start Cell 8 of 15 
+			Start Cell 9 of 15 
+			Start Cell 10 of 15 
+			Start Cell 11 of 15 
+			Start Cell 12 of 15 
+			Start Cell 13 of 15 
+			Start Cell 14 of 15 
+			Start Cell 15 of 15 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:078
+Connect . . .Edge . . .Cell . . .Time taken:00:00:00:255
 GRID REFINEMENT end
 SNAKE PROCESS START
   Start initialisation
@@ -56,112 +55,98 @@ ans =
 
       Number: 1
         Name: ''
-       Color: [0.9400 0.9400 0.9400]
+       Color: [0.940000000000000 0.940000000000000 0.940000000000000]
     Position: [680 558 560 420]
        Units: 'pixels'
 
   Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-  Initialisation time:00:00:00:452
+  Initialisation time:00:00:01:165
   Start Time Stepping
-     Step 1  - DVol = 0.19021  Time Taken: 00:00:00:218
-     Step 2  - DVol = 0.13257  Time Taken: 00:00:00:219
-     Step 3  - DVol = 0.11323  Time Taken: 00:00:00:327
-     Step 4  - DVol = 0.11428  Time Taken: 00:00:00:203
-     Step 5  - DVol = 0.087952  Time Taken: 00:00:00:187
-     Step 6  - DVol = 0.073285  Time Taken: 00:00:00:281
-     Step 7  - DVol = 0.06384  Time Taken: 00:00:00:218
-     Step 8  - DVol = 0.056348  Time Taken: 00:00:00:265
-     Step 9  - DVol = 0.056076  Time Taken: 00:00:00:312
-     Step 10  -[Warning: volumefraction>1] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractVolumeFractions', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 51)" style="font-weight:bold">VolumeFraction>ExtractVolumeFractions</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',51,0)">line 51</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 29)" style="font-weight:bold">VolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',29,0)">line 29</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>VelocityAndVolumeProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 416)" style="font-weight:bold">Snakes>VelocityAndVolumeProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',416,0)">line 416</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 144)" style="font-weight:bold">Snakes>IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',144,0)">line 144</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 84)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',84,0)">line 84</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>ExecuteSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 161)" style="font-weight:bold">Main>ExecuteSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',161,0)">line 161</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main>StandardRun', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 88)" style="font-weight:bold">Main>StandardRun</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',88,0)">line 88</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Main', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m', 36)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Main.m',36,0)">line 36</a>)] 
- DVol = 0.075578  Time Taken: 00:00:00:250
-     Step 11  - DVol = 0.048558  Time Taken: 00:00:00:218
-     Step 12  - DVol = 0.040864  Time Taken: 00:00:00:219
-     Step 13  - DVol = 0.033911  Time Taken: 00:00:00:202
-     Step 14  - DVol = 0.024856  Time Taken: 00:00:00:188
-     Step 15  - DVol = 0.018972  Time Taken: 00:00:00:187
-     Step 16  - DVol = 0.015123  Time Taken: 00:00:00:187
-     Step 17  - DVol = 0.01117  Time Taken: 00:00:00:187
-     Step 18  - DVol = 0.0083839  Time Taken: 00:00:00:172
-     Step 19  - DVol = 0.0053412  Time Taken: 00:00:00:187
-     Step 20  - DVol = 0.0040342  Time Taken: 00:00:00:172
-     Step 21  - DVol = 0.0030166  Time Taken: 00:00:00:187
-     Step 22  - DVol = 0.0019233  Time Taken: 00:00:00:171
-     Step 23  - DVol = 0.0014357  Time Taken: 00:00:00:156
-     Step 24  - DVol = 0.0010422  Time Taken: 00:00:00:172
-     Step 25  - DVol = 0.00075245  Time Taken: 00:00:00:172
-     Step 26  - DVol = 0.00056758  Time Taken: 00:00:00:171
-     Step 27  - DVol = 0.00042773  Time Taken: 00:00:00:172
-     Step 28  - DVol = 0.00032205  Time Taken: 00:00:00:171
-     Step 29  - DVol = 0.00024253  Time Taken: 00:00:00:172
-     Step 30  - DVol = 0.00018342  Time Taken: 00:00:00:172
-     Step 31  - DVol = 0.0001381  Time Taken: 00:00:00:156
-     Step 32  - DVol = 8.6336e-05  Time Taken: 00:00:00:187
-     Step 33  - DVol = 6.5439e-05  Time Taken: 00:00:00:171
-     Step 34  - DVol = 4.9252e-05  Time Taken: 00:00:00:172
-     Step 35  - DVol = 3.7007e-05  Time Taken: 00:00:00:172
-     Step 36  - DVol = 2.7788e-05  Time Taken: 00:00:00:156
-     Step 37  - DVol = 2.0847e-05  Time Taken: 00:00:00:171
-     Step 38  - DVol = 1.5643e-05  Time Taken: 00:00:00:172
-     Step 39  - DVol = 1.1737e-05  Time Taken: 00:00:00:171
-     Step 40  - DVol = 8.8058e-06  Time Taken: 00:00:00:172
-     Step 41  - DVol = 6.606e-06  Time Taken: 00:00:00:174
-     Step 42  - DVol = 4.9554e-06  Time Taken: 00:00:00:171
-     Step 43  - DVol = 3.7171e-06  Time Taken: 00:00:00:172
-     Step 44  - DVol = 2.7881e-06  Time Taken: 00:00:00:171
-     Step 45  - DVol = 2.0913e-06  Time Taken: 00:00:00:172
-     Step 46  - DVol = 1.5685e-06  Time Taken: 00:00:00:172
-     Step 47  - DVol = 1.1765e-06  Time Taken: 00:00:00:171
-     Step 48  - DVol = 8.8237e-07  Time Taken: 00:00:00:172
-     Step 49  - DVol = 6.618e-07  Time Taken: 00:00:00:171
-     Step 50  - DVol = 4.9636e-07  Time Taken: 00:00:00:172
-     Step 51  - DVol = 3.7227e-07  Time Taken: 00:00:00:172
-     Step 52  - DVol = 2.7921e-07  Time Taken: 00:00:00:171
-     Step 53  - DVol = 2.0941e-07  Time Taken: 00:00:00:172
-     Step 54  - DVol = 1.5706e-07  Time Taken: 00:00:00:171
-     Step 55  - DVol = 1.1779e-07  Time Taken: 00:00:00:172
-     Step 56  - DVol = 8.8345e-08  Time Taken: 00:00:00:172
-     Step 57  - DVol = 6.6259e-08  Time Taken: 00:00:00:171
-     Step 58  - DVol = 4.9694e-08  Time Taken: 00:00:00:172
-     Step 59  - DVol = 3.7271e-08  Time Taken: 00:00:00:171
-     Step 60  - DVol = 2.7953e-08  Time Taken: 00:00:00:172
-     Step 61  - DVol = 2.0965e-08  Time Taken: 00:00:00:172
-     Step 62  - DVol = 1.5724e-08  Time Taken: 00:00:00:173
-     Step 63  - DVol = 1.1793e-08  Time Taken: 00:00:00:172
-     Step 64  - DVol = 8.8445e-09  Time Taken: 00:00:00:172
-     Step 65  - DVol = 6.6334e-09  Time Taken: 00:00:00:171
-     Step 66  - DVol = 4.9751e-09  Time Taken: 00:00:00:172
-     Step 67  - DVol = 3.7313e-09  Time Taken: 00:00:00:171
-     Step 68  - DVol = 2.7985e-09  Time Taken: 00:00:00:172
-     Step 69  - DVol = 2.0989e-09  Time Taken: 00:00:00:172
-     Step 70  - DVol = 1.5741e-09  Time Taken: 00:00:00:171
-     Step 71  - DVol = 1.1806e-09  Time Taken: 00:00:00:172
-     Step 72  - DVol = 8.8545e-10  Time Taken: 00:00:00:173
-     Step 73  - -  Snakes Converged!
-  73 Steps Performed
-  Iteration Time:00:00:13:516
-  Volume converged to 6.64091e-10
+     Step 1  - DVol = 0.36167  Time Taken: 00:00:00:276
+     Step 2  - DVol = 0.11054  Time Taken: 00:00:00:271
+     Step 3  - DVol = 0.098897  Time Taken: 00:00:00:334
+     Step 4  - DVol = 0.093331  Time Taken: 00:00:00:358
+     Step 5  - DVol = 0.070774  Time Taken: 00:00:00:403
+     Step 6  - DVol = 0.11004  Time Taken: 00:00:00:343
+     Step 7  - DVol = 0.23242  Time Taken: 00:00:00:298
+     Step 8  - DVol = 0.19672  Time Taken: 00:00:00:300
+     Step 9  - DVol = 0.16934  Time Taken: 00:00:00:234
+     Step 10  - DVol = 0.1399  Time Taken: 00:00:00:281
+     Step 11  - DVol = 0.11512  Time Taken: 00:00:00:291
+     Step 12  - DVol = 0.09892  Time Taken: 00:00:00:240
+     Step 13  - DVol = 0.077956  Time Taken: 00:00:00:236
+     Step 14  - DVol = 0.06276  Time Taken: 00:00:00:249
+     Step 15  - DVol = 0.053272  Time Taken: 00:00:00:219
+     Step 16  - DVol = 0.040654  Time Taken: 00:00:00:219
+     Step 17  - DVol = 0.030491  Time Taken: 00:00:00:219
+     Step 18  - DVol = 0.022868  Time Taken: 00:00:00:220
+     Step 19  - DVol = 0.017151  Time Taken: 00:00:00:268
+     Step 20  - DVol = 0.004343  Time Taken: 00:00:00:209
+     Step 21  - DVol = 0.0076833  Time Taken: 00:00:00:198
+     Step 22  - DVol = 0.0057561  Time Taken: 00:00:00:199
+     Step 23  - DVol = 0.004315  Time Taken: 00:00:00:199
+     Step 24  - DVol = 0.0032354  Time Taken: 00:00:00:198
+     Step 25  - DVol = 0.0024262  Time Taken: 00:00:00:199
+     Step 26  - DVol = 0.0018195  Time Taken: 00:00:00:200
+     Step 27  - DVol = 0.0013646  Time Taken: 00:00:00:199
+     Step 28  - DVol = 0.0010235  Time Taken: 00:00:00:202
+     Step 29  - DVol = 0.00076759  Time Taken: 00:00:00:200
+     Step 30  - DVol = 0.00057569  Time Taken: 00:00:00:199
+     Step 31  - DVol = 0.00043177  Time Taken: 00:00:00:199
+     Step 32  - DVol = 0.00032383  Time Taken: 00:00:00:200
+     Step 33  - DVol = 0.00024287  Time Taken: 00:00:00:201
+     Step 34  - DVol = 0.00018216  Time Taken: 00:00:00:201
+     Step 35  - DVol = 0.00013662  Time Taken: 00:00:00:200
+     Step 36  - DVol = 0.00010246  Time Taken: 00:00:00:199
+     Step 37  - DVol = 7.6847e-05  Time Taken: 00:00:00:198
+     Step 38  - DVol = 5.7636e-05  Time Taken: 00:00:00:201
+     Step 39  - DVol = 4.3227e-05  Time Taken: 00:00:00:198
+     Step 40  - DVol = 3.242e-05  Time Taken: 00:00:00:200
+     Step 41  - DVol = 2.4315e-05  Time Taken: 00:00:00:198
+     Step 42  - DVol = 1.8236e-05  Time Taken: 00:00:00:201
+     Step 43  - DVol = 1.3677e-05  Time Taken: 00:00:00:201
+     Step 44  - DVol = 1.0258e-05  Time Taken: 00:00:00:199
+     Step 45  - DVol = 7.6934e-06  Time Taken: 00:00:00:198
+     Step 46  - DVol = 5.7701e-06  Time Taken: 00:00:00:200
+     Step 47  - DVol = 4.3276e-06  Time Taken: 00:00:00:199
+     Step 48  - DVol = 3.2457e-06  Time Taken: 00:00:00:198
+     Step 49  - DVol = 2.4343e-06  Time Taken: 00:00:00:199
+     Step 50  - DVol = 1.8257e-06  Time Taken: 00:00:00:201
+     Step 51  - DVol = 1.3693e-06  Time Taken: 00:00:00:199
+     Step 52  - DVol = 1.027e-06  Time Taken: 00:00:00:201
+     Step 53  - DVol = 7.7021e-07  Time Taken: 00:00:00:200
+     Step 54  - DVol = 5.7766e-07  Time Taken: 00:00:00:197
+     Step 55  - DVol = 4.3325e-07  Time Taken: 00:00:00:199
+     Step 56  - DVol = 3.2493e-07  Time Taken: 00:00:00:199
+     Step 57  - DVol = 2.437e-07  Time Taken: 00:00:00:199
+     Step 58  - DVol = 1.8278e-07  Time Taken: 00:00:00:199
+     Step 59  - DVol = 1.3708e-07  Time Taken: 00:00:00:199
+     Step 60  - DVol = 1.0281e-07  Time Taken: 00:00:00:202
+     Step 61  - DVol = 7.7108e-08  Time Taken: 00:00:00:199
+     Step 62  - DVol = 5.7831e-08  Time Taken: 00:00:00:200
+     Step 63  - DVol = 4.3373e-08  Time Taken: 00:00:00:201
+     Step 64  - DVol = 3.253e-08  Time Taken: 00:00:00:199
+     Step 65  - DVol = 2.4398e-08  Time Taken: 00:00:00:202
+     Step 66  - DVol = 1.8298e-08  Time Taken: 00:00:00:200
+     Step 67  - DVol = 1.3724e-08  Time Taken: 00:00:00:198
+     Step 68  - DVol = 1.0293e-08  Time Taken: 00:00:00:200
+     Step 69  - -  Snakes Converged!
+  69 Steps Performed
+  Iteration Time:00:00:15:267
+  Volume converged to 7.71954e-09
 
 ans = 
 
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (2) with properties:
+  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (5) with properties:
 
-      Number: 2
+      Number: 5
         Name: ''
-       Color: [0.9400 0.9400 0.9400]
+       Color: [0.940000000000000 0.940000000000000 0.940000000000000]
     Position: [680 558 560 420]
        Units: 'pixels'
 
   Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-Time taken:00:00:14:156
+Time taken:00:00:17:122
 SNAKE PROCESS END

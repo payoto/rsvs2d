@@ -90,11 +90,11 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.dtRatio=5;
     paramsnakesstep.snaxInitPos=1e-4;
     
-    paramsnakesstep.convCheckRate=20;
+    paramsnakesstep.convCheckRate=100;
     paramsnakesstep.convCheckRange=15;
     paramsnakesstep.convDistance=500;
     
-    paramsnakesstep.fillLooseStep=10;
+    paramsnakesstep.fillLooseStep=5;
     paramsnakesstep.fillLooseCut=1e-3;
     
 end
@@ -159,7 +159,7 @@ end
 function param=AvoidLocalOptim(param)
     
 
-    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.lengthEpsilon=1e-5;
     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=10e-2;
     param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
@@ -274,16 +274,17 @@ function [param]=Snakestestsmooth3_1()
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
-    
+    param=AvoidLocalOptim(param);
     param.general.typDat='testsmooth3_1';
 
     param.snakes.step.snakesSteps=200;
-    param.snakes.refine.refineGrid=4;
-    param.snakes.refine.typeRefine='grey';
+    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.typeRefine='all';
     
     param.general.passDomBounds=[-1,1;-0.6,0.6];
     param=AvoidLocalOptim(param);
 end
+
 
 function [param]=Snakestestsmooth4()
     
