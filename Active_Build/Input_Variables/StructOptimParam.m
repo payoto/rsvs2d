@@ -351,7 +351,7 @@ function [paroptim]=Test_CG_Aero()
     paroptim.parametrisation.snakes.refine.axisRatio=2.2;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=10;
+    paroptim.general.maxIter=50;
     paroptim.general.worker=4; 
 end
 
