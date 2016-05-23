@@ -12,4 +12,4 @@
 
 InitialiseWorkFlow;
 
-ExecuteOptimisation('bp3_Aero_CG_20');
+ExecuteOptimisation('Full_Aero_CG_20_Long');
