@@ -52,8 +52,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     % Unpacking NECESSARY variables
     global maxStep maxDt snaxInitPos
     
-    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos'};
-    [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos]=ExtractVariables(varExtract,param);
+    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos','checkSensitivities'};
+    [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos,checkSensitivities]=ExtractVariables(varExtract,param);
     
     forceparam=param.snakes.force;
     dtMin=maxDt/dtRatio;
@@ -94,10 +94,14 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     disp(['  ',int2str(ii),' Steps Performed'])
     disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
     disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
-    GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo,forceparam);
+    
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns,param);
+    
+    if checkSensitivities
+        GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+                cellCentredGrid,insideContourInfo,forceparam);
+    end
     if snakesConsole
         CheckResultsLight(refinedGriduns,snakposition,snaxel)
     end
