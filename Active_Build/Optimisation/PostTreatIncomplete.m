@@ -57,36 +57,41 @@ function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)
     varExtract={'direction','optimMethod'};
     [direction,optimMethod]=ExtractVariables(varExtract,paramoptim);
     
+    if numel(nIter)>1
+        nIterStart=nIter(1);
+        nIterEnd=nIter(2);
+        nIter=nIter(2)-nIter(1);
+    end
     
     iterstruct=struct([]);
     iterstruct=repmat(iterstruct,[nIter,1]);
     
-    for ii=1:nIter
+    for ii=nIterStart:nIterEnd
         
         [iterPath,~]=FindDir(pathStr,['iteration_',int2str(ii)],true);
         
         datName=['population_iteration_',int2str(ii)];
         [returnPath,~]=FindDir(iterPath{1},datName,false);
         load(returnPath{1},'population');
-        iterstruct(ii).population=population;
+        iterstruct(ii-nIterStart+1).population=population;
         
     end
     
     if TestGreed(optimMethod)
-    for ii=2:nIter
-        iterPrecedent=[iterstruct(ii-1).population(:).objective];
-        iterCurr=[iterstruct(ii).population(:).objective];
-        switch direction
-            case 'min'
-                iterCopy=iterCurr>iterPrecedent;
-            case 'max'
-                iterCopy=iterCurr<iterPrecedent;
+        for ii=2:nIter
+            iterPrecedent=[iterstruct(ii-1).population(:).objective];
+            iterCurr=[iterstruct(ii).population(:).objective];
+            switch direction
+                case 'min'
+                    iterCopy=iterCurr>iterPrecedent;
+                case 'max'
+                    iterCopy=iterCurr<iterPrecedent;
+            end
+
+            [iterstruct(ii).population(iterCopy)]=deal(iterstruct(ii-1).population(iterCopy));
+
+
         end
-        
-        [iterstruct(ii).population(iterCopy)]=deal(iterstruct(ii-1).population(iterCopy));
-       
-        
-    end
     end
     
 end
