@@ -61,6 +61,7 @@ function paramplotting=default_plotting()
     paramplotting.plotInterval=0;
     paramplotting.makeMov=false;
     paramplotting.debugPlot=[0];
+    paramplotting.checkSensitivities=false;
     
 end
 
@@ -412,10 +413,16 @@ function [param]=optimSupersonic_Long()
    
     [param]=optimSupersonic();
     
+    param.snakes.refine.axisRatio=2.8333;
+    
+    sizeRatio2=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio2=sizeRatio2(2)/sizeRatio2(1);
+    
+    
     param.optiminit.cellLevels=[19,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
-    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio/sizeRatio2;
     
 end
 

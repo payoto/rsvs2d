@@ -170,6 +170,15 @@ function [paroptim]=MeanVolumeConstraint(paroptim)
     
 end
 
+function [paroptim]=MeanVolumeConstraint_30(paroptim)
+    
+    paroptim.constraint.desVarConstr={'MeanVolFrac'};
+    paroptim.constraint.desVarVal={0.3};
+    paroptim.constraint.resConstr={'AeroResidualBarrier'};
+    paroptim.constraint.resVal={[-0.5,0.5]};
+    
+end
+
 function [paroptim]=SumVolumeConstraint(paroptim)
     
     paroptim.constraint.desVarConstr={'MinSumVolFrac'};
@@ -503,18 +512,18 @@ function [paroptim]=Full_Aero_CG_20()
     paroptim.general.worker=8; 
 end
 
-function [paroptim]=Full_Aero_CG_20_Long()
+function [paroptim]=BP3_Aero_CG_20_Long()
     
     [paroptim]=CG_Aero();
+    [paroptim]=MeanVolumeConstraint_30(paroptim);
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic_Long');
-    paroptim.parametrisation.snakes.refine.axisRatio=2.1250;
+    paroptim.parametrisation.snakes.refine.axisRatio=2.8333;
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
     paroptim.general.worker=12; 
 end
-
 
 function [paroptim]=Full_Aero_CG_10()
     [paroptim]=CG_Aero();
