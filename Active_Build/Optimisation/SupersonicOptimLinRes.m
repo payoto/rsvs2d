@@ -188,7 +188,7 @@ function [loop]=ConstantArea_Klunker(xMin,xMax,A,M,nPoints)
     Acalc=A;
     
     m = sqrt(M^2-1); %
-    Pb = 0.7/-(M^2-1); % base cp
+    Pb = -0.3; % base cp
     
     xl=(1-(m*Pb)/(12*Acalc))/(1-(m*Pb)/(4*Acalc));
     
