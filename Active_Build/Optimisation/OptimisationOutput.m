@@ -509,14 +509,13 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
-    for jj=1:kk
+    parfor jj=1:kk
         
         ii=needRerun(jj);
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-            
-            
+
             RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 CutCellFlow_Handler(paramoptim,minIterPos)
@@ -531,7 +530,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         
     end
     
-    for ii=1:nIter
+    parfor ii=1:nIter
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         [~,filename]=FindDir( minIterPos,'tecsubfile',false);
