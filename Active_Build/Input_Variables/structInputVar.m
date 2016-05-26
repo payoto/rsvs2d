@@ -286,7 +286,6 @@ function [param]=Snakestestsmooth3_1()
     param=AvoidLocalOptim(param);
 end
 
-
 function [param]=Snakestestsmooth4()
     
     
