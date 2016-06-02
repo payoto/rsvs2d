@@ -217,8 +217,12 @@ function [param]=Snakestestsmooth1()
     [param]=DefaultCase();
     param=OptimConvergence(param);
     %param=LinOptimSmoothing(param);
-    param=AvoidLocalOptim(param);
     param.general.typDat='testsmooth1';
+    
+    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.typeSmear='length';
+    param.snakes.step.arrivalTolerance=10e-3;
+    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
     
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
