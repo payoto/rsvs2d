@@ -11,7 +11,7 @@ Calculations Started . . .
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
 Grid Initialisation exited
-Time taken:00:00:00:207
+Time taken:00:00:00:012
 GENERATION PROCESS end
 GRID REFINEMENT START
 
@@ -23,97 +23,18 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 88 
-			Start Cell 2 of 88 
-			Start Cell 3 of 88 
-			Start Cell 4 of 88 
-			Start Cell 5 of 88 
-			Start Cell 6 of 88 
-			Start Cell 7 of 88 
-			Start Cell 8 of 88 
-			Start Cell 9 of 88 
-			Start Cell 10 of 88 
-			Start Cell 11 of 88 
-			Start Cell 12 of 88 
-			Start Cell 13 of 88 
-			Start Cell 14 of 88 
-			Start Cell 15 of 88 
-			Start Cell 16 of 88 
-			Start Cell 17 of 88 
-			Start Cell 18 of 88 
-			Start Cell 19 of 88 
-			Start Cell 20 of 88 
-			Start Cell 21 of 88 
-			Start Cell 22 of 88 
-			Start Cell 23 of 88 
-			Start Cell 24 of 88 
-			Start Cell 25 of 88 
-			Start Cell 26 of 88 
-			Start Cell 27 of 88 
-			Start Cell 28 of 88 
-			Start Cell 29 of 88 
-			Start Cell 30 of 88 
-			Start Cell 31 of 88 
-			Start Cell 32 of 88 
-			Start Cell 33 of 88 
-			Start Cell 34 of 88 
-			Start Cell 35 of 88 
-			Start Cell 36 of 88 
-			Start Cell 37 of 88 
-			Start Cell 38 of 88 
-			Start Cell 39 of 88 
-			Start Cell 40 of 88 
-			Start Cell 41 of 88 
-			Start Cell 42 of 88 
-			Start Cell 43 of 88 
-			Start Cell 44 of 88 
-			Start Cell 45 of 88 
-			Start Cell 46 of 88 
-			Start Cell 47 of 88 
-			Start Cell 48 of 88 
-			Start Cell 49 of 88 
-			Start Cell 50 of 88 
-			Start Cell 51 of 88 
-			Start Cell 52 of 88 
-			Start Cell 53 of 88 
-			Start Cell 54 of 88 
-			Start Cell 55 of 88 
-			Start Cell 56 of 88 
-			Start Cell 57 of 88 
-			Start Cell 58 of 88 
-			Start Cell 59 of 88 
-			Start Cell 60 of 88 
-			Start Cell 61 of 88 
-			Start Cell 62 of 88 
-			Start Cell 63 of 88 
-			Start Cell 64 of 88 
-			Start Cell 65 of 88 
-			Start Cell 66 of 88 
-			Start Cell 67 of 88 
-			Start Cell 68 of 88 
-			Start Cell 69 of 88 
-			Start Cell 70 of 88 
-			Start Cell 71 of 88 
-			Start Cell 72 of 88 
-			Start Cell 73 of 88 
-			Start Cell 74 of 88 
-			Start Cell 75 of 88 
-			Start Cell 76 of 88 
-			Start Cell 77 of 88 
-			Start Cell 78 of 88 
-			Start Cell 79 of 88 
-			Start Cell 80 of 88 
-			Start Cell 81 of 88 
-			Start Cell 82 of 88 
-			Start Cell 83 of 88 
-			Start Cell 84 of 88 
-			Start Cell 85 of 88 
-			Start Cell 86 of 88 
-			Start Cell 87 of 88 
-			Start Cell 88 of 88 
+			Start Cell 1 of 9 
+			Start Cell 2 of 9 
+			Start Cell 3 of 9 
+			Start Cell 4 of 9 
+			Start Cell 5 of 9 
+			Start Cell 6 of 9 
+			Start Cell 7 of 9 
+			Start Cell 8 of 9 
+			Start Cell 9 of 9 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:399
+Connect . . .Edge . . .Cell . . .Time taken:00:00:00:145
 GRID REFINEMENT end
 SNAKE PROCESS START
   Start initialisation
@@ -134,101 +55,89 @@ ans =
 
   Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-  Initialisation time:00:00:01:858
+  Initialisation time:00:00:00:722
   Start Time Stepping
-     Step 1  - DVol = 0.086225  Time Taken: 00:00:00:689
-     Step 2  - DVol = 0.04272  Time Taken: 00:00:00:694
-     Step 3  - DVol = 0.050343  Time Taken: 00:00:00:852
-     Step 4  - DVol = 0.041718  Time Taken: 00:00:00:735
-     Step 5  - DVol = 0.037846  Time Taken: 00:00:00:828
-     Step 6  - DVol = 0.042947  Time Taken: 00:00:00:790
-     Step 7  - DVol = 0.050414  Time Taken: 00:00:00:807
-     Step 8  - DVol = 0.040356  Time Taken: 00:00:00:807
-     Step 9  - DVol = 0.051239  Time Taken: 00:00:00:722
-     Step 10  - DVol = 0.045515  Time Taken: 00:00:00:669
-     Step 11  - DVol = 0.036802  Time Taken: 00:00:00:634
-     Step 12  - DVol = 0.036992  Time Taken: 00:00:00:630
-     Step 13  - DVol = 0.037577  Time Taken: 00:00:00:603
-     Step 14  - DVol = 0.031713  Time Taken: 00:00:00:638
-     Step 15  - DVol = 0.030572  Time Taken: 00:00:00:616
-     Step 16  - DVol = 0.026853  Time Taken: 00:00:00:554
-     Step 17  - DVol = 0.024273  Time Taken: 00:00:00:498
-     Step 18  - DVol = 0.021587  Time Taken: 00:00:00:504
-     Step 19  - DVol = 0.019447  Time Taken: 00:00:00:518
-     Step 20  - DVol = 0.017119  Time Taken: 00:00:00:538
-     Step 21  - DVol = 0.015995  Time Taken: 00:00:00:545
-     Step 22  - DVol = 0.014354  Time Taken: 00:00:00:522
-     Step 23  - DVol = 0.013096  Time Taken: 00:00:00:473
-     Step 24  - DVol = 0.012628  Time Taken: 00:00:00:445
-     Step 25  - DVol = 0.012033  Time Taken: 00:00:00:443
-     Step 26  - DVol = 0.011621  Time Taken: 00:00:00:448
-     Step 27  - DVol = 0.01102  Time Taken: 00:00:00:442
-     Step 28  - DVol = 0.010562  Time Taken: 00:00:00:436
-     Step 29  - DVol = 0.010084  Time Taken: 00:00:00:429
-     Step 30  - DVol = 0.01048  Time Taken: 00:00:00:420
-     Step 31  - DVol = 0.010555  Time Taken: 00:00:00:394
-     Step 32  - DVol = 0.0076063  Time Taken: 00:00:00:384
-     Step 33  - DVol = 0.0054765  Time Taken: 00:00:00:361
-     Step 34  - DVol = 0.0040817  Time Taken: 00:00:00:369
-     Step 35  - DVol = 0.003053  Time Taken: 00:00:00:364
-     Step 36  - DVol = 0.0022907  Time Taken: 00:00:00:368
-     Step 37  - DVol = 0.0016846  Time Taken: 00:00:00:375
-     Step 38  - DVol = 0.0012534  Time Taken: 00:00:00:364
-     Step 39  - DVol = 0.00094404  Time Taken: 00:00:00:363
-     Step 40  - DVol = 0.00071101  Time Taken: 00:00:00:365
-     Step 41  - DVol = 0.00053193  Time Taken: 00:00:00:368
-     Step 42  - DVol = 0.00041263  Time Taken: 00:00:00:374
-     Step 43  - DVol = 0.0003135  Time Taken: 00:00:00:367
-     Step 44  - DVol = 0.00025474  Time Taken: 00:00:00:372
-     Step 45  - DVol = 0.00019507  Time Taken: 00:00:00:358
-     Step 46  - DVol = 0.00014715  Time Taken: 00:00:00:350
-     Step 47  - DVol = 0.0001261  Time Taken: 00:00:00:350
-     Step 48  - DVol = 9.8308e-05  Time Taken: 00:00:00:347
-     Step 49  - DVol = 7.4314e-05  Time Taken: 00:00:00:350
-     Step 50  - DVol = 5.696e-05  Time Taken: 00:00:00:351
-     Step 51  - DVol = 4.2142e-05  Time Taken: 00:00:00:350
-     Step 52  - DVol = 3.1722e-05  Time Taken: 00:00:00:349
-     Step 53  - DVol = 2.4762e-05  Time Taken: 00:00:00:351
-     Step 54  - DVol = 1.918e-05  Time Taken: 00:00:00:349
-     Step 55  - DVol = 1.4538e-05  Time Taken: 00:00:00:349
-     Step 56  - DVol = 1.0939e-05  Time Taken: 00:00:00:348
-     Step 57  - DVol = 8.2131e-06  Time Taken: 00:00:00:350
-     Step 58  - DVol = 6.1629e-06  Time Taken: 00:00:00:351
-     Step 59  - DVol = 4.6235e-06  Time Taken: 00:00:00:349
-     Step 60  - DVol = 3.4683e-06  Time Taken: 00:00:00:349
-     Step 61  - DVol = 2.6016e-06  Time Taken: 00:00:00:352
-     Step 62  - DVol = 1.9513e-06  Time Taken: 00:00:00:349
-     Step 63  - DVol = 1.4636e-06  Time Taken: 00:00:00:349
-     Step 64  - DVol = 1.0978e-06  Time Taken: 00:00:00:351
-     Step 65  - DVol = 8.2335e-07  Time Taken: 00:00:00:349
-     Step 66  - DVol = 6.1753e-07  Time Taken: 00:00:00:349
-     Step 67  - DVol = 4.6315e-07  Time Taken: 00:00:00:349
-     Step 68  - DVol = 3.4737e-07  Time Taken: 00:00:00:349
-     Step 69  - DVol = 2.6053e-07  Time Taken: 00:00:00:349
-     Step 70  - DVol = 1.954e-07  Time Taken: 00:00:00:352
-     Step 71  - DVol = 1.4655e-07  Time Taken: 00:00:00:350
-     Step 72  - DVol = 1.0991e-07  Time Taken: 00:00:00:351
-     Step 73  - DVol = 8.2436e-08  Time Taken: 00:00:00:350
-     Step 74  - DVol = 6.1827e-08  Time Taken: 00:00:00:349
-     Step 75  - DVol = 4.637e-08  Time Taken: 00:00:00:348
-     Step 76  - DVol = 3.4778e-08  Time Taken: 00:00:00:349
-     Step 77  - DVol = 2.6083e-08  Time Taken: 00:00:00:349
-     Step 78  - DVol = 1.9562e-08  Time Taken: 00:00:00:351
-     Step 79  - DVol = 1.4672e-08  Time Taken: 00:00:00:351
-     Step 80  - DVol = 1.1004e-08  Time Taken: 00:00:00:350
-     Step 81  - DVol = 8.2529e-09  Time Taken: 00:00:00:350
-     Step 82  - DVol = 6.1897e-09  Time Taken: 00:00:00:348
-     Step 83  - DVol = 4.6423e-09  Time Taken: 00:00:00:351
-     Step 84  - DVol = 3.4817e-09  Time Taken: 00:00:00:348
-     Step 85  - DVol = 2.6113e-09  Time Taken: 00:00:00:349
-     Step 86  - DVol = 1.9585e-09  Time Taken: 00:00:00:349
-     Step 87  - DVol = 1.4688e-09  Time Taken: 00:00:00:350
-     Step 88  - DVol = 1.1016e-09  Time Taken: 00:00:00:348
-     Step 89  - DVol = 8.2623e-10  Time Taken: 00:00:00:349
-     Step 90  - -  Snakes Converged!
-  90 Steps Performed
-  Iteration Time:00:00:39:244
-  Volume converged to 6.19670e-10
+     Step 1  - DVol = 0.62361  Time Taken: 00:00:00:124
+     Step 2  - DVol = 0.50126  Time Taken: 00:00:00:121
+     Step 3  - DVol = 0.39653  Time Taken: 00:00:00:132
+     Step 4  - DVol = 0.32004  Time Taken: 00:00:00:140
+     Step 5  - DVol = 0.20936  Time Taken: 00:00:00:159
+     Step 6  - DVol = 0.18611  Time Taken: 00:00:00:103
+     Step 7  - DVol = 0.14229  Time Taken: 00:00:00:103
+     Step 8  - DVol = 0.10816  Time Taken: 00:00:00:101
+     Step 9  - DVol = 0.081939  Time Taken: 00:00:00:104
+     Step 10  - DVol = 0.061924  Time Taken: 00:00:00:103
+     Step 11  - DVol = 0.046711  Time Taken: 00:00:00:103
+     Step 12  - DVol = 0.035186  Time Taken: 00:00:00:110
+     Step 13  - DVol = 0.027037  Time Taken: 00:00:00:103
+     Step 14  - DVol = 0.020278  Time Taken: 00:00:00:102
+     Step 15  - DVol = 0.015209  Time Taken: 00:00:00:104
+     Step 16  - DVol = 0.011407  Time Taken: 00:00:00:108
+     Step 17  - DVol = 0.0085568  Time Taken: 00:00:00:104
+     Step 18  - DVol = 0.006165  Time Taken: 00:00:00:104
+     Step 19  - DVol = 0.0044252  Time Taken: 00:00:00:103
+     Step 20  - DVol = 0.0033007  Time Taken: 00:00:00:104
+     Step 21  - DVol = 0.0024732  Time Taken: 00:00:00:107
+     Step 22  - DVol = 0.0018547  Time Taken: 00:00:00:107
+     Step 23  - DVol = 0.0013911  Time Taken: 00:00:00:105
+     Step 24  - DVol = 0.0010433  Time Taken: 00:00:00:106
+     Step 25  - DVol = 0.00078254  Time Taken: 00:00:00:107
+     Step 26  - DVol = 0.00058693  Time Taken: 00:00:00:107
+     Step 27  - DVol = 0.00044021  Time Taken: 00:00:00:106
+     Step 28  - DVol = 0.00033017  Time Taken: 00:00:00:104
+     Step 29  - DVol = 0.00024774  Time Taken: 00:00:00:103
+     Step 30  - DVol = 0.0001898  Time Taken: 00:00:00:104
+     Step 31  - DVol = 0.00029081  Time Taken: 00:00:00:119
+     Step 32  - DVol = 0.0079213  Time Taken: 00:00:00:114
+     Step 33  - DVol = 0.0060158  Time Taken: 00:00:00:118
+     Step 34  - DVol = 0.0044727  Time Taken: 00:00:00:116
+     Step 35  - DVol = 0.0033428  Time Taken: 00:00:00:114
+     Step 36  - DVol = 0.0024472  Time Taken: 00:00:00:114
+     Step 37  - DVol = 0.0012675  Time Taken: 00:00:00:113
+     Step 38  - DVol = 0.00089319  Time Taken: 00:00:00:114
+     Step 39  - DVol = 0.00065558  Time Taken: 00:00:00:113
+     Step 40  - DVol = 0.00052996  Time Taken: 00:00:00:114
+     Step 41  - DVol = 0.00041917  Time Taken: 00:00:00:115
+     Step 42  - DVol = 0.00031853  Time Taken: 00:00:00:113
+     Step 43  - DVol = 0.00024569  Time Taken: 00:00:00:113
+     Step 44  - DVol = 0.00016955  Time Taken: 00:00:00:113
+     Step 45  - DVol = 0.00012027  Time Taken: 00:00:00:113
+     Step 46  - DVol = 8.7341e-05  Time Taken: 00:00:00:114
+     Step 47  - DVol = 6.4384e-05  Time Taken: 00:00:00:113
+     Step 48  - DVol = 4.7861e-05  Time Taken: 00:00:00:114
+     Step 49  - DVol = 3.5734e-05  Time Taken: 00:00:00:114
+     Step 50  - DVol = 2.674e-05  Time Taken: 00:00:00:113
+     Step 51  - DVol = 2.0032e-05  Time Taken: 00:00:00:113
+     Step 52  - DVol = 1.5015e-05  Time Taken: 00:00:00:114
+     Step 53  - DVol = 1.1258e-05  Time Taken: 00:00:00:112
+     Step 54  - DVol = 8.4424e-06  Time Taken: 00:00:00:115
+     Step 55  - DVol = 6.3313e-06  Time Taken: 00:00:00:113
+     Step 56  - DVol = 4.7483e-06  Time Taken: 00:00:00:113
+     Step 57  - DVol = 3.5611e-06  Time Taken: 00:00:00:113
+     Step 58  - DVol = 2.6708e-06  Time Taken: 00:00:00:114
+     Step 59  - DVol = 2.0031e-06  Time Taken: 00:00:00:115
+     Step 60  - DVol = 1.5023e-06  Time Taken: 00:00:00:113
+     Step 61  - DVol = 1.1267e-06  Time Taken: 00:00:00:114
+     Step 62  - DVol = 8.4506e-07  Time Taken: 00:00:00:114
+     Step 63  - DVol = 6.338e-07  Time Taken: 00:00:00:114
+     Step 64  - DVol = 4.7535e-07  Time Taken: 00:00:00:113
+     Step 65  - DVol = 3.5651e-07  Time Taken: 00:00:00:113
+     Step 66  - DVol = 2.6738e-07  Time Taken: 00:00:00:118
+     Step 67  - DVol = 2.0054e-07  Time Taken: 00:00:00:116
+     Step 68  - DVol = 1.504e-07  Time Taken: 00:00:00:112
+     Step 69  - DVol = 1.128e-07  Time Taken: 00:00:00:112
+     Step 70  - DVol = 8.4601e-08  Time Taken: 00:00:00:115
+     Step 71  - DVol = 6.3451e-08  Time Taken: 00:00:00:113
+     Step 72  - DVol = 4.7588e-08  Time Taken: 00:00:00:113
+     Step 73  - DVol = 3.5691e-08  Time Taken: 00:00:00:112
+     Step 74  - DVol = 2.6768e-08  Time Taken: 00:00:00:113
+     Step 75  - DVol = 2.0076e-08  Time Taken: 00:00:00:113
+     Step 76  - DVol = 1.5057e-08  Time Taken: 00:00:00:114
+     Step 77  - DVol = 1.1293e-08  Time Taken: 00:00:00:114
+     Step 78  - -  Snakes Converged!
+  78 Steps Performed
+  Iteration Time:00:00:08:796
+  Volume converged to 8.46969e-09
 
 ans = 
 
@@ -242,5 +151,5 @@ ans =
 
   Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-Time taken:00:00:41:523
+Time taken:00:00:09:721
 SNAKE PROCESS END
