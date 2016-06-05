@@ -71,8 +71,9 @@ function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
     newPoints=startPoints;
     for nIter=1:refineSteps
         numPoints=length(startPoints(:,1));
-        isCorner=DetectTrailingEdge(startPoints,TEisLeft) |...
-            DetectTrailingEdge(startPoints,~TEisLeft);
+%         isCorner=DetectTrailingEdge(startPoints,TEisLeft) |...
+%             DetectTrailingEdge(startPoints,~TEisLeft);
+        isCorner=false(size(startPoints(:,1)));
         cumCorner=cumsum(isCorner);
         numNewPoints=(numPoints*2+cumCorner(end));
         subMask=zeros(numNewPoints,numPoints);
@@ -126,6 +127,7 @@ function [newPoints,projPoints]=SubSurfBSpline(startPoints,refineSteps)
     for nIter=1:refineSteps
         numPoints=length(startPoints(:,1));
         isCorner=DetectTrailingEdge(startPoints,TEisLeft)*0;
+        isCorner=false(size(startPoints(:,1)));
         cumCorner=cumsum(isCorner);
         numNewPoints=(numPoints*2);
         subMask=zeros(numNewPoints,numPoints);
@@ -159,7 +161,7 @@ function [newPoints,projPoints]=SubSurfBSpline(startPoints,refineSteps)
         subMaskCell{nIter}=subMask;
     end
     
-    limCurvMat=LimitCurve(subMask,3);
+    limCurvMat=LimitCurve(subMask,4);
     limCurvMat=limCurvMat./(sum(limCurvMat,2)*ones([1 length(limCurvMat(:,1))]));
     [projPoints]=ProjectPoints(newPoints,limCurvMat,1);
 end
@@ -423,6 +425,11 @@ function [limCurvMat,eigVal]=LimitCurve(subMask,nStencil)
         [iEig,~]=find(d==1,1);
         if numel(iEig)==0
             [iEig,~]=find(1-d<1e-10);
+            if numel(iEig)==0
+                %warning('Root eigenvalue not 1 - limit surface invalid')
+                [~,iEig]=max(d(:));
+                iEig=ind2sub(size(d),iEig);
+            end
         end
         limCurvMat(ii,indY)=w(:,iEig)';
         eigVal(ii)=d(iEig);
