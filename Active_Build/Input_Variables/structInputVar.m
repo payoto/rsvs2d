@@ -160,7 +160,7 @@ end
 function param=AvoidLocalOptim(param)
     
 
-    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=10e-2;
     param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
@@ -299,6 +299,20 @@ function [param]=Snakestestsmooth4()
     param.general.typDat='testsmooth4';
 
     param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.typeRefine='all';
+    
+end
+
+function [param]=Snakestestsmooth4_ref()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat='testsmooth4';
+
+    param.snakes.step.snakesSteps=50;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
     
@@ -484,8 +498,27 @@ function [param]=SnakesFoilVVSmall()
     param.general.typDat='vvlofoil';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
-    param.snakes.refine.typeRefine='grey';
-    param.general.passDomBounds=[-1,1;-0.5,0.5];
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.convLevel=10^-8;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
+end
+
+function [param]=SnakesFoilVVSmall_ref()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='vvlofoil';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
     param.snakes.step.convLevel=10^-8;
@@ -493,7 +526,6 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
 end
-
 function [param]=Supersonic()
     
     [param]=DefaultCase();

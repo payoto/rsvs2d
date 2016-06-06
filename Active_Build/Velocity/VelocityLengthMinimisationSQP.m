@@ -77,7 +77,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     isFreeze=[snaxel(:).isfreeze];
     %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
-    [Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    %[Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
     [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
     
@@ -562,6 +563,38 @@ function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
     end
     Deltax=-Bkinv*(Df+Dh*u_kp1);
+    
+    DeltaxFin=zeros(size(isFreeze));
+    DeltaxFin(~isFreeze)=Deltax;
+    lagMulti(actCol)=u_kp1;
+end
+
+function [DeltaxFin,lagMulti]=SQPStepFreeze_quadprog(Df,Hf,Dh,h_vec,isFreeze)
+    
+    rmvCol=find(isFreeze);
+    Dh(rmvCol,:)=[];
+    Hf(rmvCol,:)=[];
+    Hf(:,rmvCol)=[];
+    Df(rmvCol)=[];
+    %h_vec(rmvCol)=[];
+    % output vector for lagrange multiplier
+    lagMulti=zeros([length(Dh(1,:)),1]);
+    actCol=(sum(Dh~=0)~=0);
+    
+    rmvCol=find(sum(Dh~=0)==0);
+    Dh(:,rmvCol)=[];
+    h_vec(rmvCol)=[];
+    
+    [Deltax,~,~,~,lambda] = eval('quadprog(Hf,Df,[],[],Dh'',-h_vec);');
+    u_kp1=lambda.eqlin;
+%     Bkinv=(Hf)^(-1);
+%     matToInv=(Dh'*Bkinv*Dh);
+%     if rcond(matToInv)>1e-10
+%         u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+%     else
+%         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+%     end
+%     Deltax=-Bkinv*(Df+Dh*u_kp1);
     
     DeltaxFin=zeros(size(isFreeze));
     DeltaxFin(~isFreeze)=Deltax;
