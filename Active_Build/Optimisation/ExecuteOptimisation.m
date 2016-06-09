@@ -19,6 +19,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     %clusterObj=parcluster('OptimSnakes');
     [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
+    
     varExtract={'maxIter','restartSource'};
     [maxIter,restartSource]=ExtractVariables(varExtract,paramoptim);
     startIter=1;
@@ -26,7 +27,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     % Restart
     inNFlag=nargin;
     if inNFlag==2 || ~isempty(restartSource)
-        [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
+        [iterstruct,startIter,maxIter,paramoptim]=RestartOptions(paramoptim,inNFlag,...
             restartSource,restartFromPop,maxIter,iterstruct);
     end
     
@@ -53,7 +54,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     OptimisationOutput('final',paramoptim,outinfo,iterstruct);
 end
 
-function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
+function [iterstruct,startIter,maxIter,paramoptim]=RestartOptions(paramoptim,inNFlag,...
         restartSource,restartFromPop,maxIter,iterstruct)
     
     
@@ -66,7 +67,7 @@ function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
         maxIter=startIter+maxIter;
         iterstruct=[optimstruct,iterstruct];
         
-        [iterstruct]=GenerateRestartPop(paramoptim,iterstruct,startIter);
+        [iterstruct,paramoptim]=GenerateRestartPop(paramoptim,iterstruct,startIter);
         
        paramoptim.general.restartSource=restartSource;
        startIter=startIter+1;
@@ -76,7 +77,7 @@ function [iterstruct,startIter,maxIter]=RestartOptions(paramoptim,inNFlag,...
     
 end
 
-function [iterstruct]=GenerateRestartPop(paroptim,iterstruct,startIter)
+function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter)
     
     varExtract={'optimMethod','direction'};
     [optimMethod,direction]=ExtractVariables(varExtract,paroptim);
@@ -143,7 +144,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     % Initialise Grid
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
-    
+    [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
+    [paramoptim.general.desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     % Start Parallel Pool
     
     if numel(gcp('nocreate'))==0
@@ -393,7 +395,7 @@ function [symDesVarList]=BuildSymmetryLists(symType,cellLevels,corneractive)
         case 'none'
             symDesVarList=zeros([2,0]);
         case 'horz'
-            
+             warning('Symmetry assignement not robust when taken with the rest of the program')
             nRows=cellLevels(2);
             rowMatch=zeros([2,floor(nRows/2)]);
             for ii=1:floor(nRows/2)
@@ -437,6 +439,70 @@ function notDesInd=BuildExclusionList(symDesVarList)
     
 end
 
+function [desvarconnec,cellGrid,vertexGrid]=ExtractVolumeCellConnectivity(unstructReshape)
+    % This relies on there being no empty indices for speed
+    
+    [cellGrid]=CellCentredGrid(unstructReshape);
+    [vertexGrid]=VertexCentredGrid(unstructReshape);
+    
+    nCells=length(unstructReshape.cell);
+    nEdges=length(unstructReshape.edge);
+    nVerts=length(vertexGrid);
+    cellList=[unstructReshape.cell(:).index];
+    
+    desvarconnec=struct('index',[],'neighbours',[],'corners',[]);
+    desvarconnec=repmat(desvarconnec,[1,nCells]);
+    for ii=1:nCells
+        desvarconnec(ii).index=unstructReshape.cell(ii).index;
+    end
+    for ii=1:nEdges % Find edge connected cells
+        cellInd=unstructReshape.edge(ii).cellindex;
+        cellInd(cellInd==0)=[];
+        cellSub=FindObjNum([],cellInd,cellList);
+        for jj=1:length(cellInd)
+            desvarconnec(cellSub(jj)).neighbours=...
+                [desvarconnec(cellSub(jj)).neighbours,cellInd([1:jj-1,jj+1:end])];
+        end
+    end
+    for ii=1:nVerts % Find vertex connected cells
+        cellInd=[vertexGrid(ii).cell(:).index];
+        cellInd(cellInd==0)=[];
+        cellSub=FindObjNum([],cellInd,cellList);
+        for jj=1:length(cellInd)
+            desvarconnec(cellSub(jj)).corners=...
+                [desvarconnec(cellSub(jj)).corners,cellInd([1:jj-1,jj+1:end])];
+        end
+    end
+    for ii=1:nCells % Remove duplicates sort and build corners
+        desvarconnec(ii).neighbours=unique(desvarconnec(ii).neighbours);
+        desvarconnec(ii).corners=unique(desvarconnec(ii).corners);
+        [~,~,IB] = intersect(desvarconnec(ii).neighbours,desvarconnec(ii).corners);
+        desvarconnec(ii).corners(IB)=[];
+    end
+    
+    
+end
+
+
+function [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec)
+    
+        actCell=[baseGrid.cell(:).isactive];
+        indCell=[baseGrid.cell(:).index];
+        desCellInd=cumsum(actCell).*actCell;
+        desIndC{length(actCell)}=[];
+        
+        actSub=find(actCell);
+        
+        for ii=actSub
+            desIndC{ii}=desCellInd(ii);
+        end
+        for ii=actSub
+            desvarconnec(ii).index=desIndC{ii};
+            desvarconnec(ii).neighbours=[desIndC{FindObjNum([],desvarconnec(ii).neighbours,indCell)}];
+            desvarconnec(ii).corners=[desIndC{FindObjNum([],desvarconnec(ii).corners,indCell)}];
+        end
+        desvarconnec=desvarconnec(actSub);
+end
 %% Optimisation Specific Operations
 
 function [iterstruct,paroptim]=InitialisePopulation(paroptim)
