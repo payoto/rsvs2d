@@ -12,7 +12,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
 function [paroptim]=StructOptimParam(caseStr)
     % Main function that allows changes
     
@@ -72,6 +71,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.symDesVarList=[];
     paroptimgeneral.notDesInd=[];
     paroptimgeneral.iterGap=1;
+    paroptimgeneral.desvarconnec=[]; % Structure assigned later
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -83,11 +83,11 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-3,-1e-3]; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.lineSearch=false;
-    paroptimoptimCG.validVol=0.05; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0.1; % Interval of validity of the derivatives
     paroptimoptimCG.nLineSearch=12;
     
 end
@@ -128,10 +128,10 @@ end
 
 function paroptim=ModifySnakesParam(paroptim,paramCase)
     
-    
     paroptim.general.paramCase=paramCase;
     paroptim.parametrisation=structInputVar(paramCase);
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
 end
 
 %% Standard Modifications
@@ -155,7 +155,7 @@ end
 
 function [paroptim]=OptimCG(paroptim)
     
-    paroptim.general.optimMethod='conjgradls';
+    paroptim.general.optimMethod='conjgrad';
     paroptim.general.startPop='halfuniformsharp';
     
 end
@@ -184,7 +184,7 @@ function [paroptim]=SumVolumeConstraint(paroptim)
     paroptim.constraint.desVarConstr={'MinSumVolFrac'};
     paroptim.constraint.desVarVal={3.8};
     paroptim.constraint.resConstr={'AeroResidualBarrier'};
-    paroptim.constraint.resVal={[-3.5,-0.5]};
+    paroptim.constraint.resVal={[-0.5,0.5]};
     
 end
 
@@ -332,6 +332,19 @@ function [paroptim]=MultiTopo_DEhoriz()
     
 end
 
+function [paroptim]=MultiTopo_CGhoriz()
+    
+    [paroptim]=DefaultOptim();
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
+    [paroptim]=SumVolumeConstraint(paroptim);
+    paroptim=CutCellObjective(paroptim);
+    [paroptim]=OptimCG(paroptim);
+    
+    paroptim.optim.CG.varActive='border'; % 'wideborder'
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.symType='horz'; % 'horz'
+   
+end
 %% Callable functions
 
 function [paroptim]=StandardOptim()
@@ -392,15 +405,15 @@ function [paroptim]=TestParOptimSym_desktop()
     paroptim.general.symType='horz'; % 'horz'
 end
 
-function [paroptim]=Test_MultiTopo_M2_D()
+function [paroptim]=Test_MultiTopo_M2_CG()
     
-    [paroptim]=MultiTopo_DEhoriz();
+    [paroptim]=MultiTopo_CGhoriz();
     paroptim=Test_Desktop(paroptim);
     
-    paroptim.general.nPop=48;
-    paroptim.general.maxIter=20;
+    paroptim.general.nPop=60;
+    paroptim.general.maxIter=10;
     
-    paroptim.general.worker=8; 
+    paroptim.general.worker=4;
  
 end
 
@@ -626,7 +639,6 @@ function [paroptim]=bp3_Aero_CG_05()
 end
 
 % bp2
-
 
 function [paroptim]=FullSupersonicOptimSym_bp2_025()
     

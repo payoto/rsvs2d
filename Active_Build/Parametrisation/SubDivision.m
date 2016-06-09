@@ -71,9 +71,9 @@ function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
     newPoints=startPoints;
     for nIter=1:refineSteps
         numPoints=length(startPoints(:,1));
-%         isCorner=DetectTrailingEdge(startPoints,TEisLeft) |...
-%             DetectTrailingEdge(startPoints,~TEisLeft);
-        isCorner=false(size(startPoints(:,1)));
+        isCorner=DetectTrailingEdge(startPoints,TEisLeft) |...
+            DetectTrailingEdge(startPoints,~TEisLeft);
+%         isCorner=false(size(startPoints(:,1)));
         cumCorner=cumsum(isCorner);
         numNewPoints=(numPoints*2+cumCorner(end));
         subMask=zeros(numNewPoints,numPoints);

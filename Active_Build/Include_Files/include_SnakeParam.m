@@ -321,6 +321,53 @@ function [vecAngles]=ExtractAngle360(baseVector,testVector)
     
 end
 
+function [cellCentredGrid]=CellCentredGrid(refinedGrid)
+    % Returns cell centred information about the grid being used
+    
+    cellCentredGrid=refinedGrid.cell;
+    edgeCellInfo=vertcat(refinedGrid.edge(:).cellindex);
+    
+    origEdgeIndex=[refinedGrid.edge(:).index];
+    origVertexIndex=[refinedGrid.vertex(:).index];
+    origCellIndex=[refinedGrid.cell(:).index];
+    
+    for ii=1:length(cellCentredGrid)
+        edgeCellLog=sum((edgeCellInfo==cellCentredGrid(ii).index),2)>0;
+        totEdges=sum(edgeCellLog);
+        cellCentredGrid(ii).edge(1:totEdges)=refinedGrid.edge(edgeCellLog);
+        cellVertex=[cellCentredGrid(ii).edge(:).vertexindex];
+        cellVertex=RemoveIdenticalEntries(cellVertex');
+        cellVertexSub=FindObjNum(refinedGrid.vertex,cellVertex,origVertexIndex);
+        totVertices=length(cellVertex);
+        cellCentredGrid(ii).vertex(1:totVertices)=refinedGrid.vertex(cellVertexSub);
+        
+    end
+end
+
+
+function [vertexCentredGrid]=VertexCentredGrid(refinedGrid)
+    % Returns cell centred information about the grid being used
+    
+    vertexCentredGrid=refinedGrid.vertex;
+    vertexCellInfo=vertcat(refinedGrid.edge(:).vertexindex);
+    
+    origEdgeIndex=[refinedGrid.edge(:).index];
+    origVertexIndex=[refinedGrid.vertex(:).index];
+    origCellIndex=[refinedGrid.cell(:).index];
+    
+    for ii=1:length(vertexCentredGrid)
+        vertCellLog=sum((vertexCellInfo==vertexCentredGrid(ii).index),2)>0;
+        totEdges=sum(vertCellLog);
+        vertexCentredGrid(ii).edge(1:totEdges)=refinedGrid.edge(vertCellLog);
+        vertexCell=[vertexCentredGrid(ii).edge(:).cellindex];
+        vertexCell=RemoveIdenticalEntries(vertexCell');
+        vertexCell(vertexCell==0)=[];
+        cellVertexSub=FindObjNum(refinedGrid.vertex,vertexCell,origCellIndex);
+        totCells=length(vertexCell);
+        vertexCentredGrid(ii).cell(1:totCells)=refinedGrid.cell(cellVertexSub);
+        
+    end
+end
 %% From Main
 %{
 function [isCCW]=CCWLoop(coord)
@@ -537,6 +584,7 @@ function surrogatePoints=PointGeneration(ranges,N_surpoints)
     surrogatePoints=X_RBF;
     
 end
+
 %{
 function [vec,iRows]=SortVecColumn(vec,iCol)
     % Sorts according to a columns

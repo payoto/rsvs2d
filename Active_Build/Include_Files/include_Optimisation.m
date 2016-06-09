@@ -18,9 +18,7 @@ function [desVarList]=ExtractActiveVariable(nFill,notDesInd,inactiveVar)
     
 end
 
-
-
-function [inactiveVar]=SelectInactiveVariables(newFill,varActive)
+function [inactiveVar]=SelectInactiveVariables(newFill,varActive,derivtenscalc)
     
     switch varActive
         case 'all'
@@ -29,9 +27,7 @@ function [inactiveVar]=SelectInactiveVariables(newFill,varActive)
             [inactiveVar]=InactiveVariables_border(newFill);
             
         case 'wideborder'
-            
-            [inactiveVar,activeVar]=InactiveVariables_border(newFill);
-            error('Not coded yet')
+            [inactiveVar,activeVar]=InactiveVariables_wideborder(newFill,derivtenscalc);
             
         otherwise
             error('unrecognised variable activation criterion')
@@ -52,6 +48,17 @@ function [inactiveVar,activeVar]=InactiveVariables_border(newFill)
     activeVar=find(isBord);
     
     
+end
+
+function [inactiveVar,activeVar]=InactiveVariables_wideborder(newFill,derivtenscalc)
+    
+    [inactiveVar,activeVar]=InactiveVariables_border(newFill);
+    indexDeriv=[derivtenscalc(:).index];
+    actVarSub=FindObjNum([],activeVar,indexDeriv);
+    
+    activeVar=unique([activeVar,[derivtenscalc(actVarSub).neighbours]]);
+    inactiveVar=1:length(newFill);
+    inactiveVar(activeVar)=[];
 end
     
     
