@@ -140,10 +140,11 @@ end
 function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
-        'lineSearch','nLineSearch','nPop','validVol','varActive'};
+        'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec','isRestart','borderActivation'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
-        nPop,validVol,varActive]=ExtractVariables(varExtract,paramoptim);
+        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation]...
+        =ExtractVariables(varExtract,paramoptim);
     
     
     % Extract previous iteration information
@@ -154,10 +155,16 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     % Case dependant statements
     if lineSearch
-        [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,direction);
-        [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
+        if ~isRestart
+            [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,direction);
+            [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
+        else
+            [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
+            paramoptim.general.isRestart=false;
+        end
+        
         % Need to build function for activation and deactivation of variables
-        [inactiveVar]=SelectInactiveVariables(newRoot,varActive);
+        [inactiveVar]=SelectInactiveVariables(newRoot,varActive,desvarconnec,borderActivation);
         [desVarList]=ExtractActiveVariable(length(iterCurr(1).fill),notDesInd,inactiveVar);
         [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
         newPop=[newRoot;vertcat(newGradPop{:})];
@@ -458,6 +465,22 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     stepVector=vec*stepLength;
     
 end
+function [newRoot,deltaRoot]=FindOptimalRestartPop(iterstruct,direction)
+    
+    f=[iterstruct(:).objective];
+    
+    switch direction
+        case 'min'
+            [targObj,indexLoc]=min(f);
+        case 'max'
+            [targObj,indexLoc]=max(f);
+    end
+    
+    
+    newRoot=iterstruct(indexLoc).fill;
+    deltaRoot={[1;0]};
+    
+end
 
 function [coeff]=ParabolicFit(xI,yI)
     
@@ -501,15 +524,35 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     
     nActVar=length(desVarList);
     
+    rootFillMaxUp=(1-rootFill)/2;
+    rootFillMaxDown=-(rootFill)/2;
+    
     for jj=1:length(stepSize)
+        
+        ratioUp=rootFillMaxUp/stepSize(jj);
+        ratioUp(ratioUp<0)=1;
+        ratioUp(ratioUp==0)=-0.1;
+        ratioDown=rootFillMaxDown/stepSize(jj);
+        ratioDown(ratioDown==0)=-0.1;
+        if stepSize(jj)>=0;
+            ratioStep=min([ratioUp;ones(size(ratioUp))]);
+        else
+            ratioStep=min([ratioDown;ones(size(ratioUp))]);
+        end
+        
         newGradPop{jj}=(ones(nActVar,1)*rootFill);
-        negMov=find(rootFill(desVarList)<=(min(desVarRange)+stepSize(jj)));
-        signMat=-eye(nActVar);
-        signMat(:,negMov)=signMat(:,negMov)*-1;
+        
+        %negMov=find(rootFill(desVarList)<=(min(desVarRange)+stepSize(jj)));
+        signMat=eye(nActVar);
+        for ii=1:nActVar
+            signMat(ii,ii)=ratioStep(desVarList(ii));
+        end
 
         partialSteps=signMat*stepSize(jj);
         newGradPop{jj}(:,desVarList)=newGradPop{jj}(:,desVarList)+partialSteps;
-
+        
+        
+        
         for ii=nActVar:-1:1
             actVar=find(partialSteps(ii,:)~=0);
             deltas{jj}{ii}=[desVarList(actVar);partialSteps(ii,actVar)];
