@@ -65,13 +65,16 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.direction='max';
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675];
-    paroptimgeneral.restartSource='';
+    
     paroptimgeneral.symType='none'; % 'horz'
     paroptimgeneral.nDesVar=[0];
     paroptimgeneral.symDesVarList=[];
     paroptimgeneral.notDesInd=[];
     paroptimgeneral.iterGap=1;
     paroptimgeneral.desvarconnec=[]; % Structure assigned later
+    
+    paroptimgeneral.restartSource={'',''};
+    paroptimgeneral.isRestart=false;
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -83,9 +86,10 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=[1e-3,-1e-3]; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-4,-1e-4]; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
+    paroptimoptimCG.borderActivation=0.3;
     paroptimoptimCG.lineSearch=false;
     paroptimoptimCG.validVol=0.1; % Interval of validity of the derivatives
     paroptimoptimCG.nLineSearch=12;
@@ -157,7 +161,7 @@ function [paroptim]=OptimCG(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.general.startPop='halfuniformsharp';
-    
+    paroptim.general.iterGap=2;
 end
 
 % Constraints
@@ -413,7 +417,7 @@ function [paroptim]=Test_MultiTopo_M2_CG()
     paroptim.general.nPop=60;
     paroptim.general.maxIter=10;
     
-    paroptim.general.worker=4;
+    paroptim.general.worker=12;
  
 end
 
@@ -638,6 +642,30 @@ function [paroptim]=bp3_Aero_CG_05()
     paroptim.general.worker=12; 
 end
 
+function [paroptim]=bp3_MultiTopo_M2_CG()
+    
+    [paroptim]=MultiTopo_CGhoriz();
+    paroptim=Test_Desktop(paroptim);
+    paroptim.general.restartSource={'bp3BorderOptim','DE'};
+    paroptim.general.nPop=60;
+    paroptim.general.maxIter=40;
+    
+    paroptim.general.worker=12;
+ 
+end
+
+function [paroptim]=bp3_MultiTopo_M2_CG_wide()
+    
+    [paroptim]=MultiTopo_CGhoriz();
+    paroptim.optim.CG.varActive='wideborder';
+    paroptim=Test_Desktop(paroptim);
+    paroptim.general.restartSource={'bp3BorderOptim','DE'};
+    paroptim.general.nPop=60;
+    paroptim.general.maxIter=40;
+    
+    paroptim.general.worker=12;
+ 
+end
 % bp2
 
 function [paroptim]=FullSupersonicOptimSym_bp2_025()
