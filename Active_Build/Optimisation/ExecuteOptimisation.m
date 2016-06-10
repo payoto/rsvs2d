@@ -499,7 +499,6 @@ function [desvarconnec,cellGrid,vertexGrid]=ExtractVolumeCellConnectivity(unstru
     
 end
 
-
 function [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec)
     
     actCell=[baseGrid.cell(:).isactive];
