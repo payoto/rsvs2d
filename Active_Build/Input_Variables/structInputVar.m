@@ -210,7 +210,7 @@ function [param]=DefaultCase()
 
 end
 
-%% Smoothness tests
+%%  tests cases
 
 function [param]=Snakestestsmooth1()
     
@@ -315,6 +315,27 @@ function [param]=Snakestestsmooth4_ref()
     param.snakes.step.snakesSteps=50;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
+    
+end
+
+function [param]=ModeAnalysis()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='basisanalysis';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='grey';
+    param.general.passDomBounds=[-1,1;-0.4444,0.4444];
+    param.general.refineSteps=4;
+    param.snakes.step.mergeTopo=true;
+     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
+    param.plotting.checkSensitivities=true;
     
 end
 
@@ -526,6 +547,7 @@ function [param]=SnakesFoilVVSmall_ref()
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
 end
+
 function [param]=Supersonic()
     
     [param]=DefaultCase();
