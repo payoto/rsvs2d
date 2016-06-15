@@ -326,7 +326,7 @@ function [param]=ModeAnalysis()
     
     param.general.typDat='basisanalysis';
     param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='grey';
     param.general.passDomBounds=[-1,1;-0.4444,0.4444];
     param.general.refineSteps=4;
