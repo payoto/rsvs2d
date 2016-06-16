@@ -10,6 +10,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-InitialiseWorkFlow;
+InitialiseSnakeFlow;
 
 ExecuteOptimisation('bp3_MultiTopo_M2_CG');

@@ -10,6 +10,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-InitialiseWorkFlow;
+InitialiseSnakeFlow;
 
 ExecuteOptimisation('HPC_LengthArea');

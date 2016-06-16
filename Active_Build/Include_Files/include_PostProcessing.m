@@ -534,11 +534,31 @@ function indexLine=GenerateIndexEntry(t,resultDirectory,typDat,caseStr,tags)
 end
 
 
+function []=WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
+    fid=fopen([writeDirectory,filesep,'InfoProfile_',int2str(nIter),'_',int2str(nProf),'.dat'],'w');
+    
+    ii=1;
+    cellDat{ii}=marker;ii=ii+1;
+    cellDat{ii}=datestr(t);ii=ii+1;
+    cellDat{ii}=['iteration : ',int2str(nIter)]; ii=ii+1;
+    cellDat{ii}=['Profile : ',int2str(nProf)]; ii=ii+1;
+    
+    WriteToFile(cellDat,fid);
+    fclose(fid);
+end
 %% Generate Restart Binary
 
 function []=GenerateRestartBinary(resultDirectory,marker,restartstruct)
     
     fileName=[resultDirectory,'\restart_',marker,'.mat'];
+    save(fileName,'-struct','restartstruct');
+    
+end
+
+function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
+    
+    fileName=[resultDirectory,'\restart_',marker,'.mat'];
+    fileName=MakePathCompliant(fileName);
     save(fileName,'-struct','restartstruct');
     
 end
