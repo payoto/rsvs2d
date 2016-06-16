@@ -13,8 +13,11 @@
 function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,restart)
     % Main function for the execution of the Subdivision process
     
-    close all
-    clc
+    
+    P = mfilename('fullpath');
+    P(end-4:end)='';
+    P=[P,'\..\..\'];
+    startDir=cd(P);
     
     include_SnakeParam
     include_EdgeInformation
@@ -63,6 +66,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     ManageOutputResults(param,loop,tecoutstruct,restartstruct);
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
+    cd(startDir)
 end
 
 %% Top Level Execution processes
@@ -160,11 +164,11 @@ function [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstruct
     disp('SNAKE PROCESS START')
     [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(unstructured,loop,...
         oldGrid,connectionInfo,param);
-
+    
     t2=now;
     disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
     disp('SNAKE PROCESS END')
-
+    
     if length(loopsnaxel)==length(loop)
         for ii=1:length(loopsnaxel)
             loop(ii).snaxel=loopsnaxel(ii).snaxel;
@@ -183,7 +187,7 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
     % typBOund is te type of boundary that is expected, it can either be the
     % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
     % process has been used
-     varExtract={'typeBound','subdivType'};
+    varExtract={'typeBound','subdivType'};
     [typeBound,subdivType]=ExtractVariables(varExtract,param);
     if ~exist('typeBound','var'), typeBound='vertex'; end
     

@@ -10,6 +10,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-InitialiseWorkFlow;
+InitialiseSnakeFlow;
 
 ExecuteOptimisation('BP3_Aero_CG_20_Long');
