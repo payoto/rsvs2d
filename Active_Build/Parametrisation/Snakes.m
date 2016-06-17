@@ -69,7 +69,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     [snakposition]=SnaxelNormal2(snaxel,snakposition);
-    CheckResultsLight(refinedGriduns,snakposition,snaxel)
+    %CheckResultsLight(refinedGriduns,snakposition,snaxel)
     
     
     [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid);

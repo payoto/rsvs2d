@@ -38,7 +38,7 @@ function taskStartup(task)
     
     %#ok<*INUSD> Suppression because this example does not use the input argument
     
-     InitialiseWorkFlow
+     InitialiseSnakeFlow
      include_SnakeParam
      include_EdgeInformation
      include_Utilities

@@ -284,49 +284,6 @@ function [FID]=OpenIterIndexFile(rootOptim,marker)
     
 end
 
-function [FID]=OpenErrorReportFile(rootOptim,marker)
-    % Creates a file in the current directory to write data to.
-    
-    rootOptim=MakePathCompliant(rootOptim);
-    fileName=['ErrorReport_',marker,'.txt'];
-    FID=fopen([rootOptim,filesep,fileName],'a');
-    
-end
-
-function []=GenerateErrorReportFile(t,marker,FID)
-    
-    paramCell{1}='# Error Report File';
-    paramCell{2}=['# ',datestr(t)];
-    paramCell{3}=['# ',marker];
-    paramCell{4}=[' '];
-    
-    WriteToFile(paramCell,FID);
-    fclose(FID);
-end
-
-function []=GenerateErrorReportEntries(fID,nIter,errorReports,indexEntries)
-    
-    writeReport{1}='------------------------------------------------------------';
-    writeReport{2}=['   ITERATION ',int2str(nIter)];
-    writeReport{3}='------------------------------------------------------------';
-    kk=4;
-    for ii=1:length(errorReports)
-        
-        if ~isempty(errorReports{ii})
-            writeReport{kk}=indexEntries{ii};
-            kk=kk+1;
-            writeReport{kk}=errorReports{ii};
-            kk=kk+1;
-        end
-        
-    end
-
-    WriteToFile(writeReport,fID);
-    fclose(fID);
-    
-end
-
-
 %% Output tecplot video
 
 function []=TecplotPortion_Profile(nIter,nPop,nProf,profPath,baseGrid,...

@@ -8,8 +8,6 @@ function [] = include_PostProcessing()
     
 end
 
-%%
-
 %% General
 function []=savefig(figh,figname)
 
@@ -260,7 +258,6 @@ function []=CopyDiary(writeDirectory,marker)
     
 end
 
-
 %% Boundary Output to .dat file
 
 function []=BoundaryOutput(loop,FID)
@@ -364,7 +361,6 @@ function []=PersnaliseLayFile(FID,pltFile)
     WriteToFile(layData,FID)
 end
 
-
 %% File Opening Functions
 
 function [FID]=OpenBoundaryFile(writeDirectory,marker)
@@ -431,7 +427,6 @@ function [FID]=NameVideoFile(writeDirectory,marker)
     FID=[writeDirectory,filesep,fileName];
     
 end
-
 
 %% Comments File
 
@@ -533,7 +528,6 @@ function indexLine=GenerateIndexEntry(t,resultDirectory,typDat,caseStr,tags)
     
 end
 
-
 function []=WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
     fid=fopen([writeDirectory,filesep,'InfoProfile_',int2str(nIter),'_',int2str(nProf),'.dat'],'w');
     
@@ -546,6 +540,51 @@ function []=WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
     WriteToFile(cellDat,fid);
     fclose(fid);
 end
+
+%% Error Report File
+
+function [FID]=OpenErrorReportFile(rootOptim,marker)
+    % Creates a file in the current directory to write data to.
+    
+    rootOptim=MakePathCompliant(rootOptim);
+    fileName=['ErrorReport_',marker,'.txt'];
+    FID=fopen([rootOptim,filesep,fileName],'a');
+    
+end
+
+function []=GenerateErrorReportFile(t,marker,FID)
+    
+    paramCell{1}='# Error Report File';
+    paramCell{2}=['# ',datestr(t)];
+    paramCell{3}=['# ',marker];
+    paramCell{4}=[' '];
+    
+    WriteToFile(paramCell,FID);
+    fclose(FID);
+end
+
+function []=GenerateErrorReportEntries(fID,nIter,errorReports,indexEntries)
+    
+    writeReport{1}='------------------------------------------------------------';
+    writeReport{2}=['   ITERATION ',int2str(nIter)];
+    writeReport{3}='------------------------------------------------------------';
+    kk=4;
+    for ii=1:length(errorReports)
+        
+        if ~isempty(errorReports{ii})
+            writeReport{kk}=indexEntries{ii};
+            kk=kk+1;
+            writeReport{kk}=errorReports{ii};
+            kk=kk+1;
+        end
+        
+    end
+
+    WriteToFile(writeReport,fID);
+    fclose(fID);
+    
+end
+
 %% Generate Restart Binary
 
 function []=GenerateRestartBinary(resultDirectory,marker,restartstruct)
