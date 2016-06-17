@@ -17,7 +17,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     procStr2=['OPTIMISATION - ',caseStr];
     [tStartOpt]=PrintStart(procStr2,0);
     %clusterObj=parcluster('OptimSnakes');
-    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+        connectstructinfo,unstrRef,restartsnake]...
         =InitialiseOptimisation(caseStr);
     
     varExtract={'maxIter','restartSource'};
@@ -518,6 +519,7 @@ function [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec)
     end
     desvarconnec=desvarconnec(actSub);
 end
+
 %% Optimisation Specific Operations
 
 function [iterstruct,paroptim]=InitialisePopulation(paroptim)

@@ -13,7 +13,8 @@
 
 
 function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
-        =ExecuteSnakes_Optim(gridrefined,looprestart,baseGrid,connectstructinfo,param,paramspline,outinfo,nIter,nProf,nPop)
+        =ExecuteSnakes_Optim(gridrefined,looprestart,baseGrid,connectstructinfo...
+        ,param,paramspline,outinfo,nIter,nProf,nPop)
     % Executes the snakes edge detection process
     %
     
