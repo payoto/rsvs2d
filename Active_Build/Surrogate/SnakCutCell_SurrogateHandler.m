@@ -1,4 +1,4 @@
-
+ 
 
 function [varargout]=SnakCutCell_SurrogateHandler(entryPoint,varargin)
     
@@ -100,9 +100,12 @@ function [datastruct]=SnakCutCell_Run(datastruct,parsurrogate,supportstructure,o
     indList=find([datastruct(:).flag]<0);
     [datastruct(indList)]=PerformIteration(parsurrogate,outinfo,...
         datastruct(indList),indList,supportstructure);
+    indList=indList(([datastruct(indList).flag]<=1));
+    
     if numel(varargin)==1
         [datastruct(indList).flag]=deal(varargin{1});
     end
+    
 end
 
 function [runcases]=PerformIteration(parsurrogate,outinfo,runcases,indList,supportstructure) %gridrefined,restartsnake,...
@@ -137,6 +140,10 @@ function [runcases]=PerformIteration(parsurrogate,outinfo,runcases,indList,suppo
             captureErrors{ii}=MEexception.getReport;
         end
     end
+    % Add Invalidity
+    dataMat=[runcases(:).additional];
+    resPos=dataMat(:,2)>0;
+    [runcases(resPos).flag]=deal(0);
     
     
 end
@@ -222,7 +229,6 @@ function [objValue,additional]=CutCellFlow(paramsurrogate,member,loop)
     additional.tc=areaAdd.tc;
     
 end
-
 
 function [objValue,additional]=LengthArea(member,loop)
     for ii=1:length(loop)
