@@ -501,10 +501,48 @@ function [param]=optimSupersonicMultiTopo()
     
     param.optiminit.corneractive=true;
     param.optiminit.cellLevels=[6,10];
-    sizeRatio=param.optiminit.cellLevels(1,:)+2;
-    sizeRatio=sizeRatio(2)/sizeRatio(1);
-    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.general.passDomBounds=MakeCartesianGridBounds(param.optiminit.cellLevels);
     
+end
+
+function [param]=SupersonicComponent()
+    
+    [param]=DefaultCase();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='optimInit';
+    param.general.restart=false;
+    param.general.refineSteps=3;
+    param.general.subdivType='chaikin';
+    
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.resampleSnak=false;
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesConsole=false;
+    param.snakes.step.maxStep=0.2;
+    param.snakes.step.maxDt=0.5;
+    param.snakes.step.fillLooseStep=5;
+    param.snakes.step.fillLooseCut=1e-3;
+    param.snakes.step.stepType='indiv';
+     
+    param.results.archiveName='Optimisation';
+    param.results.resultRoot=[cd,'\..\results\'];
+    param.results.noteFiles={'CurrentBuild'};
+    param.results.tags={'snakes','optimisation'};
+    
+    param.optiminit.corneractive=true;
+    param.optiminit.cellLevels=[1,1];
+    param.general.passDomBounds=MakeCartesianGridBounds(param.optiminit.cellLevels);
     
 end
 

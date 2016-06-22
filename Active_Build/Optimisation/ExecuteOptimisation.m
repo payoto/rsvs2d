@@ -27,7 +27,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     
     % Restart
     inNFlag=nargin;
-    if inNFlag==2 || ~isempty(restartSource)
+    if inNFlag==2 || ~isempty(restartSource{1})
         if inNFlag==2
             restartSource=restartFromPop;
         end
@@ -158,6 +158,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
     [outinfo]=OptimisationOutput('init',paramoptim);
+    [~,paramoptim]=ConstraintMethod('init',paramoptim,[]);
     % Initialise Grid
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);

@@ -121,6 +121,8 @@ function [paroptimconstraint]=DefaultConstraint()
     paroptimconstraint.desVarVal={[0]};
     paroptimconstraint.resConstr={' '};
     paroptimconstraint.resVal={[0]};
+    paroptimconstraint.initConstr={' '};
+    paroptimconstraint.initVal={' '};
     
 end
 
@@ -200,6 +202,18 @@ function [paroptim]=SumVolumeConstraint2(paroptim)
     paroptim.constraint.resVal={[]};
     
 end
+
+function [paroptim]=LocalVolumeConstraint(paroptim)
+    
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    paroptim.constraint.initConstr={'LocalVolFrac_image'};
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\smile_5b12.png','min'}};
+    paroptim.constraint.resConstr={'AeroResidualBarrier'};
+    paroptim.constraint.resVal={[-0.5,0.5]};
+    
+end
+
 
 % Objectives
 function paroptim=CutCellObjective(paroptim)
@@ -330,8 +344,7 @@ function [paroptim]=MultiTopo_DEhoriz()
     
     paroptim.general.symType='horz'; % 'horz'
     paroptim.general.startPop='initbusemann';
-    
-    
+
     
     
 end
@@ -349,6 +362,21 @@ function [paroptim]=MultiTopo_CGhoriz()
     paroptim.general.symType='horz'; % 'horz'
    
 end
+
+function [paroptim]=Component()
+    
+    [paroptim]=DefaultOptim();
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim=CutCellObjective(paroptim);
+    [paroptim]=OptimCG(paroptim);
+    
+    paroptim.optim.CG.varActive='wideborder'; % 'wideborder'
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.symType='none'; % 'horz'
+   
+end
+
 %% Callable functions
 
 function [paroptim]=StandardOptim()
@@ -521,7 +549,7 @@ end
 
 function [paroptim]=Full_Aero_CG_20()
     [paroptim]=CG_Aero();
-    
+    [paroptim]=LocalVolumeConstraint(paroptim);
     paroptim.parametrisation.snakes.refine.axisRatio=2.5;
     
     paroptim.general.nPop=12;
@@ -562,6 +590,15 @@ function [paroptim]=Full_Aero_CG_05()
     paroptim.general.worker=8; 
 end
 
+function [paroptim]=Full_Aero_CG_20()
+    [paroptim]=CG_Aero();
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim.parametrisation.snakes.refine.axisRatio=2.5;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=4; 
+end
 % bp3
 function [paroptim]=FullSupersonicOptim_HPC()
     
@@ -646,7 +683,7 @@ function [paroptim]=bp3_MultiTopo_M2_CG()
     
     [paroptim]=MultiTopo_CGhoriz();
     paroptim=Test_Desktop(paroptim);
-    paroptim.general.restartSource={'bp3BorderOptim','DE'};
+    %paroptim.general.restartSource={'bp3BorderOptim','DE'};
     paroptim.general.nPop=60;
     paroptim.general.maxIter=40;
     
