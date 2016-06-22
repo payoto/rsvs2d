@@ -82,6 +82,36 @@ function [varargout]=ExtractVariables(varNames,param)
     
 end
 
+function [param]=SetVariables(varNames,varValues,param)
+    
+    varInStruct=param.structdat.vardat.names;
+    varPosInStruct=param.structdat.vardat.varmatch;
+    varargout{length(varNames)}=[];
+    
+    for ii=1:length(varNames)
+        
+        targLocation=regexp(varInStruct,varNames{ii}, 'once');
+        if isempty(targLocation) || varPosInStruct(targLocation)==0
+            error([varNames{ii},' is an invalid variable name'])
+        end
+        
+        activeVarNum=varPosInStruct(targLocation);
+        param=SetVariableValue(param,activeVarNum,varValues{ii});
+    end
+    
+    function [param]=SetVariableValue(param,varNum,newVal)
+        
+        varstruct=param.structdat.vars(varNum);
+        varPath='param';
+        for jj=1:length(varstruct.vec)
+            varPath=[varPath,'.',param.structdat.fields{varstruct.vec(jj)}];
+        end
+        
+        eval([varPath,'=newVal;'])
+    end
+    
+end
+
 function [lengthParam,edgeLength]=LengthProfile(points)
     
     points=points([1,1:end],:);
@@ -117,6 +147,13 @@ end
 function CopyFileLinux(p1,p2)
 
     system(['cp -rp ''',p1,''' ''',p2,'''']);
+end
+
+function [domainBounds]=MakeCartesianGridBounds(cellLevels)
+    
+    axRatio=cellLevels'/cellLevels(1);
+    domainBounds=[-axRatio,axRatio];
+    
 end
 
 %{

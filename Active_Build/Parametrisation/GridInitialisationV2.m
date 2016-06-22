@@ -245,7 +245,7 @@ function finishedImage=ImageProcess(imPath,imType,nPad,n)
     % impath indicates the background colour: 'k' is black and 'w' is white
     
     global nGridSteps % number of steps in design domain
-    if ~exist('n','var'); n=0; end
+    if ~exist('n','var'); n=0; end % n is used to pad with ones instead of zeros
     
     preProcImage=PreProcImage(imPath);
     preProcImage=ProcessType(imType,preProcImage);

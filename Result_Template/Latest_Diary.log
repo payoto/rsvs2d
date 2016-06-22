@@ -1,82 +1,25 @@
-GENERATION PROCESS START
-
-Calculations Started . . .
-***** START GRID INITIALISATION *****
-
-     OUTPUT:Skipped
-    ACTION: Starting Grid Generated
-     OUTPUT:Skipped
-    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
-
-    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:038
-GENERATION PROCESS end
-GRID REFINEMENT START
-
-     OUTPUT:Skipped
-Calculations Started . . .
-***** START GRID REFINEMENT 1 of 1 *****
-
-     OUTPUT:Skipped
-    ACTION: Template Generated
-    ACTION: Refinement Targets Identified
-    ACTION: Edges Refined
-			Start Cell 1 of 27 
-			Start Cell 2 of 27 
-			Start Cell 3 of 27 
-			Start Cell 4 of 27 
-			Start Cell 5 of 27 
-			Start Cell 6 of 27 
-			Start Cell 7 of 27 
-			Start Cell 8 of 27 
-			Start Cell 9 of 27 
-			Start Cell 10 of 27 
-			Start Cell 11 of 27 
-			Start Cell 12 of 27 
-			Start Cell 13 of 27 
-			Start Cell 14 of 27 
-			Start Cell 15 of 27 
-			Start Cell 16 of 27 
-			Start Cell 17 of 27 
-			Start Cell 18 of 27 
-			Start Cell 19 of 27 
-			Start Cell 20 of 27 
-			Start Cell 21 of 27 
-			Start Cell 22 of 27 
-			Start Cell 23 of 27 
-			Start Cell 24 of 27 
-			Start Cell 25 of 27 
-			Start Cell 26 of 27 
-			Start Cell 27 of 27 
-    ACTION: Cells Refined
-     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:288
-GRID REFINEMENT end
-SNAKE PROCESS START
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-
-ans = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
-
-      Number: 1
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
-
-  Initialisation time:00:00:01:424
-  Start Time Stepping
-  88 Steps Performed
-  Iteration Time:00:00:25:484
-  Volume converged to 2.52176e-10
-Time taken:00:00:27:131
-SNAKE PROCESS END
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',163,1)">163 </a>    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
+if system_dependent('IsDebugMode')==1, dbquit; end
+ExecuteOptimisation('Full_Aero_CG_20')
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - Full_Aero_CG_20 start
+22-Jun-2016 17:26:33
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+22-Jun-2016 17:26:33
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
