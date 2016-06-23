@@ -120,14 +120,15 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
     % typBOund is te type of boundary that is expected, it can either be the
     % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
     % process has been used
-    varExtract={'typeBound','subdivType','resampleSnak'};
-    [typeBound,subdivType,resampleSnak]=ExtractVariables(varExtract,param);
+    varExtract={'typeBound','subdivType','resampleSnak','TEShrink','LEShrink','typeCorner'};
+    [typeBound,subdivType,resampleSnak,TEShrink,LEShrink,typeCorner]=ExtractVariables(varExtract,param);
     if ~exist('typeBound','var'), typeBound='vertex'; end
+    sharpen=[LEShrink,TEShrink];
     
     for ii=1:length(loop)
         startPoints=loop(ii).(typeBound).coord;
         loop(ii).isccw=CCWLoop(startPoints);
-        [newPoints,projPoints]=SubDivision(startPoints,refineSteps,subdivType);
+        [newPoints,projPoints]=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
         loop(ii).subdivision=newPoints;
         loop(ii).subdivspline=newPoints;
         if resampleSnak

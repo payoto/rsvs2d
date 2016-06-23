@@ -558,6 +558,20 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
             origPop(:,LEind)=origPop(:,LEind)/2;
             origPop(:,TEind)=origPop(:,TEind)/2;
             
+        case 'outerbound'
+            origPop=ones([nPop,nDesVar]);
+            
+        case 'innerbound'
+            origPop=zeros([nPop,nDesVar]);
+            ii=1;
+            try 
+                while isempty(regexp(desVarConstr{ii},'LocalVolFrac', 'once'))
+                    ii=ii+1;
+                end
+            catch
+                error('Invalid constraint - initialisation pair')
+            end
+            origPop(1,desVarVal{ii}{1})=desVarVal{ii}{2};
         case 'horzstrip'
             nStrips=cellLevels(2);
             origPop=zeros([nPop,nDesVar]);
