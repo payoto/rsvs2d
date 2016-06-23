@@ -148,6 +148,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     
     % Extract previous iteration information
+    [iterCurr]=ExtractValidIter(iterCurr);
+    [iterm1]=ExtractValidIter(iterm1);
     [gradstruct_curr]=GetIterationInformation(iterCurr);
     [gradstruct_m1]=GetIterationInformation(iterm1);
     
@@ -177,6 +179,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         % The assumption is the the modes have been selected sensibly and
         % will be close to orthogonal
         [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1);
+        [modestruct]=RemoveFailedModes(modestruct,gradstruct_curr,iterCurr(1).fill...
+            ,desVarRange,direction);
         [gradF_curr,gradF_m1]...
             =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct);
         
@@ -200,7 +204,15 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
 end
 
+function [population]=ExtractValidIter(population)
+    
+    population=population([1,find([population(2:end).constraint]>0.9)+1]);
+    
+end
+
 function [gradientopt]=GetIterationInformation(population)
+    
+    
     
     nPop=length(population);
     nGrad=nPop-1;
@@ -272,6 +284,59 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
     
     
     
+end
+
+function [modestruct]=RemoveFailedModes(modestruct,gradstruct,rootfill,desVarRange,direction)
+    
+    [newModeInd]=FindNewModes(modestruct,rootfill,desVarRange);
+    
+    [indModeFailing]=FindFailingMode(modestruct(newModeInd),gradstruct,direction);
+    
+    modestruct(newModeInd(indModeFailing))=[];
+    
+    
+end
+
+function [newModeInd]=FindNewModes(modestruct,rootfill,desVarRange)
+    % New Modes are caracterised by being 0 or 1 in the root member
+    
+    inactiveVar=find((rootfill<=min(desVarRange)) | (rootfill>=max(desVarRange)));
+    isNewMode=false(size(modestruct));
+    for ii=1:length(modestruct)
+        modeVar=find(modestruct(ii).mode);
+        
+        isNewMode(ii)=sum((FindObjNum([],modeVar,inactiveVar)==0))==numel(modeVar);
+        
+    end
+    newModeInd=find(isNewMode);
+end
+
+function [indModeFailing]=FindFailingMode(modestruct,gradstruct,direction)
+    
+    switch direction
+        case 'min'
+            multiplier=1;
+        case 'max'
+            multiplier=-1;
+    end
+    isFailing=false(size(modestruct));
+    for ii=1:length(modestruct)
+        
+        obj=[gradstruct(modestruct(ii).curr.ind).objective];
+        coeffs=modestruct(ii).curr.coeff;
+        if numel(obj)>=2
+            if numel(obj)>2
+                obj=obj(1:2);
+                coeffs=coeffs(1:2);
+            end
+            slope=multiplier*((obj(1)-obj(2))/(coeffs(1)-coeffs(2)))>=0;
+        else
+            slope=true;
+        end
+        val=sum(multiplier*obj>0)>0;
+        isFailing(ii)=slope && val;
+    end
+    indModeFailing=find(isFailing);
 end
 
 function [gradF_curr,gradF_m1]=...
@@ -465,6 +530,7 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     stepVector=vec*stepLength;
     
 end
+
 function [newRoot,deltaRoot]=FindOptimalRestartPop(iterstruct,direction)
     
     f=[iterstruct(:).objective];

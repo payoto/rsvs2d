@@ -106,7 +106,7 @@ function [constrVal]=ArrayToConstraint(finishedImage,activityLayer)
     
     [indConst]=find(activityLayer);
     
-    constrVal={indConst,finishedImage(indConst)};
+    constrVal={indConst',[finishedImage(indConst)]'};
     
     
 end

@@ -86,12 +86,12 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=[1e-4,-1e-4]; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
     paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
-    paroptimoptimCG.borderActivation=0.3;
+    paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
-    paroptimoptimCG.validVol=0.1; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
     paroptimoptimCG.nLineSearch=12;
     
 end
@@ -205,8 +205,8 @@ end
 
 function [paroptim]=LocalVolumeConstraint(paroptim)
     
-    paroptim.constraint.resConstr={' '};
-    paroptim.constraint.resVal={[]};
+    paroptim.constraint.desVarConstr={' '};
+    paroptim.constraint.desVarVal={[]};
     paroptim.constraint.initConstr={'LocalVolFrac_image'};
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\smile_5b12.png','min'}};
     paroptim.constraint.resConstr={'AeroResidualBarrier'};
@@ -370,7 +370,7 @@ function [paroptim]=Component()
     [paroptim]=LocalVolumeConstraint(paroptim);
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimCG(paroptim);
-    
+    paroptim.general.startPop='innerbound';
     paroptim.optim.CG.varActive='wideborder'; % 'wideborder'
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
@@ -590,13 +590,13 @@ function [paroptim]=Full_Aero_CG_05()
     paroptim.general.worker=8; 
 end
 
-function [paroptim]=Full_Aero_CG_20()
-    [paroptim]=CG_Aero();
-    [paroptim]=LocalVolumeConstraint(paroptim);
-    paroptim.parametrisation.snakes.refine.axisRatio=2.5;
+function [paroptim]=Full_Aero_CG_component()
+    
+    [paroptim]=Component();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=4;
+    paroptim.general.maxIter=20;
     paroptim.general.worker=4; 
 end
 % bp3

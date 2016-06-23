@@ -263,6 +263,7 @@ end
 function []=BoundaryOutput(loop,FID)
     
     % trim loops and extract data
+    [loop]=FindInternalLoop(loop);
     loopout=TrimLoops(loop);
     % format numeric data to printable strings
     cellLoops=DataToString(loopout);
@@ -334,6 +335,27 @@ function cellLoops=DataToString(loopout)
     
 end
 
+function [loop]=FindInternalLoop(loop)
+    % this function works by checkking all the inequalities around a
+    % polygon
+    isInternal=false(size(loop));
+    for ii=1:length(loop)
+        polygonPoints=loop(ii).subdivision;
+        polyVec=polygonPoints([2:end,1],:)-polygonPoints;
+        polyNorm=[polyVec(:,2),-polyVec(:,1)];
+        
+        numCond=size(polygonPoints,1);
+        for jj=[1:ii-1,ii+1:length(loop)]
+            
+            comparePoint=ones([size(polyNorm,1),1])*loop(jj).subdivision(1,:);
+            conditionNum=sum(polyNorm.*(comparePoint-polygonPoints),2);
+            allPos=sum(conditionNum>=0)==numCond;
+            allNeg=sum(conditionNum<=0)==numCond;
+            isInternal(jj)=isInternal(jj) || allPos || allNeg;
+        end
+    end
+    loop=loop(~isInternal);
+end
 %% Video Output functions
 
 function []=MakeVideo(movStruct,fps,quality,fileName)

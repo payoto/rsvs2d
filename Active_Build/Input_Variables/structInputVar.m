@@ -109,6 +109,7 @@ function paramsnakesrefine=default_snakes_refine()
     paramsnakesrefine.edgeFinish='none'; % 'none' 'sharpen' 'shrink'
     paramsnakesrefine.resampleSnak=false;
     paramsnakesrefine.axisRatio=1; % y/x ratio
+    paramsnakesrefine.typeCorner='global'; % y/x ratio
 end
 
 function paramsnakesforce=default_snakes_force()
@@ -324,6 +325,8 @@ function [param]=ModeAnalysis()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
+    param.general.refineSteps=4;
+    param.general.subdivType='chaikin';
     param.general.typDat='basisanalysis';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
@@ -334,7 +337,7 @@ function [param]=ModeAnalysis()
      param.snakes.refine.axisRatio=1;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.plotting.checkSensitivities=true;
     
 end
@@ -521,6 +524,7 @@ function [param]=SupersonicComponent()
     param.snakes.refine.typeRefine='all';
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.TEShrink=true;
+    param.snakes.refine.typeCorner='global';
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
     param.snakes.refine.axisRatio=1;

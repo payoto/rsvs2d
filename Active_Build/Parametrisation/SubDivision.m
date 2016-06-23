@@ -8,12 +8,12 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod)
+function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,sharpen,typeLocal)
     %include_Utilities
     startPoints=RemoveIdenticalConsecutivePoints(startPoints);
     switch refineMethod
         case 'chaikin'
-            [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps);
+            [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
         case 'bspline'
             
             [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
@@ -49,15 +49,16 @@ function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod)
             error('Invalid method');
     end
     
-    
+    [newPoints]=RemoveIdenticalPoints(newPoints);
+    [projPoints]=RemoveIdenticalPoints(projPoints);
     
 end
 
 %% Different subdivision processes
 
-function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
+function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps,sharpen,typeLocal)
     % Implements a Chainkin subdivision process
-    TEisLeft=0;
+    
     chainkinNoCorn=zeros([4,3]);
     chainkinNoCorn(1:4,2)=[0.25;0.75;0.75;0.25];
     
@@ -71,10 +72,7 @@ function [newPoints,projPoints]=SubSurfChainkin(startPoints,refineSteps)
     newPoints=startPoints;
     for nIter=1:refineSteps
         numPoints=length(startPoints(:,1));
-        isCorner=DetectTrailingEdge(startPoints,TEisLeft) |...
-            DetectTrailingEdge(startPoints,~TEisLeft);
-%         isCorner=false(size(startPoints(:,1)));
-        cumCorner=cumsum(isCorner);
+        [isCorner,cumCorner]=ReturnActiveCorners(startPoints,sharpen,typeLocal);
         numNewPoints=(numPoints*2+cumCorner(end));
         subMask=zeros(numNewPoints,numPoints);
         
@@ -379,6 +377,37 @@ function [newPoints,subMask]=SubSurfVarStencil_NoCorn(startPoints,refineSteps,ne
     limCurvMat=LimitCurve(subMask,7);
 end
 
+function [isCorner,cumCorner]=ReturnActiveCorners(coord,sharpen,typeLocal)
+    
+    if sharpen(1)
+        isLocLE=DetectTrailingEdge(coord,1);
+    else
+        isLocLE=false([size(coord,1),1]);
+    end
+    if sharpen(2)
+        isLocTE=DetectTrailingEdge(coord,0);
+    else
+        isLocTE=false([size(coord,1),1]);
+    end
+    
+    isLocCorn=isLocLE | isLocTE;
+    
+    isExtremum=false([size(coord,1),1]);
+    [~,iMax]=max(coord(:,1));
+    [~,iMin]=min(coord(:,1));
+    isExtremum([iMax,iMin])=true;
+    
+    switch typeLocal
+        case 'local'
+            isCorner=isLocCorn;
+        case 'global'
+            isCorner=isExtremum & isLocCorn;
+        case 'none'
+            isCorner=false([size(coord,1),1]);
+    end
+    cumCorner=cumsum(isCorner);
+end
+
 function isCorner=DetectTrailingEdge(coord,TEisLeft)
     TEisLeft=(TEisLeft-0.5)*2;
     testLocMin=((TEisLeft*(coord([2:end,1],1)-coord(:,1)))>0) ...
@@ -442,6 +471,14 @@ function [projPoints]=ProjectPoints(points,eigMat,convFactor)
     projPoints=convFactor*eigMat*points;
     
 end
+
+function [points]=RemoveIdenticalPoints(points)
+    
+    points(find(sum((points([2:end,1],:)-points).^2,2)==0),:)=[];
+    
+    
+end
+
 %% OLD
 
 %{
