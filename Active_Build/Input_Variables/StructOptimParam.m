@@ -727,6 +727,15 @@ function [paroptim]=bp3_MultiTopo_M2_CG_wide()
  
 end
 
+function [paroptim]=Full_Aero_CG_missile_in()
+    
+    [paroptim]=Component_CG();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=4; 
+end
 % 24/06/2016
 function [paroptim]=bp3_Aero_CG_smile_in()
     
