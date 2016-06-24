@@ -1,4 +1,6 @@
-GENERATION PROCESS START
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
@@ -10,10 +12,6 @@ Calculations Started . . .
 
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:031
-GENERATION PROCESS end
-GRID REFINEMENT START
 
      OUTPUT:Skipped
 Calculations Started . . .
@@ -23,29 +21,160 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 9 
-			Start Cell 2 of 9 
-			Start Cell 3 of 9 
-			Start Cell 4 of 9 
-			Start Cell 5 of 9 
-			Start Cell 6 of 9 
-			Start Cell 7 of 9 
-			Start Cell 8 of 9 
-			Start Cell 9 of 9 
+			Start Cell 1 of 98 
+			Start Cell 2 of 98 
+			Start Cell 3 of 98 
+			Start Cell 4 of 98 
+			Start Cell 5 of 98 
+			Start Cell 6 of 98 
+			Start Cell 7 of 98 
+			Start Cell 8 of 98 
+			Start Cell 9 of 98 
+			Start Cell 10 of 98 
+			Start Cell 11 of 98 
+			Start Cell 12 of 98 
+			Start Cell 13 of 98 
+			Start Cell 14 of 98 
+			Start Cell 15 of 98 
+			Start Cell 16 of 98 
+			Start Cell 17 of 98 
+			Start Cell 18 of 98 
+			Start Cell 19 of 98 
+			Start Cell 20 of 98 
+			Start Cell 21 of 98 
+			Start Cell 22 of 98 
+			Start Cell 23 of 98 
+			Start Cell 24 of 98 
+			Start Cell 25 of 98 
+			Start Cell 26 of 98 
+			Start Cell 27 of 98 
+			Start Cell 28 of 98 
+			Start Cell 29 of 98 
+			Start Cell 30 of 98 
+			Start Cell 31 of 98 
+			Start Cell 32 of 98 
+			Start Cell 33 of 98 
+			Start Cell 34 of 98 
+			Start Cell 35 of 98 
+			Start Cell 36 of 98 
+			Start Cell 37 of 98 
+			Start Cell 38 of 98 
+			Start Cell 39 of 98 
+			Start Cell 40 of 98 
+			Start Cell 41 of 98 
+			Start Cell 42 of 98 
+			Start Cell 43 of 98 
+			Start Cell 44 of 98 
+			Start Cell 45 of 98 
+			Start Cell 46 of 98 
+			Start Cell 47 of 98 
+			Start Cell 48 of 98 
+			Start Cell 49 of 98 
+			Start Cell 50 of 98 
+			Start Cell 51 of 98 
+			Start Cell 52 of 98 
+			Start Cell 53 of 98 
+			Start Cell 54 of 98 
+			Start Cell 55 of 98 
+			Start Cell 56 of 98 
+			Start Cell 57 of 98 
+			Start Cell 58 of 98 
+			Start Cell 59 of 98 
+			Start Cell 60 of 98 
+			Start Cell 61 of 98 
+			Start Cell 62 of 98 
+			Start Cell 63 of 98 
+			Start Cell 64 of 98 
+			Start Cell 65 of 98 
+			Start Cell 66 of 98 
+			Start Cell 67 of 98 
+			Start Cell 68 of 98 
+			Start Cell 69 of 98 
+			Start Cell 70 of 98 
+			Start Cell 71 of 98 
+			Start Cell 72 of 98 
+			Start Cell 73 of 98 
+			Start Cell 74 of 98 
+			Start Cell 75 of 98 
+			Start Cell 76 of 98 
+			Start Cell 77 of 98 
+			Start Cell 78 of 98 
+			Start Cell 79 of 98 
+			Start Cell 80 of 98 
+			Start Cell 81 of 98 
+			Start Cell 82 of 98 
+			Start Cell 83 of 98 
+			Start Cell 84 of 98 
+			Start Cell 85 of 98 
+			Start Cell 86 of 98 
+			Start Cell 87 of 98 
+			Start Cell 88 of 98 
+			Start Cell 89 of 98 
+			Start Cell 90 of 98 
+			Start Cell 91 of 98 
+			Start Cell 92 of 98 
+			Start Cell 93 of 98 
+			Start Cell 94 of 98 
+			Start Cell 95 of 98 
+			Start Cell 96 of 98 
+			Start Cell 97 of 98 
+			Start Cell 98 of 98 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:094
-GRID REFINEMENT end
-SNAKE PROCESS START
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:01:092
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
   Start initialisation
     Generate Cell Centred Grid
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:00:390
+  Initialisation time:00:00:05:404
   Start Time Stepping
-  83 Steps Performed
-  Iteration Time:00:00:03:651
-  Volume converged to 1.22374e-10
-Time taken:00:00:04:103
-SNAKE PROCESS END
+  20 Steps Performed
+  Iteration Time:00:00:19:641
+  Volume converged to 1.57912e-02
+Time Elapsed:00:00:29:803
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:32:236
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+24-Jun-2016 17:12:33
+--------------------------------------------------------------------------------------------
+  
+{Matrix index is out of range for deletion.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput>FindDir', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 343)" style="font-weight:bold">OptimisationOutput>FindDir</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',343,0)">line 343</a>)
+    subDir(1:2)=[];
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput>FindProfile', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 329)" style="font-weight:bold">OptimisationOutput>FindProfile</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',329,0)">line 329</a>)
+    [returnPath]=FindDir(iterDir,'profile',true);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput>ConcatenateTecplotFile', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 310)" style="font-weight:bold">OptimisationOutput>ConcatenateTecplotFile</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',310,0)">line 310</a>)
+    [profPaths]=FindProfile(iterDir);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput_OptimisationOutput_iteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 133)" style="font-weight:bold">OptimisationOutput_OptimisationOutput_iteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',133,0)">line 133</a>)
+        ConcatenateTecplotFile(writeDirectory,tecFilePath)
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('OptimisationOutput', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m', 24)" style="font-weight:bold">OptimisationOutput</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationOutput.m',24,0)">line 24</a>)
+            out=OptimisationOutput_iteration(varargin{:});
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>PerformIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 228)" style="font-weight:bold">ExecuteOptimisation>PerformIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',228,0)">line 228</a>)
+    [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population,captureErrors);
+    
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 46)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',46,0)">line 46</a>)
+        [iterstruct(nIter).popu
