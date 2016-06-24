@@ -520,7 +520,7 @@ function [param]=SupersonicComponent()
     param.general.refineSteps=3;
     param.general.subdivType='chaikin';
     
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=6;
     param.snakes.refine.typeRefine='all';
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.TEShrink=true;

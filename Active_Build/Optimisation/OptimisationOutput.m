@@ -419,6 +419,11 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         system(['cat ''',destPath,''' > ''',tecPlotFile{2},'''']);
     end
     
+    nVar=0;
+    for ii=1:length(optimstruct)
+        nVar=max([length(optimstruct(ii).population),nVar]);
+    end
+    
     nVar=max([worker,length(optimstruct(1).population)]);
     nIter=length(optimstruct);
     iterRes=zeros([nIter,nVar])+defaultVal;
