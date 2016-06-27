@@ -161,6 +161,7 @@ function [paroptim]=OptimDE_weak(paroptim)
     paroptim.optim.DE.geneType='single'; % 'single' 'horz' 'vert'
     
 end
+
 function [paroptim]=OptimDE_horiz(paroptim)
     paroptim.general.optimMethod='DEtan';
     paroptim.optim.DE.diffAmplification=0.5; %[0,2]
@@ -727,7 +728,7 @@ function [paroptim]=bp3_MultiTopo_M2_CG_wide()
  
 end
 
-function [paroptim]=Full_Aero_CG_missile_in()
+function [paroptim]=Desk_CG_missile_in()
     
     [paroptim]=Component_CG();
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
@@ -736,6 +737,41 @@ function [paroptim]=Full_Aero_CG_missile_in()
     paroptim.general.maxIter=50;
     paroptim.general.worker=4; 
 end
+
+
+function [paroptim]=Desk_CG_missile_out()
+    
+    [paroptim]=Component_CG();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
+    paroptim.general.startPop='outerbound';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=4; 
+end
+
+function [paroptim]=Desk_DE_missile_horz()
+    
+    [paroptim]=Component_CG();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
+    paroptim.general.nPop=50;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=4; 
+end
+
+
+function [paroptim]=Desk_DE_smile_horz()
+    
+    [paroptim]=Component_DE();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.general.nPop=50;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=4; 
+end
+
 % 24/06/2016
 function [paroptim]=bp3_Aero_CG_smile_in()
     
@@ -780,7 +816,7 @@ end
 
 function [paroptim]=bp3_Aero_DE_smile_horz()
     
-    [paroptim]=Component_CG();
+    [paroptim]=Component_DE();
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
     paroptim.general.nPop=100;
@@ -812,7 +848,7 @@ end
 
 function [paroptim]=bp3_Aero_DE_missile_horz()
     
-    [paroptim]=Component_CG();
+    [paroptim]=Component_DE();
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
@@ -914,7 +950,7 @@ function [paroptim]=Tbp3_Aero_DE_missile()
     [paroptim]=bp3_Aero_DE_missile();
      paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=4; 
 end
 
 function [paroptim]=Tbp3_Aero_DE_missile_weak()
