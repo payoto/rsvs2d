@@ -150,7 +150,7 @@ function CopyFileLinux(p1,p2)
 end
 
 function [domainBounds]=MakeCartesianGridBounds(cellLevels)
-    
+    cellLevels=cellLevels+2;
     axRatio=cellLevels'/cellLevels(1);
     domainBounds=[-axRatio,axRatio];
     
