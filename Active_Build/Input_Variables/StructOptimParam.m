@@ -752,7 +752,7 @@ end
 
 function [paroptim]=Desk_DE_missile_horz()
     
-    [paroptim]=Component_CG();
+    [paroptim]=Component_DE();
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};

@@ -4,6 +4,7 @@
 function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iterstruct)
     include_Utilities
     include_PostProcessing
+    include_Optimisation
     
     % Reconstruct outinfo
     outinfo.rootDir=pathStr;
@@ -60,7 +61,7 @@ function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)
     if numel(nIter)>1
         nIterStart=nIter(1);
         nIterEnd=nIter(2);
-        nIter=nIter(2)-nIter(1);
+        nIter=nIter(2)-nIter(1)+1;
     end
     
     iterstruct=struct([]);

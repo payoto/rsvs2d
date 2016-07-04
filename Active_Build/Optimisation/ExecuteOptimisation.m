@@ -617,24 +617,6 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     end
 end
 
-function [isGradient]=CheckIfGradient(optimMethod)
-    
-    switch optimMethod
-        
-        case 'DE'
-            isGradient=false;
-        case 'DEtan'
-            isGradient=false;
-        case 'conjgrad'
-            isGradient=true;
-        case 'conjgradls'
-            isGradient=true;
-        otherwise
-            isGradient=false;
-            warning('Optimisation method is not known as gradient based or otherwise, no gradient is assumed')
-            
-    end
-end
 
 function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
     

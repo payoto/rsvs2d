@@ -113,7 +113,9 @@ function [datCol]=ProjectColormap(cMap,cDat,cBounds)
     if nargin==2
         cBounds=[min(cDat),max(cDat)];
     end
-    
+    if cBounds(1)==cBounds(2)
+        cBounds(2)=1+cBounds(2);
+    end
     nCol=length(cMap(:,1));
     
     cDat(cDat>max(cBounds))=max(cBounds);
