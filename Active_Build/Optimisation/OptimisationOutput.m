@@ -57,7 +57,7 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     indexEntry=MakeCommentsFile(fidComments,paramoptim.parametrisation,t,writeDirectory);
     fclose(fidComments);
     
-    % Index File Entry 
+    % Index File Entry
     [fidIndexFile]=OpenIndexFile(resultRoot,archiveName);
     WriteToFile(indexEntry,fidIndexFile);
     fclose(fidIndexFile);
@@ -83,8 +83,8 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,...
     marker=out.marker;
     t=out.tOutput;
     rootDir=out.rootDir;
-%     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
-%     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
+    %     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
+    %     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
     markerShort=[int2str(nIter),'_',int2str(nProf)];
     
     iterStr=['\iteration_',int2str(nIter)];
@@ -97,7 +97,7 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,...
     savStruct.snakSave=snakSave;
     savStruct.loop=loop;
     
-     % Output boundary data file
+    % Output boundary data file
     [fidBoundary]=OpenBoundaryFile(writeDirectory,markerShort);
     for ii=1:length(loop)
         loop(ii).subdivision=loop(ii).subdivspline;
@@ -122,16 +122,16 @@ function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
     t=out.tOutput;
     rootDir=out.rootDir;
     fullMark=out.marker;
-%     marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
-%     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
+    %     marker=['iteration_',int2str(nIter),datestr(t,'_yymmddTHHMM')];
+    %     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
     marker=['iteration_',int2str(nIter)];
     iterStr=['\iteration_',int2str(nIter)];
     writeDirectory=[rootDir,iterStr];
     writeDirectory=MakePathCompliant(writeDirectory);
     tecFilePath=[rootDir,filesep,'Tec360PLT_',fullMark,'.plt'];
     tecFilePath=MakePathCompliant(tecFilePath);
-        ConcatenateTecplotFile(writeDirectory,tecFilePath)
-        
+    ConcatenateTecplotFile(writeDirectory,tecFilePath)
+    
     if nIter~=0
         % iter entry
         [FIDIter]=OpenIterIndexFile(rootDir,out.marker);
@@ -159,8 +159,8 @@ end
 
 function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
-    varExtract={'direction','knownOptim','objectiveName','defaultVal'};
-    [direction,knownOptim,objectiveName,defaultVal]=ExtractVariables(varExtract,paroptim);
+    varExtract={'direction','knownOptim','objectiveName','defaultVal','optimMethod'};
+    [direction,knownOptim,objectiveName,defaultVal,optimMethod]=ExtractVariables(varExtract,paroptim);
     varExtract={'axisRatio'};
     [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
     
@@ -175,6 +175,15 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     GenerateIterResultBinary(writeDirectory,marker,optimstruct)
     dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
     
+    % Figure 
+    [isGradient]=CheckIfGradient(optimMethod);
+    [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
+    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
+    figName=MakePathCompliant(figName);
+    hgsave(h,figName);
+    
+    % Tecplot flow files
     if strcmp(objectiveName,'CutCellFlow')
         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
             dat.xMin,dat.xMax,dat.A,dat.nPoints);
@@ -189,15 +198,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
         ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
             tecPlotFile,axisRatio,paroptim);
-
+        
     end
-    
-    [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,direction);
-    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
-    figName=MakePathCompliant(figName);
-    hgsave(h,figName);
-   
 end
 
 function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
@@ -215,7 +217,7 @@ function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
     
     
     if strcmp(objectiveName,'CutCellFlow')
-
+        
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
         [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
@@ -228,7 +230,7 @@ function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
     
     [h]=OptimHistory(optimstruct,knownOptim,direction);
     
-   
+    
 end
 
 %% Index File ops
@@ -333,7 +335,7 @@ function [profPaths]=FindProfile(iterDir)
         profPaths(ii)=FindDir(returnPath{ii},'tecsubfile',false);
         
     end
-
+    
 end
 
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
@@ -359,7 +361,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
         returnName{ii}=subDir(returnSub(ii)).name;
         
     end
-      
+    
     
     
 end
@@ -396,6 +398,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
     
     delete(tecPlotFile{1});
     delete(tecPlotFile{2});
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
     
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
     isIter0=regexp(iterFolders,'_0');
@@ -419,14 +422,8 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         system(['cat ''',destPath,''' > ''',tecPlotFile{2},'''']);
     end
     
-    nVar=0;
-    for ii=1:length(optimstruct)
-        nVar=max([length(optimstruct(ii).population),nVar]);
-    end
     
-    nVar=max([worker,length(optimstruct(1).population)]);
-    nIter=length(optimstruct);
-    iterRes=zeros([nIter,nVar])+defaultVal;
+    
     for ii=1:nIter
         nAct=length(optimstruct(ii).population);
         iterRes(ii,1:nAct)=[optimstruct(ii).population(:).objective];
@@ -441,7 +438,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
     % Prepare CFD file with newest version
     for ii=1:nIter
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-%         PrepareCFDPostProcessing(minIterPos);
+        %         PrepareCFDPostProcessing(minIterPos);
         
     end
     
@@ -465,7 +462,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-
+            
             RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 CutCellFlow_Handler(paramoptim,minIterPos)
@@ -480,14 +477,25 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         
     end
     
-    parfor ii=1:nIter
+    for ii=1:nIter
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         [~,filename]=FindDir( minIterPos,'tecsubfile',false);
         jj=1;
-        while ~isempty(regexp(filename{jj},'copy', 'once'))
-            jj=jj+1;
+        try 
+            while ~isempty(regexp(filename{jj},'copy', 'once'))
+                jj=jj+1;
+            end
+        catch ME
+            ME.getReport
+            minIterPos
+            optimstruct(ii).population
+            jj=jj
+            ii=ii
+            filename
+            throw(ME)
         end
+            
         
         copyfile([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
         
@@ -519,6 +527,17 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
     
 end
 
+function [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal)
+    
+    nVar=0;
+    for ii=1:length(optimstruct)
+        nVar=max([length(optimstruct(ii).population),nVar]);
+    end
+    nIter=length(optimstruct);
+    iterRes=zeros([nIter,nVar])+sign(defaultVal)*abs(defaultVal^2);
+    
+end
+
 function RunCFDPostProcessing(profilePath)
     
     compType=computer;
@@ -526,7 +545,7 @@ function RunCFDPostProcessing(profilePath)
     
     postPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
     if strcmp(compType(1:2),'PC')
-
+        
         [~,~]=system(['"',postPath,'.bat"']);
     else
         
@@ -592,7 +611,7 @@ function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
         fprintf(destF,[str,'\n']);
         flagFinished=flagTime>=nOccur && flagStrand>=nOccur;
     end
-    while (~feof(sourceF)) 
+    while (~feof(sourceF))
         str=fgetl(sourceF);
         fprintf(destF,[str,'\n']);
     end
@@ -619,7 +638,7 @@ function [destPath]=EditVariablePLT_FELINESEG(varList,ratio,cfdPath,filename)
         if ~isempty(regexp(str,'FELINESEG', 'once'))
             flagFinished=true;
         end
-            
+        
     end
     for ii=1:nNodes
         str=fgetl(sourceF);
@@ -628,7 +647,7 @@ function [destPath]=EditVariablePLT_FELINESEG(varList,ratio,cfdPath,filename)
         str=num2str(num);
         fprintf(destF,[str,'\n']);
     end
-    while (~feof(sourceF)) 
+    while (~feof(sourceF))
         str=fgetl(sourceF);
         fprintf(destF,[str,'\n']);
     end
@@ -666,7 +685,7 @@ function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,file
             fprintf(destF,[str,'\n']);
         end
     end
-    while (~feof(sourceF)) 
+    while (~feof(sourceF))
         str=fgetl(sourceF);
         fprintf(destF,[str,'\n']);
     end
@@ -678,10 +697,10 @@ end
 function [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,dirOptim)
     
     if ~isGradient
-      
-            [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim);
+        
+        [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim);
     else
-            [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim);
+        [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim);
     end
     
 end
@@ -746,7 +765,7 @@ function [h]=OptimHistory_old(optimstruct,knownOptim,dirOptim)
     yT=min(minRes)-(box(4)-box(3))*0.05;
     strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
     strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
-
+    
     strT=regexprep(strT,'\ ','\\space');
     text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
     
@@ -789,7 +808,9 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     subplot(1,2,1,'ticklabelinterpreter','latex')
     nVar=length(optimstruct(1).population);
     nIter=length(optimstruct);
-    iterRes=zeros([nIter,nVar])+defaultVal;
+    
+    
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
     hold on
     
     for ii=1:nIter
@@ -839,7 +860,7 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     yT=min(minRes)-(box(4)-box(3))*0.05;
     strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
     strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
-
+    
     strT=regexprep(strT,'\ ','\\space');
     text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
     
@@ -856,7 +877,7 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
         case 'max'
             errMeasure=knownOptim-minRes;
     end
-
+    
     
     popNominal=zeros([nIter,numel(optimstruct(1).population(1).fill)]);
     objNominal=zeros([nIter,1]);
@@ -873,7 +894,7 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
         end
     end
     
-     for ii=1:nIter
+    for ii=1:nIter
         
         popNominal(ii,:)=optimstruct(ii).population(minPos(ii)).fill;
         objNominal(ii)=optimstruct(ii).population(minPos(ii)).objective;
@@ -931,9 +952,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     
     % Plot 1
     subplot(1,2,1,'ticklabelinterpreter','latex')
-    nVar=length(optimstruct(1).population);
-    nIter=length(optimstruct);
-    iterRes=zeros([nIter,nVar])+defaultVal;
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
     hold on
     for ii=1:nIter
         nVarLoc=length(optimstruct(ii).population);
@@ -986,7 +1005,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     yT=min(minRes)-(box(4)-box(3))*0.05;
     strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
     strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
-
+    
     strT=regexprep(strT,'\ ','\\space');
     text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
     
@@ -1002,15 +1021,15 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     end
     
     
-%     for ii=1:nIter
-%         nPop=length(optimstruct(ii).population);
-%         for jj=1:nPop
-%             plot3(ones(size(optimstruct(ii).population(jj).fill))*((ii+1)/2),...
-%                 1:numel(optimstruct(ii).population(jj).fill),...
-%                 optimstruct(ii).population(jj).fill)
-%             hold on
-%         end
-%     end
+    %     for ii=1:nIter
+    %         nPop=length(optimstruct(ii).population);
+    %         for jj=1:nPop
+    %             plot3(ones(size(optimstruct(ii).population(jj).fill))*((ii+1)/2),...
+    %                 1:numel(optimstruct(ii).population(jj).fill),...
+    %                 optimstruct(ii).population(jj).fill)
+    %             hold on
+    %         end
+    %     end
     
     popNominal=zeros([ceil(nIter/2),numel(optimstruct(1).population(1).fill)]);
     objNominal=zeros([ceil(nIter/2),1]);
@@ -1073,8 +1092,14 @@ function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,
     resultDirectory=MakePathCompliant(resultDirectory);
     profileDir=optimsolution.location;
     
-    copyfile(profileDir,resultDirectory);
-    
+    %copyfile(profileDir,resultDirectory,'f');
+    compType=computer;
+    if strcmp(compType(1:2),'PC')
+            copyfile(profileDir,resultDirectory);
+        else
+            [~,~]=system(['rsync -r --exclude=*.*[0-9]* ''',profileDir,'/'' ''',resultDirectory,'''']);
+            
+    end
     c=dir(resultDirectory);
     isFileName=false;
     ii=0;

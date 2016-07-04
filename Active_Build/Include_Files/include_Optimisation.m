@@ -64,6 +64,24 @@ function [inactiveVar,activeVar]=InactiveVariables_wideborder(newFill,derivtensc
 end
     
     
+function [isGradient]=CheckIfGradient(optimMethod)
+    
+    switch optimMethod
+        
+        case 'DE'
+            isGradient=false;
+        case 'DEtan'
+            isGradient=false;
+        case 'conjgrad'
+            isGradient=true;
+        case 'conjgradls'
+            isGradient=true;
+        otherwise
+            isGradient=false;
+            warning('Optimisation method is not known as gradient based or otherwise, no gradient is assumed')
+            
+    end
+end
     
     
     
