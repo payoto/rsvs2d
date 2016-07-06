@@ -61,8 +61,7 @@ function [inactiveVar,activeVar]=InactiveVariables_wideborder(newFill,derivtensc
     activeVar=unique([activeVar,[derivtenscalc(actVarSub(cutActVar)).neighbours]]);
     inactiveVar=1:length(newFill);
     inactiveVar(activeVar)=[];
-end
-    
+end 
     
 function [isGradient]=CheckIfGradient(optimMethod)
     
