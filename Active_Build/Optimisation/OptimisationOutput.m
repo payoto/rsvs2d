@@ -806,9 +806,6 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     
     % Plot 1
     subplot(1,2,1,'ticklabelinterpreter','latex')
-    nVar=length(optimstruct(1).population);
-    nIter=length(optimstruct);
-    
     
     [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
     hold on

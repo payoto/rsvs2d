@@ -466,27 +466,6 @@ function [newPop,deltas]=...
     
 end
 
-function [newRootFill]=OverflowHandling2(paramoptim,newRootFill)
-    % Function which handles steps overflowing the fill constraint
-    
-    varExtract={'desVarRange','varOverflow'};
-    [desVarRange,varOverflow]=ExtractVariables(varExtract,paramoptim);
-    
-    switch varOverflow
-        case 'truncate'
-            minD=min(desVarRange);
-            maxD=max(desVarRange);
-            newRootFill(newRootFill<minD)=minD;
-            newRootFill(newRootFill>maxD)=maxD;
-            
-        otherwise
-            error('No valid design variable overflow mechanism')
-            
-    end
-    
-    
-    
-end
 
 function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
@@ -627,7 +606,98 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     
 end
 
-%%
+%% various
+
+function [newRootFill]=OverflowHandling2(paramoptim,newRootFill)
+    % Function which handles steps overflowing the fill constraint
+    
+    varExtract={'desVarRange','varOverflow'};
+    [desVarRange,varOverflow]=ExtractVariables(varExtract,paramoptim);
+    
+    switch varOverflow
+        case 'truncate'
+            minD=min(desVarRange);
+            maxD=max(desVarRange);
+            newRootFill(newRootFill<minD)=minD;
+            newRootFill(newRootFill>maxD)=maxD;
+            
+        case 'spill'
+            
+            
+        otherwise
+            error('No valid design variable overflow mechanism')
+            
+    end
+    
+    
+    
+end
+
+function [newFill]=SpillOverflow(paramoptim,newRootFill)
+    
+    varExtract={'desVarRange','desvarconnec'};
+    [desVarRange,desvarconnec]=ExtractVariables(varExtract,paramoptim);
+    
+    overVar=find(newRootFill>max(desVarRange));
+    underVar=find(newRootFill<min(desVarRange));
+    
+    while ~isempty(overVar) || ~isempty(underVar)
+    
+        
+        
+        
+        overVar=find(newRootFill>max(desVarRange));
+        underVar=find(newRootFill<min(desVarRange));
+    end
+    
+end
+
+
+function []=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar)
+    
+    desVarIndList=[desvarconnec(:).index];
+    
+    for ii=1:length(flowVar)
+        
+        neighInd=desvarconnec(currSub).neighbours;
+        cornInd=desvarconnec(currSub).corners;
+        
+        currSub=FindObjNum([],flowVar(ii),desVarIndList);
+        neighSub=FindObjNum([],neighInd,desVarIndList);
+        cornSub=FindObjNum([],cornInd,desVarIndList);
+        
+        currVol=newRootFill(currSub);
+        neighVol=newRootFill(neighSub);
+        cornVol=newRootFill(cornSub);
+        
+        neighEmpt=neighSub(neighVol<=0);
+        cornEmpt=cornSub(cornVol<=0);
+        for jj=1:length(cornEmpt)
+            neighGreyCell{jj}=FindObjNum([],desvarconnec(cornEmpt(jj)).neighbours,neighInd);
+        end
+        neighAll=[neighGreyCell{:}];
+        neighSubAll=neighSub(RemoveIdenticalEntries(neighAll(neighAll~=0)));
+        neighSubAll=RemoveIdenticalEntries([neighEmpt,neighSubAll]);
+        
+        nCorn=numel(cornEmpt);
+        nNeigh=sum(1-newRootFill(neighSubAll));
+        if nCorn>0
+            baseRate=(-nNeigh+sqrt(nNeigh^2+4*nCorn))/(2*nCorn);
+        elseif nNeigh>0
+            baseRate=1/nNeigh;
+        else
+            nCorn=numel(cornSub);
+            nNeigh=numel(neighSub);
+            neighSubAll=neighSub;
+            cornEmpt=cornSub;
+            baseRate=(-nNeigh+sqrt(nNeigh^2+4*nCorn))/(2*nCorn);
+        end
+        
+        
+    end
+    
+    
+end
 
 %{
 % Conjugate Gradient Method

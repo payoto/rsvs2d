@@ -124,7 +124,8 @@ function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter,
             iterstruct(startIter+1).population(ii).optimdat.value=deltas{ii}(2,:);
             
         end
-        iterstruct(startIter+1).population=ApplySymmetry(paroptim,iterstruct(startIter+1).population);
+        iterstruct(startIter+1).population=ApplySymmetry(paroptim,...
+            iterstruct(startIter+1).population);
     else
         [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter);
     end
@@ -133,8 +134,8 @@ end
 
 %%  Optimisation Operation Blocks
 
-function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,restartsnake]...
-        =InitialiseOptimisation(caseStr)
+function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+        connectstructinfo,unstrRef,restartsnake]=InitialiseOptimisation(caseStr)
     
     procStr='INITIALISE OPTIMISATION PROCESS';
     [tStart]=PrintStart(procStr,1);
@@ -163,7 +164,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [paramoptim.general.desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    [paramoptim.general.desvarconnec]=...
+        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     % Start Parallel Pool
     
     if numel(gcp('nocreate'))==0
@@ -183,15 +185,19 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,connectst
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim);
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
+    
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
-        baseGrid,connectstructinfo,paramoptim.initparam,paramoptim.spline,outinfo,0,0,0);
-    [outinfo]=OptimisationOutput('iteration',paramoptim,0,outinfo,iterstruct(1),{});
+        baseGrid,connectstructinfo,paramoptim.initparam,...
+        paramoptim.spline,outinfo,0,0,0);
+    
+    [outinfo]=OptimisationOutput('iteration',...
+        paramoptim,0,outinfo,iterstruct(1),{});
     
     [~]=PrintEnd(procStr,1,tStart);
 end
 
-function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridrefined,restartsnake,...
-        baseGrid,connectstructinfo)
+function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
+        gridrefined,restartsnake,baseGrid,connectstructinfo)
     
     
     varExtract={'nPop','objectiveName','defaultVal'};
@@ -229,9 +235,9 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,gridr
     
 end
 
-function population=NormalExecutionIteration(population,newRefGrid,newrestartsnake,...
-        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,...
-        objectiveName,paramoptim)
+function population=NormalExecutionIteration(population,newRefGrid,...
+        newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
+        ,outinfo,nIter,ii,objectiveName,paramoptim)
     
     varExtract={'restart','boundstr'};
     [isRestart,boundstr]=ExtractVariables(varExtract,paramsnake);
@@ -275,7 +281,8 @@ function population=EnforceConstraintViolation(population,defaultVal)
     
 end
 
-function [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,iterStart)
+function [iterstruct,paramoptim]...
+        =GenerateNewPop(paramoptim,iterstruct,nIter,iterStart)
     procStr=['Generate New Population'];
     [tStart]=PrintStart(procStr,2);
     
@@ -312,8 +319,8 @@ end
 
 %% Parametrisation Interface
 
-function [unstructured,unstructReshape,gridrefined,connectstructinfo,unstructuredrefined,loop]...
-        =GridInitAndRefine(param)
+function [unstructured,unstructReshape,gridrefined,connectstructinfo,...
+        unstructuredrefined,loop]=GridInitAndRefine(param)
     % Executes the Grid Initialisation process
     procStr='INITIAL GRID OPERATIONS';
     [tStart]=PrintStart(procStr,2);
@@ -329,7 +336,8 @@ function [unstructured,unstructReshape,gridrefined,connectstructinfo,unstructure
     
 end
 
-function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,restartsnake,connectstructinfo,newFill)
+function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,...
+        restartsnake,connectstructinfo,newFill)
     
     activeCell=logical([baseGrid.cell(:).isactive]);
     activeInd=[baseGrid.cell((activeCell)).index];
