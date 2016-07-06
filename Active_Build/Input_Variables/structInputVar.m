@@ -436,7 +436,7 @@ function [param]=optimSupersonic()
     
     param.snakes.refine.axisRatio=0.25;
     
-    param.optiminit.cellLevels=[10,2];
+    param.optiminit.cellLevels=[4,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
@@ -447,7 +447,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
     param.general.refineSteps=3;
-    
+    param.optiminit.corneractive=true;
 end
 
 function [param]=optimSupersonic_Long()

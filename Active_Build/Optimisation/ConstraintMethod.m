@@ -27,7 +27,7 @@ function [population,varargout]=ConstraintMethod(entryPoint,paramoptim,populatio
                 [population,varargout]=InitVariableConsCaller(initConstr{ii},initVal{ii},...
                     paramoptim,population,varargin{:});
             end
-            
+            if isempty(varargout{1}),varargout{1}=paramoptim;end
             
         case 'DesVar'
             varExtract={'desVarConstr','desVarVal'};
