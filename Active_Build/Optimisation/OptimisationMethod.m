@@ -38,6 +38,8 @@ function [newPop,iterCurr,paramoptim,deltas]=OptimisationMethod(paramoptim,varar
             
         case 'SQP'
             
+        otherwise
+            warning('unrecognised optimisation')
     end
     
 end
@@ -108,8 +110,8 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
         mutVec=projFunc(projInv(iterCurr(rInd(1)).fill)+diffAmp*...
             (projInv(iterCurr(rInd(2)).fill)-projInv(iterCurr(rInd(3)).fill)));
         %mutVec=mutVec*(max(desVarRange)-min(desVarRange))+min(desVarRange);
-        mutVec(mutVec>max(desVarRange))=max(desVarRange);
-        mutVec(mutVec<min(desVarRange))=min(desVarRange);
+%         mutVec(mutVec>max(desVarRange))=max(desVarRange);
+%         mutVec(mutVec<min(desVarRange))=min(desVarRange);
         % Crossover
         crossVec=-ones([1,nFill]);
         
@@ -118,6 +120,7 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
         crossVec(fromMutVecLog)=mutVec(fromMutVecLog);
         crossVec(~fromMutVecLog)=iterCurr(ii).fill(~fromMutVecLog);
         
+        [crossVec]=OverflowHandling2(paramoptim,crossVec);
         newPop(ii,:)=crossVec;
         
     end
@@ -622,8 +625,11 @@ function [newRootFill]=OverflowHandling2(paramoptim,newRootFill)
             newRootFill(newRootFill>maxD)=maxD;
             
         case 'spill'
-            
-            
+            newFill=zeros(size(newRootFill));
+            for ii=1:size(newRootFill,1)
+                [newFill(ii,:)]=SpillOverflow(paramoptim,newRootFill(ii,:));
+            end
+            newRootFill=newFill;
         otherwise
             error('No valid design variable overflow mechanism')
             
@@ -638,31 +644,50 @@ function [newFill]=SpillOverflow(paramoptim,newRootFill)
     varExtract={'desVarRange','desvarconnec'};
     [desVarRange,desvarconnec]=ExtractVariables(varExtract,paramoptim);
     
-    overVar=find(newRootFill>max(desVarRange));
-    underVar=find(newRootFill<min(desVarRange));
+    normRootFill=(newRootFill-min(desVarRange))/(max(desVarRange)-min(desVarRange));
     
-    while ~isempty(overVar) || ~isempty(underVar)
-    
+    overVar=find(normRootFill>1);
+    underVar=find(normRootFill<0);
+    exitFlag=false;
+    kk=0;
+    while (~isempty(overVar) || ~isempty(underVar)) && ~exitFlag
+        
+        
+        [normRootFill]=SpillOverflowVarHandling(normRootFill,desvarconnec,overVar);
+        
+        normRootFill=1-normRootFill;
+        [normRootFill]=SpillOverflowVarHandling(normRootFill,desvarconnec,underVar);
+        normRootFill=1-normRootFill;
         
         
         
-        overVar=find(newRootFill>max(desVarRange));
-        underVar=find(newRootFill<min(desVarRange));
+        overVar=find(normRootFill>1);
+        underVar=find(normRootFill<0);
+        meanFill=mean(normRootFill);
+        stdFill=std(normRootFill);
+        kk=kk+1;
+        if ((meanFill>=1 || meanFill<=0)  && (abs(stdFill)<1e-5)) || kk>100
+            exitFlag=true;
+        end
+        
     end
     
+    newFill=normRootFill*(max(desVarRange)-min(desVarRange))+min(desVarRange);
 end
 
-
-function []=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar)
+function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar)
     
     desVarIndList=[desvarconnec(:).index];
     
+    overFlowMat=zeros([length(flowVar),length(newRootFill)]);
+    
     for ii=1:length(flowVar)
+        
+        currSub=FindObjNum([],flowVar(ii),desVarIndList);
         
         neighInd=desvarconnec(currSub).neighbours;
         cornInd=desvarconnec(currSub).corners;
         
-        currSub=FindObjNum([],flowVar(ii),desVarIndList);
         neighSub=FindObjNum([],neighInd,desVarIndList);
         cornSub=FindObjNum([],cornInd,desVarIndList);
         
@@ -672,30 +697,80 @@ function []=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar)
         
         neighEmpt=neighSub(neighVol<=0);
         cornEmpt=cornSub(cornVol<=0);
+        neighGreyCell={[]};
         for jj=1:length(cornEmpt)
-            neighGreyCell{jj}=FindObjNum([],desvarconnec(cornEmpt(jj)).neighbours,neighInd);
+            neighGreyCell{jj}=FindObjNum([],desvarconnec(cornEmpt(jj)).neighbours,neighInd)';
         end
         neighAll=[neighGreyCell{:}];
         neighSubAll=neighSub(RemoveIdenticalEntries(neighAll(neighAll~=0)));
-        neighSubAll=RemoveIdenticalEntries([neighEmpt,neighSubAll]);
+        neighSubAll=RemoveIdenticalEntries([neighEmpt;neighSubAll]);
+        neighSubAll=neighSubAll(newRootFill(neighSubAll)<1);
         
         nCorn=numel(cornEmpt);
         nNeigh=sum(1-newRootFill(neighSubAll));
+        isNormProb=true;
+        
         if nCorn>0
             baseRate=(-nNeigh+sqrt(nNeigh^2+4*nCorn))/(2*nCorn);
+            
         elseif nNeigh>0
             baseRate=1/nNeigh;
-        else
-            nCorn=numel(cornSub);
-            nNeigh=numel(neighSub);
-            neighSubAll=neighSub;
-            cornEmpt=cornSub;
+        
+        elseif numel(neighSub(newRootFill(neighSub)<1))>0 ...
+                && numel(cornSub(newRootFill(cornSub)<1))>0
+            
+            neighSubAll=neighSub(newRootFill(neighSub)<1);
+            cornEmpt=cornSub(newRootFill(cornSub)<1);
+            nCorn=numel(cornEmpt);
+            nNeigh=sum(1-newRootFill(neighSubAll));
+            
             baseRate=(-nNeigh+sqrt(nNeigh^2+4*nCorn))/(2*nCorn);
+            
+        elseif numel(neighSub(newRootFill(neighSub)<1))>0
+            neighSubAll=neighSub(newRootFill(neighSub)<1);
+            nNeigh=sum(1-newRootFill(neighSubAll));
+            baseRate=1/nNeigh;
+            
+        elseif numel(cornSub(newRootFill(cornSub)<1))>0
+            neighSubAll=cornSub(newRootFill(cornSub)<1);
+            nNeigh=sum(1-newRootFill(neighSubAll));
+            baseRate=1/nNeigh;
+            
+        elseif numel(neighSub(newRootFill(neighSub)<currVol))>0 || ...
+                 numel(cornSub(newRootFill(cornSub)<currVol))>0
+            neighSubAll=[neighSub(newRootFill(neighSub)<currVol);cornSub(newRootFill(cornSub)<currVol)];
+            nNeigh=sum(currVol-newRootFill(neighSubAll));
+            baseRate=1/nNeigh;
+            
+            isNormProb=false;
+        else
+            neighSubAll=[];
+            nNeigh=sum(-newRootFill(neighSubAll));
+            
+            baseRate=0;
+            
+            isNormProb=false;
         end
         
+        if isNormProb
+            overFlowVol=zeros(size(newRootFill));
+            overFlowVol(neighSubAll)=(1-newRootFill(neighSubAll))*baseRate;
+            overFlowVol(cornEmpt)=baseRate^2;
+            overFlowVol(currSub)=-1;
+            overFlowMat(ii,:)=overFlowVol*(currVol-1);
+            %newRootFill=newRootFill+overFlowVol*(currVol-1);
+        else
+            overFlowVol=zeros(size(newRootFill));
+            overFlowVol(neighSubAll)=baseRate*(currVol-newRootFill(neighSubAll));
+            overFlowVol(cornEmpt)=baseRate^2;
+            overFlowVol(currSub)=-sum(overFlowVol);
+            overFlowMat(ii,:)=overFlowVol*(currVol-max([min(newRootFill(neighSubAll)),1]))*2/3;
+            %newRootFill=newRootFill+overFlowVol*(currVol-max([min(newRootFill(neighSubAll)),1]))*2/3;
+        end
         
     end
     
+     newRootFill=newRootFill+sum(overFlowMat,1);
     
 end
 

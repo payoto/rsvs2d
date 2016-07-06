@@ -75,6 +75,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
+    paroptimgeneral.varOverflow='truncate'; % 'truncate' 'spill' 
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -88,7 +89,6 @@ function [paroptimoptimCG]=DefaultOptimCG()
     
     paroptimoptimCG.diffStepSize=[1e-3,-1e-3]; %[0,2]
     
-    paroptimoptimCG.varOverflow='truncate'; % 'truncate' 'border' 
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
@@ -173,6 +173,7 @@ function [paroptim]=OptimCG(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.general.startPop='halfuniformsharp';
+    paroptim.general.varOverflow='truncate';
     paroptim.general.iterGap=2;
 end
 
@@ -310,7 +311,7 @@ function [paroptim]=CG_Area()
     
     [paroptim]=DefaultOptim();
     
-    paroptim=ModifySnakesParam(paroptim,'optimDefault');
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
     
     [paroptim]=SumVolumeConstraint2(paroptim);
     
@@ -321,6 +322,7 @@ function [paroptim]=CG_Area()
     paroptim.general.symType='horz'; % 'horz'
    
 end
+
 
 function [paroptim]=DE_Aero()
     
@@ -402,6 +404,22 @@ function [paroptim]=Component_DE()
 end
 
 %% Callable functions
+
+function [paroptim]=TestOptim()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
+    
+    [paroptim]=SumVolumeConstraint2(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.optimMethod='conjgrad';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='horz'; % 'horz'
+   
+end
 
 function [paroptim]=StandardOptim()
     
@@ -738,7 +756,6 @@ function [paroptim]=Desk_CG_missile_in()
     paroptim.general.worker=4; 
 end
 
-
 function [paroptim]=Desk_CG_missile_out()
     
     [paroptim]=Component_CG();
@@ -760,7 +777,6 @@ function [paroptim]=Desk_DE_missile_horz()
     paroptim.general.maxIter=50;
     paroptim.general.worker=4; 
 end
-
 
 function [paroptim]=Desk_DE_smile_horz()
     

@@ -1,18 +1,19 @@
-if system_dependent('IsDebugMode')==1, dbquit; end
-ExecuteOptimisation('Tbp3_Aero_DE_missile')
+    1.9935    1.0000    2.9935    1.0000    1.9935
+
+ExecuteOptimisation('TestOptim')
   
 --------------------------------------------------------------------------------------------
 ********************************************************************************************
 --------------------------------------------------------------------------------------------
-OPTIMISATION - Tbp3_Aero_DE_missile start
-05-Jul-2016 15:40:40
+OPTIMISATION - TestOptim start
+06-Jul-2016 15:05:34
 --------------------------------------------------------------------------------------------
   
   
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 INITIALISE OPTIMISATION PROCESS start
-05-Jul-2016 15:40:40
+06-Jul-2016 15:05:34
 --------------------------------------------------------------------------------------------
   
 WRITING AUTOMATIC FUNCTIONS
@@ -45,110 +46,47 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 98 
-			Start Cell 2 of 98 
-			Start Cell 3 of 98 
-			Start Cell 4 of 98 
-			Start Cell 5 of 98 
-			Start Cell 6 of 98 
-			Start Cell 7 of 98 
-			Start Cell 8 of 98 
-			Start Cell 9 of 98 
-			Start Cell 10 of 98 
-			Start Cell 11 of 98 
-			Start Cell 12 of 98 
-			Start Cell 13 of 98 
-			Start Cell 14 of 98 
-			Start Cell 15 of 98 
-			Start Cell 16 of 98 
-			Start Cell 17 of 98 
-			Start Cell 18 of 98 
-			Start Cell 19 of 98 
-			Start Cell 20 of 98 
-			Start Cell 21 of 98 
-			Start Cell 22 of 98 
-			Start Cell 23 of 98 
-			Start Cell 24 of 98 
-			Start Cell 25 of 98 
-			Start Cell 26 of 98 
-			Start Cell 27 of 98 
-			Start Cell 28 of 98 
-			Start Cell 29 of 98 
-			Start Cell 30 of 98 
-			Start Cell 31 of 98 
-			Start Cell 32 of 98 
-			Start Cell 33 of 98 
-			Start Cell 34 of 98 
-			Start Cell 35 of 98 
-			Start Cell 36 of 98 
-			Start Cell 37 of 98 
-			Start Cell 38 of 98 
-			Start Cell 39 of 98 
-			Start Cell 40 of 98 
-			Start Cell 41 of 98 
-			Start Cell 42 of 98 
-			Start Cell 43 of 98 
-			Start Cell 44 of 98 
-			Start Cell 45 of 98 
-			Start Cell 46 of 98 
-			Start Cell 47 of 98 
-			Start Cell 48 of 98 
-			Start Cell 49 of 98 
-			Start Cell 50 of 98 
-			Start Cell 51 of 98 
-			Start Cell 52 of 98 
-			Start Cell 53 of 98 
-			Start Cell 54 of 98 
-			Start Cell 55 of 98 
-			Start Cell 56 of 98 
-			Start Cell 57 of 98 
-			Start Cell 58 of 98 
-			Start Cell 59 of 98 
-			Start Cell 60 of 98 
-			Start Cell 61 of 98 
-			Start Cell 62 of 98 
-			Start Cell 63 of 98 
-			Start Cell 64 of 98 
-			Start Cell 65 of 98 
-			Start Cell 66 of 98 
-			Start Cell 67 of 98 
-			Start Cell 68 of 98 
-			Start Cell 69 of 98 
-			Start Cell 70 of 98 
-			Start Cell 71 of 98 
-			Start Cell 72 of 98 
-			Start Cell 73 of 98 
-			Start Cell 74 of 98 
-			Start Cell 75 of 98 
-			Start Cell 76 of 98 
-			Start Cell 77 of 98 
-			Start Cell 78 of 98 
-			Start Cell 79 of 98 
-			Start Cell 80 of 98 
-			Start Cell 81 of 98 
-			Start Cell 82 of 98 
-			Start Cell 83 of 98 
-			Start Cell 84 of 98 
-			Start Cell 85 of 98 
-			Start Cell 86 of 98 
-			Start Cell 87 of 98 
-			Start Cell 88 of 98 
-			Start Cell 89 of 98 
-			Start Cell 90 of 98 
-			Start Cell 91 of 98 
-			Start Cell 92 of 98 
-			Start Cell 93 of 98 
-			Start Cell 94 of 98 
-			Start Cell 95 of 98 
-			Start Cell 96 of 98 
-			Start Cell 97 of 98 
-			Start Cell 98 of 98 
+			Start Cell 1 of 24 
+			Start Cell 2 of 24 
+			Start Cell 3 of 24 
+			Start Cell 4 of 24 
+			Start Cell 5 of 24 
+			Start Cell 6 of 24 
+			Start Cell 7 of 24 
+			Start Cell 8 of 24 
+			Start Cell 9 of 24 
+			Start Cell 10 of 24 
+			Start Cell 11 of 24 
+			Start Cell 12 of 24 
+			Start Cell 13 of 24 
+			Start Cell 14 of 24 
+			Start Cell 15 of 24 
+			Start Cell 16 of 24 
+			Start Cell 17 of 24 
+			Start Cell 18 of 24 
+			Start Cell 19 of 24 
+			Start Cell 20 of 24 
+			Start Cell 21 of 24 
+			Start Cell 22 of 24 
+			Start Cell 23 of 24 
+			Start Cell 24 of 24 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:983
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:141
 INITIAL GRID OPERATIONS end
 -----------------------
   
+[Warning: Symmetry assignement not robust when taken with the rest of the program] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>BuildSymmetryLists', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 424)" style="font-weight:bold">ExecuteOptimisation>BuildSymmetryLists</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',424,0)">line 424</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>OptimisationParametersModif', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 396)" style="font-weight:bold">ExecuteOptimisation>OptimisationParametersModif</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',396,0)">line 396</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 184)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',184,0)">line 184</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)] 
+[Warning: Optimisation method is not known as gradient based or otherwise, no gradient is assumed] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_Optimisation>CheckIfGradient', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Optimisation.m', 80)" style="font-weight:bold">include_Optimisation>CheckIfGradient</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Optimisation.m',80,0)">line 80</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CheckIfGradient', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckIfGradient.m', 6)" style="font-weight:bold">CheckIfGradient</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckIfGradient.m',6,0)">line 6</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialisePopulation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 606)" style="font-weight:bold">ExecuteOptimisation>InitialisePopulation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',606,0)">line 606</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 185)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',185,0)">line 185</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)] 
   
 -----------------------
 SNAKE PROCESS start
@@ -157,20 +95,35 @@ SNAKE PROCESS start
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:04:477
+  Initialisation time:00:00:00:453
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:18:330
-  Volume converged to 1.06436e-02
-Time Elapsed:00:00:27:333
+  Iteration Time:00:00:02:340
+  Volume converged to 2.71470e-03
+Time Elapsed:00:00:03:370
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:29:284
+    Time Elapsed:00:00:04:461
 INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
   
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',24,1)">24  </a>    varExtract={'maxIter','restartSource'};
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',41,1)">41  </a>    for nIter=startIter:maxIter
+OptimisationMethod(paramoptim,iterstruct(1).population,iterstruct(1).population)
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',42,1)">42  </a>            warning('unrecognised optimisation')
+testFill=zeros([1 8]);
+testFill(1,1:4)=2;testFill(2,[1 2 5 6])=2;testFill(3,:)=2;
+[newFill]=OverflowHandling2(paramoptim,testFill)
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\OptimisationMethod.m',674,1)">674 </a>    newFill=normRootFill*(max(desVarRange)-min(desVarRange))+min(desVarRange);
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+newFill =
+
+    1.0000    1.0000    1.0000    1.0000    1.0000    1.0000    1.0000    1.0000
+    1.0000    1.0000    1.0000    1.0000    1.0000    1.0000    1.0000    1.0000
+    1.7500    1.7500    1.7500
