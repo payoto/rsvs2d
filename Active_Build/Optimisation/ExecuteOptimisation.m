@@ -533,8 +533,9 @@ end
 
 function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     
-    varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal','optimMethod'};
-    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod]...
+    varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal',...
+        'optimMethod','desvarconnec'};
+    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec]...
         =ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels'};
     [cellLevels]=ExtractVariables(varExtract,paroptim.parametrisation);
@@ -568,6 +569,12 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
             
         case 'outerbound'
             origPop=ones([nPop,nDesVar]);
+            multiplier=zeros(size(origPop));
+            for ii=1:length(desvarconnec)
+                multiplier(:,ii)=numel(desvarconnec(ii).neighbours);
+            end
+            multiplier=2.^multiplier/2.^max(max(multiplier));
+            origPop=multiplier.*origPop;
             
         case 'innerbound'
             origPop=zeros([nPop,nDesVar]);
