@@ -756,17 +756,6 @@ function [paroptim]=Desk_CG_missile_in()
     paroptim.general.worker=4; 
 end
 
-function [paroptim]=Desk_CG_missile_out()
-    
-    [paroptim]=Component_CG();
-    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
-    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
-    paroptim.general.startPop='outerbound';
-    paroptim.general.nPop=12;
-    paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
-end
-
 function [paroptim]=Desk_DE_missile_horz()
     
     [paroptim]=Component_DE();
@@ -788,6 +777,35 @@ function [paroptim]=Desk_DE_smile_horz()
     paroptim.general.worker=4; 
 end
 
+function [paroptim]=Desk_CG_missile_out()
+    
+    [paroptim]=Component_CG();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
+    paroptim.general.startPop='outerbound';
+    
+    paroptim.optim.CG.varActive='border'; % 'wideborder'
+    
+    paroptim.general.varOverflow='spill';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=4; 
+end
+
+function [paroptim]=Desk_CG_inline_out()
+    
+    [paroptim]=Component_CG();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\inline_5b12.png','min'}};
+    paroptim.general.startPop='outerbound';
+    
+    paroptim.optim.CG.varActive='border'; % 'wideborder'
+    
+    paroptim.general.varOverflow='spill';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=4; 
+end
 % 24/06/2016
 function [paroptim]=bp3_Aero_CG_smile_in()
     
