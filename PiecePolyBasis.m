@@ -1,16 +1,16 @@
-function [matCoeff]=PiecePolyBasis()
+function [matCoeff,pp]=PiecePolyBasis()
     
     d=1;
     Dv=1;
-    steps=5;
+    steps=50;
     plotSteps=20;
     precision=50;
     
     [matCoeff]=GenerateMatCoeff(d,Dv,steps,precision);
     
-%     PlotPiecePoly(d,Dv,plotSteps,matCoeff);
-%     figure, 
-%     semilogy(1:steps,abs(matCoeff))
+        PlotPiecePoly(d,Dv,plotSteps,matCoeff);
+        figure,
+        semilogy(1:steps,abs(matCoeff))
     
     [pp]=CalculatePolyObj(matCoeff,d);
 end
@@ -22,20 +22,20 @@ function [pp]=CalculatePolyObj(matCoeff,d)
     nStep=size(matCoeff,2);
     realCoeff=zeros(size(matCoeff));
     
-%     for ii=0:nStep-1
-%         e=(2*ii-1)*d;
-%         realCoeff(:,ii+1)=calcMask(e)*matCoeff(:,ii+1);
-%     end
+    %     for ii=0:nStep-1
+    %         e=(2*ii-1)*d;
+    %         realCoeff(:,ii+1)=calcMask(e)*matCoeff(:,ii+1);
+    %     end
     negCoeff=zeros(size(matCoeff(:,2:end)));
     for ii=nStep:-1:2
-        negCoeff(:,nStep+1-ii)=[1 -1  1]'.*matCoeff(:,ii)+[0 0 2*d]';
+        negCoeff(:,nStep+1-ii)=calcMask(2*d)*([1;-1;1].*matCoeff(:,ii));
     end
     
-    ppBounds=(-2*d*(nStep-1)-1):2*d:(2*d*(nStep-1)+1);
+    ppBounds=(-2*d*(nStep-1)-d):2*d:(2*d*(nStep-1)+d);
     allCoeff=[negCoeff,matCoeff];
-     
+    allCoeff=double(allCoeff);
     pp=mkpp(ppBounds,allCoeff');
-    x=linspace(-6,6,1000);
+    x=linspace(-99,99,10000);
     figure, plot(x,ppval(x,pp))
 end
 
@@ -127,12 +127,12 @@ function [coeffMask,endCond,condVec]=MatrixOpCoeff(d,precision)
     eigLim(x,x)=1;
     
     condVec=endCond*V*eigLim/V;
-%     for ii=1:10,
-%         res=endCond*(coeffMask^ii);
-%         strRes(ii,1:3)=res/res(end);
-%     end
-%     figure
-%     plot(1:10,strRes')
+    %     for ii=1:10,
+    %         res=endCond*(coeffMask^ii);
+    %         strRes(ii,1:3)=res/res(end);
+    %     end
+    %     figure
+    %     plot(1:10,strRes')
 end
 
 function [a0,b0,c0]=GetOriginalCoeff(d,Dv,precision)
@@ -146,5 +146,23 @@ function [a0,b0,c0]=GetOriginalCoeff(d,Dv,precision)
     
     c0=+2/3*d^2*a0+Dv/(2*d);
     b0=-2*a0*d;
+    
+end
+
+function [lineSum]=PlotBasisSums(desRange,d,pp,basisInd,coeffs)
+    
+    if nargin<5; coeffs=ones(size(basisInd));end
+    
+    x=linspace(desRange(1),desRange(2),2000);
+    
+    kk=1;
+    for ii=basisInd;
+        YMat(kk,1:numel(x))=ppval(pp,x+(ii)*2*d)*coeffs(kk);
+        kk=kk+1;
+    end
+    figure
+    plot(x,YMat)
+    hold on, 
+    lineSum=plot(x,sum(YMat),'r--');
     
 end
