@@ -323,7 +323,6 @@ function [paroptim]=CG_Area()
    
 end
 
-
 function [paroptim]=DE_Aero()
     
     % Load
@@ -392,7 +391,7 @@ end
 function [paroptim]=Component_DE()
     
     [paroptim]=DefaultOptim();
-    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    paroptim=ModifySnakesParam(paroptim,'TestInit');
     [paroptim]=LocalVolumeConstraint(paroptim);
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
@@ -400,6 +399,7 @@ function [paroptim]=Component_DE()
     paroptim.general.startPop='initbusemann';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
    
 end
 
@@ -548,6 +548,30 @@ function [paroptim]=HPC_LengthArea()
     
 end
 
+function [paroptim]=Test_Init()
+    
+    % Root param
+    [paroptim]=DefaultOptim();
+    % Standard Modifications
+    paroptim=Test_Desktop(paroptim);
+    paroptim=ModifySnakesParam(paroptim,'TestInit');
+   paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    
+    paroptim.constraint.initConstr={'LocalVolFrac_image'};
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\inline_5b12.png','min'}};
+    paroptim=LengthAreaObjective(paroptim);
+    [paroptim]=OptimDE_horiz(paroptim);
+    
+    paroptim.general.symType='none'; % 'horz'
+    paroptim.general.startPop='initaeroshell';
+    
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
+    paroptim.general.optimMethod='DE';
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=2;
+    paroptim.general.worker=12;
+end
 
 %% Full Aero Optimisations
 
@@ -806,6 +830,7 @@ function [paroptim]=Desk_CG_inline_out()
     paroptim.general.maxIter=50;
     paroptim.general.worker=4; 
 end
+
 % 24/06/2016
 function [paroptim]=bp3_Aero_CG_smile_in()
     
@@ -993,7 +1018,6 @@ function [paroptim]=Tbp3_Aero_DE_missile_weak()
     paroptim.general.maxIter=4;
     paroptim.general.worker=12; 
 end
-
 
 % bp2
 

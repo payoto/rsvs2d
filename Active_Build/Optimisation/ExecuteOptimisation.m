@@ -127,7 +127,7 @@ function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter,
         iterstruct(startIter+1).population=ApplySymmetry(paroptim,...
             iterstruct(startIter+1).population);
     else
-        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter);
+        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter);
     end
     
 end
@@ -607,6 +607,10 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         case 'initbusemann'
             [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 desVarVal);
+            
+        case 'initaeroshell'
+            [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
+        desVarVal);
     end
     
     
@@ -721,6 +725,76 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
     end
 end
+
+
+function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
+        desVarVal)
+    % Initialises a random number of aerodynamic looking strips in the
+    % domain
+    
+    minTargFill=0;
+    for ii=1:length(desVarConstr)
+        if strcmp(desVarConstr{ii},'MinSumVolFrac')
+            minTargFill=desVarVal{ii};
+            
+        end
+    end
+    
+    
+    nStrips=cellLevels(2);
+    origPop=zeros([nPop,nDesVar]);
+    for ii=1:nPop
+        pop=zeros(cellLevels);
+        while sum(sum(pop))==0
+            % Generate Active strips
+            nAct=randi(ceil(nStrips/4));
+            stripAct=randperm(ceil(nStrips/2),ceil(nAct/2));
+            stripAct=[stripAct,stripAct+1];
+            stripAct(stripAct>nStrips)=nStrips;
+            stripAct=sort(RemoveIdenticalEntries(stripAct));
+            % Find coefficients for active strips
+            nAct=numel(stripAct);
+            loStrip=[0,stripAct(1:end-1)];
+            hiStrip=[stripAct(2:end),nStrips];
+            coeffStrip=(hiStrip-loStrip)-1;
+            % Generate peaks
+            posPeak=randi(cellLevels(1)-1);
+            hPeak=rand([length(stripAct),1]).*coeffStrip';
+            ratio=minTargFill/(2*sum(hPeak));
+            if ratio>1
+                hPeak=ratio*hPeak;
+            end
+            
+            ll=1;
+            for jj=stripAct
+                
+                currPeak=hPeak(ll);
+                ll=ll+1;
+                totFrac=currPeak*cellLevels(1)/2;
+                volLine=zeros([cellLevels(1)-2+1,1]);
+                
+                for kk=2:length(volLine)-1
+                    if kk<=posPeak+1
+                        volLine(kk)=currPeak*(kk-1)/posPeak;
+                    else
+                        volLine(kk)=currPeak-currPeak*((kk-1)-posPeak)...
+                            /(length(volLine)-1-posPeak);
+                    end
+                end
+                volFrac=zeros([cellLevels(1)-2,1]);
+                for kk=1:length(volFrac)
+                    volFrac(kk)=mean(volLine(kk:kk+1));
+                end
+                volFrac=[1e-3;volFrac;1e-3];
+                volFrac(volFrac>1)=1;
+                pop(:,jj)=volFrac;
+                
+            end
+        end
+        origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
+    end
+end
+
 
 function [iterstruct]=InitialiseIterationStruct(paramoptim)
     
