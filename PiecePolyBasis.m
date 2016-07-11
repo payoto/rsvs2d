@@ -153,7 +153,7 @@ function [lineSum]=PlotBasisSums(desRange,d,pp,basisInd,coeffs)
     
     if nargin<5; coeffs=ones(size(basisInd));end
     
-    x=linspace(desRange(1),desRange(2),2000);
+    x=linspace(desRange(1),desRange(2),10001);
     
     kk=1;
     for ii=basisInd;
