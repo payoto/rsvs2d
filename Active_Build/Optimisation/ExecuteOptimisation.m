@@ -629,7 +629,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     else
         paroptim.general.nPop=nPop;
         [iterstruct]=InitialiseIterationStruct(paroptim);
-        
+        [origPop]=OverflowHandling(paroptim,origPop);
         for ii=1:nPop
             iterstruct(1).population(ii).fill=origPop(ii,:);
         end
@@ -747,8 +747,8 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
         pop=zeros(cellLevels);
         while sum(sum(pop))==0
             % Generate Active strips
-            nAct=randi(ceil(nStrips/4));
-            stripAct=randperm(ceil(nStrips/2),ceil(nAct/2));
+            nAct=randi(ceil(nStrips));
+            stripAct=randperm((nStrips),ceil(nAct/2));
             stripAct=[stripAct,stripAct+1];
             stripAct(stripAct>nStrips)=nStrips;
             stripAct=sort(RemoveIdenticalEntries(stripAct));
@@ -786,7 +786,7 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
                     volFrac(kk)=mean(volLine(kk:kk+1));
                 end
                 volFrac=[1e-3;volFrac;1e-3];
-                volFrac(volFrac>1)=1;
+                
                 pop(:,jj)=volFrac;
                 
             end

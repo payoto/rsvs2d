@@ -396,7 +396,9 @@ function [paroptim]=Component_DE()
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
     
-    paroptim.general.startPop='initbusemann';
+    paroptim.general.startPop='initaeroshell';
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
+    paroptim.general.optimMethod='DE';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
     paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
@@ -923,6 +925,28 @@ function [paroptim]=bp3_Aero_DE_missile()
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12; 
+end
+
+function [paroptim]=bp3_Aero_DE_Spill_missile2()
+    
+    [paroptim]=Component_DE();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12; 
+end
+
+function [paroptim]=bp3_Aero_DE_Spill_smile()
+    
+    [paroptim]=Component_DE();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\smile_5b12.png','min'}};
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
     paroptim.general.worker=12; 
