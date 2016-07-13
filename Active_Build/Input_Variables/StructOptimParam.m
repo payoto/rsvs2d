@@ -556,7 +556,7 @@ function [paroptim]=Test_Init()
     [paroptim]=DefaultOptim();
     % Standard Modifications
     paroptim=Test_Desktop(paroptim);
-    paroptim=ModifySnakesParam(paroptim,'TestInit');
+    paroptim=ModifySnakesParam(paroptim,'TestInitOptim');
    paroptim.constraint.resConstr={' '};
     paroptim.constraint.resVal={[]};
     

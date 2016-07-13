@@ -342,6 +342,29 @@ function [param]=ModeAnalysis()
     
 end
 
+function [param]=ModeAnalysis2body()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.refineSteps=4;
+    param.general.subdivType='chaikin';
+    param.general.typDat='2bodymode';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.4444,0.4444];
+    param.general.refineSteps=4;
+    param.snakes.step.mergeTopo=true;
+     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+    param.plotting.checkSensitivities=true;
+    
+end
+
 %% Optimisation Cases
 
 function [param]=optimDefault()
@@ -550,8 +573,7 @@ function [param]=SupersonicComponent()
     
 end
 
-
-function [param]=TestInit()
+function [param]=TestInitOptim()
     
     [param]=DefaultCase();
     

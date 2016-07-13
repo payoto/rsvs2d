@@ -691,7 +691,6 @@ function [derivtenscalcII]=CalculateDerivatives_d(derivtenscalcII,lSmear)
     [derivtenscalcII.d2fiddim]=Calc_D2FiDdim_d(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
     
 end
-
 function [dfiddi]=Calc_DFiDdi_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
     
     
@@ -770,7 +769,6 @@ function [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMultiplier,d
     
 end
 
-
 function [snaxtocell]=MatchSnaxtoCell(snaxel,coeffstructure,volumefraction)
     
     snaxInd=[snaxel(:).index];
@@ -809,7 +807,6 @@ function [snaxtocell]=MatchSnaxtoCell(snaxel,coeffstructure,volumefraction)
     
 end
 
-
 function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,Ja_x,lagMulti)
     
     nSnax=length(Hf(1,:));
@@ -834,9 +831,11 @@ function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,Ja_x,lagMulti)
     sensLagMulti=zeros([nCond,nCond]);
     
     sensSnax(:,actCol)=resSens(1:nSnax,:);
+    signLagMulti=sign(lagMulti);
+    signLagMulti(signLagMulti==0)=1;
     for ii=find(lagMulti)'
         
-        sensSnax(:,ii)=sensSnax(:,ii)*sign(lagMulti(ii));
+        sensSnax(:,ii)=sensSnax(:,ii)*signLagMulti(ii);
     end
     sensLagMulti(actCol,actCol)=resSens(nSnax+1:end,:);
     
