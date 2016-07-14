@@ -336,7 +336,7 @@ function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
     [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo);
     forceparam.isLast=true;
-    forceparam.lengthEpsilon=1e-8;
+    forceparam.lengthEpsilon=0;
     [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
@@ -2631,94 +2631,94 @@ function [newOrd]=CompareTestpos(t1,t2,ord,dir)
 end
 
 %% Sensitivity method development
-
-function []=ExecuteSensitivity(snaxel,snakposition,sensSnax)
-    
-    global unstructglobal
-    sensSnax(:,find(sum(abs(sensSnax))==0))=[];
-    dCurr=[snaxel(:).d];
-    
-    [snaxOrd]=SplitSnaxLoops(snaxel); % Isolates individual loops
-    maxDistRatio=1/4;
-    [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio);
-    
-    
-    coord1=vertcat(snakposition(:).coord);
-    [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
-        ones([length(snaxel), 1])*2],2);
-    
-    l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
-    for ii=1:length(sensSnax(1,:)),
-        snaxCopy(ii,:)=snaxel;
-        
-        dAct=dCurr'+dChange{ii};
-        for jj=1:length(snaxel)
-            snaxCopy(ii,jj).d=dAct(jj);
-        end
-        [snakposition2(ii,:)]=PositionSnakes(snaxCopy(ii,:),unstructglobal);
-    end
-    
-    for ii=1:numel(snaxOrd)
-        coordBase{ii}=vertcat(snakposition(snaxOrd{ii}).coord);
-        [refPos{ii}]=CreateComparisonMatrix(coordBase{ii});
-        for jj=1:numel(dChange)
-            
-            coordNew{ii,jj}=vertcat(snakposition2(ii,snaxOrd{ii}).coord);
-            [newPos{ii,jj}]=CreateComparisonMatrix(coordNew{ii,jj});
-            [newOrd{ii,jj}]=CompareTestpos(refPos{ii},newPos{ii,jj},1:numel(snaxOrd{ii}),dir(snaxOrd{ii}));
-        end
-    end
-    
-    %         coord2=vertcat(snakposition2(:).coord);
-    %         [testPos2]=CreateComparisonMatrix(coord2);
-    %         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
-    %
-    
-    %         figure
-    %         plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'o-',coord2(newOrd,1),coord2(newOrd,2),'o-')
-    %         hold on
-    %         for jj=1:length(newOrd)
-    %             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
-    %         end
-    %         title(['mode ',int2str(ii)])
-    %         axis equal
-    
-    
-    
-    
-end
-
-function [snaxOrd]=SplitSnaxLoops(snaxel)
-    % Splits a snake into its component loops
-    
-    kk=1;
-    jj=1;
-    snaxInd=[snaxel(:).index];
-    %snaxOrd=zeros(size(snaxel));
-    ordList=1:numel(snaxel);
-    ll=1;
-    for ii=1:length(snaxel)
-        kk=FindObjNum([],[snaxel(kk).snaxnext],snaxInd);
-        if ordList(kk)==0
-            jj=jj+1;
-            kk=min(ordList(ordList~=0));
-            ll=1;
-        end
-        snaxOrd{jj}(ll)=kk;
-        ordList(kk)=0;
-        ll=ll+1;
-    end
-    
-end
-
-function [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio)
-    
-    nMode=size(sensSnax,2);
-    dChange{nMode}=[];
-    for ii=1:nMode
-        dChange{ii}=sensSnax(:,ii)/max(abs(sensSnax(:,ii)))*maxDistRatio;
-    end
-end
+% 
+% function []=ExecuteSensitivity(snaxel,snakposition,sensSnax)
+%     
+%     global unstructglobal
+%     sensSnax(:,find(sum(abs(sensSnax))==0))=[];
+%     dCurr=[snaxel(:).d];
+%     
+%     [snaxOrd]=SplitSnaxLoops(snaxel); % Isolates individual loops
+%     maxDistRatio=1/4;
+%     [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio);
+%     
+%     
+%     coord1=vertcat(snakposition(:).coord);
+%     [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
+%         ones([length(snaxel), 1])*2],2);
+%     
+%     l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
+%     for ii=1:length(sensSnax(1,:)),
+%         snaxCopy(ii,:)=snaxel;
+%         
+%         dAct=dCurr'+dChange{ii};
+%         for jj=1:length(snaxel)
+%             snaxCopy(ii,jj).d=dAct(jj);
+%         end
+%         [snakposition2(ii,:)]=PositionSnakes(snaxCopy(ii,:),unstructglobal);
+%     end
+%     
+%     for ii=1:numel(snaxOrd)
+%         coordBase{ii}=vertcat(snakposition(snaxOrd{ii}).coord);
+%         [refPos{ii}]=CreateComparisonMatrix(coordBase{ii});
+%         for jj=1:numel(dChange)
+%             
+%             coordNew{ii,jj}=vertcat(snakposition2(ii,snaxOrd{ii}).coord);
+%             [newPos{ii,jj}]=CreateComparisonMatrix(coordNew{ii,jj});
+%             [newOrd{ii,jj}]=snaxOrd{ii}(CompareTestpos(refPos{ii},newPos{ii,jj},1:numel(snaxOrd{ii}),dir(snaxOrd{ii})));
+%         end
+%     end
+%     
+%     %         coord2=vertcat(snakposition2(:).coord);
+%     %         [testPos2]=CreateComparisonMatrix(coord2);
+%     %         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
+%     %
+%     
+%     %         figure
+%     %         plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'o-',coord2(newOrd,1),coord2(newOrd,2),'o-')
+%     %         hold on
+%     %         for jj=1:length(newOrd)
+%     %             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+%     %         end
+%     %         title(['mode ',int2str(ii)])
+%     %         axis equal
+%     
+%     
+%     
+%     
+% end
+% 
+% function [snaxOrd]=SplitSnaxLoops(snaxel)
+%     % Splits a snake into its component loops
+%     
+%     kk=1;
+%     jj=1;
+%     snaxInd=[snaxel(:).index];
+%     %snaxOrd=zeros(size(snaxel));
+%     ordList=1:numel(snaxel);
+%     ll=1;
+%     for ii=1:length(snaxel)
+%         kk=FindObjNum([],[snaxel(kk).snaxnext],snaxInd);
+%         if ordList(kk)==0
+%             jj=jj+1;
+%             kk=min(ordList(ordList~=0));
+%             ll=1;
+%         end
+%         snaxOrd{jj}(ll)=kk;
+%         ordList(kk)=0;
+%         ll=ll+1;
+%     end
+%     
+% end
+% 
+% function [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio)
+%     
+%     nMode=size(sensSnax,2);
+%     dChange{nMode}=[];
+%     for ii=1:nMode
+%         dChange{ii}=sensSnax(:,ii)/max(abs(sensSnax(:,ii)))*maxDistRatio;
+%     end
+% end
 
 %% Various
 
