@@ -391,7 +391,7 @@ end
 function [paroptim]=Component_DE()
     
     [paroptim]=DefaultOptim();
-    paroptim=ModifySnakesParam(paroptim,'TestInit');
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
     [paroptim]=LocalVolumeConstraint(paroptim);
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
