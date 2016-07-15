@@ -2,7 +2,22 @@
 
 %% Sensitivity method development
 
-function [snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,isPlot)
+function [snaxmode]=ExecuteSensitivity(entryPoint,snaxel,snakposition,sensSnax,volumefraction,isPlot)
+    
+    
+    switch entryPoint
+        case 'analytical'
+            [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,isPlot);
+        case 'snake'
+            
+    end
+        
+    
+end
+
+%% Analytical snaxel Mode structure
+
+function [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,isPlot)
     
     [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefraction,isPlot);
     
@@ -25,8 +40,8 @@ function [vectormode]=BuildVectors(looproot,loopsnaxel)
     
     for ii=1:numel(loopsnaxel)
         actRoot=FindObjNum([],loopsnaxel(ii).snaxel.index,looproot(ii).snaxel.index);
-        subAct=SubDivision(loopsnaxel(ii).snaxel.coord,2,'chaikin',[0 0],'none');
-        subRoot{ii}=SubDivision(looproot(ii).snaxel.coord(actRoot,:),2,'chaikin',[0 0],'none');
+        subAct=SubDivision(loopsnaxel(ii).snaxel.coord,3,'chaikin',[0 0],'none');
+        subRoot{ii}=SubDivision(looproot(ii).snaxel.coord(actRoot,:),3,'chaikin',[0 0],'none');
         vecMode{ii}=subAct-subRoot{ii};
     end
     vectormode.points=vertcat(subRoot{:});
@@ -46,7 +61,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
     dCurr=[snaxel(:).d];
     
     [snaxOrd]=SplitSnaxLoops(snaxel); % Isolates individual loops
-    maxDistRatio=1/10;
+    maxDistRatio=1/1000;
     [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio);
     
     
@@ -402,5 +417,11 @@ function [A]=CalculatePolyArea(points)
     normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+2))=rotDif(:,1:2);
     normMat((2*(ii-1)+1):(2*(ii-1)+2),1:2)=rotDif(:,3:4);
     A=0.5*(normMat*pointsVec)'*(centreMat*pointsVec);
+    
+end
+
+%% Combined mode data
+
+function []=BuildCellConnectivity()
     
 end

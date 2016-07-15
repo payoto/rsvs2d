@@ -14,7 +14,7 @@
 % %#codegen
 
 %% Main execution functions
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=SnakesSensitivity(refinedGrid,looprestart,...
+function SnakesSensitivity(refinedGrid,looprestart,...
         oldGrid,connectionInfo,param)
     % JUST DECLARING VARIABLES FOR LATER
     
@@ -31,21 +31,16 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=SnakesSensitivit
     
     unstructglobal=refinedGriduns;
     %profile on
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-        RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
+    
+        BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param);
     %profile viewer
     
-    if snakesConsole
-        figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
-        title('Volume error')
-        ylabel('Root Mean squared error on volume convergence')
-        xlabel('number of iterations')
-    end
+    
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-        RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
+        BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param)
     % Main execution container for Snakes
     
@@ -58,36 +53,23 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     forceparam=param.snakes.force;
     
     
-    % Starting process
-    disp(['  Start initialisation'])
-    tStepStart=now;
-    [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
-        insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param);
-   
     
+    [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
+        RestartSnakeProcess(looprestart);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     [snakposition]=SnaxelNormal2(snaxel,snakposition);
     %CheckResultsLight(refinedGriduns,snakposition,snaxel)
     
+    [cellordstruct]=BuildCellConnectivity(snaxel,refinedGrid,volfracconnec);
     
     [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid);
     
-    tStepEnd=now;
-    disp(['  Initialisation time:',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF')]);
-    tStart=now;
-   
-    tEnd=now;
-    disp(['  ',int2str(ii),' Steps Performed'])
-    disp(['  Iteration Time:',datestr(tEnd-tStart,'HH:MM:SS:FFF')]);
-    disp(['  Volume converged to ',num2str(currentConvVolume,'%.5e')])
+    
+    GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+        cellCentredGrid,insideContourInfo,forceparam);
     
     [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns,param);
-    
-        GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-                cellCentredGrid,insideContourInfo,forceparam);
-    
     
     restartsnake.snaxel=snaxel;
     restartsnake.insideContourInfo=insideContourInfo;
@@ -98,50 +80,6 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     
     
 end
-
-function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
-        insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param)
-    
-    varExtract={'restart'};
-    [restart]=ExtractVariables(varExtract,param);
-    if ~restart
-        [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-            StartSnakeProcess(refinedGriduns,refinedGrid,looprestart,...
-            oldGrid,connectionInfo,mergeTopo,boundstr);
-    else
-        [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-            RestartSnakeProcess(looprestart);
-    end
-    
-    
-end
-
-function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
-        StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
-        oldGrid,connectionInfo,mergeTopo,boundstr)
-    disp('    Generate Cell Centred Grid')
-    [cellCentredGrid]=CellCentredGridInformation(refinedGrid);
-    disp('    Establish Cell Colume Information')
-    [volfracconnec]=VolumeFractionConnectivity(oldGrid,...
-        connectionInfo,cellCentredGrid,refinedGrid);
-    
-    
-    insideContourInfo=refinedGriduns.edge.(boundstr{2});
-    disp('    Find Border Vertices')
-    [borderVertices]=FindBorderVertex(refinedGriduns);
-    disp('    Initialise Snaxel Grid')
-    
-    % Inside contour info will change depending on the type of contour under
-    % consideration (0 contour or 1 contour)
-    [snaxel,insideContourInfo]=SnaxelInitialisation(refinedGriduns,loop,insideContourInfo,boundstr);
-    
-    [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
-    [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-    [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
-    [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo);
-end
-
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(restartsnake)
@@ -186,8 +124,7 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     
 end
 
-
-function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
+function [snaxel,snakposition,sensSnax]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
@@ -195,11 +132,10 @@ function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
     [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo);
     forceparam.isLast=true;
-    forceparam.lengthEpsilon=1e-8;
+    forceparam.lengthEpsilon=0;
     [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
-    testSensitivity(snaxel,snakposition,sensSnax)
 end
 
 
@@ -270,340 +206,6 @@ function [snakSave]=ReformatSnakSave(snakSave)
                 snakSave(ii).snakposition(jj).normvector{2}];
         end
         
-    end
-end
-
-%% Snaxel Initialisation
-
-function [snaxel,insideContourInfo]=SnaxelInitialisation(unstructured,loop,insideContourInfo,boundstr)
-    allLoopEdgeIndex=[];
-    for ii=1:length(loop)
-        allLoopEdgeIndex=[allLoopEdgeIndex,loop(ii).edge.index];
-    end
-    for ii=1:length(loop)
-        if ii==1
-            snaxelIndexStart=0;
-        else
-            snaxelIndexStart=max([snaxel(:).index]);
-        end
-        [loopsnakes(ii).snaxels,insideContourInfo]=SnaxelLoop(unstructured,loop(ii),...
-            snaxelIndexStart,insideContourInfo,boundstr,allLoopEdgeIndex);
-        if ii==1
-            snaxel=loopsnakes(ii).snaxels;
-        else
-            snaxel=[snaxel,loopsnakes(ii).snaxels];
-        end
-    end
-    
-end
-
-function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
-        snaxelIndexStart,insideContourInfo,boundstr,allLoopEdgeIndex)
-    
-    loopVertInd=loop.vertex.index(1:end-2); %RemoveIdenticalEntries(loop.vertex.index);
-    loopVertSub=FindObjNum([],loopVertInd,unstructured.vertex.index);
-    vertCoord=loop.vertex.coord(1:end-2,:);
-    isLoopCCW=CCWLoop(vertCoord);
-    if isLoopCCW
-        initVertexIndex=loopVertInd;
-    else
-        %initVertexIndex=loop.vertex.index(end-2:-1:1);
-        initVertexIndex=loopVertInd(end:-1:1);
-        vertCoord=vertCoord(end:-1:1);
-    end
-    %initVertexIndex=loop.vertex.index(1:end-2);
-    %initVertexIndex=loop.vertex.index([2:3,5:end-3]);
-    edgeVertIndex=unstructured.edge.vertexindex;
-    edgeIndex=unstructured.edge.index;
-    loopEdgeIndex=loop.edge.index;
-    vertCoordFull=unstructured.vertex.coord;
-    vertIndex=unstructured.vertex.index;
-    
-    switch boundstr{3}
-        case '1bound'
-            isInside=false;
-        case '0bound'
-            isInside=true;
-        otherwise
-            error('Invalid boundstr flag')
-    end
-    
-    
-    isInside=CheckInsideFill(vertCoordFull,edgeVertIndex,initVertexIndex,...
-        edgeIndex,vertIndex,insideContourInfo);
-    
-    [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,loopEdgeIndex,allLoopEdgeIndex,snaxelIndexStart,isInside);
-    
-    [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
-    if ~isInside
-        loopEdgeSubs=FindObjNum([],loopEdgeIndex,edgeIndex);
-    else
-        snaxInd=[snaxel(:).index];
-        keepIndex=delIndex;
-        keepSub=FindObjNum([],keepIndex,snaxInd);
-        logDelInd=true(size(snaxInd));
-        logDelInd(keepSub)=false;
-        delIndex=snaxInd(logDelInd);
-        loopEdgeSubs=[];
-        snaxel=ReverseSnakes(snaxel);
-    end
-    
-    snaxel=DeleteSnaxel(snaxel,delIndex);
-    
-    [snaxel]=TestSnaxelLoopDirection(snaxel);
-    
-    insideContourInfo(loopEdgeSubs)=1;
-    
-end
-
-function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
-        edgeIndex,vertIndex,insideContourInfo)
-    
-    flag=true;
-    while flag
-        rootVert=initVertexIndex(1);
-        vertexEdges=FindEdgesIndex(rootVert,edgeVertIndex,edgeIndex);
-        vertexEdgesSub=FindObjNum([],vertexEdges,edgeIndex);
-        test=sum(insideContourInfo(vertexEdgesSub));
-        flag=false;
-        if test==0 || test==length(vertexEdgesSub)
-            flag=true;
-            initVertexIndex=initVertexIndex([2:end,1]);
-            
-            
-        end
-    end
-    
-    
-    neighboursInd=sort(edgeVertIndex(vertexEdgesSub,:),2);
-    
-    rootEdge=[initVertexIndex(end) rootVert];
-    exitEdge=[rootVert initVertexIndex(2)];
-    
-    [posExit]=FindMatchingVectors(neighboursInd,sort(exitEdge));
-    [posRoot]=FindMatchingVectors(neighboursInd,sort(rootEdge));
-    
-    for ii=1:length(vertexEdges)
-        neighbourVert(ii)=neighboursInd(ii,find(neighboursInd(ii,:)~=rootVert));
-    end
-    
-    neighbourVertSub=FindObjNum([],neighbourVert,vertIndex);
-    rootVertSub=FindObjNum([],rootVert,vertIndex);
-    
-    rootCoord=vertCoord(rootVertSub,:);
-    neighCoord=vertCoord(neighbourVertSub,:);
-    
-    vectors=neighCoord-(ones([length(vertexEdges),1])*rootCoord);
-    angles=ExtractAngle360(vectors(posRoot,:),vectors);
-    
-    indNoEx=1:length(angles);
-    indNoEx([posExit,posRoot])=[];
-    anglesExt=angles(indNoEx);
-    
-    indOut=indNoEx(find((anglesExt>=angles(posRoot)) & (anglesExt<=angles(posExit))));
-    testIsOut=insideContourInfo(vertexEdgesSub(indOut));
-    
-    if sum(testIsOut)==0
-        isInside=true;
-    elseif sum(testIsOut)==numel(testIsOut)
-        isInside=false;
-    else
-        error('Cannot decide if is inside or not')
-    end
-    
-end
-
-function [pos]=FindMatchingVectors(vecList,vec)
-    
-    pos=find(sum(abs(vecList-(ones([length(vecList(:,1)),1])*vec)),2)==0);
-    
-end
-
-function [snaxel]=TestSnaxelLoopDirection(snaxel)
-    
-    global unstructglobal
-    snakpos=PositionSnakes(snaxel,unstructglobal);
-    coord=vertcat(snakpos(:).coord);
-    [leftMostCorner]=LeftMostCorner(coord);
-    leftCornerDirection=snakpos(leftMostCorner).vector;
-    testAngles=ExtractAngle360(leftCornerDirection,[1 0]);
-    
-    nextSnaxInd=snaxel(leftMostCorner).snaxnext;
-    precSnaxInd=snaxel(leftMostCorner).snaxprec;
-    nextSnaxSub=FindObjNum(snaxel,nextSnaxInd);
-    precSnaxSub=FindObjNum(snaxel,precSnaxInd);
-    
-    precVec=coord(precSnaxSub,:)-coord(leftMostCorner,:);
-    nextVec=coord(nextSnaxSub,:)-coord(leftMostCorner,:);
-    precAngle=ExtractAngle360(precVec,[-1 -1]);
-    nextAngle=ExtractAngle360(nextVec,[-1 -1]);
-    
-    
-    if precAngle<nextAngle
-        isCCW=true;
-    elseif precAngle>nextAngle
-        isCCW=false;
-    else
-        isCCW=[];
-    end
-    
-    if sum(testAngles>pi/2)==0
-        if isCCW
-            [snaxel]=ReverseSnakesConnection(snaxel);
-        end
-    else
-        if ~isCCW
-            [snaxel]=ReverseSnakesConnection(snaxel);
-        end
-    end
-    
-end
-
-function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,currLoopEdgeIndex,invalidEdgeIndex,snaxelIndexStart,isInside,connectivity)
-    % Creates the basic snaxel structure, no removal of unworthy snaxels is
-    % performed
-    
-    if ~exist('connectivity','var'); isConnec=false; else isConnec=true; end
-    [mIVI,~]=size(initVertexIndex);
-    
-    kk=0;
-    kk2=0;
-    cellSimVertex{mIVI}=[];
-    snaxel=[];
-    
-    
-    for ii=1:mIVI
-        vertexEdges=FindEdgesIndex(initVertexIndex(ii),edgeVertIndex,edgeIndex);
-        snaxelEdges=FindSnaxelEdges(vertexEdges,invalidEdgeIndex);
-        if numel(snaxelEdges)>0
-            [kk,cellSimVertex{ii},snaxelNotOrdered]=GenerateVertexSnaxel(snaxelEdges,kk,...
-                snaxelIndexStart,initVertexIndex(ii), edgeVertIndex,edgeIndex);
-            
-            % Now Fine
-            if numel(currLoopEdgeIndex)>1
-                baseEdgeExploit=zeros(length(currLoopEdgeIndex),1);
-                for jj=1:length(currLoopEdgeIndex)
-                    if sum(vertexEdges==currLoopEdgeIndex(jj))
-                        baseEdgeExploit(jj)=1;
-                    end
-                end
-                baseEdgeExploitTest=baseEdgeExploit+[baseEdgeExploit(2:end);baseEdgeExploit(1)];
-                baseEdgeExploit=find(baseEdgeExploitTest==2);
-            else
-                baseEdgeExploit=1;
-            end
-            
-            connecOrder=CCWOrderAroundNode(snaxelNotOrdered,currLoopEdgeIndex(baseEdgeExploit));
-            generateOrder=FindObjNum(snaxelNotOrdered,connecOrder);
-            if isInside
-                generateOrder=generateOrder(end:-1:1);
-            end
-            [kk2,cellSimVertex{ii},newsnaxel]=GenerateVertexSnaxel...
-                (snaxelEdges(generateOrder),kk2,snaxelIndexStart,initVertexIndex(ii),...
-                edgeVertIndex,edgeIndex);
-            snaxel=[snaxel,newsnaxel];
-        end
-    end
-    if isConnec
-        snaxel(1).connectivity(1)=connectivity(1);
-        snaxel(1).snaxprec=connectivity(1);
-        
-        snaxel(end).connectivity(2)=connectivity(2);
-        snaxel(end).snaxnext=connectivity(2);
-    else
-        snaxel(1).connectivity(1)=snaxel(end).index;
-        snaxel(1).snaxprec=snaxel(end).index;
-        snaxel(end).connectivity(2)=snaxel(1).index;
-        snaxel(end).snaxnext=snaxel(1).index;
-    end
-end
-
-function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
-        snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex)
-    
-    global snaxInitPos
-    
-    numSE=length(snaxelEdges); % provides information about snaxel from same vertex
-    snaxelEdgesSub=FindObjNum([],snaxelEdges,edgeIndex);
-    kkLocal=0;
-    for jj=1:numSE
-        kk=kk+1;
-        kkLocal=kkLocal+1;
-        snaxIndex=kk+snaxelIndexStart;
-        cellSimVertex(jj)=snaxIndex;
-        dist=snaxInitPos; % Snaxel initialisation, it starts at the vertex
-        velocity=0; % Initialisation velocity
-        vertexOrig=initVertexIndexSingle;
-        vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);
-        vertexDest(vertexDest==vertexOrig)=[];
-        currEdge=snaxelEdges(jj);
-        if isempty(vertexDest)
-            vertexDest=0;
-        end
-        snaxPrec=snaxIndex-1;
-        snaxNext=snaxIndex+1;
-        snaxel(kkLocal)=SnaxelStructure(snaxIndex,dist,velocity,vertexOrig,...
-            vertexDest,snaxPrec,snaxNext,currEdge);
-    end
-    
-end
-
-function edges=FindEdgesIndex(vertexIndex,edgeVertIndex,edgeIndex)
-    % finds the edges connected to a vertex
-    
-    edgesPosition=find(sum(edgeVertIndex==vertexIndex,2));
-    edges=edgeIndex(edgesPosition);
-end
-
-function snaxelEdges=FindSnaxelEdges(vertexEdges,invalidEdgeIndex)
-    % finds the edges connected to a vertex which will create a snaxel
-    
-    
-    numVE=length(vertexEdges);
-    isSnaxelEdge=false([numVE,1]);
-    for jj=1:numVE
-        isSnaxelEdge(jj)=sum(invalidEdgeIndex==vertexEdges(jj))==0;
-    end
-    snaxelEdges=vertexEdges(isSnaxelEdge);
-end
-
-function [snaxel]=SnaxelStructure(index,dist,velocity,vertexOrig,...
-        vertexDest,snaxPrec,snaxNext,edge)
-    
-    snaxel.index=index;
-    snaxel.d=dist;
-    snaxel.v=velocity;
-    snaxel.acc=0;
-    snaxel.fromvertex=vertexOrig;
-    snaxel.tovertex=vertexDest;
-    snaxel.edge=edge;
-    snaxel.connectivity=[snaxPrec snaxNext];
-    snaxel.snaxprec=snaxPrec;
-    snaxel.snaxnext=snaxNext;
-    snaxel.isfreeze=0;
-end
-
-
-function [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace)
-    % Removes a connection to a snaxel from another snaxel and replaces
-    % it with the replacement connection
-    refresh=singlesnaxel.connectivity==connecRemove;
-    isNext=singlesnaxel.snaxnext==connecRemove;
-    isPrec=singlesnaxel.snaxprec==connecRemove;
-    if sum(refresh)==0
-        error('invalid connection to break');
-    end
-    if isNext && isPrec
-        warning('Topology Collapsing');
-    end
-    % then replace that number to the snaxel that is being introduced
-    singlesnaxel.connectivity(refresh)=connecReplace;
-    if isNext
-        singlesnaxel.snaxnext=connecReplace;
-    elseif isPrec
-        singlesnaxel.snaxprec=connecReplace;
     end
 end
 
@@ -935,192 +537,6 @@ function [snaxel]=VelocityCalculationContract(snaxel,snakposition)
 end
 
 
-%% Cell centred information
-function [cellCentredGrid]=CellCentredGridInformation(refinedGrid)
-    % Returns cell centred information about the grid being used
-    
-    cellCentredGrid=refinedGrid.cell;
-    edgeCellInfo=vertcat(refinedGrid.edge(:).cellindex);
-    
-    origEdgeIndex=[refinedGrid.edge(:).index];
-    origVertexIndex=[refinedGrid.vertex(:).index];
-    origCellIndex=[refinedGrid.cell(:).index];
-    
-    for ii=1:length(cellCentredGrid)
-        edgeCellLog=sum((edgeCellInfo==cellCentredGrid(ii).index),2)>0;
-        totEdges=sum(edgeCellLog);
-        cellCentredGrid(ii).edge(1:totEdges)=refinedGrid.edge(edgeCellLog);
-        cellVertex=[cellCentredGrid(ii).edge(:).vertexindex];
-        cellVertex=RemoveIdenticalEntries(cellVertex');
-        cellVertexSub=FindObjNum(refinedGrid.vertex,cellVertex,origVertexIndex);
-        totVertices=length(cellVertex);
-        cellCentredGrid(ii).vertex(1:totVertices)=refinedGrid.vertex(cellVertexSub);
-        
-    end
-    
-    [cellCentredGrid]=CalculateEdgeCellNormals(cellCentredGrid);
-    [cellCentredGrid]=CalculateStartCellVolumes(cellCentredGrid);
-end
-
-function [cellCentredGrid]=CalculateStartCellVolumes(cellCentredGrid)
-    
-    for ii=1:length(cellCentredGrid)
-        
-        for jj=1:length(cellCentredGrid(ii).edge)
-            
-            cellCentredGrid(ii).gridareablock.blockstruct(jj).centre=...
-                cellCentredGrid(ii).edge(jj).edgecentre;
-            cellCentredGrid(ii).gridareablock.blockstruct(jj).normal=...
-                cellCentredGrid(ii).edge(jj).normalvector;
-            cellCentredGrid(ii).gridareablock.blockstruct(jj).length=...
-                cellCentredGrid(ii).edge(jj).edgelength;
-            
-        end
-        [cellCentredGrid(ii).volume,cellCentredGrid(ii).gridareablock]=...
-            CalculateCellVolume(cellCentredGrid(ii).gridareablock,0);
-        
-    end
-    
-    
-end
-
-function [volume]=CalculateGreensVolume(bordstruct)
-    % THis function uses green's theorem to calculate the area inside a set
-    % of snaxels
-    volumeArray=zeros(size(bordstruct));
-    for ii=1:length(bordstruct)
-        volumeArray(ii)=dot(bordstruct(ii).centre,bordstruct(ii).normal)...
-            *bordstruct(ii).length;
-    end
-    volume=sum(volumeArray)/2;
-    
-end
-
-function [volume,areablock]=CalculateCellVolume(areablock,totalVol)
-    % Calculate the volume bounded by snaxels within a cell
-    
-    for ii=1:length(areablock)
-        areablock(ii).volume=CalculateGreensVolume(areablock(ii).blockstruct);
-    end
-    volume=sum(([areablock(:).volume]));
-    
-    if volume>totalVol
-        volume=totalVol+sum(([areablock(:).volume]-totalVol));
-    end
-    
-    
-end
-
-function [cellCentredGrid]=CalculateEdgeCellNormals(cellCentredGrid)
-    
-    for ii=1:length(cellCentredGrid)
-        blockEdges=vertcat(cellCentredGrid(ii).edge(:).vertexindex);
-        [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges);
-        orderedVertices=cellOrderedVertex{1}(:,1);
-        orderedEdges=[cellCentredGrid(ii).edge(cellOrderedEdges{1}).index];
-        orderedVertexSub=FindObjNum(cellCentredGrid(ii).vertex,orderedVertices);
-        coord=vertcat(cellCentredGrid(ii).vertex(orderedVertexSub).coord);
-        [isCCW]=CCWLoop(coord);
-        for jj=1:length(orderedEdges)
-            
-            edgeVertSub=FindObjNum(cellCentredGrid(ii).vertex,cellOrderedVertex{1}(jj,:));
-            edgeTanVector=cellCentredGrid(ii).vertex(edgeVertSub(2)).coord...
-                -cellCentredGrid(ii).vertex(edgeVertSub(1)).coord;
-            normalVector=CalcNormVec2DClockWise(edgeTanVector);
-            normalVector=normalVector/norm(normalVector);
-            
-            [vecAngles]=ExtractAnglepm180(edgeTanVector,normalVector);
-            if (isCCW && vecAngles>0) || (~isCCW && vecAngles<0)
-                normalVector=-normalVector;
-            end
-            cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).normalvector=normalVector;
-            vertCoord=vertcat(cellCentredGrid(ii).vertex(edgeVertSub).coord);
-            cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).edgecentre=...
-                mean(vertCoord);
-            cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).edgelength=...
-                norm(vertCoord(1,:)-vertCoord(2,:));
-        end
-        
-    end
-    
-    
-end
-
-function [volfracconnec]=VolumeFractionConnectivity(oldGrid,...
-        connectGrid,cellCentreGrid,refinedGrid)
-    % Modifies the connectivity information to match what is required for
-    % the calculation and use of the volume fraction information
-    [volfracconnec.cell]=VolumeFractionConnectivityCell(oldGrid,...
-        connectGrid,cellCentreGrid);
-    [volfracconnec.edge]=VolumeFractionConnectivityEdge(oldGrid,...
-        volfracconnec.cell,refinedGrid);
-end
-
-function [volfracconnec]=VolumeFractionConnectivityCell(oldGrid,connectGrid,cellCentreGrid)
-    % creates the right connectivity information for cells
-    oldCellInd=[oldGrid.cell(:).index];
-    newCellInd=[cellCentreGrid(:).index];
-    splitCellInd=[connectGrid.cell(:).old];
-    
-    for ii=1:length(oldCellInd)
-        volfracconnec(ii).oldCellInd=(oldGrid.cell(ii).index);
-        splitSub=FindObjNum([],volfracconnec(ii).oldCellInd,splitCellInd);
-        if splitSub==0
-            newSub=FindObjNum([],volfracconnec(ii).oldCellInd,newCellInd);
-            if newSub==0
-                error('There is an issue with the grid splitting match')
-            end
-            newCellOldIndex=cellCentreGrid(newSub).index;
-        else
-            newCellOldIndex=connectGrid.cell(splitSub).new;
-        end
-        volfracconnec(ii).newCellInd=newCellOldIndex;
-        volfracconnec(ii).targetfill=oldGrid.cell(ii).fill;
-    end
-    
-end
-
-function [volfracconnec]=VolumeFractionConnectivityEdge(oldGrid,connectCell,refinedGrid)
-    % Creates the right connectivity information for edges
-    oldCellInd=[oldGrid.cell(:).index];
-    newEdgeInd=[refinedGrid.edge(:).index];
-    subConnCellVec=[];
-    for ii=1:length(connectCell)
-        subConnCellVec=[subConnCellVec,ones(1,length(connectCell(ii).newCellInd))];
-    end
-    connectCellNewCell=[connectCell(:).newCellInd];
-    
-    connectCellNewCellMat=connectCellNewCell'*[1 1];
-    
-    for ii=length(newEdgeInd):-1:1
-        
-        volfracconnec(ii).newedge=newEdgeInd(ii);
-        volfracconnec(ii).newcell=refinedGrid.edge(ii).cellindex;
-        edgeNewCell=volfracconnec(ii).newcell;
-        oldCell=zeros(size(edgeNewCell));
-        oldCell(edgeNewCell==0)=0;
-        
-        edgeNewCellMat=ones([length(connectCellNewCell),1])*edgeNewCell;
-        kk=sum(connectCellNewCellMat==edgeNewCellMat,2)>0;
-        %         for jj=1:length(edgeNewCell)
-        %             if edgeNewCell(jj)~=0
-        %
-        %                 for kk=1:length(connectCell)
-        %                     if sum(connectCell(kk).newCellInd==edgeNewCell(jj))>0
-        %                         oldNewCell=connectCell(kk).oldCellInd;
-        %                     end
-        %
-        %                 end
-        %                 oldCell(jj)=oldNewCell;
-        %             end
-        %         end
-        oldCell(edgeNewCell~=0)=[connectCell(subConnCellVec(kk)).oldCellInd];
-        volfracconnec(ii).oldCell=oldCell;
-    end
-    
-end
-
-
 %% Snaxel position
 % Increments position
 
@@ -1157,24 +573,6 @@ function [finishedSnakesSub]=ArrivalCondition(snaxel)
     isArrived=d>=(1-arrivalTolerance);
     willImpact=abs((1-d)./v)<maxDt;
     finishedSnakesSub=find((isFwd & ~isFreeze & isArrived & willImpact));
-end
-
-function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInsideEdges,snaxel)
-    % Updates the logical inside contour info
-    
-    global unstructglobal
-    
-    edgeInd=unstructglobal.edge.index;
-    snaxEdges=[snaxel(:).edge];
-    [snaxEdges]=RemoveIdenticalEntries(snaxEdges);
-    
-    stillSnaxEdge=FindObjNum([],newInsideEdges,snaxEdges)>0;
-    newInsideEdges(stillSnaxEdge)=[];
-    
-    newInsideEdgesSub=FindObjNum([],newInsideEdges,edgeInd);
-    insideContourInfo=logical(insideContourInfo);
-    insideContourInfo(newInsideEdgesSub)=true;
-    
 end
 
 
@@ -1233,44 +631,6 @@ function [precSnax,nextSnax]=CCWNeighbours(snaxel,snakInd,snakposition)
 end
 
 %% Cleaning conquest
-
-function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo)
-    % Function containing the process allowing the deletion of Snaxels at each
-    % time step
-    delIndex=0;
-    kk=0;
-    
-    while ~isempty(delIndex)
-        canMove=[snaxel(:).isfreeze]~=1;
-        if ~isempty(snaxel(canMove))
-            [delIndex]=FindBadSnaxels(snaxel(canMove),insideContourInfo);
-        else
-            delIndex=[];
-        end
-        delSub=FindObjNum(snaxel,delIndex);
-        insideEdgesInd=[snaxel(delSub).edge];
-        snaxel=DeleteSnaxel(snaxel,delIndex);
-        [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
-            insideEdgesInd,snaxel);
-        kk=kk+1;
-    end
-    
-    
-end
-
-function [delIndex]=FindBadSnaxels(snaxel,insideContourInfo)
-    % Function containing all the deleting conditions for the Snaxels
-    delIndex=[];
-    %[wanderingIndex]=FindWanderingSnaxels(snaxel);
-    insideIndex=[];
-    %[insideIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
-    
-    [edgeConIndex]=FindEdgeConnectedSnaxels(snaxel);
-    
-    %delIndex=[insideIndex;edgeConIndex;arrivedIndex];
-    delIndex=[insideIndex;edgeConIndex];
-    [delIndex]=RemoveIdenticalEntries(delIndex);
-end
 
 function [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo)
     % Finds Snaxels on an edge inside the contour
@@ -1347,6 +707,27 @@ function snaxel=DeleteSnaxel(snaxel,delIndex)
     
     snaxel(delSnaxSub)=[];
     
+end
+
+function [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace)
+    % Removes a connection to a snaxel from another snaxel and replaces
+    % it with the replacement connection
+    refresh=singlesnaxel.connectivity==connecRemove;
+    isNext=singlesnaxel.snaxnext==connecRemove;
+    isPrec=singlesnaxel.snaxprec==connecRemove;
+    if sum(refresh)==0
+        error('invalid connection to break');
+    end
+    if isNext && isPrec
+        warning('Topology Collapsing');
+    end
+    % then replace that number to the snaxel that is being introduced
+    singlesnaxel.connectivity(refresh)=connecReplace;
+    if isNext
+        singlesnaxel.snaxnext=connecReplace;
+    elseif isPrec
+        singlesnaxel.snaxprec=connecReplace;
+    end
 end
 
 
@@ -1475,98 +856,6 @@ function [freezeIndex]=FreezeBorderContact(snaxel,borderVertices)
     
 end
 
-function [borderVertices]=FindBorderVertex(unstructured)
-    
-    edgeVertIndex=unstructured.edge.vertexindex;
-    edgeIndex=unstructured.edge.index;
-    vertexIndex=unstructured.vertex.index;
-    edgeCellIndex=unstructured.edge.cellindex;
-    
-    nVert=length(vertexIndex);
-    
-    isBorderVertex=false([nVert 1]);
-    ii=1;
-    vertex=0;
-    while ~isempty(vertex)
-        vertex(1)=[];
-        edges=FindEdgesIndex(vertexIndex(ii),edgeVertIndex,edgeIndex);
-        vertEdgeSub=FindObjNum([],edges,edgeIndex);
-        vertCellIndex=edgeCellIndex(vertEdgeSub,:);
-        isOnBorderCell=sum(sum((vertCellIndex==0)))>0;
-        if isOnBorderCell && ~isBorderVertex(ii)
-            isBorderVertex(ii)=true;
-            vertex=edgeVertIndex(vertEdgeSub,:);
-            vertex(vertex(:)==vertexIndex(ii))=[];
-        end
-        
-        if ~isempty(vertex)
-            ii=find(vertex(1)==vertexIndex);
-        end
-    end
-    
-    borderVertices=vertexIndex(isBorderVertex);
-end
-
-function [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo)
-    % function which merges topologies
-    
-    global unstructglobal
-    edgeInd=unstructglobal.edge.index;
-    
-    workingPair=[];
-    [mergeIndex,workingPair]=FreezeEdgeContact(snaxel,true);
-    ll=1;
-    savMergeInd=[];
-    snaxOrig=snaxel;
-    while ~isempty(workingPair)
-        
-        
-        for ii=1:length(workingPair)
-            [precSnax(ii),nextSnax(ii)]=CCWNeighbours(snaxel,workingPair(ii),snakposition);
-        end
-        if ~isempty(workingPair)
-            [snaxel]=MergeTopologies(snaxel,workingPair,precSnax,nextSnax);
-            [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
-            savMergeInd(ll)=mergeIndex;
-            ll=ll+1;
-        end
-        clear workingPair precSnax nextSnax
-        [mergeIndex,workingPair]=FreezeEdgeContact(snaxel,true);
-    end
-    snaxInd=[snaxOrig(:).index];
-    insideSnaxSub=FindObjNum(snaxel,savMergeInd,snaxInd);
-    insideEdgesInd=[snaxOrig(insideSnaxSub).edge];
-    
-    [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
-        insideEdgesInd,snaxel);
-    
-end
-
-function [snaxel]=MergeTopologies(snaxel,workPair,precSnak,nextSnak)
-    % Merges topologies by inverting connections
-    
-    workSub=FindObjNum(snaxel,workPair);
-    snakSave=snaxel(workSub);
-    snaxel=DeleteSnaxel(snaxel,workPair);
-    
-    snaxInd=[snaxel(:).index];
-    precSub=FindObjNum(snaxel,precSnak,snaxInd);
-    nextSub=FindObjNum(snaxel,nextSnak,snaxInd);
-    
-    
-    for ii=1:length(workPair)
-        jj=abs(ii-3);
-        snaxel(precSub(ii)).snaxnext=nextSnak(jj);
-        snaxel(precSub(ii)).connectivity=[snaxel(precSub(ii)).snaxnext,...
-            snaxel(precSub(ii)).snaxprec];
-        snaxel(nextSub(ii)).snaxprec=precSnak(jj);
-        snaxel(nextSub(ii)).connectivity=[snaxel(nextSub(ii)).snaxnext,...
-            snaxel(nextSub(ii)).snaxprec];
-        
-    end
-    
-end
-
 function [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid)
     
     borderEdges=[refinedGrid.edge(:).boundaryis0] & [refinedGrid.edge(:).boundaryis1];
@@ -1577,81 +866,75 @@ function [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid)
 end
 
 
-%% Check sensitivity
-function []=testSensitivity(snaxel,snakposition,sensSnax)
+%% Sensitivity method development
+
+function [snaxmode]=ExecuteSensitivity(entryPoint,snaxel,snakposition,sensSnax,volumefraction,isPlot)
     
-    global unstructglobal
-    sensSnax(:,find(sum(abs(sensSnax))==0))=[];
-    dCurr=[snaxel(:).d];
-    kk=1;
-    snaxInd=[snaxel(:).index];
-    snaxOrd=zeros(size(snaxel));
-    ordList=1:numel(snaxOrd);
-    for ii=1:length(snaxel)
-        kk=FindObjNum([],[snaxel(kk).snaxnext],snaxInd);
-        if ordList(kk)==0
-            kk=min(ordList(ordList~=0));
-        end
-        snaxOrd(ii)=kk;
-        ordList(kk)=0;
-    end
-    %snaxOrd(end+1)=snaxOrd(1);
-    coord1=vertcat(snakposition(:).coord);
-    [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
-        ones([length(snaxel), 1])*2],2);
-    [testPos1]=CreateComparisonMatrix(coord1);
-    l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
-    for ii=1:length(sensSnax(1,:)),
-        snaxCopy=snaxel;
-        e1=(1)./sensSnax(:,ii);
-        e2=(-1)./sensSnax(:,ii);
-        e1_sel=min(e1(e1>0));
-        e2_sel=min(e2(e2>0));
-        e_sel(ii)=min([e1_sel,e2_sel]);
-        dChange{ii}=sensSnax(:,ii)/max(abs(sensSnax(:,ii)));
-        %dChange{ii}=-sensSnax(:,ii)/100;
-        dAct=dCurr'+dChange{ii};
-        
-        for jj=1:length(snaxel)
-            snaxCopy(jj).d=dAct(jj);
-        end
-        [snakposition2]=PositionSnakes(snaxCopy,unstructglobal);
-        
-        
-        coord2=vertcat(snakposition2(:).coord);
-        [testPos2]=CreateComparisonMatrix(coord2);
-        [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
-        figure
-        plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'o-',coord2(newOrd,1),coord2(newOrd,2),'o-')
-        hold on
-        for jj=1:length(newOrd)
-            plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
-        end
-        title(['mode ',int2str(ii)])
-        axis equal
-        
+    
+    switch entryPoint
+        case 'analytical'
+            [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,isPlot);
+        case 'snake'
+            
     end
     
     
 end
 
-function []=ExecuteSensitivity(snaxel,snakposition,sensSnax)
+%% Analytical snaxel Mode structure
+
+function [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,isPlot)
     
+    [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefraction,isPlot);
+    
+    rootloop=OrderSurfaceSnaxel(snaxel);
+    for jj=1:numel(rootloop)
+        A(jj)=abs(CalculatePolyArea(rootloop(jj).snaxel.coord));
+    end
+    startVol=sum(A);
+    
+    for ii=1:numel(snaxmode)
+        for jj=1:numel(snaxmode(ii).loopsnaxel)
+            snaxmode(ii).A(jj)=abs(CalculatePolyArea(snaxmode(ii).loopsnaxel(jj).snaxel.coord));
+        end
+        [snaxmode(ii).vecmode]=BuildVectors(rootloop,snaxmode(ii).loopsnaxel);
+        snaxmode(ii).deltaFrac=(sum(snaxmode(ii).A)-startVol)/snaxmode(ii).cellVol;
+    end
+end
+
+function [vectormode]=BuildVectors(looproot,loopsnaxel)
+    
+    for ii=1:numel(loopsnaxel)
+        actRoot=FindObjNum([],loopsnaxel(ii).snaxel.index,looproot(ii).snaxel.index);
+        subAct=SubDivision(loopsnaxel(ii).snaxel.coord,3,'chaikin',[0 0],'none');
+        subRoot{ii}=SubDivision(looproot(ii).snaxel.coord(actRoot,:),3,'chaikin',[0 0],'none');
+        vecMode{ii}=subAct-subRoot{ii};
+    end
+    vectormode.points=vertcat(subRoot{:});
+    vectormode.vector=vertcat(vecMode{:});
+end
+
+function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefraction,isPlot)
+    
+    if nargin<5
+        isPlot=false;
+    end
     global unstructglobal
+    t1=now;
+    cellVols=[volumefraction(find(sum(abs(sensSnax))~=0)).totalvolume];
+    cellInd=[volumefraction(find(sum(abs(sensSnax))~=0)).oldCellInd];
     sensSnax(:,find(sum(abs(sensSnax))==0))=[];
     dCurr=[snaxel(:).d];
     
     [snaxOrd]=SplitSnaxLoops(snaxel); % Isolates individual loops
-    maxDistRatio=1/4;
+    maxDistRatio=1/1000;
     [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio);
     
     
     coord1=vertcat(snakposition(:).coord);
     [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
         ones([length(snaxel), 1])*2],2);
-    [testPos1]=CreateComparisonMatrix(coord1);
     
-    l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
     for ii=1:length(sensSnax(1,:)),
         snaxCopy(ii,:)=snaxel;
         
@@ -1660,24 +943,99 @@ function []=ExecuteSensitivity(snaxel,snakposition,sensSnax)
             snaxCopy(ii,jj).d=dAct(jj);
         end
         [snakposition2(ii,:)]=PositionSnakes(snaxCopy(ii,:),unstructglobal);
-    end 
-        
-%         coord2=vertcat(snakposition2(:).coord);
-%         [testPos2]=CreateComparisonMatrix(coord2);
-%         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
-%         
-        
-%         figure
-%         plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'o-',coord2(newOrd,1),coord2(newOrd,2),'o-')
-%         hold on
-%         for jj=1:length(newOrd)
-%             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
-%         end
-%         title(['mode ',int2str(ii)])
-%         axis equal
-        
+    end
+    
+    coordBase{numel(snaxOrd)}=[];
+    refPos{numel(snaxOrd)}=[];
+    coordNew{numel(snaxOrd),numel(dChange)}=[];
+    newPos{numel(snaxOrd),numel(dChange)}=[];
+    newOrd{numel(snaxOrd),numel(dChange)}=[];
+    for ii=1:numel(snaxOrd)
+        coordBase{ii}=vertcat(snakposition(snaxOrd{ii}).coord);
+        [refPos{ii}]=CreateComparisonMatrix(coordBase{ii});
+        for jj=1:numel(dChange)
+            coordNew{ii,jj}=vertcat(snakposition2(jj,snaxOrd{ii}).coord);
+            [newPos{ii,jj}]=CreateComparisonMatrix(coordNew{ii,jj});
+            [newOrd{ii,jj}]=(CompareTestpos(refPos{ii},newPos{ii,jj},1:numel(snaxOrd{ii}),dir(snaxOrd{ii})));
+        end
+    end
+    
+    for jj=1:numel(dChange)
+        snaxmode(jj).cellindex=cellInd(jj);
+        snaxmode(jj).snaxel=snaxCopy(jj,:);
+        snaxOrdTemp=newOrd(:,jj);
+        for ii=1:numel(snaxOrd)
+            snaxOrdTemp{ii}=snaxOrd{ii}(snaxOrdTemp{ii});
+        end
+        [snaxmode(jj).snaxel]=MatchOrders(snaxmode(jj).snaxel,snaxOrdTemp);
+        snaxmode(jj).loopsnaxel=OrderSurfaceSnaxel(snaxmode(jj).snaxel);
+        snaxmode(jj).cellVol=cellVols(jj);
+    end
     
     
+    t2=now;
+    
+    
+    if isPlot
+        for jj=1:numel(dChange)
+            coordFull{jj}=vertcat(snakposition2(jj,:).coord);
+        end
+        
+        for jj=1:numel(dChange)
+            figure
+            hold on
+            for ii=1:numel(snaxOrd)
+                
+                plot(coordBase{ii}(:,1),coordBase{ii}(:,2),'+-')
+                plot(coordNew{ii,jj}(newOrd{ii,jj},1),coordNew{ii,jj}(newOrd{ii,jj},2),'o-')
+                
+            end
+            for ii=1:size(coord1,1)
+                plot([coord1(ii,1),coordFull{jj}(ii,1)],[coord1(ii,2),coordFull{jj}(ii,2)],'k--')
+            end
+            
+        end
+    end
+    t3=now;
+    %         coord2=vertcat(snakposition2(:).coord);
+    %         [testPos2]=CreateComparisonMatrix(coord2);
+    %         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
+    %
+    
+    %         figure
+    %         plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'o-',coord2(newOrd,1),coord2(newOrd,2),'o-')
+    %         hold on
+    %         for jj=1:length(newOrd)
+    %             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+    %         end
+    %         title(['mode ',int2str(ii)])
+    %         axis equal
+    
+    
+    datestr(t3-t2,'SS:FFF')
+    datestr(t2-t1,'SS:FFF')
+    
+end
+
+function [snaxel]=MatchOrders(snaxel,snaxOrd)
+    
+    for ii=1:numel(snaxOrd)
+        
+        nOrd=numel(snaxOrd{ii});
+        for jj=1:nOrd
+            ind=mod(jj-1,nOrd)+1;
+            indp1=mod(jj,nOrd)+1;
+            indm1=mod(jj-2,nOrd)+1;
+            
+            snaxel(snaxOrd{ii}(ind)).snaxprec=snaxel(snaxOrd{ii}(indm1)).index;
+            snaxel(snaxOrd{ii}(ind)).snaxnext=snaxel(snaxOrd{ii}(indp1)).index;
+            snaxel(snaxOrd{ii}(ind)).connectivity=...
+                [snaxel(snaxOrd{ii}(indm1)).index,snaxel(snaxOrd{ii}(indp1)).index];
+        end
+        
+    end
+    
+    snaxel=snaxel([snaxOrd{:}]);
     
 end
 
@@ -1687,23 +1045,26 @@ function [snaxOrd]=SplitSnaxLoops(snaxel)
     kk=1;
     jj=1;
     snaxInd=[snaxel(:).index];
-    snaxOrd=zeros(size(snaxel));
-    ordList=1:numel(snaxOrd);
+    %snaxOrd=zeros(size(snaxel));
+    ordList=1:numel(snaxel);
+    ll=1;
     for ii=1:length(snaxel)
         kk=FindObjNum([],[snaxel(kk).snaxnext],snaxInd);
-        if ordList{jj}(kk)==0
+        if ordList(kk)==0
             jj=jj+1;
             kk=min(ordList(ordList~=0));
+            ll=1;
         end
-        snaxOrd{jj}(ii)=kk;
+        snaxOrd{jj}(ll)=kk;
         ordList(kk)=0;
+        ll=ll+1;
     end
     
 end
 
 function [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio)
     
-    nMode=size(snSnax,2);
+    nMode=size(sensSnax,2);
     dChange{nMode}=[];
     for ii=1:nMode
         dChange{ii}=sensSnax(:,ii)/max(abs(sensSnax(:,ii)))*maxDistRatio;
@@ -1717,7 +1078,7 @@ function [testPos]=CreateComparisonMatrix(coord)
     for jj=1:n
         testPos{jj}=zeros(m);
         for ii=1:m
-            testPos{jj}(:,ii)=(coord(ii,jj)>coord(:,jj));
+            testPos{jj}(:,ii)=(coord(ii,jj)>coord(:,jj))+(coord(ii,jj)<coord(:,jj))*-1;
         end
     end
     
@@ -1725,6 +1086,9 @@ function [testPos]=CreateComparisonMatrix(coord)
 end
 
 function [newOrd]=CompareTestpos(t1,t2,ord,dir)
+    
+    oldOrd=ord;
+    ord=FindObjNum([],ord,ord)';
     
     for ii=1:length(t1)
         tD{ii}=t1{ii}~=t2{ii};
@@ -1739,45 +1103,56 @@ function [newOrd]=CompareTestpos(t1,t2,ord,dir)
         tDel=tDel+ii*(tD{ii} & ~tX);
     end
     
-    newOrd=ord;
-    for ii=1:length(ord)-1
-        if tX(newOrd(ii+1),newOrd(ii))
-            tX(newOrd(ii+1),newOrd(ii))=false;
-            tX(newOrd(ii),newOrd(ii+1))=false;
-            interim=newOrd(ii);
-            newOrd(ii)=newOrd(ii+1);
-            if ii==1
-                newOrd(end)=newOrd(ii+1);
-            end
-            newOrd(ii+1)=interim;
-        end
-    end
+    [newOrd,tX]=ReorderList(ord,tX);
     newOrd=newOrd(end:-1:1);
-    for ii=1:length(ord)-1
-        if tX(newOrd(ii+1),newOrd(ii))
-            interim=newOrd(ii);
-            newOrd(ii)=newOrd(ii+1);
-            if ii==1
-                newOrd(end)=newOrd(ii+1);
-            end
-            newOrd(ii+1)=interim;
-        end
-    end
-    kk=1;
-    newOrd=[newOrd(end-1),newOrd];
+    [newOrd,tX]=ReorderList(newOrd,tX);
+    newOrd=newOrd(end:-1:1);
+    
+    %newOrd=[newOrd(end-1),newOrd];
     rmSnak=[];
-    for ii=2:length(newOrd)-1
-        tTest=tDel([newOrd(ii-1),newOrd(ii),newOrd(ii+1)],[newOrd(ii)]);
-        if (sum(tTest~=dir(newOrd(ii)) & tTest~=0))
-            rmSnak(kk)=ii;
+    kk=1;
+    for ii=1:length(newOrd)
+        
+        ind=mod(ii-1,length(newOrd))+1;
+        indp1=mod(ii,length(newOrd))+1;
+        indm1=mod(ii-2,length(newOrd))+1;
+        
+        
+        tTest=tDel([newOrd(indm1),newOrd(ind),newOrd(indp1)],[newOrd(ind)]);
+        tTest2=t2{abs(dir(newOrd(ind))-3)}([newOrd(indm1),newOrd(ind),newOrd(indp1)]...
+            ,[newOrd(ind)]);
+        
+        if (sum(tTest~=dir(newOrd(ind)) & tTest~=0)) ... % overtaken by neighbour
+                || (sum(tTest2==0 & (tTest==dir(newOrd(ind))))) % neighbours on same line have crossed
+            rmSnak(kk)=ind;
             kk=kk+1;
+            
+            
         end
     end
     newOrd(rmSnak)=[];
-    
+    newOrd=oldOrd(newOrd);
 end
 
-%% Various
+function [newOrd,tX]=ReorderList(ord,tX)
+    
+    newOrd=ord;
+    for ii=0:2*length(ord)-1
+        ind1=mod(ii,length(ord))+1;
+        ind2=mod(ii+1,length(ord))+1;
+        if tX(newOrd(ind2),newOrd(ind1)) % if crossing
+            
+            tX(newOrd(ind2),newOrd(ind1))=false; % delete the crossing flag
+            tX(newOrd(ind1),newOrd(ind2))=false;
+            
+            interim=newOrd(ind1); % invert connection
+            newOrd(ind1)=newOrd(ind2);
+            newOrd(ind2)=interim;
+        end
+    end
+    
+    
+end
 
 function [loopsnaxel]=OrderSurfaceSnaxel(snaxel)
     % function extracting the snaxels into their separate loops
@@ -1810,407 +1185,104 @@ function [loopsnaxel]=OrderSurfaceSnaxel(snaxel)
     
 end
 
-function [snaxelrev]=ReverseSnakes(snaxel)
-    % Reverses a set of snaxels such that they are pointing the other way
+function [A]=CalculatePolyArea(points)
     
-    for ii=length(snaxel):-1:1
-        snaxelrev(ii)=snaxel(ii);
-        % unchanged
-        snaxelrev(ii).index=snaxel(ii).index;
-        snaxelrev(ii).edge=snaxel(ii).edge;
-        snaxelrev(ii).isfreeze=snaxel(ii).isfreeze;
-        snaxelrev(ii).connectivity=snaxel(ii).connectivity;
-        % changed
-        snaxelrev(ii).d=1-snaxel(ii).d;
-        snaxelrev(ii).v=-snaxel(ii).v;
-        snaxelrev(ii).acc=-snaxel(ii).acc;
-        snaxelrev(ii).tovertex=snaxel(ii).fromvertex;
-        snaxelrev(ii).fromvertex=snaxel(ii).tovertex;
-        snaxelrev(ii).snaxprec=snaxel(ii).snaxnext;
-        snaxelrev(ii).snaxnext=snaxel(ii).snaxprec;
+    pointsVec=points';
+    pointsVec=pointsVec(:);
+    %plot(points(:,1),points(:,2));
+    n=length(points(:,1));
+    centreMat=eye(2*n);
+    centreMat=(centreMat+centreMat(:,[end-1:end,1:end-2]))*0.5;
+    
+    [rotDif]=[0 -1 0 1; 1 0 -1 0];
+    normMat=zeros(2*n);
+    for ii=1:n-1
+        normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+4))=rotDif;
     end
-    
-    
+    ii=n;
+    normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+2))=rotDif(:,1:2);
+    normMat((2*(ii-1)+1):(2*(ii-1)+2),1:2)=rotDif(:,3:4);
+    A=0.5*(normMat*pointsVec)'*(centreMat*pointsVec);
     
 end
 
-function [snaxelrev]=ReverseSnakesConnection(snaxel)
-    % Reverses a set of snaxels such that they are pointing the other way
-    
-    for ii=length(snaxel):-1:1
-        snaxelrev(ii)=snaxel(ii);
-        % changed
-        snaxelrev(ii).snaxprec=snaxel(ii).snaxnext;
-        snaxelrev(ii).snaxnext=snaxel(ii).snaxprec;
-    end
-    
-    
-    
-end
+%% Combined mode data
 
-function [points]=ShrinkEdges(points,LEShrink,TEShrink)
-    % Function which allows to make sharp trailing edges and leading edges
-    [~,iLE]=min(points(:,1));
-    [~,iTE]=max(points(:,1));
+function [cellordstruct]=BuildCellConnectivity(snaxel,gridRefined,volfraconnec)
     
-    [m,~]=size(points);
+    edgeInd=[gridRefined.edge(:).index];
     
-    iLEm1=iLE-1;
-    [iLEm1]=IndexMod(iLEm1,m);
-    iLEp1=iLE+1;
-    [iLEp1]=IndexMod(iLEp1,m);
+    [oldCellInd,newCellInd]=NewToOldCell(volfraconnec);
     
-    iTEm1=iTE-1;
-    [iTEm1]=IndexMod(iTEm1,m);
-    iTEp1=iTE+1;
-    [iTEp1]=IndexMod(iTEp1,m);
-    
-    points(iLEm1,2)=points(iLEm1,2)-LEShrink;
-    points(iLEp1,2)=points(iLEp1,2)+LEShrink;
-    
-    points(iTEm1,2)=points(iTEm1,2)+TEShrink;
-    points(iTEp1,2)=points(iTEp1,2)-TEShrink;
-    
-    if points(iLEm1,2)<=points(iLE+1,2)
-         points([iLEm1,iLE+1],:)=[];
-    end
-    if points(iTEm1,2)>=points(iTEp1,2)
-         points([iTEm1,iTEp1],:)=[];
-    end
-    
-end
-
-function [points]=SharpenEdges(points,TEShrink,LEShrink)
-    % Function which allows to make sharp trailing edges and leading edges
-    [~,iLE]=min(points(:,1));
-    [~,iTE]=max(points(:,1));
-    
-    [m,~]=size(points);
-    
-    iLEm1=iLE-1;
-    [iLEm1]=IndexMod(iLEm1,m);
-    iLEp1=iLE+1;
-    [iLEp1]=IndexMod(iLEp1,m);
-    iLEm2=iLE-2;
-    [iLEm2]=IndexMod(iLEm2,m);
-    iLEp2=iLE+2;
-    [iLEp2]=IndexMod(iLEp2,m);
-    
-    iTEm1=iTE-1;
-    [iTEm1]=IndexMod(iTEm1,m);
-    iTEp1=iTE+1;
-    [iTEp1]=IndexMod(iTEp1,m);
-    iTEm2=iTE-2;
-    [iTEm2]=IndexMod(iTEm2,m);
-    iTEp2=iTE+2;
-    [iTEp2]=IndexMod(iTEp2,m);
-    
-    if LEShrink
-        [points(iLEm1,:)]=Align3points(points([iLE,iLEm2],:),points(iLEm1,:));
-        [points(iLEp1,:)]=Align3points(points([iLE,iLEp2],:),points(iLEp1,:));
-    end
-    if TEShrink
-        [points(iTEm1,:)]=Align3points(points([iTE,iTEm2],:),points(iTEm1,:));
-        [points(iTEp1,:)]=Align3points(points([iTE,iTEp2],:),points(iTEp1,:));
-    end
-    
-%     if points(iLEm1,2)<=points(iLE+1,2)
-%          points([iLEm1,iLE+1],:)=[];
-%     end
-%     if points(iTEm1,2)>=points(iTEp1,2)
-%          points([iTEm1,iTEp1],:)=[];
-%     end
-    
-end
-
-function [pointAlign]=Align3points(line,point)
-    
-    pointAlign=point;
-    
-    pointAlign(2)=(line(1,2)-line(2,2))/(line(1,1)-line(2,1))...
-        *(point(1)-line(2,1))+line(2,2);
-    
-    if isnan(pointAlign(2)) || ~isfinite(pointAlign(2))
-        pointAlign=point;
-    end
-    
-    
-end
-
-function [indMod]=IndexMod(ind,m)
-    
-    indMod=mod(ind-1,m)+1;
-    
-end
-
-
-%% Copied/Modified from main
-
-function []=template()
-    
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%
-%% OLD Working  CODE %%
-%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Do not delete
-
-%{
-function [precSnax,nextSnax]=CCWNeighbours2(snaxel,snakInd,snakposition)
-    % gives the counter clockwise order of neighbouring points
-    snaxelIndices=[snaxel(:).index];
-    snaxelIndicesPos=[snakposition(:).index];
-    snakSub=FindObjNum(snaxel,snakInd,snaxelIndices);
-    snakSubP=FindObjNum(snakposition,snakInd,snaxelIndicesPos);
-    connecInd=snaxel(snakSub).connectivity;
-    %connecSub=FindObjNum(snakposition,connecInd);
-    baseCoord=snakposition(snakSubP).coord;
-    
-    [~,connecNonSimInd,intermidiateCon]=FindFirstNonSimilarSnaxel(snaxel,connecInd,snakInd,...
-        baseCoord,snakposition);
-    
-    [contourStruct]=ExtractContourStruct(snaxel,snakposition,connecNonSimInd,...
-        intermidiateCon,snaxelIndices);
-    baseVec=sum(vertcat(contourStruct(:).vector));
-    [precSnaxNonSim,nextSnaxNonSim]=CCWConnections(snakposition,snakInd,...
-        connecNonSimInd,baseVec);
-    
-    precSnaxLog=precSnaxNonSim==connecNonSimInd;
-    nextSnaxLog=nextSnaxNonSim==connecNonSimInd;
-    
-    precSnax=connecInd(precSnaxLog);
-    nextSnax=connecInd(nextSnaxLog);
-    
-end
-
-function [contourStruct]=ExtractContourStruct(snaxel,snakposition,connecNonSimInd,...
-        intermidiateCon,snaxelIndices)
-    
-    for ii=1:length(connecNonSimInd)
-        truncInd=[connecNonSimInd(ii),intermidiateCon{ii}(end)];
-        truncSub=FindObjNum(snaxel,truncInd,snaxelIndices);
-        snaxelTrunc=snaxel(truncSub);
-        for jj=1:length(snaxelTrunc)
-            
-            snaxelTrunc(jj).connectivity=snaxelTrunc(jj).connectivity...
-                (snaxelTrunc(jj).connectivity==truncInd(1) |...
-                snaxelTrunc(jj).connectivity==truncInd(2))*[1 1];
-            
-        end
-        [contourStruct(ii)]=ContourNormal2(snaxelTrunc,snakposition);
-    end
-end
-
-function [precSnax,nextSnax]=CCWConnections(snakposition,snakInd,connecIndex,outBaseVec)
-    % gives the counter clockwise order of neighbouring points
-    snakSub=FindObjNum(snakposition,snakInd);
-    connecSub=FindObjNum(snakposition,connecIndex);
-    
-    baseCoord=snakposition(snakSub).coord;
-    %baseVec=snakposition(snakSub).vector;
-    connecCoord=vertcat(snakposition(connecSub).coord);
-    
-    connecVec=zeros(size(connecCoord));
-    for ii=1:length(connecIndex)
-        connecVec(ii,:)=connecCoord(ii,:)-baseCoord;
-    end
-    
-    vecAngles=ExtractAngle360(outBaseVec,connecVec);
-    is0Angle=find(vecAngles==0, 1);
-    if ~isempty(is0Angle)
-        error('0 Angles should Be a Thing of the past')
-%{
-        if numel(is0Angle)==1
-            not0Angle=find(vecAngles~=0);
-            if vecAngles(not0Angle)>pi
-                vecAngles(is0Angle)=0;
-            elseif vecAngles(not0Angle)<pi
-                vecAngles(is0Angle)=2*pi;
-            elseif vecAngles(not0Angle)==pi
-                warning('Calculation of CCW connections is problematic')
-            end
-        else
-            warning('Calculation of CCW connections is problematic')
-        end
-%}
-    end
-    
-    [~,iNext]=min(vecAngles);
-    [~,iPrec]=max(vecAngles);
-    precSnax=connecIndex(iPrec);
-    nextSnax=connecIndex(iNext);
-    
-end
-
-function [snakposition]=SnaxelNormal(snaxel,snakposition)
-    % Calculates the normal at the Snaxel (According to snakes with topology control)
-    
-    [normalcontourvec]=ContourNormal(snaxel,snakposition);
-    nSnax=length(snaxel);
-    nNCV=length(normalcontourvec);
-    normalVecVertex=zeros(nNCV,2);
-    for ii=1:nNCV
-        normalVecVertex(ii,1)=normalcontourvec(ii).vertex(1);
-        normalVecVertex(ii,2)=normalcontourvec(ii).vertex(2);
-    end
-    
-    for ii=1:nSnax
-        contourVecSub=(normalVecVertex(:,1)==snaxel(ii).index);
-        snakposition(ii).normvector=...
-            {normalcontourvec(contourVecSub).vector};
+    for ii=1:numel(snaxel)
+        snaxcellinfo(ii).index=snaxel(ii).index;
+        snaxcellinfo(ii).precsnax=snaxel(ii).snaxprec;
+        snaxcellinfo(ii).nextsnax=snaxel(ii).snaxnext;
+        snaxcellinfo(ii).newcell=gridRefined.edge(...
+            FindObjNum([],snaxel(ii).edge,edgeInd)).cellindex;
         
+        snaxcellinfo(ii).oldcell=(oldCellInd(...
+            FindObjNum([],snaxcellinfo(ii).newcell,newCellInd)));
+    end
+    
+    [snaxOrd]=SplitSnaxLoops(snaxel);
+    
+    for ii=1:length(snaxOrd)
+        cellsRaw=vertcat(snaxcellinfo(snaxOrd{ii}).oldcell);
+        cellOrd{ii}=OrderRawCells(cellsRaw);
+    end
+    
+    cellordstruct=repmat(struct('index',[],'nextcell',[],'prevcell',[]),[1,numel([cellOrd{:}])]);
+    kk=1;
+    for ii=1:numel(cellOrd)
+        nCell=numel(cellOrd{ii});
+        for jj=1:nCell
+            cellordstruct(kk).index=cellOrd{ii}(jj);
+            cellordstruct(kk).nextcell=cellOrd{ii}(mod(jj,nCell)+1);
+            cellordstruct(kk).prevcell=cellOrd{ii}(mod(jj-2,nCell)+1);
+            kk=kk+1;
+        end
+    end
+    
+    
+end
+
+function [cellsOrdRaw]=OrderRawCells(cellsRaw)
+    
+    
+    cellsOrdRaw=zeros([1,numel(cellsRaw)]);
+    [l2Ind,l1Ind]=find((ones([2,1])*cellsRaw(1,:))==(cellsRaw(2,:)'*ones([1,2])));
+    nRows=size(cellsRaw,1);
+    cellsOrdRaw(1)=cellsRaw(1,l1Ind(1));
+    cellsOrdRaw(2)=cellsRaw(1,l2Ind(1));
+    kk=3;
+    for ii=2:nRows
+        l1Ind=abs(l2Ind(1)-3);
+        l2Ind=find(cellsRaw(ii,l1Ind)==cellsRaw(mod(ii,nRows)+1,:));
         
-%         if numel(find(normalVecVertex==snaxel(ii).index))>2
-%             warning('normal contour vec not operating as expected')
-%         end
-    end
-    
-end
-
-function [normalcontourvec]=ContourNormal(snaxel,snakposition)
-    % Calculates the normal of the contour
-    
-    snaxInd=[snaxel(:).index];
-    nSnax=length(snaxel);
-    ll=0;
-    
-    
-    for ii=1:nSnax
-        for kk=1:2
-            ll=ll+1;
-            snakIndex=snakposition(ii).index;
-            
-            baseCoord=snakposition(ii).coord;
-            
-            nextSnakIndex=snaxel(ii).connectivity(kk);
-            nextSnakSub=FindObjNum(snaxel,nextSnakIndex,snaxInd);
-            normalcontourvec(ll).vertex=[snakIndex,nextSnakIndex];
-            
-            tanVec=baseCoord-snakposition(nextSnakSub).coord;
-            if sum(abs(tanVec))~=0
-                % if the tangential vector is not the 0 vector
-                normalVector=CalcNormVec2D(tanVec);
-            else
-                % else use the direction vectors
-                normalVector=sum([snakposition(ii).vector;...
-                    snakposition(nextSnakSub).vector]);
-            end
-            if sum(abs(normalVector))==0
-                [nextSub,nextSnax]=...
-                    FindFirstNonSimilarSnaxel(snaxel,nextSnakIndex,snakIndex,...
-                    baseCoord,snakposition);
-                nextSnakSub=FindObjNum(snaxel,nextSnax,snaxInd);
-                tanVec=baseCoord-snakposition(nextSnakSub).coord;
-                if sum(abs(tanVec))~=0
-                    % if the tangential vector is not the 0 vector
-                    normalVector=CalcNormVec2D(tanVec);
-                else
-                    % else use the direction vectors
-                    normalVector=sum([snakposition(ii).vector;...
-                        snakposition(nextSnakSub).vector]);
-                end
-            end
-            for jj=1:2
-                workIndex=normalcontourvec(ll).vertex(jj);
-                workIndex=FindObjNum(snaxel,workIndex,snaxInd);
-                testDirNV(jj)=dot(snakposition(workIndex).vector,normalVector);
-            end
-            if sum(testDirNV<0)
-                normalVector=-normalVector;
-                for jj=1:2
-                    workIndex=normalcontourvec(ll).vertex(jj);
-                    workIndex=FindObjNum(snaxel,workIndex,snaxInd);
-                    testDirNV(jj)=dot(snakposition(workIndex).vector,normalVector);
-                end
-                if sum(testDirNV<0)
-                    %                    warning('Snaxel moving into the volume')
-                end
-            end
-            if sum(abs(normalVector))==0
-                error('vertex Normal is [0 0]')
-            end
-            normalcontourvec(ll).vector=normalVector/norm(normalVector);
+        if isempty(l2Ind)
+            error('Non matching cell lists')
         end
+        
+        cellsOrdRaw(kk)=cellsRaw(ii,l1Ind);
+        cellsOrdRaw(kk+1)=cellsRaw(mod(ii,nRows)+1,l2Ind(1));
+        kk=kk+2;
+        
+    end
+    cellsOrdRaw=RemoveIdenticalConsecutivePoints(cellsOrdRaw')';
+    if cellsOrdRaw(end)==cellsOrdRaw(1)
+        cellsOrdRaw(end)=[];
     end
 end
 
-function [connecSub,connecSnax,intermediateCon]=...
-        FindFirstNonSimilarSnaxel(snaxel,connecSnax,snaxIndex,baseCoord,snaxPositions)
-    % Checks the case where snaxels have the same coordinates and orders them
-    % based on the following snaxel
+function [oldCellInd,newCellInd]=NewToOldCell(volfraconnec)
     
-    snaxInd=[snaxel(:).index];
-    snaxPInd=[snaxPositions(:).index];
-    connecSub=FindObjNum(snaxel,connecSnax,snaxInd);
-    connecSubP=FindObjNum(snaxPositions,connecSnax,snaxPInd);
-    intermediateCon{length(connecSub)}=[];
-    for ii=1:length(connecSub)
-        precConnectionIndex=snaxIndex;
-        ll=1;
-        intermediateCon{ii}(ll)=precConnectionIndex;
-        ll=ll+1;
-        while sum(baseCoord~=snaxPositions(connecSubP(ii)).coord)==0;
-            replaceConnec=snaxel(connecSub(ii)).connectivity;
-            replaceConnec=replaceConnec(replaceConnec~=precConnectionIndex);
-            precConnectionIndex=connecSnax(ii);
-            intermediateCon{ii}(ll)=precConnectionIndex;
-            ll=ll+1;
-            connecSnax(ii)=replaceConnec;
-            connecSub(ii)=FindObjNum(snaxel,connecSnax(ii),snaxInd);
-            connecSubP(ii)=FindObjNum(snaxPositions,connecSnax(ii),snaxPInd);
-        end
+    newCellInd=[volfraconnec.cell(:).newCellInd];
+    oldCellInd=ones(size(newCellInd));
+    kk=1;
+    for ii=1:length(volfraconnec.cell)
+        nNew=numel(volfraconnec.cell(ii).newCellInd);
+        oldCellInd(kk:kk+nNew-1)=ones([1,nNew])*volfraconnec.cell(ii).oldCellInd;
+        kk=kk+nNew;
     end
-    
 end
-
-
-function [derivstruct,edgeSnakSub]=AddSnaxelDeriv2(cellStruct,edgeSnakSub)
-    % Calculates snaxel-snaxel border
-    
-    snaxNormVector=vertcat(cellStruct.snaxel(edgeSnakSub).normvector);
-    for jj=1:2
-        for ll=1:2
-            if sum(snaxNormVector{1,jj}==snaxNormVector{2,ll})==2
-                snaxNormVecIndex=jj;
-            end
-        end
-    end
-    activeCoord=vertcat(cellStruct.snaxel(edgeSnakSub).coord);
-    
-    normVecLength=snaxNormVector{1,snaxNormVecIndex}*norm(activeCoord(1,:)-activeCoord(2,:));
-    
-    [edgeSnakSub]=CalculateCWdirectionEdge(activeCoord,...
-        snaxNormVector{1,snaxNormVecIndex},edgeSnakSub);
-    for ii=2:-1:1
-        jj=ii;%abs(ii-3);
-        derivstruct(ii)=...
-            BorderDerivCoeffStructure(cellStruct.index,cellStruct.snaxel(edgeSnakSub(ii)).index,...
-            cellStruct.snaxel(edgeSnakSub(ii)).vector*cellStruct.snaxel(edgeSnakSub(ii)).edgelength...
-            ,mean(activeCoord),normVecLength,jj);
-    end
-    
-    
-end
-
-
-function [bordstruct,edgeSnakSub]=AddSnaxelBorders2(cellStruct,edgeSnakSub)
-    % Calculates snaxel-snaxel border
-    
-    snaxNormVector=vertcat(cellStruct.snaxel(edgeSnakSub).normvector);
-    for jj=1:2
-        for ll=1:2
-            if sum(snaxNormVector{1,jj}==snaxNormVector{2,ll})==2
-                snaxNormVecIndex=jj;
-            end
-        end
-    end
-    activeCoord=vertcat(cellStruct.snaxel(edgeSnakSub).coord);
-    
-    bordstruct=BorderStructure(norm(activeCoord(1,:)-activeCoord(2,:)),...
-        mean(activeCoord),snaxNormVector{1,snaxNormVecIndex});
-    [edgeSnakSub]=CalculateCWdirectionEdge(activeCoord,...
-        snaxNormVector{1,snaxNormVecIndex},edgeSnakSub);
-end
-
-%}

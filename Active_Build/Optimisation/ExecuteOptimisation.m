@@ -726,7 +726,6 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
     end
 end
 
-
 function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
         desVarVal)
     % Initialises a random number of aerodynamic looking strips in the
@@ -794,7 +793,6 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
     end
 end
-
 
 function [iterstruct]=InitialiseIterationStruct(paramoptim)
     

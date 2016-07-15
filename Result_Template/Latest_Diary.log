@@ -824,4 +824,240 @@ ans =
 {Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('SubDivision', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\SubDivision.m', 16)" style="font-weight:bold">SubDivision</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\SubDivision.m',16,0)">line 16</a>)
 Not enough input arguments.
 
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSensitivity>BuildVectors', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\ExecuteSensitivity.m', 28)" style="font-weight:bold">ExecuteSensitivity>BuildVectors</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\ExecuteSensitivity.m',28,0)">line 28</a>
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSensitivity>BuildVectors', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\ExecuteSensitivity.m', 28)" style="font-weight:bold">ExecuteSensitivity>BuildVectors</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\ExecuteSensitivity.m',28,0)">line 28</a>)
+        subAct=SubDivision(loopsnaxel(ii).snaxel.coord,1,'chaikin');
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\ExecuteSensitivity.m', 19)" style="font-weight:bold">ExecuteSensitivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\ExecuteSensitivity.m',19,0)">line 19</a>)
+        [snaxmode(ii).loopsnaxel]=BuildVectors(rootloop,snaxmode(ii).loopsnaxel);
+} 
+clc
+[snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,false)
+
+ans =
+
+00:000
+
+
+ans =
+
+00:686
+
+
+snaxmode = 
+
+1x40 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+
+    cellindex
+    snaxel
+    loopsnaxel
+    cellVol
+    A
+    deltaFrac
+
+[snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,false)
+
+ans =
+
+00:000
+
+
+ans =
+
+00:687
+
+
+snaxmode = 
+
+1x40 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+
+    cellindex
+    snaxel
+    loopsnaxel
+    cellVol
+    A
+    vecmode
+    deltaFrac
+
+for ii=1:length(snaxmode); figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1),snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2),'o-');end
+close all
+[snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,false)
+
+ans =
+
+00:000
+
+
+ans =
+
+00:702
+
+
+snaxmode = 
+
+1x40 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+
+    cellindex
+    snaxel
+    loopsnaxel
+    cellVol
+    A
+    vecmode
+    deltaFrac
+
+for ii=1:length(snaxmode); figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1),snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2),'o-');end
+close all
+clc
+[snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,false)
+
+ans =
+
+00:000
+
+
+ans =
+
+00:702
+
+
+snaxmode = 
+
+1x40 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+
+    cellindex
+    snaxel
+    loopsnaxel
+    cellVol
+    A
+    vecmode
+    deltaFrac
+
+for ii=1:length(snaxmode); figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1),snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2),'o-');end
+close all
+cl
+{Undefined function or variable 'cl'.
+} 
+[snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,false)
+
+ans =
+
+00:000
+
+
+ans =
+
+00:702
+
+
+snaxmode = 
+
+1x40 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+
+    cellindex
+    snaxel
+    loopsnaxel
+    cellVol
+    A
+    vecmode
+    deltaFrac
+
+for ii=1:length(snaxmode); figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1)*5,...
+snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2)*5,'o-');
+end
+close all
+for jj=[1 2 5],for ii=40; figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1)*jj,...
+snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2)*jj,'o-');
+end,end
+figure,plot(1:numel(snaxmode(ii).vecmode.vector(:,2)),snaxmode(ii).vecmode.vector)
+hold on
+plot(1:numel(snaxmode(ii).vecmode.vector(:,2)),sqrt(sum(snaxmode(ii).vecmode.vector.^2,2)))
+[snaxmode]=ExecuteSensitivity(snaxel,snakposition,sensSnax,volumefraction,false)
+
+ans =
+
+00:000
+
+
+ans =
+
+00:702
+
+
+snaxmode = 
+
+1x40 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+
+    cellindex
+    snaxel
+    loopsnaxel
+    cellVol
+    A
+    vecmode
+    deltaFrac
+
+for jj=[10 20 50],for ii=40; figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1)*jj,...
+snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2)*jj,'o-');
+end,end
+figure,plot(1:numel(snaxmode(ii).vecmode.vector(:,2)),snaxmode(ii).vecmode.vector)
+hold on
+plot(1:numel(snaxmode(ii).vecmode.vector(:,2)),sqrt(sum(snaxmode(ii).vecmode.vector.^2,2)))
+close all
+for jj=[100 200 500],for ii=40; figure,hold on, ...
+plot(snaxmode(ii).vecmode.points(:,1),snaxmode(ii).vecmode.points(:,2),'+-')
+plot(snaxmode(ii).vecmode.points(:,1)+snaxmode(ii).vecmode.vector(:,1)*jj,...
+snaxmode(ii).vecmode.points(:,2)+snaxmode(ii).vecmode.vector(:,2)*jj,'o-');
+end,end
+figure,plot(1:numel(snaxmode(ii).vecmode.vector(:,2)),snaxmode(ii).vecmode.vector)
+hold on
+plot(1:numel(snaxmode(ii).vecmode.vector(:,2)),sqrt(sum(snaxmode(ii).vecmode.vector.^2,2)))
+4.5*3600/1100
+
+ans =
+
+   14.7273
+
+4.5*3600/(700*0.72)
+
+ans =
+
+   32.1429
+
+700*0.72
+
+ans =
+
+   504
+
+VelocityCalculationVolumeFraction
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>VelocityCalculationVolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 1253)" style="font-weight:bold">Snakes>VelocityCalculationVolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',1253,0)">line 1253</a>)
+Not enough input arguments.
+} 
+close all
+clc
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+ans = 
+
+  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
+
+      Number: 1
+        Name: ''
+       Color: [0.9400 0.9400 0.9400]
+    Position: [680 558 560 420]
+       Units: 'pixels'
+
+  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
+
+Time taken:20:59:10:773
+SNAKE PROCESS END
