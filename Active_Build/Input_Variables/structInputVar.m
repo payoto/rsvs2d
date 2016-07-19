@@ -546,7 +546,8 @@ function [param]=SupersonicComponent()
     param.general.subdivType='chaikin';
     
     
-    param.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth';
+    param.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth';
+    
     
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
