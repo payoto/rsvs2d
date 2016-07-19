@@ -249,29 +249,6 @@ function [cellOrderedVertex,cellOrderedEdges]=...
     
 end
 
-function [vec,iRows]=SortVecColumn(vec,iCol)
-    % Sorts according to a columns
-    [~,iRows]=sort(vec(:,iCol));
-    vec=vec(iRows,:);
-    
-end
-
-function [vectorEntries]=RemoveIdenticalEntries(vectorEntries)
-    % Function which removes identical entries in a column vector
-    vectorEntriesUnsort=vectorEntries;
-    [vectorEntries,vectorIndex]=sort(vectorEntries);
-    kk=1;
-    rmvDI=[];
-    for ii=2:length(vectorEntries)
-        if vectorEntries(ii)==vectorEntries(ii-1)
-            rmvDI(kk)=ii;
-            kk=kk+1;
-        end
-    end
-    %vectorEntries(rmvDI)=[];
-    vectorIndex(rmvDI)=[];
-    vectorEntries=vectorEntriesUnsort(vectorIndex);
-end
 %{
 function sub=FindObjNum(object,index,objInd)
     % finds the array index from a snaxel number

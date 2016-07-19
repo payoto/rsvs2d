@@ -97,7 +97,8 @@ for ii=1:length(lNew)
 end
 title('Derivatives')
 legend(lGrad,legEntry)
-
+coeffstruct.peaksmooth.coeff=coeffs;
+coeffstruct.peaksmooth.maxsmooth=10;
 %% Poly coeff smoothing
 matCoeff=double(matCoeff);
 nBases=30;
@@ -135,7 +136,8 @@ for kk=1:length(nSmooth)
         coeffs(nBases+1)=1;
     end
     coeffs(abs(coeffs)<1e-3)=0;
-    coeffs;
+    coeffstruct.polysmooth(kk).coeff=coeffs(coeffs~=0);
+    coeffstruct.polysmooth(kk).maxsmooth=nSmooth(kk);
     lBasis(kk)=PlotBasisSums(desRange,d,pp,basisInd,coeffs);
     legEntry{kk}=['Smoothing Level: ',int2str(nSmooth(kk))];
 end
@@ -218,7 +220,9 @@ for kk=1:length(nSmooth)
         coeffs(nBases+1)=1;
     end
     coeffs(abs(coeffs)<1e-3)=0;
-    coeffs;
+    
+    coeffstruct.polypeaksmooth(kk).coeff=coeffs(coeffs~=0);
+    coeffstruct.polypeaksmooth(kk).maxsmooth=nSmooth(kk);
     lBasis(kk)=PlotBasisSums(desRange,d,pp,basisInd,coeffs);
     legEntry{kk}=['Smoothing Level: ',int2str(nSmooth(kk))];
 end

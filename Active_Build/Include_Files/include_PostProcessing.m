@@ -135,8 +135,8 @@ function []=GenerateParameterFile(FID,param,t,marker)
     paramCell{1}='% Parameter File';
     paramCell{2}=['% ',datestr(t)];
     paramCell{3}=['% ',marker];
-    for ii=length(param.structdat.vars):-1:1
-        [paramCell{ii+4}]=ExtractVariablePathAndValue(param,ii);
+    for ii=1:length(param.structdat.vars)
+        paramCell=[paramCell,ExtractVariablePathAndValue2(param,ii)];
         
     end
     
@@ -157,6 +157,37 @@ function [paramStr]=ExtractVariablePathAndValue(param,varNum)
     varVal=actstruct;
     [varStr]=GenerateVariableString(varVal);
     paramStr=[pathVar,' = ',varStr,';'];
+end
+
+
+function [paramStr]=ExtractVariablePathAndValue2(param,varNum)
+    
+    varstruct=param.structdat.vars(varNum);
+    actstruct=param;
+    pathVar{1}='param';
+    
+    
+    for jj=1:length(varstruct.vec)
+        tempPath=[];
+        tempPath{numel(pathVar)}=[];
+        for kk=1:numel(pathVar)
+            pathVar{kk}=[pathVar{kk},'.',param.structdat.fields{varstruct.vec(jj)}];
+            nTestVar=numel(eval(pathVar{kk}));
+            if (jj<length(varstruct.vec)) && nTestVar>1
+                for ii=1:nTestVar
+                    tempPath{kk}{ii}=[pathVar{kk},'(',int2str(ii),')'];
+                end
+            else
+                tempPath{kk}{1}=pathVar{kk};
+            end
+        end
+        pathVar=[tempPath{:}];
+    end
+    paramStr{numel(pathVar)}=[];
+    for ii=1:numel(pathVar)
+        [varStr]=GenerateVariableString(eval(pathVar{ii}));
+        paramStr{ii}=[pathVar{ii},' = ',varStr,';'];
+    end
 end
 
 function [varStr]=GenerateVariableString(startVar)
@@ -193,7 +224,7 @@ function [varStr]=GenerateVariableString(startVar)
             varStrCell{1,1}=' ';
             for ii=1:m
                 for jj=1:n
-                    varStrCell{ii,jj}=num2str(startVar(ii,jj));
+                    varStrCell{ii,jj}=num2str(startVar(ii,jj),12);
                 end
             end
             [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);

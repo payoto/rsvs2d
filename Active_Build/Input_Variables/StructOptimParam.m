@@ -4,7 +4,7 @@
 %      Department of Aerospace Engineering
 %                     2015
 %
-%       Optimisation Using 
+%       Optimisation Using
 %          Parametric Snakes for
 %      for Aerodynamic shape
 %         parametrisation
@@ -17,11 +17,11 @@ function [paroptim]=StructOptimParam(caseStr)
     
     [paroptim]=eval(caseStr);
     paroptim.general.optimCase=caseStr;
-
+    
 end
 
 function structdat=GetStructureData(paroptim)
-        
+    
     [structdat]=ExploreStructureTree(paroptim);
     structdat.vardat.names=[structdat.vars(:).name];
     structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
@@ -75,7 +75,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
-    paroptimgeneral.varOverflow='truncate'; % 'truncate' 'spill' 
+    paroptimgeneral.varOverflow='spill'; % 'truncate' 'spill'
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -87,9 +87,9 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=[1e-3,-1e-3]; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
     
-    paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder'
+    paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
     paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
@@ -173,7 +173,7 @@ function [paroptim]=OptimCG(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.general.startPop='halfuniformsharp';
-    paroptim.general.varOverflow='truncate';
+    paroptim.general.varOverflow='spill';
     paroptim.general.iterGap=2;
 end
 
@@ -213,7 +213,12 @@ function [paroptim]=SumVolumeConstraint2(paroptim)
     paroptim.constraint.resVal={[]};
     
 end
-
+function [paroptim]=ConstraintArea(paroptim)
+    
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    
+end
 function [paroptim]=LocalVolumeConstraint(paroptim)
     
     paroptim.constraint.desVarConstr={' '};
@@ -246,7 +251,7 @@ function paroptim=FullOpt_bp3(paroptim)
     
     paroptim.general.nPop=48;
     paroptim.general.maxIter=150;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
     
 end
 
@@ -254,7 +259,7 @@ function paroptim=FullOpt_bp2(paroptim)
     
     paroptim.general.nPop=48;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     
 end
 
@@ -262,21 +267,21 @@ function paroptim=FullOpt_Desktop(paroptim)
     
     paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     
 end
 
 function paroptim=Test_bp3(paroptim)
     paroptim.general.nPop=12;
     paroptim.general.maxIter=3;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
     
 end
 
 function paroptim=Test_bp2(paroptim)
     paroptim.general.nPop=8;
     paroptim.general.maxIter=3;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     
 end
 
@@ -284,7 +289,7 @@ function paroptim=Test_Desktop(paroptim)
     
     paroptim.general.nPop=6;
     paroptim.general.maxIter=3;
-    paroptim.general.worker=6; 
+    paroptim.general.worker=6;
     
 end
 
@@ -304,7 +309,7 @@ function [paroptim]=CG_Aero()
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
-   
+    
 end
 
 function [paroptim]=CG_Area()
@@ -316,17 +321,18 @@ function [paroptim]=CG_Area()
     [paroptim]=SumVolumeConstraint2(paroptim);
     
     [paroptim]=OptimCG(paroptim);
-    
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
-   
+    
 end
+
+
 
 function [paroptim]=DE_Aero()
     
     % Load
-    [paroptim]=DefaultOptim(); 
+    [paroptim]=DefaultOptim();
     
     % Standard modifications
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
@@ -339,7 +345,7 @@ function [paroptim]=DE_Aero()
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
-   
+    
 end
 
 function [paroptim]=MultiTopo_DEhoriz()
@@ -355,7 +361,7 @@ function [paroptim]=MultiTopo_DEhoriz()
     
     paroptim.general.symType='horz'; % 'horz'
     paroptim.general.startPop='initbusemann';
-
+    
     
     
 end
@@ -371,7 +377,7 @@ function [paroptim]=MultiTopo_CGhoriz()
     paroptim.optim.CG.varActive='border'; % 'wideborder'
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='horz'; % 'horz'
-   
+    
 end
 
 function [paroptim]=Component_CG()
@@ -385,7 +391,7 @@ function [paroptim]=Component_CG()
     paroptim.optim.CG.varActive='wideborder'; % 'wideborder'
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
-   
+    
 end
 
 function [paroptim]=Component_DE()
@@ -397,12 +403,12 @@ function [paroptim]=Component_DE()
     [paroptim]=OptimDE_horiz(paroptim);
     
     paroptim.general.startPop='initaeroshell';
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
-   
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    
 end
 
 %% Callable functions
@@ -420,7 +426,7 @@ function [paroptim]=TestOptim()
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
-   
+    
 end
 
 function [paroptim]=StandardOptim()
@@ -450,7 +456,7 @@ function [paroptim]=Test_CG_Aero()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=Test_CG_Area()
@@ -461,7 +467,7 @@ function [paroptim]=Test_CG_Area()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=TestParOptim_desktop()
@@ -490,7 +496,7 @@ function [paroptim]=Test_MultiTopo_M2_CG()
     paroptim.general.maxIter=10;
     
     paroptim.general.worker=12;
- 
+    
 end
 
 function [paroptim]=Test_MultiTopo_Init_D()
@@ -503,7 +509,7 @@ function [paroptim]=Test_MultiTopo_Init_D()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=3;
-    paroptim.general.worker=6; 
+    paroptim.general.worker=6;
 end
 
 function [paroptim]=Test_MultiTopo_Init_D2()
@@ -514,7 +520,7 @@ function [paroptim]=Test_MultiTopo_Init_D2()
     paroptim.general.nPop=32;
     paroptim.general.maxIter=3;
     
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
 end
 
 function [paroptim]=TestParOptimAero_desktop()
@@ -529,7 +535,7 @@ function [paroptim]=TestParOptimAero_desktop()
     
     paroptim.general.optimMethod='DEtan';
     paroptim.general.symType='horz'; % 'horz'
-     
+    
 end
 
 function [paroptim]=TestParOptim_HPC()
@@ -557,7 +563,7 @@ function [paroptim]=Test_Init()
     % Standard Modifications
     paroptim=Test_Desktop(paroptim);
     paroptim=ModifySnakesParam(paroptim,'TestInitOptim');
-   paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resConstr={' '};
     paroptim.constraint.resVal={[]};
     
     paroptim.constraint.initConstr={'LocalVolFrac_image'};
@@ -568,11 +574,62 @@ function [paroptim]=Test_Init()
     paroptim.general.symType='none'; % 'horz'
     paroptim.general.startPop='initaeroshell';
     
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill' 
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     paroptim.general.nPop=100;
     paroptim.general.maxIter=2;
     paroptim.general.worker=12;
+end
+
+%% Test cases for length Area
+
+function [paroptim]=Test_smoothCG_Area()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
+    
+    [paroptim]=MeanVolumeConstraint(paroptim);
+    [paroptim]=ConstraintArea(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='horz'; % 'horz'
+    
+    paroptim.optim.CG.varActive='all';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=4;
+end
+
+
+
+function [paroptim]=Test_smoothCG_outmissile_Area()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    [paroptim]=ConstraintArea(paroptim);
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
+    
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.startPop='outerbound';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='none'; % 'horz'
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=4;
 end
 
 %% Full Aero Optimisations
@@ -584,7 +641,7 @@ function [paroptim]=FullSupersonicOptim_Desktop()
     
     paroptim.general.nPop=32;
     paroptim.general.maxIter=45;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     
 end
 
@@ -594,7 +651,7 @@ function [paroptim]=FullSupersonicOptimSym_Desktop()
     
     paroptim.general.nPop=32;
     paroptim.general.maxIter=45;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
@@ -609,9 +666,9 @@ function [paroptim]=Full_MultiTopo_M2_D()
     
     paroptim.general.nPop=56;
     paroptim.general.maxIter=150;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     
-
+    
 end
 
 function [paroptim]=Full_Aero_CG_20()
@@ -621,7 +678,7 @@ function [paroptim]=Full_Aero_CG_20()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=40;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
 end
 
 function [paroptim]=BP3_Aero_CG_20_Long()
@@ -634,7 +691,7 @@ function [paroptim]=BP3_Aero_CG_20_Long()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Full_Aero_CG_10()
@@ -644,7 +701,7 @@ function [paroptim]=Full_Aero_CG_10()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=40;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
 end
 
 function [paroptim]=Full_Aero_CG_05()
@@ -654,7 +711,7 @@ function [paroptim]=Full_Aero_CG_05()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=40;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
 end
 
 function [paroptim]=Full_Aero_CG_smile()
@@ -664,7 +721,7 @@ function [paroptim]=Full_Aero_CG_smile()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=20;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 % bp3
@@ -674,7 +731,7 @@ function [paroptim]=FullSupersonicOptim_HPC()
     
     paroptim.general.nPop=48;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
     
 end
 
@@ -724,7 +781,7 @@ function [paroptim]=bp3_Aero_CG_20()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_CG_10()
@@ -734,7 +791,7 @@ function [paroptim]=bp3_Aero_CG_10()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_CG_05()
@@ -744,7 +801,7 @@ function [paroptim]=bp3_Aero_CG_05()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_MultiTopo_M2_CG()
@@ -756,7 +813,7 @@ function [paroptim]=bp3_MultiTopo_M2_CG()
     paroptim.general.maxIter=40;
     
     paroptim.general.worker=12;
- 
+    
 end
 
 function [paroptim]=bp3_MultiTopo_M2_CG_wide()
@@ -769,7 +826,7 @@ function [paroptim]=bp3_MultiTopo_M2_CG_wide()
     paroptim.general.maxIter=40;
     
     paroptim.general.worker=12;
- 
+    
 end
 
 function [paroptim]=Desk_CG_missile_in()
@@ -779,7 +836,7 @@ function [paroptim]=Desk_CG_missile_in()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=12;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=Desk_DE_missile_horz()
@@ -790,7 +847,7 @@ function [paroptim]=Desk_DE_missile_horz()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=50;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=Desk_DE_smile_horz()
@@ -800,7 +857,7 @@ function [paroptim]=Desk_DE_smile_horz()
     
     paroptim.general.nPop=50;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=Desk_CG_missile_out()
@@ -815,7 +872,7 @@ function [paroptim]=Desk_CG_missile_out()
     paroptim.general.varOverflow='spill';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=Desk_CG_inline_out()
@@ -830,7 +887,7 @@ function [paroptim]=Desk_CG_inline_out()
     paroptim.general.varOverflow='spill';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 % 24/06/2016
@@ -841,7 +898,7 @@ function [paroptim]=bp3_Aero_CG_smile_in()
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=70;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_CG_missile_in()
@@ -851,7 +908,7 @@ function [paroptim]=bp3_Aero_CG_missile_in()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=12;
     paroptim.general.maxIter=70;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_CG_smile_out()
@@ -861,7 +918,7 @@ function [paroptim]=bp3_Aero_CG_smile_out()
     paroptim.general.startPop='innerbound';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=70;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_CG_missile_out()
@@ -872,7 +929,7 @@ function [paroptim]=bp3_Aero_CG_missile_out()
     paroptim.general.startPop='outerbound';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=70;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_smile_horz()
@@ -882,7 +939,7 @@ function [paroptim]=bp3_Aero_DE_smile_horz()
     
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_smile()
@@ -893,7 +950,7 @@ function [paroptim]=bp3_Aero_DE_smile()
     
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_smile_weak()
@@ -904,7 +961,7 @@ function [paroptim]=bp3_Aero_DE_smile_weak()
     
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_missile_horz()
@@ -915,7 +972,7 @@ function [paroptim]=bp3_Aero_DE_missile_horz()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_missile()
@@ -927,7 +984,7 @@ function [paroptim]=bp3_Aero_DE_missile()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_Spill_missile2()
@@ -938,7 +995,7 @@ function [paroptim]=bp3_Aero_DE_Spill_missile2()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_Spill_smile()
@@ -949,7 +1006,7 @@ function [paroptim]=bp3_Aero_DE_Spill_smile()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\smile_5b12.png','min'}};
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_DE_missile_weak()
@@ -961,18 +1018,18 @@ function [paroptim]=bp3_Aero_DE_missile_weak()
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
-    % test versions
-    
+% test versions
+
 function [paroptim]=Tbp3_Aero_CG_smile_in()
     
     [paroptim]=bp3_Aero_CG_smile_in();
     
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_CG_missile_in()
@@ -980,7 +1037,7 @@ function [paroptim]=Tbp3_Aero_CG_missile_in()
     
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_CG_smile_out()
@@ -988,15 +1045,15 @@ function [paroptim]=Tbp3_Aero_CG_smile_out()
     
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_CG_missile_out()
     [paroptim]=bp3_Aero_CG_missile_out();
-   
+    
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_DE_smile_horz()
@@ -1004,7 +1061,7 @@ function [paroptim]=Tbp3_Aero_DE_smile_horz()
     
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_DE_smile()
@@ -1012,35 +1069,35 @@ function [paroptim]=Tbp3_Aero_DE_smile()
     
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_DE_smile_weak()
     [paroptim]=bp3_Aero_DE_smile_weak();
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_DE_missile_horz()
     [paroptim]=bp3_Aero_DE_missile_horz();
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=Tbp3_Aero_DE_missile()
     [paroptim]=bp3_Aero_DE_missile();
-     paroptim.general.nPop=4;
+    paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=Tbp3_Aero_DE_missile_weak()
     [paroptim]=bp3_Aero_DE_missile_weak();
     paroptim.general.nPop=4;
     paroptim.general.maxIter=4;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
 end
 
 % bp2
@@ -1051,7 +1108,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_025()
     
     paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
@@ -1066,7 +1123,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_05()
     
     paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
@@ -1081,7 +1138,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_1()
     
     paroptim.general.nPop=32;
     paroptim.general.maxIter=50;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     

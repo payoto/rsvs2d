@@ -142,7 +142,8 @@ end
 function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
-        'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec','isRestart','borderActivation'};
+        'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
+        'isRestart','borderActivation'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
         nPop,validVol,varActive,desvarconnec,isRestart,borderActivation]...
@@ -478,7 +479,13 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
     
     invalidPoints=g<0.9;
     
-    [~,bestPoint]=min(f);
+    switch direction
+        case 'min'
+            [~,bestPoint]=min(f);
+        case 'max'
+            [~,bestPoint]=max(f);
+    end
+    
     stepLengths=1./2.^[inf,(worker-2):-1:0];
     
     if bestPoint==1
