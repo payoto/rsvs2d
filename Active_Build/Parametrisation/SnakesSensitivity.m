@@ -14,45 +14,45 @@
 % %#codegen
 
 %% Main execution functions
-function SnakesSensitivity(refinedGrid,looprestart,...
-        oldGrid,connectionInfo,param)
+function newFill=SnakesSensitivity(refinedGrid,looprestart,...
+        oldGrid,paramsnake,paramoptim,rootFill)
     % JUST DECLARING VARIABLES FOR LATER
     
     % plotInterval,numSteps,makeMov,boundstr
-    global arrivalTolerance unstructglobal maxStep maxDt
+    global arrivalTolerance unstructglobal
     
     
-    varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole'};
-    [arrivalTolerance,maxStep,maxDt,snakesConsole]=ExtractVariables(varExtract,param);
+    varExtract={'arrivalTolerance'};
+    [arrivalTolerance]=ExtractVariables(varExtract,paramsnake);
     
     % ACTUALLY DOING STUFF
     refinedGriduns=ModifReshape(refinedGrid);
-    oldGridUns=ModifReshape(oldGrid);
     
     unstructglobal=refinedGriduns;
     %profile on
     
-        BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
-        oldGrid,oldGridUns,connectionInfo,param);
+    newFill=BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
+        oldGrid,paramsnake,paramoptim,rootFill);
     %profile viewer
     
     
 end
 
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+function [newFill]=...
         BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
-        oldGrid,oldGridUns,connectionInfo,param)
+        oldGrid,paramsnake,paramoptim,rootFill)
     % Main execution container for Snakes
     
     % Unpacking NECESSARY variables
-    global maxStep maxDt snaxInitPos
+    global snaxInitPos
     
-    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos','checkSensitivities'};
-    [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos,checkSensitivities]=ExtractVariables(varExtract,param);
+    varExtract={'snaxInitPos'};
+    [snaxInitPos]=ExtractVariables(varExtract,paramsnake);
+    varExtract={'diffStepSize'};
+    [diffStepSize]=ExtractVariables(varExtract,paramoptim);
     
-    forceparam=param.snakes.force;
-    
-    
+    forceparam=paramsnake.snakes.force;
+
     
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(looprestart);
@@ -61,25 +61,17 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     %CheckResultsLight(refinedGriduns,snakposition,snaxel)
     
     [cellordstruct]=BuildCellConnectivity(snaxel,refinedGrid,volfracconnec);
-    
-    [freezeVertex,borderEdgInd]=IdentifyProfileEdgeVertices(refinedGrid);
-    
-    
-    GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-        cellCentredGrid,insideContourInfo,forceparam);
-    
-    [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
-        borderVertices,refinedGriduns,param);
-    
-    restartsnake.snaxel=snaxel;
-    restartsnake.insideContourInfo=insideContourInfo;
-    restartsnake.cellCentredGrid=cellCentredGrid;
-    restartsnake.volfracconnec=volfracconnec;
-    restartsnake.borderVertices=borderVertices;
+    [cellordstruct]=BuildModeMixing(cellordstruct,paramsnake);
+    [cellordstruct]=BuildFillMode(oldGrid,cellordstruct);
+    [newFill]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim);
     
     
+    % Eventually get gradient 
+%     GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+%         cellCentredGrid,insideContourInfo,forceparam);
     
 end
+
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(restartsnake)
@@ -210,6 +202,76 @@ function [snakSave]=ReformatSnakSave(snakSave)
 end
 
 
+function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,...
+        restartsnake,connectstructinfo,newFill)
+    
+    activeCell=logical([baseGrid.cell(:).isactive]);
+    activeInd=[baseGrid.cell((activeCell)).index];
+    
+    connecInd=[connectstructinfo.cell(:).old];
+    activConnecSub=FindObjNum([],activeInd,connecInd);
+    activeCellSub=find(activeCell);
+    refCellInd=[refinedGrid.cell(:).index];
+    
+    cellCentreInd=[restartsnake.cellCentredGrid(:).index];
+    
+    if numel(newFill)~=numel(activeCellSub)
+        error('Fill and Active Set do not match in size')
+    end
+    if sum(abs(newFill))==0
+        newFill(round(numel(newFill)/2))=1e-3;
+    end
+    
+    newGrid=baseGrid;
+    newRefGrid=refinedGrid;
+    newRestart=restartsnake;
+    for ii=1:length(activeCellSub)
+        newGrid.cell(activeCellSub(ii)).fill=newFill(ii);
+        newRestart.volfracconnec.cell(activeCellSub(ii)).targetfill=newFill(ii);
+        newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
+        [newRefGrid.cell(newSub).fill]=deal(newFill(ii));
+        newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],cellCentreInd);
+        [newRestart.cellCentredGrid(newSub).fill]=deal(newFill(ii));
+    end
+    
+end
+
+function [cellordstruct]=BuildFillMode(baseGrid,cellordstruct)
+    
+    activeCell=logical([baseGrid.cell(:).isactive]);
+    activeInd=[baseGrid.cell((activeCell)).index];
+    
+    
+    for ii=1:length(cellordstruct)
+        cellordstruct(ii).fillmode=zeros([1 numel(activeInd)]);
+        cellordstruct(ii).fillmode(...
+            FindObjNum([],cellordstruct(ii).coeffMode(:,1)',activeInd))=...
+            cellordstruct(ii).coeffMode(:,2)';
+    end
+    
+    
+end
+
+function [newfillstruct]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim)
+    
+    kk=1;
+    newfillstruct=repmat(struct('fill',[],'optimdat',struct('var',[],'val',[])),...
+        [1,numel(diffStepSize)*numel(cellordstruct)]);
+    for ii=1:numel(diffStepSize)
+        for jj=1:numel(cellordstruct)
+            newRootFill=rootFill+cellordstruct(jj).fillmode*diffStepSize(ii);
+            [newRootFill]=OverflowHandling(paramoptim,newRootFill);
+            deltaFill=newRootFill-rootFill;
+            newfillstruct(kk).fill=newRootFill;
+            newfillstruct(kk).optimdat.var=find(deltaFill~=0);
+            newfillstruct(kk).optimdat.val=deltaFill(deltaFill~=0);
+            kk=kk+1;
+        end
+    end
+    
+    
+    
+end
 %% Contour Normal Calculation
 
 function [snakposition]=SnaxelNormal2(snaxel,snakposition)
@@ -1232,7 +1294,8 @@ function [cellordstruct]=BuildCellConnectivity(snaxel,gridRefined,volfraconnec)
         cellOrd{ii}=OrderRawCells(cellsRaw);
     end
     
-    cellordstruct=repmat(struct('index',[],'nextcell',[],'prevcell',[]),[1,numel([cellOrd{:}])]);
+    cellordstruct=repmat(struct('index',[],'nextcell',[],'prevcell',[],...
+        'loopindex',[],'looplength',[]),[1,numel([cellOrd{:}])]);
     kk=1;
     for ii=1:numel(cellOrd)
         nCell=numel(cellOrd{ii});
@@ -1240,6 +1303,9 @@ function [cellordstruct]=BuildCellConnectivity(snaxel,gridRefined,volfraconnec)
             cellordstruct(kk).index=cellOrd{ii}(jj);
             cellordstruct(kk).nextcell=cellOrd{ii}(mod(jj,nCell)+1);
             cellordstruct(kk).prevcell=cellOrd{ii}(mod(jj-2,nCell)+1);
+            cellordstruct(kk).loopindex=ii;
+            cellordstruct(kk).looplength=nCell;
+            
             kk=kk+1;
         end
     end
@@ -1254,7 +1320,7 @@ function [cellsOrdRaw]=OrderRawCells(cellsRaw)
     [l2Ind,l1Ind]=find((ones([2,1])*cellsRaw(1,:))==(cellsRaw(2,:)'*ones([1,2])));
     nRows=size(cellsRaw,1);
     cellsOrdRaw(1)=cellsRaw(1,l1Ind(1));
-    cellsOrdRaw(2)=cellsRaw(1,l2Ind(1));
+    cellsOrdRaw(2)=cellsRaw(2,l2Ind(1));
     kk=3;
     for ii=2:nRows
         l1Ind=abs(l2Ind(1)-3);
@@ -1286,3 +1352,77 @@ function [oldCellInd,newCellInd]=NewToOldCell(volfraconnec)
         kk=kk+nNew;
     end
 end
+
+%% Combined mode coefficients
+
+function [cellordstruct]=BuildModeMixing(cellordstruct,param)
+    
+    varExtract={'modeSmoothType','modeSmoothNum'};
+    [modeSmoothType,modeSmoothNum]=ExtractVariables(varExtract,param);
+    
+    loopInfo=RemoveIdenticalVectors([[cellordstruct(:).loopindex]',...
+        [cellordstruct(:).looplength]']);
+    
+    for ii=1:size(loopInfo,1)
+        [coeffList{loopInfo(ii,1)}]=ReturnSmoothingCoeff(modeSmoothType,...
+            loopInfo(ii,2),modeSmoothNum);
+    end
+    
+    loopInd=[cellordstruct(:).loopindex];
+    cellInd=[cellordstruct(:).index];
+    
+    for ii=1:length(cellordstruct)
+        currLoop=loopInd==loopInd(ii);
+        cellordstruct(ii).coeffMode=SingleMode(cellordstruct(currLoop),cellInd(ii),...
+            coeffList{loopInd(ii)},cellInd(currLoop));
+    end
+    
+end
+
+function [coeffMode]=SingleMode(cellordstruct,cellNum,coeffList,cellInd)
+    
+    coeffMode=[cellNum,1];
+    modeSub=FindObjNum([],cellNum,cellInd);
+    neighbour=[cellordstruct(modeSub).prevcell,cellordstruct(modeSub).nextcell];
+    for ii=2:numel(coeffList)
+        coeffMode(end+1:end+2,:)=[neighbour',coeffList(ii)*ones([2,1])];
+        modeSub=FindObjNum([],neighbour,cellInd);
+        neighbour=[cellordstruct(modeSub(1)).prevcell,cellordstruct(modeSub(2)).nextcell];
+    end
+    
+end
+
+function [coeffList]=ReturnSmoothingCoeff(smoothType,nCell,nSmooth)
+    % valid smoothtypes: peaksmooth polysmooth polypeaksmooth
+    
+    [coeffstructure]=smoothcoeffdata();
+    coeffstructure=coeffstructure.(smoothType);
+    nMode=numel(coeffstructure);
+    for ii=1:nMode
+        coeffstructure(ii).minCell=numel(coeffstructure(ii).coeff);
+    end
+    
+    if ~strcmp(smoothType,'peaksmooth')
+        minCell=[coeffstructure(:).minCell];
+        maxSmooth=[coeffstructure(:).maxsmooth];
+        posValid=find((minCell<=nCell) & (maxSmooth<=nSmooth));
+        [~,posMaxSmooth]=max(maxSmooth(posValid));
+        
+        coeffstructure=coeffstructure(posValid(posMaxSmooth));
+        centrePos=find(coeffstructure.coeff==1);
+        
+        coeffList=coeffstructure.coeff(centrePos:end);
+    else
+        
+        centrePos=find(coeffstructure.coeff==1);
+        nAct=min([nSmooth,floor((nCell-1)/2),coeffstructure.maxsmooth]);
+        coeffList=coeffstructure.coeff(centrePos:centrePos+nAct);
+        
+    end
+    
+    
+    
+end
+
+%% Build modes
+

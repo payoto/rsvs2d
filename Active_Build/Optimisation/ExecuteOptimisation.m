@@ -200,15 +200,72 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
     
     
-    varExtract={'nPop','objectiveName','defaultVal'};
-    [nPop,objectiveName,defaultVal]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'nPop','objectiveName','defaultVal','lineSearch'};
+    [nPop,objectiveName,defaultVal,lineSearch]=ExtractVariables(varExtract,paramoptim);
+    
+    
+    [population]=ConstraintMethod('DesVar',paramoptim,population);
+    
+    
+    if (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
+        [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
+            gridrefined,restartsnake,baseGrid,connectstructinfo);
+    else
+        [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+            gridrefined,restartsnake,baseGrid,connectstructinfo);
+    end
+    nPop=numel(population);
+    [paramoptim]=SetVariables({'nPop'},{nPop},paramoptim);
+    
+    [population,captureErrors]=ParallelObjectiveCalc...
+        (objectiveName,paramoptim,population,supportstruct,captureErrors);
+    
+    [population]=ConstraintMethod('Res',paramoptim,population);
+    population=EnforceConstraintViolation(population,defaultVal);
+    
+    [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population,captureErrors);
+    
+end
+
+
+function [population,captureErrors]=ParallelObjectiveCalc...
+        (objectiveName,paramoptim,population,supportstruct,captureErrors)
+    
+    nPop=numel(population);
+    
+    parfor ii=1:nPop %
+        try
+            [population(ii).objective,additional]=...
+                EvaluateObjective(objectiveName,paramoptim,population(ii),...
+                supportstruct(ii).loop);
+            fieldsAdd=fieldnames(additional);
+            for jj=1:numel(fieldsAdd)
+                population(ii).additional.(fieldsAdd{jj})=additional.(fieldsAdd{jj});
+            end
+        catch MEexception
+            % Error Capture
+            population(ii).constraint=false;
+            population(ii).exception=['error: ',MEexception.identifier];
+            captureErrors{ii}=MEexception.getReport;
+        end
+    end
+    
+end
+
+%% Normal Iteration
+
+function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
+        gridrefined,restartsnake,baseGrid,connectstructinfo)
+    
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
     
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
     [population]=ConstraintMethod('DesVar',paramoptim,population);
     
     [captureErrors{1:nPop}]=deal('');
-    
+    supportstruct=repmat(struct('loop',[]),[1,nPop]);
     parfor ii=1:nPop
         %for ii=1:nPop
         
@@ -216,8 +273,8 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         try
             % Normal Execution
-            population(ii)=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
-                newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,objectiveName,paramoptim);
+            [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
+                newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,paramoptim);
             
             
         catch MEexception
@@ -228,16 +285,90 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
         end
     end
     
-    [population]=ConstraintMethod('Res',paramoptim,population);
-    population=EnforceConstraintViolation(population,defaultVal);
+end
+
+%% Gradient Iteration
+function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+        gridrefined,restartsnake,baseGrid,connectstructinfo)
     
-    [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population,captureErrors);
+    
+    paramsnake=paramoptim.parametrisation;
+    paramspline=paramoptim.spline;
+    [population]=ConstraintMethod('DesVar',paramoptim,population);
+    
+    [population,supportstruct,restartsnake,paramsnake,captureErrors]=ComputeRootSensitivityPop...
+        (paramsnake,paramspline,paramoptim,population,baseGrid,gridrefined,...
+        restartsnake,connectstructinfo,outinfo,nIter);
+    
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
+    [captureErrors{2:nPop}]=deal('');
+    
+    supportstruct=[supportstruct,repmat(struct('loop',[]),[1,nPop-1])];
+    
+    parfor ii=1:nPop-1
+        %for ii=1:nPop
+        currentMember=population(ii+1).fill;
+        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
+        try
+            % Normal Execution
+            [population(ii+1),supportstruct(ii+1)]=NormalExecutionIteration(population(ii+1),newRefGrid,newrestartsnake,...
+                newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii+1,paramoptim);
+            
+        catch MEexception
+            % Error Capture
+            population(ii+1).constraint=false;
+            population(ii+1).exception=['error: ',MEexception.identifier];
+            captureErrors{ii+1}=MEexception.getReport;
+        end
+    end
     
 end
 
-function population=NormalExecutionIteration(population,newRefGrid,...
+function [newpopulation,supportstruct,restartsnake,paramsnake,captureErrors]=...
+        ComputeRootSensitivityPop(paramsnake,paramspline,paramoptim,...
+        population,baseGrid,gridrefined,restartsnake,connectstructinfo,outinfo,nIter)
+    
+    captureErrors{1}='';
+    % try
+        % Compute root member profile
+        currentMember=population(1).fill;
+        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
+        
+        [population(1),supportstruct,restartsnake]=NormalExecutionIteration(population(1),newRefGrid,...
+            newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
+            ,outinfo,nIter,1,paramoptim);
+        
+        % Compute sensitivity
+        newfillstruct=SnakesSensitivity(newRefGrid,restartsnake,...
+            newGrid,paramsnake,paramoptim,currentMember);
+        
+        nPop=numel(newfillstruct)+1;
+        [paramoptim]=SetVariables({'nPop'},{nPop},paramoptim);
+        [newpopulation]=GeneratePopulationStruct(paramoptim);
+        newpopulation(1)=population(1);
+        for ii=2:nPop
+            newpopulation(ii).fill=newfillstruct(ii-1).fill;
+            newpopulation(ii).optimdat.var=newfillstruct(ii-1).optimdat.var;
+            newpopulation(ii).optimdat.value=newfillstruct(ii-1).optimdat.val;
+        end
+        varExtract={'restart'};
+        [paramsnake]=SetVariables(varExtract,{true},paramsnake);
+%     catch MEexception
+%         population(1).constraint=false;
+%         population(1).exception=['error: ',MEexception.identifier];
+%         captureErrors{1}=MEexception.getReport;
+%         newpopulation=population;
+%         supportstruct.loop=[];
+%         warning('Sensitivity Extraction has failed, basis will not be smoothed.')
+%     end
+    
+    
+end
+
+function [population,supportstruct,restartsnake]=NormalExecutionIteration(population,newRefGrid,...
         newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
-        ,outinfo,nIter,ii,objectiveName,paramoptim)
+        ,outinfo,nIter,ii,paramoptim)
     
     varExtract={'restart','boundstr'};
     [isRestart,boundstr]=ExtractVariables(varExtract,paramsnake);
@@ -254,11 +385,10 @@ function population=NormalExecutionIteration(population,newRefGrid,...
         ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
         newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,nPop);
     population.location=outTemp.dirprofile;
-    [population.objective,population.additional]=EvaluateObjective(objectiveName,paramoptim,population,loop);
     population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
     population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
     
-    
+    supportstruct.loop=loop;
 end
 
 function population=EnforceConstraintViolation(population,defaultVal)
@@ -579,7 +709,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         case 'innerbound'
             origPop=zeros([nPop,nDesVar]);
             ii=1;
-            try 
+            try
                 while isempty(regexp(desVarConstr{ii},'LocalVolFrac', 'once'))
                     ii=ii+1;
                 end
@@ -610,7 +740,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
             
         case 'initaeroshell'
             [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
-        desVarVal);
+                desVarVal);
     end
     
     
@@ -635,7 +765,6 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         end
     end
 end
-
 
 function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
     

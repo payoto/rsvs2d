@@ -37,7 +37,7 @@ function [structdat]=ExploreStructureTree(rootstruct)
                 workingPosVec=[currentPosVec,posNumWorking+ii]; % Creates the posi
                 [newfields,newvars,maxPosNum]=...
                     ExploreStructureTreeRecurse...
-                    (rootstruct.(fields{ii}),workingPosVec,maxPosNum);
+                    (rootstruct.(fields{ii})(1),workingPosVec,maxPosNum);
                 fields=[fields;newfields];
             else
                 workingPosVec=[currentPosVec,posNumWorking+ii];
@@ -122,7 +122,44 @@ function [lengthParam,edgeLength]=LengthProfile(points)
     
 end
 
-function trimmedPoints=RemoveIdenticalConsecutivePoints(points)
+function [points]=RemoveIdenticalVectors(points)
+    
+    indOrd=1:size(points,1);
+    for ii=1:size(points,2)
+        [points,iRows]=SortVecColumn(points,ii);
+        indOrd=indOrd(iRows);
+    end
+    [points,indRmv]=RemoveIdenticalConsecutivePoints(points);
+    indOrd(indRmv)=[];
+    [~,indOrd]=sort(indOrd);
+    points=points(indOrd,:);
+end
+
+function [vec,iRows]=SortVecColumn(vec,iCol)
+    % Sorts according to a columns
+    [~,iRows]=sort(vec(:,iCol));
+    vec=vec(iRows,:);
+    
+end
+
+function [vectorEntries]=RemoveIdenticalEntries(vectorEntries)
+    % Function which removes identical entries in a column vector
+    vectorEntriesUnsort=vectorEntries;
+    [vectorEntries,vectorIndex]=sort(vectorEntries);
+    kk=1;
+    rmvDI=[];
+    for ii=2:length(vectorEntries)
+        if vectorEntries(ii)==vectorEntries(ii-1)
+            rmvDI(kk)=ii;
+            kk=kk+1;
+        end
+    end
+    %vectorEntries(rmvDI)=[];
+    vectorIndex(rmvDI)=[];
+    vectorEntries=vectorEntriesUnsort(vectorIndex);
+end
+
+function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
     
     [~,edgeLength]=LengthProfile(points);
     indRmv=find(edgeLength<1e-10);

@@ -146,6 +146,8 @@ function paramoptiminit=default_optimInit()
     paramoptiminit.defaultfill=0.5;
     paramoptiminit.defaultCorner=1e-4;
     paramoptiminit.corneractive=false;
+    paramoptiminit.modeSmoothType='peaksmooth';
+    paramoptiminit.modeSmoothNum=6;
 end
 
 %% Standard Parameter sub sections
@@ -459,7 +461,7 @@ function [param]=optimSupersonic()
     
     param.snakes.refine.axisRatio=0.25;
     
-    param.optiminit.cellLevels=[4,2];
+    param.optiminit.cellLevels=[10,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
@@ -543,7 +545,10 @@ function [param]=SupersonicComponent()
     param.general.refineSteps=3;
     param.general.subdivType='chaikin';
     
-    param.snakes.refine.refineGrid=6;
+    
+    param.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth';
+    
+    param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.TEShrink=true;

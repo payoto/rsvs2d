@@ -9,7 +9,6 @@ function [] = include_GridCheck()
 end
 
 
-
 function []=CheckGrid(gridreshape)
     domainBounds=[0 1 ; 0 1];
     

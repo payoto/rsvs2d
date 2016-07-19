@@ -29,6 +29,9 @@ function [inactiveVar]=SelectInactiveVariables(newFill,varActive,derivtenscalc,c
         case 'wideborder'
             [inactiveVar,activeVar]=InactiveVariables_wideborder(newFill,derivtenscalc,cutoff);
             
+        case 'snaksensiv'
+            
+            [inactiveVar]=InactiveVariables_border(newFill);
         otherwise
             error('unrecognised variable activation criterion')
     end
@@ -37,12 +40,12 @@ function [inactiveVar]=SelectInactiveVariables(newFill,varActive,derivtenscalc,c
 end
 
 function [inactiveVar,activeVar]=InactiveVariables_border(newFill)
-
+    
     is0=newFill==0;
     is1=newFill==1;
     
     inactiveVar=find(is0);
-    inactiveVar=[inactiveVar,find(is1)];  
+    inactiveVar=[inactiveVar,find(is1)];
     
     isBord=~is0 & ~is1;
     activeVar=find(isBord);
@@ -61,8 +64,8 @@ function [inactiveVar,activeVar]=InactiveVariables_wideborder(newFill,derivtensc
     activeVar=unique([activeVar,[derivtenscalc(actVarSub(cutActVar)).neighbours]]);
     inactiveVar=1:length(newFill);
     inactiveVar(activeVar)=[];
-end 
-    
+end
+
 function [isGradient]=CheckIfGradient(optimMethod)
     
     switch optimMethod
@@ -81,7 +84,20 @@ function [isGradient]=CheckIfGradient(optimMethod)
             
     end
 end
+
+function [isSnakeSensitivity]=CheckSnakeSensitivityAlgorithm(paramoptim)
     
+    varExtract={'varActive','optimMethod'};
+    [varActive,optimMethod]=ExtractVariables(varExtract,paramoptim);
+    
+    isSnakeSensitivity=false;
+    [isGradient]=CheckIfGradient(optimMethod);
+    
+    if isGradient
+        isSnakeSensitivity=strcmp(varActive,'snaksensiv');
+    end
+end
+
 function [newRootFill]=OverflowHandling(paramoptim,newRootFill)
     % Function which handles steps overflowing the fill constraint
     
@@ -101,6 +117,10 @@ function [newRootFill]=OverflowHandling(paramoptim,newRootFill)
                 [newFill(ii,:)]=SpillOverflow(paramoptim,newRootFill(ii,:));
             end
             newRootFill=newFill;
+            minD=min(desVarRange);
+            maxD=max(desVarRange);
+            newRootFill(newRootFill<minD)=minD;
+            newRootFill(newRootFill>maxD)=maxD;
         otherwise
             error('No valid design variable overflow mechanism')
             
@@ -186,7 +206,7 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
             
         elseif nNeigh>0
             baseRate=1/nNeigh;
-        
+            
         elseif numel(neighSub(newRootFill(neighSub)<1))>0 ...
                 && numel(cornSub(newRootFill(cornSub)<1))>0
             
@@ -208,7 +228,7 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
             baseRate=1/nNeigh;
             
         elseif numel(neighSub(newRootFill(neighSub)<currVol))>0 || ...
-                 numel(cornSub(newRootFill(cornSub)<currVol))>0
+                numel(cornSub(newRootFill(cornSub)<currVol))>0
             neighSubAll=[neighSub(newRootFill(neighSub)<currVol);cornSub(newRootFill(cornSub)<currVol)];
             nNeigh=sum(currVol-newRootFill(neighSubAll));
             baseRate=1/nNeigh;
@@ -241,17 +261,16 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
         
     end
     
-     newRootFill=newRootFill+sum(overFlowMat,1);
+    newRootFill=newRootFill+sum(overFlowMat,1);
     
 end
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
