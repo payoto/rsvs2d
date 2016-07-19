@@ -296,7 +296,7 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
     paramspline=paramoptim.spline;
     [population]=ConstraintMethod('DesVar',paramoptim,population);
     
-    [population,supportstruct,restartsnake,paramsnake,captureErrors]=ComputeRootSensitivityPop...
+    [population,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=ComputeRootSensitivityPop...
         (paramsnake,paramspline,paramoptim,population,baseGrid,gridrefined,...
         restartsnake,connectstructinfo,outinfo,nIter);
     
@@ -325,12 +325,12 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
     
 end
 
-function [newpopulation,supportstruct,restartsnake,paramsnake,captureErrors]=...
+function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=...
         ComputeRootSensitivityPop(paramsnake,paramspline,paramoptim,...
         population,baseGrid,gridrefined,restartsnake,connectstructinfo,outinfo,nIter)
     
     captureErrors{1}='';
-    % try
+    try
         % Compute root member profile
         currentMember=population(1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
@@ -354,14 +354,14 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,captureErrors]=...
         end
         varExtract={'restart'};
         [paramsnake]=SetVariables(varExtract,{true},paramsnake);
-%     catch MEexception
-%         population(1).constraint=false;
-%         population(1).exception=['error: ',MEexception.identifier];
-%         captureErrors{1}=MEexception.getReport;
-%         newpopulation=population;
-%         supportstruct.loop=[];
-%         warning('Sensitivity Extraction has failed, basis will not be smoothed.')
-%     end
+    catch MEexception
+        population(1).constraint=false;
+        population(1).exception=['error: ',MEexception.identifier];
+        captureErrors{1}=MEexception.getReport;
+        newpopulation=population;
+        supportstruct.loop=[];
+        warning('Sensitivity Extraction has failed, basis will not be smoothed.')
+    end
     
     
 end

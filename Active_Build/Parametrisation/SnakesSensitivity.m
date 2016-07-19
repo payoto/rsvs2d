@@ -52,7 +52,7 @@ function [newFill]=...
     [diffStepSize]=ExtractVariables(varExtract,paramoptim);
     
     forceparam=paramsnake.snakes.force;
-
+    
     
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(looprestart);
@@ -66,9 +66,9 @@ function [newFill]=...
     [newFill]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim);
     
     
-    % Eventually get gradient 
-%     GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-%         cellCentredGrid,insideContourInfo,forceparam);
+    % Eventually get gradient
+    %     GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+    %         cellCentredGrid,insideContourInfo,forceparam);
     
 end
 
@@ -1122,6 +1122,25 @@ function [snaxOrd]=SplitSnaxLoops(snaxel)
         ll=ll+1;
     end
     
+    [snaxOrd]=CloseRepeatingSnaxLoops(snaxOrd);
+end
+
+function [snaxOrd]=CloseRepeatingSnaxLoops(snaxOrd)
+    ii=1;
+    jj=1;
+    while (ii<=numel(snaxOrd))
+        
+        activeLoop=snaxOrd{ii};
+        subActCell=sort(FindObjNum([],activeLoop(jj),activeLoop));
+        if numel(subActCell)>1
+            snaxOrd{ii}=activeLoop(subActCell(1):subActCell(2)-1);
+            snaxOrd{numel(snaxOrd)+1}=activeLoop([subActCell(2):end,1:subActCell(1)-1]);
+            jj=0;
+        end
+
+        ii=ii+floor(jj/length(activeLoop));
+        jj=mod(jj,length(activeLoop))+1;
+    end
 end
 
 function [dChange]=FindModalDistanceChange(sensSnax,maxDistRatio)
