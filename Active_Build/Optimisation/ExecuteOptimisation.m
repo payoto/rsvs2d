@@ -203,10 +203,7 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
     varExtract={'nPop','objectiveName','defaultVal','lineSearch'};
     [nPop,objectiveName,defaultVal,lineSearch]=ExtractVariables(varExtract,paramoptim);
     
-    
-    [population]=ConstraintMethod('DesVar',paramoptim,population);
-    
-    
+
     if (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
         [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
@@ -245,8 +242,8 @@ function [population,captureErrors]=ParallelObjectiveCalc...
         catch MEexception
             % Error Capture
             population(ii).constraint=false;
-            population(ii).exception=['error: ',MEexception.identifier];
-            captureErrors{ii}=MEexception.getReport;
+            population(ii).exception=[population(ii).exception,'error: ',MEexception.identifier];
+            captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
         end
     end
     
@@ -294,11 +291,15 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
     
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
+    
     [population]=ConstraintMethod('DesVar',paramoptim,population);
     
     [population,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=ComputeRootSensitivityPop...
         (paramsnake,paramspline,paramoptim,population,baseGrid,gridrefined,...
         restartsnake,connectstructinfo,outinfo,nIter);
+    
+    population=ApplySymmetry(paramoptim,population);
+    [population]=ConstraintMethod('DesVar',paramoptim,population);
     
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
@@ -667,8 +668,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         'optimMethod','desvarconnec'};
     [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec]...
         =ExtractVariables(varExtract,paroptim);
-    varExtract={'cellLevels'};
-    [cellLevels]=ExtractVariables(varExtract,paroptim.parametrisation);
+    varExtract={'cellLevels','corneractive'};
+    [cellLevels,corneractive]=ExtractVariables(varExtract,paroptim.parametrisation);
     
     switch startPop
         case 'rand'
@@ -688,9 +689,13 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
             origPop(:,TEind)=origPop(:,TEind)/2;
             
         case 'halfuniformsharp'
-            
-            LEind=1+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
-            TEind=cellLevels(1)-2+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+            if ~corneractive
+                LEind=1+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+                TEind=cellLevels(1)-2+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+            else
+                LEind=1+(cellLevels(1))*[0:(cellLevels(2)-1)];
+                TEind=cellLevels(1)+(cellLevels(1))*[0:(cellLevels(2)-1)];
+            end
             
             origPop=ones([nPop nDesVar])*0.5;
             
@@ -950,7 +955,7 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
     end
     optimdatstruct=struct('var',[],'value',[]);
     popstruct=struct('fill',valFill,'location','','objective',[],'constraint'...
-        ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','none');
+        ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','');
     
 end
 

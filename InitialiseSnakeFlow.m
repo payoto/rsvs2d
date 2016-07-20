@@ -10,9 +10,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function []=InitialiseWorkFlow()
+function []=InitialiseSnakeFlow()
     singleFolder={''};
-    rootTreeFolders={'Active_Build',['MEX_Function_Directory',filesep,'MEX_Executables'],'Automated_Function_Directory'};
+    rootTreeFolders={'Active_Build',['MEX_Function_Directory',filesep,'MEX_Executables']...
+        ,'Automated_Function_Directory','JobScripts'};
     
     [addSingleDir]=FormulateValidFolders(singleFolder);
     [rootTreeDirs]=FormulateValidFolders(rootTreeFolders);

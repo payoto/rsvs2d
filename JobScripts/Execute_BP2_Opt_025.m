@@ -9,7 +9,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+MoveToDir('source',1)
 InitialiseSnakeFlow;
 
-ExecuteOptimisation('HPC_LengthArea');
+ExecuteOptimisation('bp3_Aero_CG_05');

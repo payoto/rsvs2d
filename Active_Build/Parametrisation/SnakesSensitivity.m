@@ -60,11 +60,11 @@ function [newFill]=...
     [snakposition]=SnaxelNormal2(snaxel,snakposition);
     %CheckResultsLight(refinedGriduns,snakposition,snaxel)
     
-    [cellordstruct]=BuildCellConnectivity(snaxel,refinedGrid,volfracconnec);
+    [cellordstruct]=BuildCellConnectivity(snaxel,oldGrid,refinedGrid,volfracconnec);
     [cellordstruct]=BuildModeMixing(cellordstruct,paramsnake);
     [cellordstruct]=BuildFillMode(oldGrid,cellordstruct);
     [newFill]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim);
-    
+    [newFill]=RemoveModeNotDesign(paramoptim,oldGrid,newFill);
     
     % Eventually get gradient
     %     GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
@@ -244,27 +244,64 @@ function [cellordstruct]=BuildFillMode(baseGrid,cellordstruct)
     
     for ii=1:length(cellordstruct)
         cellordstruct(ii).fillmode=zeros([1 numel(activeInd)]);
-        cellordstruct(ii).fillmode(...
-            FindObjNum([],cellordstruct(ii).coeffMode(:,1)',activeInd))=...
-            cellordstruct(ii).coeffMode(:,2)';
+        sub=FindObjNum([],cellordstruct(ii).coeffMode(:,1)',activeInd);
+        subAct=sub~=0;
+        cellordstruct(ii).fillmode(sub(subAct))=...
+            cellordstruct(ii).coeffMode(find(subAct),2)';
     end
     
     
 end
 
+function [vec]=RemoveZerosVec(vec)
+    
+    vec=vec(vec~=0);
+    
+end
+
+function [newfillstruct]=RemoveModeNotDesign(paramoptim,baseGrid,newfillstruct)
+    varExtract={'notDesInd'};
+    [notDesInd]=ExtractVariables(varExtract,paramoptim);
+    
+    activeCell=logical([baseGrid.cell(:).isactive]);
+    activeInd=[baseGrid.cell((activeCell)).index];
+    kk=1;
+    for ii=1:length(newfillstruct)
+        if FindObjNum([],newfillstruct(ii).cellind,activeInd(notDesInd))~=0;
+           rmFill(kk)=ii;
+           kk=kk+1; 
+        end
+    end
+    newfillstruct(rmFill)=[];
+end
+
 function [newfillstruct]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim)
     
     kk=1;
+    
+    
+    actCell=[cellordstruct(:).index];
+    actCell=RemoveIdenticalEntries(actCell);
+    
+    allCell=[cellordstruct(:).index];
+    
     newfillstruct=repmat(struct('fill',[],'optimdat',struct('var',[],'val',[])),...
-        [1,numel(diffStepSize)*numel(cellordstruct)]);
+        [1,numel(diffStepSize)*numel(actCell)]);
     for ii=1:numel(diffStepSize)
-        for jj=1:numel(cellordstruct)
-            newRootFill=rootFill+cellordstruct(jj).fillmode*diffStepSize(ii);
+        for ll=1:numel(actCell)
+            jj=FindObjNum([],actCell(ll),allCell);
+            fillMode=vertcat(cellordstruct(jj).fillmode);
+            % fillMode=sum(fillMode,1);
+            % fillMode=fillMode/max(fillMode);
+            [~,pos]=max(abs(fillMode),[],1);
+            fillMode=fillMode(sub2ind(size(fillMode),pos,1:size(fillMode,2)));
+            newRootFill=rootFill+fillMode*diffStepSize(ii);
             [newRootFill]=OverflowHandling(paramoptim,newRootFill);
             deltaFill=newRootFill-rootFill;
             newfillstruct(kk).fill=newRootFill;
             newfillstruct(kk).optimdat.var=find(deltaFill~=0);
             newfillstruct(kk).optimdat.val=deltaFill(deltaFill~=0);
+            newfillstruct(kk).cellind=actCell(ll);
             kk=kk+1;
         end
     end
@@ -1122,7 +1159,6 @@ function [snaxOrd]=SplitSnaxLoops(snaxel)
         ll=ll+1;
     end
     
-    [snaxOrd]=CloseRepeatingSnaxLoops(snaxOrd);
 end
 
 function [snaxOrd]=CloseRepeatingSnaxLoops(snaxOrd)
@@ -1289,10 +1325,10 @@ end
 
 %% Combined mode data
 
-function [cellordstruct]=BuildCellConnectivity(snaxel,gridRefined,volfraconnec)
+function [cellordstruct]=BuildCellConnectivity(snaxel,baseGrid,gridRefined,volfraconnec)
     
     edgeInd=[gridRefined.edge(:).index];
-    
+    activeCellInd=[baseGrid.cell(logical([baseGrid.cell(:).isactive])).index];
     [oldCellInd,newCellInd]=NewToOldCell(volfraconnec);
     
     for ii=1:numel(snaxel)
@@ -1310,12 +1346,15 @@ function [cellordstruct]=BuildCellConnectivity(snaxel,gridRefined,volfraconnec)
     
     for ii=1:length(snaxOrd)
         cellsRaw=vertcat(snaxcellinfo(snaxOrd{ii}).oldcell);
-        cellOrd{ii}=OrderRawCells(cellsRaw);
+        cellOrd{ii}=OrderRawCells(cellsRaw,activeCellInd);
     end
+    
+    [cellOrd]=CloseRepeatingSnaxLoops(cellOrd);
     
     cellordstruct=repmat(struct('index',[],'nextcell',[],'prevcell',[],...
         'loopindex',[],'looplength',[]),[1,numel([cellOrd{:}])]);
     kk=1;
+    
     for ii=1:numel(cellOrd)
         nCell=numel(cellOrd{ii});
         for jj=1:nCell
@@ -1332,7 +1371,7 @@ function [cellordstruct]=BuildCellConnectivity(snaxel,gridRefined,volfraconnec)
     
 end
 
-function [cellsOrdRaw]=OrderRawCells(cellsRaw)
+function [cellsOrdRaw]=OrderRawCells(cellsRaw,activeCellInd)
     
     
     cellsOrdRaw=zeros([1,numel(cellsRaw)]);
@@ -1355,6 +1394,7 @@ function [cellsOrdRaw]=OrderRawCells(cellsRaw)
         
     end
     cellsOrdRaw=RemoveIdenticalConsecutivePoints(cellsOrdRaw')';
+    cellsOrdRaw=cellsOrdRaw(FindObjNum([],cellsOrdRaw,activeCellInd)~=0);
     if cellsOrdRaw(end)==cellsOrdRaw(1)
         cellsOrdRaw(end)=[];
     end
