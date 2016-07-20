@@ -461,7 +461,7 @@ function [param]=optimSupersonic()
     
     param.snakes.refine.axisRatio=0.25;
     
-    param.optiminit.cellLevels=[10,2];
+    param.optiminit.cellLevels=[12,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;

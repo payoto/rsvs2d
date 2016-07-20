@@ -9,7 +9,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+MoveToDir('source',1)
 InitialiseSnakeFlow;
 
 ExecuteOptimisation('BP3_Aero_CG_20_Long');
