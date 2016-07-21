@@ -185,8 +185,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
     % Tecplot flow files
     if strcmp(objectiveName,'CutCellFlow')
-        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
-            dat.xMin,dat.xMax,dat.A,dat.nPoints);
+%         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
+%             dat.xMin,dat.xMax,dat.A,dat.nPoints);
         
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
@@ -969,7 +969,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     
     meanRes=mean(iterRes,2);
     stdRes=std(iterRes,0,2);
-    lSub1(2)=plot([2:2:nIter]/2,minRes,'r-');
+    lSub1(2)=plot(1:numel(minRes),minRes,'r-');
     %lSub1(3)=plot(1:2:nIter,meanRes,'color',[0.7 0 0]);
     lSub1(3)=plot([0,nIter],[knownOptim knownOptim],'r--');
     
@@ -1038,7 +1038,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     end
     
     
-    iterVec=((2:2:length(optimstruct))-1)/2;
+    iterVec=((1:2:nIter)+1)/2;
     varVec=1:length(popNominal(1,:));
     
     [iterGrid,varGrid]=meshgrid(iterVec,varVec);

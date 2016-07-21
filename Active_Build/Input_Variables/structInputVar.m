@@ -472,7 +472,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
     param.general.refineSteps=3;
-    param.optiminit.corneractive=true;
+    param.optiminit.corneractive=false;
 end
 
 function [param]=optimSupersonic_Long()
