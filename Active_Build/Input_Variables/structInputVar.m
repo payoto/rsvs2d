@@ -462,9 +462,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.axisRatio=0.25;
     
     param.optiminit.cellLevels=[14,2];
-    sizeRatio=param.optiminit.cellLevels(1,:)+2;
-    sizeRatio=sizeRatio(2)/sizeRatio(1);
-    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     param.general.subdivType='chaikin';
     param.snakes.refine.TEShrink=true;
