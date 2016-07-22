@@ -992,8 +992,8 @@ function [paroptim]=desk_Aero_CG_10_smooth_peak()
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=6;
-    paroptim.general.worker=18;
+    paroptim.general.maxIter=18;
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=desk_Aero_CG_10_smooth_poly()
@@ -1016,7 +1016,7 @@ function [paroptim]=desk_Aero_CG_10_smooth_none()
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='all';
-    paroptim.optim.CG.validVol=0.5;
+    paroptim.optim.CG.validVol=0.3;
     paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.general.nPop=12;
