@@ -329,8 +329,6 @@ function [paroptim]=CG_Area()
     
 end
 
-
-
 function [paroptim]=DE_Aero()
     
     % Load
@@ -979,24 +977,128 @@ function [paroptim]=Desk_CG_inline_out()
     paroptim.general.worker=4;
 end
 
-% Smoothed mode
+%% Smoothed mode
 
+% desktop
 
 function [paroptim]=desk_Aero_CG_10_smooth_peak()
+    
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.3;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=30;
+    paroptim.general.maxIter=6;
+    paroptim.general.worker=18;
+end
+
+function [paroptim]=desk_Aero_CG_10_smooth_poly()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=18;
     paroptim.general.worker=4;
 end
 
-function [paroptim]=BP3_SmoothCG_outmis_Aero()
+function [paroptim]=desk_Aero_CG_10_smooth_none()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='all';
+    paroptim.optim.CG.validVol=0.5;
+    paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=18;
+    paroptim.general.worker=4;
+end
+
+function [paroptim]=desk_Aero_CG_10_smooth_polypeak()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.parametrisation.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=18;
+    paroptim.general.worker=4;
+end
+
+function [paroptim]=desk_SmoothCG_outmis_peak()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    
+    
+    paroptim=CutCellObjective(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.startPop='outerbound';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='none'; % 'horz'
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=10;
+    paroptim.general.worker=4;
+end
+
+function [paroptim]=desk_SmoothCG_outmis_poly()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    
+    
+    paroptim=CutCellObjective(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.startPop='outerbound';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='none'; % 'horz'
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    
+    paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=10;
+    paroptim.general.worker=4;
+end
+
+function [paroptim]=desk_SmoothCG_outmis_polypeak()
     
     [paroptim]=DefaultOptim();
     
@@ -1022,8 +1124,69 @@ function [paroptim]=BP3_SmoothCG_outmis_Aero()
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=10;
     paroptim.general.worker=4;
+end
+
+function [paroptim]=desk_SmoothCG_outmis_none()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    
+    
+    paroptim=CutCellObjective(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.startPop='outerbound';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='none'; % 'horz'
+    
+    paroptim.optim.CG.varActive='all';
+    
+    paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=10;
+    paroptim.general.worker=4;
+end
+
+% BP3
+function [paroptim]=BP3_SmoothCG_outmis_Aero()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'SupersonicComponent');
+    
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    
+    
+    paroptim=CutCellObjective(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.startPop='outerbound';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='none'; % 'horz'
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=50;
+    paroptim.general.worker=12;
 end
 
 function [paroptim]=bp3_Aero_CG_10_smooth_peak()
@@ -1045,7 +1208,7 @@ end
 function [paroptim]=bp3_Aero_CG_10_smooth_poly()
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
@@ -1060,7 +1223,7 @@ end
 function [paroptim]=bp3_Aero_CG_10_smooth_polypeak()
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
@@ -1076,11 +1239,11 @@ end
 function [paroptim]=bp3_Aero_CG_10_smooth_none()
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     
     paroptim.optim.CG.varActive='all';
-    paroptim.parametrisation.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
@@ -1093,7 +1256,7 @@ function [paroptim]=bp3_Aero_CG_05_smooth()
     paroptim.parametrisation.snakes.refine.axisRatio=0.6;
     
     paroptim.optim.CG.varActive='snaksensiv';
-    paroptim.parametrisation.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
@@ -1103,16 +1266,19 @@ end
 function [paroptim]=bp3_Aero_CG_20_smooth()
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=2.5;
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic_Long');
+    paroptim.parametrisation.snakes.refine.axisRatio=2*19/14;
     
     paroptim.optim.CG.varActive='snaksensiv';
-    paroptim.parametrisation.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=100;
     paroptim.general.worker=12;
 end
+
+%% Component
 % 24/06/2016
 function [paroptim]=bp3_Aero_CG_smile_in()
     

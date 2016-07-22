@@ -461,7 +461,7 @@ function [param]=optimSupersonic()
     
     param.snakes.refine.axisRatio=0.25;
     
-    param.optiminit.cellLevels=[12,2];
+    param.optiminit.cellLevels=[14,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
@@ -480,15 +480,8 @@ function [param]=optimSupersonic_Long()
     [param]=optimSupersonic();
     
     param.snakes.refine.axisRatio=2.8333;
-    
-    sizeRatio2=param.optiminit.cellLevels(1,:)+2;
-    sizeRatio2=sizeRatio2(2)/sizeRatio2(1);
-    
-    
     param.optiminit.cellLevels=[19,2];
-    sizeRatio=param.optiminit.cellLevels(1,:)+2;
-    sizeRatio=sizeRatio(2)/sizeRatio(1);
-    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio/sizeRatio2;
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
 end
 
