@@ -303,12 +303,12 @@ end
 function [newModeInd]=FindNewModes(modestruct,rootfill,desVarRange)
     % New Modes are caracterised by being 0 or 1 in the root member
     
-    inactiveVar=find((rootfill<=min(desVarRange)) | (rootfill>=max(desVarRange)));
+    activeVar=find((rootfill>min(desVarRange)) & (rootfill<max(desVarRange)));
     isNewMode=false(size(modestruct));
     for ii=1:length(modestruct)
         modeVar=find(modestruct(ii).mode);
         
-        isNewMode(ii)=sum((FindObjNum([],modeVar,inactiveVar)==0))==numel(modeVar);
+        isNewMode(ii)=sum((FindObjNum([],modeVar,activeVar)==0))>=ceil(numel(modeVar)/2);
         
     end
     newModeInd=find(isNewMode);

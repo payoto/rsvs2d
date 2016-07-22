@@ -177,16 +177,12 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
     % Figure 
     [isGradient]=CheckIfGradient(optimMethod);
-    [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
-    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
-    figName=MakePathCompliant(figName);
-    hgsave(h,figName);
+    
     
     % Tecplot flow files
     if strcmp(objectiveName,'CutCellFlow')
-%         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
-%             dat.xMin,dat.xMax,dat.A,dat.nPoints);
+        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
+            dat.xMin,dat.xMax,dat.A,dat.nPoints);
         
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
@@ -200,6 +196,11 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             tecPlotFile,axisRatio,paroptim);
         
     end
+    [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
+    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
+    figName=MakePathCompliant(figName);
+    hgsave(h,figName);
 end
 
 function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
