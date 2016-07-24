@@ -981,7 +981,7 @@ end
 
 % desktop
 
-function [paroptim]=desk_Aero_CG_10_smooth_peak()
+function [paroptim]=desk_Aero_CG_10_peak()
     
     [paroptim]=CG_Aero();
     
@@ -996,7 +996,7 @@ function [paroptim]=desk_Aero_CG_10_smooth_peak()
     paroptim.general.worker=4;
 end
 
-function [paroptim]=desk_Aero_CG_10_smooth_poly()
+function [paroptim]=desk_Aero_CG_10_poly()
     [paroptim]=CG_Aero();
     
     paroptim.parametrisation.snakes.refine.axisRatio=1;
@@ -1010,7 +1010,7 @@ function [paroptim]=desk_Aero_CG_10_smooth_poly()
     paroptim.general.worker=4;
 end
 
-function [paroptim]=desk_Aero_CG_10_smooth_none()
+function [paroptim]=desk_Aero_CG_10_none()
     [paroptim]=CG_Aero();
     
     paroptim.parametrisation.snakes.refine.axisRatio=1;
@@ -1024,7 +1024,7 @@ function [paroptim]=desk_Aero_CG_10_smooth_none()
     paroptim.general.worker=4;
 end
 
-function [paroptim]=desk_Aero_CG_10_smooth_polypeak()
+function [paroptim]=desk_Aero_CG_10_polypeak()
     [paroptim]=CG_Aero();
     
     paroptim.parametrisation.snakes.refine.axisRatio=1;
