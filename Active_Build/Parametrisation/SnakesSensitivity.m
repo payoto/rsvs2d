@@ -266,6 +266,7 @@ function [newfillstruct]=RemoveModeNotDesign(paramoptim,baseGrid,newfillstruct)
     activeCell=logical([baseGrid.cell(:).isactive]);
     activeInd=[baseGrid.cell((activeCell)).index];
     kk=1;
+    rmFill=[];
     for ii=1:length(newfillstruct)
         if FindObjNum([],newfillstruct(ii).cellind,activeInd(notDesInd))~=0;
            rmFill(kk)=ii;

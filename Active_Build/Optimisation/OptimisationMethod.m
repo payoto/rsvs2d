@@ -151,8 +151,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     
     % Extract previous iteration information
-    [iterCurr]=ExtractValidIter(iterCurr);
-    [iterm1]=ExtractValidIter(iterm1);
+    [iterCurr,validCurr]=ExtractValidIter(iterCurr);
+    [iterm1,validM1]=ExtractValidIter(iterm1);
     [gradstruct_curr]=GetIterationInformation(iterCurr);
     [gradstruct_m1]=GetIterationInformation(iterm1);
     
@@ -161,7 +161,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     % Case dependant statements
     if lineSearch
         if ~isRestart
-            [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,direction);
+            [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,validCurr,direction);
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
@@ -207,9 +207,10 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
 end
 
-function [population]=ExtractValidIter(population)
+function [population,validIter]=ExtractValidIter(population)
     
-    population=population([1,find([population(2:end).constraint]>0.9)+1]);
+    validIter=[1,find([population(2:end).constraint]>0.9)+1];
+    population=population(validIter);
     
 end
 
@@ -470,7 +471,7 @@ function [newPop,deltas]=...
 end
 
 
-function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
+function [stepVector]=FindOptimalStepVector(iterstruct,worker,validCurr,direction)
     
     f=[iterstruct(:).objective];
     g=[iterstruct(:).constraint];
@@ -486,13 +487,13 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,direction)
             [~,bestPoint]=max(f);
     end
     
-    stepLengths=1./2.^[inf,(worker-2):-1:0];
-    
+    stepLengths=1./2.^[inf,worker-validCurr(2:end)];
+    stepLengths=stepLengths/stepLengths(end);
     if bestPoint==1
         bestPoint=2;
     end
-    if bestPoint==worker
-        bestPoint=worker-1;
+    if bestPoint==numel(f)
+        bestPoint=numel(f)-1;
     end
     prevPoint=bestPoint-1;
     nextPoint=bestPoint+1;
@@ -565,6 +566,11 @@ end
 function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim)
     
     newRoot=rootFill+stepVector;
+    popVec.fill=newRoot;
+    popVec=ApplySymmetry(paramoptim,popVec);
+    [popVec]=ConstraintMethod('DesVar',paramoptim,popVec);
+    newRoot=popVec.fill;
+    
     [newRoot]=OverflowHandling(paramoptim,newRoot);
     
     realStep=newRoot-rootFill;

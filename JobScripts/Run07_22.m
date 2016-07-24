@@ -4,28 +4,28 @@ InitialiseSnakeFlow
 kk=1;
 
 try 
-    ExecuteOptimisation('desk_Aero_CG_10_smooth_peak')
+    ExecuteOptimisation('desk_Aero_CG_10_peak')
 catch ME
     errorSave{kk}=ME;
 end
 kk=kk+1;
 try 
     
-    ExecuteOptimisation('desk_Aero_CG_10_smooth_poly')
+    ExecuteOptimisation('desk_Aero_CG_10_poly')
 catch ME
     errorSave{kk}=ME;
 end
 kk=kk+1;
 
 try 
-    ExecuteOptimisation('desk_Aero_CG_10_smooth_polypeak')
+    ExecuteOptimisation('desk_Aero_CG_10_polypeak')
 catch ME
     errorSave{kk}=ME;
 end
 kk=kk+1;
 
 try 
-    ExecuteOptimisation('desk_Aero_CG_10_smooth_none')
+    ExecuteOptimisation('desk_Aero_CG_10_none')
 catch ME
     errorSave{kk}=ME;
 end

@@ -266,6 +266,20 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
 end
 
 
+function population=ApplySymmetry(paramoptim,population)
+    
+    varExtract={'symDesVarList'};
+    [symDesVarList]=ExtractVariables(varExtract,paramoptim);
+    
+    for ii=1:length(population)
+        population(ii).fill(symDesVarList(2,:))=...
+            population(ii).fill(symDesVarList(1,:));
+    end
+    
+    
+end
+
+
 
 
 
