@@ -1146,7 +1146,7 @@ function [paroptim]=desk_SmoothCG_outmis_none()
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='none'; % 'horz'
     
-    paroptim.optim.CG.varActive='all';
+    paroptim.optim.CG.varActive='border';
     
     paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
