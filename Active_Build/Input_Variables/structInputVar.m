@@ -478,7 +478,7 @@ function [param]=optimSupersonic_Long()
     [param]=optimSupersonic();
     
     param.snakes.refine.axisRatio=2.8333;
-    param.optiminit.cellLevels=[19,2];
+    param.optiminit.cellLevels=[26,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
 end

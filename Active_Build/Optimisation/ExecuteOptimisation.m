@@ -98,10 +98,10 @@ function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter,
         %         [origPop,nPop,deltas]=InitialiseGradientBased(...
         %             iterstruct(startIter).population(rootInd).fill,paroptim);
         %         paroptim.general.nPop=nPop;
-        [isGradientPrec]=CheckIfGradient(precOptMeth);
+        [isGradientPrec]=CheckIfGradient(precOptMeth{1});
         
         if isGradientPrec
-            %paroptim.optim.CG.lineSearch=true;
+            paroptim.optim.CG.lineSearch=precOptMeth{2};
             [origPop,~,paroptim,deltas]...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
                 iterstruct(max([startIter-iterGap,startIter])).population);
