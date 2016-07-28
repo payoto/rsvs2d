@@ -527,6 +527,8 @@ function [paramoptim]=CheckiterGap(paramoptim)
     switch optimMethod
         case 'conjgradls'
             paramoptim.general.iterGap=2;
+        case 'conjgrad'
+            paramoptim.general.iterGap=2;
         otherwise
             
             paramoptim.general.iterGap=1;
