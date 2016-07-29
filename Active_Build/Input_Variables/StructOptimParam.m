@@ -1166,6 +1166,7 @@ function [paroptim]=desk_Aero_CG_20L_pk()
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic_Long');
     paroptim.constraint.desVarVal={0.3};
     paroptim.parametrisation.snakes.refine.axisRatio=4/3*2*2;
+    paroptim.obj.flow.nMach=4;
     
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
@@ -1184,6 +1185,7 @@ function [paroptim]=desk_Aero_CG_20L_po()
     paroptim.constraint.desVarVal={0.3};
     paroptim.parametrisation.snakes.refine.axisRatio=4/3*2*2;
     paroptim.general.startPop='randuniform';
+    paroptim.obj.flow.nMach=4;
     
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
