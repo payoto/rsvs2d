@@ -156,7 +156,7 @@ end
 
 function [errFlag]=CutCellErrorHandling(endstr,stoponerror)
     
-    errorTerms={'exception','neg','griduns','error'};
+    errorTerms={'exception','neg','griduns','error','IEEE_INVALID_FLAG','IEEE_UNDERFLOW_FLAG','lam'};
     [errFlag]=CutCellErrorDetection(errorTerms,endstr);
     
     if sum(errFlag) && stoponerror
