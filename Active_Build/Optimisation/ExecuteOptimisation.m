@@ -654,8 +654,8 @@ end
 function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     
     varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal',...
-        'optimMethod','desvarconnec'};
-    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec]...
+        'optimMethod','desvarconnec','specificFillName'};
+    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,specificFillName]...
         =ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paroptim.parametrisation);
@@ -666,6 +666,9 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         case 'randuniform'
             
             origPop=rand([nPop,1])*ones([1 nDesVar]);
+        case 'specificfill'
+            
+            [origPop]=StartFromFill(nDesVar,nPop,specificFillName);
             
         case 'randuniformsharp'
             
@@ -915,6 +918,49 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
         end
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
     end
+end
+
+function [origPop]=StartFromFill(nDesVar,nPop,fillName)
+    
+    switch fillName
+        case '24DVaverage'
+            rootFill=[   0.072190973000000
+                0.197280875000000
+                0.307048435000000
+                0.394557265000000
+                0.458644380000000
+                0.500609320000000
+                0.523538210000000
+                0.530283520000000
+                0.523530135000000
+                0.499683995000000
+                0.452365100000000
+                0.340267790000000
+                0.072190973000000
+                0.197280875000000
+                0.307048435000000
+                0.394557265000000
+                0.458644380000000
+                0.500609320000000
+                0.523538210000000
+                0.530283520000000
+                0.523530135000000
+                0.499683995000000
+                0.452365100000000
+                0.340267790000000]';
+            
+        otherwise
+            
+            error('invalid fill')
+            
+    end
+    
+    if nDesVar~=length(rootFill)
+        error('invalid fill and parametrisation combination at initialisation')
+    end
+    
+    origPop=ones([nPop,1])*rootFill;
+    
 end
 
 function [iterstruct]=InitialiseIterationStruct(paramoptim)

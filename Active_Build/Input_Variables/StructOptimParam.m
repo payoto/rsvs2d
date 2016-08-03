@@ -59,6 +59,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.desVarRange=[0,1];
     paroptimgeneral.nPop=6;
     paroptimgeneral.startPop='rand';
+    paroptimgeneral.specificFillName='24DVaverage';
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea';
@@ -1158,7 +1159,6 @@ function [paroptim]=desk_outmis_()
     paroptim.general.worker=4;
 end
 
-
 function [paroptim]=desk_Aero_CG_20L_pk()
     
     [paroptim]=CG_Aero();
@@ -1195,6 +1195,23 @@ function [paroptim]=desk_Aero_CG_20L_po()
     paroptim.general.nPop=12;
     paroptim.general.maxIter=10;
     paroptim.general.worker=4;
+end
+
+function [paroptim]=BP3_24to12DV_pk()
+    [paroptim]=CG_Aero();
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.general.startPop='specificfill';
+    paroptim.general.specificFillName='24DVaverage';
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=6;
+    paroptim.general.worker=12;
 end
 
 % BP3
@@ -1238,6 +1255,7 @@ function [paroptim]=bp3_Aero_CG_10_smooth_peak()
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.3;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     
     paroptim.general.nPop=12;
@@ -1295,7 +1313,7 @@ end
 function [paroptim]=bp3_Aero_CG_8_smooth_peak()
     [paroptim]=CG_Aero();
     
-    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
