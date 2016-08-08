@@ -1,15 +1,16 @@
 %% Code to generate a 3D plot of function
 
-function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps)
+function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps,epsD)
     if ~exist('eps','var'), eps=0;end
+    if ~exist('epsD','var'), epsD=0;end
     jj=0:numStep-1;
-    dVec=1-jj*stepSize;
+    dVec=jj*stepSize;
     [d_i,d_m]=meshgrid(dVec,dVec);
     for jj=1:numStep
         for kk=1:numStep
-            derivtenscalc.d_i=dVec(jj)-eps;
-            derivtenscalc.d_m=dVec(kk)-eps;
-            derivtenscalc.normFi=sqrt(sum(((derivtenscalc.g1_i+derivtenscalc.Dg_i*derivtenscalc.d_i)-(derivtenscalc.g1_m+derivtenscalc.Dg_m*derivtenscalc.d_m)).^2));
+            derivtenscalc.d_i=dVec(jj)-epsD;
+            derivtenscalc.d_m=dVec(kk)-epsD;
+            derivtenscalc.normFi=sqrt(eps^2+sum(((derivtenscalc.g1_i+derivtenscalc.Dg_i*derivtenscalc.d_i)-(derivtenscalc.g1_m+derivtenscalc.Dg_m*derivtenscalc.d_m)).^2));
             [derivtenscalc3(jj,kk)]=CalculateDerivatives(derivtenscalc);
         end
     end
@@ -47,7 +48,7 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps)
         end
     end
     figure
-    surf(1-di,1-dm,Fi,'linestyle','none')
+    surf(di,dm,Fi,'linestyle','none')
     title('Norm (Fi)')
     xlabel('di')
     ylabel('dm')
@@ -55,12 +56,12 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps)
     
     figure
     subplot(1,2,1)
-    surf(1-di,1-dm,dfiddi,'linestyle','none')
+    surf(di,dm,dfiddi,'linestyle','none')
     title('1st di derivative')
     xlabel('di')
     ylabel('dm')
     subplot(1,2,2)
-    surf(1-di,1-dm,dfiddm,'linestyle','none')
+    surf(di,dm,dfiddm,'linestyle','none')
     title('1st dm derivative')
     xlabel('di')
     ylabel('dm')
@@ -68,26 +69,26 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps)
     
     figure
     subplot(1,3,1)
-    [h(1)]=SurfFor2ndDeriv(1-di,1-dm,d2fiddi2);
+    [h(1)]=SurfFor2ndDeriv(di,dm,d2fiddi2);
     hold on
-    %surf(1-di(2:end-1,2:end-1),1-dm(2:end-1,2:end-1),d2fiddi2FD,log10(abs(d2fiddi2FD)),'linestyle','none')
+    %surf(di(2:end-1,2:end-1),dm(2:end-1,2:end-1),d2fiddi2FD,log10(abs(d2fiddi2FD)),'linestyle','none')
     title('2nd di derivative')
     xlabel('di')
     ylabel('dm')
     subplot(1,3,3)
-    [h(2)]=SurfFor2ndDeriv(1-di,1-dm,d2fiddm2);
+    [h(2)]=SurfFor2ndDeriv(di,dm,d2fiddm2);
     hold on
-    %surf(1-di(2:end-1,2:end-1),1-dm(2:end-1,2:end-1),d2fiddm2FD,log10(abs(d2fiddm2FD)),'linestyle','none')
+    %surf(di(2:end-1,2:end-1),dm(2:end-1,2:end-1),d2fiddm2FD,log10(abs(d2fiddm2FD)),'linestyle','none')
     title('2nd dm derivative')
     xlabel('di')
     ylabel('dm')
     subplot(1,3,2)
-    [h(3)]=SurfFor2ndDeriv(1-di,1-dm,d2fiddim);
+    [h(3)]=SurfFor2ndDeriv(di,dm,d2fiddim);
     title('dmdi derivative')
     xlabel('di')
     ylabel('dm')
     hold on
-    %surf(1-di(2:end-1,2:end-1),1-dm(2:end-1,2:end-1),d2fiddmiFD,log10(abs(d2fiddmiFD)),'linestyle','none')
+    %surf(di(2:end-1,2:end-1),dm(2:end-1,2:end-1),d2fiddmiFD,log10(abs(d2fiddmiFD)),'linestyle','none')
     
 end
 
