@@ -408,6 +408,11 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthSmear(snaxel,snakpositi
         
         [derivtenscalc(ii)]=CalculateDerivatives(derivtenscalc(ii));
         
+        if (abs(dot(derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m))<=1e-10) ...
+                && (sum(derivtenscalc(ii).g1_i==derivtenscalc(ii).g1_m)==numel(derivtenscalc(ii).g1_i))
+            printf('We''d have a problem')
+        end
+        
     end
     testnan=find(isnan([derivtenscalc(:).d2fiddi2]));
     if ~isempty(testnan)
