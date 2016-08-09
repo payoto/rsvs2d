@@ -1,7 +1,7 @@
 function [matCoeff,pp]=PiecePolyBasis()
     
     d=1;
-    Dv=1;
+    Dv=1.68;
     steps=50;
     plotSteps=20;
     precision=50;
