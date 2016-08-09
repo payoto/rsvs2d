@@ -11,7 +11,7 @@ Calculations Started . . .
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
 Grid Initialisation exited
-Time taken:00:00:00:047
+Time taken:00:00:00:031
 GENERATION PROCESS end
 GRID REFINEMENT START
 
@@ -97,7 +97,7 @@ Calculations Started . . .
 			Start Cell 72 of 72 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:01:192
+Connect . . .Edge . . .Cell . . .Time taken:00:00:01:255
 GRID REFINEMENT end
 SNAKE PROCESS START
   Start initialisation
@@ -105,611 +105,111 @@ SNAKE PROCESS START
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:06:099
+  Initialisation time:00:00:06:866
   Start Time Stepping
-     Step 1  -<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Velocity\VelocityLengthMinimisationSQP.m',413,1)">413 </a>            printf('We''d have a problem')
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,0)
-
-colormean =
-
-    5.0052
-
-
-colorstd =
-
-    4.3727
-
-
-colormean =
-
-    5.0295
-
-
-colorstd =
-
-    5.0125
-
-
-colormean =
-
-    5.9176
-
-
-colorstd =
-
-    0.8845
-
-if system_dependent('IsDebugMode')==1, dbquit; end
-[unstructured,loop,unstructReshape,snakSave]=Main('Snakestestsmooth1')
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-WRITING AUTOMATIC FUNCTIONS
-GENERATION PROCESS START
-
-Calculations Started . . .
-***** START GRID INITIALISATION *****
-
-     OUTPUT:Skipped
-    ACTION: Starting Grid Generated
-     OUTPUT:Skipped
-    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
-
-    Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:016
-GENERATION PROCESS end
-GRID REFINEMENT START
-
-     OUTPUT:Skipped
-Calculations Started . . .
-***** START GRID REFINEMENT 1 of 1 *****
-
-     OUTPUT:Skipped
-    ACTION: Template Generated
-    ACTION: Refinement Targets Identified
-    ACTION: Edges Refined
-			Start Cell 1 of 9 
-			Start Cell 2 of 9 
-			Start Cell 3 of 9 
-			Start Cell 4 of 9 
-			Start Cell 5 of 9 
-			Start Cell 6 of 9 
-			Start Cell 7 of 9 
-			Start Cell 8 of 9 
-			Start Cell 9 of 9 
-    ACTION: Cells Refined
-     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:140
-GRID REFINEMENT end
-SNAKE PROCESS START
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:00:625
-  Start Time Stepping
-     Step 1  -<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Velocity\VelocityLengthMinimisationSQP.m',413,1)">413 </a>            printf('We''d have a problem')
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,0)
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    7.5729
-
-
-colorstd =
-
-    0.6882
-
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,0)
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    7.5729
-
-
-colorstd =
-
-    0.6882
-
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,1e-6)
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    7.5729
-
-
-colorstd =
-
-    0.6882
-
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,1e-6)
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    6.5826
-
-
-colorstd =
-
-    5.0050
-
-
-colormean =
-
-    7.5729
-
-
-colorstd =
-
-    0.6882
-
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,1e-6)
-
-colormean =
-
-    8.0148
-
-
-colorstd =
-
-    0.4722
-
-
-colormean =
-
-    8.0148
-
-
-colorstd =
-
-    0.4722
-
-
-colormean =
-
-    6.5946
-
-
-colorstd =
-
-    0.6490
-
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),20,1e-6,1e-6)
-
-colormean =
-
-    8.0148
-
-
-colorstd =
-
-    0.4722
-
-
-colormean =
-
-    8.0148
-
-
-colorstd =
-
-    0.4722
-
-
-colormean =
-
-    6.5946
-
-
-colorstd =
-
-    0.6490
-
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),100,1e-6,1e-6)
-
-colormean =
-
-    6.1069
-
-
-colorstd =
-
-    1.1148
-
-
-colormean =
-
-    6.1069
-
-
-colorstd =
-
-    1.1148
-
-
-colormean =
-
-    5.7815
-
-
-colorstd =
-
-    0.7550
-
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\ProfileLength.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\FirstDerivativesAnd Norm.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SecondDerivatives.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\FirstDerivatives.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\FirstDerivativesAnd Norm.fig',1)
-hgsave(4,'epsFi_1stDeriv.fig')
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SecondDerivatives.fig',1)
-hgsave(5,'2ndDeriv.fig')
-close all
-figure
-ax=findobj(2,'type','axes');
-axN=copyobj(ax,3)
-
-axN = 
-
-  3x1 <a href="matlab:helpPopup matlab.graphics.axis.Axes" style="font-weight:bold">Axes</a> array:
-
-  Axes
-  Axes
-  Axes
-
-axN(4:6)=copyobj(findobj(1,'type','axes'),3)
-
-axN = 
-
-  6x1 <a href="matlab:helpPopup matlab.graphics.axis.Axes" style="font-weight:bold">Axes</a> array:
-
-  Axes
-  Axes
-  Axes
-  Axes
-  Axes
-  Axes
-
-ReorganiseSubPlots(axN,0.3)
-{Attempted to access sizSubPlot(2); index out of bounds because numel(sizSubPlot)=1.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_PostProcessing>ReorganiseSubPlots', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_PostProcessing.m', 74)" style="font-weight:bold">include_PostProcessing>ReorganiseSubPlots</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_PostProcessing.m',74,0)">line 74</a>)
-    yLength=(yHeight-interPad(2)*(sizSubPlot(2)-1))/sizSubPlot(2);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ReorganiseSubPlots', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ReorganiseSubPlots.m', 6)" style="font-weight:bold">ReorganiseSubPlots</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ReorganiseSubPlots.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=ReorganiseSubPlots_Handle(varargin{:});
-} 
-ReorganiseSubPlots(axN,[2 3])
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.05,0.05])
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.07,0.07])
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.1,0.1])
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.1,0.2])
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.2,0.7])
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('matlab.graphics.axis.Axes/set')" style="font-weight:bold">matlab.graphics.axis.Axes/set</a>
-While setting the 'Position' property of <a href="matlab:doc matlab.graphics.axis.Axes">Axes</a>:
-Width and height must be > 0
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_PostProcessing>ReorganiseSubPlots', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_PostProcessing.m', 86)" style="font-weight:bold">include_PostProcessing>ReorganiseSubPlots</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_PostProcessing.m',86,0)">line 86</a>)
-        set(ax(ii),'position',posVec)
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ReorganiseSubPlots', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ReorganiseSubPlots.m', 6)" style="font-weight:bold">ReorganiseSubPlots</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ReorganiseSubPlots.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=ReorganiseSubPlots_Handle(varargin{:});
-} 
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.2,0.07])
-ReorganiseSubPlots(axN,[2 3],[0.1,0.1,0.05,0.05],[0.15,0.07])
-ReorganiseSubPlots(axN([1 2 3 4 6 5]),[2 3],[0.1,0.1,0.05,0.05],[0.15,0.07])
-view(70,30)
-view(30,30)
-view(-30,30)
-view(-33,30)
-view(-33,30)
-view(-33,30)
-view(-45,30)
-view(-45,30)
-hgsave(3,'SmoothedSQPDeriv.fig')
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),100,1e-6,0)
-
-colormean =
-
-    5.6523
-
-
-colorstd =
-
-    2.8337
-
-
-colormean =
-
-    5.6523
-
-
-colorstd =
-
-    2.8337
-
-
-colormean =
-
-    5.8707
-
-
-colorstd =
-
-    0.8276
-
-hgsave(4,'OriginalSQPDeriv.fig')
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),100,1e-6,0,1e-6)
-
-colormean =
-
-    5.6289
-
-
-colorstd =
-
-    2.8869
-
-
-colormean =
-
-    5.6289
-
-
-colorstd =
-
-    2.8869
-
-
-colormean =
-
-    5.8454
-
-
-colorstd =
-
-    0.8943
-
-close all
-ii
-
-ii =
-
-    22
-
-save('TestProblemSQPDeriv.mat')
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\OriginalSQPDeriv.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SmoothedSQPDeriv.fig',1)
-Test_ProblemDerivatives(derivtenscalc(ii),100,1e-2,0,1e-6)
-
-colormean =
-
-   -3.5562
-
-
-colorstd =
-
-    2.8389
-
-
-colormean =
-
-   -3.5562
-
-
-colorstd =
-
-    2.8389
-
-
-colormean =
-
-   -3.5562
-
-
-colorstd =
-
-    1.7632
-
-close all
-Test_ProblemDerivatives(derivtenscalc(ii),100,1e-2,1e-6)
-
-colormean =
-
-   -3.5071
-
-
-colorstd =
-
-    2.4438
-
-
-colormean =
-
-   -3.5071
-
-
-colorstd =
-
-    2.4438
-
-
-colormean =
-
-   -3.3396
-
-
-colorstd =
-
-    0.8276
-
-Test_ProblemDerivatives(derivtenscalc(ii),100,1e-2,0)
-
-colormean =
-
-   -3.6102
-
-
-colorstd =
-
-    3.4362
-
-
-colormean =
-
-   -3.6304
-
-
-colorstd =
-
-    3.5332
-
-
-colormean =
-
-   -3.3396
-
-
-colorstd =
-
-    0.8276
-
-close all
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SmoothedSQPDeriv.fig',1)
-pathStr='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SmoothedSQPDerivFullPage'
-
-pathStr =
-
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SmoothedSQPDerivFullPage
-
-pathStr='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SmoothedSQPDerivFullPage.eps'
-
-pathStr =
-
-C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Development Notes\SQP Derivatives\Dir_2016-02-23T153424_SQPDerivative visualisation\SmoothedSQPDerivFullPage.eps
-
-print(1,pathStr,'-depsc')
-h=figure(1)
-
-h = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
-
-      Number: 1
+     Step 1  - DVol = 0.0982  Time Taken: 00:00:01:468
+     Step 2  - DVol = 0.079558  Time Taken: 00:00:01:558
+     Step 3  - DVol = 0.08044  Time Taken: 00:00:02:376
+     Step 4  - DVol = 0.067552  Time Taken: 00:00:01:505
+     Step 5  - DVol = 0.067452  Time Taken: 00:00:01:347
+     Step 6  - DVol = 0.057993  Time Taken: 00:00:02:122
+     Step 7  - DVol = 0.052643  Time Taken: 00:00:01:301
+     Step 8  - DVol = 0.046259  Time Taken: 00:00:01:341
+     Step 9  - DVol = 0.035437  Time Taken: 00:00:02:060
+     Step 10  - DVol = 0.032036  Time Taken: 00:00:01:285
+     Step 11  - DVol = 0.026986  Time Taken: 00:00:01:264
+     Step 12  - DVol = 0.022515  Time Taken: 00:00:01:374
+     Step 13  - DVol = 0.019773  Time Taken: 00:00:01:252
+     Step 14  - DVol = 0.016557  Time Taken: 00:00:01:251
+     Step 15  - DVol = 0.013546  Time Taken: 00:00:01:342
+     Step 16  - DVol = 0.011463  Time Taken: 00:00:01:296
+     Step 17  - DVol = 0.0095223  Time Taken: 00:00:01:733
+     Step 18  - DVol = 0.0075663  Time Taken: 00:00:01:268
+     Step 19  - DVol = 0.0062286  Time Taken: 00:00:01:218
+     Step 20  - DVol = 0.0050652  Time Taken: 00:00:01:217
+     Step 21  - DVol = 0.0040854  Time Taken: 00:00:01:265
+     Step 22  - DVol = 0.003429  Time Taken: 00:00:01:222
+     Step 23  - DVol = 0.0026407  Time Taken: 00:00:01:203
+     Step 24  - DVol = 0.0020252  Time Taken: 00:00:01:264
+     Step 25  - DVol = 0.0018627  Time Taken: 00:00:01:253
+     Step 26  - DVol = 0.001041  Time Taken: 00:00:01:233
+     Step 27  - DVol = 0.00079933  Time Taken: 00:00:01:217
+     Step 28  - DVol = 0.00059307  Time Taken: 00:00:01:234
+     Step 29  - DVol = 0.00043635  Time Taken: 00:00:01:206
+     Step 30  - DVol = 0.00036816  Time Taken: 00:00:01:234
+     Step 31  - DVol = 0.0011223  Time Taken: 00:00:01:187
+     Step 32  - DVol = 0.0008481  Time Taken: 00:00:01:201
+     Step 33  - DVol = 0.00063608  Time Taken: 00:00:01:187
+     Step 34  - DVol = 0.00047706  Time Taken: 00:00:01:191
+     Step 35  - DVol = 0.0003578  Time Taken: 00:00:01:187
+     Step 36  - DVol = 0.00026835  Time Taken: 00:00:01:185
+     Step 37  - DVol = 0.00020128  Time Taken: 00:00:01:202
+     Step 38  - DVol = 0.00015203  Time Taken: 00:00:01:206
+     Step 39  - DVol = 0.00010694  Time Taken: 00:00:01:251
+     Step 40  - DVol = 0.00083583  Time Taken: 00:00:01:264
+     Step 41  - DVol = 0.0010873  Time Taken: 00:00:01:202
+     Step 42  - DVol = 0.0008436  Time Taken: 00:00:01:190
+     Step 43  - DVol = 0.0006327  Time Taken: 00:00:01:187
+     Step 44  - DVol = 0.00047453  Time Taken: 00:00:01:171
+     Step 45  - DVol = 0.0003559  Time Taken: 00:00:01:158
+     Step 46  - DVol = 0.00026692  Time Taken: 00:00:01:171
+     Step 47  - DVol = 0.00020019  Time Taken: 00:00:01:188
+     Step 48  - DVol = 0.00015014  Time Taken: 00:00:01:171
+     Step 49  - DVol = 0.00011261  Time Taken: 00:00:01:156
+     Step 50  - DVol = 8.4456e-05  Time Taken: 00:00:01:139
+     Step 51  - DVol = 6.3342e-05  Time Taken: 00:00:01:190
+     Step 52  - DVol = 4.7506e-05  Time Taken: 00:00:01:156
+     Step 53  - DVol = 3.563e-05  Time Taken: 00:00:01:186
+     Step 54  - DVol = 2.6722e-05  Time Taken: 00:00:01:186
+     Step 55  - DVol = 2.0042e-05  Time Taken: 00:00:01:171
+     Step 56  - DVol = 1.503e-05  Time Taken: 00:00:01:176
+     Step 57  - DVol = 1.1265e-05  Time Taken: 00:00:01:186
+     Step 58  - DVol = 8.4472e-06  Time Taken: 00:00:01:202
+     Step 59  - DVol = 6.3349e-06  Time Taken: 00:00:01:218
+     Step 60  - DVol = 4.751e-06  Time Taken: 00:00:01:221
+     Step 61  - DVol = 3.5632e-06  Time Taken: 00:00:01:218
+     Step 62  - DVol = 2.6724e-06  Time Taken: 00:00:01:218
+     Step 63  - DVol = 2.0043e-06  Time Taken: 00:00:01:222
+     Step 64  - DVol = 1.5032e-06  Time Taken: 00:00:01:218
+     Step 65  - DVol = 1.1274e-06  Time Taken: 00:00:01:217
+     Step 66  - DVol = 8.4555e-07  Time Taken: 00:00:01:203
+     Step 67  - DVol = 6.3416e-07  Time Taken: 00:00:01:206
+     Step 68  - DVol = 4.7562e-07  Time Taken: 00:00:01:186
+     Step 69  - DVol = 3.5672e-07  Time Taken: 00:00:01:171
+     Step 70  - DVol = 2.6754e-07  Time Taken: 00:00:01:186
+     Step 71  - DVol = 2.0065e-07  Time Taken: 00:00:01:218
+     Step 72  - DVol = 1.5049e-07  Time Taken: 00:00:01:192
+     Step 73  - DVol = 1.1287e-07  Time Taken: 00:00:01:187
+     Step 74  - DVol = 8.465e-08  Time Taken: 00:00:01:218
+     Step 75  - DVol = 6.3488e-08  Time Taken: 00:00:01:185
+     Step 76  - DVol = 4.7616e-08  Time Taken: 00:00:01:203
+     Step 77  - DVol = 3.5712e-08  Time Taken: 00:00:01:191
+     Step 78  - DVol = 2.6784e-08  Time Taken: 00:00:01:202
+     Step 79  - DVol = 2.0088e-08  Time Taken: 00:00:01:202
+     Step 80  - DVol = 1.5066e-08  Time Taken: 00:00:01:201
+     Step 81  - DVol = 1.1299e-08  Time Taken: 00:00:01:203
+     Step 82  - DVol = 8.4746e-09  Time Taken: 00:00:01:205
+     Step 83  - DVol = 6.3559e-09  Time Taken: 00:00:01:188
+     Step 84  - DVol = 4.767e-09  Time Taken: 00:00:01:186
+     Step 85  - DVol = 3.5752e-09  Time Taken: 00:00:01:202
+     Step 86  - DVol = 2.6814e-09  Time Taken: 00:00:01:186
+     Step 87  - DVol = 2.0111e-09  Time Taken: 00:00:01:190
+     Step 88  - -  Snakes Converged!
+  88 Steps Performed
+  Iteration Time:00:01:51:205
+  Volume converged to 1.50830e-09
+
+ans = 
+
+  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (33) with properties:
+
+      Number: 33
         Name: ''
        Color: [0.9400 0.9400 0.9400]
-    Position: [671 60 742 885]
+    Position: [680 558 560 420]
        Units: 'pixels'
 
-  Show <a href="matlab:if exist('h', 'var'), matlab.graphics.internal.getForDisplay('h', h, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('h'), end">all properties</a>
+  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
 
-if exist('h', 'var'), matlab.graphics.internal.getForDisplay('h', h, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('h'), end
-                 Alphamap: [1x64 double]
-             BeingDeleted: 'off'
-               BusyAction: 'queue'
-            ButtonDownFcn: ''
-                 Children: [7x1 Graphics]
-                 Clipping: 'on'
-          CloseRequestFcn: 'closereq'
-                    Color: [0.9400 0.9400 0.9400]
-                 Colormap: [64x3 double]
-                CreateFcn: ''
-              CurrentAxes: [1x1 Axes]
-         CurrentCharacter: ''
-            CurrentObject: []
-             CurrentPoint: [0 0]
-                DeleteFcn: ''
-             DockControls: 'on'
-                 FileName: 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes V...'
-        GraphicsSmoothing: 'on'
-         HandleVisibility: 'on'
-            IntegerHandle: 'on'
-            Interruptible: 'on'
-           InvertHardcopy: 'on'
-              KeyPressFcn: ''
-            KeyReleaseFcn: ''
-                  MenuBar: 'figure'
-                     Name: ''
-     
+Time taken:00:02:07:320
+SNAKE PROCESS END
