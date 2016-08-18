@@ -1,4 +1,32 @@
-GENERATION PROCESS START
+tlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',34,0)">line 34</a>)
+        [iterstruct,startIter,maxIter,paramoptim]=RestartOptions(paramoptim,inNFlag,...
+} 
+ExecuteOptimisation('desk_Aero_CG_10_pk',{'Restart_LocOptim',{'conjgrad',false}})
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - desk_Aero_CG_10_pk start
+18-Aug-2016 16:37:32
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+18-Aug-2016 16:37:32
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
@@ -10,10 +38,6 @@ Calculations Started . . .
 
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:031
-GENERATION PROCESS end
-GRID REFINEMENT START
 
      OUTPUT:Skipped
 Calculations Started . . .
@@ -23,193 +47,288 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 72 
-			Start Cell 2 of 72 
-			Start Cell 3 of 72 
-			Start Cell 4 of 72 
-			Start Cell 5 of 72 
-			Start Cell 6 of 72 
-			Start Cell 7 of 72 
-			Start Cell 8 of 72 
-			Start Cell 9 of 72 
-			Start Cell 10 of 72 
-			Start Cell 11 of 72 
-			Start Cell 12 of 72 
-			Start Cell 13 of 72 
-			Start Cell 14 of 72 
-			Start Cell 15 of 72 
-			Start Cell 16 of 72 
-			Start Cell 17 of 72 
-			Start Cell 18 of 72 
-			Start Cell 19 of 72 
-			Start Cell 20 of 72 
-			Start Cell 21 of 72 
-			Start Cell 22 of 72 
-			Start Cell 23 of 72 
-			Start Cell 24 of 72 
-			Start Cell 25 of 72 
-			Start Cell 26 of 72 
-			Start Cell 27 of 72 
-			Start Cell 28 of 72 
-			Start Cell 29 of 72 
-			Start Cell 30 of 72 
-			Start Cell 31 of 72 
-			Start Cell 32 of 72 
-			Start Cell 33 of 72 
-			Start Cell 34 of 72 
-			Start Cell 35 of 72 
-			Start Cell 36 of 72 
-			Start Cell 37 of 72 
-			Start Cell 38 of 72 
-			Start Cell 39 of 72 
-			Start Cell 40 of 72 
-			Start Cell 41 of 72 
-			Start Cell 42 of 72 
-			Start Cell 43 of 72 
-			Start Cell 44 of 72 
-			Start Cell 45 of 72 
-			Start Cell 46 of 72 
-			Start Cell 47 of 72 
-			Start Cell 48 of 72 
-			Start Cell 49 of 72 
-			Start Cell 50 of 72 
-			Start Cell 51 of 72 
-			Start Cell 52 of 72 
-			Start Cell 53 of 72 
-			Start Cell 54 of 72 
-			Start Cell 55 of 72 
-			Start Cell 56 of 72 
-			Start Cell 57 of 72 
-			Start Cell 58 of 72 
-			Start Cell 59 of 72 
-			Start Cell 60 of 72 
-			Start Cell 61 of 72 
-			Start Cell 62 of 72 
-			Start Cell 63 of 72 
-			Start Cell 64 of 72 
-			Start Cell 65 of 72 
-			Start Cell 66 of 72 
-			Start Cell 67 of 72 
-			Start Cell 68 of 72 
-			Start Cell 69 of 72 
-			Start Cell 70 of 72 
-			Start Cell 71 of 72 
-			Start Cell 72 of 72 
+			Start Cell 1 of 64 
+			Start Cell 2 of 64 
+			Start Cell 3 of 64 
+			Start Cell 4 of 64 
+			Start Cell 5 of 64 
+			Start Cell 6 of 64 
+			Start Cell 7 of 64 
+			Start Cell 8 of 64 
+			Start Cell 9 of 64 
+			Start Cell 10 of 64 
+			Start Cell 11 of 64 
+			Start Cell 12 of 64 
+			Start Cell 13 of 64 
+			Start Cell 14 of 64 
+			Start Cell 15 of 64 
+			Start Cell 16 of 64 
+			Start Cell 17 of 64 
+			Start Cell 18 of 64 
+			Start Cell 19 of 64 
+			Start Cell 20 of 64 
+			Start Cell 21 of 64 
+			Start Cell 22 of 64 
+			Start Cell 23 of 64 
+			Start Cell 24 of 64 
+			Start Cell 25 of 64 
+			Start Cell 26 of 64 
+			Start Cell 27 of 64 
+			Start Cell 28 of 64 
+			Start Cell 29 of 64 
+			Start Cell 30 of 64 
+			Start Cell 31 of 64 
+			Start Cell 32 of 64 
+			Start Cell 33 of 64 
+			Start Cell 34 of 64 
+			Start Cell 35 of 64 
+			Start Cell 36 of 64 
+			Start Cell 37 of 64 
+			Start Cell 38 of 64 
+			Start Cell 39 of 64 
+			Start Cell 40 of 64 
+			Start Cell 41 of 64 
+			Start Cell 42 of 64 
+			Start Cell 43 of 64 
+			Start Cell 44 of 64 
+			Start Cell 45 of 64 
+			Start Cell 46 of 64 
+			Start Cell 47 of 64 
+			Start Cell 48 of 64 
+			Start Cell 49 of 64 
+			Start Cell 50 of 64 
+			Start Cell 51 of 64 
+			Start Cell 52 of 64 
+			Start Cell 53 of 64 
+			Start Cell 54 of 64 
+			Start Cell 55 of 64 
+			Start Cell 56 of 64 
+			Start Cell 57 of 64 
+			Start Cell 58 of 64 
+			Start Cell 59 of 64 
+			Start Cell 60 of 64 
+			Start Cell 61 of 64 
+			Start Cell 62 of 64 
+			Start Cell 63 of 64 
+			Start Cell 64 of 64 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:01:255
-GRID REFINEMENT end
-SNAKE PROCESS START
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:312
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+[Warning: Symmetry assignement not robust when taken with the rest of the program] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>BuildSymmetryLists', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 544)" style="font-weight:bold">ExecuteOptimisation>BuildSymmetryLists</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',544,0)">line 544</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>OptimisationParametersModif', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 514)" style="font-weight:bold">ExecuteOptimisation>OptimisationParametersModif</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',514,0)">line 514</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 184)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',184,0)">line 184</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)] 
+  
+-----------------------
+SNAKE PROCESS start
   Start initialisation
     Generate Cell Centred Grid
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:06:866
+  Initialisation time:00:00:01:233
   Start Time Stepping
-     Step 1  - DVol = 0.0982  Time Taken: 00:00:01:468
-     Step 2  - DVol = 0.079558  Time Taken: 00:00:01:558
-     Step 3  - DVol = 0.08044  Time Taken: 00:00:02:376
-     Step 4  - DVol = 0.067552  Time Taken: 00:00:01:505
-     Step 5  - DVol = 0.067452  Time Taken: 00:00:01:347
-     Step 6  - DVol = 0.057993  Time Taken: 00:00:02:122
-     Step 7  - DVol = 0.052643  Time Taken: 00:00:01:301
-     Step 8  - DVol = 0.046259  Time Taken: 00:00:01:341
-     Step 9  - DVol = 0.035437  Time Taken: 00:00:02:060
-     Step 10  - DVol = 0.032036  Time Taken: 00:00:01:285
-     Step 11  - DVol = 0.026986  Time Taken: 00:00:01:264
-     Step 12  - DVol = 0.022515  Time Taken: 00:00:01:374
-     Step 13  - DVol = 0.019773  Time Taken: 00:00:01:252
-     Step 14  - DVol = 0.016557  Time Taken: 00:00:01:251
-     Step 15  - DVol = 0.013546  Time Taken: 00:00:01:342
-     Step 16  - DVol = 0.011463  Time Taken: 00:00:01:296
-     Step 17  - DVol = 0.0095223  Time Taken: 00:00:01:733
-     Step 18  - DVol = 0.0075663  Time Taken: 00:00:01:268
-     Step 19  - DVol = 0.0062286  Time Taken: 00:00:01:218
-     Step 20  - DVol = 0.0050652  Time Taken: 00:00:01:217
-     Step 21  - DVol = 0.0040854  Time Taken: 00:00:01:265
-     Step 22  - DVol = 0.003429  Time Taken: 00:00:01:222
-     Step 23  - DVol = 0.0026407  Time Taken: 00:00:01:203
-     Step 24  - DVol = 0.0020252  Time Taken: 00:00:01:264
-     Step 25  - DVol = 0.0018627  Time Taken: 00:00:01:253
-     Step 26  - DVol = 0.001041  Time Taken: 00:00:01:233
-     Step 27  - DVol = 0.00079933  Time Taken: 00:00:01:217
-     Step 28  - DVol = 0.00059307  Time Taken: 00:00:01:234
-     Step 29  - DVol = 0.00043635  Time Taken: 00:00:01:206
-     Step 30  - DVol = 0.00036816  Time Taken: 00:00:01:234
-     Step 31  - DVol = 0.0011223  Time Taken: 00:00:01:187
-     Step 32  - DVol = 0.0008481  Time Taken: 00:00:01:201
-     Step 33  - DVol = 0.00063608  Time Taken: 00:00:01:187
-     Step 34  - DVol = 0.00047706  Time Taken: 00:00:01:191
-     Step 35  - DVol = 0.0003578  Time Taken: 00:00:01:187
-     Step 36  - DVol = 0.00026835  Time Taken: 00:00:01:185
-     Step 37  - DVol = 0.00020128  Time Taken: 00:00:01:202
-     Step 38  - DVol = 0.00015203  Time Taken: 00:00:01:206
-     Step 39  - DVol = 0.00010694  Time Taken: 00:00:01:251
-     Step 40  - DVol = 0.00083583  Time Taken: 00:00:01:264
-     Step 41  - DVol = 0.0010873  Time Taken: 00:00:01:202
-     Step 42  - DVol = 0.0008436  Time Taken: 00:00:01:190
-     Step 43  - DVol = 0.0006327  Time Taken: 00:00:01:187
-     Step 44  - DVol = 0.00047453  Time Taken: 00:00:01:171
-     Step 45  - DVol = 0.0003559  Time Taken: 00:00:01:158
-     Step 46  - DVol = 0.00026692  Time Taken: 00:00:01:171
-     Step 47  - DVol = 0.00020019  Time Taken: 00:00:01:188
-     Step 48  - DVol = 0.00015014  Time Taken: 00:00:01:171
-     Step 49  - DVol = 0.00011261  Time Taken: 00:00:01:156
-     Step 50  - DVol = 8.4456e-05  Time Taken: 00:00:01:139
-     Step 51  - DVol = 6.3342e-05  Time Taken: 00:00:01:190
-     Step 52  - DVol = 4.7506e-05  Time Taken: 00:00:01:156
-     Step 53  - DVol = 3.563e-05  Time Taken: 00:00:01:186
-     Step 54  - DVol = 2.6722e-05  Time Taken: 00:00:01:186
-     Step 55  - DVol = 2.0042e-05  Time Taken: 00:00:01:171
-     Step 56  - DVol = 1.503e-05  Time Taken: 00:00:01:176
-     Step 57  - DVol = 1.1265e-05  Time Taken: 00:00:01:186
-     Step 58  - DVol = 8.4472e-06  Time Taken: 00:00:01:202
-     Step 59  - DVol = 6.3349e-06  Time Taken: 00:00:01:218
-     Step 60  - DVol = 4.751e-06  Time Taken: 00:00:01:221
-     Step 61  - DVol = 3.5632e-06  Time Taken: 00:00:01:218
-     Step 62  - DVol = 2.6724e-06  Time Taken: 00:00:01:218
-     Step 63  - DVol = 2.0043e-06  Time Taken: 00:00:01:222
-     Step 64  - DVol = 1.5032e-06  Time Taken: 00:00:01:218
-     Step 65  - DVol = 1.1274e-06  Time Taken: 00:00:01:217
-     Step 66  - DVol = 8.4555e-07  Time Taken: 00:00:01:203
-     Step 67  - DVol = 6.3416e-07  Time Taken: 00:00:01:206
-     Step 68  - DVol = 4.7562e-07  Time Taken: 00:00:01:186
-     Step 69  - DVol = 3.5672e-07  Time Taken: 00:00:01:171
-     Step 70  - DVol = 2.6754e-07  Time Taken: 00:00:01:186
-     Step 71  - DVol = 2.0065e-07  Time Taken: 00:00:01:218
-     Step 72  - DVol = 1.5049e-07  Time Taken: 00:00:01:192
-     Step 73  - DVol = 1.1287e-07  Time Taken: 00:00:01:187
-     Step 74  - DVol = 8.465e-08  Time Taken: 00:00:01:218
-     Step 75  - DVol = 6.3488e-08  Time Taken: 00:00:01:185
-     Step 76  - DVol = 4.7616e-08  Time Taken: 00:00:01:203
-     Step 77  - DVol = 3.5712e-08  Time Taken: 00:00:01:191
-     Step 78  - DVol = 2.6784e-08  Time Taken: 00:00:01:202
-     Step 79  - DVol = 2.0088e-08  Time Taken: 00:00:01:202
-     Step 80  - DVol = 1.5066e-08  Time Taken: 00:00:01:201
-     Step 81  - DVol = 1.1299e-08  Time Taken: 00:00:01:203
-     Step 82  - DVol = 8.4746e-09  Time Taken: 00:00:01:205
-     Step 83  - DVol = 6.3559e-09  Time Taken: 00:00:01:188
-     Step 84  - DVol = 4.767e-09  Time Taken: 00:00:01:186
-     Step 85  - DVol = 3.5752e-09  Time Taken: 00:00:01:202
-     Step 86  - DVol = 2.6814e-09  Time Taken: 00:00:01:186
-     Step 87  - DVol = 2.0111e-09  Time Taken: 00:00:01:190
-     Step 88  - -  Snakes Converged!
-  88 Steps Performed
-  Iteration Time:00:01:51:205
-  Volume converged to 1.50830e-09
+  20 Steps Performed
+  Iteration Time:00:00:07:500
+  Volume converged to 7.60432e-04
+Time Elapsed:00:00:10:422
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:11:517
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 25 start
+18-Aug-2016 16:37:44
+--------------------------------------------------------------------------------------------
+  
+Operation terminated by user during VolumeFraction>ExtractCellDerivInformation (line 413)
 
-ans = 
 
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (33) with properties:
+In VolumeFractionDVolumeFractionDifferentiated (line 397)
+        [cellCentredGrid(ii).coeffBlock]=...
 
-      Number: 33
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
+In VolumeFraction (line 30)
+    [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid);
 
-  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
+In Snakes>VelocityAndVolumeProcess (line 422)
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
 
-Time taken:00:02:07:320
-SNAKE PROCESS END
+In Snakes>IterSnakes (line 148)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+
+In Snakes>RunSnakesProcess (line 88)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
+
+In Snakes (line 34)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+In ExecuteSnakes_Optim (line 29)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+
+In ExecuteOptimisation>NormalExecutionIteration (line 385)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+
+In ExecuteOptimisation>(parfor body) (line 273)
+            [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
+
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
+
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
+
+Operation terminated by user during VolumeFraction>ExtractCellDerivInformation
+
+
+In VolumeFractionDVolumeFractionDifferentiated (line 397)
+        [cellCentredGrid(ii).coeffBlock]=...
+
+In VolumeFraction (line 30)
+    [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid);
+
+In Snakes>VelocityAndVolumeProcess (line 422)
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+
+In Snakes>IterSnakes (line 148)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+
+In Snakes>RunSnakesProcess (line 88)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
+
+In Snakes (line 34)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+In ExecuteSnakes_Optim (line 29)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+
+In ExecuteOptimisation>NormalExecutionIteration (line 385)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+
+In ExecuteOptimisation>(parfor body) (line 273)
+            [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
+
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
+
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
+
+Operation terminated by user during FindObjNum (line 14)
+
+
+In VolumeFraction>ExtractBorderStructure (line 280)
+    edgeSnakSub=FindObjNum(cellStruct.snaxel,edgeSnak(:,1));
+
+In VolumeFraction>ExtractCellFillInformation (line 169)
+            [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
+
+In VolumeFraction (line 26)
+        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
+
+In Snakes>VelocityAndVolumeProcess (line 422)
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+
+In Snakes>IterSnakes (line 148)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+
+In Snakes>RunSnakesProcess (line 88)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
+
+In Snakes (line 34)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+In ExecuteSnakes_Optim (line 29)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+
+In ExecuteOptimisation>NormalExecutionIteration (line 385)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+
+In ExecuteOptimisation>(parfor body) (line 273)
+            [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
+
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
+
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
+
+Operation terminated by user during mean
+
+
+In VolumeFraction>AddEdgeSnaxelDeriv (line 509)
+    derivStruct=...
+
+In VolumeFraction>ExtractBorderDerivStructure (line 448)
+        [bordstruct3,~,~]=...
+
+In VolumeFraction>ExtractCellDerivInformation (line 421)
+            [coeffblock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks);
+
+In VolumeFractionDVolumeFractionDifferentiated (line 397)
+        [cellCentredGrid(ii).coeffBlock]=...
+
+In VolumeFraction (line 30)
+    [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid);
+
+In Snakes>VelocityAndVolumeProcess (line 422)
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+
+In Snakes>IterSnakes (line 148)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+
+In Snakes>RunSnakesProcess (line 88)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
+
+In Snakes (line 34)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+In ExecuteSnakes_Optim (line 29)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+
+In ExecuteOptimisation>NormalExecutionIteration (line 385)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+
+In ExecuteOptimisation>(parfor body) (line 273)
+            [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
+
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
+
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
+
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('distcomp.remoteparfor/getCompleteIntervals', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\distcomp\+distcomp\remoteparfor.m', 127)" style="font-weight:bold">distcomp.remoteparfor/getCompleteIntervals</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\distcomp\+distcomp\remoteparfor.m',127,0)">line 127</a>)
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>distributed_execution', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p', 820)" style="font-weight:bold">parallel_function>distributed_execution</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',820,0)">line 820</a>)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p', 587)" style="font-weight:bold">parallel_function</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',587,0)">line 587</a>)
+        R = distributed_execution(...
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>IterateNoSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 266)" style="font-weight:bold">ExecuteOptimisation>IterateNoSensitivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',266,0)">line 266</a>)
+    parfor ii=1:nPop
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>PerformIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 208)" style="font-weight:bold">ExecuteOptimisation>PerformIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',208,0)">line 208</a>)
+        [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
+        
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 46)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',46,0)">line 46</a>)
+        [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...} 
+ExecuteOptimisation('desk_Aero_CG_10_pk',clc{'Restart_LocOptim',{'conjgrad',false}})
+{Undefined variable "clc" or class "clc".
+} 
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Component\Dir_2016-07-29T111621_bp3_Aero_DE_Spill_missile2\Optimisation_2016-07-29T111621_bp3_Aero_DE_Spill_missile2.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Component\Dir_2016-07-29T111621_bp3_Aero_DE_Spill_missile2\Optimisation_2016-07-29T111621_bp3_Aero_DE_Spill_missile2.fig',1)
+clc

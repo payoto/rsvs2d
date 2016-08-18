@@ -113,7 +113,7 @@ end
 
 function [preProcImage,activityLayer]=ProcImageConstraint(imPath)
     % Load Image and reduce it to an averaged double array from 0 to 1
-    
+    imPath=MakePathCompliant(imPath)
     preProcImage=imread(imPath);
     imClass=class(preProcImage);
     numBit=str2num(regexprep(imClass,'uint',''));
