@@ -1510,21 +1510,29 @@ end
 function [paroptim]=bp3_Aero_CG_12L_pk()
     [paroptim]=CG_Aero();
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic_Long');
-    paroptim.parametrisation.snakes.refine.axisRatio=1.25*2;
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*1.25*2;
     paroptim.general.startPop='halfuniformsharp';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.4;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
-    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.parametrisation.optiminit.modeSmoothNum=5;
      paroptim.obj.flow.nMach=0.85;
      paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
-    paroptimobjflow.stoponerror=false;
-    paroptimobjflow.targConv=-6;
-    paroptimobjflow.lengthConvTest=100;
-    paroptimobjflow.restartIter=2000;
-    paroptimobjflow.maxRestart=10;
+    paroptim.obj.flow.stoponerror=false;
+    paroptim.obj.flow.targConv=-6;
+    paroptim.obj.flow.lengthConvTest=100;
+    paroptim.obj.flow.restartIter=2000;
+    paroptim.obj.flow.maxRestart=10;
      
+    
+    
+    
+    
+    paroptim.spline.splineCase='aerosnake';
+    paroptim.spline.domain='normalizeX';
+
+    
     paroptim.general.nPop=12;
     paroptim.general.maxIter=60;
     paroptim.general.worker=12;
@@ -1655,6 +1663,23 @@ function [paroptim]=bp3_Aero_CG_Restart_missile2()
     paroptim.general.nPop=12;
     paroptim.general.maxIter=40;
     paroptim.general.worker=12;
+end
+
+function [paroptim]=Desk_CG_Re_missile2()
+    
+    [paroptim]=Component_CG();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=40;
+    paroptim.general.worker=4;
 end
 
 function [paroptim]=bp3_Aero_DE_Spill_smile()
