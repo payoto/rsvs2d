@@ -24,7 +24,7 @@ chmod 755 ../supersonic_ogive/RunPost.sh
 
 cp -rp cartcell.exe ../transonic/cartcell.exe
 cp -rp eulerflowuns.exe ../transonic/eulerflowuns.exe
-cp -rp postproc.exe ../supersonic_ogive/postproc.exe
+cp -rp postproc.exe ../transonic/postproc.exe
 chmod 755 ../transonic/RunFlow.sh
 chmod 755 ../transonic/RunOnlyFlow.sh
 chmod 755 ../transonic/RunPost.sh

@@ -464,6 +464,8 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
             
+        flowCommand=['cp -p ''/panfs/panasas01/aero/ap1949/SnakVolParam/source/Result_Template/CFD_code_Template/Source/postproc.exe'' ''',[minIterPos,filesep,'CFD/postproc.exe'],''''];
+        [status,stdout]=system(flowCommand);
             RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 CutCellFlow_Handler(paramoptim,minIterPos)
