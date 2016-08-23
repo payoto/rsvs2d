@@ -104,7 +104,7 @@ function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter,
             paroptim.optim.CG.lineSearch=precOptMeth{2};
             [origPop,~,paroptim,deltas]...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
-                iterstruct(max([startIter-iterGap,startIter])).population);
+                iterstruct(max([startIter-iterGap,1])).population);
         else
             
             paroptim.optim.CG.lineSearch=true;
@@ -127,7 +127,7 @@ function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter,
         iterstruct(startIter+1).population=ApplySymmetry(paroptim,...
             iterstruct(startIter+1).population);
     else
-        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter);
+        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,1);
     end
     
 end
