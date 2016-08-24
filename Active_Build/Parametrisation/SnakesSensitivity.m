@@ -1349,7 +1349,11 @@ function [cellordstruct]=BuildCellConnectivity(snaxel,baseGrid,gridRefined,volfr
         cellsRaw=vertcat(snaxcellinfo(snaxOrd{ii}).oldcell);
         cellOrd{ii}=OrderRawCells(cellsRaw,activeCellInd);
     end
-    
+    delCell=false(size(cellOrd));
+    for ii=1:length(cellOrd)
+        delCell(ii)=isempty(cellOrd{ii});
+    end
+    cellOrd(delCell)=[];
     [cellOrd]=CloseRepeatingSnaxLoops(cellOrd);
     
     cellordstruct=repmat(struct('index',[],'nextcell',[],'prevcell',[],...
