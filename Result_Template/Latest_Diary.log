@@ -1,3 +1,33 @@
+nakes Volume Parametrisation\source\InitialiseSnakeFlow.m', 24)" style="font-weight:bold">InitialiseSnakeFlow</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseSnakeFlow.m',24,0)">line 24</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('LocalConstr_missile4', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocalConstr_missile4.m', 4)" style="font-weight:bold">LocalConstr_missile4</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocalConstr_missile4.m',4,0)">line 4</a>)] 
+[Warning: Duplicate directory name: C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 86)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',86,0)">line 86</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('InitialiseSnakeFlow>AddFoldersToPath', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseSnakeFlow.m', 62)" style="font-weight:bold">InitialiseSnakeFlow>AddFoldersToPath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseSnakeFlow.m',62,0)">line 62</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('InitialiseSnakeFlow', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseSnakeFlow.m', 24)" style="font-weight:bold">InitialiseSnakeFlow</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\InitialiseSnakeFlow.m',24,0)">line 24</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('LocalConstr_missile4', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocalConstr_missile4.m', 4)" style="font-weight:bold">LocalConstr_missile4</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocalConstr_missile4.m',4,0)">line 4</a>)] 
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - bp3_Aero_CG_Restart_missile2 start
+23-Aug-2016 20:51:16
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+23-Aug-2016 20:51:16
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
 
 imPath =
 
@@ -126,11 +156,11 @@ Calculations Started . . .
 			Start Cell 98 of 98 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:483
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:467
 INITIAL GRID OPERATIONS end
 -----------------------
   
-Starting parallel pool (parpool) using the 'OptimSnakes_Import_71' profile ... connected to 4 workers.
+Starting parallel pool (parpool) using the 'OptimSnakes_Import_72' profile ... connected to 4 workers.
 
 ans = 
 
@@ -138,8 +168,8 @@ ans =
 
             Connected: true
            NumWorkers: 4
-              Cluster: <a href="matlab: parallel.internal.display.Displayer.displayObject('1F8B0800000000000000AD53CD4EC24010DE9662F420D198181EC153034613F18618A384C6043070D8A42EB8C1EAD2DDB4F5C08D238FE1D1A3471F858B771FC31DBBA54B2D41A3934CA6DF74E69B9FDD45C69583A494A43E4BDD90BA297517C5622CAC859CC67507F081544102C21865B6E74734F009B3EFBC503032B11BEC29942E878EA91F71E0BDD478B7155F51E10D5523A903B81C7FBE9BDABF44816F66A57C5B193E88E95B299FA930D2E67C2BA4F9664EBEDE4F51CE5D54182CEC20E111859FED0B66BEF018ED0544081AB8AECAAF68F969BD182735133FC4978DD5737F64E24DE5030BE3DF4A9D2A7D953A57FF13E94E0445E7242268F9FC561F34CA15A855C8FFB524460ED67D26FA3E4F3646979266F5FB6629BF7EBEFB1ACF8EC28B3187F1F8768B0F098BF9E6E877F7654F61B04D3EE8443C20230A8491C7FDB4CFE99A3E9B993E01374EF14D4883101351AD1DD5705D083835DCE664ECF923EC90E8BEC783C7103BF56EAB7E8619CCE1AAA9DC073E0871FBB0523D26691F2F68F53DCCEE1DE24FD6EC0365F6F1DFF933B4E6FDA3E57BD3FF224CDFBF7E3FFEF2FE413E01A3CD16DC40050000')">OptimSnakes_Import_71</a>
-        AttachedFiles: ...ctive_Build\Optimisation\Parallel\taskStartup.m
+              Cluster: <a href="matlab: parallel.internal.display.Displayer.displayObject('1F8B0800000000000000AD53CD4EC24010DE9662F420D198181EC153034613F18618A384C6043070D8A42EB8C1EAD2DDB4F5C08D238FE1D1A3471F858B771FC31DBBA54B2D41A3934CA6DF74E69B9FDD45C69583A494A43E4BDD90BA297517C5622CAC859CC67507F081544102C21865B6E74734F009B3EFBC503032B11BEC29942E878EA91F71E0BDD478B7155F51E10D5523A903B81C7FBE9BDABF44816F66A57C5B193E88E95B299FA930D2E67C2BA4F9664EBEDE4F51CE5D54182CEC20E111859FED0B66BEF018ED0544081AB8AECAAF68F969BD182735133FC4978DD5737F64E24DE5030BE3DF4A9D2A7D953A57FF13E94E0445E7242268F9FC561F34CA15A855C8FFB524460ED67D26FA3E4F3646979266F5FB6629BF7EBEFB1ACF8EC28B3187F1F8768B0F098BF9E6E877F7654F61B04D3EE8443C20230A8491C7FDB4CFE99A3E9B993E01374EF14D4883101351AD1DD5705D083835DCE664ECF923EC90E8BEC783C7103BF56EAB7E8619CCE1AAA9DC073E0871FBB0523D26691F2F68F53DCCEE1DE24FD6EC0365F6F1DFF933B4E6FDA3E57BD3FF224CDFBF7E3FFEF2FE413E01A3CD16DC40050000')">OptimSnakes_Import_72</a>
+        AttachedFiles: ...9\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\Parallel\taskStartup.m
           IdleTimeout: Inf (no automatic shut down)
           SpmdEnabled: true
 
@@ -151,1666 +181,691 @@ SNAKE PROCESS start
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:01:904
+  Initialisation time:00:00:01:989
   Start Time Stepping
   20 Steps Performed
-  Iteration Time:00:00:10:577
+  Iteration Time:00:00:11:022
   Volume converged to 1.65554e-02
-Time Elapsed:00:00:15:085
+Time Elapsed:00:00:15:350
 SNAKE PROCESS end
 -----------------------
   
   
 --------------------------------------------------------------------------------------------
-    Time Elapsed:00:00:55:039
+    Time Elapsed:00:01:29:334
 INITIALISE OPTIMISATION PROCESS end
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
   
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',41,1)">41  </a>    for nIter=startIter:maxIter
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 28 start
+23-Aug-2016 20:52:46
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:01:940
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:05:242
+  Volume converged to 2.40622e-06
+Time Elapsed:00:01:08:313
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:070
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:883
+  Volume converged to 5.96531e-05
+Time Elapsed:00:01:19:690
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:081
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:852
+  Volume converged to 5.91969e-05
+Time Elapsed:00:01:19:828
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:055
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:295
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:20:095
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:072
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:19:169
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:20:990
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:192
+  Volume converged to 6.08226e-05
+Time Elapsed:00:01:17:619
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:673
+  Volume converged to 5.95333e-05
+Time Elapsed:00:01:19:112
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:025
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:887
+  Volume converged to 8.54301e-05
+Time Elapsed:00:01:19:192
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:030
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:963
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:369
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:539
+  Volume converged to 5.96538e-05
+Time Elapsed:00:01:18:935
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:030
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:120
+  Volume converged to 6.59243e-05
+Time Elapsed:00:01:19:618
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:023
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:430
+  Volume converged to 7.20520e-05
+Time Elapsed:00:01:18:840
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:395
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:824
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:021
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:15:548
+  Volume converged to 5.91969e-05
+Time Elapsed:00:01:17:030
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:15:693
+  Volume converged to 8.56948e-05
+Time Elapsed:00:01:17:183
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:657
+  Volume converged to 5.89182e-05
+Time Elapsed:00:01:17:996
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:581
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:17:986
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:039
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:223
+  Volume converged to 5.95333e-05
+Time Elapsed:00:01:18:675
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:011
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:156
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:17:578
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:995
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:420
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:191
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:663
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:085
+  Volume converged to 5.12433e-05
+Time Elapsed:00:01:18:427
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:021
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:035
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:518
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:940
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:910
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:030
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:363
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:781
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:023
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:515
+  Volume converged to 5.16663e-05
+Time Elapsed:00:01:18:970
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:030
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:299
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:754
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:026
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:905
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:437
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:026
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:347
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:892
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:021
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:629
+  Volume converged to 5.12246e-05
+Time Elapsed:00:01:18:228
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:164
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:645
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:040
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:897
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:874
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:045
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:306
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:20:013
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:030
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:585
+  Volume converged to 4.25395e-05
+Time Elapsed:00:01:20:015
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:818
+  Volume converged to 5.18066e-05
+Time Elapsed:00:01:20:200
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:033
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:218
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:678
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:028
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:19:358
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:20:829
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:15:826
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:17:273
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:000
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:17:394
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:848
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:357
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:040
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:955
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:325
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:012
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:16:930
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:18:384
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:030
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:251
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:684
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:020
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:17:939
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:322
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  150 Steps Performed
+  Iteration Time:00:01:18:389
+  Volume converged to 5.91488e-05
+Time Elapsed:00:01:19:898
+SNAKE PROCESS end
+-----------------------
+  
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('distcomp.remoteparfor/getCompleteIntervals', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\distcomp\+distcomp\remoteparfor.m', 127)" style="font-weight:bold">distcomp.remoteparfor/getCompleteIntervals</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\distcomp\+distcomp\remoteparfor.m',127,0)">line 127</a>)
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>distributed_execution', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p', 820)" style="font-weight:bold">parallel_function>distributed_execution</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',820,0)">line 820</a>)
+        [tags, out] = P.getCompleteIntervals(chunkSize);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p', 587)" style="font-weight:bold">parallel_function</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',587,0)">line 587</a>)
+        R = distributed_execution(...
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>IterateSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 310)" style="font-weight:bold">ExecuteOptimisation>IterateSensitivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',310,0)">line 310</a>)
+    parfor ii=1:nPop-1
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>PerformIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 211)" style="font-weight:bold">ExecuteOptimisation>PerformIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',211,0)">line 211</a>)
+        [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 46)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',46,0)">line 46</a>)
+        [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('LocalConstr_missile4', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocalConstr_missile4.m', 6)" style="font-weight:bold">LocalConstr_missile4</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocalConstr_missile4.m',6,0)">line 6</a>)
+ExecuteOptimisation('bp3_Aero_CG_Restart_missile2',{'Restart_DE_Spill_missile2',{'DE',false}});
+} 
+<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\lang\parallel_function.p',587,1)">587 </a>        R = distributed_execution(...
 if system_dependent('IsDebugMode')==1, dbquit; end
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-19T182459_bp3_Aero_CG_12L_pk\Optimisation_2016-08-19T182459_bp3_Aero_CG_12L_pk.fig',1)
-edit PostTreatIncomplete.m
-clc
-edit CutCellFlow_Handler.m
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-22T145040_bp3_Aero_CG_12L_pk\Optimisation_2016-08-22T145040_bp3_Aero_CG_12L_pk.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-20T203553_bp3_Aero_CG_12L_pk\Optimisation_2016-08-20T203553_bp3_Aero_CG_12L_pk.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\FirstOptim\Dir_2016-08-18T222429_bp3_MultiTopo_M2_DE_Spill\Optimisation_2016-08-18T222429_bp3_MultiTopo_M2_DE_Spill.fig',1)
-axis([0 15 0 1])
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\FirstOptim\Dir_2016-08-18T230352_bp3_MultiTopo_M2_DE_Spill\Optimisation_2016-08-18T230352_bp3_MultiTopo_M2_DE_Spill.fig',1)
-uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-22T145040_bp3_Aero_CG_12L_pk\Optimal__160822T1450\CFD - Copy\boundary.dat',1)
-VarName1=VarName1/2;
-VarName2=VarName2/2;
-format long
-[VarName1,VarName2]
+Operation terminated by user during Snakes>IterSnakes (line 209)
 
-ans =
 
-  -0.451171875000000  -0.039179695500000
-  -0.449869790000000  -0.039391634500000
-  -0.448567710000000  -0.039603318500000
-  -0.447265625000000  -0.039814748500000
-  -0.445963540000000  -0.040025924500000
-  -0.444661460000000  -0.040236845500000
-  -0.443359375000000  -0.040447512500000
-  -0.442057290000000  -0.040657925500000
-  -0.440755210000000  -0.040868084000000
-  -0.439453125000000  -0.041077988000000
-  -0.438151040000000  -0.041287638000000
-  -0.436848960000000  -0.041497033500000
-  -0.435546875000000  -0.041706174500000
-  -0.434244790000000  -0.041915061500000
-  -0.432942710000000  -0.042123694000000
-  -0.431640625000000  -0.042332072500000
-  -0.430338540000000  -0.042540196500000
-  -0.429036460000000  -0.042748066500000
-  -0.427734375000000  -0.042955682000000
-  -0.426432290000000  -0.043163043000000
-  -0.425130210000000  -0.043370150000000
-  -0.423828125000000  -0.043577003000000
-  -0.422526040000000  -0.043783601000000
-  -0.421223960000000  -0.043989945500000
-  -0.419921875000000  -0.044195131500000
-  -0.418619790000000  -0.044399159000000
-  -0.417317710000000  -0.044602028500000
-  -0.416015625000000  -0.044803739500000
-  -0.414713540000000  -0.045004292500000
-  -0.413411460000000  -0.045203687500000
-  -0.412109375000000  -0.045401924000000
-  -0.410807290000000  -0.045599002500000
-  -0.409505210000000  -0.045794019500000
-  -0.408203125000000  -0.045986975000000
-  -0.406901040000000  -0.046177869500000
-  -0.405598960000000  -0.046366703000000
-  -0.404296875000000  -0.046553474500000
-  -0.402994790000000  -0.046738185000000
-  -0.401692710000000  -0.046920834500000
-  -0.400390625000000  -0.047101422500000
-  -0.399088540000000  -0.047279950500000
-  -0.397786460000000  -0.047456418000000
-  -0.396484375000000  -0.047630825500000
-  -0.395182290000000  -0.047803172500000
-  -0.393880210000000  -0.047973459500000
-  -0.392578125000000  -0.048141686500000
-  -0.391276040000000  -0.048307853500000
-  -0.389973960000000  -0.048471960000000
-  -0.388671875000000  -0.048634007000000
-  -0.387369790000000  -0.048793995500000
-  -0.386067710000000  -0.048951924500000
-  -0.384765625000000  -0.049107794000000
-  -0.383463540000000  -0.049261604500000
-  -0.382161460000000  -0.049413356000000
-  -0.380859375000000  -0.049563048500000
-  -0.379557290000000  -0.049710681500000
-  -0.378255210000000  -0.049856067000000
-  -0.376953125000000  -0.049999205000000
-  -0.375651040000000  -0.050140095000000
-  -0.374348960000000  -0.050278740000000
-  -0.373046875000000  -0.050415135000000
-  -0.371744790000000  -0.050549280000000
-  -0.370442710000000  -0.050681180000000
-  -0.369140625000000  -0.050810835000000
-  -0.367838540000000  -0.050938050000000
-  -0.366536460000000  -0.051062830000000
-  -0.365234375000000  -0.051185175000000
-  -0.363932290000000  -0.051305080000000
-  -0.362630210000000  -0.051422555000000
-  -0.361328125000000  -0.051537590000000
-  -0.360026040000000  -0.051650195000000
-  -0.358723960000000  -0.051760360000000
-  -0.357421875000000  -0.051868090000000
-  -0.356119790000000  -0.051973385000000
-  -0.354817710000000  -0.052076245000000
-  -0.353515625000000  -0.052176670000000
-  -0.352213540000000  -0.052274660000000
-  -0.350911460000000  -0.052370215000000
-  -0.349609375000000  -0.052463335000000
-  -0.348307290000000  -0.052554020000000
-  -0.347005210000000  -0.052642270000000
-  -0.345703125000000  -0.052728085000000
-  -0.344401040000000  -0.052811470000000
-  -0.343098960000000  -0.052892420000000
-  -0.341796875000000  -0.052970930000000
-  -0.340494790000000  -0.053047010000000
-  -0.339192710000000  -0.053120660000000
-  -0.337890625000000  -0.053191870000000
-  -0.336588540000000  -0.053261695000000
-  -0.335286460000000  -0.053330140000000
-  -0.333984375000000  -0.053397195000000
-  -0.332682290000000  -0.053462870000000
-  -0.331380210000000  -0.053527155000000
-  -0.330078125000000  -0.053590060000000
-  -0.328776040000000  -0.053651575000000
-  -0.327473960000000  -0.053711710000000
-  -0.326171875000000  -0.053771505000000
-  -0.324869790000000  -0.053830970000000
-  -0.323567710000000  -0.053890095000000
-  -0.322265625000000  -0.053948885000000
-  -0.320963540000000  -0.054007335000000
-  -0.319661460000000  -0.054065455000000
-  -0.318359375000000  -0.054123235000000
-  -0.317057290000000  -0.054180680000000
-  -0.315755210000000  -0.054237790000000
-  -0.314453125000000  -0.054294565000000
-  -0.313151040000000  -0.054351005000000
-  -0.311848960000000  -0.054407105000000
-  -0.310546875000000  -0.054462870000000
-  -0.309244790000000  -0.054518300000000
-  -0.307942710000000  -0.054573395000000
-  -0.306640625000000  -0.054628155000000
-  -0.305338540000000  -0.054682575000000
-  -0.304036460000000  -0.054736660000000
-  -0.302734375000000  -0.054790410000000
-  -0.301432290000000  -0.054843825000000
-  -0.300130210000000  -0.054896905000000
-  -0.298828125000000  -0.054949650000000
-  -0.297526040000000  -0.055002055000000
-  -0.296223960000000  -0.055054125000000
-  -0.294921875000000  -0.055105515000000
-  -0.293619790000000  -0.055156230000000
-  -0.292317710000000  -0.055206260000000
-  -0.291015625000000  -0.055255610000000
-  -0.289713540000000  -0.055304285000000
-  -0.288411460000000  -0.055352280000000
-  -0.287109375000000  -0.055399590000000
-  -0.285807290000000  -0.055446225000000
-  -0.284505210000000  -0.055491835000000
-  -0.283203125000000  -0.055536425000000
-  -0.281901040000000  -0.055579985000000
-  -0.280598960000000  -0.055622525000000
-  -0.279296875000000  -0.055664045000000
-  -0.277994790000000  -0.055704540000000
-  -0.276692710000000  -0.055744010000000
-  -0.275390625000000  -0.055782455000000
-  -0.274088540000000  -0.055819880000000
-  -0.272786460000000  -0.055856280000000
-  -0.271484375000000  -0.055891660000000
-  -0.270182290000000  -0.055926015000000
-  -0.268880210000000  -0.055959345000000
-  -0.267578125000000  -0.055991655000000
-  -0.266276040000000  -0.056022940000000
-  -0.264973960000000  -0.056053200000000
-  -0.263671875000000  -0.056082440000000
-  -0.262369790000000  -0.056110655000000
-  -0.261067710000000  -0.056137845000000
-  -0.259765625000000  -0.056164015000000
-  -0.258463540000000  -0.056189160000000
-  -0.257161460000000  -0.056213280000000
-  -0.255859375000000  -0.056236380000000
-  -0.254557290000000  -0.056258455000000
-  -0.253255210000000  -0.056279915000000
-  -0.251953125000000  -0.056300755000000
-  -0.250651040000000  -0.056320980000000
-  -0.249348960000000  -0.056340585000000
-  -0.248046875000000  -0.056359575000000
-  -0.246744790000000  -0.056377945000000
-  -0.245442710000000  -0.056395700000000
-  -0.244140625000000  -0.056412835000000
-  -0.242838540000000  -0.056429760000000
-  -0.241536460000000  -0.056446470000000
-  -0.240234375000000  -0.056462970000000
-  -0.238932290000000  -0.056479255000000
-  -0.237630210000000  -0.056495335000000
-  -0.236328125000000  -0.056511200000000
-  -0.235026040000000  -0.056526850000000
-  -0.233723960000000  -0.056542290000000
-  -0.232421875000000  -0.056557520000000
-  -0.231119790000000  -0.056572535000000
-  -0.229817710000000  -0.056587340000000
-  -0.228515625000000  -0.056601930000000
-  -0.227213540000000  -0.056616310000000
-  -0.225911460000000  -0.056630480000000
-  -0.224609375000000  -0.056644440000000
-  -0.223307290000000  -0.056658185000000
-  -0.222005210000000  -0.056671715000000
-  -0.220703125000000  -0.056685035000000
-  -0.219401040000000  -0.056698145000000
-  -0.218098960000000  -0.056711045000000
-  -0.216796875000000  -0.056723730000000
-  -0.215494790000000  -0.056736200000000
-  -0.214192710000000  -0.056748465000000
-  -0.212890625000000  -0.056760510000000
-  -0.211588540000000  -0.056772460000000
-  -0.210286460000000  -0.056784300000000
-  -0.208984375000000  -0.056796040000000
-  -0.207682290000000  -0.056807680000000
-  -0.206380210000000  -0.056819210000000
-  -0.205078125000000  -0.056830640000000
-  -0.203776040000000  -0.056841970000000
-  -0.202473960000000  -0.056853195000000
-  -0.201171875000000  -0.056864425000000
-  -0.199869790000000  -0.056875660000000
-  -0.198567710000000  -0.056886900000000
-  -0.197265625000000  -0.056898145000000
-  -0.195963540000000  -0.056909400000000
-  -0.194661460000000  -0.056920655000000
-  -0.193359375000000  -0.056931920000000
-  -0.192057290000000  -0.056943190000000
-  -0.190755210000000  -0.056954465000000
-  -0.189453125000000  -0.056965745000000
-  -0.188151040000000  -0.056977030000000
-  -0.186848960000000  -0.056988320000000
-  -0.185546875000000  -0.056999615000000
-  -0.184244790000000  -0.057010920000000
-  -0.182942710000000  -0.057022230000000
-  -0.181640625000000  -0.057033540000000
-  -0.180338540000000  -0.057044860000000
-  -0.179036460000000  -0.057056185000000
-  -0.177734375000000  -0.057067515000000
-  -0.176432290000000  -0.057078855000000
-  -0.175130210000000  -0.057090195000000
-  -0.173828125000000  -0.057101540000000
-  -0.172526040000000  -0.057112895000000
-  -0.171223960000000  -0.057124255000000
-  -0.169921875000000  -0.057135620000000
-  -0.168619790000000  -0.057146995000000
-  -0.167317710000000  -0.057158375000000
-  -0.166015625000000  -0.057169760000000
-  -0.164713540000000  -0.057181155000000
-  -0.163411460000000  -0.057192555000000
-  -0.162109375000000  -0.057203965000000
-  -0.160807290000000  -0.057215385000000
-  -0.159505210000000  -0.057226810000000
-  -0.158203125000000  -0.057238240000000
-  -0.156901040000000  -0.057249685000000
-  -0.155598960000000  -0.057261135000000
-  -0.154296875000000  -0.057272595000000
-  -0.152994790000000  -0.057284065000000
-  -0.151692710000000  -0.057295545000000
-  -0.150390625000000  -0.057307030000000
-  -0.149088540000000  -0.057318525000000
-  -0.147786460000000  -0.057330030000000
-  -0.146484375000000  -0.057341545000000
-  -0.145182290000000  -0.057353065000000
-  -0.143880210000000  -0.057364600000000
-  -0.142578125000000  -0.057376140000000
-  -0.141276040000000  -0.057387685000000
-  -0.139973960000000  -0.057399245000000
-  -0.138671875000000  -0.057410810000000
-  -0.137369790000000  -0.057422385000000
-  -0.136067710000000  -0.057433970000000
-  -0.134765625000000  -0.057445565000000
-  -0.133463540000000  -0.057457165000000
-  -0.132161460000000  -0.057468775000000
-  -0.130859375000000  -0.057480395000000
-  -0.129557290000000  -0.057492025000000
-  -0.128255210000000  -0.057503640000000
-  -0.126953125000000  -0.057515255000000
-  -0.125651040000000  -0.057526855000000
-  -0.124348960000000  -0.057538450000000
-  -0.123046875000000  -0.057550035000000
-  -0.121744790000000  -0.057561615000000
-  -0.120442710000000  -0.057573185000000
-  -0.119140625000000  -0.057584745000000
-  -0.117838540000000  -0.057596280000000
-  -0.116536460000000  -0.057607790000000
-  -0.115234375000000  -0.057619270000000
-  -0.113932290000000  -0.057630730000000
-  -0.112630210000000  -0.057642160000000
-  -0.111328125000000  -0.057653570000000
-  -0.110026040000000  -0.057664950000000
-  -0.108723960000000  -0.057676305000000
-  -0.107421875000000  -0.057687635000000
-  -0.106119790000000  -0.057698940000000
-  -0.104817710000000  -0.057710215000000
-  -0.103515625000000  -0.057721470000000
-  -0.102213540000000  -0.057732695000000
-  -0.100911460000000  -0.057743895000000
-  -0.099609375000000  -0.057755070000000
-  -0.098307290000000  -0.057766220000000
-  -0.097005210000000  -0.057777345000000
-  -0.095703125000000  -0.057788440000000
-  -0.094401040000000  -0.057799515000000
-  -0.093098960000000  -0.057810560000000
-  -0.091796875000000  -0.057821585000000
-  -0.090494790000000  -0.057832580000000
-  -0.089192710000000  -0.057843550000000
-  -0.087890625000000  -0.057854490000000
-  -0.086588540000000  -0.057865230000000
-  -0.085286460000000  -0.057875760000000
-  -0.083984375000000  -0.057886085000000
-  -0.082682290000000  -0.057896205000000
-  -0.081380210000000  -0.057906120000000
-  -0.080078125000000  -0.057915825000000
-  -0.078776040000000  -0.057925325000000
-  -0.077473960000000  -0.057934620000000
-  -0.076171875000000  -0.057943525000000
-  -0.074869790000000  -0.057952045000000
-  -0.073567710000000  -0.057960180000000
-  -0.072265625000000  -0.057967930000000
-  -0.070963540000000  -0.057975290000000
-  -0.069661460000000  -0.057982260000000
-  -0.068359375000000  -0.057988850000000
-  -0.067057290000000  -0.057995050000000
-  -0.065755210000000  -0.058000860000000
-  -0.064453125000000  -0.058006290000000
-  -0.063151040000000  -0.058011330000000
-  -0.061848960000000  -0.058015980000000
-  -0.060546875000000  -0.058020245000000
-  -0.059244790000000  -0.058024125000000
-  -0.057942710000000  -0.058027620000000
-  -0.056640625000000  -0.058030725000000
-  -0.055338540000000  -0.058033445000000
-  -0.054036460000000  -0.058035775000000
-  -0.052734375000000  -0.058037720000000
-  -0.051432290000000  -0.058039280000000
-  -0.050130210000000  -0.058040450000000
-  -0.048828125000000  -0.058041235000000
-  -0.047526041500000  -0.058041635000000
-  -0.046223958500000  -0.058041645000000
-  -0.044921875000000  -0.058041710000000
-  -0.043619791500000  -0.058041820000000
-  -0.042317708500000  -0.058041985000000
-  -0.041015625000000  -0.058042205000000
-  -0.039713541500000  -0.058042470000000
-  -0.038411458500000  -0.058042790000000
-  -0.037109375000000  -0.058043160000000
-  -0.035807291500000  -0.058043580000000
-  -0.034505208500000  -0.058044490000000
-  -0.033203125000000  -0.058045890000000
-  -0.031901041500000  -0.058047780000000
-  -0.030598958500000  -0.058050155000000
-  -0.029296875000000  -0.058053020000000
-  -0.027994791500000  -0.058056375000000
-  -0.026692708500000  -0.058060220000000
-  -0.025390625000000  -0.058064555000000
-  -0.024088541500000  -0.058069380000000
-  -0.022786458500000  -0.058074690000000
-  -0.021484375000000  -0.058080490000000
-  -0.020182291500000  -0.058086780000000
-  -0.018880208500000  -0.058093560000000
-  -0.017578125000000  -0.058100830000000
-  -0.016276041500000  -0.058108585000000
-  -0.014973958500000  -0.058116835000000
-  -0.013671875000000  -0.058125570000000
-  -0.012369791500000  -0.058134795000000
-  -0.011067708500000  -0.058144510000000
-  -0.009765625000000  -0.058154710000000
-  -0.008463541500000  -0.058165405000000
-  -0.007161458500000  -0.058176585000000
-  -0.005859375000000  -0.058188255000000
-  -0.004557291650000  -0.058200415000000
-  -0.003255208350000  -0.058212560000000
-  -0.001953125000000  -0.058224685000000
-  -0.000651041650000  -0.058236800000000
-   0.000651041650000  -0.058248895000000
-   0.001953125000000  -0.058260970000000
-   0.003255208350000  -0.058273035000000
-   0.004557291650000  -0.058285080000000
-   0.005859375000000  -0.058297110000000
-   0.007161458500000  -0.058308620000000
-   0.008463541500000  -0.058319605000000
-   0.009765625000000  -0.058330070000000
-   0.011067708500000  -0.058340015000000
-   0.012369791500000  -0.058349440000000
-   0.013671875000000  -0.058358340000000
-   0.014973958500000  -0.058366720000000
-   0.016276041500000  -0.058374580000000
-   0.017578125000000  -0.058381915000000
-   0.018880208500000  -0.058388730000000
-   0.020182291500000  -0.058395025000000
-   0.021484375000000  -0.058400795000000
-   0.022786458500000  -0.058406045000000
-   0.024088541500000  -0.058410775000000
-   0.025390625000000  -0.058414980000000
-   0.026692708500000  -0.058418670000000
-   0.027994791500000  -0.058421835000000
-   0.029296875000000  -0.058424475000000
-   0.030598958500000  -0.058426600000000
-   0.031901041500000  -0.058428200000000
-   0.033203125000000  -0.058429275000000
-   0.034505208500000  -0.058429835000000
-   0.035807291500000  -0.058429870000000
-   0.037109375000000  -0.058429385000000
-   0.038411458500000  -0.058429245000000
-   0.039713541500000  -0.058429455000000
-   0.041015625000000  -0.058430015000000
-   0.042317708500000  -0.058430925000000
-   0.043619791500000  -0.058432180000000
-   0.044921875000000  -0.058433785000000
-   0.046223958500000  -0.058435740000000
-   0.047526041500000  -0.058438045000000
-   0.048828125000000  -0.058441565000000
-   0.050130210000000  -0.058446305000000
-   0.051432290000000  -0.058452260000000
-   0.052734375000000  -0.058459440000000
-   0.054036460000000  -0.058467835000000
-   0.055338540000000  -0.058477445000000
-   0.056640625000000  -0.058488280000000
-   0.057942710000000  -0.058500330000000
-   0.059244790000000  -0.058513600000000
-   0.060546875000000  -0.058528090000000
-   0.061848960000000  -0.058543795000000
-   0.063151040000000  -0.058560720000000
-   0.064453125000000  -0.058578865000000
-   0.065755210000000  -0.058598225000000
-   0.067057290000000  -0.058618805000000
-   0.068359375000000  -0.058640605000000
-   0.069661460000000  -0.058663625000000
-   0.070963540000000  -0.058687860000000
-   0.072265625000000  -0.058713320000000
-   0.073567710000000  -0.058739990000000
-   0.074869790000000  -0.058767885000000
-   0.076171875000000  -0.058796995000000
-   0.077473960000000  -0.058827325000000
-   0.078776040000000  -0.058858875000000
-   0.080078125000000  -0.058889380000000
-   0.081380210000000  -0.058918835000000
-   0.082682290000000  -0.058947245000000
-   0.083984375000000  -0.058974615000000
-   0.085286460000000  -0.059000930000000
-   0.086588540000000  -0.059026205000000
-   0.087890625000000  -0.059050435000000
-   0.089192710000000  -0.059073615000000
-   0.090494790000000  -0.059093485000000
-   0.091796875000000  -0.059110050000000
-   0.093098960000000  -0.059123300000000
-   0.094401040000000  -0.059133240000000
-   0.095703125000000  -0.059139870000000
-   0.097005210000000  -0.059143190000000
-   0.098307290000000  -0.059143200000000
-   0.099609375000000  -0.059139900000000
-   0.100911460000000  -0.059133290000000
-   0.102213540000000  -0.059123370000000
-   0.103515625000000  -0.059110140000000
-   0.104817710000000  -0.059093600000000
-   0.106119790000000  -0.059073750000000
-   0.107421875000000  -0.059050585000000
-   0.108723960000000  -0.059024115000000
-   0.110026040000000  -0.058994335000000
-   0.111328125000000  -0.058961240000000
-   0.112630210000000  -0.058924835000000
-   0.113932290000000  -0.058885120000000
-   0.115234375000000  -0.058842095000000
-   0.116536460000000  -0.058795760000000
-   0.117838540000000  -0.058746115000000
-   0.119140625000000  -0.058693155000000
-   0.120442710000000  -0.058636890000000
-   0.121744790000000  -0.058581105000000
-   0.123046875000000  -0.058525810000000
-   0.124348960000000  -0.058471000000000
-   0.125651040000000  -0.058416675000000
-   0.126953125000000  -0.058362835000000
-   0.128255210000000  -0.058309485000000
-   0.129557290000000  -0.058256615000000
-   0.130859375000000  -0.058204235000000
-   0.132161460000000  -0.058156135000000
-   0.133463540000000  -0.058112315000000
-   0.134765625000000  -0.058072780000000
-   0.136067710000000  -0.058037530000000
-   0.137369790000000  -0.058006555000000
-   0.138671875000000  -0.057979870000000
-   0.139973960000000  -0.057957460000000
-   0.141276040000000  -0.057939335000000
-   0.142578125000000  -0.057925490000000
-   0.143880210000000  -0.057915930000000
-   0.145182290000000  -0.057910650000000
-   0.146484375000000  -0.057909650000000
-   0.147786460000000  -0.057912935000000
-   0.149088540000000  -0.057920500000000
-   0.150390625000000  -0.057932345000000
-   0.151692710000000  -0.057948475000000
-   0.152994790000000  -0.057968885000000
-   0.154296875000000  -0.057993575000000
-   0.155598960000000  -0.058022550000000
-   0.156901040000000  -0.058055805000000
-   0.158203125000000  -0.058093340000000
-   0.159505210000000  -0.058135160000000
-   0.160807290000000  -0.058181265000000
-   0.162109375000000  -0.058231645000000
-   0.163411460000000  -0.058282170000000
-   0.164713540000000  -0.058332840000000
-   0.166015625000000  -0.058383645000000
-   0.167317710000000  -0.058434595000000
-   0.168619790000000  -0.058485685000000
-   0.169921875000000  -0.058536915000000
-   0.171223960000000  -0.058588290000000
-   0.172526040000000  -0.058639805000000
-   0.173828125000000  -0.058687315000000
-   0.175130210000000  -0.058730830000000
-   0.176432290000000  -0.058770345000000
-   0.177734375000000  -0.058805865000000
-   0.179036460000000  -0.058837380000000
-   0.180338540000000  -0.058864895000000
-   0.181640625000000  -0.058888410000000
-   0.182942710000000  -0.058907930000000
-   0.184244790000000  -0.058923445000000
-   0.185546875000000  -0.058934965000000
-   0.186848960000000  -0.058942485000000
-   0.188151040000000  -0.058946005000000
-   0.189453125000000  -0.058945525000000
-   0.190755210000000  -0.058941050000000
-   0.192057290000000  -0.058932570000000
-   0.193359375000000  -0.058920095000000
-   0.194661460000000  -0.058903620000000
-   0.195963540000000  -0.058883145000000
-   0.197265625000000  -0.058858670000000
-   0.198567710000000  -0.058830195000000
-   0.199869790000000  -0.058797725000000
-   0.201171875000000  -0.058761250000000
-   0.202473960000000  -0.058720780000000
-   0.203776040000000  -0.058676305000000
-   0.205078125000000  -0.058630260000000
-   0.206380210000000  -0.058582645000000
-   0.207682290000000  -0.058533450000000
-   0.208984375000000  -0.058482685000000
-   0.210286460000000  -0.058430345000000
-   0.211588540000000  -0.058376435000000
-   0.212890625000000  -0.058320945000000
-   0.214192710000000  -0.058263890000000
-   0.215494790000000  -0.058207680000000
-   0.216796875000000  -0.058152330000000
-   0.218098960000000  -0.058097825000000
-   0.219401040000000  -0.058044180000000
-   0.220703125000000  -0.057991385000000
-   0.222005210000000  -0.057939445000000
-   0.223307290000000  -0.057888355000000
-   0.224609375000000  -0.057838120000000
-   0.225911460000000  -0.057788740000000
-   0.227213540000000  -0.057740210000000
-   0.228515625000000  -0.057692530000000
-   0.229817710000000  -0.057645710000000
-   0.231119790000000  -0.057599740000000
-   0.232421875000000  -0.057554620000000
-   0.233723960000000  -0.057510360000000
-   0.235026040000000  -0.057466945000000
-   0.236328125000000  -0.057424390000000
-   0.237630210000000  -0.057382685000000
-   0.238932290000000  -0.057341830000000
-   0.240234375000000  -0.057301830000000
-   0.241536460000000  -0.057262685000000
-   0.242838540000000  -0.057224390000000
-   0.244140625000000  -0.057186950000000
-   0.245442710000000  -0.057150365000000
-   0.246744790000000  -0.057113600000000
-   0.248046875000000  -0.057076660000000
-   0.249348960000000  -0.057039550000000
-   0.250651040000000  -0.057002260000000
-   0.251953125000000  -0.056964800000000
-   0.253255210000000  -0.056927160000000
-   0.254557290000000  -0.056889345000000
-   0.255859375000000  -0.056851355000000
-   0.257161460000000  -0.056812165000000
-   0.258463540000000  -0.056771770000000
-   0.259765625000000  -0.056730170000000
-   0.261067710000000  -0.056687370000000
-   0.262369790000000  -0.056643365000000
-   0.263671875000000  -0.056598155000000
-   0.264973960000000  -0.056551745000000
-   0.266276040000000  -0.056504130000000
-   0.267578125000000  -0.056455310000000
-   0.268880210000000  -0.056405290000000
-   0.270182290000000  -0.056354060000000
-   0.271484375000000  -0.056301635000000
-   0.272786460000000  -0.056248000000000
-   0.274088540000000  -0.056193165000000
-   0.275390625000000  -0.056137125000000
-   0.276692710000000  -0.056079885000000
-   0.277994790000000  -0.056021440000000
-   0.279296875000000  -0.055961790000000
-   0.280598960000000  -0.055900940000000
-   0.281901040000000  -0.055838880000000
-   0.283203125000000  -0.055775620000000
-   0.284505210000000  -0.055711160000000
-   0.285807290000000  -0.055645490000000
-   0.287109375000000  -0.055578620000000
-   0.288411460000000  -0.055511115000000
-   0.289713540000000  -0.055442970000000
-   0.291015625000000  -0.055374190000000
-   0.292317710000000  -0.055304775000000
-   0.293619790000000  -0.055234720000000
-   0.294921875000000  -0.055164030000000
-   0.296223960000000  -0.055092705000000
-   0.297526040000000  -0.055020740000000
-   0.298828125000000  -0.054948710000000
-   0.300130210000000  -0.054876610000000
-   0.301432290000000  -0.054804435000000
-   0.302734375000000  -0.054732195000000
-   0.304036460000000  -0.054659885000000
-   0.305338540000000  -0.054587505000000
-   0.306640625000000  -0.054515055000000
-   0.307942710000000  -0.054442535000000
-   0.309244790000000  -0.054369950000000
-   0.310546875000000  -0.054297290000000
-   0.311848960000000  -0.054224560000000
-   0.313151040000000  -0.054151765000000
-   0.314453125000000  -0.054078900000000
-   0.315755210000000  -0.054005960000000
-   0.317057290000000  -0.053932955000000
-   0.318359375000000  -0.053859880000000
-   0.319661460000000  -0.053786735000000
-   0.320963540000000  -0.053713520000000
-   0.322265625000000  -0.053640240000000
-   0.323567710000000  -0.053566885000000
-   0.324869790000000  -0.053493460000000
-   0.326171875000000  -0.053419970000000
-   0.327473960000000  -0.053346405000000
-   0.328776040000000  -0.053272775000000
-   0.330078125000000  -0.053198375000000
-   0.331380210000000  -0.053123200000000
-   0.332682290000000  -0.053047255000000
-   0.333984375000000  -0.052970540000000
-   0.335286460000000  -0.052893055000000
-   0.336588540000000  -0.052814795000000
-   0.337890625000000  -0.052735770000000
-   0.339192710000000  -0.052655970000000
-   0.340494790000000  -0.052574700000000
-   0.341796875000000  -0.052491955000000
-   0.343098960000000  -0.052407740000000
-   0.344401040000000  -0.052322050000000
-   0.345703125000000  -0.052234890000000
-   0.347005210000000  -0.052146255000000
-   0.348307290000000  -0.052056150000000
-   0.349609375000000  -0.051964570000000
-   0.350911460000000  -0.051871520000000
-   0.352213540000000  -0.051776995000000
-   0.353515625000000  -0.051680995000000
-   0.354817710000000  -0.051583525000000
-   0.356119790000000  -0.051484585000000
-   0.357421875000000  -0.051384170000000
-   0.358723960000000  -0.051282280000000
-   0.360026040000000  -0.051178920000000
-   0.361328125000000  -0.051074085000000
-   0.362630210000000  -0.050967775000000
-   0.363932290000000  -0.050859995000000
-   0.365234375000000  -0.050750745000000
-   0.366536460000000  -0.050640015000000
-   0.367838540000000  -0.050527815000000
-   0.369140625000000  -0.050414145000000
-   0.370442710000000  -0.050299000000000
-   0.371744790000000  -0.050183555000000
-   0.373046875000000  -0.050067810000000
-   0.374348960000000  -0.049951765000000
-   0.375651040000000  -0.049835422000000
-   0.376953125000000  -0.049718780500000
-   0.378255210000000  -0.049601839500000
-   0.379557290000000  -0.049484599500000
-   0.380859375000000  -0.049367060500000
-   0.382161460000000  -0.049250396500000
-   0.383463540000000  -0.049134607000000
-   0.384765625000000  -0.049019693000000
-   0.386067710000000  -0.048905653500000
-   0.387369790000000  -0.048792489500000
-   0.388671875000000  -0.048680200500000
-   0.389973960000000  -0.048568786000000
-   0.391276040000000  -0.048458247000000
-   0.392578125000000  -0.048348582500000
-   0.393880210000000  -0.048239793000000
-   0.395182290000000  -0.048131878500000
-   0.396484375000000  -0.048024839000000
-   0.397786460000000  -0.047918674000000
-   0.399088540000000  -0.047813384000000
-   0.400390625000000  -0.047708969000000
-   0.401692710000000  -0.047605428500000
-   0.402994790000000  -0.047502763000000
-   0.404296875000000  -0.047400972500000
-   0.405598960000000  -0.047300056500000
-   0.406901040000000  -0.047200015000000
-   0.408203125000000  -0.047100849000000
-   0.409505210000000  -0.047002557000000
-   0.410807290000000  -0.046905140000000
-   0.412109375000000  -0.046808598000000
-   0.413411460000000  -0.046708290000000
-   0.414713540000000  -0.046604216000000
-   0.416015625000000  -0.046496376500000
-   0.417317710000000  -0.046384771500000
-   0.418619790000000  -0.046269400500000
-   0.419921875000000  -0.046150263500000
-   0.421223960000000  -0.046027361000000
-   0.422526040000000  -0.045900692500000
-   0.423828125000000  -0.045765607000000
-   0.425130210000000  -0.045622105000000
-   0.426432290000000  -0.045470186000000
-   0.427734375000000  -0.045309850500000
-   0.429036460000000  -0.045141098000000
-   0.430338540000000  -0.044963928500000
-   0.431640625000000  -0.044778342500000
-   0.432942710000000  -0.044584339500000
-   0.434244790000000  -0.044381899500000
-   0.435546875000000  -0.044171023000000
-   0.436848960000000  -0.043951709500000
-   0.438151040000000  -0.043723959500000
-   0.439453125000000  -0.043487773000000
-   0.440755210000000  -0.043243149500000
-   0.442057290000000  -0.042990089000000
-   0.443359375000000  -0.042728592000000
-   0.444661460000000  -0.042458631500000
-   0.445963540000000  -0.042180207000000
-   0.447265625000000  -0.041893318500000
-   0.448567710000000  -0.041597966500000
-   0.449869790000000  -0.041294151000000
-   0.451171875000000  -0.040981872000000
-   0.452473960000000  -0.040661129000000
-   0.453776040000000  -0.040331922000000
-   0.455078125000000  -0.039975337500000
-   0.456380210000000  -0.039591374500000
-   0.457682290000000  -0.039180034000000
-   0.458984375000000  -0.038741315500000
-   0.460286460000000  -0.038275219000000
-   0.461588540000000  -0.037781744500000
-   0.462890625000000  -0.037260892000000
-   0.464192710000000  -0.036712661500000
-   0.465388795000000  -0.036197932000000
-   0.466478890000000  -0.035716703500000
-   0.467462985000000  -0.035268976500000
-   0.468341085000000  -0.034854750500000
-   0.469113190000000  -0.034474026000000
-   0.469779295000000  -0.034126802000000
-   0.470339410000000  -0.033813079500000
-   0.470793525000000  -0.033532858500000
-   0.471296875000000  -0.033205815500000
-   0.471849455000000  -0.032831952000000
-   0.472451265000000  -0.032411267000000
-   0.473102305000000  -0.031943761000000
-   0.473802580000000  -0.031429433500000
-   0.474552080000000  -0.030868285000000
-   0.475350815000000  -0.030260315500000
-   0.476198785000000  -0.029605525000000
-   0.477103515000000  -0.028864616000000
-   0.478065010000000  -0.028037589000000
-   0.479083270000000  -0.027124444000000
-   0.480158295000000  -0.026125181000000
-   0.481290085000000  -0.025039800000000
-   0.482478640000000  -0.023868300500000
-   0.483723960000000  -0.022610683500000
-   0.485026040000000  -0.021266948000000
-   0.486328125000000  -0.019843886500000
-   0.487630210000000  -0.018341498500000
-   0.488932290000000  -0.016759784000000
-   0.490234375000000  -0.015098743000000
-   0.491536460000000  -0.013358375500000
-   0.492838540000000  -0.011538681500000
-   0.494140625000000  -0.009639661000000
-   0.495442710000000  -0.007661314500000
-   0.496589610000000  -0.005918743500000
-   0.497581335000000  -0.004411949250000
-   0.498417875000000  -0.003140930950000
-   0.499099240000000  -0.002105688750000
-   0.499617840000000  -0.001317739950000
-   0.499973685000000  -0.000777084450000
-   0.500166750000000  -0.000483722320000
-   0.500197100000000  -0.000437653525000
-   0.500235000000000  -0.000380067535000
-   0.500280450000000  -0.000310964345000
-   0.500318350000000  -0.000253378355000
-   0.500348700000000  -0.000207309565000
-   0.500394150000000  -0.000138206375000
-   0.500424500000000  -0.000092137585000
-   0.500485150000000                   0
-   0.500424500000000   0.000092137585000
-   0.500394150000000   0.000138206375000
-   0.500348700000000   0.000207309565000
-   0.500318350000000   0.000253378355000
-   0.500280450000000   0.000310964345000
-   0.500235000000000   0.000380067535000
-   0.500197100000000   0.000437653525000
-   0.500166750000000   0.000483722320000
-   0.499973685000000   0.000777084450000
-   0.499617840000000   0.001317739950000
-   0.499099240000000   0.002105688750000
-   0.498417875000000   0.003140930950000
-   0.497581335000000   0.004411949250000
-   0.496589610000000   0.005918743500000
-   0.495442710000000   0.007661314500000
-   0.494140625000000   0.009639661000000
-   0.492838540000000   0.011538681500000
-   0.491536460000000   0.013358375500000
-   0.490234375000000   0.015098743000000
-   0.488932290000000   0.016759784000000
-   0.487630210000000   0.018341498500000
-   0.486328125000000   0.019843886500000
-   0.485026040000000   0.021266948000000
-   0.483723960000000   0.022610683500000
-   0.482478640000000   0.023868300500000
-   0.481290085000000   0.025039800000000
-   0.480158295000000   0.026125181000000
-   0.479083270000000   0.027124444000000
-   0.478065010000000   0.028037589000000
-   0.477103515000000   0.028864616000000
-   0.476198785000000   0.029605525000000
-   0.475350815000000   0.030260315500000
-   0.474552080000000   0.030868285000000
-   0.473802580000000   0.031429433500000
-   0.473102305000000   0.031943761000000
-   0.472451265000000   0.032411267000000
-   0.471849455000000   0.032831952000000
-   0.471296875000000   0.033205815500000
-   0.470793525000000   0.033532858500000
-   0.470339410000000   0.033813079500000
-   0.469779295000000   0.034126802000000
-   0.469113190000000   0.034474026000000
-   0.468341085000000   0.034854750500000
-   0.467462985000000   0.035268976500000
-   0.466478890000000   0.035716703500000
-   0.465388795000000   0.036197932000000
-   0.464192710000000   0.036712661500000
-   0.462890625000000   0.037260892000000
-   0.461588540000000   0.037781744500000
-   0.460286460000000   0.038275219000000
-   0.458984375000000   0.038741315500000
-   0.457682290000000   0.039180034000000
-   0.456380210000000   0.039591374500000
-   0.455078125000000   0.039975337500000
-   0.453776040000000   0.040331922000000
-   0.452473960000000   0.040661129000000
-   0.451171875000000   0.040981872000000
-   0.449869790000000   0.041294151000000
-   0.448567710000000   0.041597966500000
-   0.447265625000000   0.041893318500000
-   0.445963540000000   0.042180207000000
-   0.444661460000000   0.042458631500000
-   0.443359375000000   0.042728592000000
-   0.442057290000000   0.042990089000000
-   0.440755210000000   0.043243149500000
-   0.439453125000000   0.043487773000000
-   0.438151040000000   0.043723959500000
-   0.436848960000000   0.043951709500000
-   0.435546875000000   0.044171023000000
-   0.434244790000000   0.044381899500000
-   0.432942710000000   0.044584339500000
-   0.431640625000000   0.044778342500000
-   0.430338540000000   0.044963928500000
-   0.429036460000000   0.045141098000000
-   0.427734375000000   0.045309850500000
-   0.426432290000000   0.045470186000000
-   0.425130210000000   0.045622105000000
-   0.423828125000000   0.045765607000000
-   0.422526040000000   0.045900692500000
-   0.421223960000000   0.046027361000000
-   0.419921875000000   0.046150263500000
-   0.418619790000000   0.046269400500000
-   0.417317710000000   0.046384771500000
-   0.416015625000000   0.046496376500000
-   0.414713540000000   0.046604216000000
-   0.413411460000000   0.046708290000000
-   0.412109375000000   0.046808598000000
-   0.410807290000000   0.046905140000000
-   0.409505210000000   0.047002557000000
-   0.408203125000000   0.047100849000000
-   0.406901040000000   0.047200015000000
-   0.405598960000000   0.047300056500000
-   0.404296875000000   0.047400972500000
-   0.402994790000000   0.047502763000000
-   0.401692710000000   0.047605428500000
-   0.400390625000000   0.047708969000000
-   0.399088540000000   0.047813384000000
-   0.397786460000000   0.047918674000000
-   0.396484375000000   0.048024839000000
-   0.395182290000000   0.048131878500000
-   0.393880210000000   0.048239793000000
-   0.392578125000000   0.048348582500000
-   0.391276040000000   0.048458247000000
-   0.389973960000000   0.048568786000000
-   0.388671875000000   0.048680200500000
-   0.387369790000000   0.048792489500000
-   0.386067710000000   0.048905653500000
-   0.384765625000000   0.049019693000000
-   0.383463540000000   0.049134607000000
-   0.382161460000000   0.049250396500000
-   0.380859375000000   0.049367060500000
-   0.379557290000000   0.049484599500000
-   0.378255210000000   0.049601839500000
-   0.376953125000000   0.049718780500000
-   0.375651040000000   0.049835422000000
-   0.374348960000000   0.049951765000000
-   0.373046875000000   0.050067810000000
-   0.371744790000000   0.050183555000000
-   0.370442710000000   0.050299000000000
-   0.369140625000000   0.050414145000000
-   0.367838540000000   0.050527815000000
-   0.366536460000000   0.050640015000000
-   0.365234375000000   0.050750745000000
-   0.363932290000000   0.050859995000000
-   0.362630210000000   0.050967775000000
-   0.361328125000000   0.051074085000000
-   0.360026040000000   0.051178920000000
-   0.358723960000000   0.051282280000000
-   0.357421875000000   0.051384170000000
-   0.356119790000000   0.051484585000000
-   0.354817710000000   0.051583525000000
-   0.353515625000000   0.051680995000000
-   0.352213540000000   0.051776995000000
-   0.350911460000000   0.051871520000000
-   0.349609375000000   0.051964570000000
-   0.348307290000000   0.052056150000000
-   0.347005210000000   0.052146255000000
-   0.345703125000000   0.052234890000000
-   0.344401040000000   0.052322050000000
-   0.343098960000000   0.052407740000000
-   0.341796875000000   0.052491955000000
-   0.340494790000000   0.052574700000000
-   0.339192710000000   0.052655970000000
-   0.337890625000000   0.052735770000000
-   0.336588540000000   0.052814795000000
-   0.335286460000000   0.052893055000000
-   0.333984375000000   0.052970540000000
-   0.332682290000000   0.053047255000000
-   0.331380210000000   0.053123200000000
-   0.330078125000000   0.053198375000000
-   0.328776040000000   0.053272775000000
-   0.327473960000000   0.053346405000000
-   0.326171875000000   0.053419970000000
-   0.324869790000000   0.053493460000000
-   0.323567710000000   0.053566885000000
-   0.322265625000000   0.053640240000000
-   0.320963540000000   0.053713520000000
-   0.319661460000000   0.053786735000000
-   0.318359375000000   0.053859880000000
-   0.317057290000000   0.053932955000000
-   0.315755210000000   0.054005960000000
-   0.314453125000000   0.054078900000000
-   0.313151040000000   0.054151765000000
-   0.311848960000000   0.054224560000000
-   0.310546875000000   0.054297290000000
-   0.309244790000000   0.054369950000000
-   0.307942710000000   0.054442535000000
-   0.306640625000000   0.054515055000000
-   0.305338540000000   0.054587505000000
-   0.304036460000000   0.054659885000000
-   0.302734375000000   0.054732195000000
-   0.301432290000000   0.054804435000000
-   0.300130210000000   0.054876610000000
-   0.298828125000000   0.054948710000000
-   0.297526040000000   0.055020740000000
-   0.296223960000000   0.055092705000000
-   0.294921875000000   0.055164030000000
-   0.293619790000000   0.055234720000000
-   0.292317710000000   0.055304775000000
-   0.291015625000000   0.055374190000000
-   0.289713540000000   0.055442970000000
-   0.288411460000000   0.055511115000000
-   0.287109375000000   0.055578620000000
-   0.285807290000000   0.055645490000000
-   0.284505210000000   0.055711160000000
-   0.283203125000000   0.055775620000000
-   0.281901040000000   0.055838880000000
-   0.280598960000000   0.055900940000000
-   0.279296875000000   0.055961790000000
-   0.277994790000000   0.056021440000000
-   0.276692710000000   0.056079885000000
-   0.275390625000000   0.056137125000000
-   0.274088540000000   0.056193165000000
-   0.272786460000000   0.056248000000000
-   0.271484375000000   0.056301635000000
-   0.270182290000000   0.056354060000000
-   0.268880210000000   0.056405290000000
-   0.267578125000000   0.056455310000000
-   0.266276040000000   0.056504130000000
-   0.264973960000000   0.056551745000000
-   0.263671875000000   0.056598155000000
-   0.262369790000000   0.056643365000000
-   0.261067710000000   0.056687370000000
-   0.259765625000000   0.056730170000000
-   0.258463540000000   0.056771770000000
-   0.257161460000000   0.056812165000000
-   0.255859375000000   0.056851355000000
-   0.254557290000000   0.056889345000000
-   0.253255210000000   0.056927160000000
-   0.251953125000000   0.056964800000000
-   0.250651040000000   0.057002260000000
-   0.249348960000000   0.057039550000000
-   0.248046875000000   0.057076660000000
-   0.246744790000000   0.057113600000000
-   0.245442710000000   0.057150365000000
-   0.244140625000000   0.057186950000000
-   0.242838540000000   0.057224390000000
-   0.241536460000000   0.057262685000000
-   0.240234375000000   0.057301830000000
-   0.238932290000000   0.057341830000000
-   0.237630210000000   0.057382685000000
-   0.236328125000000   0.057424390000000
-   0.235026040000000   0.057466945000000
-   0.233723960000000   0.057510360000000
-   0.232421875000000   0.057554620000000
-   0.231119790000000   0.057599740000000
-   0.229817710000000   0.057645710000000
-   0.228515625000000   0.057692530000000
-   0.227213540000000   0.057740210000000
-   0.225911460000000   0.057788740000000
-   0.224609375000000   0.057838120000000
-   0.223307290000000   0.057888355000000
-   0.222005210000000   0.057939445000000
-   0.220703125000000   0.057991385000000
-   0.219401040000000   0.058044180000000
-   0.218098960000000   0.058097825000000
-   0.216796875000000   0.058152330000000
-   0.215494790000000   0.058207680000000
-   0.214192710000000   0.058263890000000
-   0.212890625000000   0.058320945000000
-   0.211588540000000   0.058376435000000
-   0.210286460000000   0.058430345000000
-   0.208984375000000   0.058482685000000
-   0.207682290000000   0.058533450000000
-   0.206380210000000   0.058582645000000
-   0.205078125000000   0.058630260000000
-   0.203776040000000   0.058676305000000
-   0.202473960000000   0.058720780000000
-   0.201171875000000   0.058761250000000
-   0.199869790000000   0.058797725000000
-   0.198567710000000   0.058830195000000
-   0.197265625000000   0.058858670000000
-   0.195963540000000   0.058883145000000
-   0.194661460000000   0.058903620000000
-   0.193359375000000   0.058920095000000
-   0.192057290000000   0.058932570000000
-   0.190755210000000   0.058941050000000
-   0.189453125000000   0.058945525000000
-   0.188151040000000   0.058946005000000
-   0.186848960000000   0.058942485000000
-   0.185546875000000   0.058934965000000
-   0.184244790000000   0.058923445000000
-   0.182942710000000   0.058907930000000
-   0.181640625000000   0.058888410000000
-   0.180338540000000   0.058864895000000
-   0.179036460000000   0.058837380000000
-   0.177734375000000   0.058805865000000
-   0.176432290000000   0.058770345000000
-   0.175130210000000   0.058730830000000
-   0.173828125000000   0.058687315000000
-   0.172526040000000   0.058639805000000
-   0.171223960000000   0.058588290000000
-   0.169921875000000   0.058536915000000
-   0.168619790000000   0.058485685000000
-   0.167317710000000   0.058434595000000
-   0.166015625000000   0.058383645000000
-   0.164713540000000   0.058332840000000
-   0.163411460000000   0.058282170000000
-   0.162109375000000   0.058231645000000
-   0.160807290000000   0.058181265000000
-   0.159505210000000   0.058135160000000
-   0.158203125000000   0.058093340000000
-   0.156901040000000   0.058055805000000
-   0.155598960000000   0.058022550000000
-   0.154296875000000   0.057993575000000
-   0.152994790000000   0.057968885000000
-   0.151692710000000   0.057948475000000
-   0.150390625000000   0.057932345000000
-   0.149088540000000   0.057920500000000
-   0.147786460000000   0.057912935000000
-   0.146484375000000   0.057909650000000
-   0.145182290000000   0.057910650000000
-   0.143880210000000   0.057915930000000
-   0.142578125000000   0.057925490000000
-   0.141276040000000   0.057939335000000
-   0.139973960000000   0.057957460000000
-   0.138671875000000   0.057979870000000
-   0.137369790000000   0.058006555000000
-   0.136067710000000   0.058037530000000
-   0.134765625000000   0.058072780000000
-   0.133463540000000   0.058112315000000
-   0.132161460000000   0.058156135000000
-   0.130859375000000   0.058204235000000
-   0.129557290000000   0.058256615000000
-   0.128255210000000   0.058309485000000
-   0.126953125000000   0.058362835000000
-   0.125651040000000   0.058416675000000
-   0.124348960000000   0.058471000000000
-   0.123046875000000   0.058525810000000
-   0.121744790000000   0.058581105000000
-   0.120442710000000   0.058636890000000
-   0.119140625000000   0.058693155000000
-   0.117838540000000   0.058746115000000
-   0.116536460000000   0.058795760000000
-   0.115234375000000   0.058842095000000
-   0.113932290000000   0.058885120000000
-   0.112630210000000   0.058924835000000
-   0.111328125000000   0.058961240000000
-   0.110026040000000   0.058994335000000
-   0.108723960000000   0.059024115000000
-   0.107421875000000   0.059050585000000
-   0.106119790000000   0.059073750000000
-   0.104817710000000   0.059093600000000
-   0.103515625000000   0.059110140000000
-   0.102213540000000   0.059123370000000
-   0.100911460000000   0.059133290000000
-   0.099609375000000   0.059139900000000
-   0.098307290000000   0.059143200000000
-   0.097005210000000   0.059143190000000
-   0.095703125000000   0.059139870000000
-   0.094401040000000   0.059133240000000
-   0.093098960000000   0.059123300000000
-   0.091796875000000   0.059110050000000
-   0.090494790000000   0.059093485000000
-   0.089192710000000   0.059073615000000
-   0.087890625000000   0.059050435000000
-   0.086588540000000   0.059026205000000
-   0.085286460000000   0.059000930000000
-   0.083984375000000   0.058974615000000
-   0.082682290000000   0.058947245000000
-   0.081380210000000   0.058918835000000
-   0.080078125000000   0.058889380000000
-   0.078776040000000   0.058858875000000
-   0.077473960000000   0.058827325000000
-   0.076171875000000   0.058796995000000
-   0.074869790000000   0.058767885000000
-   0.073567710000000   0.058739990000000
-   0.072265625000000   0.058713320000000
-   0.070963540000000   0.058687860000000
-   0.069661460000000   0.058663625000000
-   0.068359375000000   0.058640605000000
-   0.067057290000000   0.058618805000000
-   0.065755210000000   0.058598225000000
-   0.064453125000000   0.058578865000000
-   0.063151040000000   0.058560720000000
-   0.061848960000000   0.058543795000000
-   0.060546875000000   0.058528090000000
-   0.059244790000000   0.058513600000000
-   0.057942710000000   0.058500330000000
-   0.056640625000000   0.058488280000000
-   0.055338540000000   0.058477445000000
-   0.054036460000000   0.058467835000000
-   0.052734375000000   0.058459440000000
-   0.051432290000000   0.058452260000000
-   0.050130210000000   0.058446305000000
-   0.048828125000000   0.058441565000000
-   0.047526041500000   0.058438045000000
-   0.046223958500000   0.058435740000000
-   0.044921875000000   0.058433785000000
-   0.043619791500000   0.058432180000000
-   0.042317708500000   0.058430925000000
-   0.041015625000000   0.058430015000000
-   0.039713541500000   0.058429455000000
-   0.038411458500000   0.058429245000000
-   0.037109375000000   0.058429385000000
-   0.035807291500000   0.058429870000000
-   0.034505208500000   0.058429835000000
-   0.033203125000000   0.058429275000000
-   0.031901041500000   0.058428200000000
-   0.030598958500000   0.058426600000000
-   0.029296875000000   0.058424475000000
-   0.027994791500000   0.058421835000000
-   0.026692708500000   0.058418670000000
-   0.025390625000000   0.058414980000000
-   0.024088541500000   0.058410775000000
-   0.022786458500000   0.058406045000000
-   0.021484375000000   0.058400795000000
-   0.020182291500000   0.058395025000000
-   0.018880208500000   0.058388730000000
-   0.017578125000000   0.058381915000000
-   0.016276041500000   0.058374580000000
-   0.014973958500000   0.058366720000000
-   0.013671875000000   0.058358340000000
-   0.012369791500000   0.058349440000000
-   0.011067708500000   0.058340015000000
-   0.009765625000000   0.058330070000000
-   0.008463541500000   0.058319605000000
-   0.007161458500000   0.058308620000000
-   0.005859375000000   0.058297110000000
-   0.004557291650000   0.058285080000000
-   0.003255208350000   0.058273035000000
-   0.001953125000000   0.058260970000000
-   0.000651041650000   0.058248895000000
-  -0.000651041650000   0.058236800000000
-  -0.001953125000000   0.058224685000000
-  -0.003255208350000   0.058212560000000
-  -0.004557291650000   0.058200415000000
-  -0.005859375000000   0.058188255000000
-  -0.007161458500000   0.058176585000000
-  -0.008463541500000   0.058165405000000
-  -0.009765625000000   0.058154710000000
-  -0.011067708500000   0.058144510000000
-  -0.012369791500000   0.058134795000000
-  -0.013671875000000   0.058125570000000
-  -0.014973958500000   0.058116835000000
-  -0.016276041500000   0.058108585000000
-  -0.017578125000000   0.058100830000000
-  -0.018880208500000   0.058093560000000
-  -0.020182291500000   0.058086780000000
-  -0.021484375000000   0.058080490000000
-  -0.022786458500000   0.058074690000000
-  -0.024088541500000   0.058069380000000
-  -0.025390625000000   0.058064555000000
-  -0.026692708500000   0.058060220000000
-  -0.027994791500000   0.058056375000000
-  -0.029296875000000   0.058053020000000
-  -0.030598958500000   0.058050155000000
-  -0.031901041500000   0.058047780000000
-  -0.033203125000000   0.058045890000000
-  -0.034505208500000   0.058044490000000
-  -0.035807291500000   0.058043580000000
-  -0.037109375000000   0.058043160000000
-  -0.038411458500000   0.058042790000000
-  -0.039713541500000   0.058042470000000
-  -0.041015625000000   0.058042205000000
-  -0.042317708500000   0.058041985000000
-  -0.043619791500000   0.058041820000000
-  -0.044921875000000   0.058041710000000
-  -0.046223958500000   0.058041645000000
-  -0.047526041500000   0.058041635000000
-  -0.048828125000000   0.058041235000000
-  -0.050130210000000   0.058040450000000
-  -0.051432290000000   0.058039280000000
-  -0.052734375000000   0.058037720000000
-  -0.054036460000000   0.058035775000000
-  -0.055338540000000   0.058033445000000
-  -0.056640625000000   0.058030725000000
-  -0.057942710000000   0.058027620000000
-  -0.059244790000000   0.058024125000000
-  -0.060546875000000   0.058020245000000
-  -0.061848960000000   0.058015980000000
-  -0.063151040000000   0.058011330000000
-  -0.064453125000000   0.058006290000000
-  -0.065755210000000   0.058000860000000
-  -0.067057290000000   0.057995050000000
-  -0.068359375000000   0.057988850000000
-  -0.069661460000000   0.057982260000000
-  -0.070963540000000   0.057975290000000
-  -0.072265625000000   0.057967930000000
-  -0.073567710000000   0.057960180000000
-  -0.074869790000000   0.057952045000000
-  -0.076171875000000   0.057943525000000
-  -0.077473960000000   0.057934620000000
-  -0.078776040000000   0.057925325000000
-  -0.080078125000000   0.057915825000000
-  -0.081380210000000   0.057906120000000
-  -0.082682290000000   0.057896205000000
-  -0.083984375000000   0.057886085000000
-  -0.085286460000000   0.057875760000000
-  -0.086588540000000   0.057865230000000
-  -0.087890625000000   0.057854490000000
-  -0.089192710000000   0.057843550000000
-  -0.090494790000000   0.057832580000000
-  -0.091796875000000   0.057821585000000
-  -0.093098960000000   0.057810560000000
-  -0.094401040000000   0.057799515000000
-  -0.095703125000000   0.057788440000000
-  -0.097005210000000   0.057777345000000
-  -0.098307290000000   0.057766220000000
-  -0.099609375000000   0.057755070000000
-  -0.100911460000000   0.057743895000000
-  -0.102213540000000   0.057732695000000
-  -0.103515625000000   0.057721470000000
-  -0.104817710000000   0.057710215000000
-  -0.106119790000000   0.057698940000000
-  -0.107421875000000   0.057687635000000
-  -0.108723960000000   0.057676305000000
-  -0.110026040000000   0.057664950000000
-  -0.111328125000000   0.057653570000000
-  -0.112630210000000   0.057642160000000
-  -0.113932290000000   0.057630730000000
-  -0.115234375000000   0.057619270000000
-  -0.116536460000000   0.057607790000000
-  -0.117838540000000   0.057596280000000
-  -0.119140625000000   0.057584745000000
-  -0.120442710000000   0.057573185000000
-  -0.121744790000000   0.057561615000000
-  -0.123046875000000   0.057550035000000
-  -0.124348960000000   0.057538450000000
-  -0.125651040000000   0.057526855000000
-  -0.126953125000000   0.057515255000000
-  -0.128255210000000   0.057503640000000
-  -0.129557290000000   0.057492025000000
-  -0.130859375000000   0.057480395000000
-  -0.132161460000000   0.057468775000000
-  -0.133463540000000   0.057457165000000
-  -0.134765625000000   0.057445565000000
-  -0.136067710000000   0.057433970000000
-  -0.137369790000000   0.057422385000000
-  -0.138671875000000   0.057410810000000
-  -0.139973960000000   0.057399245000000
-  -0.141276040000000   0.057387685000000
-  -0.142578125000000   0.057376140000000
-  -0.143880210000000   0.057364600000000
-  -0.145182290000000   0.057353065000000
-  -0.146484375000000   0.057341545000000
-  -0.147786460000000   0.057330030000000
-  -0.149088540000000   0.057318525000000
-  -0.150390625000000   0.057307030000000
-  -0.151692710000000   0.057295545000000
-  -0.152994790000000   0.057284065000000
-  -0.154296875000000   0.057272595000000
-  -0.155598960000000   0.057261135000000
-  -0.156901040000000   0.057249685000000
-  -0.158203125000000   0.057238240000000
-  -0.159505210000000   0.057226810000000
-  -0.160807290000000   0.057215385000000
-  -0.162109375000000   0.057203965000000
-  -0.163411460000000   0.057192555000000
-  -0.164713540000000   0.057181155000000
-  -0.166015625000000   0.057169760000000
-  -0.167317710000000   0.057158375000000
-  -0.168619790000000   0.057146995000000
-  -0.169921875000000   0.057135620000000
-  -0.171223960000000   0.057124255000000
-  -0.172526040000000   0.057112895000000
-  -0.173828125000000   0.057101540000000
-  -0.175130210000000   0.057090195000000
-  -0.176432290000000   0.057078855000000
-  -0.177734375000000   0.057067515000000
-  -0.179036460000000   0.057056185000000
-  -0.180338540000000   0.057044860000000
-  -0.181640625000000   0.057033540000000
-  -0.182942710000000   0.057022230000000
-  -0.184244790000000   0.057010920000000
-  -0.185546875000000   0.056999615000000
-  -0.186848960000000   0.056988320000000
-  -0.188151040000000   0.056977030000000
-  -0.189453125000000   0.056965745000000
-  -0.190755210000000   0.056954465000000
-  -0.192057290000000   0.056943190000000
-  -0.193359375000000   0.056931920000000
-  -0.194661460000000   0.056920655000000
-  -0.195963540000000   0.056909400000000
-  -0.197265625000000   0.056898145000000
-  -0.198567710000000   0.056886900000000
-  -0.199869790000000   0.056875660000000
-  -0.201171875000000   0.056864425000000
-  -0.202473960000000   0.056853195000000
-  -0.203776040000000   0.056841970000000
-  -0.205078125000000   0.056830640000000
-  -0.206380210000000   0.056819210000000
-  -0.207682290000000   0.056807680000000
-  -0.208984375000000   0.056796040000000
-  -0.210286460000000   0.056784300000000
-  -0.211588540000000   0.056772460000000
-  -0.212890625000000   0.056760510000000
-  -0.214192710000000   0.056748465000000
-  -0.215494790000000   0.056736200000000
-  -0.216796875000000   0.056723730000000
-  -0.218098960000000   0.056711045000000
-  -0.219401040000000   0.056698145000000
-  -0.220703125000000   0.056685035000000
-  -0.222005210000000   0.056671715000000
-  -0.223307290000000   0.056658185000000
-  -0.224609375000000   0.056644440000000
-  -0.225911460000000   0.056630480000000
-  -0.227213540000000   0.056616310000000
-  -0.228515625000000   0.056601930000000
-  -0.229817710000000   0.056587340000000
-  -0.231119790000000   0.056572535000000
-  -0.232421875000000   0.056557520000000
-  -0.233723960000000   0.056542290000000
-  -0.235026040000000   0.056526850000000
-  -0.236328125000000   0.056511200000000
-  -0.237630210000000   0.056495335000000
-  -0.238932290000000   0.056479255000000
-  -0.240234375000000   0.056462970000000
-  -0.241536460000000   0.056446470000000
-  -0.242838540000000   0.056429760000000
-  -0.244140625000000   0.056412835000000
-  -0.245442710000000   0.056395700000000
-  -0.246744790000000   0.056377945000000
-  -0.248046875000000   0.056359575000000
-  -0.249348960000000   0.056340585000000
-  -0.250651040000000   0.056320980000000
-  -0.251953125000000   0.056300755000000
-  -0.253255210000000   0.056279915000000
-  -0.254557290000000   0.056258455000000
-  -0.255859375000000   0.056236380000000
-  -0.257161460000000   0.056213280000000
-  -0.258463540000000   0.056189160000000
-  -0.259765625000000   0.056164015000000
-  -0.261067710000000   0.056137845000000
-  -0.262369790000000   0.056110655000000
-  -0.263671875000000   0.056082440000000
-  -0.264973960000000   0.056053200000000
-  -0.266276040000000   0.056022940000000
-  -0.267578125000000   0.055991655000000
-  -0.268880210000000   0.055959345000000
-  -0.270182290000000   0.055926015000000
-  -0.271484375000000   0.055891660000000
-  -0.272786460000000   0.055856280000000
-  -0.274088540000000   0.055819880000000
-  -0.275390625000000   0.055782455000000
-  -0.276692710000000   0.055744010000000
-  -0.277994790000000   0.055704540000000
-  -0.279296875000000   0.055664045000000
-  -0.280598960000000   0.055622525000000
-  -0.281901040000000   0.055579985000000
-  -0.283203125000000   0.055536425000000
-  -0.284505210000000   0.055491835000000
-  -0.285807290000000   0.055446225000000
-  -0.287109375000000   0.055399590000000
-  -0.288411460000000   0.055352280000000
-  -0.289713540000000   0.055304285000000
-  -0.291015625000000   0.055255610000000
-  -0.292317710000000   0.055206260000000
-  -0.293619790000000   0.055156230000000
-  -0.294921875000000   0.055105515000000
-  -0.296223960000000   0.055054125000000
-  -0.297526040000000   0.055002055000000
-  -0.298828125000000   0.054949650000000
-  -0.300130210000000   0.054896905000000
-  -0.301432290000000   0.054843825000000
-  -0.302734375000000   0.054790410000000
-  -0.304036460000000   0.054736660000000
-  -0.305338540000000   0.054682575000000
-  -0.306640625000000   0.054628155000000
-  -0.307942710000000   0.054573395000000
-  -0.309244790000000   0.054518300000000
-  -0.310546875000000   0.054462870000000
-  -0.311848960000000   0.054407105000000
-  -0.313151040000000   0.054351005000000
-  -0.314453125000000   0.054294565000000
-  -0.315755210000000   0.054237790000000
-  -0.317057290000000   0.054180680000000
-  -0.318359375000000   0.054123235000000
-  -0.319661460000000   0.054065455000000
-  -0.320963540000000   0.054007335000000
-  -0.322265625000000   0.053948885000000
-  -0.323567710000000   0.053890095000000
-  -0.324869790000000   0.053830970000000
-  -0.326171875000000   0.053771505000000
-  -0.327473960000000   0.053711710000000
-  -0.328776040000000   0.053651575000000
-  -0.330078125000000   0.053590060000000
-  -0.331380210000000   0.053527155000000
-  -0.332682290000000   0.053462870000000
-  -0.333984375000000   0.053397195000000
-  -0.335286460000000   0.053330140000000
-  -0.336588540000000   0.053261695000000
-  -0.337890625000000   0.053191870000000
-  -0.339192710000000   0.053120660000000
-  -0.340494790000000   0.053047010000000
-  -0.341796875000000   0.052970930000000
-  -0.343098960000000   0.052892420000000
-  -0.344401040000000   0.052811470000000
-  -0.345703125000000   0.052728085000000
-  -0.347005210000000   0.052642270000000
-  -0.348307290000000   0.052554020000000
-  -0.349609375000000   0.052463335000000
-  -0.350911460000000   0.052370215000000
-  -0.352213540000000   0.052274660000000
-  -0.353515625000000   0.052176670000000
-  -0.354817710000000   0.052076245000000
-  -0.356119790000000   0.051973385000000
-  -0.357421875000000   0.051868090000000
-  -0.358723960000000   0.051760360000000
-  -0.360026040000000   0.051650195000000
-  -0.361328125000000   0.051537590000000
-  -0.362630210000000   0.051422555000000
-  -0.363932290000000   0.051305080000000
-  -0.365234375000000   0.051185175000000
-  -0.366536460000000   0.051062830000000
-  -0.367838540000000   0.050938050000000
-  -0.369140625000000   0.050810835000000
-  -0.370442710000000   0.050681180000000
-  -0.371744790000000   0.050549280000000
-  -0.373046875000000   0.050415135000000
-  -0.374348960000000   0.050278740000000
-  -0.375651040000000   0.050140095000000
-  -0.376953125000000   0.049999205000000
-  -0.378255210000000   0.049856067000000
-  -0.379557290000000   0.049710681500000
-  -0.380859375000000   0.049563048500000
-  -0.382161460000000   0.049413356000000
-  -0.383463540000000   0.049261604500000
-  -0.384765625000000   0.049107794000000
-  -0.386067710000000   0.048951924500000
-  -0.387369790000000   0.048793995500000
-  -0.388671875000000   0.048634007000000
-  -0.389973960000000   0.048471960000000
-  -0.391276040000000   0.048307853500000
-  -0.392578125000000   0.048141686500000
-  -0.393880210000000   0.047973459500000
-  -0.395182290000000   0.047803172500000
-  -0.396484375000000   0.047630825500000
-  -0.397786460000000   0.047456418000000
-  -0.399088540000000   0.047279950500000
-  -0.400390625000000   0.047101422500000
-  -0.401692710000000   0.046920834500000
-  -0.402994790000000   0.046738185000000
-  -0.404296875000000   0.046553474500000
-  -0.405598960000000   0.046366703000000
-  -0.406901040000000   0.046177869500000
-  -0.408203125000000   0.045986975000000
-  -0.409505210000000   0.045794019500000
-  -0.410807290000000   0.045599002500000
-  -0.412109375000000   0.045401924000000
-  -0.413411460000000   0.045203687500000
-  -0.414713540000000   0.045004292500000
-  -0.416015625000000   0.044803739500000
-  -0.417317710000000   0.044602028500000
-  -0.418619790000000   0.044399159000000
-  -0.419921875000000   0.044195131500000
-  -0.421223960000000   0.043989945500000
-  -0.422526040000000   0.043783601000000
-  -0.423828125000000   0.043577003000000
-  -0.425130210000000   0.043370150000000
-  -0.426432290000000   0.043163043000000
-  -0.427734375000000   0.042955682000000
-  -0.429036460000000   0.042748066500000
-  -0.430338540000000   0.042540196500000
-  -0.431640625000000   0.042332072500000
-  -0.432942710000000   0.042123694000000
-  -0.434244790000000   0.041915061500000
-  -0.435546875000000   0.041706174500000
-  -0.436848960000000   0.041497033500000
-  -0.438151040000000   0.041287638000000
-  -0.439453125000000   0.041077988000000
-  -0.440755210000000   0.040868084000000
-  -0.442057290000000   0.040657925500000
-  -0.443359375000000   0.040447512500000
-  -0.444661460000000   0.040236845500000
-  -0.445963540000000   0.040025924500000
-  -0.447265625000000   0.039814748500000
-  -0.448567710000000   0.039603318500000
-  -0.449869790000000   0.039391634500000
-  -0.451171875000000   0.039179695500000
-  -0.452473960000000   0.038967503000000
-  -0.453776040000000   0.038755055500000
-  -0.455078125000000   0.038516130500000
-  -0.456380210000000   0.038250728000000
-  -0.457682290000000   0.037958847500000
-  -0.458984375000000   0.037640490000000
-  -0.460286460000000   0.037295654000000
-  -0.461588540000000   0.036924340500000
-  -0.462890625000000   0.036526549500000
-  -0.464192710000000   0.036102281000000
-  -0.465390645000000   0.035698776000000
-  -0.466484435000000   0.035316035500000
-  -0.467474080000000   0.034954058500000
-  -0.468359575000000   0.034612845500000
-  -0.469140925000000   0.034292396500000
-  -0.469818125000000   0.033992711500000
-  -0.470391180000000   0.033713790500000
-  -0.470860090000000   0.033455633500000
-  -0.471374530000000   0.033153938000000
-  -0.471934510000000   0.032808704500000
-  -0.472540015000000   0.032419933000000
-  -0.473191060000000   0.031987623500000
-  -0.473887635000000   0.031511775500000
-  -0.474629740000000   0.030992389500000
-  -0.475417380000000   0.030429465500000
-  -0.476250555000000   0.029823003500000
-  -0.477142345000000   0.029125908500000
-  -0.478092745000000   0.028338181000000
-  -0.479101760000000   0.027459820500000
-  -0.480169390000000   0.026490827500000
-  -0.481295635000000   0.025431201500000
-  -0.482480490000000   0.024280943000000
-  -0.483723960000000   0.023040051500000
-  -0.485026040000000   0.021708527500000
-  -0.486328125000000   0.020288809000000
-  -0.487630210000000   0.018780896000000
-  -0.488932290000000   0.017184789000000
-  -0.490234375000000   0.015500487500000
-  -0.491536460000000   0.013727991500000
-  -0.492838540000000   0.011867301000000
-  -0.494140625000000   0.009918416500000
-  -0.495442710000000   0.007881337500000
-  -0.496589535000000   0.006087150500000
-  -0.497581110000000   0.004535854750000
-  -0.498417435000000   0.003227450950000
-  -0.499098500000000   0.002161938900000
-  -0.499616805000000   0.001351061700000
-  -0.499972350000000   0.000794819350000
-  -0.500165150000000   0.000493211930000
-  -0.500195150000000   0.000446239365000
-  -0.500232700000000   0.000387523660000
-  -0.500277750000000   0.000317064810000
-  -0.500315250000000   0.000258349105000
-  -0.500345300000000   0.000211376540000
-  -0.500390300000000   0.000140917695000
-  -0.500420350000000   0.000093945130000
-  -0.500480400000000                   0
-  -0.500420350000000  -0.000093945130000
-  -0.500390300000000  -0.000140917695000
-  -0.500345300000000  -0.000211376540000
-  -0.500315250000000  -0.000258349105000
-  -0.500277750000000  -0.000317064810000
-  -0.500232700000000  -0.000387523660000
-  -0.500195150000000  -0.000446239365000
-  -0.500165150000000  -0.000493211930000
-  -0.499972350000000  -0.000794819350000
-  -0.499616805000000  -0.001351061700000
-  -0.499098500000000  -0.002161938900000
-  -0.498417435000000  -0.003227450950000
-  -0.497581110000000  -0.004535854750000
-  -0.496589535000000  -0.006087150500000
-  -0.495442710000000  -0.007881337500000
-  -0.494140625000000  -0.009918416500000
-  -0.492838540000000  -0.011867301000000
-  -0.491536460000000  -0.013727991500000
-  -0.490234375000000  -0.015500487500000
-  -0.488932290000000  -0.017184789000000
-  -0.487630210000000  -0.018780896000000
-  -0.486328125000000  -0.020288809000000
-  -0.485026040000000  -0.021708527500000
-  -0.483723960000000  -0.023040051500000
-  -0.482480490000000  -0.024280943000000
-  -0.481295635000000  -0.025431201500000
-  -0.480169390000000  -0.026490827500000
-  -0.479101760000000  -0.027459820500000
-  -0.478092745000000  -0.028338181000000
-  -0.477142345000000  -0.029125908500000
-  -0.476250555000000  -0.029823003500000
-  -0.475417380000000  -0.030429465500000
-  -0.474629740000000  -0.030992389500000
-  -0.473887635000000  -0.031511775500000
-  -0.473191060000000  -0.031987623500000
-  -0.472540015000000  -0.032419933000000
-  -0.471934510000000  -0.032808704500000
-  -0.471374530000000  -0.033153938000000
-  -0.470860090000000  -0.033455633500000
-  -0.470391180000000  -0.033713790500000
-  -0.469818125000000  -0.033992711500000
-  -0.469140925000000  -0.034292396500000
-  -0.468359575000000  -0.034612845500000
-  -0.467474080000000  -0.034954058500000
-  -0.466484435000000  -0.035316035500000
-  -0.465390645000000  -0.035698776000000
-  -0.464192710000000  -0.036102281000000
-  -0.462890625000000  -0.036526549500000
-  -0.461588540000000  -0.036924340500000
-  -0.460286460000000  -0.037295654000000
-  -0.458984375000000  -0.037640490000000
-  -0.457682290000000  -0.037958847500000
-  -0.456380210000000  -0.038250728000000
-  -0.455078125000000  -0.038516130500000
-  -0.453776040000000  -0.038755055500000
-  -0.452473960000000  -0.038967503000000
+In Snakes>RunSnakesProcess (line 88)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
 
-clc
-close all
-clear all
-load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Component\Dir_2016-08-18T170706_bp3_Aero_DE_smile_horz\Restart_DE_Spill_smile.mat')
-optimstruct1=optimstruct
+In Snakes (line 34)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
 
-optimstruct1 = 
+In ExecuteSnakes_Optim (line 29)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
 
-1x36 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+In ExecuteOptimisation>NormalExecutionIteration (line 385)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
 
-    population
+In ExecuteOptimisation>(parfor body) (line 316)
+            [population(ii+1),supportstruct(ii+1)]=NormalExecutionIteration(population(ii+1),newRefGrid,newrestartsnake,...
 
-load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\r
+In parallel_function>make_general_channel/channel_general (line 914)
+                    O = F(C{:});
+
+In remoteParallelFunction (line 38)
+        out = parallel.internal.pool.serialize(feval(channel, channelArgs{:}));
+
+Operation terminated by user during FindObjNum (line 14)
+
+
+In VolumeFraction>ExtractCellFillInformation (line 177)
+        isFullCell=prod(FindObjNum([],[cellStruct.edge(:).index],...
+
+In VolumeFraction (line 26)
+        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
+
+In Snakes>VelocityAndVolumeProcess (line 422)
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+
+In Snakes>IterSnakes (line 148)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+
+In Snakes>RunSnakesProcess (line 88)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
+
+In Snakes (line 34)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+In ExecuteSnakes_Optim (line 29)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+
+In ExecuteOptimisation>NormalExecutionIteration (line 385)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+
+In ExecuteOptimisation>(parfor body) (line 316)
+            [population(ii+1),supportstruct(ii+1)]=NormalExecutionIteration(population(ii+1),newRefGrid,newrestartsnake,...

@@ -127,7 +127,7 @@ function [iterstruct,paroptim]=GenerateRestartPop(paroptim,iterstruct,startIter,
         iterstruct(startIter+1).population=ApplySymmetry(paroptim,...
             iterstruct(startIter+1).population);
     else
-        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,1);
+        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter);
     end
     
 end
