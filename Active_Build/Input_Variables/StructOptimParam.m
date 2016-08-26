@@ -918,6 +918,27 @@ function [paroptim]=bp3_MultiTopo_M2_DE_Spill()
     paroptim.general.worker=12;
     
 end
+
+function [paroptim]=bp3_MultiTopo_M2_DE_SpillT()
+    
+    [paroptim]=bp3_MultiTopo_M2_DE_Spill();
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=4;
+    
+    paroptim.general.worker=12;
+    
+end
+
+function [paroptim]=bp3_MultiTopo_M2_DE_SpillTT()
+    
+    [paroptim]=bp3_MultiTopo_M2_DE_Spill();
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=1;
+    
+    paroptim.general.worker=12;
+    
+end
+
 function [paroptim]=bp3_MultiTopo_M2_CG_wide()
     
     [paroptim]=MultiTopo_CGhoriz();
@@ -1414,7 +1435,6 @@ function [paroptim]=bp3_Aero_CG_10L_none()
     
 end
 
-
 function [paroptim]=bp3_Aero_CG_05_smooth()
     [paroptim]=CG_Aero();
     
@@ -1562,7 +1582,7 @@ function [paroptim]=LocOptim_12to24_13()
     nDes=13;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1577,7 +1597,7 @@ function [paroptim]=LocOptim_12to24_14()
     nDes=14;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1592,7 +1612,7 @@ function [paroptim]=LocOptim_12to24_15()
     nDes=15;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1607,7 +1627,7 @@ function [paroptim]=LocOptim_12to24_16()
     nDes=16;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1622,7 +1642,7 @@ function [paroptim]=LocOptim_12to24_17()
     nDes=17;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1637,7 +1657,7 @@ function [paroptim]=LocOptim_12to24_18()
     nDes=18;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1652,7 +1672,7 @@ function [paroptim]=LocOptim_12to24_19()
     nDes=19;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1667,7 +1687,7 @@ function [paroptim]=LocOptim_12to24_20()
     nDes=20;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1682,7 +1702,7 @@ function [paroptim]=LocOptim_12to24_21()
     nDes=21;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1697,7 +1717,7 @@ function [paroptim]=LocOptim_12to24_22()
     nDes=22;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1712,7 +1732,7 @@ function [paroptim]=LocOptim_12to24_23()
     nDes=23;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     
@@ -1727,7 +1747,7 @@ function [paroptim]=LocOptim_12to24_24()
     nDes=24;
     
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
-    paroptim.parametrisation.passDomBounds=...
+    paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
         paroptim.parametrisation.optiminit.cellLevels);
     

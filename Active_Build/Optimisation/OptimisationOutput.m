@@ -183,7 +183,15 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     if strcmp(objectiveName,'CutCellFlow')
         [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
             dat.xMin,dat.xMax,dat.A,dat.nPoints);
-        
+    end
+    
+    [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
+    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
+    figName=MakePathCompliant(figName);
+    hgsave(h,figName);
+    
+    if strcmp(objectiveName,'CutCellFlow')   
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
         tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
@@ -196,11 +204,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             tecPlotFile,axisRatio,paroptim);
         
     end
-    [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
-    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-    figName=[writeDirectory,'\Optimisation_',marker,'.fig'];
-    figName=MakePathCompliant(figName);
-    hgsave(h,figName);
+    
 end
 
 function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
@@ -464,8 +468,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
             
-        flowCommand=['cp -p ''/panfs/panasas01/aero/ap1949/SnakVolParam/source/Result_Template/CFD_code_Template/Source/postproc.exe'' ''',[minIterPos,filesep,'CFD/postproc.exe'],''''];
-        [status,stdout]=system(flowCommand);
+        
             RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 CutCellFlow_Handler(paramoptim,minIterPos)
