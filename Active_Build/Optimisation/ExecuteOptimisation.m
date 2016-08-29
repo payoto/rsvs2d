@@ -24,7 +24,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     varExtract={'maxIter','restartSource'};
     [maxIter,restartSource]=ExtractVariables(varExtract,paramoptim);
     startIter=1;
-    
+    firstValidIter=1;
     % Restart
     inNFlag=nargin;
     if inNFlag==2 || ~isempty(restartSource{1})
