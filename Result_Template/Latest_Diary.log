@@ -1,3 +1,20 @@
+51
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+30-Aug-2016 17:33:51
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
   
 -----------------------
 INITIAL GRID OPERATIONS start
@@ -87,30 +104,79 @@ Calculations Started . . .
 			Start Cell 64 of 64 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('FindObjNum', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Various\FindObjNum.m', 19)" style="font-weight:bold">FindObjNum</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Various\FindObjNum.m',19,0)">line 19</a>)
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:462
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+[Warning: Symmetry assignement not robust when taken with the rest of
+the program] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>BuildSymmetryLists', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 551)" style="font-weight:bold">ExecuteOptimisation>BuildSymmetryLists</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',551,0)">line 551</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>OptimisationParametersModif', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 521)" style="font-weight:bold">ExecuteOptimisation>OptimisationParametersModif</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',521,0)">line 521</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 191)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',191,0)">line 191</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)] 
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:01:273
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:07:930
+  Volume converged to 7.60432e-04
+Time Elapsed:00:00:10:905
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:13:219
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+30-Aug-2016 17:34:04
+--------------------------------------------------------------------------------------------
+  
+{Operation terminated by user during
+<a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractBorderDerivStructure', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 453)" style="font-weight:bold">VolumeFraction>ExtractBorderDerivStructure</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',453,0)">line 453</a>)
 
 
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_EdgeInformation>EdgeFillInformationReshape', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_EdgeInformation.m', 105)" style="font-weight:bold">include_EdgeInformation>EdgeFillInformationReshape</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_EdgeInformation.m',105,0)">line 105</a>)
-    edgeCellSub(:,2)=FindObjNum(gridreshape.cell,edgeCellIndex(:,2),cellIndex);
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractCellDerivInformation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 421)" style="font-weight:bold">VolumeFraction>ExtractCellDerivInformation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',421,0)">line 421</a>)
+            [coeffblock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks);
+            
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFractionDVolumeFractionDifferentiated', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 397)" style="font-weight:bold">VolumeFractionDVolumeFractionDifferentiated</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',397,0)">line 397</a>)
+        [cellCentredGrid(ii).coeffBlock]=...
 
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_EdgeInformation>EdgePropertiesReshape', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_EdgeInformation.m', 62)" style="font-weight:bold">include_EdgeInformation>EdgePropertiesReshape</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_EdgeInformation.m',62,0)">line 62</a>)
-    edgeFill=EdgeFillInformationReshape(gridreshape);
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 30)" style="font-weight:bold">VolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',30,0)">line 30</a>)
+    [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid);
+    
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>VelocityAndVolumeProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 422)" style="font-weight:bold">Snakes>VelocityAndVolumeProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',422,0)">line 422</a>)
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+    
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 148)" style="font-weight:bold">Snakes>IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',148,0)">line 148</a>)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+        
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 88)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',88,0)">line 88</a>)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
+        
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
 
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('EdgePropertiesReshape', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\EdgePropertiesReshape.m', 6)" style="font-weight:bold">EdgePropertiesReshape</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\EdgePropertiesReshape.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=EdgePropertiesReshape_Handle(varargin{:});
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSnakes_Optim', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m', 29)" style="font-weight:bold">ExecuteSnakes_Optim</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m',29,0)">line 29</a>)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+    
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>NormalExecutionIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 392)" style="font-weight:bold">ExecuteOptimisation>NormalExecutionIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',392,0)">line 392</a>)
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
 
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m', 30)" style="font-weight:bold">GridRefinement</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m',30,0)">line 30</a>)
-    [gridrefined]=EdgePropertiesReshape(gridrefined);
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>GridInitAndRefine', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 462)" style="font-weight:bold">ExecuteOptimisation>GridInitAndRefine</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',462,0)">line 462</a>)
-    [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 164)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',164,0)">line 164</a>)
-    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)
-    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('LocOptim_12to24', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocOptim_12to24.m', 6)" style="font-weight:bold">LocOptim_12to24</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\JobScripts\LocOptim_12to24.m',6,0)">line 6</a>)
-ExecuteOptimisation(['LocOptim_12to24_',int2str(nDes)]);
-} 
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>ComputeRootSensitivityPop', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 346)" style="font-weight:bold">ExecuteOptimisation>ComputeRootSensitivityPop</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',346,0)">line 346</a>)
+        [population(1),supportstruct,restartsnake]=NormalExecutionIteration(population(1),newRefGrid,...
+        
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>IterateSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 304)" style="font-weight:bold">ExecuteOptimisation>IterateSensitivity</a> (<a href="matl
