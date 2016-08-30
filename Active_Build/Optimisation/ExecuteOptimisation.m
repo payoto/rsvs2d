@@ -661,8 +661,8 @@ end
 function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     
     varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal',...
-        'optimMethod','desvarconnec','specificFillName'};
-    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,specificFillName]...
+        'optimMethod','desvarconnec','specificFillName','initInterp'};
+    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,specificFillName,initInterp]...
         =ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paroptim.parametrisation);
@@ -745,6 +745,10 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         case 'initaeroshell'
             [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
                 desVarVal);
+            
+        case 'initinterp'
+            [rootFill]=InitialiseFromFunction(cellLevels,corneractive,initInterp,nDesVar);
+            origPop=ones([nPop 1])*rootFill;
     end
     
     
@@ -926,6 +930,42 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
     end
 end
+
+function [rootFill]=InitialiseFromFunction(cellLevels,corneractive,initInterp,nDesVar)
+    
+    load(initInterp{1}); % loads file with variable interpFunc with the same #rows as cellLevels
+    
+    
+    [nFunc,nDes]=size(interpFunc);
+    indFunc=linspace(0,1,nDes);
+    indFill=linspace(0,1,cellLevels(1));
+    rootFill=zeros([1,nDesVar]);
+    
+    if cellLevels(2)>nFunc
+        warning('insufficient number of functions some will be repeated')
+        
+    end
+    nCellLine=ones([1,cellLevels(2)])*cellLevels(1);
+    if ~corneractive
+        nCellLine(1)=cellLevels(1)-2;
+        nCellLine(end)=cellLevels(1)-2;
+    end
+    startInd=cumsum([0,nCellLine(1:end-1)])+1;
+    endInd=cumsum(nCellLine);
+    for ii=1:cellLevels(2)
+        
+        interpFill=interp1(indFunc,interpFunc(ii,:),indFill);
+        
+        if ~corneractive && (ii==1 || ii==cellLevels(2))
+            interpFill([1,end])=[];
+        end
+        
+        rootFill(startInd(ii):endInd(ii))=interpFill;
+        
+    end
+    
+end
+
 
 function [origPop]=StartFromFill(nDesVar,nPop,fillName)
     

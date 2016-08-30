@@ -77,6 +77,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
     paroptimgeneral.varOverflow='spill'; % 'truncate' 'spill'
+    paroptimgeneral.initInterp={};
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -1564,7 +1565,8 @@ function [paroptim]=LocOptim_12to24_12()
     [paroptim]=CG_Aero();
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
     paroptim.parametrisation.snakes.refine.axisRatio=1.25;
-    paroptim.general.startPop='halfuniformsharp';
+    paroptim.general.startPop='initinterp';
+    paroptim.general.initInterp={'InterpFunc_24DV.mat'};
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.3;
@@ -1572,7 +1574,7 @@ function [paroptim]=LocOptim_12to24_12()
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=40;
+    paroptim.general.maxIter=30;
     paroptim.general.worker=12;
 end
 
@@ -1743,6 +1745,203 @@ end
 
 function [paroptim]=LocOptim_12to24_24()
     [paroptim]=LocOptim_12to24_12();
+    
+    nDes=24;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_12()
+    [paroptim]=CG_Aero();
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.general.startPop='initinterp';
+    paroptim.general.initInterp={'InterpFunc_13DV.mat'};
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=30;
+    paroptim.general.worker=12;
+end
+
+function [paroptim]=LocOptim_12to24_2_13()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=13;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_14()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=14;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_15()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=15;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_16()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=16;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_17()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=17;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_18()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=18;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_19()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=19;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_20()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=20;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_21()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=21;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_22()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=22;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_23()
+    [paroptim]=LocOptim_12to24_2_12();
+    
+    nDes=23;
+    
+    paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(...
+        paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
+    
+end
+
+function [paroptim]=LocOptim_12to24_2_24()
+    [paroptim]=LocOptim_12to24_2_12();
     
     nDes=24;
     
