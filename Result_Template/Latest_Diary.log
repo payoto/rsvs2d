@@ -179,4 +179,152 @@ In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Exec
 In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>ComputeRootSensitivityPop', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 346)" style="font-weight:bold">ExecuteOptimisation>ComputeRootSensitivityPop</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',346,0)">line 346</a>)
         [population(1),supportstruct,restartsnake]=NormalExecutionIteration(population(1),newRefGrid,...
         
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>IterateSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 304)" style="font-weight:bold">ExecuteOptimisation>IterateSensitivity</a> (<a href="matl
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>IterateSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 304)" style="font-weight:bold">ExecuteOptimisation>IterateSensitivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',304,0)">line 304</a>)
+    [population,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=ComputeRootSensitivityPop...
+    
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>PerformIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 218)" style="font-weight:bold">ExecuteOptimisation>PerformIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',218,0)">line 218</a>)
+        [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+        
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 46)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',46,0)">line 46</a>)
+        [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...} 
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',346,1)">346 </a>        [population(1),supportstruct,restartsnake]=NormalExecutionIteration(population(1),newRefGrid,...
+if system_dependent('IsDebugMode')==1, dbquit; end
+cl
+{Undefined function or variable 'cl'.
+} 
+clc
+rootDir={'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-18T205701_bp3_Aero_CG_12L_pk'}
+
+rootDir = 
+
+    'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Vol...'
+
+clc
+pltPaths=PreplotUtil(rootDir);
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+rootDir={'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-30T044510_bp3_Aero_CG_12L_pk'}
+
+rootDir = 
+
+    'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Vol...'
+
+
+pltPaths=PreplotUtil(rootDir);
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Transonic\Dir_2016-08-30T044510_bp3_Aero_CG_12L_pk\Optimisation_2016-08-30T044510_bp3_Aero_CG_12L_pk.fig',1)
+rootDir{'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts'}
+{Index exceeds matrix dimensions.
+} 
+rootDir={'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts'}
+
+rootDir = 
+
+    'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes V...'
+
+pltPaths=PreplotUtil(rootDir);
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+FindDir Could not find requested item
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts\from24DV\des12\Optimisation_2016-08-30T173933_LocOptim_12to24_12.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts\from24DV\des13\Optimisation_2016-08-30T173935_LocOptim_12to24_13.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts\from13DV\des12\Optimisation_2016-08-30T175435_LocOptim_12to24_2_12.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts\from13DV\des13\Optimisation_2016-08-30T174600_LocOptim_12to24_2_13.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\SmoothedModes\Modality\restarts\from13DV\des14\Optimisation_2016-08
