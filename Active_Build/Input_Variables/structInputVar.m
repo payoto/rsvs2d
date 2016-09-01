@@ -367,6 +367,29 @@ function [param]=ModeAnalysis2body()
     
 end
 
+function [param]=FlatPlate()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.refineSteps=4;
+    param.general.subdivType='chaikin';
+    param.general.typDat='flatplate';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.1818,0.1818];
+    param.general.refineSteps=2;
+    param.snakes.step.mergeTopo=true;
+     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+    param.plotting.checkSensitivities=false;
+    
+end
+
 %% Optimisation Cases
 
 function [param]=optimDefault()
