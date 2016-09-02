@@ -216,7 +216,11 @@ function [varStr]=GenerateVariableString(startVar)
                     varStrCell{ii,jj}=GenerateVariableString(startVar{ii,jj});
                 end
             end
-            [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
+            if exist('varStrCell','var')
+                [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
+            else
+                [varStr]=[openStr,closeStr];
+            end
         case 'double'
             
             openStr='[';

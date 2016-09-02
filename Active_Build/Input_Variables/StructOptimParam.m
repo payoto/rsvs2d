@@ -1538,8 +1538,8 @@ function [paroptim]=bp3_Aero_CG_12L_pk()
     paroptim.optim.CG.validVol=0.4;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=5;
-     paroptim.obj.flow.nMach=0.85;
-     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
+    paroptim.obj.flow.nMach=0.85;
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
     paroptim.obj.flow.stoponerror=false;
     paroptim.obj.flow.targConv=-6;
     paroptim.obj.flow.lengthConvTest=100;
@@ -1557,6 +1557,12 @@ function [paroptim]=bp3_Aero_CG_12L_pk()
     paroptim.general.nPop=12;
     paroptim.general.maxIter=60;
     paroptim.general.worker=12;
+end
+
+function [paroptim]=bp3_Aero_CG_12L_pk_re()
+    [paroptim]=bp3_Aero_CG_12L_pk();
+    paroptim.general.maxIter=16;
+    
 end
 
 %% Test Local Optimum
