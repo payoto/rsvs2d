@@ -1,4 +1,35 @@
-GENERATION PROCESS START
+metrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',168,0)">line 168</a>)
+    [outinfo]=OptimisationOutput('init',paramoptim);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+} 
+ExecuteOptimisation('bp3_Aero_CG_12L_pk');
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - bp3_Aero_CG_12L_pk start
+02-Sep-2016 11:19:19
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+02-Sep-2016 11:19:19
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
@@ -10,10 +41,6 @@ Calculations Started . . .
 
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:047
-GENERATION PROCESS end
-GRID REFINEMENT START
 
      OUTPUT:Skipped
 Calculations Started . . .
@@ -23,186 +50,152 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 88 
-			Start Cell 2 of 88 
-			Start Cell 3 of 88 
-			Start Cell 4 of 88 
-			Start Cell 5 of 88 
-			Start Cell 6 of 88 
-			Start Cell 7 of 88 
-			Start Cell 8 of 88 
-			Start Cell 9 of 88 
-			Start Cell 10 of 88 
-			Start Cell 11 of 88 
-			Start Cell 12 of 88 
-			Start Cell 13 of 88 
-			Start Cell 14 of 88 
-			Start Cell 15 of 88 
-			Start Cell 16 of 88 
-			Start Cell 17 of 88 
-			Start Cell 18 of 88 
-			Start Cell 19 of 88 
-			Start Cell 20 of 88 
-			Start Cell 21 of 88 
-			Start Cell 22 of 88 
-			Start Cell 23 of 88 
-			Start Cell 24 of 88 
-			Start Cell 25 of 88 
-			Start Cell 26 of 88 
-			Start Cell 27 of 88 
-			Start Cell 28 of 88 
-			Start Cell 29 of 88 
-			Start Cell 30 of 88 
-			Start Cell 31 of 88 
-			Start Cell 32 of 88 
-			Start Cell 33 of 88 
-			Start Cell 34 of 88 
-			Start Cell 35 of 88 
-			Start Cell 36 of 88 
-			Start Cell 37 of 88 
-			Start Cell 38 of 88 
-			Start Cell 39 of 88 
-			Start Cell 40 of 88 
-			Start Cell 41 of 88 
-			Start Cell 42 of 88 
-			Start Cell 43 of 88 
-			Start Cell 44 of 88 
-			Start Cell 45 of 88 
-			Start Cell 46 of 88 
-			Start Cell 47 of 88 
-			Start Cell 48 of 88 
-			Start Cell 49 of 88 
-			Start Cell 50 of 88 
-			Start Cell 51 of 88 
-			Start Cell 52 of 88 
-			Start Cell 53 of 88 
-			Start Cell 54 of 88 
-			Start Cell 55 of 88 
-			Start Cell 56 of 88 
-			Start Cell 57 of 88 
-			Start Cell 58 of 88 
-			Start Cell 59 of 88 
-			Start Cell 60 of 88 
-			Start Cell 61 of 88 
-			Start Cell 62 of 88 
-			Start Cell 63 of 88 
-			Start Cell 64 of 88 
-			Start Cell 65 of 88 
-			Start Cell 66 of 88 
-			Start Cell 67 of 88 
-			Start Cell 68 of 88 
-			Start Cell 69 of 88 
-			Start Cell 70 of 88 
-			Start Cell 71 of 88 
-			Start Cell 72 of 88 
-			Start Cell 73 of 88 
-			Start Cell 74 of 88 
-			Start Cell 75 of 88 
-			Start Cell 76 of 88 
-			Start Cell 77 of 88 
-			Start Cell 78 of 88 
-			Start Cell 79 of 88 
-			Start Cell 80 of 88 
-			Start Cell 81 of 88 
-			Start Cell 82 of 88 
-			Start Cell 83 of 88 
-			Start Cell 84 of 88 
-			Start Cell 85 of 88 
-			Start Cell 86 of 88 
-			Start Cell 87 of 88 
-			Start Cell 88 of 88 
+			Start Cell 1 of 112 
+			Start Cell 2 of 112 
+			Start Cell 3 of 112 
+			Start Cell 4 of 112 
+			Start Cell 5 of 112 
+			Start Cell 6 of 112 
+			Start Cell 7 of 112 
+			Start Cell 8 of 112 
+			Start Cell 9 of 112 
+			Start Cell 10 of 112 
+			Start Cell 11 of 112 
+			Start Cell 12 of 112 
+			Start Cell 13 of 112 
+			Start Cell 14 of 112 
+			Start Cell 15 of 112 
+			Start Cell 16 of 112 
+			Start Cell 17 of 112 
+			Start Cell 18 of 112 
+			Start Cell 19 of 112 
+			Start Cell 20 of 112 
+			Start Cell 21 of 112 
+			Start Cell 22 of 112 
+			Start Cell 23 of 112 
+			Start Cell 24 of 112 
+			Start Cell 25 of 112 
+			Start Cell 26 of 112 
+			Start Cell 27 of 112 
+			Start Cell 28 of 112 
+			Start Cell 29 of 112 
+			Start Cell 30 of 112 
+			Start Cell 31 of 112 
+			Start Cell 32 of 112 
+			Start Cell 33 of 112 
+			Start Cell 34 of 112 
+			Start Cell 35 of 112 
+			Start Cell 36 of 112 
+			Start Cell 37 of 112 
+			Start Cell 38 of 112 
+			Start Cell 39 of 112 
+			Start Cell 40 of 112 
+			Start Cell 41 of 112 
+			Start Cell 42 of 112 
+			Start Cell 43 of 112 
+			Start Cell 44 of 112 
+			Start Cell 45 of 112 
+			Start Cell 46 of 112 
+			Start Cell 47 of 112 
+			Start Cell 48 of 112 
+			Start Cell 49 of 112 
+			Start Cell 50 of 112 
+			Start Cell 51 of 112 
+			Start Cell 52 of 112 
+			Start Cell 53 of 112 
+			Start Cell 54 of 112 
+			Start Cell 55 of 112 
+			Start Cell 56 of 112 
+			Start Cell 57 of 112 
+			Start Cell 58 of 112 
+			Start Cell 59 of 112 
+			Start Cell 60 of 112 
+			Start Cell 61 of 112 
+			Start Cell 62 of 112 
+			Start Cell 63 of 112 
+			Start Cell 64 of 112 
+			Start Cell 65 of 112 
+			Start Cell 66 of 112 
+			Start Cell 67 of 112 
+			Start Cell 68 of 112 
+			Start Cell 69 of 112 
+			Start Cell 70 of 112 
+			Start Cell 71 of 112 
+			Start Cell 72 of 112 
+			Start Cell 73 of 112 
+			Start Cell 74 of 112 
+			Start Cell 75 of 112 
+			Start Cell 76 of 112 
+			Start Cell 77 of 112 
+			Start Cell 78 of 112 
+			Start Cell 79 of 112 
+			Start Cell 80 of 112 
+			Start Cell 81 of 112 
+			Start Cell 82 of 112 
+			Start Cell 83 of 112 
+			Start Cell 84 of 112 
+			Start Cell 85 of 112 
+			Start Cell 86 of 112 
+			Start Cell 87 of 112 
+			Start Cell 88 of 112 
+			Start Cell 89 of 112 
+			Start Cell 90 of 112 
+			Start Cell 91 of 112 
+			Start Cell 92 of 112 
+			Start Cell 93 of 112 
+			Start Cell 94 of 112 
+			Start Cell 95 of 112 
+			Start Cell 96 of 112 
+			Start Cell 97 of 112 
+			Start Cell 98 of 112 
+			Start Cell 99 of 112 
+			Start Cell 100 of 112 
+			Start Cell 101 of 112 
+			Start Cell 102 of 112 
+			Start Cell 103 of 112 
+			Start Cell 104 of 112 
+			Start Cell 105 of 112 
+			Start Cell 106 of 112 
+			Start Cell 107 of 112 
+			Start Cell 108 of 112 
+			Start Cell 109 of 112 
+			Start Cell 110 of 112 
+			Start Cell 111 of 112 
+			Start Cell 112 of 112 
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:345
-GRID REFINEMENT end
-SNAKE PROCESS START
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:01:720
-  Start Time Stepping
-     Step 1  - DVol = 0.1397  Time Taken: 00:00:00:578
-     Step 2  - DVol = 0.1124  Time Taken: 00:00:00:595
-     Step 3  - DVol = 0.1075  Time Taken: 00:00:00:954
-     Step 4  - DVol = 0.098815  Time Taken: 00:00:00:577
-     Step 5  - DVol = 0.076648  Time Taken: 00:00:00:580
-     Step 6  - DVol = 0.06846  Time Taken: 00:00:00:929
-     Step 7  - DVol = 0.060033  Time Taken: 00:00:00:533
-     Step 8  - DVol = 0.045408  Time Taken: 00:00:00:548
-     Step 9  - DVol = 0.03416  Time Taken: 00:00:00:546
-     Step 10  - DVol = 0.025112  Time Taken: 00:00:00:896
-     Step 11  - DVol = 0.019874  Time Taken: 00:00:00:517
-     Step 12  - DVol = 0.015003  Time Taken: 00:00:00:531
-     Step 13  - DVol = 0.01116  Time Taken: 00:00:00:525
-     Step 14  - DVol = 0.0084763  Time Taken: 00:00:00:531
-     Step 15  - DVol = 0.0063861  Time Taken: 00:00:00:532
-     Step 16  - DVol = 0.0045835  Time Taken: 00:00:00:515
-     Step 17  - DVol = 0.0034376  Time Taken: 00:00:00:516
-     Step 18  - DVol = 0.0025782  Time Taken: 00:00:00:530
-     Step 19  - DVol = 0.0019336  Time Taken: 00:00:00:484
-     Step 20  - DVol = 0.001442  Time Taken: 00:00:00:501
-     Step 21  - DVol = 0.0010816  Time Taken: 00:00:00:486
-     Step 22  - DVol = 0.00081157  Time Taken: 00:00:00:499
-     Step 23  - DVol = 0.00060891  Time Taken: 00:00:00:501
-     Step 24  - DVol = 0.00045682  Time Taken: 00:00:00:501
-     Step 25  - DVol = 0.00034271  Time Taken: 00:00:00:517
-     Step 26  - DVol = 0.00025708  Time Taken: 00:00:00:515
-     Step 27  - DVol = 0.00019284  Time Taken: 00:00:00:519
-     Step 28  - DVol = 0.00014465  Time Taken: 00:00:00:499
-     Step 29  - DVol = 0.0001085  Time Taken: 00:00:00:485
-     Step 30  - DVol = 8.138e-05  Time Taken: 00:00:00:500
-     Step 31  - DVol = 6.1039e-05  Time Taken: 00:00:00:471
-     Step 32  - DVol = 4.5781e-05  Time Taken: 00:00:00:510
-     Step 33  - DVol = 3.4337e-05  Time Taken: 00:00:00:500
-     Step 34  - DVol = 2.5753e-05  Time Taken: 00:00:00:500
-     Step 35  - DVol = 1.9315e-05  Time Taken: 00:00:00:484
-     Step 36  - DVol = 1.4487e-05  Time Taken: 00:00:00:499
-     Step 37  - DVol = 1.0865e-05  Time Taken: 00:00:00:500
-     Step 38  - DVol = 8.1489e-06  Time Taken: 00:00:00:485
-     Step 39  - DVol = 6.1117e-06  Time Taken: 00:00:00:501
-     Step 40  - DVol = 4.5838e-06  Time Taken: 00:00:00:483
-     Step 41  - DVol = 3.4379e-06  Time Taken: 00:00:00:499
-     Step 42  - DVol = 2.5784e-06  Time Taken: 00:00:00:500
-     Step 43  - DVol = 1.9338e-06  Time Taken: 00:00:00:489
-     Step 44  - DVol = 1.4504e-06  Time Taken: 00:00:00:509
-     Step 45  - DVol = 1.0878e-06  Time Taken: 00:00:00:489
-     Step 46  - DVol = 8.1583e-07  Time Taken: 00:00:00:484
-     Step 47  - DVol = 6.1187e-07  Time Taken: 00:00:00:501
-     Step 48  - DVol = 4.5891e-07  Time Taken: 00:00:00:483
-     Step 49  - DVol = 3.4418e-07  Time Taken: 00:00:00:501
-     Step 50  - DVol = 2.5813e-07  Time Taken: 00:00:00:486
-     Step 51  - DVol = 1.936e-07  Time Taken: 00:00:00:500
-     Step 52  - DVol = 1.452e-07  Time Taken: 00:00:00:484
-     Step 53  - DVol = 1.089e-07  Time Taken: 00:00:00:491
-     Step 54  - DVol = 8.1676e-08  Time Taken: 00:00:00:485
-     Step 55  - DVol = 6.1257e-08  Time Taken: 00:00:00:486
-     Step 56  - DVol = 4.5942e-08  Time Taken: 00:00:00:499
-     Step 57  - DVol = 3.4457e-08  Time Taken: 00:00:00:485
-     Step 58  - DVol = 2.5843e-08  Time Taken: 00:00:00:483
-     Step 59  - DVol = 1.9382e-08  Time Taken: 00:00:00:500
-     Step 60  - DVol = 1.4536e-08  Time Taken: 00:00:00:500
-     Step 61  - DVol = 1.0902e-08  Time Taken: 00:00:00:484
-     Step 62  - DVol = 8.1768e-09  Time Taken: 00:00:00:490
-     Step 63  - DVol = 6.1326e-09  Time Taken: 00:00:00:484
-     Step 64  - DVol = 4.5994e-09  Time Taken: 00:00:00:500
-     Step 65  - -  Snakes Converged!
-  65 Steps Performed
-  Iteration Time:00:00:34:168
-  Volume converged to 3.44958e-09
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:582
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+Starting parallel pool (parpool) using the 'OptimSnakes_Import_74' profile ... 
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.getJavaFutureResult', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\getJavaFutureResult.m', 15)" style="font-weight:bold">parallel.internal.getJavaFutureResult</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\getJavaFutureResult.m',15,0)">line 15</a>)
 
-ans = 
 
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (6) with properties:
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.pool.InteractiveClient/waitForSessionCreation', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\+pool\InteractiveClient.m', 637)" style="font-weight:bold">parallel.internal.pool.InteractiveClient/waitForSessionCreation</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\+pool\InteractiveClient.m',637,0)">line 637</a>)
+                [gotSession, session] = parallel.internal.getJavaFutureResult(...
 
-      Number: 6
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.pool.InteractiveClient/start', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\+pool\InteractiveClient.m', 345)" style="font-weight:bold">parallel.internal.pool.InteractiveClient/start</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\+pool\InteractiveClient.m',345,0)">line 345</a>)
+                    obj.Session = obj.waitForSessionCreation(sessionFuture, connectionCounter, ...
 
-  Show <a href="matlab:if exist('ans', 'var'), matlab.graphics.internal.getForDisplay('ans', ans, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('ans'), end">all properties</a>
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.Pool>iStartClient', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\@Pool\Pool.m', 547)" style="font-weight:bold">parallel.Pool>iStartClient</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\@Pool\Pool.m',547,0)">line 547</a>)
+client.start(poolType , numWorkers, cluster, ...
 
-Time taken:00:00:36:340
-SNAKE PROCESS END
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.Pool.hBuildPool', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\@Pool\Pool.m', 439)" style="font-weight:bold">parallel.Pool.hBuildPool</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\@Pool\Pool.m',439,0)">line 439</a>)
+            iStartClient(client, 'pool', cluster, guiMode, supportRestart, argsList);
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.pool.doParpool', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\+pool\doParpool.m', 15)" style="font-weight:bold">parallel.internal.pool.doParpool</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\+parallel\+internal\+pool\doParpool.m',15,0)">line 15</a>)
+    pool = parallel.Pool.hBuildPool(constructorArgs{:});
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parpool', 'C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\parpool.m', 89)" style="font-weight:bold">parpool</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\distcomp\cluster\parpool.m',89,0)">line 89</a>)
+    pool = parallel.internal.pool.doParpool(varargin{:});
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 188)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',188,0)">line 188</a>)
+        parpool(poolName)
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+} 
+% Parameter File 
+% 02-Sep-2016 11:19:19 
+% 2016-09
