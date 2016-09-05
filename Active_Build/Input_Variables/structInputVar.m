@@ -390,6 +390,29 @@ function [param]=FlatPlate()
     
 end
 
+function [param]=Missile2In()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.refineSteps=4;
+    param.general.subdivType='chaikin';
+    param.general.typDat='missile2_input';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-2/3,2/3];
+    param.general.refineSteps=2;
+    param.snakes.step.mergeTopo=true;
+     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+    param.plotting.checkSensitivities=false;
+    
+end
+
 %% Optimisation Cases
 
 function [param]=optimDefault()
@@ -1044,6 +1067,9 @@ function [param]=TestInit()
     sizeRatio=sizeRatio(1)/sizeRatio(2);
     param.general.passDomBounds(1,:)=param.general.passDomBounds(1,:)*sizeRatio;
 end
+
+
+
 
 %% Not updated yet
 function [param]=SnakesFoilVSmall()
