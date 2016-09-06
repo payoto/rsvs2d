@@ -1014,6 +1014,63 @@ function [paroptim]=Desk_CG_inline_out()
     paroptim.general.worker=4;
 end
 
+% Test pop size effect on multi topo optim
+
+
+function [paroptim]=bp3_MT_pop_100()
+    
+    [paroptim]=MultiTopo_DEhoriz();
+    paroptim=Test_Desktop(paroptim);
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.optimMethod='DE';
+    
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=200;
+    
+    paroptim.general.worker=12;
+    
+end
+
+function [paroptim]=bp3_MT_pop_75()
+    
+    [paroptim]=bp3_MT_pop_100();
+    
+    paroptim.general.nPop=75;
+    
+end
+function [paroptim]=bp3_MT_pop_25()
+    
+    [paroptim]=bp3_MT_pop_100();
+    
+    paroptim.general.nPop=25;
+    
+end
+function [paroptim]=bp3_MT_pop_50()
+    
+    [paroptim]=bp3_MT_pop_100();
+    
+    paroptim.general.nPop=50;
+    
+end
+
+function [paroptim]=bp3_MT_pop_125()
+    
+    [paroptim]=bp3_MT_pop_100();
+    
+    paroptim.general.nPop=125;
+    
+end
+
+
+function [paroptim]=bp3_MT_pop_150()
+    
+    [paroptim]=bp3_MT_pop_100();
+    
+    paroptim.general.nPop=150;
+    
+end
+
 %% Smoothed mode
 
 % desktop
@@ -2127,6 +2184,29 @@ function [paroptim]=bp3_Aero_DE_missile_weak()
     paroptim.general.maxIter=100;
     paroptim.general.worker=12;
 end
+% Componetns long
+function [paroptim]=bp3_missile2()
+    
+    [paroptim]=Component_DE();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile2_5b12.png','min'}};
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12;
+end
+
+function [paroptim]=bp3_smile()
+    
+    [paroptim]=Component_DE();
+    paroptim.parametrisation.snakes.refine.axisRatio=0.5;
+    
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\smile_5b12.png','min'}};
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12;
+end
+
 
 % test versions
 
