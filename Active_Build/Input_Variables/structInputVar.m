@@ -785,6 +785,30 @@ function [param]=Klunker()
     
 end
 
+function [param]=Klunker2()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='klunker2';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=2;
+    param.snakes.refine.typeRefine='all';
+    param.general.refineSteps=4;
+    param.snakes.step.mergeTopo=false;
+     param.snakes.refine.axisRatio=1.0;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.edgeFinish='sharpen';
+    
+    param.optiminit.cellLevels=[8,4];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    
+end
+
 function [param]=Line()
     
     [param]=DefaultCase();
@@ -1039,8 +1063,24 @@ function [param]=Donught()
     
     [param]=HalfWedge();
     
+    param.general.typDat='donught';
+    param.snakes.refine.edgeFinish='none';
+    param.snakes.refine.axisRatio=1;
+    param.optiminit.cellLevels=[3,3];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=0.5;
+    
+end
+
+function [param]=Donught2()
+    
+    [param]=HalfWedge();
+    
     param.general.typDat='donught2';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=1;
     param.optiminit.cellLevels=[3,3];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1068,230 +1108,196 @@ function [param]=TestInit()
     param.general.passDomBounds(1,:)=param.general.passDomBounds(1,:)*sizeRatio;
 end
 
-
-
-
-%% Not updated yet
-function [param]=SnakesFoilVSmall()
+%% validation cases
+% Validation cases need:
+%   CurrentValidation()
+%   param.snakes.refine.refineGrid
+%   param.snakes.step.snakesSteps
+function [param]=CurrentValidation()
     
-    passDomBounds=[-1,1;-1,1];
-     % number of steps in design domain
-    passGridSteps=3; 
-     % number of refining steps
-    refineSteps=2;
-    passPadding=1;
+    [param]=DefaultCase();
     
-    typDat='vlofoil';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=0;
-    snakesSteps=50;
-    refineGrid=2;
-    typeRefine='grey';
-    execTest=false;
-    makeMov=false;
+    % Note Files
+    param.results.noteFiles={'CurrentBuild'};
+    param.results.tags={'snakes','Opimisation','VALIDATION','SQP','Profile Length'};
+    
+    % Local optimum avoidance params
+    param.snakes.step.mergeTopo=true;
+    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.typeSmear='length';
+    param.snakes.step.arrivalTolerance=10e-2;
+    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
+    param.snakes.step.convCheckRate=100;
+    param.snakes.step.convCheckRange=15;
+    param.snakes.step.convDistance=500;
+    param.snakes.step.fillLooseStep=5;
+    param.snakes.step.fillLooseCut=1e-3;
+    
+    % Default stepping params for validation (some cases might need more)
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    
+    % Need to sort out the domain sizes to be always square?
+end
+
+function [param]=val_Snakestestsmooth1()
+    
+    [param]=CurrentValidation();
+    
+    param.general.typDat='testsmooth1';
+    
+    
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=8;
     
 end
 
-function [param]=SnakesdoubleBody()
+function [param]=val_Snakestestsmooth1_2()
     
-    passDomBounds=[-1,1;-1,1];
-     % number of steps in design domain
-    passGridSteps=3; 
-     % number of refining steps
-    refineSteps=0;
-    passPadding=1;
+    [param]=CurrentValidation();
     
-    typDat='doubleBody';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=1;
-    snakesSteps=100;
-    refineGrid=2;
-    typeRefine='grey';
-    execTest=false;
-    makeMov=false;
+    param.general.typDat='testsmooth1_2';
+    
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=8;
     
 end
 
-function [param]=RandSmall()
+function [param]=val_Snakestestsmooth2()
     
-    passDomBounds=[-1,1;-1,1];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=4;
-    passPadding=1;
     
-    typDat='rand';
-    typeBound='vertex'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=false;
-    isCheckRes=true;
-    snakesPlotInterval=1;
-    snakesSteps=2;
-    refineGrid=2;
-    typeRefine='all';
-    execTest=false;
-    makeMov=false;
+    [param]=CurrentValidation();
+    
+    param.general.typDat='testsmooth2';
+
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    
+    param.general.passDomBounds=[-1,1;-0.75,0.75];
+end
+
+function [param]=val_Snakestestsmooth3()
+    
+    
+    [param]=CurrentValidation();
+    
+    param.general.typDat='testsmooth3';
+
+    param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.typeRefine='all';
     
 end
 
-function [param]=SquareSnakes()
+function [param]=val_Snakestestsmooth3_1()
     
-    passDomBounds=[-1,1;-1,1];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=4;
-    passPadding=1;
     
-    typDat='square';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=5;
-    snakesSteps=50;
+    [param]=CurrentValidation();
     
-    refineGrid=2;
-    typeRefine='all';
-    execTest=false;
-    makeMov=false;
+    param.general.typDat='testsmooth3_1';
+
+    param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=8;
+    param.snakes.refine.typeRefine='all';
     
+    param.general.passDomBounds=[-1,1;-0.6,0.6];
+    param=AvoidLocalOptim(param);
+end
+
+function [param]=val_SnakesFoilVVSmall()
+    
+    [param]=CurrentValidation();
+    
+    param.general.typDat='vvlofoil';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.convLevel=10^-8;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
+end
+
+function [param]=val_SnakesFoilVVSmall4()
+    
+    [param]=CurrentValidation();
+    
+    param.general.typDat='vvlofoil4';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.25,0.25];
+    param.general.refineSteps=3;
+    param.snakes.step.mergeTopo=true;
     
 end
 
-function [param]=UniNoPlot()
+function [param]=val_BuzmanBiplane3()
     
-    passDomBounds=[-1.2,1.2;-1.2,1.2];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=2;
-    passPadding=1;
+    [param]=CurrentValidation();
     
-    typDat='uni';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=false;
-    snakesPlotInterval=0;
-    snakesSteps=20;
+    param.general.typDat='buzmanbiplane3';
     
-    refineGrid=2;
-    typeRefine='grey';
-    execTest=false;
-    makeMov=false;
-    
+    param.optiminit.cellLevels=[6,9];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
     
 end
 
-function [param]=UniLo2InitPlot() %#ok<*DEFNU>
+function [param]=val_Donught()
     
-    passDomBounds=[-2,2;-1,1];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=2;
-    passPadding=1;
+    [param]=CurrentValidation();
     
-    typDat='uniLo2';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=0;
-    snakesSteps=20;
-    
-    refineGrid=2;
-    typeRefine='grey';
-    execTest=false;
-    makeMov=false;
-    
+    param.general.typDat='donught';
+    param.snakes.refine.edgeFinish='none';
+    param.snakes.refine.axisRatio=1;
+    param.optiminit.cellLevels=[3,3];
+    sizeRatio=param.optiminit.cellLevels(1,:)+2;
+    sizeRatio=sizeRatio(2)/sizeRatio(1);
+    param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=0.5;
     
 end
 
-function [param]=WedgInitPlot() %#ok<*DEFNU>
+function [param]=val_Donught2()
     
-    passDomBounds=[-2,2;-1,1];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=2;
-    passPadding=1;
+    [param]=CurrentValidation();
     
-    typDat='wedg';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=0;
-    snakesSteps=40;
+    param.general.typDat='donught2';
+    param.snakes.refine.edgeFinish='none';
     
-    refineGrid=2;
-    typeRefine='grey';
-    execTest=false;
-    makeMov=false;
-    
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=0.5;
     
 end
 
-function [param]=WedgPlot() %#ok<*DEFNU>
+function [param]=val_WeirdShapeIn()
     
-    passDomBounds=[-2,2;-1,1];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=2;
-    passPadding=1;
+    [param]=CurrentValidation();
     
-    typDat='wedg';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=4;
-    snakesSteps=20;
+    param.general.typDat='low5shape';
     
-    refineGrid=2;
-    typeRefine='grey';
-    execTest=false;
-    makeMov=false;
-    
-    
+   
+    param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
+    param.general.boundstr{2}='solidisIn1';
+    param.general.boundstr{3}='1bound';
+
 end
 
-function [param]=WeirdShapeNoPlot()
+function [param]=val_WeirdShapeOut()
     
-    passDomBounds=[-1.2,1.2;-1.2,1.2];
-     % number of steps in design domain
-    passGridSteps=10; 
-     % number of refining steps
-    refineSteps=3;
-    passPadding=1;
+    [param]=CurrentValidation();
     
-    typDat='low5shape';
-    typeBound='snaxel'; % 'vertex' or 'snaxel'
-    loadLogical=false;
-    useSnakes=true;
-    isCheckRes=true;
-    snakesPlotInterval=0;
-    snakesSteps=100;
+    param.general.typDat='low5shape';
+   
     
-    refineGrid=4;
-    typeRefine='all';
-    execTest=false;
-    makeMov=false;
-    
+    param.general.typDat='low5shape';
+
 end
-
-
-
-
-
-

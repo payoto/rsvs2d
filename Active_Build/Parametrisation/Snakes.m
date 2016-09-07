@@ -366,9 +366,16 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
         ConvergenceTest(snaxel,volumefraction,convLevel)
     % Calculates wether the snaxel population has converged
     
+    % Get profile lengths
+    [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
+    
+    
+    
+    % Velocity condition
     vSnax=[snaxel(:).v];
     currentConvVelocity=(sqrt(sum(vSnax.^2))/length(vSnax));
     conditionVelocity=currentConvVelocity<convLevel;
+    % Volume fraction condition
     isCellSnax=[volumefraction(:).isSnax];
     diffVolFrac=[volumefraction(isCellSnax).targetfill]-[volumefraction(isCellSnax).volumefraction];
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
@@ -410,7 +417,6 @@ function [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forcepara
     lastAlgo=typSub==maxTypeSub;
 end
 
-
 function [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
         currentConvVelocity,currentConvVolume,forceparam,lastAlgo,trigCount,...
         snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
@@ -419,12 +425,20 @@ function [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition
     
     [volfracconnec,cellCentredGrid]=ModifyFillInformation...
         (cellCentredGrid,volfracconnec,param,ii-1);
-    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+    
+    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,...
+        snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo);
+    
     [convergenceCondition,currentConvVelocity,currentConvVolume]=...
         ConvergenceTest(snaxel,volumefraction,convLevel);
-    [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,ii,currentConvVolume,trigCount);
-    [snaxel,snakposition,snaxelmodvel,velcalcinfo]=VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
+    
+    [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,...
+        ii,currentConvVolume,trigCount);
+    
+    [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+        VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
+        coeffstructure,forceparam);
     
 end
 
@@ -505,16 +519,21 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
     
     varExtract={'snakData'};
     [snakData]=ExtractVariables(varExtract,param);
+    for ii=1:length(loopsnaxel)
+    [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=ClosedLoopProperties(loopsnaxel(ii).snaxel.coord);
+    end
     
+    % Length Snake
+    lSnak=sum(L);
     switch snakData
         case 'all'
             [snakSave]=WriteSnakSaveHeavy(snaxel,dt,snakposition,...
                 volumefraction,cellCentredGridSnax,currentConvVelocity,...
-                currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+                currentConvVolume,lSnak,movFrame,velcalcinfo,insideContourInfo);
             
         case 'light'
             [snakSave]=WriteSnakSaveLight(dt,volumefraction,currentConvVelocity,...
-                currentConvVolume);
+                currentConvVolume,lSnak);
             
     end
     
@@ -523,7 +542,7 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
     
     function [snakSave]=WriteSnakSaveHeavy(snaxel,dt,snakposition,...
             volumefraction,cellCentredGridSnax,currentConvVelocity,...
-            currentConvVolume,movFrame,velcalcinfo,insideContourInfo)
+            currentConvVolume,lSnak,movFrame,velcalcinfo,insideContourInfo)
         
         snakSave.snaxel=snaxel;
         snakSave.dt=dt;
@@ -535,11 +554,11 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
         snakSave.movFrame=movFrame;
         snakSave.velcalcinfo=velcalcinfo;
         snakSave.insideContourInfo=insideContourInfo;
-        
+        snakSave.lSnak=lSnak;
     end
     
     function [snakSave]=WriteSnakSaveLight(dt,volumefraction,currentConvVelocity,...
-            currentConvVolume)
+            currentConvVolume,lSnak)
         
         snakSave.dt=dt;
         
@@ -549,6 +568,7 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
         
         snakSave.currentConvVelocity=currentConvVelocity;
         snakSave.currentConvVolume=currentConvVolume;
+        snakSave.lSnak=lSnak;
         
         
     end

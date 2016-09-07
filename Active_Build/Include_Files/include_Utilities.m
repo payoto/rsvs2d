@@ -24,14 +24,14 @@ function [structdat]=ExploreStructureTree(rootstruct)
     function [fields,vars,maxPosNum]=...
             ExploreStructureTreeRecurse...
             (rootstruct,currentPosVec,maxPosNum)
-        % Explores a structure tree and returns 
+        % Explores a structure tree and returns
         vars=struct([]);
         fields=fieldnames(rootstruct);
         sizStruct=length(fields);
         posNumWorking=maxPosNum;
         maxPosNum=maxPosNum+sizStruct;
-
-
+        
+        
         for ii=1:sizStruct
             if isstruct(rootstruct.(fields{ii}))
                 workingPosVec=[currentPosVec,posNumWorking+ii]; % Creates the posi
@@ -47,8 +47,8 @@ function [structdat]=ExploreStructureTree(rootstruct)
             vars=[vars,newvars];
             clear newvars
         end
-
-
+        
+        
     end
     
 end
@@ -170,7 +170,7 @@ function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
 end
 
 function structdat=GetStructureData(paroptim)
-        
+    
     [structdat]=ExploreStructureTree(paroptim);
     structdat.vardat.names=[structdat.vars(:).name];
     structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
@@ -182,7 +182,7 @@ function structdat=GetStructureData(paroptim)
 end
 
 function CopyFileLinux(p1,p2)
-
+    
     system(['cp -rp ''',p1,''' ''',p2,'''']);
 end
 
@@ -203,6 +203,38 @@ function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
     
     axRatio=(cellLevels'+2)*cellLength;
     domainBounds=[-axRatio,axRatio];
+    
+end
+
+function [xMin,xMax,t,L,A]=ClosedLoopProperties(points)
+    
+    [A]=abs(CalculatePolyArea(points));
+    vec=points([end,1:end-1],:)-points;
+    L=sum(sqrt(sum(vec.^2,2)));
+    t=max(points(:,2))-min(points(:,2));
+    xMin=min(points(:,1));
+    xMax=max(points(:,1));
+    
+end
+
+function [A]=CalculatePolyArea(points)
+    
+    pointsVec=points';
+    pointsVec=pointsVec(:);
+    plot(points(:,1),points(:,2));
+    n=length(points(:,1));
+    centreMat=eye(2*n);
+    centreMat=(centreMat+centreMat(:,[end-1:end,1:end-2]))*0.5;
+    
+    [rotDif]=[0 -1 0 1; 1 0 -1 0];
+    normMat=zeros(2*n);
+    for ii=1:n-1
+        normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+4))=rotDif;
+    end
+    ii=n;
+    normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+2))=rotDif(:,1:2);
+    normMat((2*(ii-1)+1):(2*(ii-1)+2),1:2)=rotDif(:,3:4);
+    A=0.5*(normMat*pointsVec)'*(centreMat*pointsVec);
     
 end
 

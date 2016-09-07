@@ -12,7 +12,7 @@
 %             Alexandre Payot
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%#codegen
+% %#codegen
 function [snaxel,snakposition,snaxelmodvel,velcalcinfostruct,sensSnax]=VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
     [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
@@ -303,7 +303,6 @@ function [forcecoeff,velcoeff_i,velcoeff_p,velcoeff_m]=TensileVelDerivCoeff(deri
     end
 end
 
-
 function [snaxeltensvel,snakposition]=CalculateBendingVelocity(snaxel,snakposition,snakPosIndex,snaxeltensvel)
     
     
@@ -539,6 +538,18 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
     end
     Deltax=-Bkinv*(Df+Dh*u_kp1);
+    
+end
+
+
+function []=CalculateFeasibility()
+    [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMultiplier,derivtenscalc);
+    [optVal,feasVal]=SQPOptim(Df,Hf,Dh,h_vec,lagMulti)
+end
+
+function [optVal,feasVal]=SQPOptim(Df,Hf,Dh,h_vec,lagMulti)
+    
+    feasVal=Dh*lagMulti;
     
 end
 
