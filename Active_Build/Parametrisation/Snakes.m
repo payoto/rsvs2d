@@ -519,8 +519,9 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
     
     varExtract={'snakData'};
     [snakData]=ExtractVariables(varExtract,param);
-    for ii=1:length(loopsnaxel)
-    [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=ClosedLoopProperties(loopsnaxel(ii).snaxel.coord);
+    [loopSnaxel]=OrderSurfaceSnaxel(snaxel);
+    for ii=1:length(loopSnaxel)
+    [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=ClosedLoopProperties(loopSnaxel(ii).snaxel.coord);
     end
     
     % Length Snake

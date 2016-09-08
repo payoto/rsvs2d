@@ -1039,6 +1039,7 @@ function [paroptim]=bp3_MT_pop_75()
     paroptim.general.nPop=75;
     
 end
+
 function [paroptim]=bp3_MT_pop_25()
     
     [paroptim]=bp3_MT_pop_100();
@@ -1046,6 +1047,7 @@ function [paroptim]=bp3_MT_pop_25()
     paroptim.general.nPop=25;
     
 end
+
 function [paroptim]=bp3_MT_pop_50()
     
     [paroptim]=bp3_MT_pop_100();
@@ -1061,7 +1063,6 @@ function [paroptim]=bp3_MT_pop_125()
     paroptim.general.nPop=125;
     
 end
-
 
 function [paroptim]=bp3_MT_pop_150()
     
