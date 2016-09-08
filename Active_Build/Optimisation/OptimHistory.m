@@ -370,7 +370,7 @@ end
 function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     
     
-    h=figure('Name','Optimisation Result','Position',[20 100 1000 600]);
+    h(1)=figure('Name','Optimisation Result','Position',[20 100 1000 600]);
     
     % Plot 1
     subplot(1,2,1,'ticklabelinterpreter','latex')
@@ -378,10 +378,18 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     nIter=length(optimstruct);
     iterRes=zeros([nIter,nVar])+defaultVal;
     hold on
+    cVec=[]; 
+    for ii=1:length(optimstruct),
+        for jj=1:length(optimstruct(ii).population), 
+            cVec=[cVec,optimstruct(ii).population(jj).additional.c]; 
+        end  
+    end 
     
+    meanC=mean(cVec);
     for ii=1:nIter
         nVarLoc=length(optimstruct(ii).population);
-        iterRes(ii,1:nVarLoc)=[optimstruct(ii).population(:).objective];
+        iterRes(ii,1:nVarLoc)=[optimstruct(ii).population(:).objective]/meanC;
+        
         lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
     end
     switch dirOptim
@@ -449,21 +457,30 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     objNominal=zeros([nIter,1]);
     cBounds=[min(minRes),max(minRes)];
     [datCol]=ProjectColormap(h.Colormap,meanRes,cBounds);
-    
-    for ii=1:nIter
-        nPop=length(optimstruct(ii).population);
-        for jj=1:nPop
-            plot3(ones(size(optimstruct(ii).population(jj).fill))*((ii+1)/2),...
-                1:numel(optimstruct(ii).population(jj).fill),...
-                optimstruct(ii).population(jj).fill,'Color',datCol(ii,:));
-            hold on
-        end
-    end
-    
+    maxFill=popNominal;
+    minFill=popNominal;
+    meanFill=popNominal;
+    stdFill=popNominal;
+        %             plot3(ones(size(optimstruct(ii).population(jj).fill))*((ii+1)/2),...
+%                 1:numel(optimstruct(ii).population(jj).fill),...
+%                 optimstruct(ii).population(:).fill,'Color',datCol(ii,:));
      for ii=1:nIter
         
         popNominal(ii,:)=optimstruct(ii).population(minPos(ii)).fill;
         objNominal(ii)=optimstruct(ii).population(minPos(ii)).objective;
+        fillPop=vertcat(optimstruct(ii).population(:).fill);
+        maxFill(ii,:)=max(fillPop);
+        minFill(ii,:)=min(fillPop);
+        meanFill(ii,:)=mean(fillPop);
+        stdFill(ii,:)=std(fillPop);
+        
+        plot3(ones(size(optimstruct(ii).population(1).fill))*((ii+1)),...
+            1:numel(optimstruct(ii).population(jj).fill),...
+            maxFill(ii,:),'Color',datCol(ii,:));
+        hold on
+        plot3(ones(size(optimstruct(ii).population(1).fill))*((ii+1)),...
+            1:numel(optimstruct(ii).population(jj).fill),...
+            minFill(ii,:),'Color',datCol(ii,:));
     end
     
     
@@ -472,14 +489,68 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     
     [iterGrid,varGrid]=meshgrid(iterVec,varVec);
     [objGrid,~]=meshgrid(objNominal,varVec);
+    [meanGrid,~]=meshgrid(meanRes,varVec);
     
     surf(iterGrid,varGrid,popNominal',objGrid)
     colorbar;
-    
     xlabel('Iteration', 'interpreter','latex','fontsize',12)
     ylabel('Variable Index', 'interpreter','latex','fontsize',12)
     zlabel('Variable Value', 'interpreter','latex','fontsize',12)
     set(axh,'ticklabelinterpreter','latex')
+%     axh=subplot(2,2,4,'ticklabelinterpreter','latex');
+%     hold on
+%     
+%     mesh(iterGrid,varGrid,maxFill')
+%     hold on
+%     surf(iterGrid,varGrid,minFill')
+
+    % Figure 2
+    h(2)=figure('Name','Design Variable Evolution','Position',[20 100 1000 600]);
+    
+    axh=subplot(2,2,1,'ticklabelinterpreter','latex');
+    s(1)=surf(iterGrid,varGrid,meanFill');
+    caxis([0 1])
+    
+    axc(1)=colorbar;
+    view(0 ,90)
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('Variable Index', 'interpreter','latex','fontsize',12)
+    
+    set(axh,'ticklabelinterpreter','latex')
+    axh=subplot(2,2,3,'ticklabelinterpreter','latex');
+    s(2)=surf(iterGrid,varGrid,stdFill');
+    caxis([0 1])
+    axc(2)=colorbar;
+    view(0 ,90)
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('Variable Index', 'interpreter','latex','fontsize',12)
+    
+    set(axh,'ticklabelinterpreter','latex')
+    axh=subplot(2,2,2,'ticklabelinterpreter','latex');
+    s(3)=surf(iterGrid,varGrid,maxFill');
+    caxis([0 1])
+    axc(3)=colorbar;
+    view(0 ,90)
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('Variable Index', 'interpreter','latex','fontsize',12)
+    
+    axh=subplot(2,2,4,'ticklabelinterpreter','latex');
+    s(4)=surf(iterGrid,varGrid,minFill');
+    caxis([0 1])
+    axc(4)=colorbar;
+    view(0 ,90)
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('Variable Index', 'interpreter','latex','fontsize',12)
+    
+    cLabel={'Mean','Standard Deviation','Maximum','Minimum'};
+    for ii=1:length(s)
+        s(ii).EdgeColor='none';
+        axc(ii).TickLabelInterpreter='latex';
+        axc(ii).Label.String=cLabel{ii};
+        axc(ii).Label.FontSize=14;
+    end
+    
+    
     
     %{
     axh=subplot(1,2,2,'ticklabelinterpreter','latex');

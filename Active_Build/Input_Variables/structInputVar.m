@@ -1041,6 +1041,9 @@ function [param]=BuzmanBiplane3()
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
     param.snakes.step.fillLooseStep=30;
     param.snakes.step.fillLooseCut=0.5;
+    param.snakes.step.convCheckRate=25;
+    param.snakes.step.convCheckRange=15;
+    param.snakes.step.convDistance=50;
 end
 
 function [param]=BuzmanBiplane4()

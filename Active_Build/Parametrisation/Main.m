@@ -67,6 +67,10 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
     cd(startDir)
+    lSnak=[snakSave(:).lSnak];
+    DlSnak=lSnak(2:end)-lSnak(1:end-1);
+    figure, plot(1:length(lSnak),lSnak)
+    figure, semilogy(1:length(DlSnak),-(DlSnak),'o-',1:length(DlSnak),(DlSnak),'+-')
 end
 
 %% Top Level Execution processes

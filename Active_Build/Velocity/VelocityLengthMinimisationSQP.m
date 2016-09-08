@@ -82,6 +82,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
     
+    SQPOptim(Df,Hf,hessA,areaConstrMat',areaTargVec,lagMulti);
+    
     sensSnax=[];
     if forceparam.isLast
         sensSnax=SnaxelSensitivity(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2,...
@@ -542,15 +544,21 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
 end
 
 
-function []=CalculateFeasibility()
-    [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMultiplier,derivtenscalc);
-    [optVal,feasVal]=SQPOptim(Df,Hf,Dh,h_vec,lagMulti)
-end
 
-function [optVal,feasVal]=SQPOptim(Df,Hf,Dh,h_vec,lagMulti)
-    
-    feasVal=Dh*lagMulti;
-    
+function [optVal,feasVal]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
+    rmvCol=find(sum(Dh~=0)==0);
+%     Dh(:,rmvCol)=[];
+%     h_vec(rmvCol)=[];
+%     lagMulti(rmvCol)=[];
+    RMS=@(x) sqrt(mean(x.^2));
+
+    feasVal=RMS(h_vec);
+    optVal=RMS(Df-Dh*lagMulti);
+    Z=null(Dh');
+    HL=HA+Hf;
+    optTest=real(eig(Z'*HL*Z));
+    posDefErr=RMS([optTest(optTest<0);zeros(size(optTest(optTest>=0)))]);
+    fprintf('\n %.5e  %.5e  %.5e  \n',feasVal,optVal,posDefErr)
 end
 
 function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)

@@ -48,6 +48,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         % Evaluate Objective Function
         [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter);
         % create new population
+        OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
         [~]=PrintEnd(procStr,1,tStart);
     end
     %% Finish Optimisation
