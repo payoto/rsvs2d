@@ -1123,6 +1123,7 @@ function [param]=CurrentValidation()
     % Note Files
     param.results.noteFiles={'CurrentBuild'};
     param.results.tags={'snakes','Opimisation','VALIDATION','SQP','Profile Length'};
+    param.results.archiveName='ParamValidation';
     
     % Local optimum avoidance params
     param.snakes.step.mergeTopo=true;

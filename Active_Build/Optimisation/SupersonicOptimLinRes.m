@@ -96,7 +96,6 @@ function [loop]=ConstantArea_Wedge(xMin,xMax,A,M)
     loop.subdivision(end+1,:)=loop.subdivision(1,:);
 end
 
-
 function [loop]=ConstantArea_Busemann(xMin,xMax,A,M)
     
     h=2*A/2/(xMax-xMin);
