@@ -23,7 +23,8 @@ function [marker,t]=GenerateResultMarker(typDat)
     
 end
 
-function [resultDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t)
+function [resultDirectory]=GenerateResultDirectoryName(marker,resultRoot,...
+        archiveName,t)
     if ~exist('t','var'),t=now;end
     dateSubFolders=['Archive_',datestr(now,'yyyy_mm'),'\Day_',datestr(t,29)];
     resultDirectory=[resultRoot,filesep,archiveName,filesep,dateSubFolders,...
@@ -158,7 +159,6 @@ function [paramStr]=ExtractVariablePathAndValue(param,varNum)
     [varStr]=GenerateVariableString(varVal);
     paramStr=[pathVar,' = ',varStr,';'];
 end
-
 
 function [paramStr]=ExtractVariablePathAndValue2(param,varNum)
     

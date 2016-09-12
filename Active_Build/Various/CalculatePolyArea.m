@@ -2,7 +2,7 @@ function [A]=CalculatePolyArea(points)
     
     pointsVec=points';
     pointsVec=pointsVec(:);
-    plot(points(:,1),points(:,2));
+    %plot(points(:,1),points(:,2));
     n=length(points(:,1));
     centreMat=eye(2*n);
     centreMat=(centreMat+centreMat(:,[end-1:end,1:end-2]))*0.5;

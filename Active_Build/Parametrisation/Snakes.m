@@ -22,8 +22,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     global arrivalTolerance unstructglobal maxStep maxDt
     
     
-    varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole'};
-    [arrivalTolerance,maxStep,maxDt,snakesConsole]=ExtractVariables(varExtract,param);
+    varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole','case'};
+    [arrivalTolerance,maxStep,maxDt,snakesConsole,caseStr]=ExtractVariables(varExtract,param);
     
     % ACTUALLY DOING STUFF
     refinedGriduns=ModifReshape(refinedGrid);
@@ -37,7 +37,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     %profile viewer
     
     if snakesConsole
-        figure,semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
+        figure('Name',['VolError',caseStr]),semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
         title('Volume error')
         ylabel('Root Mean squared error on volume convergence')
         xlabel('number of iterations')
@@ -103,7 +103,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
             cellCentredGrid,insideContourInfo,forceparam);
     end
     if snakesConsole
-        CheckResultsLight(refinedGriduns,snakposition,snaxel)
+        %CheckResultsLight(refinedGriduns,snakposition,snaxel)
     end
     restartsnake.snaxel=snaxel;
     restartsnake.insideContourInfo=insideContourInfo;
