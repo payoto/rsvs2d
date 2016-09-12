@@ -12,7 +12,7 @@
 
 
 
-function []=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
+function [rootDirectory]=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
     
     % Unpack necessary variables
     varExtract={'makeMov','typDat','resultRoot','archiveName'};
@@ -23,7 +23,7 @@ function []=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
     [marker,t]=GenerateResultMarker(typDat);
     % Create Directory
     [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
-    
+    rootDirectory=writeDirectory;
     CopyDiary(writeDirectory,marker)
     
     % Output boundary data file

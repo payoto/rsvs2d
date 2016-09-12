@@ -10,7 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,restart)
+function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(caseString,restart)
     % Main function for the execution of the Subdivision process
     
     
@@ -55,7 +55,7 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     end
     % Post processes
     loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
-    CheckResults(unstructured,loop,typeBound)
+    CheckResults(unstructured,loop,typeBound,caseString)
     
     tecoutstruct.baseGrid=unstructReshape;
     tecoutstruct.fineGrid=unstructuredrefined;
@@ -63,14 +63,11 @@ function [unstructured,loop,unstructReshape,snakSave,param]=Main(caseString,rest
     tecoutstruct.connectstructinfo=connectstructinfo;
     
     diary off
-    ManageOutputResults(param,loop,tecoutstruct,restartstruct);
+    rootDirectory=ManageOutputResults(param,loop,tecoutstruct,restartstruct);
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
     cd(startDir)
-    lSnak=[snakSave(:).lSnak];
-    DlSnak=lSnak(2:end)-lSnak(1:end-1);
-    figure, plot(1:length(lSnak),lSnak)
-    figure, semilogy(1:length(DlSnak),-(DlSnak),'o-',1:length(DlSnak),(DlSnak),'+-')
+    
 end
 
 %% Top Level Execution processes
@@ -208,11 +205,11 @@ end
 
 
 %% Plot Functions
-function []=CheckResults(unstructured,loop,typeBound)
+function []=CheckResults(unstructured,loop,typeBound,caseString)
     global nDim domainBounds
     
     if nDim==2
-        figh=figure;
+        figh=figure('Name',['Final Profile ',caseString]);
         axh=axes;
         hold on
         
