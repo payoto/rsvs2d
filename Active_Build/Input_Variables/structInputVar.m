@@ -1127,9 +1127,10 @@ function [param]=CurrentValidation()
     
     % Local optimum avoidance params
     param.snakes.step.mergeTopo=true;
-    param.snakes.force.lengthEpsilon=1e-6;
+
     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=10e-2;
+    param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
     param.snakes.step.convCheckRate=100;
     param.snakes.step.convCheckRange=15;

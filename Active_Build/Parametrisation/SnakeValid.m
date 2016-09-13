@@ -1,6 +1,27 @@
-function [procdat,out]=SnakeValid(validationName,procdat,out)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Runs a single snake validation case
+
+function [procdat,out]=SnakeValid(validationName,parampreset,procdat)
     
     include_PostProcessing
+    include_SnakeParam
+    include_EdgeInformation
+    include_Utilities
+    include_PostProcessing
+    include_Mex_Wrapper
+    
+    
+    runValid=true;
+    if nargin==1
+        parampreset=structInputVar('CurrentValidation');
+        parampreset.structdat=GetStructureData(parampreset);
+    end
+    if nargin>2
+        runValid=false;
+    end
+    
+    
+    
     
     snakCell={'Snakestestsmooth1','Snakestestsmooth1_2','Snakestestsmooth2',...
         'Snakestestsmooth3','Snakestestsmooth3_1','Donught','Donught2',...
@@ -8,29 +29,39 @@ function [procdat,out]=SnakeValid(validationName,procdat,out)
         'WeirdShapeIn','WeirdShapeOut'};
     
     T{length(snakCell)}=[];
-    if nargin==1
-        out=repmat(struct('unstructured',[],'loop',[],'unstructReshape',[],'snakSave',[]...
-            ,'param',[],'rootdir',''),[1 length(snakCell)]);
+    out=repmat(struct('unstructured',[],'loop',[],'unstructReshape',[],'snakSave',[]...
+        ,'param',[],'rootdir',''),[1 length(snakCell)]);
+    
+    if runValid
         procdat=repmat(struct('caseName','','warningnum',0,'errornum',0,'cputime',0,'termination',false, 'niter',0,...
             'snaketime',0,'volerror',1,'velerror',1,'length',0,'path',''),[1 length(snakCell)]);
         
         for ii=1:length(snakCell)
             pause(ii/5)
-            [T{ii},out(ii)]=CallMain(snakCell{ii});
+            [T{ii},out(ii)]=CallMain(snakCell{ii},parampreset);
+            memory
             [procdat(ii)]=ProcessData(out(ii),T{ii},snakCell{ii},procdat(ii));
+            
         end
     end
-    param=structInputVar('CurrentValidation');
+    
+    
     
     OutputDirectory(validationName,param,procdat)
     
     
 end
 
-function [T,out]=CallMain(snakCell)
+function [T,out]=CallMain(snakCell,parampreset)
+    param=structInputVar(['val_',snakCell]);
+    
+    for ii=1:length(parampreset.structdat.vars)
+        param=SetVariables({parampreset.structdat.vars(ii).name},...
+            {ExtractVariables({parampreset.structdat.vars(ii).name},parampreset)},param);
+    end
     
     [T,out.unstructured,out.loop,out.unstructReshape,out.snakSave,out.param,out.rootdir]=...
-        evalc('Main([''val_'',snakCell])');
+        evalc('MainSimple(param)');
 end
 
 function [procdat]=ProcessData(out,T,caseName,procdat)
@@ -40,7 +71,7 @@ function [procdat]=ProcessData(out,T,caseName,procdat)
     lSnak=[out.snakSave(:).lSnak];
     DlSnak=lSnak(2:end)-lSnak(1:end-1);
     figure('Name',[caseName,'Length']), plot(1:length(lSnak),lSnak)
-    figure('Name',[caseName,'LengthDelta']), 
+    figure('Name',[caseName,'LengthDelta']),
     semilogy(1:length(DlSnak),-(DlSnak),'o-',1:length(DlSnak),(DlSnak),'+-')
     
     try
@@ -59,8 +90,8 @@ function [procdat]=ProcessData(out,T,caseName,procdat)
         procdat.niter=length(out.snakSave); % number of iteration to termination
         
         procdat.snaketime=sum([out.snakSave(:).dt]);
-        procdat.volerror=out.snakSave(end).currentConvVolume;
-        procdat.velerror=out.snakSave(end).currentConvVelocity;
+        procdat.volerror=log10(out.snakSave(end).currentConvVolume);
+        procdat.velerror=log10(out.snakSave(end).currentConvVelocity);
         procdat.length=out.snakSave(end).lSnak;
         procdat.path=out.rootdir;
     catch
@@ -142,7 +173,7 @@ function [sumLines]=GenerateSummaryLine(validationName,t,marker,procdat)
         separator=' , ';
     end
     
-
+    
 end
 
 function []=OutputDirectory(validationName,param,procdat)
@@ -154,6 +185,8 @@ function []=OutputDirectory(validationName,param,procdat)
     [marker,t]=GenerateResultMarker(validationName);
     [writeDirectory]=GenerateValidationDirectory(marker,resultRoot,archiveName,t);
     
+    fileName=[writeDirectory,filesep,'Procdat_',marker,'.mat'];
+    save(fileName,'procdat');
     % Parameter Data
     [fidParam]=OpenParamFile(writeDirectory,marker);
     GenerateParameterFile(fidParam,param,t,marker);
@@ -163,11 +196,13 @@ function []=OutputDirectory(validationName,param,procdat)
     
     [sumLines]=GenerateSummaryLine(validationName,t,marker,procdat);
     OutputValidationSummary(resultRoot,archiveName,sumLines)
+    
+    OutputAllFigures(writeDirectory)
 end
 
 function []=OutputTableResult(tableCell,writeDirectory,marker)
     
-    fileName=['table_',marker,'.dat'];
+    fileName=['table_',marker,'.csv'];
     FID=fopen([writeDirectory,filesep,fileName],'w+');
     
     WriteToFile(tableCell,FID)
@@ -195,7 +230,7 @@ function []=OutputValidationSummary(resultRoot,archiveName,sumLines)
     % Creates a file in the current directory to write data to.
     
     resultRoot=MakePathCompliant(resultRoot);
-    fileName=['Validations_',archiveName,'.txt'];
+    fileName=['Validations_',archiveName,'.csv'];
     FID=fopen([resultRoot,filesep,archiveName,filesep,fileName],'a');
     
     WriteToFile(sumLines,FID)
@@ -247,5 +282,227 @@ function [outLine]=GenerateOutputData(procdat)
     outLine{kk,1}=min([procdat(:).velerror]);outLine{kk,2}='double';outLine{kk,3}='vel err - min';
     kk=kk+1;
     outLine{kk,1}=sum([procdat(:).length]);outLine{kk,2}='double';outLine{kk,3}='total length';
+    
+end
+
+
+%% Simplified Main File
+
+function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=MainSimple(param)
+    % Main function for the execution of the Subdivision process
+    
+    
+    diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
+    fidDiary=fopen(diaryFile,'w');
+    fclose(fidDiary);
+    diary(diaryFile);
+    
+    
+    [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+        ,snakSave,unstructReshape,gridrefined,restartsnake]=StandardRun(param);
+    
+    varExtract={'typeBound','refineSteps','case'};
+    [typeBound,refineSteps,caseString]=ExtractVariables(varExtract,param);
+    
+    % Restart structure generation
+    restartstruct.gridrefined=gridrefined;
+    restartstruct.param=param;
+    restartstruct.connectstructinfo=connectstructinfo;
+    restartstruct.unstructReshape=unstructReshape;
+    restartstruct.snakrestart=restartsnake;
+    
+    % Post processes
+    loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
+    CheckResults(unstructured,loop,typeBound,caseString)
+    
+    tecoutstruct.baseGrid=unstructReshape;
+    tecoutstruct.fineGrid=unstructuredrefined;
+    tecoutstruct.snakSave=snakSave;
+    tecoutstruct.connectstructinfo=connectstructinfo;
+    
+    diary off
+    rootDirectory=ManageOutputResults(param,loop,tecoutstruct,restartstruct);
+    %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
+    %OutPutBinaryResults(snakSave,saveParam,typDat)
+    
+    
+end
+
+%% Top Level Execution processes
+
+function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
+        ,snakSave,unstructReshape,gridrefined,restartsnake]...
+        =StandardRun(param)
+    
+    
+    param.general.restart=false;
+    varExtract={'useSnakes'};
+    [useSnakes]=ExtractVariables(varExtract,param);
+    
+    
+    % Execution of subroutines
+    
+    [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param);
+    
+    [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
+        ExecuteGridRefinement(unstructReshape,param);
+    snakSave=[];
+    if useSnakes
+        [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(gridrefined,looprefined,...
+            unstructReshape,connectstructinfo,param);
+    end
+    
+end
+
+function [unstructured,loop,unstructReshape]...
+        =ExecuteGridInitialisation(param)
+    % Executes the Grid Initialisation process
+    
+    disp('GENERATION PROCESS START')
+    t1=now;
+    [unstructured,loop,unstructReshape]=...
+        GridInitialisationV2(param);
+    disp('Grid Initialisation exited')
+    t2=now;
+    disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
+    disp('GENERATION PROCESS end')
+    
+    
+end
+
+function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
+        ExecuteGridRefinement(unstructReshape,param)
+    % Executes the Grid Initialisation process
+    
+    disp('GRID REFINEMENT START')
+    t1=now;
+    [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
+        GridRefinement(unstructReshape,param);
+    
+    t2=now;
+    disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
+    disp('GRID REFINEMENT end')
+    
+    
+end
+
+function [snaxel,snakposition,snakSave,loop,restartsnake]=ExecuteSnakes(unstructured,loop,...
+        oldGrid,connectionInfo,param)
+    % Executes the snakes edge detection process
+    %
+    
+    t1=now;
+    disp('SNAKE PROCESS START')
+    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(unstructured,loop,...
+        oldGrid,connectionInfo,param);
+    
+    t2=now;
+    disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
+    disp('SNAKE PROCESS END')
+    
+    if length(loopsnaxel)==length(loop)
+        for ii=1:length(loopsnaxel)
+            loop(ii).snaxel=loopsnaxel(ii).snaxel;
+        end
+    else
+        loop=loopsnaxel;
+    end
+end
+
+
+%% Subdivision process
+
+function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
+    % Function taking in a closed loop of vertices and applying the subdivision
+    % process
+    % typBOund is te type of boundary that is expected, it can either be the
+    % string 'vertex' (default) or the string 'snaxel' to show that the snaxel
+    % process has been used
+    varExtract={'typeBound','subdivType','TEShrink','LEShrink','typeCorner'};
+    [typeBound,subdivType,TEShrink,LEShrink,typeCorner]=ExtractVariables(varExtract,param);
+    if ~exist('typeBound','var'), typeBound='vertex'; end
+    
+    sharpen=[LEShrink,TEShrink];
+    
+    for ii=1:length(loop)
+        startPoints=loop(ii).(typeBound).coord;
+        loop(ii).isccw=CCWLoop(startPoints);
+        newPoints=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
+        %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
+        loop(ii).subdivision=newPoints;
+    end
+end
+
+
+%% Plot Functions
+function []=CheckResults(unstructured,loop,typeBound,caseString)
+    global nDim domainBounds
+    
+    if nDim==2
+        figh=figure('Name',['Final Profile ',caseString]);
+        axh=axes;
+        hold on
+        
+        colString='bgcmyk';
+        
+        isEdgeIndex=find(unstructured.edge.boundaryis1);
+        for ii=1:length(isEdgeIndex)
+            PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'bo')
+        end
+        
+        isEdgeIndex=find(unstructured.edge.boundaryis0);
+        for ii=1:length(isEdgeIndex)
+            PlotEdge(figh,axh,unstructured,isEdgeIndex(ii),'b-')
+        end
+        
+        
+        isCellFull=find(unstructured.cell.fill);
+        for ii=1:length( isCellFull)
+            %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
+        end
+        
+        for ii=1:length(loop)
+            [~,colIndex]=IntegerQuotient(ii,length(colString));
+            colIndex=colIndex+1;
+            PlotLoop(figh,axh,loop,ii,[colString(colIndex),'--'],typeBound)
+            PlotSubDiv(figh,axh,loop,ii,[colString(colIndex),'-'])
+        end
+        
+        axis equal
+        axis([domainBounds(1,1:2) domainBounds(2,1:2)])
+    end
+    
+end
+
+function []=PlotEdge(figh,axh,unstructured,indexEdge,format)
+    figure(figh)
+    %axes(axh)
+    
+    vertices=unstructured.edge.vertexindex(indexEdge,:);
+    coord=unstructured.vertex.coord(vertices,:);
+    
+    plot(coord(:,1),coord(:,2),format)
+    
+end
+
+function []=PlotLoop(figh,axh,loop,indexLoop,format,typeBound)
+    figure(figh)
+    axes(axh)
+    
+    
+    coord=loop(indexLoop).(typeBound).coord;
+    
+    plot(coord(:,1),coord(:,2),format)
+    
+end
+
+function []=PlotSubDiv(figh,axh,loop,indexLoop,format)
+    figure(figh)
+    axes(axh)
+    
+    
+    coord=loop(indexLoop).subdivision;
+    
+    plot(coord(:,1),coord(:,2),format)
     
 end
