@@ -4,20 +4,103 @@
 function [procdat,parampreset,sweepopts]=SweepSnakeValidation(sweepCaseStr)
     
     include_Utilities
+    include_Validation
     
     sweepopts=eval(sweepCaseStr);
     
     [sweepopts]=GenerateSweepArrays(sweepopts);
     [parampreset]=GenerateSweptParam(sweepopts);
-    procdat=[];
+    procdat=repmat(ProcDatTemplate,[length(parampreset),12]);
+    
     for ii=1:length(parampreset)
-        [procdat(ii),~]=SnakeValid([sweepCaseStr,'_',int2str(ii)],parampreset(ii));
+        
+        [procdatTemp,~]=SnakeValid([sweepCaseStr,'_',int2str(ii)],parampreset(ii));
+        nDat(ii)=length(procdatTemp);
+        procdat(ii,1:nDat(ii))=procdatTemp;
     end
-    
-    
+    procdat=procdat(:,1:max(nDat));
+    OutputSweepData(sweepCaseStr,procdat,sweepopts,parampreset)
     
 end
 
+%% Output
+
+function []=OutputSweepData(sweepCaseStr,procdat,sweepopts,parampreset)
+    
+    param=structInputVar('CurrentValidation');
+    varExtract={'resultRoot','archiveName'};
+    [resultRoot,archiveName]=ExtractVariables(varExtract,param);
+    
+    [marker,t]=GenerateResultMarker(sweepCaseStr);
+    [writeDirectory]=GenerateValSweepDirectory(marker,resultRoot,archiveName,t);
+    
+    fileName=[writeDirectory,filesep,'Procdat_',marker,'.mat'];
+    save(fileName,'procdat','sweepopts','parampreset');
+    
+    paramCell{1}=['# ',sweepCaseStr,' - ',datestr(t),' - ',marker];
+    paramCell{2}=['# '];
+    
+    [tabLines]=GenerateSweepTable(procdat,sweepopts,parampreset);
+    
+    OutputSweepTableResult([paramCell,tabLines],writeDirectory,marker)
+    
+end
+
+function [resultDirectory]=GenerateValSweepDirectory(marker,resultRoot,...
+        archiveName,t)
+    if ~exist('t','var'),t=now;end
+    dateSubFolders=['Archive_',datestr(now,'yyyy_mm'),'\Day_',datestr(t,29)];
+    resultDirectory=[resultRoot,filesep,archiveName,filesep,dateSubFolders,...
+        filesep,'SWEEP_',marker];
+    
+    resultDirectory=MakePathCompliant(resultDirectory);
+    
+    mkdir(resultDirectory)
+end
+
+
+function []=OutputSweepTableResult(tableCell,writeDirectory,marker)
+    
+    fileName=['sweeptable_',marker,'.csv'];
+    FID=fopen([writeDirectory,filesep,fileName],'w+');
+    
+    WriteToFile(tableCell,FID)
+    
+    fclose(FID);
+end
+
+function [tabLines]=GenerateSweepTable(procdat,sweepopts,parampreset)
+    
+    varNames={sweepopts(:).varname};
+    
+    tabLines{size(procdat,1)+1}='';
+    
+    for ii=1:size(procdat,1)
+        
+        [sumLines]=GenerateSummaryLine(procdat(ii,:));
+        [paramSubstring]=BuildParamSubstring(varNames,parampreset(ii));
+        if ii==1
+            tabLines{1}=[paramSubstring{1},',',sumLines{1}];
+        end
+        tabLines{ii+1}=[paramSubstring{2},',',sumLines{2}];
+    end
+    
+end
+
+function [paramSubstring]=BuildParamSubstring(varNames,parampreset)
+    
+    paramSubstring{1}='';
+    paramSubstring{2}='';
+    separator='';
+    for ii=1:length(varNames)
+        paramVal=ExtractVariables(varNames(ii),parampreset);
+        paramSubstring{1}=[paramSubstring{1},separator,varNames{ii}];
+        paramSubstring{2}=[paramSubstring{2},separator,ProcesstoString(paramVal)];
+        separator=' , ';
+    end
+    
+    
+end
 %% Generate Swept Param
 
 function [sweepopts]=GenerateSweepArrays(sweepopts)
@@ -57,7 +140,6 @@ function [param]=GenerateSweptParam(sweepopts)
     end
     
     
-    
 end
 
 %% Sweep Cases
@@ -76,6 +158,19 @@ function [sweepopts]=lEps_arrTol()
     sweepopts(kk).range=[-4 -1];
     sweepopts(kk).steps={[4],'log'};
     kk=kk+1;
+        
+    
+end
+
+function [sweepopts]=test1()
+    
+    kk=1;
+    sweepopts(kk).varname='lengthEpsilon';
+    sweepopts(kk).array=[1e-4 1e-8];
+    sweepopts(kk).range=[-4 -8];
+    sweepopts(kk).steps={[2],'log'};
+    kk=kk+1;
+    
         
     
 end

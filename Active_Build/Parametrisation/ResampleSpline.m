@@ -303,6 +303,12 @@ function newParList=Distribution(samplingDistrib,distribSource,provNewParList,nS
                 case 'cosine'
                     theta=linspace(0,pi,nSample);
                     newParList=(1-cos(theta))/2*(domParam(2)-domParam(1))+domParam(1);
+                case '2cosine'
+                    theta=linspace(0,2*pi,nSample);
+                    newParList=(heaviside(theta-pi)*2-(heaviside(theta-pi)-0.5)...
+                        .*2.*(1-cos(theta))/2)/2*(domParam(2)-domParam(1))+domParam(1);
+                otherwise 
+                    error('Unknown sampling distribution')
             end
         case 'provided'
             
@@ -393,8 +399,8 @@ function [parspline]=CaseSpline_aerofoil()
     parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
     
     parspline.samplingParam='param';
-    parspline.samplingN=300;
-    parspline.samplingDistrib='acos';
+    parspline.samplingN=301;
+    parspline.samplingDistrib='cosine';
     
 end
 
@@ -405,14 +411,14 @@ function [parspline]=CaseSpline_snake()
     parspline.TEisLeft=0;
     
     parspline.parameter='l'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.typCurve='closed';
+    parspline.typCurve='open';
     
     parspline.distribution='calc';
-    parspline.domain='none'; % 'normalizeX' 'normalizeL'
+    parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
     
     parspline.samplingParam='param';
-    parspline.samplingN=500;
-    parspline.samplingDistrib='even';
+    parspline.samplingN=501;
+    parspline.samplingDistrib='2cosine';
     
 end
 

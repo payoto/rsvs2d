@@ -9,7 +9,7 @@ function [procdat,out]=SnakeValid(validationName,parampreset,procdat)
     include_Utilities
     include_PostProcessing
     include_Mex_Wrapper
-    
+    include_Validation
     
     runValid=true;
     if nargin==1
@@ -20,8 +20,7 @@ function [procdat,out]=SnakeValid(validationName,parampreset,procdat)
         runValid=false;
     end
     
-    
-    
+    param=ImposePresets(structInputVar('CurrentValidation'),parampreset);
     
     snakCell={'Snakestestsmooth1','Snakestestsmooth1_2','Snakestestsmooth2',...
         'Snakestestsmooth3','Snakestestsmooth3_1','Donught','Donught2',...
@@ -33,32 +32,77 @@ function [procdat,out]=SnakeValid(validationName,parampreset,procdat)
         ,'param',[],'rootdir',''),[1 length(snakCell)]);
     
     if runValid
-        procdat=repmat(struct('caseName','','warningnum',0,'errornum',0,'cputime',0,'termination',false, 'niter',0,...
-            'snaketime',0,'volerror',1,'velerror',1,'length',0,'path',''),[1 length(snakCell)]);
+        procdat=repmat(ProcDatTemplate,[1 length(snakCell)]);
         
-        for ii=1:length(snakCell)
-            pause(ii/5)
-            [T{ii},out(ii)]=CallMain(snakCell{ii},parampreset);
-            memory
-            [procdat(ii)]=ProcessData(out(ii),T{ii},snakCell{ii},procdat(ii));
-            
+        comStr=computer;
+        
+        if strcmp(comStr(1:2),'PC')
+            [procdat,out,T]=WindowsSerialLoop(parampreset,snakCell,procdat,out);
+        else
+            [procdat,out,T]=LinuxParallelLoop(parampreset,snakCell,procdat,out);
         end
     end
+        
     
     
     
-    OutputDirectory(validationName,param,procdat)
+    
+    OutputDirectory(validationName,param,procdat,T)
     
     
 end
 
-function [T,out]=CallMain(snakCell,parampreset)
-    param=structInputVar(['val_',snakCell]);
+function [procdat,out,T]=LinuxParallelLoop(parampreset,snakCell,procdat,out)
+    
+%     if numel(gcp('nocreate'))==0
+%         poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+%         clusterObj=parcluster(poolName);
+%         clusterObj.NumWorkers=12;
+%         saveProfile(clusterObj);
+%         parpool(poolName)
+%     end
+    for ii=1:length(snakCell)
+        
+        
+        try 
+            [T{ii},out(ii)]=CallMain(snakCell{ii},parampreset);
+        catch ME
+            T{ii}=ME.getReport;
+        end
+        [procdat(ii)]=ProcessData(out(ii),T{ii},snakCell{ii},procdat(ii));
+    end
+    
+end
+
+function [procdat,out,T]=WindowsSerialLoop(parampreset,snakCell,procdat,out)
+    
+    for ii=1:length(snakCell)
+        try 
+            [T{ii},out(ii)]=CallMain(snakCell{ii},parampreset);
+            
+        catch ME
+            T{ii}=ME.getReport;
+        end
+        
+        [procdat(ii)]=ProcessData(out(ii),T{ii},snakCell{ii},procdat(ii));
+        
+    end
+    
+end
+
+function param=ImposePresets(param,parampreset)
     
     for ii=1:length(parampreset.structdat.vars)
         param=SetVariables({parampreset.structdat.vars(ii).name},...
             {ExtractVariables({parampreset.structdat.vars(ii).name},parampreset)},param);
     end
+    
+end
+
+function [T,out]=CallMain(snakCell,parampreset)
+    
+    
+    param=ImposePresets(structInputVar(['val_',snakCell]),parampreset);
     
     [T,out.unstructured,out.loop,out.unstructReshape,out.snakSave,out.param,out.rootdir]=...
         evalc('MainSimple(param)');
@@ -76,12 +120,13 @@ function [procdat]=ProcessData(out,T,caseName,procdat)
     
     try
         % read from text
-        procdat.warningnum=numel(regexpi(T,'warning'));
+        procdat.warningnum=numel(regexp(T,'Warning:'));
         
-        procdat.errornum=numel(regexpi(T,'error'));
+        procdat.errornum=numel(regexp(T,'Error '));
         
         timeMark=regexp(regexpi(T,'Iteration time[^\n]*','match'),':.*','match');
         procdat.cputime=str2num(regexprep(timeMark{1}{1},':',' '))*[3600;60;1;0.001]; % time between start and end. (look for "Iteration Time:")
+        
         
         procdat.termination=~isempty(regexpi(T,'Snakes Converged!')); % true / false (true means terminate with convergence) (look for Snakes Converged!)
         
@@ -128,65 +173,31 @@ function [tableCell]=GenerateTableResult(validationName,t,marker,procdat)
     
 end
 
-function [strOut]=ProcesstoString(inputVar,classin)
-    
-    if nargin==1
-        classin=class(inputVar);
-    end
-    
-    switch classin
-        case 'int'
-            strOut=int2str(inputVar);
-        case 'logical'
-            strOut=int2str(inputVar);
-        case 'double'
-            if all(mod(inputVar,1)==0)
-                strOut=int2str(inputVar);
-            else
-                strOut=num2str(inputVar,' %12.7e ');
-            end
-        case 'char'
-            strOut=inputVar;
-        otherwise
-            strOut='';
-            
-    end
-    
-    
-    
-    
-end
-
-function [sumLines]=GenerateSummaryLine(validationName,t,marker,procdat)
-    
-    [outLine]=GenerateOutputData(procdat);
-    
+function [sumLines]=GenerateSummaryEntry(validationName,t,marker,procdat)
     
     sumLines{1}=['# ',validationName,' - ',datestr(t),' - ',marker];
     
-    separator='';
-    sumLines{2}='# ';
-    sumLines{3}='';
-    for ii=1:size(outLine,1)
-        sumLines{2}=[sumLines{2},separator,outLine{ii,3}];
-        sumLines{3}=[sumLines{3},separator,ProcesstoString(outLine{ii,1},outLine{ii,2})];
-        separator=' , ';
-    end
+    [sumLines(2:3)]=GenerateSummaryLine(procdat);
     
     
 end
 
-function []=OutputDirectory(validationName,param,procdat)
+function []=OutputDirectory(validationName,param,procdat,T)
     
     varExtract={'resultRoot','archiveName'};
     [resultRoot,archiveName]=ExtractVariables(varExtract,param);
-    
     
     [marker,t]=GenerateResultMarker(validationName);
     [writeDirectory]=GenerateValidationDirectory(marker,resultRoot,archiveName,t);
     
     fileName=[writeDirectory,filesep,'Procdat_',marker,'.mat'];
     save(fileName,'procdat');
+    
+    fileName=[writeDirectory,filesep,'Diary_',marker,'.txt'];
+    FIDDiary=fopen(fileName,'w');
+    WriteToFile(T,FIDDiary);
+    fclose(FIDDiary);
+    
     % Parameter Data
     [fidParam]=OpenParamFile(writeDirectory,marker);
     GenerateParameterFile(fidParam,param,t,marker);
@@ -194,7 +205,7 @@ function []=OutputDirectory(validationName,param,procdat)
     [tableCell]=GenerateTableResult(validationName,t,marker,procdat);
     OutputTableResult(tableCell,writeDirectory,marker);
     
-    [sumLines]=GenerateSummaryLine(validationName,t,marker,procdat);
+    [sumLines]=GenerateSummaryEntry(validationName,t,marker,procdat);
     OutputValidationSummary(resultRoot,archiveName,sumLines)
     
     OutputAllFigures(writeDirectory)
@@ -224,6 +235,7 @@ function []=OutputAllFigures(writeDirectory)
         
     end
     
+    close all
 end
 
 function []=OutputValidationSummary(resultRoot,archiveName,sumLines)
@@ -251,7 +263,7 @@ function [resultDirectory]=GenerateValidationDirectory(marker,resultRoot,...
     mkdir(resultDirectory)
 end
 
-function [outLine]=GenerateOutputData(procdat)
+function [outLine]=GenerateValidationData(procdat)
     
     kk=1;
     outLine{kk,1}=sum([procdat(:).warningnum]);outLine{kk,2}='int';outLine{kk,3}='warnings';

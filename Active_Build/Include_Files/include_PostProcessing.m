@@ -648,14 +648,14 @@ end
 
 function []=GenerateRestartBinary(resultDirectory,marker,restartstruct)
     
-    fileName=[resultDirectory,'\restart_',marker,'.mat'];
+    fileName=[resultDirectory,filesep,'restart_',marker,'.mat'];
     save(fileName,'-struct','restartstruct');
     
 end
 
 function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
     
-    fileName=[resultDirectory,'\restart_',marker,'.mat'];
+    fileName=[resultDirectory,filesep,'restart_',marker,'.mat'];
     fileName=MakePathCompliant(fileName);
     save(fileName,'-struct','restartstruct');
     
