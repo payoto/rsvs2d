@@ -42,7 +42,7 @@ function [procdat,out]=SnakeValid(validationName,parampreset,procdat)
             [procdat,out,T]=LinuxParallelLoop(parampreset,snakCell,procdat,out);
         end
     end
-        
+    
     
     
     
@@ -54,17 +54,17 @@ end
 
 function [procdat,out,T]=LinuxParallelLoop(parampreset,snakCell,procdat,out)
     
-%     if numel(gcp('nocreate'))==0
-%         poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
-%         clusterObj=parcluster(poolName);
-%         clusterObj.NumWorkers=12;
-%         saveProfile(clusterObj);
-%         parpool(poolName)
-%     end
+    %     if numel(gcp('nocreate'))==0
+    %         poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+    %         clusterObj=parcluster(poolName);
+    %         clusterObj.NumWorkers=12;
+    %         saveProfile(clusterObj);
+    %         parpool(poolName)
+    %     end
     for ii=1:length(snakCell)
         
         
-        try 
+        try
             [T{ii},out(ii)]=CallMain(snakCell{ii},parampreset);
         catch ME
             T{ii}=ME.getReport;
@@ -77,7 +77,7 @@ end
 function [procdat,out,T]=WindowsSerialLoop(parampreset,snakCell,procdat,out)
     
     for ii=1:length(snakCell)
-        try 
+        try
             [T{ii},out(ii)]=CallMain(snakCell{ii},parampreset);
             
         catch ME
@@ -112,13 +112,14 @@ function [procdat]=ProcessData(out,T,caseName,procdat)
     % out is the output structure containing the data
     % T is the char array containing the text output
     
-    lSnak=[out.snakSave(:).lSnak];
-    DlSnak=lSnak(2:end)-lSnak(1:end-1);
-    figure('Name',[caseName,'Length']), plot(1:length(lSnak),lSnak)
-    figure('Name',[caseName,'LengthDelta']),
-    semilogy(1:length(DlSnak),-(DlSnak),'o-',1:length(DlSnak),(DlSnak),'+-')
+    
     
     try
+        lSnak=[out.snakSave(:).lSnak];
+        DlSnak=lSnak(2:end)-lSnak(1:end-1);
+        figure('Name',[caseName,'Length']), plot(1:length(lSnak),lSnak)
+        figure('Name',[caseName,'LengthDelta']),
+        semilogy(1:length(DlSnak),-(DlSnak),'o-',1:length(DlSnak),(DlSnak),'+-')
         % read from text
         procdat.warningnum=numel(regexp(T,'Warning:'));
         
