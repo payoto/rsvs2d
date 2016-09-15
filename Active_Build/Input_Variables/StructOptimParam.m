@@ -41,6 +41,7 @@ function [paroptim]=DefaultOptim()
     [paroptim.optim.CG]=DefaultOptimCG();
     [paroptim.spline]=DefaultOptimSpline();
     paroptim.obj.flow=DefaultCutCell_Flow();
+    [paroptim.obj.invdes]=DefaultInversedesign();
     [paroptim.constraint]=DefaultConstraint();
     paroptim.structdat=GetStructureData(paroptim);
     
@@ -62,7 +63,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.specificFillName='24DVaverage';
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
-    paroptimgeneral.objectiveName='LengthArea';
+    paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
     paroptimgeneral.direction='max';
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675];
@@ -116,7 +117,18 @@ function [paroptimspline]=DefaultOptimSpline()
     
     
     paroptimspline.splineCase='aerosnake';
-    paroptimspline.domain='normalizeX';
+    paroptimspline.resampleSnak=false;
+    
+end
+
+function [paroptimobjinvdes]=DefaultInversedesign()
+    
+    
+    paroptimobjinvdes.aeroClass='NACA'; % 'NACA' 'UIUC'
+    paroptimobjinvdes.aeroName='4412';
+    paroptimobjinvdes.profileComp='distance'; % 'distance' or 'area'
+    
+    
 end
 
 function [paroptimconstraint]=DefaultConstraint()
@@ -248,6 +260,16 @@ function paroptim=LengthAreaObjective(paroptim)
     paroptim.general.objectiveName='LengthArea';
     paroptim.general.direction='max';
     paroptim.general.defaultVal=-1e3;
+end
+
+function paroptim=CutCellInvDes(paroptim)
+    
+    paroptim.general.objectiveName='InverseDesign';
+    paroptim.general.direction='min';
+    paroptim.general.defaultVal=100;
+    
+    paroptim.spline.splineCase='inversedesign';
+    paroptim.spline.resampleSnak=true;
 end
 
 % Run Sizes

@@ -15,8 +15,9 @@ function [resampPoints,splineblock]=ResampleSpline(points,paramspline)
     [parspline]=BuildSpecifiedCase(paramspline);
     points=RemoveIdenticalConsecutivePoints(points);
     points=SplitAtTrailingEdge(points,parspline.TEisLeft);
-    [nPoints,nDim]=size(points);
+    
     [normPoints,parList,domSize]=GenerateParameterList(parspline,points);
+    [nPoints,nDim]=size(normPoints);
     [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList);
     [resampPoints,splineblock]=ResampleSplinePatches(splineblock,parspline,nPoints);
     
@@ -53,7 +54,9 @@ function [points]=CheckClosedCurve(points,typCurve)
            end
        case 'open'
            
+       otherwise
            
+           error('unknown curve type')
    end
     
     
@@ -119,7 +122,6 @@ function parList=ExtractParameterList(parType,points)
     
 end
 
-
 function splitPoints=SplitAtTrailingEdge(points,TEisLeft)
     TEisLeft=(TEisLeft-0.5)*2;
     [~,testGlobalMin]=min(TEisLeft*points(:,1));
@@ -132,8 +134,8 @@ end
 function [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList)
     
     nSample=parspline.samplingN;
-    
-    [interestPoints]=FindLocalExtremum(parList);
+    eps=parspline.eps;
+    [interestPoints]=FindLocalExtremum(parList,eps);
     
     
     intNodes=find(sum(interestPoints,2));
@@ -184,7 +186,7 @@ function [trimBlocks,domBlocks,blockLength,totDomLength]=SplitSplineBlocks(intNo
     
 end
 
-function [interestPoints]=FindLocalExtremum(vec)
+function [interestPoints]=FindLocalExtremum(vec,eps)
     
     sizVec=size(vec);
     
@@ -192,10 +194,12 @@ function [interestPoints]=FindLocalExtremum(vec)
         vec=vec';
     end
     
+    
+    
     testMin=(((vec(2:end-1)<=vec(1:end-2)) & (vec(2:end-1)<=vec(3:end))));
     testMax=(((vec(2:end-1)>=vec(1:end-2)) & (vec(2:end-1)>=vec(3:end))));
-    testWeakSaddle=(((vec(2:end-1)==vec(1:end-2)) | (vec(2:end-1)==vec(3:end))));
-    testStrongSaddle=(((vec(2:end-1)==vec(1:end-2)) & (vec(2:end-1)==vec(3:end))));
+    testWeakSaddle=((abs(vec(2:end-1)-vec(1:end-2))<=eps) | (abs(vec(2:end-1)-vec(3:end))<=eps));
+    testStrongSaddle=((abs(vec(2:end-1)-vec(1:end-2))<=eps) & (abs(vec(2:end-1)-vec(3:end))<=eps));
     
     interestPoints=zeros(length(vec),4);
     interestPoints(2:end-1,1:4)=[testMin,testMax,testWeakSaddle,testStrongSaddle];
@@ -239,6 +243,10 @@ function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
 end
 
 function [cond]=PickEndcond(parspline,indRange,nPoints)
+    % conditions are based on function csape
+    % Empty condval disables the end condition and lets the spline be
+    % normal
+    %
     
     indepVar=parspline.parameter;
     
@@ -266,7 +274,7 @@ function [cond]=PickEndcond(parspline,indRange,nPoints)
         otherwise
             cond.ValsX=[];
             cond.ValsY=[];
-            cond.active=[0 0;0 0];
+            cond.active=[1 1 ; 1 1];
             
     end
     
@@ -283,7 +291,11 @@ end
 
 function [newPoints,interPP]=BuildSplineInterpolant(parList,data,cond,condVals,newParList)
     
-    if numel(condVals)>0
+    if numel(condVals)>0 && any(cond)
+        if data(1)>=data(end)
+            condVals=flip(condVals);
+            cond=flip(cond);
+        end
         interPP = csape(parList,[condVals(1);data;condVals(2)]',cond);
     else
         interPP = csape(parList,data');
@@ -294,7 +306,7 @@ end
 
 function newParList=Distribution(samplingDistrib,distribSource,provNewParList,nSample,domParam)
     
-    nSample=nSample+2; % so that at least the two edges are computed.
+    nSample=max([nSample,2]); % so that at least the two edges are computed.
     switch distribSource
         case 'calc'
             switch samplingDistrib
@@ -368,6 +380,7 @@ function [parspline]=CaseSpline_default()
     
     parspline.smoothing=0;
     parspline.TEisLeft=0;
+    parspline.eps=1e-7;
     
     parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
     parspline.typCurve='closed';
@@ -437,5 +450,23 @@ function [parspline]=CaseSpline_aerosnake()
     parspline.samplingParam='param';
     parspline.samplingN=301;
     parspline.samplingDistrib='even';
+    
+end
+
+function [parspline]=CaseSpline_inversedesign()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.typCurve='open';
+    
+    parspline.distribution='calc';
+    parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=301;
+    parspline.samplingDistrib='cosine';
     
 end

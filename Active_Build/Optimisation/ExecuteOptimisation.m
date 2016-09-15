@@ -526,6 +526,14 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
         =BuildExclusionList(paramoptim.general.symDesVarList);
     
     [paramoptim]=CheckiterGap(paramoptim);
+    
+    
+    % Set resampleSnak to match iin both with precedence in the
+    % optimisation option
+    paramoptim.parametrisation=SetVariables({'resampleSnak'},...
+        {ExtractVariables({'resampleSnak'},paramoptim)},paramoptim.parametrisation);
+    
+    
 end
 
 function [paramoptim]=CheckiterGap(paramoptim)
@@ -1163,3 +1171,20 @@ function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
     
 end
 
+function [objValue,additional]=InverseDesign(paramoptim,member,loop)
+    
+    
+    
+end
+
+function [objValue,additional]=InverseDesign_NACA(paramoptim,member,loop)
+    
+    
+    
+end
+
+function [objValue,additional]=InverseDesign_UUIC(paramoptim,member,loop)
+    
+    
+    
+end
