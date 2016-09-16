@@ -42,7 +42,11 @@ function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefin
     [gridreshape.cell(:).vertexindex]=deal([]);
     % Pre refinement processing
     [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine);
-    [gridrefined,connecstructinfo]=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]',[nRefine nRefine]);
+    if numel(nRefine)==1
+        [gridrefined,connecstructinfo]=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]',[nRefine nRefine]);
+    else
+        [gridrefined,connecstructinfo]=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]', nRefine(1:2));
+    end
 %     CheckResultsRefineGrid(gridreshape)
 %     CheckResultsRefineGrid(gridedgerefined)
 %     CheckResultsRefineGrid(gridrefined)

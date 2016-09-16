@@ -460,7 +460,7 @@ function [parspline]=CaseSpline_inversedesign()
     parspline.TEisLeft=0;
     
     parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.typCurve='open';
+    parspline.typCurve='closed';
     
     parspline.distribution='calc';
     parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
@@ -468,5 +468,5 @@ function [parspline]=CaseSpline_inversedesign()
     parspline.samplingParam='param';
     parspline.samplingN=301;
     parspline.samplingDistrib='cosine';
-    
+    %parspline.samplingScope='local';
 end
