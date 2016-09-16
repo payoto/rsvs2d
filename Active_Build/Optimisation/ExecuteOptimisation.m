@@ -1171,19 +1171,9 @@ function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
     
 end
 
+% Inverse design
+
 function [objValue,additional]=InverseDesign(paramoptim,member,loop)
-    
-    
-    
-end
-
-function [objValue,additional]=InverseDesign_NACA(paramoptim,member,loop)
-    
-    
-    
-end
-
-function [objValue,additional]=InverseDesign_UUIC(paramoptim,member,loop)
     
     
     

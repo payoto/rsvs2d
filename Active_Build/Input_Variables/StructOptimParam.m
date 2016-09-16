@@ -743,6 +743,14 @@ function [paroptim]=SmoothCG_outmis_Aero()
     paroptim.general.worker=4;
 end
 
+%% Inverse Design Cases
+
+function paroptim=test_invdes()
+    [paroptim]=DefaultOptim();
+    paroptim=CutCellInvDes(paroptim);
+    paroptim.obj.invdes.aeroName='0012';
+end
+
 %% Full Aero Optimisations
 
 % Desktop

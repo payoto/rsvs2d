@@ -11,9 +11,11 @@ Calculations Started . . .
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
 Grid Initialisation exited
-Time taken:00:00:00:047
+Time taken:00:00:00:038
 GENERATION PROCESS end
 GRID REFINEMENT START
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Mex_Wrapper.m',62,1)">62  </a>    [refinedGrid,connec]=GridRefine_MEX(nLevels,levelSize,...
+if system_dependent('IsDebugMode')==1, dbcont; end
 
      OUTPUT:Skipped
 Calculations Started . . .
@@ -23,267 +25,152 @@ Calculations Started . . .
     ACTION: Template Generated
     ACTION: Refinement Targets Identified
     ACTION: Edges Refined
-			Start Cell 1 of 40 
-			Start Cell 2 of 40 
-			Start Cell 3 of 40 
-			Start Cell 4 of 40 
-			Start Cell 5 of 40 
-			Start Cell 6 of 40 
-			Start Cell 7 of 40 
-			Start Cell 8 of 40 
-			Start Cell 9 of 40 
-			Start Cell 10 of 40 
-			Start Cell 11 of 40 
-			Start Cell 12 of 40 
-			Start Cell 13 of 40 
-			Start Cell 14 of 40 
-			Start Cell 15 of 40 
-			Start Cell 16 of 40 
-			Start Cell 17 of 40 
-			Start Cell 18 of 40 
-			Start Cell 19 of 40 
-			Start Cell 20 of 40 
-			Start Cell 21 of 40 
-			Start Cell 22 of 40 
-			Start Cell 23 of 40 
-			Start Cell 24 of 40 
-			Start Cell 25 of 40 
-			Start Cell 26 of 40 
-			Start Cell 27 of 40 
-			Start Cell 28 of 40 
-			Start Cell 29 of 40 
-			Start Cell 30 of 40 
-			Start Cell 31 of 40 
-			Start Cell 32 of 40 
-			Start Cell 33 of 40 
-			Start Cell 34 of 40 
-			Start Cell 35 of 40 
-			Start Cell 36 of 40 
-			Start Cell 37 of 40 
-			Start Cell 38 of 40 
-			Start Cell 39 of 40 
-			Start Cell 40 of 40 
-    ACTION: Cells Refined
-     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:172
-GRID REFINEMENT end
-SNAKE PROCESS START
-  Start initialisation
-    Generate Cell Centred Grid
-    Establish Cell Colume Information
-    Find Border Vertices
-    Initialise Snaxel Grid
-  Initialisation time:00:00:00:858
-  Start Time Stepping
-     Step 1  -
- 1.94961e-02  1.93458e-02  0.00000e+00  
- DVol = 0.19021  Time Taken: 00:00:00:297
-     Step 2  -
- 1.68776e-02  2.70546e-02  0.00000e+00  
- DVol = 0.14595  Time Taken: 00:00:00:280
-     Step 3  -
- 1.42978e-02  1.90312e-02  0.00000e+00  
- DVol = 0.13793  Time Taken: 00:00:00:390
-     Step 4  -
- 1.26961e-02  1.66292e-02  0.00000e+00  
- DVol = 0.12167  Time Taken: 00:00:00:266
-     Step 5  -
- 1.08155e-02  2.53088e-02  0.00000e+00  
- DVol = 0.091361  Time Taken: 00:00:00:265
-     Step 6  -
- 8.42480e-03  2.29137e-02  0.00000e+00  
- DVol = 0.083255  Time Taken: 00:00:00:312
-     Step 7  -
- 7.15153e-03  2.98059e-02  0.00000e+00  
- DVol = 0.070672  Time Taken: 00:00:00:281
-     Step 8  -
- 5.60212e-03  2.37754e-02  0.00000e+00  
- DVol = 0.055361  Time Taken: 00:00:00:249
-     Step 9  -
- 4.32460e-03  1.73557e-02  0.00000e+00  
- DVol = 0.042736  Time Taken: 00:00:00:267
-     Step 10  -
- 3.12199e-03  1.81329e-02  0.00000e+00  
- DVol = 0.030852  Time Taken: 00:00:00:265
-     Step 11  -
- 2.31648e-03  2.42031e-02  0.00000e+00  
- DVol = 0.022892  Time Taken: 00:00:00:250
-     Step 12  -
- 1.78497e-03  1.88240e-02  0.00000e+00  
- DVol = 0.017639  Time Taken: 00:00:00:218
-     Step 13  -
- 1.31492e-03  2.63474e-02  0.00000e+00  
- DVol = 0.012994  Time Taken: 00:00:00:234
-     Step 14  -
- 9.34087e-04  3.00360e-02  0.00000e+00  
- DVol = 0.0092308  Time Taken: 00:00:00:234
-     Step 15  -
- 7.05761e-04  2.68784e-02  0.00000e+00  
- DVol = 0.0069744  Time Taken: 00:00:00:219
-     Step 16  -
- 5.32455e-04  2.42200e-02  0.00000e+00  
- DVol = 0.0052618  Time Taken: 00:00:00:218
-     Step 17  -
- 3.96314e-04  2.27208e-02  0.00000e+00  
- DVol = 0.0039164  Time Taken: 00:00:00:234
-     Step 18  -
- 2.58894e-04  3.07946e-02  0.00000e+00  
- DVol = 0.0025584  Time Taken: 00:00:00:218
-     Step 19  -
- 1.95568e-04  3.33555e-02  0.00000e+00  
- DVol = 0.0019326  Time Taken: 00:00:00:219
-     Step 20  -
- 1.39935e-04  3.18015e-02  0.00000e+00  
- DVol = 0.0013829  Time Taken: 00:00:00:218
-     Step 21  -
- 1.00000e-04  3.11889e-02  0.00000e+00  
- DVol = 0.00098821  Time Taken: 00:00:00:234
-     Step 22  -
- 7.52173e-05  3.09879e-02  0.00000e+00  
- DVol = 0.00074331  Time Taken: 00:00:00:218
-     Step 23  -
- 5.65715e-05  3.04463e-02  0.00000e+00  
- DVol = 0.00055905  Time Taken: 00:00:00:225
-     Step 24  -
- 4.24948e-05  3.04830e-02  0.00000e+00  
- DVol = 0.00041994  Time Taken: 00:00:00:203
-     Step 25  -
- 3.19335e-05  3.00344e-02  0.00000e+00  
- DVol = 0.00031557  Time Taken: 00:00:00:219
-     Step 26  -
- 2.39889e-05  2.97945e-02  0.00000e+00  
- DVol = 0.00023706  Time Taken: 00:00:00:218
-     Step 27  -
- 1.80170e-05  2.94789e-02  0.00000e+00  
- DVol = 0.00017805  Time Taken: 00:00:00:234
-     Step 28  -
- 1.18690e-05  2.91202e-02  0.00000e+00  
- DVol = 0.00011729  Time Taken: 00:00:00:218
-     Step 29  -
- 8.66827e-06  2.90428e-02  0.00000e+00  
- DVol = 8.5661e-05  Time Taken: 00:00:00:219
-     Step 30  -
- 7.33624e-06  2.89947e-02  0.00000e+00  
- DVol = 7.2498e-05  Time Taken: 00:00:00:218
-     Step 31  -
- 5.66244e-06  2.89500e-02  0.00000e+00  
- DVol = 5.5957e-05  Time Taken: 00:00:00:219
-     Step 32  -
- 4.26440e-06  2.89131e-02  0.00000e+00  
- DVol = 4.2141e-05  Time Taken: 00:00:00:218
-     Step 33  -
- 3.18834e-06  2.88832e-02  0.00000e+00  
- DVol = 3.1508e-05  Time Taken: 00:00:00:218
-     Step 34  -
- 2.38345e-06  2.88594e-02  0.00000e+00  
- DVol = 2.3554e-05  Time Taken: 00:00:00:219
-     Step 35  -
- 1.78429e-06  2.88406e-02  0.00000e+00  
- DVol = 1.7633e-05  Time Taken: 00:00:00:218
-     Step 36  -
- 1.33717e-06  2.88260e-02  0.00000e+00  
- DVol = 1.3214e-05  Time Taken: 00:00:00:219
-     Step 37  -
- 1.00262e-06  2.88148e-02  0.00000e+00  
- DVol = 9.908e-06  Time Taken: 00:00:00:218
-     Step 38  -
- 7.51927e-07  2.88072e-02  0.00000e+00  
- DVol = 7.4306e-06  Time Taken: 00:00:00:218
-     Step 39  -
- 5.64456e-07  2.88014e-02  0.00000e+00  
- DVol = 5.578e-06  Time Taken: 00:00:00:219
-     Step 40  -
- 4.24628e-07  2.87968e-02  0.00000e+00  
- DVol = 4.1962e-06  Time Taken: 00:00:00:234
-     Step 41  -
- 3.18884e-07  2.87933e-02  0.00000e+00  
- DVol = 3.1512e-06  Time Taken: 00:00:00:218
-     Step 42  -
- 2.39275e-07  2.87908e-02  0.00000e+00  
- DVol = 2.3645e-06  Time Taken: 00:00:00:219
-     Step 43  -
- 1.79469e-07  2.87892e-02  0.00000e+00  
- DVol = 1.7735e-06  Time Taken: 00:00:00:218
-     Step 44  -
- 1.34575e-07  2.87878e-02  0.00000e+00  
- DVol = 1.3299e-06  Time Taken: 00:00:00:218
-     Step 45  -
- 1.00949e-07  2.87867e-02  0.00000e+00  
- DVol = 9.9759e-07  Time Taken: 00:00:00:219
-     Step 46  -
- 7.57178e-08  2.87859e-02  0.00000e+00  
- DVol = 7.4825e-07  Time Taken: 00:00:00:218
-     Step 47  -
- 5.67902e-08  2.87852e-02  0.00000e+00  
- DVol = 5.6121e-07  Time Taken: 00:00:00:203
-     Step 48  -
- 4.25932e-08  2.87848e-02  0.00000e+00  
- DVol = 4.2091e-07  Time Taken: 00:00:00:218
-     Step 49  -
- 3.19451e-08  2.87844e-02  0.00000e+00  
- DVol = 3.1569e-07  Time Taken: 00:00:00:219
-     Step 50  -
- 2.39589e-08  2.87841e-02  0.00000e+00  
- DVol = 2.3676e-07  Time Taken: 00:00:00:234
-     Step 51  -
- 1.79692e-08  2.87839e-02  0.00000e+00  
- DVol = 1.7757e-07  Time Taken: 00:00:00:218
-     Step 52  -
- 1.34769e-08  2.87837e-02  0.00000e+00  
- DVol = 1.3318e-07  Time Taken: 00:00:00:234
-     Step 53  -
- 1.01077e-08  2.87836e-02  0.00000e+00  
- DVol = 9.9886e-08  Time Taken: 00:00:00:219
-     Step 54  -
- 7.58079e-09  2.87835e-02  0.00000e+00  
- DVol = 7.4914e-08  Time Taken: 00:00:00:218
-     Step 55  -
- 5.68560e-09  2.87835e-02  0.00000e+00  
- DVol = 5.6186e-08  Time Taken: 00:00:00:219
-     Step 56  -
- 4.26420e-09  2.87834e-02  0.00000e+00  
- DVol = 4.2139e-08  Time Taken: 00:00:00:218
-     Step 57  -
- 3.19815e-09  2.87834e-02  0.00000e+00  
- DVol = 3.1605e-08  Time Taken: 00:00:00:218
-     Step 58  -
- 2.39862e-09  2.87833e-02  0.00000e+00  
- DVol = 2.3703e-08  Time Taken: 00:00:00:219
-     Step 59  -
- 1.79896e-09  2.87833e-02  0.00000e+00  
- DVol = 1.7778e-08  Time Taken: 00:00:00:218
-     Step 60  -
- 1.34922e-09  2.87833e-02  0.00000e+00  
- DVol = 1.3333e-08  Time Taken: 00:00:00:219
-     Step 61  -
- 1.01192e-09  2.87833e-02  0.00000e+00  
- DVol = 9.9999e-09  Time Taken: 00:00:00:202
-     Step 62  -
- 7.58937e-10  2.87833e-02  0.00000e+00  
- DVol = 7.4999e-09  Time Taken: 00:00:00:218
-     Step 63  -
- 5.69203e-10  2.87833e-02  0.00000e+00  
- DVol = 5.6249e-09  Time Taken: 00:00:00:219
-     Step 64  -
- 4.26902e-10  2.87833e-02  0.00000e+00  
- DVol = 4.2187e-09  Time Taken: 00:00:00:218
-     Step 65  -
- 3.20177e-10  2.87833e-02  0.00000e+00  
- DVol = 3.164e-09  Time Taken: 00:00:00:219
-     Step 66  -
- 2.40133e-10  2.87833e-02  0.00000e+00  
- DVol = 2.373e-09  Time Taken: 00:00:00:218
-     Step 67  -
- 1.80099e-10  2.87833e-02  0.00000e+00  
- DVol = 1.7798e-09  Time Taken: 00:00:00:218
-     Step 68  -
- 1.35075e-10  2.87833e-02  0.00000e+00  
- DVol = 1.3348e-09  Time Taken: 00:00:00:219
-     Step 69  -
- 1.01306e-10  2.87833e-02  0.00000e+00  
- -  Snakes Converged!
-  69 Steps Performed
-  Iteration Time:00:00:15:921
-  Volume converged to 1.00112e-09
-Time taken:00:00:16:950
-SNAKE PROCESS END
+			Start Cell 1 of 56 
+------------------------------------------------------------------------
+          Access violation detected at Fri Sep 16 17:06:14 2016
+------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding      : Disabled
+  Crash Mode          : continue (default)
+  Current Graphics Driver: NVIDIA Corporation Quadro K620/PCIe/SSE2 Version 4.4.0
+  Default Encoding    : windows-1252
+  Graphics card 1     : NVIDIA ( 0x10de ) NVIDIA Quadro K620 Version 9.18.13.4121
+  Host Name           : IT062038
+  MATLAB Architecture : win64
+  MATLAB Root         : C:\Program Files\MATLAB\R2015a
+  MATLAB Version      : 8.5.0.197613 (R2015a)
+  OpenGL              : hardware
+  Operating System    : Microsoft Windows 7 Enterprise 
+  Processor ID        : x86 Family 6 Model 60 Stepping 3, GenuineIntel
+  Virtual Machine     : Java 1.7.0_60-b19 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+  Window System       : Version 6.1 (Build 7601: Service Pack 1)
+
+Fault Count: 1
+
+
+Abnormal termination:
+Access violation
+
+Register State (from fault):
+  RAX = 0000007800000000  RBX = 000000021b2a92c0
+  RCX = 000000ffffffffff  RDX = 0000000000000000
+  RSP = 0000000004016d60  RBP = 00000000dbff4030
+  RSI = 0000000000000000  RDI = 0000000000000000
+ 
+   R8 = 00000000dbff4020   R9 = 0000000004016d3c
+  R10 = 000000013c47dca0  R11 = 00000adf006e000a
+  R12 = 00000000041c0000  R13 = 00000000f6f30270
+  R14 = 000000000000127f  R15 = 0000000000000009
+ 
+  RIP = 00000000777beef1  EFL = 00010206
+ 
+   CS = 0033   FS = 0053   GS = 002b
+
+Stack Trace (from fault):
+[  0] 0x00000000777beef1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00323313 RtlAnsiStringToUnicodeString+00000289
+[  1] 0x0000000077571a0a                   C:\WINDOWS\system32\kernel32.dll+00137738 HeapFree+00000010
+[  2] 0x000007fef56d69d8                   C:\WINDOWS\system32\MSVCR120.dll+00420312 free+00000028
+[  3] 0x000007feee437429 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridRefine_MEX.mexw64+00029737 RefineCell+00000617
+[  4] 0x000007feee4379e5 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridRefine_MEX.mexw64+00031205 RefineSelectedCells+00000421
+[  5] 0x000007feee438f33 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridRefine_MEX.mexw64+00036659 RefineGrid_MEX+00000339
+[  6] 0x000007feee4315f9 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridRefine_MEX.mexw64+00005625 mexFunction+00000745
+[  7] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
+[  8] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
+[  9] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
+[ 10] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 11] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 12] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 13] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 14] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 15] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 16] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 17] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 18] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 19] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 20] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 21] 0x00000000051e1847 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00071751 mdSetCurrentIntFcnIndexProtected::~mdSetCurrentIntFcnIndexProtected+00002135
+[ 22] 0x00000000053b92e6 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01086182 inFunctionHandleInterface::getWorkspaceObj+00010854
+[ 23] 0x00000000057cad1f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+05352735 inFunctionHandleInterface::UnloadWorkspaces+00621263
+[ 24] 0x00000000057cc6d5 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+05359317 inFunctionHandleInterface::UnloadWorkspaces+00627845
+[ 25] 0x00000000052cc0b9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00114873 in_is_matlab_function+00059497
+[ 26] 0x00000000052ca09c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106652 in_is_matlab_function+00051276
+[ 27] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 28] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 29] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 30] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 31] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 32] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 33] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 34] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 35] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 36] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 37] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 38] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 39] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 40] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 41] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 42] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 43] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 44] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 45] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 46] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 47] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 48] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 49] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 50] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 51] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 52] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 53] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 54] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 55] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 56] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 57] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 58] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 59] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 60] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 61] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 62] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 63] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 64] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 65] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 66] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 67] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 68] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 69] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 70] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 71] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 72] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 73] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 74] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 75] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 76] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 77] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 78] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 79] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 80] 0x00000000053e31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
+[ 81] 0x00000000052cb69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
+[ 82] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 83] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 84] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 85] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 86] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 87] 0x00000000051e2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
+[ 88] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 89] 0x000000000539b268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
+[ 90] 0x000000000539b864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
+[ 91] 0x000000000539ba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
+[ 92] 0x000000000539b9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
+[ 93] 0x000000000539b9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
+[ 94] 0x000000000534f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
+[ 95] 0x000000000534854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
+[ 96] 0x0000000005348471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
+[ 97] 0x000000000663e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
+[ 98] 0x000000000663f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
+[ 99] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
+[100] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
+[101] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
+[102] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
+[103] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
+[104] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
+[105] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\ui
