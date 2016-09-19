@@ -1559,7 +1559,7 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 	splitCellsInd=(int*)realloc(splitCellsInd,(nSplitCells+nCellRefine)*sizeof(int));
 	
 	for(ii=0;ii<nCellRefine;ii++){
-	printf("\n			Start Cell %i of %i ",ii+1,nCellRefine);
+	/*printf("\n			Start Cell %i of %i ",ii+1,nCellRefine);*/
 		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii],posEdgeSideTemp,
 			posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
 			

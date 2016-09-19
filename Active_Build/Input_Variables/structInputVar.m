@@ -723,6 +723,25 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.refine.edgeFinish='sharpen';
 end
 
+function [param]=testRefinement()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='testsmooth1';
+    param.snakes.step.snakesSteps=5;
+    param.snakes.refine.refineGrid=[2 1];
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.convLevel=10^-8;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
+end
+
 function [param]=SnakNaca0012()
     
     [param]=DefaultCase();
@@ -730,8 +749,8 @@ function [param]=SnakNaca0012()
     param=AvoidLocalOptim(param);
     
     param.general.typDat='naca0012';
-    param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=[4 1];
+    param.snakes.step.snakesSteps=5;
+    param.snakes.refine.refineGrid=[2 1];
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
     param.general.refineSteps=5;

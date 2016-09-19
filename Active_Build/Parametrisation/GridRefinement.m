@@ -13,7 +13,7 @@
 
 
 
-function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
+function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
         GridRefinement(gridreshape,param)
     % bridge function for the refinement function
     
@@ -27,12 +27,12 @@ function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
     
     [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
     
-    [gridrefined]=EdgePropertiesReshape(gridrefined);
-    isEdge=[gridrefined.edge(:).(boundstr{1})];
+    [gridrefined2]=EdgePropertiesReshape(gridrefined);
+    isEdge=[gridrefined2.edge(:).(boundstr{1})];
     cond=boundstr{3};
-    [loop]=OrderSurfaceVertexReshape(gridrefined,isEdge,cond);
+    [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
     
-    [unstructuredrefined]=ModifReshape(gridrefined);
+    [unstructuredrefined]=ModifReshape(gridrefined2);
 end
 
 function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine)
