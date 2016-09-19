@@ -80,7 +80,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			/*printf("%i ", levelSize[dim()*ii+jj]); */
 		}
 	}
-	/*printf("got here fine!\n");*/
+	printf("got here fine!\n");
 	inputArrayPtr=mxGetPr(prhs[7]);
 	for (ii=0;ii<nRefine;ii++){
 		cellrefineInd[ii]=(int)(*(inputArrayPtr+(ii)));
@@ -100,7 +100,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	OutputGridStruct(&plhs[0]);
 	OutputConnectStruct(&plhs[1]);
 	/*free(levelSize); */
-	 ClearWorkSpace();
+	/* ClearWorkSpace(); */
 	free(cellrefineInd);
 	free(cellrefinePos);
 	/*
