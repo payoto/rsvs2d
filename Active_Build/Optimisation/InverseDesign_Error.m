@@ -35,11 +35,11 @@ function [errorMeasure]=InverseDesign_Error(paramoptim,loop)
         otherwise
             error('not coded yet') 
     end
-    plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
-    figure,
-    plotPoints(analysisCoord)
-    hold on
-    plotPoints(targCoord)
+%     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+%     figure,
+%     plotPoints(analysisCoord)
+%     hold on
+%     plotPoints(targCoord)
     
 end
 

@@ -262,11 +262,11 @@ function paroptim=LengthAreaObjective(paroptim)
     paroptim.general.defaultVal=-1e3;
 end
 
-function paroptim=CutCellInvDes(paroptim)
+function paroptim=InvDesObjective(paroptim)
     
     paroptim.general.objectiveName='InverseDesign';
     paroptim.general.direction='min';
-    paroptim.general.defaultVal=100;
+    paroptim.general.defaultVal=1000;
     
     paroptim.spline.splineCase='inversedesign';
     paroptim.spline.resampleSnak=true;
@@ -432,6 +432,23 @@ function [paroptim]=Component_DE()
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
     paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    
+end
+
+function [paroptim]=Inverse_CG()
+    
+    [paroptim]=DefaultOptim();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
+    [paroptim]=LocalVolumeConstraint(paroptim);
+    paroptim=InvDesObjective(paroptim);
+    [paroptim]=OptimCG(paroptim);
+    paroptim.general.startPop='halfuniformsharp';
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.symType='none'; % 'horz'
     
 end
 
@@ -746,9 +763,13 @@ end
 %% Inverse Design Cases
 
 function paroptim=test_invdes()
-    [paroptim]=DefaultOptim();
-    paroptim=CutCellInvDes(paroptim);
+    [paroptim]=Inverse_CG();
+    
     paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=4;
 end
 
 %% Full Aero Optimisations
