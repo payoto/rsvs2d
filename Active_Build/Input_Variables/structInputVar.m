@@ -658,6 +658,44 @@ function [param]=TestInitOptim()
     
 end
 
+function [param]=optimInverseDesign()
+   
+    [param]=DefaultCase();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='optimInit';
+    param.general.restart=true;
+    param.general.refineSteps=2;
+    
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.snakesSteps=200;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesConsole=false;
+    
+    param.results.archiveName='Optimisation';
+    param.results.resultRoot=[cd,'\..\results\'];
+    param.results.noteFiles={'CurrentBuild'};
+    param.results.tags={'snakes','optimisation'};
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.optiminit.cellLevels=[12,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+    
+    param.general.subdivType='chaikin';
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.resampleSnak=true;
+    param.general.refineSteps=2;
+    param.optiminit.corneractive=false;
+end
+
 %% Surrogate modelling Cases
 
 function [param]=surrogateDefault()
@@ -749,8 +787,8 @@ function [param]=SnakNaca0012()
     param=AvoidLocalOptim(param);
     
     param.general.typDat='naca0012';
-    param.snakes.step.snakesSteps=5;
-    param.snakes.refine.refineGrid=[2 1];
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=[4 4];
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
     param.general.refineSteps=5;

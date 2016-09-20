@@ -1175,6 +1175,15 @@ end
 
 function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     
+    [obj]=InverseDesign_Error(paramoptim,loop);
     
+    [~,areaAdd]=LengthArea(paramoptim,member,loop);
+    objValue=obj.sum;
     
+    additional=obj;
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
 end
