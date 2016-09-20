@@ -1,4 +1,31 @@
-GENERATION PROCESS START
+ramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+} 
+try,  ExecuteOptimisation('desk_0012cos'); catch ME{1}, end, try ExecuteOptimisation('desk_4412cos'); catch ME{2}, end
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - desk_0012cos start
+20-Sep-2016 17:27:38
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+20-Sep-2016 17:27:38
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
@@ -10,10 +37,6 @@ Calculations Started . . .
 
     Mex Output . Grid . . .Edge . . .Vertex . . .Cell . . .done !
 Reshaping
-Grid Initialisation exited
-Time taken:00:00:00:031
-GENERATION PROCESS end
-GRID REFINEMENT START
 got here fine!
 
      OUTPUT:Skipped
@@ -26,228 +49,4290 @@ Calculations Started . . .
     ACTION: Edges Refined
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .Time taken:00:00:00:219
-GRID REFINEMENT end
-SNAKE PROCESS START
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:187
+INITIAL GRID OPERATIONS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
   Start initialisation
     Generate Cell Centred Grid
     Establish Cell Colume Information
     Find Border Vertices
     Initialise Snaxel Grid
-  Initialisation time:00:00:01:108
+  Initialisation time:00:00:00:795
   Start Time Stepping
-     Step 1  -
- 1.81484e-02  1.62080e-02  0.00000e+00  
- DVol = 0.13949  Time Taken: 00:00:00:354
-     Step 2  -
- 1.55532e-02  2.26808e-02  0.00000e+00  
- DVol = 0.10991  Time Taken: 00:00:00:387
-     Step 3  -
- 1.30847e-02  1.59392e-02  0.00000e+00  
- DVol = 0.099236  Time Taken: 00:00:00:627
-     Step 4  -
- 1.15058e-02  1.38604e-02  0.00000e+00  
- DVol = 0.086537  Time Taken: 00:00:00:373
-     Step 5  -
- 9.75852e-03  1.98531e-02  0.00000e+00  
- DVol = 0.066983  Time Taken: 00:00:00:395
-     Step 6  -
- 7.50024e-03  2.11482e-02  0.00000e+00  
- DVol = 0.058465  Time Taken: 00:00:00:448
-     Step 7  -
- 6.45137e-03  2.53689e-02  0.00000e+00  
- DVol = 0.050289  Time Taken: 00:00:00:402
-     Step 8  -
- 4.97961e-03  1.77304e-02  0.00000e+00  
- DVol = 0.038817  Time Taken: 00:00:00:413
-     Step 9  -
- 3.72365e-03  1.18095e-02  0.00000e+00  
- DVol = 0.029026  Time Taken: 00:00:00:393
-     Step 10  -
- 2.71026e-03  1.55822e-02  0.00000e+00  
- DVol = 0.021127  Time Taken: 00:00:00:381
-     Step 11  -
- 2.13310e-03  2.54760e-02  0.00000e+00  
- DVol = 0.016628  Time Taken: 00:00:00:361
-     Step 12  -
- 1.73728e-03  2.14785e-02  0.00000e+00  
- DVol = 0.013542  Time Taken: 00:00:00:376
-     Step 13  -
- 1.27530e-03  2.47723e-02  0.00000e+00  
- DVol = 0.0099411  Time Taken: 00:00:00:316
-     Step 14  -
- 9.70483e-04  1.90634e-02  0.00000e+00  
- DVol = 0.007565  Time Taken: 00:00:00:363
-     Step 15  -
- 6.23773e-04  2.22355e-02  0.00000e+00  
- DVol = 0.0048624  Time Taken: 00:00:00:341
-     Step 16  -
- 4.70174e-04  1.93812e-02  0.00000e+00  
- DVol = 0.0036651  Time Taken: 00:00:00:366
-     Step 17  -
- 3.14318e-04  2.43137e-02  0.00000e+00  
- DVol = 0.0024501  Time Taken: 00:00:00:312
-     Step 18  -
- 2.35533e-04  2.30005e-02  0.00000e+00  
- DVol = 0.001836  Time Taken: 00:00:00:300
-     Step 19  -
- 1.77158e-04  2.22187e-02  0.00000e+00  
- DVol = 0.001381  Time Taken: 00:00:00:352
-     Step 20  -
- 1.31103e-04  2.76690e-02  0.00000e+00  
- DVol = 0.001022  Time Taken: 00:00:00:344
-     Step 21  -
- 9.47473e-05  2.46106e-02  0.00000e+00  
- DVol = 0.00073857  Time Taken: 00:00:00:332
-     Step 22  -
- 7.15643e-05  2.41289e-02  0.00000e+00  
- DVol = 0.00055785  Time Taken: 00:00:00:310
-     Step 23  -
- 5.40493e-05  2.36503e-02  0.00000e+00  
- DVol = 0.00042132  Time Taken: 00:00:00:325
-     Step 24  -
- 4.70983e-05  2.36323e-02  0.00000e+00  
- DVol = 0.00036714  Time Taken: 00:00:00:343
-     Step 25  -
- 3.54479e-05  2.30692e-02  0.00000e+00  
- DVol = 0.00027632  Time Taken: 00:00:00:340
-     Step 26  -
- 2.66817e-05  2.26827e-02  0.00000e+00  
- DVol = 0.00020799  Time Taken: 00:00:00:336
-     Step 27  -
- 2.00791e-05  2.23854e-02  0.00000e+00  
- DVol = 0.00015652  Time Taken: 00:00:00:349
-     Step 28  -
- 1.51046e-05  2.21449e-02  0.00000e+00  
- DVol = 0.00011774  Time Taken: 00:00:00:301
-     Step 29  -
- 1.13575e-05  2.19471e-02  0.00000e+00  
- DVol = 8.8533e-05  Time Taken: 00:00:00:354
-     Step 30  -
- 8.53645e-06  2.17848e-02  0.00000e+00  
- DVol = 6.6543e-05  Time Taken: 00:00:00:362
-     Step 31  -
- 6.41368e-06  2.16541e-02  0.00000e+00  
- DVol = 4.9995e-05  Time Taken: 00:00:00:347
-     Step 32  -
- 4.81729e-06  2.15879e-02  0.00000e+00  
- DVol = 3.7551e-05  Time Taken: 00:00:00:336
-     Step 33  -
- 3.63284e-06  2.15781e-02  0.00000e+00  
- DVol = 2.8318e-05  Time Taken: 00:00:00:310
-     Step 34  -
- 2.78833e-06  2.15383e-02  0.00000e+00  
- DVol = 2.1735e-05  Time Taken: 00:00:00:293
-     Step 35  -
- 2.09604e-06  2.14989e-02  0.00000e+00  
- DVol = 1.6339e-05  Time Taken: 00:00:00:345
-     Step 36  -
- 1.57236e-06  2.14648e-02  0.00000e+00  
- DVol = 1.2257e-05  Time Taken: 00:00:00:350
-     Step 37  -
- 1.17966e-06  2.14372e-02  0.00000e+00  
- DVol = 9.1956e-06  Time Taken: 00:00:00:324
-     Step 38  -
- 8.85004e-07  2.14152e-02  0.00000e+00  
- DVol = 6.8987e-06  Time Taken: 00:00:00:386
-     Step 39  -
- 6.63911e-07  2.13981e-02  0.00000e+00  
- DVol = 5.1753e-06  Time Taken: 00:00:00:362
-     Step 40  -
- 4.98025e-07  2.13850e-02  0.00000e+00  
- DVol = 3.8822e-06  Time Taken: 00:00:00:398
-     Step 41  -
- 3.73570e-07  2.13749e-02  0.00000e+00  
- DVol = 2.912e-06  Time Taken: 00:00:00:395
-     Step 42  -
- 2.80206e-07  2.13673e-02  0.00000e+00  
- DVol = 2.1842e-06  Time Taken: 00:00:00:371
-     Step 43  -
- 2.10170e-07  2.13615e-02  0.00000e+00  
- DVol = 1.6383e-06  Time Taken: 00:00:00:355
-     Step 44  -
- 1.57637e-07  2.13572e-02  0.00000e+00  
- DVol = 1.2288e-06  Time Taken: 00:00:00:321
-     Step 45  -
- 1.18233e-07  2.13539e-02  0.00000e+00  
- DVol = 9.2164e-07  Time Taken: 00:00:00:302
-     Step 46  -
- 8.86774e-08  2.13514e-02  0.00000e+00  
- DVol = 6.9125e-07  Time Taken: 00:00:00:317
-     Step 47  -
- 6.65096e-08  2.13496e-02  0.00000e+00  
- DVol = 5.1845e-07  Time Taken: 00:00:00:338
-     Step 48  -
- 4.98831e-08  2.13482e-02  0.00000e+00  
- DVol = 3.8884e-07  Time Taken: 00:00:00:328
-     Step 49  -
- 3.74129e-08  2.13471e-02  0.00000e+00  
- DVol = 2.9164e-07  Time Taken: 00:00:00:316
-     Step 50  -
- 2.80599e-08  2.13464e-02  0.00000e+00  
- DVol = 2.1873e-07  Time Taken: 00:00:00:314
-     Step 51  -
- 2.10451e-08  2.13458e-02  0.00000e+00  
- DVol = 1.6405e-07  Time Taken: 00:00:00:329
-     Step 52  -
- 1.57839e-08  2.13453e-02  0.00000e+00  
- DVol = 1.2304e-07  Time Taken: 00:00:00:312
-     Step 53  -
- 1.18380e-08  2.13450e-02  0.00000e+00  
- DVol = 9.2279e-08  Time Taken: 00:00:00:322
-     Step 54  -
- 8.87852e-09  2.13447e-02  0.00000e+00  
- DVol = 6.9209e-08  Time Taken: 00:00:00:312
-     Step 55  -
- 6.65891e-09  2.13446e-02  0.00000e+00  
- DVol = 5.1907e-08  Time Taken: 00:00:00:328
-     Step 56  -
- 4.99419e-09  2.13444e-02  0.00000e+00  
- DVol = 3.893e-08  Time Taken: 00:00:00:337
-     Step 57  -
- 3.74565e-09  2.13443e-02  0.00000e+00  
- DVol = 2.9198e-08  Time Taken: 00:00:00:314
-     Step 58  -
- 2.80924e-09  2.13442e-02  0.00000e+00  
- DVol = 2.1898e-08  Time Taken: 00:00:00:314
-     Step 59  -
- 2.10693e-09  2.13442e-02  0.00000e+00  
- DVol = 1.6424e-08  Time Taken: 00:00:00:331
-     Step 60  -
- 1.58020e-09  2.13441e-02  0.00000e+00  
- DVol = 1.2318e-08  Time Taken: 00:00:00:313
-     Step 61  -
- 1.18515e-09  2.13441e-02  0.00000e+00  
- DVol = 9.2384e-09  Time Taken: 00:00:00:312
-     Step 62  -
- 8.88862e-10  2.13441e-02  0.00000e+00  
- DVol = 6.9288e-09  Time Taken: 00:00:00:300
-     Step 63  -
- 6.66647e-10  2.13440e-02  0.00000e+00  
- DVol = 5.1966e-09  Time Taken: 00:00:00:314
-     Step 64  -
- 4.99985e-10  2.13440e-02  0.00000e+00  
- DVol = 3.8974e-09  Time Taken: 00:00:00:314
-     Step 65  -
- 3.74989e-10  2.13440e-02  0.00000e+00  
- DVol = 2.9231e-09  Time Taken: 00:00:00:345
-     Step 66  -
- 2.81242e-10  2.13440e-02  0.00000e+00  
- DVol = 2.1923e-09  Time Taken: 00:00:00:313
-     Step 67  -
- 2.10931e-10  2.13440e-02  0.00000e+00  
- DVol = 1.6442e-09  Time Taken: 00:00:00:307
-     Step 68  -
- 1.58198e-10  2.13440e-02  0.00000e+00  
- DVol = 1.2332e-09  Time Taken: 00:00:00:345
-     Step 69  -
- 1.18649e-10  2.13440e-02  0.00000e+00  
- DVol = 9.2488e-10  Time Taken: 00:00:00:312
-     Step 70  -
- 8.89867e-11  2.13440e-02  0.00000e+00  
- -  Snakes Converged!
-  70 Steps Performed
-  Iteration Time:00:00:24:300
-  Volume converged to 6.93662e-10
-Time taken:00:00:25:642
-SNAKE PROCESS END
+  20 Steps Performed
+  Iteration Time:00:00:12:221
+  Volume converged to 4.11200e-04
+Time Elapsed:00:00:14:281
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:15:326
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+20-Sep-2016 17:27:53
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:23:560
+  Volume converged to 4.76216e-09
+Time Elapsed:00:00:24:279
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:078
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:884
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:28:070
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:807
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:28:008
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:713
+  Volume converged to 8.14801e-09
+Time Elapsed:00:00:27:930
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:728
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:28:008
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:711
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:26:679
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:179
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:27:068
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:008
+  Volume converged to 8.14777e-09
+Time Elapsed:00:00:27:053
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:898
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:26:835
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:452
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:263
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:999
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:26:842
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:187
+  Volume converged to 8.14764e-09
+Time Elapsed:00:00:26:998
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:296
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:107
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:982
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:26:810
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:013
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:26:902
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:076
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:26:988
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:983
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:26:794
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:293
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:204
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:510
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:360
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:495
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:416
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:542
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:360
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:473
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:27:431
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:505
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:337
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:692
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:571
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:838
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:711
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:510
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:368
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:261
+  Volume converged to 8.14764e-09
+Time Elapsed:00:00:27:103
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:244
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:259
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:478
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:353
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:274
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:27:116
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:336
+  Volume converged to 8.14776e-09
+Time Elapsed:00:00:27:178
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:461
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:272
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:430
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:27:210
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:341
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:138
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:576
+  Volume converged to 8.14776e-09
+Time Elapsed:00:00:27:418
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:967
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:26:794
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:795
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:26:638
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:178
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:036
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:147
+  Volume converged to 8.14764e-09
+Time Elapsed:00:00:27:004
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:411
+  Volume converged to 8.14779e-09
+Time Elapsed:00:00:27:317
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:567
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:27:597
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:220
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:110
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:517
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:375
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:078
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:174
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:062
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:469
+  Volume converged to 8.14778e-09
+Time Elapsed:00:00:27:296
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:434
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:229
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:324
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:245
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:543
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:27:572
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:169
+  Volume converged to 8.14774e-09
+Time Elapsed:00:00:26:995
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:800
+  Volume converged to 8.14765e-09
+Time Elapsed:00:00:27:861
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:502
+  Volume converged to 8.14768e-09
+Time Elapsed:00:00:28:392
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:081
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:892
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:315
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:28:158
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:138
+  Volume converged to 8.14798e-09
+Time Elapsed:00:00:28:123
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:076
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:27:874
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:372
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:28:248
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:984
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:28:186
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:370
+  Volume converged to 8.14774e-09
+Time Elapsed:00:00:28:275
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:026
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:28:010
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:621
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:588
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:137
+  Volume converged to 8.14772e-09
+Time Elapsed:00:00:27:988
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:846
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:610
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:143
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:28:125
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:27:657
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:28:641
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:931
+  Volume converged to 8.14774e-09
+Time Elapsed:00:00:27:789
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:147
+  Volume converged to 8.14774e-09
+Time Elapsed:00:00:26:974
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:303
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:303
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:911
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:709
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:071
+  Volume converged to 8.14777e-09
+Time Elapsed:00:00:26:945
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:340
+  Volume converged to 8.14772e-09
+Time Elapsed:00:00:27:215
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:152
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:213
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:340
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:307
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:636
+  Volume converged to 8.14771e-09
+Time Elapsed:00:00:27:572
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:368
+  Volume converged to 8.14774e-09
+Time Elapsed:00:00:27:148
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:399
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:27:195
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:431
+  Volume converged to 8.14770e-09
+Time Elapsed:00:00:27:320
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:291
+  Volume converged to 8.14774e-09
+Time Elapsed:00:00:27:195
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:24:624
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:25:420
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:24:624
+  Volume converged to 8.14769e-09
+Time Elapsed:00:00:25:388
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:24:452
+  Volume converged to 8.14773e-09
+Time Elapsed:00:00:25:170
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:20:985
+  Volume converged to 8.14778e-09
+Time Elapsed:00:00:21:671
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:031
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:031
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:031
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:047
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:10:00:808
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+20-Sep-2016 17:37:54
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:28:314
+  Volume converged to 4.80642e-09
+Time Elapsed:00:00:29:124
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:28:578
+  Volume converged to 5.00796e-09
+Time Elapsed:00:00:29:531
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:28:391
+  Volume converged to 6.60379e-09
+Time Elapsed:00:00:29:468
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  42 Steps Performed
+  Iteration Time:00:00:29:343
+  Volume converged to 9.53991e-09
+Time Elapsed:00:00:30:264
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:28:546
+  Volume converged to 4.76217e-09
+Time Elapsed:00:00:29:513
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:28:060
+  Volume converged to 5.41927e-09
+Time Elapsed:00:00:29:060
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:28:529
+  Volume converged to 4.86242e-09
+Time Elapsed:00:00:29:357
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  40 Steps Performed
+  Iteration Time:00:00:27:968
+  Volume converged to 9.73380e-09
+Time Elapsed:00:00:28:842
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  45 Steps Performed
+  Iteration Time:00:00:31:835
+  Volume converged to 7.63767e-09
+Time Elapsed:00:00:32:708
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  47 Steps Performed
+  Iteration Time:00:00:32:991
+  Volume converged to 8.42346e-09
+Time Elapsed:00:00:33:927
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  49 Steps Performed
+  Iteration Time:00:00:34:981
+  Volume converged to 9.40036e-09
+Time Elapsed:00:00:35:761
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  63 Steps Performed
+  Iteration Time:00:00:40:942
+  Volume converged to 2.13420e-10
+Time Elapsed:00:00:42:066
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:01:42:669
+ITERATION 2 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 3 start
+20-Sep-2016 17:39:37
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:30:967
+  Volume converged to 4.58061e-09
+Time Elapsed:00:00:31:684
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:363
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:222
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:457
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:362
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:441
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:346
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  38 Steps Performed
+  Iteration Time:00:00:26:362
+  Volume converged to 5.79293e-09
+Time Elapsed:00:00:27:282
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:087
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:27:007
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:993
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:773
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:946
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:866
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:806
+  Volume converged to 8.40051e-09
+Time Elapsed:00:00:26:757
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:252
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:27:312
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:376
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:27:312
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:330
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:219
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:358
+  Volume converged to 8.40037e-09
+Time Elapsed:00:00:27:250
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:340
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:27:136
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:028
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:839
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:888
+  Volume converged to 8.40041e-09
+Time Elapsed:00:00:26:692
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:402
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:291
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:048
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:422
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:27:975
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:805
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:28:412
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:375
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:685
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:546
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:944
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:226
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:069
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:897
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:27:927
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:725
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:536
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:647
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:458
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:953
+  Volume converged to 8.40008e-09
+Time Elapsed:00:00:26:889
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:719
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:561
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:766
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:608
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:843
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:686
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:804
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:599
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:695
+  Volume converged to 8.40043e-09
+Time Elapsed:00:00:26:569
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:461
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:290
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  41 Steps Performed
+  Iteration Time:00:00:28:828
+  Volume converged to 2.62512e-09
+Time Elapsed:00:00:29:702
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:449
+  Volume converged to 8.40043e-09
+Time Elapsed:00:00:26:262
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:186
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:075
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:682
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:509
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:406
+  Volume converged to 8.40052e-09
+Time Elapsed:00:00:26:234
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:615
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:26:425
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:771
+  Volume converged to 8.40081e-09
+Time Elapsed:00:00:26:676
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:661
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:26:925
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:880
+  Volume converged to 8.40037e-09
+Time Elapsed:00:00:26:769
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:770
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:26:675
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:193
+  Volume converged to 8.40051e-09
+Time Elapsed:00:00:25:988
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:802
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:26:602
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:464
+  Volume converged to 8.40041e-09
+Time Elapsed:00:00:26:322
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:595
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:484
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:282
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:27:280
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:948
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:868
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:466
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:285
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:085
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:974
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:027
+  Volume converged to 8.40008e-09
+Time Elapsed:00:00:26:995
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:334
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:27:151
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:971
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:785
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:597
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:423
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:529
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:372
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:355
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:228
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  41 Steps Performed
+  Iteration Time:00:00:28:400
+  Volume converged to 2.62512e-09
+Time Elapsed:00:00:29:242
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:004
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:26:941
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:038
+  Volume converged to 8.40043e-09
+Time Elapsed:00:00:26:914
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:854
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:719
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:135
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:055
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:936
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:27:917
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:929
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:27:748
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:516
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:410
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:965
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:27:855
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:992
+  Volume converged to 8.40043e-09
+Time Elapsed:00:00:26:834
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:344
+  Volume converged to 8.40081e-09
+Time Elapsed:00:00:26:312
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:26:009
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:914
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:587
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:399
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:801
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:613
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  38 Steps Performed
+  Iteration Time:00:00:26:191
+  Volume converged to 5.79291e-09
+Time Elapsed:00:00:26:971
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:317
+  Volume converged to 8.40042e-09
+Time Elapsed:00:00:26:339
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:200
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:26:075
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:24:780
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:25:591
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:373
+  Volume converged to 8.40041e-09
+Time Elapsed:00:00:26:169
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:068
+  Volume converged to 8.40046e-09
+Time Elapsed:00:00:25:926
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:25:162
+  Volume converged to 8.40044e-09
+Time Elapsed:00:00:26:223
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:23:928
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:24:708
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:23:418
+  Volume converged to 8.40041e-09
+Time Elapsed:00:00:24:182
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:23:386
+  Volume converged to 8.40045e-09
+Time Elapsed:00:00:24:088
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  37 Steps Performed
+  Iteration Time:00:00:20:410
+  Volume converged to 8.40051e-09
+Time Elapsed:00:00:21:111
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:047
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:09:56:246
+ITERATION 3 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 4 start
+20-Sep-2016 17:49:33
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:37:277
+  Volume converged to 4.57374e-09
+Time Elapsed:00:00:38:104
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:37:823
+  Volume converged to 4.55338e-09
+Time Elapsed:00:00:38:743
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  55 Steps Performed
+  Iteration Time:00:00:38:510
+  Volume converged to 3.35672e-09
+Time Elapsed:00:00:39:274
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  56 Steps Performed
+  Iteration Time:00:00:38:541
+  Volume converged to 2.50786e-09
+Time Elapsed:00:00:39:430
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:37:548
+  Volume converged to 4.58060e-09
+Time Elapsed:00:00:38:454
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:37:314
+  Volume converged to 4.56692e-09
+Time Elapsed:00:00:38:094
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:37:954
+  Volume converged to 4.52677e-09
+Time Elapsed:00:00:39:114
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  55 Steps Performed
+  Iteration Time:00:00:38:282
+  Volume converged to 3.28739e-09
+Time Elapsed:00:00:39:192
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  53 Steps Performed
+  Iteration Time:00:00:37:637
+  Volume converged to 7.88678e-09
+Time Elapsed:00:00:38:526
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  56 Steps Performed
+  Iteration Time:00:00:38:464
+  Volume converged to 2.73201e-09
+Time Elapsed:00:00:39:228
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  54 Steps Performed
+  Iteration Time:00:00:38:489
+  Volume converged to 8.50664e-09
+Time Elapsed:00:00:39:206
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  200 Steps Performed
+  Iteration Time:00:01:51:540
+  Volume converged to 2.94340e-05
+Time Elapsed:00:01:52:242
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:03:12:285
+ITERATION 4 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 5 start
+20-Sep-2016 17:52:45
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  53 Steps Performed
+  Iteration Time:00:00:31:487
+  Volume converged to 9.58866e-09
+Time Elapsed:00:00:32:206
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:725
+  Volume converged to 6.17853e-10
+Time Elapsed:00:00:33:615
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:100
+  Volume converged to 6.17862e-10
+Time Elapsed:00:00:34:116
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:835
+  Volume converged to 6.17834e-10
+Time Elapsed:00:00:33:771
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:819
+  Volume converged to 6.17840e-10
+Time Elapsed:00:00:33:755
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:231
+  Volume converged to 6.17867e-10
+Time Elapsed:00:00:33:105
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:048
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:354
+  Volume converged to 6.17873e-10
+Time Elapsed:00:00:33:292
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:652
+  Volume converged to 6.17839e-10
+Time Elapsed:00:00:33:620
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:806
+  Volume converged to 6.17862e-10
+Time Elapsed:00:00:33:758
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:895
+  Volume converged to 6.17868e-10
+Time Elapsed:00:00:33:737
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:896
+  Volume converged to 6.17858e-10
+Time Elapsed:00:00:33:831
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:880
+  Volume converged to 6.17873e-10
+Time Elapsed:00:00:33:706
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:020
+  Volume converged to 6.02389e-10
+Time Elapsed:00:00:33:925
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:864
+  Volume converged to 6.17880e-10
+Time Elapsed:00:00:33:723
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:522
+  Volume converged to 6.17857e-10
+Time Elapsed:00:00:33:348
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:568
+  Volume converged to 6.17873e-10
+Time Elapsed:00:00:33:473
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:802
+  Volume converged to 6.17875e-10
+Time Elapsed:00:00:33:692
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:921
+  Volume converged to 6.17877e-10
+Time Elapsed:00:00:33:748
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:546
+  Volume converged to 6.17862e-10
+Time Elapsed:00:00:33:373
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:905
+  Volume converged to 6.17858e-10
+Time Elapsed:00:00:33:841
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:374
+  Volume converged to 6.17874e-10
+Time Elapsed:00:00:34:185
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:046
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:379
+  Volume converged to 6.17862e-10
+Time Elapsed:00:00:33:284
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:628
+  Volume converged to 6.17863e-10
+Time Elapsed:00:00:33:813
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:316
+  Volume converged to 6.17857e-10
+Time Elapsed:00:00:33:471
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:253
+  Volume converged to 6.17858e-10
+Time Elapsed:00:00:33:237
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:34:338
+  Volume converged to 6.17857e-10
+Time Elapsed:00:00:35:243
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:34:135
+  Volume converged to 6.17860e-10
+Time Elapsed:00:00:35:024
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:062
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:34:339
+  Volume converged to 6.17859e-10
+Time Elapsed:00:00:35:388
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:063
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:34:467
+  Volume converged to 6.17866e-10
+Time Elapsed:00:00:35:434
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:660
+  Volume converged to 6.17855e-10
+Time Elapsed:00:00:34:644
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:078
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:583
+  Volume converged to 6.17852e-10
+Time Elapsed:00:00:34:644
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:234
+  Volume converged to 6.17872e-10
+Time Elapsed:00:00:34:078
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:33:765
+  Volume converged to 6.17861e-10
+Time Elapsed:00:00:34:670
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  46 Steps Performed
+  Iteration Time:00:00:32:861
+  Volume converged to 6.17872e-10
+Time Elapsed:00:00:33:812
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start T
