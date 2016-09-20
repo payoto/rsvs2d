@@ -19,9 +19,9 @@ function [unstructured,loop,unstructReshape]=...
     
     %unpacking input parameters
     varExtract={'passDomBounds','passGridSteps','passPadding',...
-        'typDat','loadLogical','isCheckRes','boundstr'};
+        'typDat','loadLogical','isCheckRes','boundstr','gridDistrib'};
     [passDomBounds,passGridSteps,passPadding,...
-        typDat,loadLogical,isCheckRes,boundstr]=ExtractVariables(varExtract,param);
+        typDat,loadLogical,isCheckRes,boundstr,gridDistrib]=ExtractVariables(varExtract,param);
     
     % Defining global variables
     
@@ -46,6 +46,7 @@ function [unstructured,loop,unstructReshape]=...
     if ~loadLogical
         
         [unstructured]=InitialisEdgeGrid(param);
+        [unstructured]=GridRedistrib(unstructured,gridDistrib);
         [unstructured]=EdgeProperties(unstructured);
         isEdge=unstructured.edge.(boundstr{1});
         cond=boundstr{3};
@@ -62,7 +63,49 @@ function [unstructured,loop,unstructReshape]=...
     [unstructReshape]=ModifUnstructured(unstructured);
 end
 
+function [unstructured]=GridRedistrib(unstructured,gridDistrib)
+    
+    switch gridDistrib
+        
+        case 'none'
+        
+        case 'cosX1'        
+        xMax=1; %max(coord(:,1));
+        xMin=-1; %min(coord(:,1));
+        [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        case 'cosX'
+        xMax=max(unstructured.vertex.coord(:,1));
+        xMin=min(unstructured.vertex.coord(:,1));
+        [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        
+        otherwise
+            warning('Unrecognised grid distribution Type')
+    end
+    
+end
 
+function [unstructured]=CosGridDistrib(unstructured,xMax,xMin)
+    
+    coord=unstructured.vertex.coord;
+        x=coord(:,1);
+        
+        Dx=xMax-x;
+        
+        Dx=min(abs(Dx(Dx~=0)));
+        
+        xNorm=(coord(:,1)-xMin)/(xMax-xMin);
+        newX=(1-cos(xNorm*pi))/2*(xMax-xMin)+xMin;
+        DminNx=newX(xNorm<1 & xNorm>0)-1;
+        DminNx=min(abs(DminNx(DminNx~=0)));
+        
+        newX((xNorm>1))=(x(x>xMax)-xMax)/Dx*DminNx+xMax;
+        
+        newX((xNorm<0))=(x(x<xMin)-xMin)/Dx*DminNx+xMin;
+        
+        coord(:,1)=newX;
+        unstructured.vertex.coord=coord;
+    
+end
 %% Initialisation Functions
 
 function [unstructured]=InitialisEdgeGrid(param)

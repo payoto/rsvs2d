@@ -247,6 +247,15 @@ function [paroptim]=LocalVolumeConstraint(paroptim)
 end
 
 
+function [paroptim]=NoConstraint(paroptim)
+    paroptim.constraint.initConstr={};
+    paroptim.constraint.initVal={};
+    paroptim.constraint.desVarConstr={};
+    paroptim.constraint.desVarVal={};
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
+    
+end
 % Objectives
 function paroptim=CutCellObjective(paroptim)
     
@@ -439,7 +448,7 @@ function [paroptim]=Inverse_CG()
     
     [paroptim]=DefaultOptim();
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
-    [paroptim]=LocalVolumeConstraint(paroptim);
+    [paroptim]=NoConstraint(paroptim);
     paroptim=InvDesObjective(paroptim);
     [paroptim]=OptimCG(paroptim);
     paroptim.general.startPop='halfuniformsharp';
@@ -762,16 +771,54 @@ end
 
 %% Inverse Design Cases
 
+
 function paroptim=test_invdes()
     [paroptim]=Inverse_CG();
     
     paroptim.obj.invdes.aeroName='0012';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniform';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=16;
+    paroptim.general.worker=4;
+end
+
+function paroptim=desk_0012cos()
+    [paroptim]=Inverse_CG();
     
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
+    paroptim.obj.invdes.aeroName='0012';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=20;
     paroptim.general.worker=4;
 end
 
+function paroptim=desk_4412cos()
+    
+    paroptim=desk_0012cos();
+    paroptim.obj.invdes.aeroName='4412';
+    %paroptim.optim.CG.varActive='all';
+    
+end 
+
+function paroptim=bp3_invdes()
+    [paroptim]=Inverse_CG();
+    
+    paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=16;
+    paroptim.general.worker=12;
+end
+
+function paroptim=bp3_invdes_L()
+     paroptim=bp3_invdes();
+     
+    paroptim.general.startPop='halfuniform';
+     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_L');
+end
 %% Full Aero Optimisations
 
 % Desktop

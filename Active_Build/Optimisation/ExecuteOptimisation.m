@@ -679,6 +679,9 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
     switch startPop
         case 'rand'
             origPop=rand([nPop,nDesVar]);
+        case 'halfuniform'
+            origPop=ones([nPop nDesVar])*0.5;
+            
         case 'randuniform'
             
             origPop=rand([nPop,1])*ones([1 nDesVar]);
@@ -1042,6 +1045,10 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             
         case 'LengthArea'
             addstruct=struct('A',[],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+            
+        case 'InverseDesign'
+            addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
+                [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
             
     end
     optimdatstruct=struct('var',[],'value',[]);

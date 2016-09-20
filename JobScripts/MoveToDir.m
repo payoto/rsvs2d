@@ -5,7 +5,7 @@ function []=MoveToDir(nameDir,numStep)
      currDir=cd;
      filesepLoc=regexp(currDir,filesep);
      ii=0;
-     while ~strcmp(currDir(filesepLoc(end)+1:end),nameDir) && ii<numStep
+     while isempty(regexp(currDir(filesepLoc(end)+1:end),nameDir, 'once')) && ii<numStep
          
          cd ..
          currDir=cd;
