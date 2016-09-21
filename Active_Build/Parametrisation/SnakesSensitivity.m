@@ -1072,7 +1072,6 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
         snaxmode(jj).cellVol=cellVols(jj);
     end
     
-    
     t2=now;
     
     

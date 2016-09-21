@@ -1140,6 +1140,9 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     zlabel('Variable Value', 'interpreter','latex','fontsize',12)
     set(axh,'ticklabelinterpreter','latex')
     
+    
+    
+    
 end
 
 %% Binaries
