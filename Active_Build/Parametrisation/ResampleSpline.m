@@ -34,7 +34,8 @@ function [normPoints,parList,domSize]=GenerateParameterList(parspline,points)
     
     % Normalize data
     normType=parspline.domain;
-    [normPoints]=NormalizePoints(normType,points);
+    normScale=parspline.scale;
+    [normPoints]=NormalizePoints(normType,points,normScale);
     
     % Extract Parameter Type
     parType=parspline.parameter;
@@ -73,7 +74,7 @@ function [domSize]=ExtractDomain(normPoints,parList)
     
 end
 
-function [normPoints]=NormalizePoints(normType,points)
+function [normPoints]=NormalizePoints(normType,points,normScale)
     
     switch normType
         case 'normalizeX'
@@ -93,6 +94,13 @@ function [normPoints]=NormalizePoints(normType,points)
             vecTrans=points(minXi,:);
             
             normPoints=ratio*(points.*(ones(size(points(:,1)))*vecTrans));
+        case 'scaleX'
+            ratio=1/normScale;
+            
+            [~,minXi]=min(points(:,1));
+            vecTrans=points(minXi,:);
+            
+            normPoints=ratio*(points-(ones(size(points(:,1)))*vecTrans));
         otherwise
             normPoints=points;
     end
@@ -388,6 +396,7 @@ function [parspline]=CaseSpline_default()
     parspline.distribution='provided';
     parspline.newParList=[];
     parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
+    parspline.scale=1;
     
     parspline.samplingParam='param';
     parspline.samplingN=50;
@@ -468,5 +477,24 @@ function [parspline]=CaseSpline_inversedesign()
     parspline.samplingParam='param';
     parspline.samplingN=301;
     parspline.samplingDistrib='cosine';
+    %parspline.samplingScope='local';
+end
+
+function [parspline]=CaseSpline_inversedesign2()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='l'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.typCurve='closed';
+    
+    parspline.distribution='calc';
+    parspline.domain='scaleX'; % 'normalizeX' 'normalizeL'
+    parspline.scale=2.000055;
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=501;
+    parspline.samplingDistrib='2cosine';
     %parspline.samplingScope='local';
 end

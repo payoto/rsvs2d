@@ -589,9 +589,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     
     % Plot 1
     subplot(1,2,1,'ticklabelinterpreter','latex')
-    nVar=length(optimstruct(1).population);
-    nIter=length(optimstruct);
-    iterRes=zeros([nIter,nVar])+defaultVal;
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
     hold on
     for ii=1:nIter
         nVarLoc=length(optimstruct(ii).population);
@@ -611,7 +609,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     
     meanRes=mean(iterRes,2);
     stdRes=std(iterRes,0,2);
-    lSub1(2)=plot([2:2:nIter]/2,minRes,'r-');
+    lSub1(2)=plot(1:numel(minRes),minRes,'r-');
     %lSub1(3)=plot(1:2:nIter,meanRes,'color',[0.7 0 0]);
     lSub1(3)=plot([0,nIter],[knownOptim knownOptim],'r--');
     
@@ -644,7 +642,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     yT=min(minRes)-(box(4)-box(3))*0.05;
     strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
     strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
-
+    
     strT=regexprep(strT,'\ ','\\space');
     text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
     
@@ -659,16 +657,8 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
             errMeasure=knownOptim-minRes;
     end
     
+  
     
-%     for ii=1:nIter
-%         nPop=length(optimstruct(ii).population);
-%         for jj=1:nPop
-%             plot3(ones(size(optimstruct(ii).population(jj).fill))*((ii+1)/2),...
-%                 1:numel(optimstruct(ii).population(jj).fill),...
-%                 optimstruct(ii).population(jj).fill)
-%             hold on
-%         end
-%     end
     
     popNominal=zeros([ceil(nIter/2),numel(optimstruct(1).population(1).fill)]);
     objNominal=zeros([ceil(nIter/2),1]);
@@ -680,7 +670,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     end
     
     
-    iterVec=((2:2:length(optimstruct))-1)/2;
+    iterVec=((1:2:nIter)+1)/2;
     varVec=1:length(popNominal(1,:));
     
     [iterGrid,varGrid]=meshgrid(iterVec,varVec);
@@ -694,5 +684,43 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     ylabel('Variable Index', 'interpreter','latex','fontsize',12)
     zlabel('Variable Value', 'interpreter','latex','fontsize',12)
     set(axh,'ticklabelinterpreter','latex')
+    
+    %% figure 2
+    
+    
+    
+    h(2)=figure('Name','Design Variable Evolution','Position',[20 100 1000 600]);
+    
+    axh=subplot(2,2,1,'ticklabelinterpreter','latex');
+    s(1)=surf(iterGrid,varGrid,meanFill');
+    caxis([0 1])
+    
+    axc(1)=colorbar;
+    view(0 ,90)
+    xlabel('Iteration', 'interpreter','latex','fontsize',12)
+    ylabel('Variable Index', 'interpreter','latex','fontsize',12)
+    
+    
+    
+    cLabel={'Mean','Standard Deviation','Maximum','Minimum'};
+    for ii=1:length(s)
+        s(ii).EdgeColor='none';
+        axc(ii).TickLabelInterpreter='latex';
+        axc(ii).Label.String=cLabel{ii};
+        axc(ii).Label.FontSize=14;
+    end
+    
+    
+end
+
+
+function [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal)
+    
+    nVar=0;
+    for ii=1:length(optimstruct)
+        nVar=max([length(optimstruct(ii).population),nVar]);
+    end
+    nIter=length(optimstruct);
+    iterRes=zeros([nIter,nVar])+sign(defaultVal)*abs(defaultVal^2);
     
 end

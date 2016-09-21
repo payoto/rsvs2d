@@ -455,6 +455,8 @@ function [paroptim]=Inverse_CG()
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.validVol=0.2;
     
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
@@ -799,6 +801,36 @@ function paroptim=desk_4412cos()
     
     paroptim=desk_0012cos();
     paroptim.obj.invdes.aeroName='4412';
+    %paroptim.optim.CG.varActive='all';
+    
+end 
+
+
+function paroptim=bp3_0012cos()
+    [paroptim]=Inverse_CG();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
+    paroptim.obj.invdes.aeroName='0012';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniform';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+
+function paroptim=bp3_4412cos()
+    
+    paroptim=bp3_0012cos();
+    paroptim.obj.invdes.aeroName='4412';
+    %paroptim.optim.CG.varActive='all';
+    
+end 
+
+
+function paroptim=bp3_2212cos()
+    
+    paroptim=bp3_0012cos();
+    paroptim.obj.invdes.aeroName='2212';
     %paroptim.optim.CG.varActive='all';
     
 end 
