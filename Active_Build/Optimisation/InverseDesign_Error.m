@@ -91,6 +91,8 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     naca45t=@(x,t,a4)  5*t*(0.2969*sqrt(x)-0.1260*x-0.3516*x.^2+0.2843*x.^3-a4*x.^4);
     naca4c=@(x,m,p) [m*x(x<p)/p^2.*(2*p-x(x<p)) ; m*(1-x(x>=p))/(1-p)^2.*(1+x(x>=p)-2*p)];
     
+   x(x>1)=1;
+   x(x<0)=0;
     
     if numel(nacaStr)==4
         m=str2num(nacaStr(1))/100;

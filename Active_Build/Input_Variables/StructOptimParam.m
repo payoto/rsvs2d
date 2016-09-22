@@ -277,8 +277,6 @@ function paroptim=InvDesObjective(paroptim)
     paroptim.general.direction='min';
     paroptim.general.defaultVal=1000;
     
-    paroptim.spline.splineCase='inversedesign';
-    paroptim.spline.resampleSnak=true;
 end
 
 % Run Sizes
@@ -457,6 +455,9 @@ function [paroptim]=Inverse_CG()
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.validVol=0.2;
+    
+    paroptim.spline.splineCase='inversedesign2';
+    paroptim.spline.resampleSnak=true;
     
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
@@ -809,6 +810,10 @@ end
 function paroptim=bp3_0012cos()
     [paroptim]=Inverse_CG();
     
+    paroptim.optim.CG.diffStepSize=[1e-2,-1e-2];
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.spline.splineCase='inversedesign2';
+    
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';
@@ -826,7 +831,6 @@ function paroptim=bp3_4412cos()
     
 end 
 
-
 function paroptim=bp3_2212cos()
     
     paroptim=bp3_0012cos();
@@ -834,6 +838,39 @@ function paroptim=bp3_2212cos()
     %paroptim.optim.CG.varActive='all';
     
 end 
+
+function paroptim=bp32_0012cos()
+    [paroptim]=Inverse_CG();
+    
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.spline.splineCase='inversedesign2';
+    
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
+    paroptim.obj.invdes.aeroName='0012';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniform';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+
+function paroptim=bp32_4412cos()
+    
+    paroptim=bp32_0012cos();
+    paroptim.obj.invdes.aeroName='4412';
+    %paroptim.optim.CG.varActive='all';
+    
+end 
+
+function paroptim=bp32_2212cos()
+    
+    paroptim=bp32_0012cos();
+    paroptim.obj.invdes.aeroName='2212';
+    %paroptim.optim.CG.varActive='all';
+    
+end 
+
 
 function paroptim=bp3_invdes()
     [paroptim]=Inverse_CG();
