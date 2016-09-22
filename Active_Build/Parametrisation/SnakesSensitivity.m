@@ -1014,6 +1014,13 @@ function [vectormode]=BuildVectors(looproot,loopsnaxel)
     vectormode.vector=vertcat(vecMode{:});
 end
 
+function [snaxmode]=BuildMovementStructures(snaxel,snakposition,sensSnax,volumefraction)
+  
+    
+    
+    
+end
+
 function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefraction,isPlot)
     
     if nargin<5
