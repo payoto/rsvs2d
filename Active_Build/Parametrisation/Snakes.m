@@ -299,31 +299,13 @@ end
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
         borderVertices,refinedGriduns,param)
     
-    varExtract={'edgeFinish','TEShrink','LEShrink','axisRatio'};
-    [edgeFinish,TEShrink,LEShrink,axisRatio]=ExtractVariables(varExtract,param);
     
     %disp('Finished Iterations , starting Post Process')
     [snaxel]=FreezingFunction(snaxel,borderVertices);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     
     %disp('Creating Snaxel Loops')
-    [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
-    for ii=1:length(loopsnaxel)
-        loopsnaxel(ii).snaxel.coord(:,2)=loopsnaxel(ii).snaxel.coord(:,2)*axisRatio;
-    end
-    
-    switch edgeFinish
-        case 'shrink'
-            for ii=1:length(loopsnaxel)
-                loopsnaxel(ii).snaxel.coord=ShrinkEdges(loopsnaxel(ii).snaxel.coord,LEShrink,TEShrink);
-            end
-        case 'sharpen'
-            for ii=1:length(loopsnaxel)
-                [loopsnaxel(ii).snaxel.coord]=SharpenEdges(loopsnaxel(ii).snaxel.coord,TEShrink,LEShrink);
-            end
-        case 'none'
-            
-    end
+    [loopsnaxel]=ExtractSnaxelLoops(snaxel,param);
     
 end
 
@@ -2653,37 +2635,6 @@ end
 
 %% Various
 
-function [loopsnaxel]=OrderSurfaceSnaxel(snaxel)
-    % function extracting the snaxels into their separate loops
-    global unstructglobal
-    
-    snaxPositions=PositionSnakes(snaxel,unstructglobal);
-    
-    nSnax=length(snaxel);
-    blockSegments=zeros(2*nSnax,2);
-    for ii=1:nSnax
-        for jj=0:1
-            blockSegments(2*ii-jj,:)=[snaxel(ii).index,snaxel(ii).connectivity(jj+1)];
-        end
-    end
-    
-    cellSimilar=FindIdenticalVector(blockSegments);
-    for ii=1:length(cellSimilar)
-        blockEdgeIndex(ii)=cellSimilar{ii}(1);
-    end
-    blockEdges=blockSegments(blockEdgeIndex,:);
-    % Order edges into closed loops
-    [cellOrderedVertex]=OrderBlockEdges(blockEdges);
-    snaxIndex=[snaxel(:).index];
-    for ii=1:length(cellOrderedVertex)
-        loopsnaxel(ii).snaxel.index=[cellOrderedVertex{ii}(:,1)];
-        loopIndices=FindObjNum(snaxel,loopsnaxel(ii).snaxel.index,snaxIndex);
-        loopsnaxel(ii).snaxel.coord=vertcat(snaxPositions(loopIndices).coord);
-        %loopsnaxel(ii).edge.index=isEdgeIndex(cellOrderedEdges{ii});
-    end
-    
-end
-
 function [snaxelrev]=ReverseSnakes(snaxel)
     % Reverses a set of snaxels such that they are pointing the other way
     
@@ -2721,102 +2672,6 @@ function [snaxelrev]=ReverseSnakesConnection(snaxel)
     
     
 end
-
-function [points]=ShrinkEdges(points,LEShrink,TEShrink)
-    % Function which allows to make sharp trailing edges and leading edges
-    [~,iLE]=min(points(:,1));
-    [~,iTE]=max(points(:,1));
-    
-    [m,~]=size(points);
-    
-    iLEm1=iLE-1;
-    [iLEm1]=IndexMod(iLEm1,m);
-    iLEp1=iLE+1;
-    [iLEp1]=IndexMod(iLEp1,m);
-    
-    iTEm1=iTE-1;
-    [iTEm1]=IndexMod(iTEm1,m);
-    iTEp1=iTE+1;
-    [iTEp1]=IndexMod(iTEp1,m);
-    
-    points(iLEm1,2)=points(iLEm1,2)-LEShrink;
-    points(iLEp1,2)=points(iLEp1,2)+LEShrink;
-    
-    points(iTEm1,2)=points(iTEm1,2)+TEShrink;
-    points(iTEp1,2)=points(iTEp1,2)-TEShrink;
-    
-    if points(iLEm1,2)<=points(iLE+1,2)
-        points([iLEm1,iLE+1],:)=[];
-    end
-    if points(iTEm1,2)>=points(iTEp1,2)
-        points([iTEm1,iTEp1],:)=[];
-    end
-    
-end
-
-function [points]=SharpenEdges(points,TEShrink,LEShrink)
-    % Function which allows to make sharp trailing edges and leading edges
-    [~,iLE]=min(points(:,1));
-    [~,iTE]=max(points(:,1));
-    
-    [m,~]=size(points);
-    
-    iLEm1=iLE-1;
-    [iLEm1]=IndexMod(iLEm1,m);
-    iLEp1=iLE+1;
-    [iLEp1]=IndexMod(iLEp1,m);
-    iLEm2=iLE-2;
-    [iLEm2]=IndexMod(iLEm2,m);
-    iLEp2=iLE+2;
-    [iLEp2]=IndexMod(iLEp2,m);
-    
-    iTEm1=iTE-1;
-    [iTEm1]=IndexMod(iTEm1,m);
-    iTEp1=iTE+1;
-    [iTEp1]=IndexMod(iTEp1,m);
-    iTEm2=iTE-2;
-    [iTEm2]=IndexMod(iTEm2,m);
-    iTEp2=iTE+2;
-    [iTEp2]=IndexMod(iTEp2,m);
-    
-    if LEShrink
-        [points(iLEm1,:)]=Align3points(points([iLE,iLEm2],:),points(iLEm1,:));
-        [points(iLEp1,:)]=Align3points(points([iLE,iLEp2],:),points(iLEp1,:));
-    end
-    if TEShrink
-        [points(iTEm1,:)]=Align3points(points([iTE,iTEm2],:),points(iTEm1,:));
-        [points(iTEp1,:)]=Align3points(points([iTE,iTEp2],:),points(iTEp1,:));
-    end
-    
-    %     if points(iLEm1,2)<=points(iLE+1,2)
-    %          points([iLEm1,iLE+1],:)=[];
-    %     end
-    %     if points(iTEm1,2)>=points(iTEp1,2)
-    %          points([iTEm1,iTEp1],:)=[];
-    %     end
-    
-end
-
-function [pointAlign]=Align3points(line,point)
-    
-    pointAlign=point;
-    
-    pointAlign(2)=(line(1,2)-line(2,2))/(line(1,1)-line(2,1))...
-        *(point(1)-line(2,1))+line(2,2);
-    
-    if isnan(pointAlign(2)) || ~isfinite(pointAlign(2))
-        pointAlign=point;
-    end
-    
-    
-end
-
-function [indMod]=IndexMod(ind,m)
-    
-    indMod=mod(ind-1,m)+1;
-    
-end
-
 
 %% Copied/Modified from main
 

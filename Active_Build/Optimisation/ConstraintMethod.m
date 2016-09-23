@@ -113,7 +113,7 @@ end
 
 function [preProcImage,activityLayer]=ProcImageConstraint(imPath)
     % Load Image and reduce it to an averaged double array from 0 to 1
-    imPath=MakePathCompliant(imPath)
+    imPath=MakePathCompliant(imPath);
     preProcImage=imread(imPath);
     imClass=class(preProcImage);
     numBit=str2num(regexprep(imClass,'uint',''));
@@ -363,6 +363,10 @@ function [population]=ResultVariableConsCaller(constrName,constrVal,paroptim,pop
             
         case 'Volume'
             
+        case 'SnakResBarrier'
+            constrVal=ExtractVariables({'convLevel'},paroptim.parametrisation);
+            constrVal=[constrVal*100,1];
+            population=BarrierSnaxelVolResidual(constrVal,population);
         case ' '
             
         otherwise
@@ -411,5 +415,27 @@ function population=BarrierAerodynamicResidual(constrVal,population)
     
 end
 
+
+function population=BarrierSnaxelVolResidual(constrVal,population)
+    
+    for ii=1:length(population)
+        
+        if population(ii).constraint>0
+            if population(ii).additional.snaxelVolRes<constrVal(1)
+                population(ii).constraint=1;
+                
+            elseif population(ii).additional.snaxelVolRes>constrVal(2) % Constraint fully violated
+                population(ii).constraint=0;
+                
+            else
+                population(ii).constraint=1-(0.5+0.5*tanh(3/(-(log10(constrVal(1))-log10(constrVal(2)))/2)...
+                    *log10(population(ii).additional.snaxelVolRes)));
+            end
+        end
+        
+    end
+    
+    
+end
 
 
