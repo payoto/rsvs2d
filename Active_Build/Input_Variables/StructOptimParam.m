@@ -246,7 +246,6 @@ function [paroptim]=LocalVolumeConstraint(paroptim)
     
 end
 
-
 function [paroptim]=NoConstraint(paroptim)
     paroptim.constraint.initConstr={};
     paroptim.constraint.initVal={};
@@ -254,6 +253,16 @@ function [paroptim]=NoConstraint(paroptim)
     paroptim.constraint.desVarVal={};
     paroptim.constraint.resConstr={};
     paroptim.constraint.resVal={};
+    
+end
+
+function [paroptim]=SnaxVolResConstraint(paroptim)
+    paroptim.constraint.initConstr={};
+    paroptim.constraint.initVal={};
+    paroptim.constraint.desVarConstr={};
+    paroptim.constraint.desVarVal={};
+    paroptim.constraint.resConstr={'SnakResBarrier'};
+    paroptim.constraint.resVal={1};
     
 end
 % Objectives
@@ -446,7 +455,7 @@ function [paroptim]=Inverse_CG()
     
     [paroptim]=DefaultOptim();
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
-    [paroptim]=NoConstraint(paroptim);
+    [paroptim]=SnaxVolResConstraint(paroptim);
     paroptim=InvDesObjective(paroptim);
     [paroptim]=OptimCG(paroptim);
     paroptim.general.startPop='halfuniformsharp';
@@ -789,12 +798,14 @@ end
 function paroptim=desk_0012cos()
     [paroptim]=Inverse_CG();
     
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.spline.splineCase='inversedesign2';
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';
-    paroptim.general.startPop='halfuniform';
+    paroptim.general.startPop='halfuniformsharp';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=40;
     paroptim.general.worker=4;
 end
 
@@ -803,6 +814,7 @@ function paroptim=desk_4412cos()
     paroptim=desk_0012cos();
     paroptim.obj.invdes.aeroName='4412';
     %paroptim.optim.CG.varActive='all';
+    paroptim.parametrisation.snakes.refine.axisRatio=2;
     
 end 
 
@@ -810,7 +822,7 @@ end
 function paroptim=bp3_0012cos()
     [paroptim]=Inverse_CG();
     
-    paroptim.optim.CG.diffStepSize=[1e-2,-1e-2];
+    paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
     paroptim.optim.CG.validVol=0.3;
     paroptim.spline.splineCase='inversedesign2';
     
@@ -819,8 +831,10 @@ function paroptim=bp3_0012cos()
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=40;
     paroptim.general.worker=8;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio=2;
 end
 
 function paroptim=bp3_4412cos()
@@ -851,8 +865,10 @@ function paroptim=bp32_0012cos()
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=40;
     paroptim.general.worker=8;
+    paroptim.parametrisation.snakes.refine.axisRatio=2;
+    
 end
 
 function paroptim=bp32_4412cos()
