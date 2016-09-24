@@ -67,14 +67,24 @@ function [newFill]=...
     [newFill]=RemoveModeNotDesign(paramoptim,oldGrid,newFill);
     
     % Eventually get gradient
-    [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo,forceparam);
-    [snaxmode]=ExecuteSensitivity('analytical',snaxel,snakposition,sensSnax,volumefraction,false);
-    [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,volumefraction);
-    
-    [newloop]=MoveToFill(snaxmove,deltaFill);
+    [newloop]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill);
 end
 
+function [newloop]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill)
+    
+    [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo,forceparam);
+    %[snaxmode]=ExecuteSensitivity('analytical',snaxel,snakposition,sensSnax,volumefraction,false);
+    
+    [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,false);
+    [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,oldGrid);
+    [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,volumefraction);
+    deltaFill=vertcat(newFill(:).fill)-ones([numel(newFill),1])*rootFill;
+    [newloop]=MoveToFill(snaxmove,deltaFill);
+    
+end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(restartsnake)
@@ -973,18 +983,6 @@ end
 
 %% Sensitivity method development
 
-function [snaxmode]=ExecuteSensitivity(entryPoint,snaxel,snakposition,sensSnax,volumefraction,isPlot)
-    
-    
-    switch entryPoint
-        case 'analytical'
-            [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,isPlot);
-        case 'snake'
-            
-    end
-    
-    
-end
 
 %% Analytical snaxel Mode structure
 
@@ -1505,7 +1503,6 @@ function [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSna
         error('Indices mismatch between snakposition and snaxel while building movement structure')
     end
     
-    [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode);
     [loopsnaxel,nSnax,nLoop]=CCWLoopLength(snaxel,snakposition);
     
     [snaxmove]=BuildSnaxMoveTemplate(nSnax,nSnax,nSnax);
@@ -1601,7 +1598,7 @@ function [snaxmove]=CalculateMoveData(snaxmove,snakposition,sensSnax,loopsnaxel)
     
 end
 
-function [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode)
+function [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,baseGrid)
     % Scale the sensitivity values in sensSnax to be in units of d per unit
     % of volume fraction
     
@@ -1612,10 +1609,16 @@ function [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode)
     sensRatio=[snaxmode(:).sensSnaxRatio]./[snaxmode(:).deltaFrac];
     colSub=FindObjNum([],cellSens,cellInd);
     
-    sensSnax=sensSnax(:,colSub).*(ones([size(sensSnax,1),1])*sensRatio);
+    sensSnax(:,colSub)=sensSnax(:,colSub).*(ones([size(sensSnax,1),1])*sensRatio);
     
+    activeCell=logical([baseGrid.cell(:).isactive]);
+    activeInd=[baseGrid.cell((activeCell)).index];
+    activeSub=find(activeCell);
     
+    sensSnax=sensSnax(:,activeSub);
 end
+
+
 
 % Movement function
 
@@ -1680,6 +1683,7 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
             
             newloop(jj,ii).snaxel.index=snaxList(newOrder(:,jj));
             newloop(jj,ii).snaxel.coord=newCoord(newOrder(:,jj),:);
+            newloop(jj,ii).snaxel.vector=newNormal(newOrder(:,jj),:);
         end
 
     end
