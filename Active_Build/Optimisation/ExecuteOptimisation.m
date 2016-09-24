@@ -391,8 +391,27 @@ function [population,supportstruct,restartsnake]=NormalExecutionIteration(popula
     end
     
     [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
-        ExecuteSnakes_Optim(newRefGrid,newrestartsnake,...
+        ExecuteSnakes_Optim('snak',newRefGrid,newrestartsnake,...
         newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,nPop);
+    population.location=outTemp.dirprofile;
+    population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
+    population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+    
+    supportstruct.loop=loop;
+end
+
+function [population,supportstruct,restartsnake]=SensitivityExecutionIteration(population,newRefGrid,...
+        newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
+        ,outinfo,nIter,ii,paramoptim)
+    
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
+    
+    
+    [~,~,snakSave,loop,restartsnake,outTemp]=...
+        ExecuteSnakes_Optim('sens',newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,nPop);
+    
     population.location=outTemp.dirprofile;
     population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
     population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
