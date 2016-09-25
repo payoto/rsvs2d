@@ -14,8 +14,8 @@
 % %#codegen
 
 %% Main execution functions
-function newFill=SnakesSensitivity(refinedGrid,looprestart,...
-        oldGrid,paramsnake,paramoptim,rootFill)
+function [out]=SnakesSensitivity(entryPoint,refinedGrid,looprestart,...
+        oldGrid,paramsnake,paramoptim,rootFill,varargin)
     % JUST DECLARING VARIABLES FOR LATER
     
     % plotInterval,numSteps,makeMov,boundstr
@@ -31,16 +31,16 @@ function newFill=SnakesSensitivity(refinedGrid,looprestart,...
     unstructglobal=refinedGriduns;
     %profile on
     
-    newFill=BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
-        oldGrid,paramsnake,paramoptim,rootFill);
+    [out]=BuildSensitivityModes(entryPoint,refinedGriduns,refinedGrid,looprestart,...
+        oldGrid,paramsnake,paramoptim,rootFill,varargin{:});
     %profile viewer
     
     
 end
 
-function [newFill]=...
-        BuildSensitivityModes(refinedGriduns,refinedGrid,looprestart,...
-        oldGrid,paramsnake,paramoptim,rootFill)
+function [out]=...
+        BuildSensitivityModes(entryPoint,refinedGriduns,refinedGrid,looprestart,...
+        oldGrid,paramsnake,paramoptim,rootFill,varargin)
     % Main execution container for Snakes
     
     % Unpacking NECESSARY variables
@@ -56,34 +56,58 @@ function [newFill]=...
     
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(looprestart);
-    [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-    [snakposition]=SnaxelNormal2(snaxel,snakposition);
+    
     %CheckResultsLight(refinedGriduns,snakposition,snaxel)
-    
-    [cellordstruct]=BuildCellConnectivity(snaxel,oldGrid,refinedGrid,volfracconnec);
-    [cellordstruct]=BuildModeMixing(cellordstruct,paramsnake);
-    [cellordstruct]=BuildFillMode(oldGrid,cellordstruct);
-    [newFill]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim);
-    [newFill]=RemoveModeNotDesign(paramoptim,oldGrid,newFill);
-    
-    % Eventually get gradient
-    [newloop]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill);
+    switch entryPoint
+        case 'fill'
+            fprintf('\n    Build Fill information from sensitivity ')
+            [cellordstruct]=BuildCellConnectivity(snaxel,oldGrid,refinedGrid,volfracconnec);
+            fprintf('.')
+            [cellordstruct]=BuildModeMixing(cellordstruct,paramsnake);
+            fprintf('.')
+            [cellordstruct]=BuildFillMode(oldGrid,cellordstruct);
+            fprintf('.')
+            [newFill]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim);
+            fprintf('.')
+            [out]=RemoveModeNotDesign(paramoptim,oldGrid,newFill);
+            fprintf(' done!\n')
+        case 'profile'
+            % Eventually get gradient
+            [out]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+                cellCentredGrid,insideContourInfo,forceparam,varargin{1},oldGrid,rootFill,paramsnake);
+    end
 end
 
-function [newloop]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill)
+
+function [supportstruct]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill,paramsnake)
     
-    [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo,forceparam);
+      fprintf('\n    Build Profile information from sensitivity ')  
+        callerStr=['GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,',...
+            'cellCentredGrid,insideContourInfo,forceparam)'];
+    [~,snaxel,snakposition,sensSnax,volumefraction]=evalc(callerStr);
     %[snaxmode]=ExecuteSensitivity('analytical',snaxel,snakposition,sensSnax,volumefraction,false);
-    
+    fprintf('.')
     [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,false);
+    fprintf('.')
     [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,oldGrid);
+    fprintf('.')
     [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,volumefraction);
+    fprintf('.')
     deltaFill=vertcat(newFill(:).fill)-ones([numel(newFill),1])*rootFill;
     [newloop]=MoveToFill(snaxmove,deltaFill);
+    fprintf('.')
     
+    activeCellInd=oldGrid.cell(logical([oldGrid.cell(:).isactive])).index;
+    activeSub=FindObjNum([],activeCellInd,[volumefraction(:).oldCellInd]);
+    for ii=1:numel(newFill)
+        supportstruct(ii).loopsens=FinishLoops(newloop(ii,:),paramsnake);
+        supportstruct(ii).volumefraction=volumefraction;
+        for jj=1:numel(activeSub)
+            supportstruct(ii).volumefraction(activeSub(jj)).targetfill=newFill(ii).fill(jj);
+        end
+    end
+    fprintf(' done!\n')
 end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
@@ -1023,7 +1047,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
         isPlot=false;
     end
     global unstructglobal
-    t1=now;
+    
     cellVols=[volumefraction(find(sum(abs(sensSnax))~=0)).totalvolume];
     cellInd=[volumefraction(find(sum(abs(sensSnax))~=0)).oldCellInd];
     sensSnax(:,find(sum(abs(sensSnax))==0))=[];
@@ -1076,7 +1100,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
         snaxmode(jj).sensSnaxRatio=sensSnaxRatio(jj);
     end
     
-    t2=now;
+    
     
     
     if isPlot
@@ -1099,7 +1123,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
             
         end
     end
-    t3=now;
+    
     %         coord2=vertcat(snakposition2(:).coord);
     %         [testPos2]=CreateComparisonMatrix(coord2);
     %         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
@@ -1115,8 +1139,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
     %         axis equal
     
     
-    datestr(t3-t2,'SS:FFF')
-    datestr(t2-t1,'SS:FFF')
+    
     
 end
 
@@ -1612,13 +1635,10 @@ function [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,baseGrid)
     sensSnax(:,colSub)=sensSnax(:,colSub).*(ones([size(sensSnax,1),1])*sensRatio);
     
     activeCell=logical([baseGrid.cell(:).isactive]);
-    activeInd=[baseGrid.cell((activeCell)).index];
     activeSub=find(activeCell);
     
     sensSnax=sensSnax(:,activeSub);
 end
-
-
 
 % Movement function
 
@@ -1629,8 +1649,10 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
     % Find new Lpos
     
     nFill=size(deltaFill,1);
-    newloop=repmat(struct('snaxel',struct('index',[],'coord',[])),[nFill,numel(snaxmove)]);
-    
+    newloop=repmat(struct('snaxel',struct('index',[],'coord',[],'vector',[],...
+        'coordnoscale',[])),[nFill,numel(snaxmove)]);
+    figure
+    hold on
     % deltaFill must be trimmed to only have active snax boxes
     for ii=1:numel(snaxmove)
         % each column represent a different fill
@@ -1656,9 +1678,9 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
         newLpos=deltaLpos+(vertcat(snaxmove(ii).snax(:).posL)*(ones([1,size(deltaFill,1)])));
         newLpos(newLpos<0)=snaxmove(ii).support.maxL+newLpos(newLpos<0);
         newLpos(newLpos>snaxmove(ii).support.maxL)=...
-            newLpos(newLpos<0)-snaxmove(ii).support.maxL;
+            newLpos(newLpos>snaxmove(ii).support.maxL)-snaxmove(ii).support.maxL;
         [~,newOrder]=sort(newLpos);
-        
+        plot(newOrder)
         [distVert,closeVert]=min(abs(vertPosL-repmat(newLpos,[1 1 nVert])),[],3);
         [distEdge,closeEdge]=min(abs(edgePosL-repmat(newLpos,[1 1 nEdge])),[],3);
         
@@ -1683,6 +1705,7 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
             
             newloop(jj,ii).snaxel.index=snaxList(newOrder(:,jj));
             newloop(jj,ii).snaxel.coord=newCoord(newOrder(:,jj),:);
+            newloop(jj,ii).snaxel.coordnoscale=newCoord(newOrder(:,jj),:);
             newloop(jj,ii).snaxel.vector=newNormal(newOrder(:,jj),:);
         end
 

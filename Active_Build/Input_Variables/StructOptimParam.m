@@ -93,6 +93,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
     
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
+    paroptimoptimCG.sensCalc='snake'; % 'analytical'
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
     paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
@@ -265,6 +266,7 @@ function [paroptim]=SnaxVolResConstraint(paroptim)
     paroptim.constraint.resVal={1};
     
 end
+
 % Objectives
 function paroptim=CutCellObjective(paroptim)
     
@@ -460,6 +462,7 @@ function [paroptim]=Inverse_CG()
     [paroptim]=OptimCG(paroptim);
     paroptim.general.startPop='halfuniformsharp';
     paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='snake';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
@@ -803,7 +806,7 @@ function paroptim=desk_0012cos()
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';
-    paroptim.general.startPop='halfuniformsharp';
+    paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=40;
     paroptim.general.worker=4;
