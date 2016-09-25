@@ -81,7 +81,7 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
             ratio=1/(max(points(:,1))-min(points(:,1)));
             
             [~,minXi]=min(points(:,1));
-            vecTrans=points(minXi,:);
+            vecTrans=[points(minXi,1),0];
             
             normPoints=ratio*(points-(ones(size(points(:,1)))*vecTrans));
             
@@ -98,7 +98,7 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
             ratio=1/normScale;
             
             [~,minXi]=min(points(:,1));
-            vecTrans=points(minXi,:);
+            vecTrans=[points(minXi,1),0];
             
             normPoints=ratio*(points-(ones(size(points(:,1)))*vecTrans));
         otherwise

@@ -59,10 +59,13 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     
     
     looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
+    
     tecStruct.snakposition=snakposition;
     tecStruct.baseGrid=baseGrid;
     tecStruct.nPop=nPop;
     tecStruct.fineGrid=gridrefined;
+    tecStruct.volumefraction=snakSave(end).volumefraction;
+    tecStruct.snaxel=restartsnake.snaxel;
     
     if strcmp('all',snakData)
         [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,baseGrid,...
@@ -78,11 +81,12 @@ end
 
 
 
-function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
-        =ExecuteSnakes_Optim_sens(gridrefined,looprestart,baseGrid,connectstructinfo...
+function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]...
+        =ExecuteSnakes_Optim_sens(gridrefined,supportstructsens,baseGrid,connectstructinfo...
         ,param,paramspline,outinfo,nIter,nProf,nPop)
     % Executes the snakes edge detection process
     %
+    % loop
     
     procStr='SNAKE PROCESS';
     
@@ -91,23 +95,31 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     varExtract={'refineSteps','snakData'};
     [refineSteps,snakData]=ExtractVariables(varExtract,param);
     
-    callerString='Snakes(gridrefined,looprestart,baseGrid,connectstructinfo,param);';
-    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+    looprestart=supportstructsens.loopsens;
+    restartsnake=supportstructsens;
     
-    if length(loopsnaxel)==length(looprestart)
-        for ii=1:length(loopsnaxel)
-            looprestart(ii).snaxel=loopsnaxel(ii).snaxel;
-        end
-    else
-        looprestart=loopsnaxel;
-    end
+    % callerString='Snakes(gridrefined,looprestart,baseGrid,connectstructinfo,param);';
+    % [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+    
     
     
     looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
-    tecStruct.snakposition=snakposition;
+    
+    [tecsnaxel,tecsnakposition]=LooptoTecSnax(looprestart);
+    
+    tecStruct.snakposition=tecsnakposition;
     tecStruct.baseGrid=baseGrid;
     tecStruct.nPop=nPop;
     tecStruct.fineGrid=gridrefined;
+    tecStruct.volumefraction.targetfill=...
+        [supportstructsens.volumefraction(:).targetfill];
+    tecStruct.volumefraction.currentfraction=...
+        [supportstructsens.volumefraction(:).volumefraction];
+    tecStruct.volumefraction.totVolume=...
+        [supportstructsens.volumefraction(:).totalvolume];
+    tecStruct.snaxel=tecsnaxel;
+    
+    snakSave=struct('tecstruct',tecStruct,'warn','This is not a standard snakSave');
     
     if strcmp('all',snakData)
         warning('Incompatible parameters have been declared: snakData request ''all'' ignored')
@@ -118,9 +130,38 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
             restartsnake,snakSave,tecStruct);
     end
     [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
-    fprintf([textOut1,textOut,textOut2])
+    fprintf([textOut1,'\n   Sensitivity Profile post-treated\n',textOut2])
 end
 
+function [tecsnaxel,tecsnakposition]=LooptoTecSnax(loopsens)
+    tot=0;
+    for ii=1:length(loopsens)
+        tot=tot+numel(loopsens(ii).snaxel.index);
+    end
+    
+    tecsnaxel=repmat(struct('index',[],'snaxnext',[],'v',1e-10),[1 tot]);
+    tecsnakposition=repmat(struct('index',[],'coord',[],'vector',[]),[1 tot]);
+    
+    kk=1;
+    for ii=1:length(loopsens)
+        nLoop=numel(loopsens(ii).snaxel.index);
+        for jj=1:numel(loopsens(ii).snaxel.index)
+            
+            tecsnaxel(kk).index=loopsens(ii).snaxel.index(jj);
+            nextSub=[kk+1:min([kk+1,nLoop]),mod(kk,nLoop)+1:1];
+            tecsnaxel(kk).snaxnext=loopsens(ii).snaxel.index(nextSub);
+            
+            tecsnakposition(kk).index=loopsens(ii).snaxel.index(jj);
+            tecsnakposition(kk).coord=loopsens(ii).snaxel.coordnoscale(jj,:);
+            tecsnakposition(kk).vector=loopsens(ii).snaxel.vector(jj,:);
+            kk=kk+1;
+        end
+    end
+    
+    
+    
+    
+end
 
 %% Print to screen functions
 

@@ -371,10 +371,15 @@ end
 
 function [loopsnaxel]=ExtractSnaxelLoops(snaxel,param)
     
+    [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
+    [loopsnaxel]=FinishLoops(loopsnaxel,param);
+end
+
+function [loopsnaxel]=FinishLoops(loopsnaxel,param)
+    
     varExtract={'edgeFinish','TEShrink','LEShrink','axisRatio'};
     [edgeFinish,TEShrink,LEShrink,axisRatio]=ExtractVariables(varExtract,param);
     
-    [loopsnaxel]=OrderSurfaceSnaxel(snaxel);
     for ii=1:length(loopsnaxel)
         
         loopsnaxel(ii).snaxel.coord(:,2)=loopsnaxel(ii).snaxel.coord(:,2)*axisRatio;
@@ -392,6 +397,7 @@ function [loopsnaxel]=ExtractSnaxelLoops(snaxel,param)
         case 'none'
             
     end
+    
 end
 
 function [loopsnaxel]=OrderSurfaceSnaxel(snaxel,snaxPositions)

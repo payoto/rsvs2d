@@ -194,7 +194,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     
-    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim(gridrefined,loop,...
+    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
         paramoptim.spline,outinfo,0,0,0);
     
@@ -211,7 +211,7 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
     varExtract={'nPop','objectiveName','defaultVal','lineSearch'};
     [nPop,objectiveName,defaultVal,lineSearch]=ExtractVariables(varExtract,paramoptim);
     
-
+    
     if (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
         [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
@@ -302,18 +302,27 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
     
     [population]=ConstraintMethod('DesVar',paramoptim,population);
     
-    [population,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=ComputeRootSensitivityPop...
+    [population,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=ComputeRootSensitivityPopFill...
         (paramsnake,paramspline,paramoptim,population,baseGrid,gridrefined,...
         restartsnake,connectstructinfo,outinfo,nIter);
     
     population=ApplySymmetry(paramoptim,population);
     [population]=ConstraintMethod('DesVar',paramoptim,population);
     
-    varExtract={'nPop'};
-    [nPop]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'nPop','sensCalc'};
+    [nPop,sensCalc]=ExtractVariables(varExtract,paramoptim);
     [captureErrors{2:nPop}]=deal('');
     
     supportstruct=[supportstruct,repmat(struct('loop',[]),[1,nPop-1])];
+    supportstructsens=repmat(struct('loop',[],'loopsens',[],'volumefraction',[]),[1,nPop-1]);
+    
+    if strcmp('analytical',sensCalc)
+        [supportstructsens]=ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
+        population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstructsens);
+        
+    end
+    
+    rootPop=population(1);
     
     parfor ii=1:nPop-1
         %for ii=1:nPop
@@ -321,11 +330,20 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         try
             % Normal Execution
-            [population(ii+1),supportstruct(ii+1)]=NormalExecutionIteration(population(ii+1),newRefGrid,newrestartsnake,...
-                newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii+1,paramoptim);
+            switch sensCalc
+                case'snake'
+                    [population(ii+1),supportstruct(ii+1)]=NormalExecutionIteration(...
+                        population(ii+1),newRefGrid,newrestartsnake,newGrid,...
+                        connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii+1,paramoptim);
+                case 'analytical'
+                    [population(ii+1),supportstruct(ii+1)]=SensitivityExecutionIteration(...
+                        population(ii+1),newRefGrid,supportstructsens(ii),newGrid,...
+                        connectstructinfo,paramsnake,paramspline,outinfo,...
+                        nIter,ii+1,paramoptim,rootPop);
+            end
             
         catch MEexception
-            % Error Capture
+            Error Capture
             population(ii+1).constraint=false;
             population(ii+1).exception=['error: ',MEexception.identifier];
             captureErrors{ii+1}=MEexception.getReport;
@@ -335,7 +353,7 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
 end
 
 function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=...
-        ComputeRootSensitivityPop(paramsnake,paramspline,paramoptim,...
+        ComputeRootSensitivityPopFill(paramsnake,paramspline,paramoptim,...
         population,baseGrid,gridrefined,restartsnake,connectstructinfo,outinfo,nIter)
     
     captureErrors{1}='';
@@ -349,7 +367,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
             ,outinfo,nIter,1,paramoptim);
         
         % Compute sensitivity
-        newfillstruct=SnakesSensitivity(newRefGrid,restartsnake,...
+        newfillstruct=SnakesSensitivity('fill',newRefGrid,restartsnake,...
             newGrid,paramsnake,paramoptim,currentMember);
         
         nPop=numel(newfillstruct)+1;
@@ -373,6 +391,31 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
     end
     
     
+end
+
+
+function [supportstruct]=...
+        ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
+        population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstruct)
+    procStr=['Compute new profiles from sensitivity'];
+    [tStart]=PrintStart(procStr,2);
+    
+    
+    % Compute root member profile
+    currentMember=population(1).fill;
+    [newGrid,newRefGrid,~]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
+    
+    % Compute sensitivity
+    newProfileLoops=SnakesSensitivity('profile',newRefGrid,restartsnake,...
+        newGrid,paramsnake,paramoptim,currentMember,population(2:end));
+    
+    
+    [supportstruct(:).loopsens]=deal(newProfileLoops(:).loopsens);
+    [supportstruct(:).volumefraction]=deal(newProfileLoops(:).volumefraction);
+    
+    
+    
+    [~]=PrintEnd(procStr,2,tStart);
 end
 
 function [population,supportstruct,restartsnake]=NormalExecutionIteration(population,newRefGrid,...
@@ -401,20 +444,20 @@ function [population,supportstruct,restartsnake]=NormalExecutionIteration(popula
 end
 
 function [population,supportstruct,restartsnake]=SensitivityExecutionIteration(population,newRefGrid,...
-        newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
-        ,outinfo,nIter,ii,paramoptim)
+        supportstructsens,newGrid,connectstructinfo,paramsnake,paramspline...
+        ,outinfo,nIter,ii,paramoptim,rootmember)
     
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
     
     
-    [~,~,snakSave,loop,restartsnake,outTemp]=...
-        ExecuteSnakes_Optim('sens',newRefGrid,newrestartsnake,...
+    [~,~,~,loop,restartsnake,outTemp]=...
+        ExecuteSnakes_Optim('sens',newRefGrid,supportstructsens,...
         newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,nPop);
     
     population.location=outTemp.dirprofile;
-    population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
-    population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+    population.additional.snaxelVolRes=rootmember.additional.snaxelVolRes;
+    population.additional.snaxelVelResV=rootmember.additional.snaxelVelResV;
     
     supportstruct.loop=loop;
 end
