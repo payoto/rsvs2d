@@ -272,11 +272,11 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     [captureErrors{1:nPop}]=deal('');
     supportstruct=repmat(struct('loop',[]),[1,nPop]);
     parfor ii=1:nPop
-        %for ii=1:nPop
+    %for ii=flip(1:nPop)
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        try
+         try
             % Normal Execution
             [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
                 newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,paramoptim);
