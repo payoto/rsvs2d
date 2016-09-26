@@ -821,6 +821,14 @@ function paroptim=desk_4412cos()
     
 end 
 
+function paroptim=desk_2212cos()
+    
+    paroptim=desk_0012cos();
+    paroptim.obj.invdes.aeroName='2212';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.parametrisation.snakes.refine.axisRatio=2;
+    
+end 
 
 function paroptim=bp3_0012cos()
     [paroptim]=Inverse_CG();

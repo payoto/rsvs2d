@@ -19,7 +19,7 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
             [out.marker,out.tOutput,out.rootDir]=OptimisationOutput_Init(paramoptim);
         case 'profile'
             out=varargin{1};
-            out.dirprofile=OptimisationOutput_profile(varargin{:});
+            out.dirprofile=OptimisationOutput_profile(paramoptim,varargin{:});
         case 'iteration'
             out=OptimisationOutput_iteration(varargin{:});
         case 'optstruct'
@@ -78,8 +78,11 @@ function [marker,t, writeDirectory]=OptimisationOutput_Init(paramoptim)
     PersnaliseLayFile(FID,pltFile);
 end
 
-function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,...
+function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,loop,...
         restartsnak,snakSave,tecStruct)
+    
+    varExtract={'resampleSnak'};
+    [resampleSnak]=ExtractVariables(varExtract,paramoptim);
     
     
     marker=out.marker;
@@ -101,10 +104,14 @@ function [writeDirectory]=OptimisationOutput_profile(out,nIter,nProf,loop,...
     
     % Output boundary data file
     [fidBoundary]=OpenBoundaryFile(writeDirectory,markerShort);
-    for ii=1:length(loop)
-        loop(ii).subdivision=loop(ii).subdivspline;
+    
+    if resampleSnak
+        typeLoop='subdivspline';
+    else
+        typeLoop='subdivision';
     end
-    BoundaryOutput(loop,fidBoundary);
+    
+    BoundaryOutput(loop,fidBoundary,typeLoop);
     fclose(fidBoundary);
     if nIter>0
         TecplotPortion_Profile(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
@@ -130,9 +137,7 @@ function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
     iterStr=['\iteration_',int2str(nIter)];
     writeDirectory=[rootDir,iterStr];
     writeDirectory=MakePathCompliant(writeDirectory);
-    tecFilePath=[rootDir,filesep,'Tec360PLT_',fullMark,'.plt'];
-    tecFilePath=MakePathCompliant(tecFilePath);
-    ConcatenateTecplotFile(writeDirectory,tecFilePath)
+    
     
     if nIter~=0
         % iter entry
@@ -156,7 +161,9 @@ function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)
 %         hgsave(h,figName);
 %         close(h);
     end
-    
+    tecFilePath=[rootDir,filesep,'Tec360PLT_',fullMark,'.plt'];
+    tecFilePath=MakePathCompliant(tecFilePath);
+    ConcatenateTecplotFile(writeDirectory,tecFilePath)
 end
 
 function [out]=OptimisationOutput_iterationFullPop(out,optimstruct)

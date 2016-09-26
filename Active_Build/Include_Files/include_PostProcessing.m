@@ -297,11 +297,14 @@ end
 
 %% Boundary Output to .dat file
 
-function []=BoundaryOutput(loop,FID)
+function []=BoundaryOutput(loop,FID,typeLoop)
+    if nargin<3
+        typeLoop='subdivision';
+    end
     
     % trim loops and extract data
     [loop]=FindInternalLoop(loop);
-    loopout=TrimLoops(loop);
+    loopout=TrimLoops(loop,typeLoop);
     % format numeric data to printable strings
     cellLoops=DataToString(loopout);
     
@@ -310,19 +313,22 @@ function []=BoundaryOutput(loop,FID)
     
 end
 
-function [loopout]=TrimLoops(loop)
+function [loopout]=TrimLoops(loop,typeLoop)
     % function extracting the data that must be written to the boundary.dat
     % file
+    if nargin<2
+        typeLoop='subdivision';
+    end
     
     nLoop=length(loop);
     
     for ii=1:nLoop
-        endInd=length(loop(ii).subdivision(:,1));
+        endInd=length(loop(ii).(typeLoop)(:,1));
         
-        isNeg2=sum(sum(loop(ii).subdivision(1:2,:)==loop(ii).subdivision(end-1:end,:)))...
-            ==numel(loop(ii).subdivision(1:2,:));
-        isNeg1=sum(loop(ii).subdivision(1,:)==loop(ii).subdivision(end,:))...
-            ==numel(loop(ii).subdivision(1,:));
+        isNeg2=sum(sum(loop(ii).(typeLoop)(1:2,:)==loop(ii).(typeLoop)(end-1:end,:)))...
+            ==numel(loop(ii).(typeLoop)(1:2,:));
+        isNeg1=sum(loop(ii).(typeLoop)(1,:)==loop(ii).(typeLoop)(end,:))...
+            ==numel(loop(ii).(typeLoop)(1,:));
         
         if isNeg2
             endInd=endInd-2;
@@ -333,11 +339,11 @@ function [loopout]=TrimLoops(loop)
         end
         
         if loop(ii).isccw
-            loopout.surf(ii).coord=loop(ii).subdivision(1:endInd,:);
+            loopout.surf(ii).coord=loop(ii).(typeLoop)(1:endInd,:);
         else
-            loopout.surf(ii).coord=loop(ii).subdivision(endInd:-1:1,:);
+            loopout.surf(ii).coord=loop(ii).(typeLoop)(endInd:-1:1,:);
         end
-        loopout.surf(ii).nvertex=length(loopout.surf(ii).coord(:,1));
+        loopout.surf(ii).nvertex=size(loopout.surf(ii).coord,1);
         loopout.surf(ii).nfaces=loopout.surf(ii).nvertex;
     end
     loopout.total.nvertex=sum([loopout.surf(:).nvertex]);
