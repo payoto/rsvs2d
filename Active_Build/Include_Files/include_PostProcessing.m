@@ -304,6 +304,9 @@ function []=BoundaryOutput(loop,FID,typeLoop)
     
     % trim loops and extract data
     [loop]=FindInternalLoop(loop);
+    if numel(loop)==0
+        error('Loop is Empty after internal Trimming, check ''fill''')
+    end
     loopout=TrimLoops(loop,typeLoop);
     % format numeric data to printable strings
     cellLoops=DataToString(loopout);
@@ -346,6 +349,7 @@ function [loopout]=TrimLoops(loop,typeLoop)
         loopout.surf(ii).nvertex=size(loopout.surf(ii).coord,1);
         loopout.surf(ii).nfaces=loopout.surf(ii).nvertex;
     end
+    
     loopout.total.nvertex=sum([loopout.surf(:).nvertex]);
     loopout.total.nfaces=sum([loopout.surf(:).nfaces]);
     loopout.total.nloops=nLoop;

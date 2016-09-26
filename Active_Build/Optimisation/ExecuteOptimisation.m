@@ -275,7 +275,8 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     %for ii=flip(1:nPop)
         
         currentMember=population(ii).fill;
-        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
+        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
+            restartsnake,connectstructinfo,currentMember);
          try
             % Normal Execution
             [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...

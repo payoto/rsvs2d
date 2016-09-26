@@ -58,8 +58,6 @@ end
 
 %% comparison functions
 
-
-
 function []=CalculateDifferences(sensloops,snakloops)
     
     if numel(sensloops)~=numel(snakloops)
