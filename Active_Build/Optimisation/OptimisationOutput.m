@@ -111,8 +111,7 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
         typeLoop='subdivision';
     end
     
-    BoundaryOutput(loop,fidBoundary,typeLoop);
-    fclose(fidBoundary);
+    
     if nIter>0
         TecplotPortion_Profile(nIter,tecStruct.nPop,nProf,writeDirectory,tecStruct.baseGrid,...
             tecStruct.volumefraction,tecStruct.snaxel,tecStruct.snakposition);
@@ -124,6 +123,9 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     
     GenerateProfileBinary(writeDirectory,markerShort,savStruct)
     WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
+    
+    BoundaryOutput(loop,fidBoundary,typeLoop);
+    fclose(fidBoundary);
 end
 
 function [out]=OptimisationOutput_iteration(nIter,out,population,errorReports)

@@ -10,8 +10,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-
 function [errorMeasure]=InverseDesign_Error(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};

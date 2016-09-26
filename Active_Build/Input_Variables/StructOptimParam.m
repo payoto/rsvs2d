@@ -833,7 +833,7 @@ end
 function paroptim=bp3_0012cos()
     [paroptim]=Inverse_CG();
     
-    paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
+    paroptim.optim.CG.diffStepSize=[1e-2,-1e-2];
     paroptim.optim.CG.validVol=0.3;
     paroptim.spline.splineCase='inversedesign2';
     
@@ -897,7 +897,6 @@ function paroptim=bp32_2212cos()
     %paroptim.optim.CG.varActive='all';
     
 end 
-
 
 function paroptim=bp3_invdes()
     [paroptim]=Inverse_CG();

@@ -127,4 +127,2953 @@ ITERATION 6 start
 [> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSnakes_Optim>SubdivisionSurface_Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m', 256)" style="font-weight:bold">ExecuteSnakes_Optim>SubdivisionSurface_Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m',256,0)">line 256</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSnakes_Optim_ExecuteSnakes_Optim_snak', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m', 61)" style="font-weight:bold">ExecuteSnakes_Optim_ExecuteSnakes_Optim_snak</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m',61,0)">line 61</a>)
   In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSnakes_Optim', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m', 21)" style="font-weight:bold">ExecuteSnakes_Optim</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m',21,0)">line 21</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>NormalExecutionIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 436)" style="font-weight:bold">Execu
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>NormalExecutionIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 436)" style="font-weight:bold">ExecuteOptimisation>NormalExecutionIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',436,0)">line 436</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>IterateNoSensitivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 281)" style="font-weight:bold">ExecuteOptimisation>IterateNoSensitivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',281,0)">line 281</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>PerformIteration', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 216)" style="font-weight:bold">ExecuteOptimisation>PerformIteration</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',216,0)">line 216</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 46)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',46,0)">line 46</a>)] 
+if system_dependent('IsDebugMode')==1, dbquit; end
+clc
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\Dir_2016-09-12T101904_bp3_MT_pop_25\Optimisation_2016-09-12T101904_bp3_MT_pop_25.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\Dir_2016-09-12T102000_bp3_MT_pop_50\DesVarHist_2016-09-12T102000_bp3_MT_pop_50.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\Dir_2016-09-12T102000_bp3_MT_pop_50\Optimisation_2016-09-12T102000_bp3_MT_pop_50.fig',1)
+uiopen('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\Dir_2016-09-12T102055_bp3_MT_pop_75\Optimisation_2016-09-12T102055_bp3_MT_pop_75.fig',1)
+[17 01 12 15]-[12 10 20 48]
+
+ans =
+
+     5    -9    -8   -33
+
+([17 01 12 15]-[12 10 20 48])*[24 1 1/60 1/3600]'
+
+ans =
+
+  110.8575
+
+clc
+ help fmincon
+ <strong>fmincon</strong> finds a constrained minimum of a function of several variables.
+    <strong>fmincon</strong> attempts to solve problems of the form:
+     min F(X)  subject to:  A*X  <= B, Aeq*X  = Beq (linear constraints)
+      X                     C(X) <= 0, Ceq(X) = 0   (nonlinear constraints)
+                               LB <= X <= UB        (bounds)
+     
+    <strong>fmincon</strong> implements four different algorithms: interior point, SQP,
+    active set, and trust region reflective. Choose one via the option
+    Algorithm: for instance, to choose SQP, set OPTIONS =
+    optimoptions('fmincon','Algorithm','sqp'), and then pass OPTIONS to
+    <strong>fmincon</strong>.
+                                                            
+    X = <strong>fmincon</strong>(FUN,X0,A,B) starts at X0 and finds a minimum X to the 
+    function FUN, subject to the linear inequalities A*X <= B. FUN accepts 
+    input X and returns a scalar function value F evaluated at X. X0 may be
+    a scalar, vector, or matrix. 
+ 
+    X = <strong>fmincon</strong>(FUN,X0,A,B,Aeq,Beq) minimizes FUN subject to the linear 
+    equalities Aeq*X = Beq as well as A*X <= B. (Set A=[] and B=[] if no 
+    inequalities exist.)
+ 
+    X = <strong>fmincon</strong>(FUN,X0,A,B,Aeq,Beq,LB,UB) defines a set of lower and upper
+    bounds on the design variables, X, so that a solution is found in 
+    the range LB <= X <= UB. Use empty matrices for LB and UB
+    if no bounds exist. Set LB(i) = -Inf if X(i) is unbounded below; 
+    set UB(i) = Inf if X(i) is unbounded above.
+ 
+    X = <strong>fmincon</strong>(FUN,X0,A,B,Aeq,Beq,LB,UB,NONLCON) subjects the minimization
+    to the constraints defined in NONLCON. The function NONLCON accepts X 
+    and returns the vectors C and Ceq, representing the nonlinear 
+    inequalities and equalities respectively. <strong>fmincon</strong> minimizes FUN such 
+    that C(X) <= 0 and Ceq(X) = 0. (Set LB = [] and/or UB = [] if no bounds
+    exist.)
+ 
+    X = <strong>fmincon</strong>(FUN,X0,A,B,Aeq,Beq,LB,UB,NONLCON,OPTIONS) minimizes with
+    the default optimization parameters replaced by values in OPTIONS, an
+    argument created with the OPTIMOPTIONS function. See OPTIMOPTIONS for
+    details. For a list of options accepted by <strong>fmincon</strong> refer to the
+    documentation.
+   
+    X = <strong>fmincon</strong>(PROBLEM) finds the minimum for PROBLEM. PROBLEM is a
+    structure with the function FUN in PROBLEM.objective, the start point
+    in PROBLEM.x0, the linear inequality constraints in PROBLEM.Aineq
+    and PROBLEM.bineq, the linear equality constraints in PROBLEM.Aeq and
+    PROBLEM.beq, the lower bounds in PROBLEM.lb, the upper bounds in 
+    PROBLEM.ub, the nonlinear constraint function in PROBLEM.nonlcon, the
+    options structure in PROBLEM.options, and solver name 'fmincon' in
+    PROBLEM.solver. Use this syntax to solve at the command line a problem 
+    exported from OPTIMTOOL. The structure PROBLEM must have all the fields.
+ 
+    [X,FVAL] = <strong>fmincon</strong>(FUN,X0,...) returns the value of the objective 
+    function FUN at the solution X.
+ 
+    [X,FVAL,EXITFLAG] = <strong>fmincon</strong>(FUN,X0,...) returns an EXITFLAG that 
+    describes the exit condition of <strong>fmincon</strong>. Possible values of EXITFLAG 
+    and the corresponding exit conditions are listed below. See the
+    documentation for a complete description.
+    
+    All algorithms:
+      1  First order optimality conditions satisfied.
+      0  Too many function evaluations or iterations.
+     -1  Stopped by output/plot function.
+     -2  No feasible point found.
+    Trust-region-reflective, interior-point, and sqp:
+      2  Change in X too small.
+    Trust-region-reflective:
+      3  Change in objective function too small.
+    Active-set only:
+      4  Computed search direction too small.
+      5  Predicted change in objective function too small.
+    Interior-point and sqp:
+     -3  Problem seems unbounded.
+ 
+    [X,FVAL,EXITFLAG,OUTPUT] = <strong>fmincon</strong>(FUN,X0,...) returns a structure 
+    OUTPUT with information such as total number of iterations, and final 
+    objective function value. See the documentation for a complete list.
+ 
+    [X,FVAL,EXITFLAG,OUTPUT,LAMBDA] = <strong>fmincon</strong>(FUN,X0,...) returns the 
+    Lagrange multipliers at the solution X: LAMBDA.lower for LB, 
+    LAMBDA.upper for UB, LAMBDA.ineqlin is for the linear inequalities, 
+    LAMBDA.eqlin is for the linear equalities, LAMBDA.ineqnonlin is for the
+    nonlinear inequalities, and LAMBDA.eqnonlin is for the nonlinear 
+    equalities.
+ 
+    [X,FVAL,EXITFLAG,OUTPUT,LAMBDA,GRAD] = <strong>fmincon</strong>(FUN,X0,...) returns the 
+    value of the gradient of FUN at the solution X.
+ 
+    [X,FVAL,EXITFLAG,OUTPUT,LAMBDA,GRAD,HESSIAN] = <strong>fmincon</strong>(FUN,X0,...) 
+    returns the value of the exact or approximate Hessian of the Lagrangian
+    at X. 
+ 
+    Examples
+      FUN can be specified using @:
+         X = fmincon(@humps,...)
+      In this case, F = humps(X) returns the scalar function value F of 
+      the HUMPS function evaluated at X.
+ 
+      FUN can also be an anonymous function:
+         X = fmincon(@(x) 3*sin(x(1))+exp(x(2)),[1;1],[],[],[],[],[0 0])
+      returns X = [0;0].
+ 
+    If FUN or NONLCON are parameterized, you can use anonymous functions to
+    capture the problem-dependent parameters. Suppose you want to minimize 
+    the objective given in the function myfun, subject to the nonlinear 
+    constraint mycon, where these two functions are parameterized by their 
+    second argument a1 and a2, respectively. Here myfun and mycon are 
+    MATLAB file functions such as
+ 
+         function f = myfun(x,a1)      
+         f = x(1)^2 + a1*x(2)^2;       
+                                       
+         function [c,ceq] = mycon(x,a2)
+         c = a2/x(1) - x(2);
+         ceq = [];
+ 
+    To optimize for specific values of a1 and a2, first assign the values 
+    to these two parameters. Then create two one-argument anonymous 
+    functions that capture the values of a1 and a2, and call myfun and 
+    mycon with two arguments. Finally, pass these anonymous functions to 
+    <strong>fmincon</strong>:
+ 
+         a1 = 2; a2 = 1.5; % define parameters first
+         options = optimoptions('fmincon','Algorithm','interior-point'); % run interior-point algorithm
+         x = fmincon(@(x) myfun(x,a1),[1;2],[],[],[],[],[],[],@(x) mycon(x,a2),options)
+ 
+    See also <a href="matlab:help optimoptions">optimoptions</a>, <a href="matlab:help optimtool">optimtool</a>, <a href="matlab:help fminunc">fminunc</a>, <a href="matlab:help fminbnd">fminbnd</a>, <a href="matlab:help fminsearch">fminsearch</a>, @, <a href="matlab:help function_handle">function_handle</a>.
+
+doc fmincon
+uiopen('C:\Users\ap1949\Local Documents\Utilities\MATLAB_Apps\fminlbfgs\example.m',1)
+uiopen('C:\Users\ap1949\Local Documents\Utilities\MATLAB_Apps\fminlbfgs\fminlbfgs.m',1)
+uiopen('C:\Users\ap1949\Local Documents\Utilities\MATLAB_Apps\fminlbfgs\myfun.m',1)
+uiopen('C:\Users\ap1949\Local Documents\Utilities\MATLAB_Apps\fminlbfgs\fminlbfgs.m',1)
+[sensloops,snakloops]=ValidateSensivity(pathSens,pathSnak)
+WRITING AUTOMATIC FUNCTIONS
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ValidateSensivity>FindProfileLoops', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m', 50)" style="font-weight:bold">ValidateSensivity>FindProfileLoops</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m',50,0)">line 50</a>)
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ValidateSensivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m', 9)" style="font-weight:bold">ValidateSensivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m',9,0)">line 9</a>)
+    [sensloops]=FindProfileLoops(pathSens);
+} 
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m',50,1)">50  </a>        load(restartPath{1})
+if system_dependent('IsDebugMode')==1, dbquit; end
+Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
+	at com.mathworks.mlwidgets.workspace.ClassicWhosInformation.<init>(ClassicWhosInformation.java:20)
+	at com.mathworks.mlwidgets.workspace.ClassicWhosInformation.getInstance(ClassicWhosInformation.java:53)
+	at com.mathworks.mlwidgets.workspace.WhosRecordlistModel.setWhosInformation(WhosRecordlistModel.java:45)
+	at com.mathworks.mlwidgets.array.editors.MatlabWorkspaceLikeModel.setSuperWhosInformation(MatlabWorkspaceLikeModel.java:373)
+	at com.mathworks.mlwidgets.array.editors.MatlabWorkspaceLikeModel.access$100(MatlabWorkspaceLikeModel.java:33)
+	at com.mathworks.mlwidgets.array.editors.MatlabWorkspaceLikeModel$1.run(MatlabWorkspaceLikeModel.java:386)
+	at java.awt.event.InvocationEvent.dispatch(Unknown Source)
+	at java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.awt.EventQueue.access$200(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.run(Unknown Source)
+Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
+	at com.mathworks.mlwidgets.workspace.ClassicWhosInformation.<init>(ClassicWhosInformation.java:20)
+	at com.mathworks.mlwidgets.workspace.ClassicWhosInformation.getInstance(ClassicWhosInformation.java:53)
+	at com.mathworks.mlwidgets.workspace.WhosRecordlistModel.setWhosInformation(WhosRecordlistModel.java:45)
+	at com.mathworks.mlwidgets.array.editors.MatlabWorkspaceLikeModel.setSuperWhosInformation(MatlabWorkspaceLikeModel.java:373)
+	at com.mathworks.mlwidgets.array.editors.MatlabWorkspaceLikeModel.access$100(MatlabWorkspaceLikeModel.java:33)
+	at com.mathworks.mlwidgets.array.editors.MatlabWorkspaceLikeModel$1.run(MatlabWorkspaceLikeModel.java:386)
+	at java.awt.event.InvocationEvent.dispatch(Unknown Source)
+	at java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.awt.EventQueue.access$200(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.run(Unknown Source)
+clc
+CalculateDifferences(sensloops,snakloops)
+close all
+clc
+CalculateDifferences(sensloops,snakloops)
+close all
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 25)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',25,0)">line 25</a>)
+
+} 
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',25,1)">25  </a>        axis([0 501 1e-12 1])
+if system_dependent('IsDebugMode')==1, dbquit; end
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 26)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',26,0)">line 26</a>)
+
+} 
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',26,1)">26  </a>        pause; 
+if system_dependent('IsDebugMode')==1, dbquit; end
+CalculateDifferences(sensloops,snakloops)
+close all
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 27)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',27,0)">line 27</a>)
+
+} 
+CalculateDifferences(sensloops,snakloops)
+close all
+CalculateDifferences(sensloops,snakloops)
+
+plotPoints = 
+
+    @(points,str)plot(points([1:end],1),points([1:end],2))
+
+close all
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 74)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',74,0)">line 74</a>)
+
+} 
+CalculateDifferences(sensloops,snakloops)
+{Undefined function or variable 'double2str'.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 74)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',74,0)">line 74</a>)
+        title(double2str(errstruct(ii).max))
+} 
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 75)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',75,0)">line 75</a>)
+
+} 
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 76)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',76,0)">line 76</a>)
+
+} 
+clc
+CalculateDifferences(sensloops,snakloops)
+CalculateDifferences(sensloops,snakloops)
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CalculateDifferences', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m', 79)" style="font-weight:bold">CalculateDifferences</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\CalculateDifferences.m',79,0)">line 79</a>)
+
+} 
+close all
+clc
+load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\population_iteration_2.mat')
+clc
+edit ConstraintMethod.m
+uiimport('C:\Users\ap1949\AppData\Local\Temp\scp18475\panfs\panasas01\aero\ap1949\SnakVolParam\results\Optimisation\Archive_2016_09\Day_2016-09-26\Dir_2016-09-26T115523_bp3_2212cos\iteration_22\profile_1\restart_22_1.mat')
+load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\restart_22_1.mat')
+plotPoints= @(points,str) plot(points([1:end],1),points([1:end],2))
+
+plotPoints = 
+
+    @(points,str)plot(points([1:end],1),points([1:end],2))
+
+plotPoints(loop.subdivspline)
+plotPoints(loop.snaxel.coord)
+hold on
+plotPoints(loop.snaxel.coord)
+plotPoints(loop.subdivspline)
+plotPoints(loop.subdivision)
+cd C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cd')" style="font-weight:bold">cd</a>
+Too many input arguments.
+} 
+cd 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7'
+cd matlab
+more on
+help Contents
+  snopt m-files
+  -------------
+ 
+  snsolve.m
+      is a simple mex interface to the Fortran routine snOptA.  This
+      routine finds the minimum of a smooth nonlinear function subject to
+      linear and nonlinear constraints.
+ 
+      snopt.m may be called in one of four ways, depending on the number
+      of arguments in the calling sequence.  In general, the robustness
+      increases with the number of arguments (and complexity).
+ 
+      The user need not provide the derivatives of the problem functions,
+      although user-provided derivatives increase the speed and
+      reliability of snopt.  The problem derivatives may be provided
+      in either dense or sparse format.
+ 
+      Examples that provide all problem information and all derivatives:
+        hs13   hsmain   snoptmain2   sntoy   t1diet
+ 
+      Examples that provide all problem information and only some
+      derivatives:
+        snoptmain3
+ 
+      Examples that provide problem information and no derivatives:
+        snoptmain   sntoy2
+ 
+  snend.m
+      must be called after calling snsolve.m to deallocate memory and reset
+      workspace and settings.
+ 
+  snscreen.m
+      starts and stops a copy of the summary output being printed to the
+      Matlab terminal display.
+ 
+      To start output to the screen, type:
+        >> snscreen on;
+      To stop  output to the screen, type:
+        >> snscreen off;
+      Screen output may be simultaneously appended to a file (see "snsummary").
+ 
+ 
+  snsummary.m
+      saves summary information to a file.
+        >> snsummary ('probName.sum');   % Starts printing on probName.sum
+        >> snsummary   off;              % Closes the summary file
+ 
+      Note: data is appended to the summary file.
+      It may be necessary to close the summary file to purge the summary buffer.
+ 
+ 
+  snprint.m
+      saves detailed information about the progress of snopt to a file.
+        >> snprint   ('probName.out');   % Starts printing on probName.out
+        >> snprint    off;               % Closes the print file
+ 
+      It may be necessary to close the print file to purge the print buffer.
+ 
+ 
+  snspec.m
+      reads an options file for the snopt optimization routine.
+        >> t1diet.spc = which('t1diet.spc');
+        >> snspec ( t1diet.spc );
+ 
+ 
+  snset, snseti, snsetr
+      set advanced options for the snopt optimization routine.
+ 
+ 
+  snget, sngeti, sngetr
+      retrieve current values of snopt optional parameters.
+      (they have the opposite effect of snset, snseti, and snsetr)
+ 
+ 
+  snJac
+      finds the coordinate structure for sparse derivatives.
+ 
+ 
+  Philip Gill
+  Joshua Griffin
+  Elizabeth Wong
+ 
+  Updated:                               19 Oct  2004
+                                          4 May  2006
+                                         18 Jun  2007
+                                         28 Sep  2013
+
+    <a href="matlab:matlab.internal.language.introspective.displayOverloads('Contents')">Other functions named Contents</a>
+runNPExamples
+{Cannot find an exact (case-sensitive) match for 'runNPExamples'
+
+The closest match is: runNPexamples in C:\Users\ap1949\Local
+Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m
+
+} 
+runNPexamples
+{Undefined function or variable 'snoptmex'.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('snscreen', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\snscreen.m', 18)" style="font-weight:bold">snscreen</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\snscreen.m',18,0)">line 18</a>)
+  snoptmex( screenon );
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 6)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',6,0)">line 6</a>)
+snscreen on} 
+runAllExamples
+{Undefined function or variable 'runAllExamples'.} 
+runQPExamples
+{Cannot find an exact (case-sensitive) match for 'runQPExamples'
+
+The closest match is: runQPexamples in C:\Users\ap1949\Local
+Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runQPexamples.m
+} 
+runQPexamples
+{Undefined function or variable 'sqoptmex'.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('sqscreen', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\sqscreen.m', 18)" style="font-weight:bold">sqscreen</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\sqscreen.m',18,0)">line 18</a>)
+  sqoptmex( screenon );
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runQPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runQPexamples.m', 6)" style="font-weight:bold">runQPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runQPexamples.m',6,0)">line 6</a>)
+sqscreen on} 
+runNPexamples
+
+============================================================= 
+sntoy: Solving diet LP problem using SNOPT ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin t1diet problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+
+ Nonlinear constraints       0     Linear constraints       4
+ Nonlinear variables         0     Linear variables         6
+ Jacobian  variables         0     Objective variables      0
+ Total constraints           4     Total variables          6
+ 
+
+    Itn  FP mult  NumInf         SumInf
+      0                2  7.7491103E+00
+      1 -1.2E+01       1  2.6988636E-01
+
+ Itn      2: Feasible linear constraints
+
+    Itn  LP mult  NonOpt   LP objective
+      2 -3.1E+00       3  1.2065751E+02
+      3  1.4E+01       2  1.0642572E+02
+      4  6.3E+00       2  1.0132790E+02
+      5  1.4E+00       1  9.8603589E+01
+      6 -1.1E-02       0  9.2500000E+01
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   6   Objective            9.2500000000E+01
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 4.5E+00   Max pi                      4 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.02 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+sntoy: Solving toy problem using SNOPT ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin  Toy NLP problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       3     Linear constraints       1
+ Nonlinear variables         4     Linear variables         0
+ Jacobian  variables         4     Objective variables      4
+ Total constraints           4     Total variables          4
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      12   out of      12   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      1               1  5.0E-01  1.3E+00  1.7000000E+01                  r
+     1      0  1.0E+00      2 (0.0E+00)(0.0E+00) 1.4000000E+01        4.5E+01   rl
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   1   Objective            1.4000000000E+01
+ No. of major iterations             1   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           4.525E+01   Nonlinear obj. term  1.4000000000E+01
+ User function calls (total)         3
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 2.0E+00   Max pi                      2 8.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+ Nonlinear constraint violn    0.0E+00
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.03 seconds
+ Time for solution output                       0.84 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+hsmain: snopt solves hs47 ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin HS problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       3     Linear constraints       3
+ Nonlinear variables         5     Linear variables         0
+ Jacobian  variables         4     Objective variables      5
+ Total constraints           6     Total variables          5
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      10   out of      10   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      2               1  3.9E-01  2.4E+00  1.2639087E+01      1           r
+     1      1  1.0E+00      2  4.3E-01  1.7E+00 -3.8226719E+00      1           r
+     2      3  1.0E+00      3  5.0E-02  2.1E+00  1.0691395E+00      1 7.9E+00 s
+     3      2  3.9E-01      5  1.2E-01  4.7E-01 -8.1325434E-02      2 3.1E+00
+     4      1  1.0E+00      6  1.5E-02  1.5E-01  1.2536843E-02      2 4.7E+00
+     5      1  1.0E+00      7  1.5E-03  4.4E-02  4.4669337E-04      2 4.7E+00
+     6      1  1.0E+00      8  2.7E-04  9.2E-03 -6.9171550E-04      2 4.7E+00
+     7      1  1.0E+00      9  1.6E-05  1.2E-02 -7.7800952E-04      2 4.7E+00
+     8      1  1.0E+00     10  8.3E-05  2.8E-02 -9.8685127E-04      2 4.7E+00
+     9      1  1.0E+00     12  2.8E-03  2.4E-01 -2.4039981E-03      2 4.7E+00  m
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.8E-01     15  6.3E-03  2.6E-01 -4.2689446E-03      1 4.7E+00
+    11      2  1.5E-01     18  7.6E-03  5.4E-01 -5.7759321E-03      2 4.7E+00
+    12      1  1.0E+00     19  1.7E-03  6.5E-01 -7.8751378E-03      2 4.7E+00
+    13      1  1.0E+00     20  4.9E-05  4.7E-01 -8.5686539E-03      2 4.7E+00
+    14      1  1.0E+00     21  1.7E-03  1.6E-01 -1.6728332E-02      2 4.7E+00
+    15      1  1.0E+00     22  9.4E-04  2.2E-01 -2.4168523E-02      2 4.7E+00
+    16      1  1.0E+00     23  2.0E-03  1.9E-01 -2.6080861E-02      2 4.7E+00
+    17      1  1.0E+00     24  1.1E-04  1.6E-02 -2.6699190E-02      2 4.7E+00
+    18      1  1.0E+00     25  1.3E-05  2.0E-03 -2.6714138E-02      2 4.7E+00
+    19      1  1.0E+00     26 (6.7E-08) 4.8E-05 -2.6714183E-02      2 4.7E+00
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    20      1  1.0E+00     27 (2.2E-11)(1.8E-07)-2.6714183E-02      2 4.7E+00
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  27   Objective           -2.6714182688E-02
+ No. of major iterations            20   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           4.703E+00   Nonlinear obj. term -2.6714182688E-02
+ User function calls (total)        28
+ No. of superbasics                  2   No. of basic nonlinears             3
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       5 1.8E+00   Max pi                      6 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             3 1.8E-07
+ Nonlinear constraint violn    5.9E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       1.47 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+sntoy2: snopt solves toy problem ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin  Toy NLP problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+
+ Nonzero derivs  Jij        12
+ Non-constant    Jij's       8     Constant Jij's           4
+ 
+ SNJAC  EXIT 100 -- finished successfully
+ SNJAC  INFO 102 -- Jacobian structure estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       2     Linear constraints       2
+ Nonlinear variables         3     Linear variables         1
+ Jacobian  variables         3     Objective variables      3
+ Total constraints           4     Total variables          4
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined       8   out of       8   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      1               1  5.0E-01  2.3E+00  1.7000000E+01                  r
+ Itn      1 -- Central differences invoked.  Small reduced gradient.
+     1      0  1.0E+00      2 (3.0E-13)(9.0E-13) 1.4000000E+01        1.0E+01   rl  c
+     1      0  1.0E+00      2 (3.0E-13)(9.0E-13) 1.4000000E+01        1.0E+01   r   c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   1   Objective            1.4000000000E+01
+ No. of major iterations             1   Linear    obj. term  1.0000000000E+01
+ Penalty parameter           1.030E+01   Nonlinear obj. term  4.0000000000E+00
+ User function calls (total)         6   Calls with modes 1,2 (known g)      2
+ Calls for forward differencing      0   Calls for central differencing      0
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 2.0E+00   Max pi                      1 8.0E+00
+ Max Primal infeas           1 9.0E-13   Max Dual infeas             2 8.9E-16
+ Nonlinear constraint violn    9.0E-13
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.02 seconds
+ Time for solution output                       0.72 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+snoptmain: snopt solves hexagon with no derivatives ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+
+ Nonzero derivs  Jij        61
+ Non-constant    Jij's      53     Constant Jij's           8
+ 
+ SNJAC  EXIT 100 -- finished successfully
+ SNJAC  INFO 102 -- Jacobian structure estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      14     Linear constraints       5
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined       0   out of      53   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077318E+00      3 3.7E-01 sm
+     3      2  3.5E-02      5  9.9E-02  1.7E-01  1.3381430E+00      2 2.7E+00
+     4      2  1.2E-01      6  8.8E-02  1.7E-01  1.3381986E+00      3 2.7E+00
+     5      1  1.0E+00      7  1.2E-02  3.5E-02  1.3501054E+00      3 2.7E+00
+     6      1  1.0E+00      8  1.5E-03  2.9E-03  1.3499273E+00      3 3.9E+00
+     7      1  1.0E+00      9  5.5E-05  1.1E-03  1.3499623E+00      3 3.9E+00
+     8      1  1.0E+00     10  1.5E-06  1.5E-04  1.3499629E+00      3 3.9E+00
+     9      1  1.0E+00     11 (2.1E-08) 8.5E-06  1.3499629E+00      3 3.9E+00
+ Itn     30 -- Central differences invoked.  Small reduced gradient.
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.0E+00     12 (3.3E-11)(1.6E-06) 1.3499629E+00      3 3.9E+00       c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  31   Objective            1.3499628859E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.948E+00   Nonlinear obj. term  1.3499628859E+00
+ User function calls (total)       155   Calls with modes 1,2 (known g)     12
+ Calls for forward differencing    117   Calls for central differencing      9
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             1 1.6E-06
+ Nonlinear constraint violn    6.7E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       3.04 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.06 seconds
+ Time for objective function                    0.00 seconds
+itns =
+    31
+majors =
+    10
+
+============================================================= 
+snoptmain2: snopt solves hexagon with dense Jacobian ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain2
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      18     Linear constraints       1
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined     171   out of     171   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077320E+00      3 3.7E-01 sm
+     3      1  4.1E-02      6  9.9E-02  1.7E-01  1.3381298E+00      3 2.7E+00
+     4      1  1.0E-01      8  8.9E-02  1.7E-01  1.3382616E+00      3 2.7E+00
+     5      1  1.0E+00      9  1.4E-02  3.7E-02  1.3499110E+00      3 2.7E+00
+     6      1  1.0E+00     10  1.9E-03  3.9E-03  1.3499149E+00      3 3.3E+00
+     7      1  1.0E+00     11  7.1E-05  1.4E-03  1.3499622E+00      3 3.3E+00
+     8      1  1.0E+00     12  2.2E-06  1.9E-04  1.3499629E+00      3 3.3E+00
+     9      1  1.0E+00     13 (3.4E-08) 1.4E-05  1.3499629E+00      3 3.3E+00
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     14 (1.2E-10)(1.1E-06) 1.3499629E+00      3 3.3E+00
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  28   Objective            1.3499628860E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.257E+00   Nonlinear obj. term  1.3499628860E+00
+ User function calls (total)        15
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             2 1.1E-06
+ Nonlinear constraint violn    2.3E-10
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.02 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+snoptmain3: snopt solves hexagon with some derivatives ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain3
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      14     Linear constraints       5
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      49   out of      53   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077320E+00      3 3.7E-01 sm
+     3      2  3.5E-02      5  9.9E-02  1.7E-01  1.3381429E+00      2 2.7E+00
+     4      2  1.2E-01      6  8.8E-02  1.7E-01  1.3381985E+00      3 2.7E+00
+     5      1  1.0E+00      7  1.2E-02  3.5E-02  1.3501054E+00      3 2.7E+00
+     6      1  1.0E+00      8  1.5E-03  2.9E-03  1.3499273E+00      3 3.9E+00
+     7      1  1.0E+00      9  5.5E-05  1.1E-03  1.3499623E+00      3 3.9E+00
+     8      1  1.0E+00     10  1.5E-06  1.5E-04  1.3499629E+00      3 3.9E+00
+     9      1  1.0E+00     11 (2.1E-08) 8.5E-06  1.3499629E+00      3 3.9E+00
+ Itn     30 -- Central differences invoked.  Small reduced gradient.
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  31   Objective            1.3499628859E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.948E+00   Nonlinear obj. term  1.3499628859E+00
+ User function calls (total)        96   Calls with modes 1,2 (known g)     12
+ Calls for forward differencing     52   Calls for central differencing      4
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             2 1.0E-06
+ Nonlinear constraint violn    6.7E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.03 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+runQPexamples
+
+============================================================= 
+hs76: sqopt solves quadratic problem hs76 ... 
+ ==============================
+ S Q O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin HS76
+ 
+ SQMEM  EXIT 100 -- finished successfully
+ SQMEM  INFO 104 -- memory requirements estimated
+ 
+
+ Nonlinear constraints       0     Linear constraints       3
+ Nonlinear variables         4     Linear variables         0
+ Jacobian  variables         0     Objective variables      4
+ Total constraints           3     Total variables          4
+ 
+
+ Itn      0: Feasible linear constraints
+
+    Itn  QP mult  NonOpt   QP objective    nS    rgNorm
+      0                3 -1.2500000E+00
+      1 -2.5E+00       3 -3.5937500E+00
+      2  2.6E+00       1 -4.6250000E+00
+      3  5.0E-01       1 -4.6805556E+00     1
+      4 -5.6E-02       0 -4.6818182E+00     2
+ 
+ SQOPT  EXIT   0 -- finished successfully
+ SQOPT  INFO   1 -- optimality conditions satisfied
+
+ Problem name                 HS76
+ No. of iterations                   4   Objective           -4.6818181818E+00
+ No. of Hessian products             9   Linear    objective  0.0000000000E+00
+                                         Quadratic objective -4.6818181818E+00
+ No. of superbasics                  2   No. of basic nonlinears             1
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       2 2.1E+00   Max pi                      1 4.5E-01
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.02 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+snoptmain
+itns =
+    31
+majors =
+    10
+ans =
+    0.0609
+    0.5976
+    1.0000
+    0.5976
+    0.0609
+    0.3438
+    0.5000
+   -0.5000
+   -0.3438
+clear
+runNPexamples
+
+============================================================= 
+sntoy: Solving diet LP problem using SNOPT ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin t1diet problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+
+ Nonlinear constraints       0     Linear constraints       4
+ Nonlinear variables         0     Linear variables         6
+ Jacobian  variables         0     Objective variables      0
+ Total constraints           4     Total variables          6
+ 
+
+    Itn  FP mult  NumInf         SumInf
+      0                2  7.7491103E+00
+      1 -1.2E+01       1  2.6988636E-01
+
+ Itn      2: Feasible linear constraints
+
+    Itn  LP mult  NonOpt   LP objective
+      2 -3.1E+00       3  1.2065751E+02
+      3  1.4E+01       2  1.0642572E+02
+      4  6.3E+00       2  1.0132790E+02
+      5  1.4E+00       1  9.8603589E+01
+      6 -1.1E-02       0  9.2500000E+01
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   6   Objective            9.2500000000E+01
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 4.5E+00   Max pi                      4 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.00 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+sntoy: Solving toy problem using SNOPT ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin  Toy NLP problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       3     Linear constraints       1
+ Nonlinear variables         4     Linear variables         0
+ Jacobian  variables         4     Objective variables      4
+ Total constraints           4     Total variables          4
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      12   out of      12   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      1               1  5.0E-01  1.3E+00  1.7000000E+01                  r
+     1      0  1.0E+00      2 (0.0E+00)(0.0E+00) 1.4000000E+01        4.5E+01   rl
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   1   Objective            1.4000000000E+01
+ No. of major iterations             1   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           4.525E+01   Nonlinear obj. term  1.4000000000E+01
+ User function calls (total)         3
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 2.0E+00   Max pi                      2 8.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+ Nonlinear constraint violn    0.0E+00
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.00 seconds
+ Time for solution output                       0.28 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+hsmain: snopt solves hs47 ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin HS problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       3     Linear constraints       3
+ Nonlinear variables         5     Linear variables         0
+ Jacobian  variables         4     Objective variables      5
+ Total constraints           6     Total variables          5
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      10   out of      10   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      2               1  3.9E-01  2.4E+00  1.2639087E+01      1           r
+     1      1  1.0E+00      2  4.3E-01  1.7E+00 -3.8226719E+00      1           r
+     2      3  1.0E+00      3  5.0E-02  2.1E+00  1.0691395E+00      1 7.9E+00 s
+     3      2  3.9E-01      5  1.2E-01  4.7E-01 -8.1325434E-02      2 3.1E+00
+     4      1  1.0E+00      6  1.5E-02  1.5E-01  1.2536843E-02      2 4.7E+00
+     5      1  1.0E+00      7  1.5E-03  4.4E-02  4.4669337E-04      2 4.7E+00
+     6      1  1.0E+00      8  2.7E-04  9.2E-03 -6.9171550E-04      2 4.7E+00
+     7      1  1.0E+00      9  1.6E-05  1.2E-02 -7.7800952E-04      2 4.7E+00
+     8      1  1.0E+00     10  8.3E-05  2.8E-02 -9.8685127E-04      2 4.7E+00
+     9      1  1.0E+00     12  2.8E-03  2.4E-01 -2.4039981E-03      2 4.7E+00  m
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.8E-01     15  6.3E-03  2.6E-01 -4.2689446E-03      1 4.7E+00
+    11      2  1.5E-01     18  7.6E-03  5.4E-01 -5.7759321E-03      2 4.7E+00
+    12      1  1.0E+00     19  1.7E-03  6.5E-01 -7.8751378E-03      2 4.7E+00
+    13      1  1.0E+00     20  4.9E-05  4.7E-01 -8.5686539E-03      2 4.7E+00
+    14      1  1.0E+00     21  1.7E-03  1.6E-01 -1.6728332E-02      2 4.7E+00
+    15      1  1.0E+00     22  9.4E-04  2.2E-01 -2.4168523E-02      2 4.7E+00
+    16      1  1.0E+00     23  2.0E-03  1.9E-01 -2.6080861E-02      2 4.7E+00
+    17      1  1.0E+00     24  1.1E-04  1.6E-02 -2.6699190E-02      2 4.7E+00
+    18      1  1.0E+00     25  1.3E-05  2.0E-03 -2.6714138E-02      2 4.7E+00
+    19      1  1.0E+00     26 (6.7E-08) 4.8E-05 -2.6714183E-02      2 4.7E+00
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    20      1  1.0E+00     27 (2.2E-11)(1.8E-07)-2.6714183E-02      2 4.7E+00
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  27   Objective           -2.6714182688E-02
+ No. of major iterations            20   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           4.703E+00   Nonlinear obj. term -2.6714182688E-02
+ User function calls (total)        28
+ No. of superbasics                  2   No. of basic nonlinears             3
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       5 1.8E+00   Max pi                      6 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             3 1.8E-07
+ Nonlinear constraint violn    5.9E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.17 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+sntoy2: snopt solves toy problem ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin  Toy NLP problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+
+ Nonzero derivs  Jij        12
+ Non-constant    Jij's       8     Constant Jij's           4
+ 
+ SNJAC  EXIT 100 -- finished successfully
+ SNJAC  INFO 102 -- Jacobian structure estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       2     Linear constraints       2
+ Nonlinear variables         3     Linear variables         1
+ Jacobian  variables         3     Objective variables      3
+ Total constraints           4     Total variables          4
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined       8   out of       8   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      1               1  5.0E-01  2.3E+00  1.7000000E+01                  r
+ Itn      1 -- Central differences invoked.  Small reduced gradient.
+     1      0  1.0E+00      2 (3.0E-13)(9.0E-13) 1.4000000E+01        1.0E+01   rl  c
+     1      0  1.0E+00      2 (3.0E-13)(9.0E-13) 1.4000000E+01        1.0E+01   r   c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   1   Objective            1.4000000000E+01
+ No. of major iterations             1   Linear    obj. term  1.0000000000E+01
+ Penalty parameter           1.030E+01   Nonlinear obj. term  4.0000000000E+00
+ User function calls (total)         6   Calls with modes 1,2 (known g)      2
+ Calls for forward differencing      0   Calls for central differencing      0
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 2.0E+00   Max pi                      1 8.0E+00
+ Max Primal infeas           1 9.0E-13   Max Dual infeas             2 8.9E-16
+ Nonlinear constraint violn    9.0E-13
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.00 seconds
+ Time for solution output                       0.20 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+snoptmain: snopt solves hexagon with no derivatives ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+
+ Nonzero derivs  Jij        61
+ Non-constant    Jij's      53     Constant Jij's           8
+ 
+ SNJAC  EXIT 100 -- finished successfully
+ SNJAC  INFO 102 -- Jacobian structure estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      14     Linear constraints       5
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined       0   out of      53   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077318E+00      3 3.7E-01 sm
+     3      2  3.5E-02      5  9.9E-02  1.7E-01  1.3381430E+00      2 2.7E+00
+     4      2  1.2E-01      6  8.8E-02  1.7E-01  1.3381986E+00      3 2.7E+00
+     5      1  1.0E+00      7  1.2E-02  3.5E-02  1.3501054E+00      3 2.7E+00
+     6      1  1.0E+00      8  1.5E-03  2.9E-03  1.3499273E+00      3 3.9E+00
+     7      1  1.0E+00      9  5.5E-05  1.1E-03  1.3499623E+00      3 3.9E+00
+     8      1  1.0E+00     10  1.5E-06  1.5E-04  1.3499629E+00      3 3.9E+00
+     9      1  1.0E+00     11 (2.1E-08) 8.5E-06  1.3499629E+00      3 3.9E+00
+ Itn     30 -- Central differences invoked.  Small reduced gradient.
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.0E+00     12 (3.3E-11)(1.6E-06) 1.3499629E+00      3 3.9E+00       c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  31   Objective            1.3499628859E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.948E+00   Nonlinear obj. term  1.3499628859E+00
+ User function calls (total)       155   Calls with modes 1,2 (known g)     12
+ Calls for forward differencing    117   Calls for central differencing      9
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             1 1.6E-06
+ Nonlinear constraint violn    6.7E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.19 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+itns =
+    31
+majors =
+    10
+
+============================================================= 
+snoptmain2: snopt solves hexagon with dense Jacobian ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain2
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      18     Linear constraints       1
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined     171   out of     171   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077320E+00      3 3.7E-01 sm
+     3      1  4.1E-02      6  9.9E-02  1.7E-01  1.3381298E+00      3 2.7E+00
+     4      1  1.0E-01      8  8.9E-02  1.7E-01  1.3382616E+00      3 2.7E+00
+     5      1  1.0E+00      9  1.4E-02  3.7E-02  1.3499110E+00      3 2.7E+00
+     6      1  1.0E+00     10  1.9E-03  3.9E-03  1.3499149E+00      3 3.3E+00
+     7      1  1.0E+00     11  7.1E-05  1.4E-03  1.3499622E+00      3 3.3E+00
+     8      1  1.0E+00     12  2.2E-06  1.9E-04  1.3499629E+00      3 3.3E+00
+     9      1  1.0E+00     13 (3.4E-08) 1.4E-05  1.3499629E+00      3 3.3E+00
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     14 (1.2E-10)(1.1E-06) 1.3499629E+00      3 3.3E+00
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  28   Objective            1.3499628860E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.257E+00   Nonlinear obj. term  1.3499628860E+00
+ User function calls (total)        15
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             2 1.1E-06
+ Nonlinear constraint violn    2.3E-10
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.02 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+snoptmain3: snopt solves hexagon with some derivatives ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain3
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      14     Linear constraints       5
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      49   out of      53   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077320E+00      3 3.7E-01 sm
+     3      2  3.5E-02      5  9.9E-02  1.7E-01  1.3381429E+00      2 2.7E+00
+     4      2  1.2E-01      6  8.8E-02  1.7E-01  1.3381985E+00      3 2.7E+00
+     5      1  1.0E+00      7  1.2E-02  3.5E-02  1.3501054E+00      3 2.7E+00
+     6      1  1.0E+00      8  1.5E-03  2.9E-03  1.3499273E+00      3 3.9E+00
+     7      1  1.0E+00      9  5.5E-05  1.1E-03  1.3499623E+00      3 3.9E+00
+     8      1  1.0E+00     10  1.5E-06  1.5E-04  1.3499629E+00      3 3.9E+00
+     9      1  1.0E+00     11 (2.1E-08) 8.5E-06  1.3499629E+00      3 3.9E+00
+ Itn     30 -- Central differences invoked.  Small reduced gradient.
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  31   Objective            1.3499628859E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.948E+00   Nonlinear obj. term  1.3499628859E+00
+ User function calls (total)        96   Calls with modes 1,2 (known g)     12
+ Calls for forward differencing     52   Calls for central differencing      4
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             2 1.0E-06
+ Nonlinear constraint violn    6.7E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.20 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.05 seconds
+ Time for objective function                    0.00 seconds
+ addpath('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab')
+runNPexamples
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 3)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',3,0)">line 3</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples\t1diet] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 4)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',4,0)">line 4</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples\sntoy] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 5)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',5,0)">line 5</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples\snmain] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 6)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',6,0)">line 6</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples\hsmain] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 7)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',7,0)">line 7</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples\hs76] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 8)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',8,0)">line 8</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+[Warning: Name is nonexistent or not a directory: C:\Users\ap1949\Local Documents\PhD\Development
+Work\Snakes Volume Parametrisation\source\examples\fmincon] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('path', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m', 109)" style="font-weight:bold">path</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\path.m',109,0)">line 109</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('addpath', 'C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m', 84)" style="font-weight:bold">addpath</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2015a\toolbox\matlab\general\addpath.m',84,0)">line 84</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('setpath', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m', 9)" style="font-weight:bold">setpath</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\setpath.m',9,0)">line 9</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('runNPexamples', 'C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m', 4)" style="font-weight:bold">runNPexamples</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\Utilities\SNOPT\snopt7_4\snopt7\matlab\runNPexamples.m',4,0)">line 4</a>)] 
+
+============================================================= 
+sntoy: Solving diet LP problem using SNOPT ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin t1diet problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+
+ Nonlinear constraints       0     Linear constraints       4
+ Nonlinear variables         0     Linear variables         6
+ Jacobian  variables         0     Objective variables      0
+ Total constraints           4     Total variables          6
+ 
+
+    Itn  FP mult  NumInf         SumInf
+      0                2  7.7491103E+00
+      1 -1.2E+01       1  2.6988636E-01
+
+ Itn      2: Feasible linear constraints
+
+    Itn  LP mult  NonOpt   LP objective
+      2 -3.1E+00       3  1.2065751E+02
+      3  1.4E+01       2  1.0642572E+02
+      4  6.3E+00       2  1.0132790E+02
+      5  1.4E+00       1  9.8603589E+01
+      6 -1.1E-02       0  9.2500000E+01
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   6   Objective            9.2500000000E+01
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 4.5E+00   Max pi                      4 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.00 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+sntoy: Solving toy problem using SNOPT ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin  Toy NLP problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       3     Linear constraints       1
+ Nonlinear variables         4     Linear variables         0
+ Jacobian  variables         4     Objective variables      4
+ Total constraints           4     Total variables          4
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      12   out of      12   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      1               1  5.0E-01  1.3E+00  1.7000000E+01                  r
+     1      0  1.0E+00      2 (0.0E+00)(0.0E+00) 1.4000000E+01        4.5E+01   rl
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   1   Objective            1.4000000000E+01
+ No. of major iterations             1   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           4.525E+01   Nonlinear obj. term  1.4000000000E+01
+ User function calls (total)         3
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 2.0E+00   Max pi                      2 8.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             0 0.0E+00
+ Nonlinear constraint violn    0.0E+00
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.00 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+hsmain: snopt solves hs47 ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin HS problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       3     Linear constraints       3
+ Nonlinear variables         5     Linear variables         0
+ Jacobian  variables         4     Objective variables      5
+ Total constraints           6     Total variables          5
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      10   out of      10   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      2               1  3.9E-01  2.4E+00  1.2639087E+01      1           r
+     1      1  1.0E+00      2  4.3E-01  1.7E+00 -3.8226719E+00      1           r
+     2      3  1.0E+00      3  5.0E-02  2.1E+00  1.0691395E+00      1 7.9E+00 s
+     3      2  3.9E-01      5  1.2E-01  4.7E-01 -8.1325434E-02      2 3.1E+00
+     4      1  1.0E+00      6  1.5E-02  1.5E-01  1.2536843E-02      2 4.7E+00
+     5      1  1.0E+00      7  1.5E-03  4.4E-02  4.4669337E-04      2 4.7E+00
+     6      1  1.0E+00      8  2.7E-04  9.2E-03 -6.9171550E-04      2 4.7E+00
+     7      1  1.0E+00      9  1.6E-05  1.2E-02 -7.7800952E-04      2 4.7E+00
+     8      1  1.0E+00     10  8.3E-05  2.8E-02 -9.8685127E-04      2 4.7E+00
+     9      1  1.0E+00     12  2.8E-03  2.4E-01 -2.4039981E-03      2 4.7E+00  m
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.8E-01     15  6.3E-03  2.6E-01 -4.2689446E-03      1 4.7E+00
+    11      2  1.5E-01     18  7.6E-03  5.4E-01 -5.7759321E-03      2 4.7E+00
+    12      1  1.0E+00     19  1.7E-03  6.5E-01 -7.8751378E-03      2 4.7E+00
+    13      1  1.0E+00     20  4.9E-05  4.7E-01 -8.5686539E-03      2 4.7E+00
+    14      1  1.0E+00     21  1.7E-03  1.6E-01 -1.6728332E-02      2 4.7E+00
+    15      1  1.0E+00     22  9.4E-04  2.2E-01 -2.4168523E-02      2 4.7E+00
+    16      1  1.0E+00     23  2.0E-03  1.9E-01 -2.6080861E-02      2 4.7E+00
+    17      1  1.0E+00     24  1.1E-04  1.6E-02 -2.6699190E-02      2 4.7E+00
+    18      1  1.0E+00     25  1.3E-05  2.0E-03 -2.6714138E-02      2 4.7E+00
+    19      1  1.0E+00     26 (6.7E-08) 4.8E-05 -2.6714183E-02      2 4.7E+00
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    20      1  1.0E+00     27 (2.2E-11)(1.8E-07)-2.6714183E-02      2 4.7E+00
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  27   Objective           -2.6714182688E-02
+ No. of major iterations            20   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           4.703E+00   Nonlinear obj. term -2.6714182688E-02
+ User function calls (total)        28
+ No. of superbasics                  2   No. of basic nonlinears             3
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       5 1.8E+00   Max pi                      6 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             3 1.8E-07
+ Nonlinear constraint violn    5.9E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.19 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+sntoy2: snopt solves toy problem ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin  Toy NLP problem
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+
+ Nonzero derivs  Jij        12
+ Non-constant    Jij's       8     Constant Jij's           4
+ 
+ SNJAC  EXIT 100 -- finished successfully
+ SNJAC  INFO 102 -- Jacobian structure estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints       2     Linear constraints       2
+ Nonlinear variables         3     Linear variables         1
+ Jacobian  variables         3     Objective variables      3
+ Total constraints           4     Total variables          4
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined       8   out of       8   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      1               1  5.0E-01  2.3E+00  1.7000000E+01                  r
+ Itn      1 -- Central differences invoked.  Small reduced gradient.
+     1      0  1.0E+00      2 (3.0E-13)(9.0E-13) 1.4000000E+01        1.0E+01   rl  c
+     1      0  1.0E+00      2 (3.0E-13)(9.0E-13) 1.4000000E+01        1.0E+01   r   c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                   1   Objective            1.4000000000E+01
+ No. of major iterations             1   Linear    obj. term  1.0000000000E+01
+ Penalty parameter           1.030E+01   Nonlinear obj. term  4.0000000000E+00
+ User function calls (total)         6   Calls with modes 1,2 (known g)      2
+ Calls for forward differencing      0   Calls for central differencing      0
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       4 2.0E+00   Max pi                      1 8.0E+00
+ Max Primal infeas           1 9.0E-13   Max Dual infeas             2 8.9E-16
+ Nonlinear constraint violn    9.0E-13
+ 
+ 
+
+ Solution printed on file   9
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.00 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.00 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+snoptmain: snopt solves hexagon with no derivatives ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+
+ Nonzero derivs  Jij        61
+ Non-constant    Jij's      53     Constant Jij's           8
+ 
+ SNJAC  EXIT 100 -- finished successfully
+ SNJAC  INFO 102 -- Jacobian structure estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      14     Linear constraints       5
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined       0   out of      53   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077318E+00      3 3.7E-01 sm
+     3      2  3.5E-02      5  9.9E-02  1.7E-01  1.3381430E+00      2 2.7E+00
+     4      2  1.2E-01      6  8.8E-02  1.7E-01  1.3381986E+00      3 2.7E+00
+     5      1  1.0E+00      7  1.2E-02  3.5E-02  1.3501054E+00      3 2.7E+00
+     6      1  1.0E+00      8  1.5E-03  2.9E-03  1.3499273E+00      3 3.9E+00
+     7      1  1.0E+00      9  5.5E-05  1.1E-03  1.3499623E+00      3 3.9E+00
+     8      1  1.0E+00     10  1.5E-06  1.5E-04  1.3499629E+00      3 3.9E+00
+     9      1  1.0E+00     11 (2.1E-08) 8.5E-06  1.3499629E+00      3 3.9E+00
+ Itn     30 -- Central differences invoked.  Small reduced gradient.
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.0E+00     12 (3.3E-11)(1.6E-06) 1.3499629E+00      3 3.9E+00       c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  31   Objective            1.3499628859E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.948E+00   Nonlinear obj. term  1.3499628859E+00
+ User function calls (total)       155   Calls with modes 1,2 (known g)     12
+ Calls for forward differencing    117   Calls for central differencing      9
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             1 1.6E-06
+ Nonlinear constraint violn    6.7E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.16 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.08 seconds
+ Time for objective function                    0.00 seconds
+itns =
+    31
+majors =
+    10
+
+============================================================= 
+snoptmain2: snopt solves hexagon with dense Jacobian ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain2
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      18     Linear constraints       1
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined     171   out of     171   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077320E+00      3 3.7E-01 sm
+     3      1  4.1E-02      6  9.9E-02  1.7E-01  1.3381298E+00      3 2.7E+00
+     4      1  1.0E-01      8  8.9E-02  1.7E-01  1.3382616E+00      3 2.7E+00
+     5      1  1.0E+00      9  1.4E-02  3.7E-02  1.3499110E+00      3 2.7E+00
+     6      1  1.0E+00     10  1.9E-03  3.9E-03  1.3499149E+00      3 3.3E+00
+     7      1  1.0E+00     11  7.1E-05  1.4E-03  1.3499622E+00      3 3.3E+00
+     8      1  1.0E+00     12  2.2E-06  1.9E-04  1.3499629E+00      3 3.3E+00
+     9      1  1.0E+00     13 (3.4E-08) 1.4E-05  1.3499629E+00      3 3.3E+00
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     14 (1.2E-10)(1.1E-06) 1.3499629E+00      3 3.3E+00
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  28   Objective            1.3499628860E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.257E+00   Nonlinear obj. term  1.3499628860E+00
+ User function calls (total)        15
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             2 1.1E-06
+ Nonlinear constraint violn    2.3E-10
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.02 seconds
+ Time for solution output                       0.02 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+
+============================================================= 
+snoptmain3: snopt solves hexagon with some derivatives ... 
+ ==============================
+ S N O P T  7.4-1.2  (Feb 2015)
+ ==============================
+ 
+
+ Begin snmain3
+ 
+ SNSPEC EXIT 100 -- finished successfully
+ SNSPEC INFO 101 -- SPECS file read
+ 
+ SNMEMA EXIT 100 -- finished successfully
+ SNMEMA INFO 104 -- memory requirements estimated
+ 
+ Scale option  0
+ 
+
+ Nonlinear constraints      14     Linear constraints       5
+ Nonlinear variables         9     Linear variables         0
+ Jacobian  variables         9     Objective variables      9
+ Total constraints          19     Total variables          9
+ 
+ Itn      0: Feasible linear rows
+ Itn      0: PP1.  Minimizing  Norm(x-x0)
+
+ Itn      0: PP1.  Norm(x-x0) approximately minimized  (0.00E+00)
+
+ 
+ The user has defined      49   out of      53   first  derivatives
+ 
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+     0      9               1 (0.0E+00) 5.7E-01  3.1349175E-01      8           r
+     1      8  1.0E+00      2  4.0E-02  2.8E-01  1.0812627E+00      3           r
+     2      3  1.0E+00      4  1.0E-01  1.7E-01  1.4077320E+00      3 3.7E-01 sm
+     3      2  3.5E-02      5  9.9E-02  1.7E-01  1.3381429E+00      2 2.7E+00
+     4      2  1.2E-01      6  8.8E-02  1.7E-01  1.3381985E+00      3 2.7E+00
+     5      1  1.0E+00      7  1.2E-02  3.5E-02  1.3501054E+00      3 2.7E+00
+     6      1  1.0E+00      8  1.5E-03  2.9E-03  1.3499273E+00      3 3.9E+00
+     7      1  1.0E+00      9  5.5E-05  1.1E-03  1.3499623E+00      3 3.9E+00
+     8      1  1.0E+00     10  1.5E-06  1.5E-04  1.3499629E+00      3 3.9E+00
+     9      1  1.0E+00     11 (2.1E-08) 8.5E-06  1.3499629E+00      3 3.9E+00
+ Itn     30 -- Central differences invoked.  Small reduced gradient.
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      1  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+
+ Major Minors     Step   nCon Feasible  Optimal  MeritFunction     nS Penalty
+    10      2  1.0E+00     12 (3.3E-11)(1.0E-06) 1.3499629E+00      3 3.9E+00       c
+ 
+ SNOPTA EXIT   0 -- finished successfully
+ SNOPTA INFO   1 -- optimality conditions satisfied
+
+ Problem name                 matlabMx
+ No. of iterations                  31   Objective            1.3499628859E+00
+ No. of major iterations            10   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           3.948E+00   Nonlinear obj. term  1.3499628859E+00
+ User function calls (total)        96   Calls with modes 1,2 (known g)     12
+ Calls for forward differencing     52   Calls for central differencing      4
+ No. of superbasics                  3   No. of basic nonlinears             5
+ No. of degenerate steps             0   Percentage                       0.00
+ Max x                       3 1.0E+00   Max pi                     19 1.0E+00
+ Max Primal infeas           0 0.0E+00   Max Dual infeas             2 1.0E-06
+ Nonlinear constraint violn    6.7E-11
+
+ Solution not printed
+ 
+ Time for MPS input                             0.00 seconds
+ Time for solving problem                       0.05 seconds
+ Time for solution output                       0.00 seconds
+ Time for constraint functions                  0.02 seconds
+ Time for objective function                    0.00 seconds
+            clc
+load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\restart_25_1.mat')
+clear
+load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\restart_25_1.mat')
+plotPoints= @(points,str) plot(points([1:end],1),points([1:end],2))
+plotPoints = 
+    @(points,str)plot(points([1:end],1),points([1:end],2))
+plotPoints(loop.subdivspline)
+hold on
+naca4t=@(x,t)  5*t*(0.2969*sqrt(x)-0.1260*x-0.3516*x.^2+0.2843*x.^3-0.1036*x.^4);
+naca4c=@(x,m,p) [m*x(x<=p)/p^2.*(2*p-x(x<=p)) , m*(1-x(x>=p))/(1-p)^2.*(1+x(x>=p)-2*p)];
+x=sort(loop.subdivspline(:,1))
+x =
+    0.0001
+    0.0002
+    0.0003
+    0.0004
+    0.0006
+    0.0007
+    0.0008
+    0.0009
+    0.0010
+    0.0010
+    0.0012
+    0.0013
+    0.0014
+    0.0015
+    0.0017
+    0.0019
+    0.0021
+    0.0023
+    0.0025
+    0.0027
+    0.0028
+    0.0029
+    0.0030
+    0.0031
+    0.0031
+    0.0031
+    0.0032
+    0.0032
+    0.0033
+    0.0035
+    0.0036
+    0.0039
+    0.0042
+    0.0046
+    0.0049
+    0.0051
+    0.0057
+    0.0064
+    0.0069
+    0.0072
+    0.0081
+    0.0090
+    0.0090
+    0.0100
+    0.0111
+    0.0112
+    0.0123
+    0.0134
+    0.0136
+    0.0149
+    0.0157
+    0.0164
+    0.0179
+    0.0180
+    0.0195
+    0.0205
+    0.0212
+    0.0229
+    0.0229
+    0.0248
+    0.0255
+    0.0267
+    0.0281
+    0.0287
+    0.0308
+    0.0308
+    0.0330
+    0.0335
+    0.0353
+    0.0364
+    0.0376
+    0.0393
+    0.0400
+    0.0423
+    0.0425
+    0.0450
+    0.0454
+    0.0477
+    0.0486
+    0.0504
+    0.0518
+    0.0532
+    0.0552
+    0.0560
+    0.0586
+    0.0590
+    0.0620
+    0.0620
+    0.0651
+    0.0656
+    0.0683
+    0.0692
+    0.0715
+    0.0729
+    0.0748
+    0.0767
+    0.0782
+    0.0805
+    0.0817
+    0.0844
+    0.0853
+    0.0884
+    0.0889
+    0.0925
+    0.0926
+    0.0963
+    0.0966
+    0.1001
+    0.1008
+    0.1040
+    0.1050
+    0.1080
+    0.1093
+    0.1120
+    0.1137
+    0.1161
+    0.1181
+    0.1202
+    0.1226
+    0.1244
+    0.1272
+    0.1287
+    0.1318
+    0.1330
+    0.1364
+    0.1374
+    0.1412
+    0.1419
+    0.1459
+    0.1464
+    0.1508
+    0.1510
+    0.1556
+    0.1557
+    0.1603
+    0.1606
+    0.1650
+    0.1656
+    0.1698
+    0.1707
+    0.1747
+    0.1758
+    0.1796
+    0.1810
+    0.1846
+    0.1862
+    0.1896
+    0.1914
+    0.1947
+    0.1967
+    0.1998
+    0.2021
+    0.2050
+    0.2075
+    0.2102
+    0.2130
+    0.2155
+    0.2185
+    0.2208
+    0.2240
+    0.2261
+    0.2296
+    0.2315
+    0.2352
+    0.2370
+    0.2409
+    0.2425
+    0.2466
+    0.2480
+    0.2523
+    0.2536
+    0.2581
+    0.2592
+    0.2639
+    0.2649
+    0.2697
+    0.2706
+    0.2756
+    0.2763
+    0.2815
+    0.2821
+    0.2875
+    0.2879
+    0.2935
+    0.2937
+    0.2995
+    0.2996
+    0.3055
+    0.3055
+    0.3114
+    0.3116
+    0.3173
+    0.3177
+    0.3232
+    0.3238
+    0.3292
+    0.3300
+    0.3351
+    0.3362
+    0.3411
+    0.3424
+    0.3471
+    0.3486
+    0.3531
+    0.3549
+    0.3592
+    0.3611
+    0.3653
+    0.3674
+    0.3715
+    0.3737
+    0.3777
+    0.3801
+    0.3839
+    0.3864
+    0.3902
+    0.3928
+    0.3965
+    0.3992
+    0.4028
+    0.4056
+    0.4092
+    0.4120
+    0.4155
+    0.4184
+    0.4219
+    0.4248
+    0.4283
+    0.4313
+    0.4347
+    0.4377
+    0.4410
+    0.4442
+    0.4474
+    0.4506
+    0.4538
+    0.4571
+    0.4602
+    0.4636
+    0.4667
+    0.4700
+    0.4731
+    0.4765
+    0.4795
+    0.4830
+    0.4859
+    0.4895
+    0.4924
+    0.4960
+    0.4988
+    0.5024
+    0.5052
+    0.5089
+    0.5116
+    0.5154
+    0.5181
+    0.5218
+    0.5245
+    0.5283
+    0.5309
+    0.5348
+    0.5373
+    0.5412
+    0.5437
+    0.5477
+    0.5501
+    0.5541
+    0.5565
+    0.5605
+    0.5629
+    0.5669
+    0.5692
+    0.5733
+    0.5756
+    0.5797
+    0.5819
+    0.5861
+    0.5883
+    0.5924
+    0.5946
+    0.5988
+    0.6009
+    0.6051
+    0.6072
+    0.6114
+    0.6135
+    0.6177
+    0.6198
+    0.6240
+    0.6260
+    0.6302
+    0.6323
+    0.6364
+    0.6385
+    0.6426
+    0.6447
+    0.6488
+    0.6509
+    0.6549
+    0.6571
+    0.6611
+    0.6632
+    0.6672
+    0.6693
+    0.6732
+    0.6754
+    0.6792
+    0.6815
+    0.6852
+    0.6876
+    0.6912
+    0.6936
+    0.6972
+    0.6996
+    0.7031
+    0.7056
+    0.7089
+    0.7115
+    0.7148
+    0.7174
+    0.7206
+    0.7233
+    0.7263
+    0.7292
+    0.7321
+    0.7350
+    0.7378
+    0.7408
+    0.7434
+    0.7465
+    0.7490
+    0.7523
+    0.7546
+    0.7579
+    0.7601
+    0.7636
+    0.7656
+    0.7692
+    0.7710
+    0.7747
+    0.7764
+    0.7802
+    0.7818
+    0.7857
+    0.7871
+    0.7911
+    0.7924
+    0.7965
+    0.7976
+    0.8018
+    0.8027
+    0.8071
+    0.8079
+    0.8124
+    0.8129
+    0.8176
+    0.8179
+    0.8227
+    0.8229
+    0.8278
+    0.8278
+    0.8326
+    0.8329
+    0.8374
+    0.8379
+    0.8422
+    0.8428
+    0.8469
+    0.8477
+    0.8515
+    0.8525
+    0.8561
+    0.8573
+    0.8606
+    0.8620
+    0.8650
+    0.8667
+    0.8694
+    0.8713
+    0.8737
+    0.8759
+    0.8780
+    0.8804
+    0.8822
+    0.8849
+    0.8864
+    0.8892
+    0.8905
+    0.8936
+    0.8945
+    0.8979
+    0.8984
+    0.9021
+    0.9023
+    0.9062
+    0.9062
+    0.9099
+    0.9103
+    0.9136
+    0.9143
+    0.9173
+    0.9183
+    0.9209
+    0.9222
+    0.9244
+    0.9261
+    0.9278
+    0.9298
+    0.9312
+    0.9335
+    0.9345
+    0.9372
+    0.9377
+    0.9408
+    0.9409
+    0.9440
+    0.9443
+    0.9470
+    0.9477
+    0.9499
+    0.9511
+    0.9528
+    0.9544
+    0.9556
+    0.9576
+    0.9583
+    0.9607
+    0.9610
+    0.9635
+    0.9638
+    0.9660
+    0.9667
+    0.9685
+    0.9696
+    0.9708
+    0.9724
+    0.9731
+    0.9751
+    0.9753
+    0.9774
+    0.9777
+    0.9795
+    0.9802
+    0.9814
+    0.9826
+    0.9833
+    0.9849
+    0.9851
+    0.9868
+x=sort(loop.subdivspline(:,1));
+plotPoints([[x';flip(x)'],[naca4c(x,2/100,2/10)+naca4t(x',.12);flip(naca4c(x,2/100,2/10)-naca4t(x',0.12))]])
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('horzcat')" style="font-weight:bold">horzcat</a>
+Dimensions of matrices being concatenated are not consistent.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('(x,m,p)[m*x(x<=p)/p^2>=p))/(1-p)^2.*(1+x(x>=p)-2*p)]')" style="font-weight:bold">(x,m,p)[m*x(x<=p)/p^2>=p))/(1-p)^2.*(1+x(x>=p)-2*p)]</a>
+
+} 
+plotPoints([[x';flip(x)'],[naca4c(x',2/100,2/10)+naca4t(x',.12);flip(naca4c(x',2/100,2/10)-naca4t(x',0.12))]])
+x=linspace(0,1,1000);
+plotPoints([[x';flip(x)'],[naca4c(x',2/100,2/10)+naca4t(x',.12);flip(naca4c(x',2/100,2/10)-naca4t(x',0.12))]])
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('horzcat')" style="font-weight:bold">horzcat</a>
+Dimensions of matrices being concatenated are not consistent.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('(x,m,p)[m*x(x<=p)/p^2>=p))/(1-p)^2.*(1+x(x>=p)-2*p)]')" style="font-weight:bold">(x,m,p)[m*x(x<=p)/p^2>=p))/(1-p)^2.*(1+x(x>=p)-2*p)]</a>
+
+} 
+plotPoints([[x';flip(x)'],[naca4c(x,2/100,2/10)+naca4t(x',.12);flip(naca4c(x,2/100,2/10)-naca4t(x',0.12))]])
+{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plus')" style="font-weight:bold"> + </a>
+Matrix dimensions must agree.} 
+clc
+naca4c=@(x,m,p) [m*x(x<=p)/p^2.*(2*p-x(x<=p)) , m*(1-x(x>=p))/(1-p)^2.*(1+x(x>=p)-2*p)];
+plotPoints([[x';flip(x)'],[naca4c(x,2/100,2/10)'+naca4t(x',.12);flip(naca4c(x,2/100,2/10)'-naca4t(x',0.12))]])
+plotPoints([[x';flip(x)'],[naca4c(x,4/100,4/10)'+naca4t(x',.12);flip(naca4c(x,4/100,4/10)'-naca4t(x',0.12))]])
+qstat -q
+{Undefined function or variable 'qstat'.} 
+load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\DE_population\restart_29_1.mat')
+plotPoints(loop.subdivspline)
+clc
+[sensloops,snakloops]=ValidateSensivity('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212',pathSnak)
+{Undefined function or variable 'pathSnak'.} 
+[sensloops,snakloops]=ValidateSensivity('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212','C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212')
+WRITING AUTOMATIC FUNCTIONS
+FindDir Could not find requested item
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ValidateSensivity>FindProfileLoops', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m', 43)" style="font-weight:bold">ValidateSensivity>FindProfileLoops</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m',43,0)">line 43</a>)
+    [profilePath,profileName]=FindDir(rootDir,'profile',true);
+{Output argument "profloops" (and maybe others) not assigned during call to
+"ValidateSensivity>FindProfileLoops".
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ValidateSensivity', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m', 9)" style="font-weight:bold">ValidateSensivity</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\ValidateSensivity.m',9,0)">line 9</a>)
+    [sensloops]=FindProfileLoops(pathSens);} 
+pathStr='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\iteration_30'
+pathStr =
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\iteration_30
+[sensloops,snakloops]=ValidateSensivity(pathStr,pathStr)
+WRITING AUTOMATIC FUNCTIONS
+sensloops = 
+1x12 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+    loop
+snakloops = 
+1x12 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+    loop
+figure
+hold on
+plotPoints([[x';flip(x)'],[naca4c(x,2/100,2/10)'+naca4t(x',.12);flip(naca4c(x,2/100,2/10)'-naca4t(x',0.12))]])
+for ii=1:numel(sensloops),for jj=1:numel(sensloop(ii).loop),plotPoints(sensloop(ii).loop(jj).subdivspline),end,end
+{Undefined variable "sensloop" or class "sensloop".} 
+for ii=1:numel(sensloops),for jj=1:numel(sensloops(ii).loop),plotPoints(sensloops(ii).loop(jj).subdivspline),end,end
+pathStr2='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\iteration_29'
+pathStr2 =
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\iteration_29
+[sensloops,snakloops]=ValidateSensivity(pathStr,pathStr2)
+WRITING AUTOMATIC FUNCTIONS
+sensloops = 
+1x12 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+    loop
+snakloops = 
+1x81 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+    loop
+sensloop=snakloops;
+figure
+hold on
+plotPoints([[x';flip(x)'],[naca4c(x,2/100,2/10)'+naca4t(x',.12);flip(naca4c(x,2/100,2/10)'-naca4t(x',0.12))]])
+for ii=1:numel(sensloop),for jj=1:numel(sensloop(ii).loop),plotPoints(sensloop(ii).loop(jj).subdivspline),end,end
+pathStr1='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\Dir_2016-09-26T115519_bp32_2212cos\iteration_33'
+pathStr1 =
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\Dir_2016-09-26T115519_bp32_2212cos\iteration_33
+pathStr2='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\Dir_2016-09-26T115519_bp32_2212cos\iteration_34'
+pathStr2 =
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\InverseDesign\NACA2212\Dir_2016-09-26T115519_bp32_2212cos\iteration_34
+[sensloop1,snakloop2]=ValidateSensivity(pathStr1,pathStr2)
+WRITING AUTOMATIC FUNCTIONS
+sensloop1 = 
+1x81 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+    loop
+snakloop2 = 
+1x12 <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> array with fields:
+    loop
+naca4t=@(x,t)  5*t*(0.2969*sqrt(x)-0.1260*x-0.3516*x.^2+0.2843*x.^3-0.1036*x.^4);
+clc
+comparemodes
+WRITING AUTOMATIC FUNCTIONS
+{Subscript indices must either be real positive integers or logicals.
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('comparemodes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\comparemodes.m', 17)" style="font-weight:bold">comparemodes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\comparemodes.m',17,0)">line 17</a>)
+plotPoints([[x';flip(x)'],[naca4c(x,2/100,2/10)'+naca4t(x',.12);...} 
+{Subscript indices must either be real positive integers or logicals.} 
+x
+x =
+  Columns 1 through 10
+         0    0.0005    0.0010    0.0015    0.0020    0.0025    0.0030    0.0035    0.0040    0.0045
+  Columns 11 through 20
+    0.0050    0.0055    0.0060    0.0065    0.0070    0.0075    0.0080    0.0085    0.0090    0.0095
+  Columns 21 through 30
+    0.0100    0.0105    0.0110    0.0115    0.0120    0.0125    0.0130    0.0135    0.0140    0.0145
+  Columns 31 through 40
+    0.0150    0.0155    0.0160    0.0165    0.0170    0.0175    0.0180    0.0185    0.0190    0.0195
+  Columns 41 through 50
+    0.0200    0.0205    0.0210    0.0215    0.0220    0.0225    0.0230    0.0235    0.0240    0.0245
+  Columns 51 through 60
+    0.0250    0.0255    0.0260    0.0265    0.0270    0.0275    0.0280    0.0285    0.0290    0.0295
+  Columns 61 through 70
+    0.0300    0.0305    0.0310    0.0315    0.0320    0.0325    0.0330    0.0335    0.0340    0.0345
+  Columns 71 through 80
+    0.0350    0.0355    0.0360    0.0365    0.0370    0.0375    0.0380    0.0385    0.0390    0.0395
+  Columns 81 through 90
+    0.0400    0.0405    0.0410    0.0415    0.0420    0.0425    0.0430    0.0435    0.0440    0.0445
+  Columns 91 through 100
+    0.0450    0.0455    0.0460    0.0465    0.0470    0.0475    0.0480    0.0485    0.0490    0.0495
+  Columns 101 through 110
+    0.0500    0.0505    0.0510    0.0515    0.0520    0.0525    0.0530    0.0535    0.0540    0.0545
+  Columns 111 through 120
+    0.0550    0.0555    0.0560    0.0565    0.0570    0.0575    0.0580    0.0585    0.0590    0.0595
+  Columns 121 through 130
+    0.0600    0.0605    0.0610    0.0615    0.0620    0.0625    0.0630    0.0635    0.0640    0.0645
+  Columns 131 through 140
+    0.0650    0.0655    0.0660    0.0665    0.0670    0.0675    0.0680    0.0685    0.0690    0.0695
+  Columns 141 through 150
+    0.0700    0.0705    0.0710    0.0715    0.0720    0.0725    0.0730    0.0735    0.0740    0.0745
+  Columns 151 through 160
+    0.0750    0.0755    0.0760    0.0765    0.0770    0.0775    0.0780    0.0785    0.0790    0.0795
+  Columns 161 through 170
+    0.0800    0.0805    0.0810    0.0815    0.0820    0.0825    0.0830    0.0835    0.0840    0.0845
+  Columns 171 through 180
+    0.0850    0.0855    0.0860    0.0865    0.0870    0.0875    0.0880    0.0885    0.0890    0.0895
+  Columns 181 through 190
+    0.0900    0.0905    0.0910    0.0915    0.0920    0.0925    0.0930    0.0935    0.0940    0.0945
+  Columns 191 through 200
+    0.0950    0.0955    0.0960    0.0965    0.0970    0.0975    0.0980    0.0985    0.0990    0.0995
+  Columns 201 through 210
+    0.1001    0.1006    0.1011    0.1016    0.1021    0.1026    0.1031    0.1036    0.1041    0.1046
+  Columns 211 through 220
+    0.1051    0.1056    0.1061    0.1066    0.1071    0.1076    0.1081    0.1086    0.1091    0.1096
+  Columns 221 through 230
+    0.1101    0.1106    0.1111    0.1116    0.1121    0.1126    0.1131    0.1136    0.1141    0.1146
+  Columns 231 through 240
+    0.1151    0.1156    0.1161    0.1166    0.1171    0.1176    0.1181    0.1186    0.1191    0.1196
+  Columns 241 through 250
+    0.1201    0.1206    0.1211    0.1216    0.1221    0.1226    0.1231    0.1236    0.1241    0.1246
+clc
+{Subscript indices must either be real positive integers or logicals.} 
+naca4c(x,2/100,2/10)
+ans =
+  Columns 1 through 10
+         0    0.0001    0.0002    0.0003    0.0004    0.0005    0.0006    0.0007    0.0008    0.0009
+  Columns 11 through 20
+    0.0010    0.0011    0.0012    0.0013    0.0014    0.0015    0.0016    0.0017    0.0018    0.0019
+  Columns 21 through 30
+    0.0020    0.0020    0.0021    0.0022    0.0023    0.0024    0.0025    0.0026    0.0027    0.0028
+  Columns 31 through 40
+    0.0029    0.0030    0.0031    0.0032    0.0033    0.0033    0.0034    0.0035    0.0036    0.0037
+  Columns 41 through 50
+    0.0038    0.0039    0.0040    0.0041    0.0042    0.0042    0.0043    0.0044    0.0045    0.0046
+  Columns 51 through 60
+    0.0047    0.0048    0.0049    0.0050    0.0050    0.0051    0.0052    0.0053    0.0054    0.0055
+  Columns 61 through 70
+    0.0056    0.0056    0.0057    0.0058    0.0059    0.0060    0.0061    0.0061    0.0062    0.0063
+  Columns 71 through 80
+    0.0064    0.0065    0.0066    0.0066    0.0067    0.0068    0.0069    0.0070    0.0070    0.0071
+  Columns 81 through 90
+    0.0072    0.0073    0.0074    0.0074    0.0075    0.0076    0.0077    0.0078    0.0078    0.0079
+  Columns 91 through 100
+    0.0080    0.0081    0.0081    0.0082    0.0083    0.0084    0.0085    0.0085    0.0086    0.0087
+  Columns 101 through 110
+    0.0088    0.0088    0.0089    0.0090    0.0091    0.0091    0.0092    0.0093    0.0093    0.0094
+  Columns 111 through 120
+    0.0095    0.0096    0.0096    0.0097    0.0098    0.0099    0.0099    0.0100    0.0101    0.0101
+  Columns 121 through 130
+    0.0102    0.0103    0.0103    0.0104    0.0105    0.0106    0.0106    0.0107    0.0108    0.0108
+  Columns 131 through 140
+    0.0109    0.0110    0.0110    0.0111    0.0112    0.0112    0.0113    0.0114    0.0114    0.0115
+  Columns 141 through 150
+    0.0116    0.0116    0.0117    0.0117    0.0118    0.0119    0.0119    0.0120    0.0121    0.0121
+  Columns 151 through 160
+    0.0122    0.0123    0.0123    0.0124    0.0124    0.0125    0.0126    0.0126    0.0127    0.0127
+  Columns 161 through 170
+    0.0128    0.0129    0.0129    0.0130    0.0130    0.0131    0.0132    0.0132    0.0133    0.0133
+  Columns 171 through 180
+    0.0134    0.0134    0.0135    0.0136    0.0136    0.0137    0.0137    0.0138    0.0138    0.0139
+  Columns 181 through 190
+    0.0140    0.0140    0.0141    0.0141    0.0142    0.0142    0.0143    0.0143    0.0144    0.0144
+  Columns 191 through 200
+    0.0145    0.0145    0.0146    0.0146    0.0147    0.0148    0.0148    0.0149    0.0149    0.0150
+  Columns 201 through 210
+    0.0150    0.0151    0.0151    0.0152    0.0152    0.0153    0.0153    0.0153    0.0154    0.0154
+  Columns 211 through 220
+    0.0155    0.0155    0.0156    0.0156    0.0157    0.0157    0.0158    0.0158    0.0159    0.0159
+  Columns 221 through 230
+    0.0160    0.0160    0.0160    0.0161    0.0161    0.0162    0.0162    0.0163    0.0163    0.0163
+  Columns 231 through 240
+    0.0164    0.0164    0.0165    0.0165    0.0166    0.0166    0.0166    0.0167    0.0167    0.0168
+  Columns 241 through 250
+    0.0168    0.0168    0.0169    0.0169    0.0170    0.0170    0.0170    0.0171    0.0171    0.0172
+  Columns 251 through 260
+    0.0172    0.0172    0.0173    0.0173    0.0173    0.0174    0.0174    0.0174    0.0175    0.0175
+  Columns 261 through 270
+    0.0176    0.0176    0.0176    0.0177    0.0177    0.0177    0.0178    0.0178    0.0178    0.0179
+  Columns 271 through 280
+    0.0179    0.0179    0.0180    0.0180    0.0180    0.0181    0.0181    0.0181    0.0181    0.0182
+  Columns 281 through 290
+    0.0182    0.0182    0.0183    0.0183    0.0183    0.0184    0.0184    0.0184    0.0184    0.0185
+  Columns 291 through 300
+    0.0185    0.0185    0.0185    0.0186    0.0186    0.0186    0.0187    0.0187    0.0187    0.0187
+  Columns 301 through 310
+    0.0188    0.0188    0.0188    0.0188    0.0189    0.0189    0.0189    0.0189    0.0189    0.0190
+  Columns 311 through 320
+    0.0190    0.0190    0.0190    0.0191    0.0191    0.0191    0.0191    0.0191    0.0192    0.0192
+  Columns 321 through 330
+    0.0192    0.0192    0.0192    0.0193    0.0193    0.0193    0.0193    0.0193    0.0194    0.0194
+  Columns 331 through 340
+    0.0194    0.0194    0.0194    0.0194    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195
+  Columns 341 through 350
+    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0197    0.0197    0.0197
+  Columns 351 through 360
+    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0198    0.0198    0.0198    0.0198
+  Columns 361 through 370
+    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0199    0.0199    0.0199    0.0199
+  Columns 371 through 380
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199
+  Columns 381 through 390
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 391 through 400
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 401 through 410
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 411 through 420
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 421 through 430
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 431 through 440
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 441 through 450
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 451 through 460
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 461 through 470
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 471 through 480
+    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200    0.0200
+  Columns 481 through 490
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199
+  Columns 491 through 500
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199
+  Columns 501 through 510
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199
+  Columns 511 through 520
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199
+  Columns 521 through 530
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199
+  Columns 531 through 540
+    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0199    0.0198
+  Columns 541 through 550
+    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198
+  Columns 551 through 560
+    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198
+  Columns 561 through 570
+    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198
+  Columns 571 through 580
+    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0198    0.0197
+  Columns 581 through 590
+    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197
+  Columns 591 through 600
+    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197
+  Columns 601 through 610
+    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197    0.0197
+  Columns 611 through 620
+    0.0197    0.0197    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196
+  Columns 621 through 630
+    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196
+  Columns 631 through 640
+    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196    0.0196
+  Columns 641 through 650
+    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195
+  Columns 651 through 660
+    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195    0.0195
+  Columns 661 through 670
+    0.0195    0.0195    0.0195    0.0195    0.0195    0.0194    0.0194    0.0194    0.0194    0.0194
+  Columns 671 through 680
+    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194
+  Columns 681 through 690
+    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0194    0.0193
+  Columns 691 through 700
+    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193
+  Columns 701 through 710
+    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193    0.0193
+  Columns 711 through 720
+    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192
+  Columns 721 through 730
+    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192    0.0192
+  Columns 731 through 740
+    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191
+  Columns 741 through 750
+    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0191    0.0190
+  Columns 751 through 760
+    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190
+  Columns 761 through 770
+    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190    0.0190    0.0189    0.0189    0.0189
+  Columns 771 through 780
+    0.0189    0.0189    0.0189    0.0189    0.0189    0.0189    0.0189    0.0189    0.0189    0.0189
+  Columns 781 through 790
+    0.0189    0.0189    0.0189    0.0189    0.0188    0.0188    0.0188    0.0188    0.0188    0.0188
+  Columns 791 through 800
+    0.0188    0.0188    0.0188    0.0188    0.0188    0.0188    0.0188    0.0188    0.0188    0.0188
+  Columns 801 through 810
+    0.0187    0.0187    0.0187    0.0187    0.0187    0.0187    0.0187    0.0187    0.0187    0.0187
+  Columns 811 through 820
+    0.0187    0.0187    0.0187    0.0187    0.0187    0.0187    0.0186    0.0186    0.0186    0.0186
+  Columns 821 through 830
+    0.0186    0.0186    0.0186    0.0186    0.0186    0.0186    0.0186    0.0186    0.0186    0.0186
+  Columns 831 through 840
+    0.0186    0.0185    0.0185    0.0185    0.0185    0.0185    0.0185    0.0185    0.0185    0.0185
+  Columns 841 through 850
+    0.0185    0.0185    0.0185    0.0185    0.0185    0.0184    0.0184    0.0184    0.0184    0.0184
+  Columns 851 through 860
+    0.0184    0.0184    0.0184    0.0184    0.0184    0.0184    0.0184    0.0184    0.0184    0.0184
+  Columns 861 through 870
+    0.0183    0.0183    0.0183    0.0183    0.0183    0.0183    0.0183    0.0183    0.0183    0.0183
+  Columns 871 through 880
+    0.0183    0.0183    0.0183    0.0182    0.0182    0.0182    0.0182    0.0182    0.0182    0.0182
+  Columns 881 through 890
+    0.0182    0.0182    0.0182    0.0182    0.0182    0.0182    0.0182    0.0181    0.0181    0.0181
+  Columns 891 through 900
+    0.0181    0.0181    0.0181    0.0181    0.0181    0.0181    0.0181    0.0181    0.0181    0.0181
+  Columns 901 through 910
+    0.0180    0.0180    0.0180    0.0180    0.0180    0.0180    0.0180    0.0180    0.0180    0.0180
+  Columns 911 through 920
+    0.0180    0.0180    0.0179    0.0179    0.0179    0.0179    0.0179    0.0179    0.0179    0.0179
+  Columns 921 through 930
+    0.0179    0.0179    0.0179    0.0179    0.0179    0.0178    0.0178    0.0178    0.0178    0.0178
+  Columns 931 through 940
+    0.0178    0.0178    0.0178    0.0178    0.0178    0.0178    0.0178    0.0177    0.0177    0.0177
+  Columns 941 through 950
+    0.0177    0.0177    0.0177    0.0177    0.0177    0.0177    0.0177    0.0177    0.0176    0.0176
+  Columns 951 through 960
+    0.0176    0.0176    0.0176    0.0176    0.0176    0.0176    0.0176    0.0176    0.0176    0.0176
+  Columns 961 through 970
+    0.0175    0.0175    0.0175    0.0175    0.0175    0.0175    0.0175    0.0175    0.0175    0.0175
+  Columns 971 through 980
+    0.0175    0.0174    0.0174    0.0174    0.0174    0.0174    0.0174    0.0174    0.0174    0.0174
+  Columns 981 through 990
+    0.0174    0.0174    0.0173    0.0173    0.0173    0.0173    0.0173    0.0173    0.0173    0.0173
+  Columns 991 through 1000
+    0.0173    0.0173    0.0173    0.0172    0.0172    0.0172    0.0172    0.0172    0.0172    0.0172
+  Columns 1001 through 1010
+    0.0172    0.0172    0.0172    0.0172    0.0171    0.0171    0.0171    0.0171    0.0171    0.0171
+  Columns 1011 through 1020
+    0.0171    0.0171    0.0171    0.0171    0.0170    0.0170    0.0170    0.0170    0.0170    0.0170
+  Columns 1021 through 1030
+    0.0170    0.0170    0.0170    0.0170    0.0170    0.0169    0.0169    0.0169    0.0169    0.0169
+  Columns 1031 through 1040
+    0.0169    0.0169    0.0169    0.0169    0.0169    0.0168    0.0168    0.0168    0.0168    0.0168
+  Columns 1041 through 1050
+    0.0168    0.0168    0.0168    0.0168    0.0168    0.0167    0.0167    0.0167    0.0167    0.0167
+  Columns 1051 through 1060
+    0.0167    0.0167    0.0167    0.0167    0.0167    0.0166    0.0166    0.0166    0.0166    0.0166
+  Columns 1061 through 1070
+    0.0166    0.0166    0.0166    0.0166    0.0165    0.0165    0.0165    0.0165    0.0165    0.0165
+  Columns 1071 through 1080
+    0.0165    0.0165    0.0165    0.0165    0.0164    0.0164    0.0164    0.0164    0.0164    0.0164
+  Columns 1081 through 1090
+    0.0164    0.0164    0.0164    0.0163    0.0163    0.0163    0.0163    0.0163    0.0163    0.0163
+  Columns 1091 through 1100
+    0.0163    0.0163    0.0163    0.0162    0.0162    0.0162    0.0162    0.0162    0.0162    0.0162
+  Columns 1101 through 1110
+    0.0162    0.0162    0.0161    0.0161    0.0161    0.0161    0.0161    0.0161    0.0161    0.0161
+  Columns 1111 through 1120
+    0.0161    0.0160    0.0160    0.0160    0.0160    0.0160    0.0160    0.0160    0.0160    0.0160
+  Columns 1121 through 1130
+    0.0159    0.0159    0.0159    0.0159    0.0159    0.0159    0.0159    0.0159    0.0159    0.0158
+  Columns 1131 through 1140
+    0.0158    0.0158    0.0158    0.0158    0.0158    0.0158    0.0158    0.0157    0.0157    0.0157
+  Columns 1141 through 1150
+    0.0157    0.0157    0.0157    0.0157    0.0157    0.0157    0.0156    0.0156    0.0156    0.0156
+  Columns 1151 through 1160
+    0.0156    0.0156    0.0156    0.0156    0.0156    0.0155    0.0155    0.0155    0.0155    0.0155
+  Columns 1161 through 1170
+    0.0155    0.0155    0.0155    0.0154    0.0154    0.0154    0.0154    0.0154    0.0154    0.0154
+  Columns 1171 through 1180
+    0.0154    0.0153    0.0153    0.0153    0.0153    0.0153    0.0153    0.0153    0.0153    0.0153
+  Columns 1181 through 1190
+    0.0152    0.0152    0.0152    0.0152    0.0152    0.0152    0.0152    0.0152    0.0151    0.0151
+  Columns 1191 through 1200
+    0.0151    0.0151    0.0151    0.0151    0.0151    0.0151    0.0150    0.0150    0.0150    0.0150
+  Columns 1201 through 1210
+    0.0150    0.0150    0.0150    0.0150    0.0149    0.0149    0.0149    0.0149    0.0149    0.0149
+  Columns 1211 through 1220
+    0.0149    0.0149    0.0148    0.0148    0.0148    0.0148    0.0148    0.0148    0.0148    0.0148
+  Columns 1221 through 1230
+    0.0147    0.0147    0.0147    0.0147    0.0147    0.0147    0.0147    0.0146    0.0146    0.0146
+  Columns 1231 through 1240
+    0.0146    0.0146    0.0146    0.0146    0.0146    0.0145    0.0145    0.0145    0.0145    0.0145
+  Columns 1241 through 1250
+    0.0145    0.0145    0.0145    0.0144    0.0144    0.0144    0.0144    0.0144    0.0144    0.0144
+  Columns 1251 through 1260
+    0.0143    0.0143    0.0143    0.0143    0.0143    0.0143    0.0143    0.0143    0.0142    0.0142
+  Columns 1261 through 1270
+    0.0142    0.0142    0.0142    0.0142    0.0142    0.0141    0.0141    0.0141    0.0141    0.0141
+  Columns 1271 through 1280
+    0.0141    0.0141    0.0141    0.0140    0.0140    0.0140    0.0140    0.0140    0.0140    0.0140
+  Columns 1281 through 1290
+    0.0139    0.0139    0.0139    0.0139    0.0139    0.0139    0.0139    0.0138    0.0138    0.0138
+  Columns 1291 through 1300
+    0.0138    0.0138    0.0138    0.0138    0.0137    0.0137    0.0137    0.0137    0.0137    0.0137
+  Columns 1301 through 1310
+    0.0137    0.0136    0.0136    0.0136    0.0136    0.0136    0.0136    0.0136    0.0135    0.0135
+  Columns 1311 through 1320
+    0.0135    0.0135    0.0135    0.0135    0.0135    0.0134    0.0134    0.0134    0.0134    0.0134
+  Columns 1321 through 1330
+    0.0134    0.0134    0.0133    0.0133    0.0133    0.0133    0.0133    0.0133    0.0133    0.0132
+  Columns 1331 through 1340
+    0.0132    0.0132    0.0132    0.0132    0.0132    0.0132    0.0131    0.0131    0.0131    0.0131
+  Columns 1341 through 1350
+    0.0131    0.0131    0.0131    0.0130    0.0130    0.0130    0.0130    0.0130    0.0130    0.0130
+  Columns 1351 through 1360
+    0.0129    0.0129    0.0129    0.0129    0.0129    0.0129    0.0128    0.0128    0.0128    0.0128
+  Columns 1361 through 1370
+    0.0128    0.0128    0.0128    0.0127    0.0127    0.0127    0.0127    0.0127    0.0127    0.0127
+  Columns 1371 through 1380
+    0.0126    0.0126    0.0126    0.0126    0.0126    0.0126    0.0125    0.0125    0.0125    0.0125
+  Columns 1381 through 1390
+    0.0125    0.0125    0.0125    0.0124    0.0124    0.0124    0.0124    0.0124    0.0124    0.0123
+  Columns 1391 through 1400
+    0.0123    0.0123    0.0123    0.0123    0.0123    0.0123    0.0122    0.0122    0.0122    0.0122
+  Columns 1401 through 1410
+    0.0122    0.0122    0.0121    0.0121    0.0121    0.0121    0.0121    0.0121    0.0121    0.0120
+  Columns 1411 through 1420
+    0.0120    0.0120    0.0120    0.0120    0.0120    0.0119    0.0119    0.0119    0.0119    0.0119
+  Columns 1421 through 1430
+    0.0119    0.0118    0.0118    0.0118    0.0118    0.0118    0.0118    0.0117    0.0117    0.0117
+  Columns 1431 through 1440
+    0.0117    0.0117    0.0117    0.0117    0.0116    0.0116    0.0116    0.0116    0.0116    0.0116
+  Columns 1441 through 1450
+    0.0115    0.0115    0.0115    0.0115    0.0115    0.0115    0.0114    0.0114    0.0114    0.0114
+  Columns 1451 through 1460
+    0.0114    0.0114    0.0113    0.0113    0.0113    0.0113    0.0113    0.0113    0.0112    0.0112
+  Columns 1461 through 1470
+    0.0112    0.0112    0.0112    0.0112    0.0111    0.0111    0.0111    0.0111    0.0111    0.0111
+  Columns 1471 through 1480
+    0.0110    0.0110    0.0110    0.0110    0.0110    0.0110    0.0109    0.0109    0.0109    0.0109
+  Columns 1481 through 1490
+    0.0109    0.0109    0.0108    0.0108    0.0108    0.0108    0.0108    0.0108    0.0107    0.0107
+  Columns 1491 through 1500
+    0.0107    0.0107    0.0107    0.0107    0.0106    0.0106    0.0106    0.0106    0.0106    0.0106
+  Columns 1501 through 1510
+    0.0105    0.0105    0.0105    0.0105    0.0105    0.0104    0.0104    0.0104    0.0104    0.0104
+  Columns 1511 through 1520
+    0.0104    0.0103    0.0103    0.0103    0.0103    0.0103    0.0103    0.0102    0.0102    0.0102
+  Columns 1521 through 1530
+    0.0102    0.0102    0.0102    0.0101    0.0101    0.0101    0.0101    0.0101    0.0100    0.0100
+  Columns 1531 through 1540
+    0.0100    0.0100    0.0100    0.0100    0.0099    0.0099    0.0099    0.0099    0.0099    0.0099
+  Columns 1541 through 1550
+    0.0098    0.0098    0.0098    0.0098    0.0098    0.0097    0.0097    0.0097    0.0097    0.0097
+  Columns 1551 through 1560
+    0.0097    0.0096    0.0096    0.0096    0.0096    0.0096    0.0095    0.0095    0.0095    0.0095
+  Columns 1561 through 1570
+    0.0095    0.0095    0.0094    0.0094    0.0094    0.0094    0.0094    0.0093    0.0093    0.0093
+  Columns 1571 through 1580
+    0.0093    0.0093    0.0093    0.0092    0.0092    0.0092    0.0092    0.0092    0.0091    0.0091
+  Columns 1581 through 1590
+    0.0091    0.0091    0.0091    0.0091    0.0090    0.0090    0.0090    0.0090    0.0090    0.0089
+  Columns 1591 through 1600
+    0.0089    0.0089    0.0089    0.0089    0.0088    0.0088    0.0088    0.0088    0.0088    0.0088
+  Columns 1601 through 1610
+    0.0087    0.0087    0.0087    0.0087    0.0087    0.0086    0.0086    0.0086    0.0086    0.0086
+  Columns 1611 through 1620
+    0.0085    0.0085    0.0085    0.0085    0.0085    0.0085    0.0084    0.0084    0.0084    0.0084
+  Columns 1621 through 1630
+    0.0084    0.0083    0.0083    0.0083    0.0083    0.0083    0.0082    0.0082    0.0082    0.0082
+  Columns 1631 through 1640
+    0.0082    0.0081    0.0081    0.0081    0.0081    0.0081    0.0080    0.0080    0.0080    0.0080
+  Columns 1641 through 1650
+    0.0080    0.0080    0.0079    0.0079    0.0079    0.0079    0.0079    0.0078    0.0078    0.0078
+  Columns 1651 through 1660
+    0.0078    0.0078    0.0077    0.0077    0.0077    0.0077    0.0077    0.0076    0.0076    0.0076
+  Columns 1661 through 1670
+    0.0076    0.0076    0.0075    0.0075    0.0075    0.0075    0.0075    0.0074    0.0074    0.0074
+  Columns 1671 through 1680
+    0.0074    0.0074    0.0073    0.0073    0.0073    0.0073    0.0073    0.0072    0.0072    0.0072
+  Columns 1681 through 1690
+    0.0072    0.0072    0.0071    0.0071    0.0071    0.0071    0.0071    0.0070    0.0070    0.0070
+  Columns 1691 through 1700
+    0.0070    0.0070    0.0069    0.0069    0.0069    0.0069    0.0069    0.0068    0.0068    0.0068
+  Columns 1701 through 1710
+    0.0068    0.0068    0.0067    0.0067    0.0067    0.0067    0.0067    0.0066    0.0066    0.0066
+  Columns 1711 through 1720
+    0.0066    0.0066    0.0065    0.0065    0.0065    0.0065    0.0065    0.0064    0.0064    0.0064
+  Columns 1721 through 1730
+    0.0064    0.0063    0.0063    0.0063    0.0063    0.0063    0.0062    0.0062    0.0062    0.0062
+  Columns 1731 through 1740
+    0.0062    0.0061    0.0061    0.0061    0.0061    0.0061    0.0060    0.0060    0.0060    0.0060
+  Columns 1741 through 1750
+    0.0060    0.0059    0.0059    0.0059    0.0059    0.0058    0.0058    0.0058    0.0058    0.0058
+  Columns 1751 through 1760
+    0.0057    0.0057    0.0057    0.0057    0.0057    0.0056    0.0056    0.0056    0.0056    0.0056
+  Columns 1761 through 1770
+    0.0055    0.0055    0.0055    0.0055    0.0054    0.0054    0.0054    0.0054    0.0054    0.0053
+  Columns 1771 t

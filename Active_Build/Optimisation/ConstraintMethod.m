@@ -415,7 +415,6 @@ function population=BarrierAerodynamicResidual(constrVal,population)
     
 end
 
-
 function population=BarrierSnaxelVolResidual(constrVal,population)
     
     for ii=1:length(population)
