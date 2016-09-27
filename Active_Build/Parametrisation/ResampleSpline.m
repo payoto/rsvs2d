@@ -48,17 +48,17 @@ end
 
 function [points]=CheckClosedCurve(points,typCurve)
     
-   switch typCurve
-       case 'closed'
-           if sum(points(1,:)~=points(end,:))
-               points(end+1,:)=points(1,:);
-           end
-       case 'open'
-           
-       otherwise
-           
-           error('unknown curve type')
-   end
+    switch typCurve
+        case 'closed'
+            if sum(points(1,:)~=points(end,:))
+                points(end+1,:)=points(1,:);
+            end
+        case 'open'
+            
+        otherwise
+            
+            error('unknown curve type')
+    end
     
     
 end
@@ -219,7 +219,7 @@ end
 function [newPoints,newblocks]=ResampleSplinePatches(splineblocks,parspline,nPoints)
     
     for ii=length(splineblocks):-1:1
-    
+        
         [newblocks(ii)]=ResampleBlock(splineblocks(ii),parspline,nPoints);
         
     end
@@ -236,16 +236,17 @@ function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
     indRange=splineblock.indRange;
     distribSource=parspline.distribution;
     provNewParList=parspline.newParList;
+    typeInterp=parspline.typeInterp;
     
     splineblock.newParList=Distribution(samplingDistrib,distribSource,provNewParList,nSample,domParam);
     [cond]=PickEndcond(parspline,indRange,nPoints);
     
     [newX,splineblock.interPPX]=...
         BuildSplineInterpolant(splineblock.parList,splineblock.normPoints(:,1),...
-        cond.active(1,:),cond.ValsX,splineblock.newParList);
+        cond.active(1,:),cond.ValsX,splineblock.newParList,typeInterp);
     [newY,splineblock.interPPY]=...
         BuildSplineInterpolant(splineblock.parList,splineblock.normPoints(:,2),...
-        cond.active(2,:),cond.ValsY,splineblock.newParList);
+        cond.active(2,:),cond.ValsY,splineblock.newParList,typeInterp);
     
     splineblock.newPoints=[newX',newY'];
 end
@@ -297,18 +298,29 @@ function [cond]=PickEndcond(parspline,indRange,nPoints)
     
 end
 
-function [newPoints,interPP]=BuildSplineInterpolant(parList,data,cond,condVals,newParList)
+function [newPoints,interPP]=BuildSplineInterpolant(parList,data,cond,condVals,newParList,typeInterp)
     
-    if numel(condVals)>0 && any(cond)
-        if data(1)>=data(end)
-            condVals=flip(condVals);
-            cond=flip(cond);
-        end
-        interPP = csape(parList,[condVals(1);data;condVals(2)]',cond);
-    else
-        interPP = csape(parList,data');
+    switch typeInterp
+        case 'cubic'
+            if numel(condVals)>0 && any(cond)
+                if data(1)>=data(end)
+                    condVals=flip(condVals);
+                    cond=flip(cond);
+                end
+                interPP = csape(parList,[condVals(1);data;condVals(2)]',cond);
+            else
+                interPP = csape(parList,data');
+            end
+            newPoints=ppval(interPP,newParList);
+            
+        case 'linear'
+            [parList,newOrd]=sort(parList);
+            interPP = griddedInterpolant(parList,data(newOrd,:));
+            newPoints= interPP(newParList);
+        otherwise
+            error('unknown interpolation')
+            
     end
-    newPoints=ppval(interPP,newParList);
     
 end
 
@@ -327,7 +339,7 @@ function newParList=Distribution(samplingDistrib,distribSource,provNewParList,nS
                     theta=linspace(0,2*pi,nSample);
                     newParList=(heaviside(theta-pi)*2-(heaviside(theta-pi)-0.5)...
                         .*2.*(1-cos(theta))/2)/2*(domParam(2)-domParam(1))+domParam(1);
-                otherwise 
+                otherwise
                     error('Unknown sampling distribution')
             end
         case 'provided'
@@ -404,6 +416,7 @@ function [parspline]=CaseSpline_default()
     
     parspline.LocMinDeriv='smooth';
     parspline.LocMaxDeriv='smooth';
+    parspline.typeInterp='cubic';
     
     
 end
@@ -496,5 +509,27 @@ function [parspline]=CaseSpline_inversedesign2()
     parspline.samplingParam='param';
     parspline.samplingN=501;
     parspline.samplingDistrib='2cosine';
+    %parspline.samplingScope='local';
+end
+
+
+function [parspline]=CaseSpline_inversedesign3()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.typCurve='closed';
+    
+    parspline.distribution='calc';
+    parspline.domain='scaleX'; % 'normalizeX' 'normalizeL'
+    parspline.scale=2.000055;
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=501;
+    parspline.samplingDistrib='cosine';
+    
+    parspline.typeInterp='linear';
     %parspline.samplingScope='local';
 end

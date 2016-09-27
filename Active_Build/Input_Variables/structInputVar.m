@@ -123,6 +123,8 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.dampSides=0;
     paramsnakesforce.vectorMagAveraging=true;
     paramsnakesforce.lengthEpsilon=1e-5;
+    paramsnakesforce.distEpsilon=1e-5;
+    paramsnakesforce.dirEpsilon=1e-5;
     paramsnakesforce.typeSmear='length';
     paramsnakesforce.isLast=false;
     
@@ -775,6 +777,8 @@ function [param]=SnakesFoilVVSmall()
     
     param.general.typDat='vvlofoil';
     param.snakes.step.snakesSteps=150;
+    
+    
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.4,0.4];
@@ -810,7 +814,6 @@ function [param]=SnakNaca0012()
     [param]=DefaultCase();
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
-    
     param.general.typDat='naca0012cos';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=[4 4];
@@ -1230,15 +1233,19 @@ function [param]=CurrentValidation()
     % Local optimum avoidance params
     param.snakes.step.mergeTopo=true;
 
-    param.snakes.force.typeSmear='length';
-    param.snakes.step.arrivalTolerance=10e-2;
-    param.snakes.force.lengthEpsilon=1e-6;
-    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
+    param.snakes.force.typeSmear='dir';
+    param.snakes.step.arrivalTolerance=1e-1;
+    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.distEpsilon=0;
+    param.snakes.force.dirEpsilon=1e-4;
+    param.snakes.step.snaxInitPos=2e-4;
     param.snakes.step.convCheckRate=100;
     param.snakes.step.convCheckRange=15;
     param.snakes.step.convDistance=500;
     param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
+    param.snakes.step.maxStep=0.3;
+    param.snakes.step.maxDt=0.5;
     
     % Default stepping params for validation (some cases might need more)
     param.snakes.step.snakesSteps=100;

@@ -1,6 +1,8 @@
 %% Code to generate a 3D plot of function
 
 function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps,epsD)
+    % to use stop in Velocity length minimisation and find two snaxels
+    % which are hitting each other
     if ~exist('eps','var'), eps=0;end
     if ~exist('epsD','var'), epsD=0;end
     jj=0:numStep-1;
@@ -8,8 +10,8 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps,epsD)
     [d_i,d_m]=meshgrid(dVec,dVec);
     for jj=1:numStep
         for kk=1:numStep
-            derivtenscalc.d_i=dVec(jj)-epsD;
-            derivtenscalc.d_m=dVec(kk)-epsD;
+            derivtenscalc.d_i=dVec(jj)+epsD;
+            derivtenscalc.d_m=dVec(kk)+epsD;
             derivtenscalc.normFi=sqrt(eps^2+sum(((derivtenscalc.g1_i+derivtenscalc.Dg_i*derivtenscalc.d_i)-(derivtenscalc.g1_m+derivtenscalc.Dg_m*derivtenscalc.d_m)).^2));
             [derivtenscalc3(jj,kk)]=CalculateDerivatives(derivtenscalc);
         end
@@ -25,8 +27,8 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps,epsD)
     d2fiddim=zeros(numStep);
     
     for jj=1:numStep
-        di(jj,:)=[derivtenscalc3(jj,:).d_i];
-        dm(jj,:)=[derivtenscalc3(jj,:).d_m];
+        di(jj,:)=[derivtenscalc3(jj,:).d_i]-epsD;
+        dm(jj,:)=[derivtenscalc3(jj,:).d_m]-epsD;
         Fi(jj,:)=[derivtenscalc3(jj,:).normFi];
         dfiddi(jj,:)=[derivtenscalc3(jj,:).dfiddi];
         dfiddm(jj,:)=[derivtenscalc3(jj,:).dfiddm];
@@ -47,42 +49,41 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps,epsD)
 %             d2fiddimFD(jj,kk)=
         end
     end
-    figure
+    hFig=figure('Name',sprintf('DerivSnak_pStep%.0e_epsL%.0e_epsD%.0e',stepSize,eps,epsD),'Position',[100 100 600 800])
+    subplot(3,2,1)
     surf(di,dm,Fi,'linestyle','none')
     title('Norm (Fi)')
     xlabel('di')
     ylabel('dm')
     
     
-    figure
-    subplot(1,2,1)
+    subplot(3,2,2)
     surf(di,dm,dfiddi,'linestyle','none')
     title('1st di derivative')
     xlabel('di')
     ylabel('dm')
-    subplot(1,2,2)
+    subplot(3,2,3)
     surf(di,dm,dfiddm,'linestyle','none')
     title('1st dm derivative')
     xlabel('di')
     ylabel('dm')
     
     
-    figure
-    subplot(1,3,1)
+    subplot(3,2,4)
     [h(1)]=SurfFor2ndDeriv(di,dm,d2fiddi2);
     hold on
     %surf(di(2:end-1,2:end-1),dm(2:end-1,2:end-1),d2fiddi2FD,log10(abs(d2fiddi2FD)),'linestyle','none')
     title('2nd di derivative')
     xlabel('di')
     ylabel('dm')
-    subplot(1,3,3)
+    subplot(3,2,5)
     [h(2)]=SurfFor2ndDeriv(di,dm,d2fiddm2);
     hold on
     %surf(di(2:end-1,2:end-1),dm(2:end-1,2:end-1),d2fiddm2FD,log10(abs(d2fiddm2FD)),'linestyle','none')
     title('2nd dm derivative')
     xlabel('di')
     ylabel('dm')
-    subplot(1,3,2)
+    subplot(3,2,6)
     [h(3)]=SurfFor2ndDeriv(di,dm,d2fiddim);
     title('dmdi derivative')
     xlabel('di')
@@ -90,6 +91,7 @@ function []=Test_ProblemDerivatives(derivtenscalc,numStep,stepSize,eps,epsD)
     hold on
     %surf(di(2:end-1,2:end-1),dm(2:end-1,2:end-1),d2fiddmiFD,log10(abs(d2fiddmiFD)),'linestyle','none')
     
+    hgsave(hFig,['.\fig\',hFig.Name,'.fig'])
 end
 
 function[]=vjkfd()
