@@ -94,6 +94,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
     paroptimoptimCG.sensCalc='snake'; % 'analytical'
+    paroptimoptimCG.sensAnalyticalType='raw'; % 'raw' 'smooth'
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
     paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
@@ -802,7 +803,10 @@ function paroptim=desk_0012cos()
     [paroptim]=Inverse_CG();
     
     paroptim.optim.CG.validVol=0.3;
-    paroptim.spline.splineCase='inversedesign2';
+    paroptim.spline.splineCase='inversedesign3';
+    paroptim.optim.CG.sensCalc='analytical';
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';
@@ -833,9 +837,9 @@ end
 function paroptim=bp3_0012cos()
     [paroptim]=Inverse_CG();
     
-    paroptim.optim.CG.diffStepSize=[1e-2,-1e-2];
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.validVol=0.3;
-    paroptim.spline.splineCase='inversedesign2';
+    paroptim.spline.splineCase='inversedesign';
     
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
     paroptim.obj.invdes.aeroName='0012';
@@ -869,8 +873,8 @@ function paroptim=bp32_0012cos()
     
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.validVol=0.3;
-    paroptim.spline.splineCase='inversedesign2';
-    
+    paroptim.spline.splineCase='inversedesign3';
+    paroptim.optim.CG.varActive='snaksensiv';
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';

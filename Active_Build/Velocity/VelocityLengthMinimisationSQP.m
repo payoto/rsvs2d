@@ -66,12 +66,16 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     
     % Current SQP
     smearLengthEps=forceparam.lengthEpsilon;
+    distEpsilon=forceparam.distEpsilon;
+    dirEpsilon=forceparam.dirEpsilon;
     typeSmear=forceparam.typeSmear;
     switch typeSmear
         case 'length'
             [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
         case 'd'
-            [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
+            [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon);
+        case 'dir'
+            [derivtenscalc2]=ExtractDataForDerivatives_directionSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,dirEpsilon);
     end
     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
     isFreeze=[snaxel(:).isfreeze];
@@ -391,7 +395,8 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthSmear(snaxel,snakpositi
         derivtenscalc(ii).d_m=snaxel(neighSub).d;
         % calculating data
         
-        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum( (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
+            (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
     end
     
@@ -421,7 +426,7 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthSmear(snaxel,snakpositi
     end
 end
 
-function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps)
+function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon)
     
     derivtenscalcTemplate=struct('index',[],...
         'snaxprec',[],...
@@ -461,14 +466,92 @@ function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposi
         derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
         derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
         
-        derivtenscalc(ii).d_i=(1-2*smearLengthEps)*snaxel(ii).d+smearLengthEps;
-        derivtenscalc(ii).d_m=(1-2*smearLengthEps)*snaxel(neighSub).d+smearLengthEps;
+        derivtenscalc(ii).d_i=(1-2*distEpsilon)*snaxel(ii).d+distEpsilon;
+        derivtenscalc(ii).d_m=(1-2*distEpsilon)*snaxel(neighSub).d+distEpsilon;
         % calculating data
         derivtenscalc(ii).p_i=(derivtenscalc(ii).g1_i+...
             derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i);
         derivtenscalc(ii).p_m=(derivtenscalc(ii).g1_m+...
             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m);
-        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum( (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
+            (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        
+%         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+...
+%             sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*...
+%             derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+...
+%             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
+    end
+    
+    for ii=length(snakposition):-1:1
+        [derivtenscalc(ii).a_i,...
+            derivtenscalc(ii).a_m,...
+            derivtenscalc(ii).a_im,...
+            derivtenscalc(ii).b_i,...
+            derivtenscalc(ii).b_m,...
+            derivtenscalc(ii).c]=...
+            Calc_LengthDerivCoeff(...
+            derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
+            derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
+        
+        [derivtenscalc(ii)]=CalculateDerivatives_d(derivtenscalc(ii),smearLengthEps);
+        
+    end
+    testnan=find(isnan([derivtenscalc(:).d2fiddi2]));
+    if ~isempty(testnan)
+        testnan
+    end
+end
+
+function [derivtenscalc]=ExtractDataForDerivatives_directionSmear...
+        (snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,smearLengthDir)
+    
+    derivtenscalcTemplate=struct('index',[],...
+        'snaxprec',[],...
+        'precsub',[],...
+        'Dg_i',[],...
+        'Dg_m',[],...
+        'g1_i',[],...
+        'g1_m',[],...
+        'd_i',[],...
+        'd_m',[],...
+        'p_i',[],...
+        'p_m',[],...
+        'normFi',[],...
+        'a_i',[],...
+        'a_m',[],...
+        'a_im',[],...
+        'b_i',[],...
+        'b_m',[],...
+        'c',[],...
+        'dfiddi',[],...
+        'dfiddm',[],...
+        'd2fiddi2',[],...
+        'd2fiddm2',[],...
+        'd2fiddim',[]...
+        );
+    derivtenscalc=repmat(derivtenscalcTemplate,[1,length(snakposition)]);
+    [snakposition]=ModifySnakposition(snaxel,snakposition,snakPosIndex,smearLengthDir);
+    for ii=length(snakposition):-1:1
+        neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
+        
+        derivtenscalc(ii).index=snakposition(ii).index;
+        derivtenscalc(ii).snaxprec=snaxel(ii).snaxprec;
+        derivtenscalc(ii).precsub=neighSub;
+        % extracting data from preexisting arrays
+        derivtenscalc(ii).Dg_i=snakposition(ii).vectornotnorm;
+        derivtenscalc(ii).Dg_m=snakposition(neighSub).vectornotnorm;
+        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
+        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
+        
+        derivtenscalc(ii).d_i=(1-2*distEpsilon)*snaxel(ii).d+distEpsilon;
+        derivtenscalc(ii).d_m=(1-2*distEpsilon)*snaxel(neighSub).d+distEpsilon;
+        % calculating data
+        derivtenscalc(ii).p_i=(derivtenscalc(ii).g1_i+...
+            derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i);
+        derivtenscalc(ii).p_m=(derivtenscalc(ii).g1_m+...
+            derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m);
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
+            (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
     end
     
@@ -490,6 +573,46 @@ function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposi
     if ~isempty(testnan)
         testnan
     end
+end
+
+function [snakposition]=ModifySnakposition(snaxel,snakposition,snakPosIndex,eps)
+    
+    for ii=1:length(snakposition)
+        
+         neighSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex)';
+        
+         dists=[snaxel([ii,neighSub]).d]';
+         vector=vertcat(snakposition([ii,neighSub]).vector);
+         
+         
+         edgeDist=sqrt(sum((vertcat(snakposition(neighSub).coord)-...
+             ones([2,1])*snakposition(ii).coord).^2,2));
+         edgeNorm=sqrt(sum((vertcat(snakposition(neighSub).vectornotnorm)+...
+             ones([2,1])*snakposition(ii).vectornotnorm).^2,2));
+         edgeDist=edgeDist./edgeNorm;
+         % find intersection vector
+         vertInit=vertcat(snakposition([ii,neighSub]).vertInit);
+         vertEnd=vertcat(snakposition([ii,neighSub]).vertInit)...
+             +vertcat(snakposition([ii,neighSub]).vectornotnorm);
+         isVertInit=all([vertInit;vertEnd]==(ones([6,1])*vertInit(1,:)),2);
+         isVertEnd=all([vertInit;vertEnd]==(ones([6,1])*vertEnd(1,:)),2);
+        
+        initMultipliers=isVertInit(1:3)-isVertInit(4:6);
+        endMultipliers=isVertEnd(4:6)-isVertEnd(1:3);
+        distCoeff=(eps-edgeDist)/eps;distCoeff(distCoeff<0)=0;distCoeff=[1;distCoeff];
+        
+        vecCoeff=distCoeff.*initMultipliers+distCoeff.*endMultipliers;
+        vecCoeff(1)=1;
+        
+        newVec=(vector'*vecCoeff)'/sum(vecCoeff);
+        newVecNoNorm=newVec*sqrt(sum(snakposition(ii).vectornotnorm.^2,2));
+        snakposition(ii).vector=newVec;
+        snakposition(ii).vectornotnorm=newVecNoNorm;
+        %edgeDist
+        %newVec-snakposition(ii).vector
+    end
+    
+  % pause(0.5) 
 end
 
 function [a_i,a_m,a_im,b_i,b_m,c]=Calc_LengthDerivCoeff(Dgi,Dgm,g1i,g1m)
@@ -544,7 +667,6 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
 end
 
 
-
 function [optVal,feasVal]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
     rmvCol=find(sum(Dh~=0)==0);
 %     Dh(:,rmvCol)=[];
@@ -558,7 +680,7 @@ function [optVal,feasVal]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
     HL=HA+Hf;
     optTest=real(eig(Z'*HL*Z));
     posDefErr=RMS([optTest(optTest<0);zeros(size(optTest(optTest>=0)))]);
-    fprintf('\n %.5e  %.5e  %.5e  \n',feasVal,optVal,posDefErr)
+    %fprintf('\n %.5e  %.5e  %.5e  \n',feasVal,optVal,posDefErr)
 end
 
 function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)

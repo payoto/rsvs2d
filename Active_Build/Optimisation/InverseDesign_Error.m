@@ -60,7 +60,7 @@ function [analysisCoord,upperLower]=PrepareLoopCoord(loop)
         [~,iTE]=max(analysisCoord(:,1));
         
         analysisCoord=analysisCoord([iTE:end,1:iTE],:); % repeats the trailing edge at start and end.
-        analysisCoord(:,2)=analysisCoord(:,2)-analysisCoord(1,2); % 0 the y at the trailing edge.
+        %analysisCoord(:,2)=analysisCoord(:,2)-analysisCoord(1,2); % 0 the y at the trailing edge.
         % TE is start and end of coord list, need LE
         %[dLE,iLE]=max(sum((analysisCoord-ones([size(analysisCoord,1),1])*analysisCoord(1,:)).^2,2));
         [~,iLE]=min(analysisCoord(:,1));

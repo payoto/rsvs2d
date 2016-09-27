@@ -1,7 +1,5 @@
 
-
-
-function [procdat,parampreset,sweepopts]=SweepSnakeValidation(sweepCaseStr)
+function [procdat,parampreset,sweepopts]=SweepSnakeValidationReload(sweepCaseStr,rootDir)
     
     include_Utilities
     include_Validation
@@ -15,7 +13,7 @@ function [procdat,parampreset,sweepopts]=SweepSnakeValidation(sweepCaseStr)
     
     for ii=1:length(parampreset)
         
-        [procdatTemp,~]=SnakeValid([[sweepCaseStr{:}],'_',int2str(ii)],parampreset(ii));
+        [procdatTemp]=procdatfindProcDat(rootDir,[[sweepCaseStr{:}],'_',int2str(ii)]);
         nDat(ii)=length(procdatTemp);
         procdat(ii,1:nDat(ii))=procdatTemp;
     end
@@ -24,28 +22,41 @@ function [procdat,parampreset,sweepopts]=SweepSnakeValidation(sweepCaseStr)
     
 end
 
-
-function [procdat,parampreset,sweepopts]=SweepSnakeValidationReload(sweepCaseStr)
-    
-    include_Utilities
-    include_Validation
-    
-    sweepopts=eval(sweepCaseStr{1});
-    param=eval(sweepCaseStr{2});
-    
-    [sweepopts]=GenerateSweepArrays(sweepopts);
-    [parampreset]=GenerateSweptParam(sweepopts,param);
-    procdat=repmat(ProcDatTemplate,[length(parampreset),12]);
-    
-    for ii=1:length(parampreset)
-        [[sweepCaseStr{:}],'_',int2str(ii)]
-        nDat(ii)=length(procdatTemp);
-        procdat(ii,1:nDat(ii))=procdatTemp;
-    end
-    procdat=procdat(:,1:max(nDat));
-    OutputSweepData([sweepCaseStr{:}],procdat,sweepopts,parampreset)
+function [procdat]=procdatfindProcDat(rootDir,str)
+    [returnPath,returnName]=FindDir(rootDir,str,true);
+    [returnPath,returnName]=FindDir(returnPath{1},'Procdat',false);
+    load(returnPath{1})
     
 end
+
+function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
+    returnPath={};
+    returnName={};
+    subDir=dir(rootDir);
+    subDir(1:2)=[];
+    nameCell={subDir(:).name};
+    isprofileDirCell=strfind(nameCell,strDir);
+    for ii=1:length(subDir)
+        subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
+            ~xor(subDir(ii).isdir,isTargDir);
+    end
+    
+    returnSub=find([subDir(:).isProfile]);
+    
+    
+    if isempty(returnSub)
+        disp('FindDir Could not find requested item')
+    end
+    for ii=1:length(returnSub)
+        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+        returnName{ii}=subDir(returnSub(ii)).name;
+        
+    end
+    
+    
+    
+end
+
 
 %% Output
 
@@ -172,6 +183,7 @@ function [param]=GenerateSweptParam(sweepopts,param)
 end
 
 %% Sweep Cases
+%% Sweep Cases
 
 function [sweepopts]=lEps_arrTol()
     
@@ -209,30 +221,6 @@ function [sweepopts]=lEps_InitPos()
     
 end
 
-function [sweepopts]=lSmooth()
-    
-    kk=1;
-    sweepopts(kk).varname='lengthEpsilon';
-    sweepopts(kk).array=[];
-    sweepopts(kk).range=[-4 -6];
-    sweepopts(kk).steps={[5],'log'};
-    kk=kk+1;
-    
-    sweepopts(kk).varname='distEpsilon';
-    sweepopts(kk).array=[];
-    sweepopts(kk).range=[-4 -6];
-    sweepopts(kk).steps={[5],'log'};
-    kk=kk+1;
-    
-    sweepopts(kk).varname='dirEpsilon';
-    sweepopts(kk).array=[];
-    sweepopts(kk).range=[-4 -6];
-    sweepopts(kk).steps={[5],'log'};
-    kk=kk+1;
-        
-    
-end
-
 function [sweepopts]=test1()
     
     kk=1;
@@ -256,24 +244,20 @@ function [param]=ActiveParameters()
     param.results.archiveName='ParamValidation';
     
     % Local optimum avoidance params
-     param.snakes.step.mergeTopo=true;
+    param.snakes.step.mergeTopo=true;
 
     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=1e-1;
     param.snakes.force.lengthEpsilon=1e-5;
-    param.snakes.force.distEpsilon=0;
-    param.snakes.force.dirEpsilon=0;
-    param.snakes.step.snaxInitPos=3e-5;
-    param.snakes.step.convCheckRate=100;
+    param.snakes.step.snaxInitPos=1e-5;
+    param.snakes.step.convCheckRate=20;
     param.snakes.step.convCheckRange=15;
-    param.snakes.step.convDistance=500;
+    param.snakes.step.convDistance=200;
     param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
-    param.snakes.step.maxStep=0.3;
-    param.snakes.step.maxDt=0.5;
     
     % Default stepping params for validation (some cases might need more)
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
@@ -289,59 +273,25 @@ function [param]=ActiveParameters2()
     param.results.archiveName='ParamValidation';
     
     % Local optimum avoidance params
-     param.snakes.step.mergeTopo=true;
-
-    param.snakes.force.typeSmear='dist';
-    param.snakes.step.arrivalTolerance=1e-1;
-    param.snakes.force.lengthEpsilon=1e-5;
-    param.snakes.force.distEpsilon=0;
-    param.snakes.force.dirEpsilon=0;
-    param.snakes.step.snaxInitPos=3e-5;
-    param.snakes.step.convCheckRate=100;
-    param.snakes.step.convCheckRange=15;
-    param.snakes.step.convDistance=500;
-    param.snakes.step.fillLooseStep=5;
-    param.snakes.step.fillLooseCut=1e-3;
-    param.snakes.step.maxStep=0.3;
-    param.snakes.step.maxDt=0.5;
-    
-    % Default stepping params for validation (some cases might need more)
-    param.snakes.step.snakesSteps=100;
-    param.snakes.refine.refineGrid=4;
-    param.snakes.refine.typeRefine='all';
-end
-
-function [param]=ActiveParameters3()
-    
-    
-    % Note Files
-    param.results.noteFiles={'CurrentBuild'};
-    param.results.tags={'snakes','Opimisation','VALIDATION','SQP','Profile Length'};
-    param.results.archiveName='ParamValidation';
-    
-    % Local optimum avoidance params
-% Local optimum avoidance params
     param.snakes.step.mergeTopo=true;
 
-    param.snakes.force.typeSmear='dir';
+    param.snakes.force.typeSmear='d';
     param.snakes.step.arrivalTolerance=1e-1;
     param.snakes.force.lengthEpsilon=1e-5;
-    param.snakes.force.distEpsilon=0;
-    param.snakes.force.dirEpsilon=0;
-    param.snakes.step.snaxInitPos=3e-5;
-    param.snakes.step.convCheckRate=100;
+    param.snakes.step.snaxInitPos=1e-5;
+    param.snakes.step.convCheckRate=20;
     param.snakes.step.convCheckRange=15;
-    param.snakes.step.convDistance=500;
+    param.snakes.step.convDistance=200;
     param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
-    param.snakes.step.maxStep=0.3;
-    param.snakes.step.maxDt=0.5;
     
     % Default stepping params for validation (some cases might need more)
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
-    
+    % Need to sort out the domain sizes to be always square?
 end
+
+
 

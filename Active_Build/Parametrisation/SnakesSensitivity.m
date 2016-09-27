@@ -74,17 +74,21 @@ function [out]=...
         case 'profile'
             % Eventually get gradient
             [out]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-                cellCentredGrid,insideContourInfo,forceparam,varargin{1},oldGrid,rootFill,paramsnake);
+                cellCentredGrid,insideContourInfo,forceparam,varargin{1},...
+                oldGrid,rootFill,paramsnake,paramoptim);
     end
 end
 
 
 function [supportstruct]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-            cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill,paramsnake)
+        cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill,paramsnake,paramoptim)
     
-      fprintf('\n    Build Profile information from sensitivity ')  
-        callerStr=['GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,',...
-            'cellCentredGrid,insideContourInfo,forceparam)'];
+    varExtract={'sensAnalyticalType'};
+    [sensAnalyticalType]=ExtractVariables(varExtract,paramoptim);
+    
+    fprintf('\n    Build Profile information from sensitivity ')
+    callerStr=['GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,',...
+        'cellCentredGrid,insideContourInfo,forceparam)'];
     [~,snaxel,snakposition,sensSnax,volumefraction]=evalc(callerStr);
     %[snaxmode]=ExecuteSensitivity('analytical',snaxel,snakposition,sensSnax,volumefraction,false);
     fprintf('.')
@@ -92,7 +96,8 @@ function [supportstruct]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGri
     fprintf('.')
     [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,oldGrid);
     fprintf('.')
-    [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,volumefraction);
+    [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,...
+        volumefraction,sensAnalyticalType);
     fprintf('.')
     deltaFill=vertcat(newFill(:).fill)-ones([numel(newFill),1])*rootFill;
     [newloop]=MoveToFill(snaxmove,deltaFill);
@@ -308,8 +313,8 @@ function [newfillstruct]=RemoveModeNotDesign(paramoptim,baseGrid,newfillstruct)
     rmFill=[];
     for ii=1:length(newfillstruct)
         if FindObjNum([],newfillstruct(ii).cellind,activeInd(notDesInd))~=0;
-           rmFill(kk)=ii;
-           kk=kk+1; 
+            rmFill(kk)=ii;
+            kk=kk+1;
         end
     end
     newfillstruct(rmFill)=[];
@@ -1059,8 +1064,9 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
     
     
     coord1=vertcat(snakposition(:).coord);
-    [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
-        ones([length(snaxel), 1])*2],2);
+    %     [dir]=sum((vertcat(snakposition(:).vector)~=0).*[ones([length(snaxel), 1]),...
+    %         ones([length(snaxel), 1])*2],2);
+    [~,dir]=max(abs(vertcat(snakposition(:).vector)),[],2);
     
     for ii=1:length(sensSnax(1,:)),
         snaxCopy(ii,:)=snaxel;
@@ -1200,7 +1206,7 @@ function [snaxOrd]=CloseRepeatingSnaxLoops(snaxOrd)
             snaxOrd{numel(snaxOrd)+1}=activeLoop([subActCell(2):end,1:subActCell(1)-1]);
             jj=0;
         end
-
+        
         ii=ii+floor(jj/length(activeLoop));
         jj=mod(jj,length(activeLoop))+1;
     end
@@ -1518,7 +1524,8 @@ end
 
 %% Build modes
 
-function [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,volumefraction)
+function [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,...
+        sensSnax,volumefraction,sensAnalyticalType)
     
     if numel(snaxel)~=numel(snakposition)
         error('Dimensiom mismatch between snakposition and snaxel while building movement structure')
@@ -1529,14 +1536,23 @@ function [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSna
     [loopsnaxel,nSnax,nLoop]=CCWLoopLength(snaxel,snakposition);
     
     [snaxmove]=BuildSnaxMoveTemplate(nSnax,nSnax,nSnax);
-    for ii=1:nLoop
-        [snaxmove(ii)]=CalculateMoveData(snaxmove(ii),snakposition,sensSnax,...
-            loopsnaxel(ii).snaxel);
+    switch sensAnalyticalType
+        case 'smooth'
+            for ii=1:nLoop
+                [snaxmove(ii)]=CalculateMoveData(snaxmove(ii),snakposition,sensSnax,...
+                    loopsnaxel(ii).snaxel);
+            end
+        case 'raw'
+            for ii=1:nLoop
+                
+                [snaxmove(ii)]=CalculateMoveDataPure(snaxmove(ii),snakposition,sensSnax,...
+                    loopsnaxel(ii).snaxel);
+            end
     end
-%     deltaFill=zeros([3,numel(snaxmode)]);
-%     deltaFill(1,3)=1;deltaFill(2,10)=1;deltaFill(3,25)=1;
-%     deltaFill=deltaFill*1e-2;
-%     MoveToFill(snaxmove,deltaFill)
+    %     deltaFill=zeros([3,numel(snaxmode)]);
+    %     deltaFill(1,3)=1;deltaFill(2,10)=1;deltaFill(3,25)=1;
+    %     deltaFill=deltaFill*1e-2;
+    %     MoveToFill(snaxmove,deltaFill)
 end
 
 function [loopsnaxel,nSnax,nLoop]=CCWLoopLength(snaxel,snakposition)
@@ -1613,6 +1629,48 @@ function [snaxmove]=CalculateMoveData(snaxmove,snakposition,sensSnax,loopsnaxel)
         [vecAngles]=ExtractAnglepm180(snaxmove.vertex(kk).normal,snakposition(ii).vector);
         snaxmove.snax(kk).rT=sin(vecAngles);
         snaxmove.snax(kk).rN=cos(vecAngles);
+        kk=kk+1;
+    end
+    
+    
+    
+    
+end
+
+function [snaxmove]=CalculateMoveDataPure(snaxmove,snakposition,sensSnax,loopsnaxel)
+    
+    fullSnax=[snakposition(:).index];
+    
+    snaxSub=FindObjNum([],loopsnaxel.index,fullSnax);
+    snaxSub=reshape(snaxSub,[1,numel(snaxSub)]);
+    
+    snaxmove.support.maxL=loopsnaxel.lpos(end);
+    
+    
+    kk=1;
+    for ii=snaxSub
+        kks=[kk:min([kk+1,snaxmove.support.nSnax]),...
+            mod(kk,snaxmove.support.nSnax)+1:1];
+        snaxmove.snax(kk).index=snakposition(ii).index;
+        snaxmove.snax(kk).d=sqrt(sum(snakposition(ii).vectornotnorm.^2));
+        snaxmove.snax(kk).sens=sensSnax(ii,:);
+        snaxmove.snax(kk).posL=loopsnaxel.lpos(kk);
+        
+        snaxmove.vertex(kk).index=snakposition(ii).index;
+        snaxmove.vertex(kk).normal=snakposition(ii).vector;
+        snaxmove.vertex(kk).normal=snaxmove.vertex(kk).normal/...
+            sqrt(sum(snaxmove.vertex(kk).normal.^2));
+        snaxmove.vertex(kk).coord=snakposition(ii).coord;
+        snaxmove.vertex(kk).posL=loopsnaxel.lpos(kk);
+        
+        snaxmove.edge(kk).index=loopsnaxel.index(kks);
+        snaxmove.edge(kk).coord=mean(loopsnaxel.coord(kks,:));
+        snaxmove.edge(kk).posL=mean(loopsnaxel.lpos(kk:kk+1));
+        snaxmove.edge(kk).normal=snakposition(ii).vectornext;
+        
+        [vecAngles]=ExtractAnglepm180(snaxmove.vertex(kk).normal,snakposition(ii).vector);
+        snaxmove.snax(kk).rT=1;
+        snaxmove.snax(kk).rN=0;
         kk=kk+1;
     end
     
@@ -1708,21 +1766,21 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
             newloop(jj,ii).snaxel.coordnoscale=newCoord(newOrder(:,jj),:);
             newloop(jj,ii).snaxel.vector=newNormal(newOrder(:,jj),:);
         end
-
+        
     end
     
     
     if false
-    
+        
         plotPoints=@(points,str) plot(points([1:end,1],1),points([1:end,1],2),str);
         quiverPoints= @(points,vector,str) quiver(points([1:end,1],1),...
             points([1:end,1],2),vector([1:end,1],1),vector([1:end,1],2));
         figure,hold on
         axis equal
-
-
+        
+        
         colorStr='rky';
-
+        
         for jj=1:nFill
             for ii=1:numel(snaxmove),
                 plotPoints(newloop(jj,ii).snaxel.coord,[colorStr(jj),'-s'])
