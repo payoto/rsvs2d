@@ -10,7 +10,7 @@
 /*int dim() = 2; */
 #ifndef GRIDGEN_VAR_INCLUDED
 #define GRIDGEN_VAR_INCLUDED
-int plotFlag=0;
+int plotFlag=1;
 int outCount=0;
 /* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;

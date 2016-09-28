@@ -549,6 +549,9 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
         snakSave.volumefraction.currentfraction=[volumefraction(:).volumefraction];
         snakSave.volumefraction.totVolume=[volumefraction(:).totalvolume];
         
+        snakSave.volumefraction.refinedInfo.index=[volumefraction(:).newCellInd];
+        snakSave.volumefraction.refinedInfo.fractionvol=[volumefraction(:).splitfraction];
+        
         snakSave.currentConvVelocity=currentConvVelocity;
         snakSave.currentConvVolume=currentConvVolume;
         snakSave.lSnak=lSnak;

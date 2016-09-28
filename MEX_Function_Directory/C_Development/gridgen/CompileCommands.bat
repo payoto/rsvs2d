@@ -1,2 +1,2 @@
 
-gcc -g gridgen.c -o gridgen.exe
+gcc -ggdb gridgen.c -o gridgen.exe
