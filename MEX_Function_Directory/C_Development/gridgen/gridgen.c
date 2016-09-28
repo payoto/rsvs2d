@@ -2,35 +2,41 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <stdbool.h>
+/*#include <stdbool.h> */
 
 #include "gridgen.h"
-#include "mex.h" /* Always include this */
-// Constant declaration
-//int dim() = 2;
-
-// Global Variables declaration
+/*#include "mex.h"  */
+/* Constant declaration */
+/*int dim() = 2; */
+#ifndef GRIDGEN_VAR_INCLUDED
+#define GRIDGEN_VAR_INCLUDED
+int plotFlag=1;
+int outCount=0;
+/* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;
-// File data Arrays
+/* File data Arrays */
 int *levelSize=NULL,*cells=NULL;
-cellTemplate *celldatstruct=NULL; // Array containing data from File
-// Array for active template
+cellTemplate *celldatstruct=NULL; /* Array containing data from File */
+/* Array for active template */
 cellTemplate *cellCurrentTemplate=NULL;
 vertexTemplate *vertCurrentTemplate=NULL;
 edgeTemplate *edgeCurrentTemplate=NULL;
-// Arrays for final grid storage
+/* Arrays for final grid storage */
 cellTemplate *cellstruct=NULL;
 vertexTemplate *vertstruct=NULL;
 edgeTemplate *edgestruct=NULL;
-// Array for template creation
+/* Array for template creation */
 cellTemplate *cellstructTemp=NULL;
 vertexTemplate *vertstructTemp=NULL;
 edgeTemplate *edgestructTemp=NULL;
+/* Dependancy Arrays */
+int **newEdgesInd=NULL; int *nNewEdges=NULL, *splitEdgesInd=NULL; int nSplitEdges=0;
+int **newCellsInd=NULL, *nNewCells=NULL, *splitCellsInd=NULL, nSplitCells=0;
+#endif
+/* Function Declarations */
 
-// Function Declarations
-
-// Main text body
-
+/* Main text body */
+/*
 void mexFunction(int nlhs, mxArray *plhs[], 
 				int nrhs, const mxArray *prhs[]){
 	InitialiseGridFromFile();
@@ -39,21 +45,28 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	
 	return;
 }
+*/
 
-/*
 int main(){
 InitialiseGridFromFile();
+ClearWorkSpace();
 return(0);
 }
-*/
+
 void InitialiseGridFromFile(){
-	 //Arrays
-	//printf("%i\n",sizeof(edgeTemplate));
+	 /*Arrays */
+	/*printf("%i\n",sizeof(edgeTemplate)); */
 	DataIn();
 	Allocatecelldatstruct();
 	DataArrayToStruct();
-	GenerateGrid();
-	//Checks
+	
+	printf("\n***** START GRID INITIALISATION *****\n");
+	GridInitialisation();
+	printf("\n    ACTION: Starting Grid Generated");
+	OutputGrid(1);
+
+	RefineGrid();
+	/*Checks */
 	/*
 	int ii, jj;
 	printf("Check Data: nLevels = %i; nCells = %i\n",nLevels,nCells);
@@ -73,7 +86,8 @@ void InitialiseGridFromFile(){
 	
 }
 
-// Allocation functions
+
+/* Allocation functions */
 void Allocatecelldatstruct(){
 	int ii;
 	
@@ -116,7 +130,17 @@ void AllocateGridStruct(int domSize[dim()],
 	nCellCurr=domSize[0]*domSize[1];
 	nEdgeCurr=domSize[0]*(1+domSize[1])+domSize[1]*(1+domSize[0]);
 	nVertCurr=(domSize[0]+1)*(domSize[1]+1);
+	
+	AllocateSolutionStruct(nCellCurr, nEdgeCurr, nVertCurr, nLevels,
+		cellstructTempOut,vertstructTempOut,edgestructTempOut);
+	
+}
 
+void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLevelsAct,
+		cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
+		
+	int ii;
+	
 	*vertstructTempOut=(vertexTemplate*)malloc(nVertCurr * sizeof(vertexTemplate));
 	*edgestructTempOut=(edgeTemplate*)malloc(nEdgeCurr * sizeof(edgeTemplate));
 	*cellstructTempOut=(cellTemplate*)malloc(nCellCurr * sizeof(cellTemplate));
@@ -135,50 +159,85 @@ void AllocateGridStruct(int domSize[dim()],
 	
 	}
 	for(ii=0;ii<nCellCurr;ii++){
-		(*cellstructTempOut)[ii].refineVec=(int*)calloc(nLevels,sizeof(int));
+		(*cellstructTempOut)[ii].refineVec=(int*)calloc(nLevelsAct,sizeof(int));
 	} 
 }
 
-// EXECUTION FUNCTIONS
+void ClearWorkSpace(){
+	int ii;
+	/* Connec struct data */
+	free(nNewEdges);
+	free(splitEdgesInd);
+	free(nNewCells);
+	free(splitCellsInd);
+	for(ii=0;ii<nSplitEdges;ii++){free(*(newEdgesInd+ii));}
+	for(ii=0;ii<nSplitCells;ii++){free(*(newCellsInd+ii));}
+	free(newEdgesInd);
+	free(newCellsInd);
+	
+	/* File Data */
+	free(levelSize);
+	free(cells);
+	for (ii=0;ii<nCells;ii++){free(celldatstruct[ii].refineVec);}
+	free(celldatstruct);
+	
+	/* Grid Structures */
+	/*
+	free(edgestruct);
+	free(vertstruct);
+	for(ii=0;ii<nCellGrid;ii++){free(cellstruct[ii].refineVec);}
+	free(cellstruct);*/
+}
+/* EXECUTION FUNCTIONS */
 
-// Import data
+/* Import data */
 void DataIn(){
-	// Reads in data from external files
+	/* Reads in data from external files */
 	
 	FILE *cellgridFID;
 	int ii,jj;
 	
+	#if defined(MEX_COMPILE)
+		#if __unix__ 
+			
+			cellgridFID=fopen("MEX_Function_Directory/MEX_Executables/gridgen/cellgrid.dat","r");
+		#elif _WIN32
+			cellgridFID=fopen("MEX_Function_Directory\\MEX_Executables\\gridgen\\cellgrid.dat","r");
+		#endif
+	#else
+		cellgridFID=fopen("cellgrid.dat","r");
+	#endif
 	
-	cellgridFID=fopen("cellgrid.dat","r");
 	if((cellgridFID!=NULL)){
-		fscanf(cellgridFID,"%i",&nLevels); // Reads in the number of levels
+		fscanf(cellgridFID,"%i",&nLevels); /* Reads in the number of levels */
 		levelSize=(int*)calloc(dim()*nLevels, sizeof(int));
-		for (ii=0;ii<=nLevels-1;ii++){ // Reads in the size of those levels
+		for (ii=0;ii<=nLevels-1;ii++){ /* Reads in the size of those levels */
 			for (jj=0; jj<dim();jj++){
 				fscanf(cellgridFID,"%i ",&levelSize[dim()*ii+jj]);
-				// printf("%i %i\n",levelSize[2*ii],levelSize[2*ii+1]);
+				/* printf("%i %i\n",levelSize[2*ii],levelSize[2*ii+1]); */
 			}
 		}
 		
-		fscanf(cellgridFID,"%i",&nCells); // Reads in the number of cells
-		//printf("	Reading cells in\n");
+		fscanf(cellgridFID,"%i",&nCells); /* Reads in the number of cells */
+		/*printf("	Reading cells in\n"); */
 		cells=(int*)calloc((2+nLevels)*nCells, sizeof(int));
 		
-		// for (ii=0;ii<(2+nLevels)*nCells;ii++){cells[ii]=0;}
+		/* for (ii=0;ii<(2+nLevels)*nCells;ii++){cells[ii]=0;} */
 		
-		for (ii=0;ii<=nCells-1;ii++){ // reads in the content of those cells
+		for (ii=0;ii<=nCells-1;ii++){ /* reads in the content of those cells */
 			fscanf(cellgridFID,"%i %i",&cells[(2+nLevels)*ii],&cells[(2+nLevels)*ii+1]);
-			//printf("%i %i ",cells[(2+nLevels)*ii],cells[(2+nLevels)*ii+1]);
+			/*printf("%i %i ",cells[(2+nLevels)*ii],cells[(2+nLevels)*ii+1]); */
 			for (jj=1;jj<=cells[(2+nLevels)*ii];jj++){
 				fscanf(cellgridFID,"%i ",&cells[(2+nLevels)*ii+jj+1]);
-				//printf("%i ",cells[(2+nLevels)*ii+jj+1]);
+				/*printf("%i ",cells[(2+nLevels)*ii+jj+1]); */
 			}
-			//printf("\n");
+			/*printf("\n"); */
 		}
-		//printf("Cell Grid Structure succesfully read in\n\n");
+		fclose(cellgridFID);
+		/*printf("Cell Grid Structure succesfully read in\n\n"); */
 		} else {
 		perror("Data file failed to open!");
-		//exit(0);
+		exit(0);
 	}
 }
 
@@ -194,8 +253,8 @@ void DataArrayToStruct(){
 			celldatstruct[ii].refineVec[jj]=cells[rootSub+2+jj];
 		}
 	}
-	free(cells);
-	// Checks
+	/*free(cells); */
+	/* Checks */
 	/*
 	for(ii=0;ii<nCells;ii++){
 		printf("cell(%i): index %i :: refineLvl %i :: vec ",ii,celldatstruct[ii].index,celldatstruct[ii].refineLvl);
@@ -207,57 +266,60 @@ void DataArrayToStruct(){
 	*/
 }
 
-// Text output for Template grid
+/* Text output for Template grid */
 
 void OutputTemplateGrid(int domSize[dim()], int lvlGrid){
 
 	int nCellCurr,nEdgeCurr,nVertCurr, ii;
 	char *fileName;
 	FILE *checkFID;
-	
 	int *nCellP, *nEdgeP, *nVertP;
+	
+	
 	nCellP=&nCellCurr;
 	nEdgeP=&nEdgeCurr;
 	nVertP=&nVertCurr;
 	CalculateNumElements(domSize,nCellP,nEdgeP,nVertP);
 	
-	if (lvlGrid>=10){
-		fileName=(char*)malloc((15+(int)(log10(lvlGrid))+2)*sizeof(char));
-	} else if ((lvlGrid>=1) & (lvlGrid<10)) {
-		fileName=(char*)malloc((15+(int)(log10(lvlGrid))+2)*sizeof(char));
-	} else {
-		fileName=(char*)malloc((15)*sizeof(char));
-	}
-	
-	sprintf(fileName,"checkTemplate%i.m",lvlGrid);
-	checkFID=fopen(fileName,"w");
-	free(fileName);
-	printf("\n    OUTPUT: checkTemplate%i.m... ",lvlGrid);
-	for (ii=0;ii<=nEdgeCurr-1;ii++){
-		fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgeCurrentTemplate[ii].index);
+	if (plotFlag){
+		if (lvlGrid>=10){
+			fileName=(char*)malloc((15+(int)(log10(lvlGrid))+2)*sizeof(char));
+		} else if ((lvlGrid>=1) & (lvlGrid<10)) {
+			fileName=(char*)malloc((15+(int)(log10(lvlGrid))+2)*sizeof(char));
+		} else {
+			fileName=(char*)malloc((15)*sizeof(char));
+		}
 		
-		fprintf(checkFID,"templateGrid.edge(%i).cellindex(1)=%i;\n",ii+1,edgeCurrentTemplate[ii].cellind[0]);
-		fprintf(checkFID,"templateGrid.edge(%i).cellindex(2)=%i;\n",ii+1,edgeCurrentTemplate[ii].cellind[1]);
-		
-		fprintf(checkFID,"templateGrid.edge(%i).vertexindex(1)=%i;\n",ii+1,edgeCurrentTemplate[ii].vertex[0]);
-		fprintf(checkFID,"templateGrid.edge(%i).vertexindex(2)=%i;\n",ii+1,edgeCurrentTemplate[ii].vertex[1]);
-	}
-	//printf(" . ");
-	for (ii=0;ii<=nCellCurr-1;ii++){
-		fprintf(checkFID,"templateGrid.cell(%i).index=%i;\n",ii+1,cellCurrentTemplate[ii].index);
-		
-		fprintf(checkFID,"templateGrid.cell(%i).fill=%lf;\n",ii+1,cellCurrentTemplate[ii].fill);
-	}
-	//printf(" . ");
-	for (ii=0;ii<=nVertCurr-1;ii++){
-		fprintf(checkFID,"templateGrid.vertex(%i).index=%i;\n",ii+1,vertCurrentTemplate[ii].index);
-		
-		fprintf(checkFID,"templateGrid.vertex(%i).coord(1)=%lf;\n",ii+1,vertCurrentTemplate[ii].coord[0]);
-		fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertCurrentTemplate[ii].coord[1]);
-		
-	} 
-	printf(" done!");
-	fclose(checkFID);
+		sprintf(fileName,"checkTemplate%i.m",lvlGrid);
+		checkFID=fopen(fileName,"w");
+		free(fileName);
+		printf("\n    OUTPUT: checkTemplate%i.m... ",lvlGrid);
+		for (ii=0;ii<=nEdgeCurr-1;ii++){
+			fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgeCurrentTemplate[ii].index);
+			
+			fprintf(checkFID,"templateGrid.edge(%i).cellindex(1)=%i;\n",ii+1,edgeCurrentTemplate[ii].cellind[0]);
+			fprintf(checkFID,"templateGrid.edge(%i).cellindex(2)=%i;\n",ii+1,edgeCurrentTemplate[ii].cellind[1]);
+			
+			fprintf(checkFID,"templateGrid.edge(%i).vertexindex(1)=%i;\n",ii+1,edgeCurrentTemplate[ii].vertex[0]);
+			fprintf(checkFID,"templateGrid.edge(%i).vertexindex(2)=%i;\n",ii+1,edgeCurrentTemplate[ii].vertex[1]);
+		}
+		/*printf(" . "); */
+		for (ii=0;ii<=nCellCurr-1;ii++){
+			fprintf(checkFID,"templateGrid.cell(%i).index=%i;\n",ii+1,cellCurrentTemplate[ii].index);
+			
+			fprintf(checkFID,"templateGrid.cell(%i).fill=%lf;\n",ii+1,cellCurrentTemplate[ii].fill);
+		}
+		/*printf(" . "); */
+		for (ii=0;ii<=nVertCurr-1;ii++){
+			fprintf(checkFID,"templateGrid.vertex(%i).index=%i;\n",ii+1,vertCurrentTemplate[ii].index);
+			
+			fprintf(checkFID,"templateGrid.vertex(%i).coord(1)=%lf;\n",ii+1,vertCurrentTemplate[ii].coord[0]);
+			fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertCurrentTemplate[ii].coord[1]);
+			
+		} 
+		printf(" done!");
+		fclose(checkFID);
+	} else {printf("\n     OUTPUT:Skipped");}
 	
 }
 
@@ -266,38 +328,39 @@ void OutputGrid(int jj){
 	int ii;
 	char fileName[20];
 	FILE *checkFID;
-	sprintf(fileName,"checkGrid%i.m",jj);
-	checkFID=fopen(fileName,"w");
-	printf("\n    OUTPUT: Checkgrid%i.m ", jj);
-	for (ii=0;ii<nEdgeGrid;ii++){
-		fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgestruct[ii].index);
-		
-		fprintf(checkFID,"templateGrid.edge(%i).cellindex(1)=%i;\n",ii+1,edgestruct[ii].cellind[0]);
-		fprintf(checkFID,"templateGrid.edge(%i).cellindex(2)=%i;\n",ii+1,edgestruct[ii].cellind[1]);
-		
-		fprintf(checkFID,"templateGrid.edge(%i).vertexindex(1)=%i;\n",ii+1,edgestruct[ii].vertex[0]);
-		fprintf(checkFID,"templateGrid.edge(%i).vertexindex(2)=%i;\n",ii+1,edgestruct[ii].vertex[1]);
-	}
-	printf(" . ");
-	for (ii=0;ii<nCellGrid;ii++){
-		fprintf(checkFID,"templateGrid.cell(%i).index=%i;\n",ii+1,cellstruct[ii].index);
-		
-		fprintf(checkFID,"templateGrid.cell(%i).fill=%lf;\n",ii+1,cellstruct[ii].fill);
-	}
-	printf(" . ");
-	for (ii=0;ii<nVertGrid;ii++){
-		fprintf(checkFID,"templateGrid.vertex(%i).index=%i;\n",ii+1,vertstruct[ii].index);
-		
-		fprintf(checkFID,"templateGrid.vertex(%i).coord(1)=%lf;\n",ii+1,vertstruct[ii].coord[0]);
-		fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertstruct[ii].coord[1]);
-		
-	} 
-	printf(" done!");
-	fclose(checkFID);
-	
+	if (plotFlag){
+		sprintf(fileName,"checkGrid%i.m",jj);
+		checkFID=fopen(fileName,"w");
+		printf("\n    OUTPUT: Checkgrid%i.m ", jj);
+		for (ii=0;ii<nEdgeGrid;ii++){
+			fprintf(checkFID,"templateGrid.edge(%i).index=%i;\n",ii+1,edgestruct[ii].index);
+			
+			fprintf(checkFID,"templateGrid.edge(%i).cellindex(1)=%i;\n",ii+1,edgestruct[ii].cellind[0]);
+			fprintf(checkFID,"templateGrid.edge(%i).cellindex(2)=%i;\n",ii+1,edgestruct[ii].cellind[1]);
+			
+			fprintf(checkFID,"templateGrid.edge(%i).vertexindex(1)=%i;\n",ii+1,edgestruct[ii].vertex[0]);
+			fprintf(checkFID,"templateGrid.edge(%i).vertexindex(2)=%i;\n",ii+1,edgestruct[ii].vertex[1]);
+		}
+		printf(" . ");
+		for (ii=0;ii<nCellGrid;ii++){
+			fprintf(checkFID,"templateGrid.cell(%i).index=%i;\n",ii+1,cellstruct[ii].index);
+			
+			fprintf(checkFID,"templateGrid.cell(%i).fill=%lf;\n",ii+1,cellstruct[ii].fill);
+		}
+		printf(" . ");
+		for (ii=0;ii<nVertGrid;ii++){
+			fprintf(checkFID,"templateGrid.vertex(%i).index=%i;\n",ii+1,vertstruct[ii].index);
+			
+			fprintf(checkFID,"templateGrid.vertex(%i).coord(1)=%lf;\n",ii+1,vertstruct[ii].coord[0]);
+			fprintf(checkFID,"templateGrid.vertex(%i).coord(2)=%lf;\n",ii+1,vertstruct[ii].coord[1]);
+			
+		} 
+		printf(" done!");
+		fclose(checkFID);
+	} else {printf("\n     OUTPUT:Skipped");}
 }
 
-// Template grid main process
+/* Template grid main process */
 void GenerateTemplateGrid(int lvlGenerate){
 	
 	int domSize[dim()],baseRefineLvl,ii;
@@ -305,7 +368,7 @@ void GenerateTemplateGrid(int lvlGenerate){
 	domSize[0]=levelSize[2*ii];
 	
 	domSize[1]=levelSize[2*ii+1];
-	//printf("%i\n",domSize[1]);
+	/*printf("%i\n",domSize[1]); */
 	baseRefineLvl=lvlGenerate;
 	BuildLvlTemplate(domSize, baseRefineLvl,nLevels,&cellCurrentTemplate,&vertCurrentTemplate,&edgeCurrentTemplate);
 	/*
@@ -326,10 +389,10 @@ void GridInitialisation(){
 	int *nCellP, *nEdgeP, *nVertP;
 	int nCellCurr, nEdgeCurr, nVertCurr;
 	
-	// First step initialises grid
+	/* First step initialises grid */
 	domSize[0]=levelSize[0];
 	domSize[1]=levelSize[1];
-	//printf("%i\n",domSize[1]);
+	/*printf("%i\n",domSize[1]); */
 	AllocateGridStruct(domSize,&cellstruct,&vertstruct,&edgestruct);
 	GenerateTemplateGrid(1);
 	
@@ -357,23 +420,19 @@ void GridInitialisation(){
 	nEdgeGrid=nEdgeCurr;
 	nVertGrid=nVertCurr;
 	
-	//printf("memory was copied\n");
+	/*printf("memory was copied\n"); */
 	DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
-	//printf("Template deallocated\n");
+	/*printf("Template deallocated\n"); */
 	
 	
 }
 
-void GenerateGrid(){
-	int ii;//jj,kk;
+void RefineGrid(){
+	int ii;/*jj,kk; */
 	int *posCellRefine=NULL,*indCellRefine=NULL,*posEdgeRefine=NULL,*indEdgeRefine=NULL;
 	int domSize[dim()];
 	int nCellRefine=0, nEdgeRefine=0;
-	printf("\n***** START GRID INITIALISATION *****\n");
-	GridInitialisation();
-	printf("\n    ACTION: Starting Grid Generated");
-	OutputGrid(1);
-	printf("\n\n");
+	
 	
 	/*
 	printf("\n Edge Orientation\n");
@@ -386,8 +445,9 @@ void GenerateGrid(){
 		GenerateTemplateGrid(ii);
 		printf("\n    ACTION: Template Generated");
 		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
+		
 		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
-				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid);
+				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,4);
 		
 		printf("\n    ACTION: Refinement Targets Identified");
 		domSize[0]=levelSize[2*(ii-1)];
@@ -431,44 +491,44 @@ void GenerateGrid(){
 		free(indEdgeRefine);
 		DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
 		OutputGrid(ii);
-		printf("\n\n");
+		
 	}
 	
 	
 }
 
 
-// Base Template grid Generation operations
+/* Base Template grid Generation operations */
 void EdgeIJtoGrid(int domSize[dim()],int IJK[dim()], int l){
-	// l is either 0 or 1 and is used as a mathematical switch
-	// Allows the selection of the right position to assign the data
+	/* l is either 0 or 1 and is used as a mathematical switch */
+	/* Allows the selection of the right position to assign the data */
 	
 	int edgSub;
 	
 	edgSub=edgsub(IJK[0], IJK[1], l,domSize);
 	
 	edgestructTemp[edgSub].index=
-			(1-l)*(IJK[0]+(IJK[1]-1)*domSize[0]) // case where l=0
-			+(l)*((IJK[0]-1)*(domSize[1])+(IJK[1]) // case where l=1
+			(1-l)*(IJK[0]+(IJK[1]-1)*domSize[0]) /* case where l=0 */
+			+(l)*((IJK[0]-1)*(domSize[1])+(IJK[1]) /* case where l=1 */
 				+((domSize[1]+1)*domSize[0]));
 				
 	edgestructTemp[edgSub].orientation=l;	
 	
-	edgestructTemp[edgSub].vertex[0]=(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ // l=1
-			(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*l;// l=2
-	edgestructTemp[edgSub].vertex[1]=(1+IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ // l=1
-		(IJK[0]+(IJK[1]-1+1)*(domSize[0]+1))*l;// l=2
+	edgestructTemp[edgSub].vertex[0]=(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ /* l=1 */
+			(IJK[0]+(IJK[1]-1)*(domSize[0]+1))*l;/* l=2 */
+	edgestructTemp[edgSub].vertex[1]=(1+IJK[0]+(IJK[1]-1)*(domSize[0]+1))*(1-l)+ /* l=1 */
+		(IJK[0]+(IJK[1]-1+1)*(domSize[0]+1))*l;/* l=2 */
 	
-	edgestructTemp[edgSub].cellind[0]=(IJK[0]+(IJK[1]-2)*domSize[0])*(1-l)+// l=1
-		(-1+IJK[0]+(IJK[1]-1)*domSize[0])*l;// l=2
-	edgestructTemp[edgSub].cellind[1]=(IJK[0]+(IJK[1]-1)*domSize[0])*(1-l)+//ll=1
-		(IJK[0]+(IJK[1]-1)*domSize[0])*l; // l=2
+	edgestructTemp[edgSub].cellind[0]=(IJK[0]+(IJK[1]-2)*domSize[0])*(1-l)+/* l=1 */
+		(-1+IJK[0]+(IJK[1]-1)*domSize[0])*l;/* l=2 */
+	edgestructTemp[edgSub].cellind[1]=(IJK[0]+(IJK[1]-1)*domSize[0])*(1-l)+/*ll=1 */
+		(IJK[0]+(IJK[1]-1)*domSize[0])*l; /* l=2 */
 	
 }
 
 void EdgeIJtoGridLowBound(int domSize[dim()],int IJK[dim()], int l){
-	// l is either 0 or 1 and is used as a mathematical switch
-	// Allows the selection of the right position to assign the data
+	/* l is either 0 or 1 and is used as a mathematical switch */
+	/* Allows the selection of the right position to assign the data */
 	
 	int edgSub;
 	
@@ -476,15 +536,15 @@ void EdgeIJtoGridLowBound(int domSize[dim()],int IJK[dim()], int l){
 	
 	EdgeIJtoGrid(domSize,IJK,l);
 	
-	edgestructTemp[edgSub].cellind[0]=(-1)*(1-l)+// l=1
-		(-2)*l;// l=2
+	edgestructTemp[edgSub].cellind[0]=(-1)*(1-l)+/* l=1 */
+		(-2)*l;/* l=2 */
 		
 	
 }
 
 void EdgeIJtoGridHighBound(int domSize[dim()],int IJK[dim()], int l){
-	// l is either 0 or 1 and is used as a mathematical switch
-	// Allows the selection of the right position to assign the data
+	/* l is either 0 or 1 and is used as a mathematical switch */
+	/* Allows the selection of the right position to assign the data */
 	
 	int edgSub;
 	
@@ -492,30 +552,30 @@ void EdgeIJtoGridHighBound(int domSize[dim()],int IJK[dim()], int l){
 	
 	EdgeIJtoGrid(domSize,IJK,l);
 	
-	edgestructTemp[edgSub].cellind[1]=(-3)*(1-l)+//ll=1
-		(-4)*l; // l=2
+	edgestructTemp[edgSub].cellind[1]=(-3)*(1-l)+/*ll=1 */
+		(-4)*l; /* l=2 */
 	
 }
 
 void VertexIJGrid(int domSize[dim()],int IJK[dim()]){
-	// For vertices IJK goes to dim()+1
-	// Assigns vertex data to template structure
+	/* For vertices IJK goes to dim()+1 */
+	/* Assigns vertex data to template structure */
 	int vertSub;
 	
 	vertSub=vertsub(IJK[0],IJK[1],domSize);
 	vertstructTemp[vertSub].index=IJK[0]+(IJK[1]-1)*(domSize[0]+1);
-	//printf("Accessed Index\n");
+	/*printf("Accessed Index\n"); */
 	vertstructTemp[vertSub].coord[0]=((double)(IJK[0]-1))
 				/((double)(domSize[0]));
 	vertstructTemp[vertSub].coord[1]=((double)(IJK[1]-1))
 				/((double)(domSize[1]));
-	//printf("Accessed coord\n");
+	/*printf("Accessed coord\n"); */
 	
 }
 
 void CellIJGrid(int domSize[dim()],int IJK[dim()], int baseRefineLvl){
-	// For vertices IJK goes to dim()+1
-	// baseRefineLvl starts from 1
+	/* For vertices IJK goes to dim()+1 */
+	/* baseRefineLvl starts from 1 */
 	int cellSub;
 	
 	cellSub=cellsub(IJK[0],IJK[1],domSize);
@@ -526,11 +586,11 @@ void CellIJGrid(int domSize[dim()],int IJK[dim()], int baseRefineLvl){
 
 }
 
-// Upper level grid template generation
+/* Upper level grid template generation */
 void AssignEdgestructContent(int domSize[dim()]){
 	int ii,jj,IJK[dim()];
 	
-	// Assign all data
+	/* Assign all data */
 	for (ii=1;ii<=domSize[0];ii++){
 		for (jj=2;jj<=domSize[1];jj++){
 			
@@ -548,7 +608,7 @@ void AssignEdgestructContent(int domSize[dim()]){
 		}
 	}
 	
-	// Boundary conditions
+	/* Boundary conditions */
 	ii=1; 
 	for (jj=1;jj<=domSize[1];jj++){
 		IJK[0]=ii;
@@ -584,7 +644,7 @@ void AssignVertextructContent(int domSize[dim()]){
 	
 	int ii, jj, IJK[dim()];
 	
-	// Assign all data
+	/* Assign all data */
 	for (ii=1;ii<=domSize[0]+1;ii++){
 		for (jj=1;jj<=domSize[1]+1;jj++){
 			
@@ -601,7 +661,7 @@ void AssignCelltructContent(int domSize[dim()], int baseRefineLvl){
 	
 	int ii, jj, IJK[dim()];
 	
-	// Assign all data
+	/* Assign all data */
 	for (ii=1;ii<=domSize[0];ii++){
 		for (jj=1;jj<=domSize[1];jj++){
 			
@@ -634,9 +694,9 @@ void BuildLvlTemplate(int domSize[dim()], int baseRefineLvl, int nLevelsInput,
 	cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut){
 	
 
-	//int ii;
-	//int jj;
-	//int kk;
+	/*int ii; */
+	/*int jj; */
+	/*int kk; */
 
 	int *nCellP;int *nEdgeP;int *nVertP;
 	int nCellCurr; int nEdgeCurr;int nVertCurr;
@@ -649,59 +709,62 @@ void BuildLvlTemplate(int domSize[dim()], int baseRefineLvl, int nLevelsInput,
 	nLevels=nLevelsInput;
 	AllocateGridStruct(domSize,cellstructTempOut,vertstructTempOut,edgestructTempOut);
 	AllocateGridStruct(domSize,&cellstructTemp,&vertstructTemp,&edgestructTemp);
-	//printf("Allocated the things\n");
+	/*printf("Allocated the things\n"); */
 	AssignVertextructContent(domSize);
 	AssignEdgestructContent(domSize);
 	AssignCelltructContent(domSize,baseRefineLvl);
 
 	
 	
-	//printf("Size of Copied Cell in function %i\n",sizeof(*cellstructTemp)*(nCellCurr));
+	/*printf("Size of Copied Cell in function %i\n",sizeof(*cellstructTemp)*(nCellCurr)); */
 	
 	memcpy(*vertstructTempOut,vertstructTemp,sizeof(vertexTemplate)*(nVertCurr));
 	memcpy(*edgestructTempOut,edgestructTemp,sizeof(edgeTemplate)*(nEdgeCurr));
-	//memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp)*(nCellCurr));
+	/*memcpy(*cellstructTempOut,cellstructTemp,sizeof(*cellstructTemp)*(nCellCurr)); */
 	MemCopyCellStruct(cellstructTemp,*cellstructTempOut,nCellCurr);
 	
 	DeAllocateTemplate(domSize,cellstructTemp,edgestructTemp,vertstructTemp);
-	//free(cellstructTemp);
-	//free(vertstructTemp);
-	//free(edgestructTemp);
+	/*free(cellstructTemp); */
+	/*free(vertstructTemp); */
+	/*free(edgestructTemp); */
 }
 
 
-// Grid Refinement Processes
+/* Grid Refinement Processes */
+
+
 
 void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRefineCell){
-	// Identify cells which still need refinement
-	//	 This is done by going through the data and finding the 
-	//	 positions (specified in the vector) where refinement is needed
-	//	 For all these operations the index of cells CANNOT BE USED
+	/* Identify cells which still need refinement */
+	/*	 This is done by going through the data and finding the  */
+	/*	 positions (specified in the vector) where refinement is needed */
+	/*	 For all these operations the index of cells CANNOT BE USED */
 		
-	// celldatstruct[].refineLvl>=refinLvl -> Needs to be refined
-	// celldatstruct[].refinevec[0:refinLvl-2] 
-	// 				-> indicate the current position of the cell of interest
-	//              => This is the universal indicator that keeps the cell consistant
-	// the corresponding cells in the current grid will be:
-	// cellstruct[].refinevec[0:refinLvl-2] 
+	/* celldatstruct[].refineLvl>=refinLvl -> Needs to be refined */
+	/* celldatstruct[].refinevec[0:refinLvl-2]  */
+	/* 				-> indicate the current position of the cell of interest */
+	/*              => This is the universal indicator that keeps the cell consistant */
+	/* the corresponding cells in the current grid will be: */
+	/* cellstruct[].refinevec[0:refinLvl-2]  */
 	
-	// The output that is needed here is the position and indices of the cells 
-	// that need refinement 
-	// cellstruct[kk].index
+	/* The output that is needed here is the position and indices of the cells  */
+	/* that need refinement  */
+	/* cellstruct[kk].index */
 	
 	int ii,kk, jj,ll, nPosRefine;
 	int *posRefV=NULL;
 	int *posCellRef=NULL;
-	//int *posGridRef=NULL, *indGridRef=NULL;
-	// first count the number of refinements needed
+	/*int *posGridRef=NULL, *indGridRef=NULL; */
+	/* first count the number of refinements needed */
 
+	
 	posRefV= (int *)calloc(nCells,sizeof(int));
 	posCellRef= (int *)calloc(nCells*(refinLvl-1),sizeof(int));
-	//printf("%i \n",refinLvl-2);
+	/*printf("%i \n",refinLvl-2); */
 	kk=0;
 	for (ii=0;ii<nCells;ii++){
 	
-		//printf("%i %i\n",ii,kk);
+		/*printf("%i %i\n",ii,kk); */
 		if (celldatstruct[ii].refineLvl>=refinLvl){
 			posRefV[kk]=ii;
 			for (ll=0;ll<refinLvl-1;ll++){
@@ -710,30 +773,29 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 			kk++;
 		}
 	}
-	//printf("%i",kk);
+	/*printf("%i",kk); */
 	posRefV=(int*)realloc(posRefV,kk*sizeof(int));
-	posCellRef=(int*)realloc(posCellRef,kk*sizeof(int)*(refinLvl-1));
+	posCellRef=(int*)realloc(posCellRef,sizeof(int)*(kk*(refinLvl-1)+1));
 	
 	nPosRefine=kk;
 	(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));
 	kk=0;
 	
-	// Match vectors to cell location 
-	// -> Note will be more efficient to remove 
-	//		vectors which are the same and then do this step
-	//printf("\n");
+	/* Match vectors to cell location  */
+	/* -> Note will be more efficient to remove  */
+	/*		vectors which are the same and then do this step */
+	/*printf("\n"); */
 	for (ii=0;ii<nPosRefine;ii++){
 		for (jj=0;jj<nCellGrid;jj++){
 			ll=0;
-			while((cellstruct[jj].refineVec[ll]==posCellRef[ii*(refinLvl-1)+ll])
-				& (ll<(refinLvl-1))){
+			while((ll<(refinLvl-1) & (cellstruct[jj].refineVec[ll]==posCellRef[ii*(refinLvl-1)+ll]))){
 				ll++;
-				//printf("%i ",ll);
+				/*printf("%i ",ll); */
 			}
 			if ((ll)==(refinLvl-1)){
 				(*posGridRef)[kk]=jj;
 				kk++;
-				//printf("\n");
+				/*printf("\n"); */
 				break;
 			}
 		}
@@ -743,7 +805,7 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	
 	(*posGridRef)=(int*)realloc((*posGridRef),kk*sizeof(int));
 	/*
-	// Checks - Seem to work
+	/* Checks - Seem to work */ /*
 	printf("\n");
 	for (ii=0;ii<kk;ii++) {
 		printf("%i - ",(*posGridRef)[ii]);
@@ -754,9 +816,9 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	}
 	
 	
-	//printf("\n");
-	//for (ii=0;ii<kk;ii++) {printf("%i ",posCellRef[ii]);}
-	//printf("\n");
+	/*printf("\n"); */ /*
+	/*for (ii=0;ii<kk;ii++) {printf("%i ",posCellRef[ii]);} */ /*
+	/*printf("\n"); */ /*
 	*/
 	/*
 	qsort((*posGridRef),nPosRefine,sizeof(int),SortOrder);
@@ -766,7 +828,7 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 		if ((*posGridRef)[ii]>(*posGridRef)[jj-1]){
 			(*posGridRef)[jj]=(*posGridRef)[ii];
 			jj++;
-			//printf("%i ", jj);
+			/*printf("%i ", jj); */ /*
 		}
 	}
 	(*posGridRef)=(int*)realloc((*posGridRef),jj*sizeof(int));
@@ -790,16 +852,16 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	*nRefineCell=jj;
 	free(posRefV);
 	free(posCellRef);
-	//free(posGridRef);
-	//free(indGridRef)
+	/*free(posGridRef); */
+	/*free(indGridRef) */
 }
 
 void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
-		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine, edgeTemplate *edgestructAct, int nEdge){
+		int **posEdgeRefine, int **indEdgeRefine,int *nEdgeRefine, edgeTemplate *edgestructAct, int nEdge, int nEdgepCell){
 	
 	int ii,jj,ll,kk,kkStart,flagEdge;
 	
-	*posEdgeRefine=(int*)calloc(nEdge,sizeof(int));
+	*posEdgeRefine=(int*)calloc(nCellRefine*nEdgepCell,sizeof(int));
 	kk=0;
 	for(ii=0;ii<nEdge;ii++){
 		for(jj=0;jj<nCellRefine;jj++){
@@ -830,9 +892,9 @@ void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
 }
 	
 void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefine, int nEdgeRefine){
-	// This function needs to find out how many mre edges and vertices are needed.
-	// Reallocate the gridstruct arrays to match that
-	// Then actually do the modification
+	/* This function needs to find out how many mre edges and vertices are needed. */
+	/* Reallocate the gridstruct arrays to match that */
+	/* Then actually do the modification */
 	
 	int ii,jj;
 	int nAddEdge,nAddVertex, maxEdgeIndex,maxVertexIndex;
@@ -858,33 +920,40 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 	edgestruct=(edgeTemplate*)realloc(edgestruct,(nEdgeGrid+nAddEdge)*sizeof(edgeTemplate));
 	vertstruct=(vertexTemplate*)realloc(vertstruct,(nVertGrid+nAddVertex)*sizeof(vertexTemplate));
 	
+	newEdgesInd=(int**)realloc(newEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof(int**));
+	nNewEdges=(int*)realloc(nNewEdges,(nSplitEdges+nEdgeRefine)*sizeof(int));
+	splitEdgesInd=(int*)realloc(splitEdgesInd,(nSplitEdges+nEdgeRefine)*sizeof(int));
+	
 	currEdgeSub=nEdgeGrid;
 	currVertSub=nVertGrid;
 	
 	for(ii=0;ii<nEdgeRefine;ii++){
 		nEdgeSplit=(1-edgestruct[posEdgeRefine[ii]].orientation)*(domSize[0]-1)
 					+(edgestruct[posEdgeRefine[ii]].orientation)*(domSize[1]-1);
-		//printf("nEdgeSplit: %i \n",nEdgeSplit);
+		*(newEdgesInd+(nSplitEdges+ii))=(int*)calloc(nEdgeSplit+1,sizeof(int));
+		/*printf("nEdgeSplit: %i \n",nEdgeSplit); */
 
-		//printf("Start Finding ObjNum ... ");
+		/*printf("Start Finding ObjNum ... "); */
 		startVertInd=edgestruct[posEdgeRefine[ii]].vertex[0];
 		endVertInd=edgestruct[posEdgeRefine[ii]].vertex[1];
 		FindObjNum(&startVertInd, listIndVert, &startVertSub, 1,nVertGrid);
 		FindObjNum(&endVertInd, listIndVert, &endVertSub, 1,nVertGrid);
-		//printf(" done!\n");
-		//printf("Start Coordinate Calc ... ");
+		/*printf(" done!\n"); */
+		/*printf("Start Coordinate Calc ... "); */
 		coordStart[0]=vertstruct[startVertSub].coord[0];
 		coordStart[1]=vertstruct[startVertSub].coord[1];
 		coordEnd[0]=vertstruct[endVertSub].coord[0];
 		coordEnd[1]=vertstruct[endVertSub].coord[1];
 		coordCooeff[0]=1.0/((double)(nEdgeSplit+1))*(coordEnd[0]-coordStart[0]);
 		coordCooeff[1]=1.0/((double)(nEdgeSplit+1))*(coordEnd[1]-coordStart[1]);
-		//printf(" done!\n");
+		/*printf(" done!\n"); */
 		
 		flipSwitch=1;
 		startEdgeSub=posEdgeRefine[ii];
 		edgestruct[startEdgeSub].vertex[flipSwitch]=maxVertexIndex+1;
-		
+		splitEdgesInd[nSplitEdges+ii]=edgestruct[startEdgeSub].index;
+		nNewEdges[nSplitEdges+ii]=nEdgeSplit+1;
+		*((*(newEdgesInd+(nSplitEdges+ii))))=edgestruct[startEdgeSub].index;
 		for(jj=0;jj<nEdgeSplit;jj++){
 		
 			memcpy(&(edgestruct[currEdgeSub].index),
@@ -896,6 +965,7 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 			
 			edgestruct[currEdgeSub].index=maxEdgeIndex;
 			edgestruct[currEdgeSub].vertex[flipSwitch]=maxVertexIndex+1;
+			*((*(newEdgesInd+(nSplitEdges+ii)))+(jj+1))=maxEdgeIndex;
 			
 			vertstruct[currVertSub].index=maxVertexIndex;
 			vertstruct[currVertSub].coord[0]=coordCooeff[0]*((double)(jj+1))+coordStart[0];
@@ -909,7 +979,7 @@ void RefineSelectedEdges(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefin
 	}
 	nEdgeGrid=(nEdgeGrid+nAddEdge);
 	nVertGrid=(nVertGrid+nAddVertex);
-	
+	nSplitEdges=nSplitEdges+nEdgeRefine;
 	free(listIndEdge);
 	free(listIndVert);
 }
@@ -943,7 +1013,7 @@ void ExtractEdgeChain(int *posEdge, int *indEdge,int nEdge ,int *ordPosEdge,
 			
 			
 			*/
-			exit(EXIT_FAILURE);
+			/*exit(EXIT_FAILURE); */
 		}
 		
 		listIndVert[actPos]=0;
@@ -1015,18 +1085,18 @@ double* ExtractAngles(double *vecTest, int nVec, int nDim){
 	
 	angles=(double*)calloc(nVec,sizeof(double));
 	dist=(double*)calloc(nVec,sizeof(double));
-	//printf("\n angles: presign Postsign ");
+	/*printf("\n angles: presign Postsign "); */
 	for (ii=0; ii<nVec;ii++){
 		for(jj=0;jj<nDim;jj++){
 			dist[ii]=dist[ii]+pow(vecTest[nDim*ii+jj],2);
 		}
 		dist[ii]=sqrt(dist[ii]);
 		angles[ii]=acos(vecTest[nDim*ii]/dist[ii]);
-		//printf("     %lf",angles[ii]);
+		/*printf("     %lf",angles[ii]); */
 		signSin=CompareDouble(vecTest[nDim*ii+1],0.0);
 		signSin=(1-abs(signSin))+signSin; 
 		angles[ii]=((double)signSin)*angles[ii];
-		//printf("   %lf  \n",angles[ii]);
+		/*printf("   %lf  \n",angles[ii]); */
 	}
 	
 	free(dist);
@@ -1054,8 +1124,8 @@ int IsClockWiseChain(int *minVertPosRet,int nEdge, int *ordIndVert, int *ordPosV
 	}
 	angleTest=(double*)ExtractAngles( vecTest,2,dim());
 	cwPos=pos_fmax_array(angleTest,2);
-	//printf("\ncw? %i angles: %lf %lf \n",cwPos,angleTest[0],angleTest[1]);
-	//printf("vertprec %i vert next %i \n",ordIndVert[vertPosTest[0]],ordIndVert[vertPosTest[1]]);
+	/*printf("\ncw? %i angles: %lf %lf \n",cwPos,angleTest[0],angleTest[1]); */
+	/*printf("vertprec %i vert next %i \n",ordIndVert[vertPosTest[0]],ordIndVert[vertPosTest[1]]); */
 	
 	free(coordList);
 	free(angleTest);
@@ -1087,8 +1157,8 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	newOrder=(int*)calloc(nEdge,sizeof(int));
 	
 	cwPos=IsClockWiseChain(&minVertPos,nEdge, ordIndVert, ordPosVert, vertstructAct, nVertAct);
-	//printf("\n lower left corner detected as %i isCW %i\n",ordIndVert[minVertPos], cwPos);
-	//printf("\n  ");
+	/*printf("\n lower left corner detected as %i isCW %i\n",ordIndVert[minVertPos], cwPos); */
+	/*printf("\n  "); */
 	/*
 	for(ii=0;ii<nEdge;ii++){
 		
@@ -1103,7 +1173,7 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	*/
 	for(ii=0;ii<nEdge;ii++){
 		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*ii)%nEdge;
-		//printf("neworder: %i orderedPos: %i \n",newOrder[ii],ordIndVert[ii]);
+		/*printf("neworder: %i orderedPos: %i \n",newOrder[ii],ordIndVert[ii]); */
 	}
 	ReorderArray(ordIndVert, newOrder ,nEdge, sizeof(int));
 	ReorderArray(ordPosVert, newOrder ,nEdge, sizeof(int));
@@ -1127,7 +1197,7 @@ void GenerateIndMatch(int domSize[dim()], int posCellRefine ,int *posEdgeSideTem
 	int *posEdgeAddTemp, int *posVertAddTemp, int *ordPosEdge, int *ordPosVert, int nCurrEdge,
 	int **convCellList, int **convEdgeList, int **convVertList){
 	
-	//int *convCellList=NULL,*convEdgeList=NULL,*convVertList=NULL;
+	/*int *convCellList=NULL,*convEdgeList=NULL,*convVertList=NULL; */
 	int *tempCellList=NULL,*tempEdgeList=NULL,*tempVertList=NULL;
 	int *gridCellList=NULL,*gridEdgeList=NULL,*gridVertList=NULL;
 	
@@ -1146,7 +1216,7 @@ void GenerateIndMatch(int domSize[dim()], int posCellRefine ,int *posEdgeSideTem
 	maxCellTemplate=max_array(tempCellList,nCellTemplate);
 	maxEdgeTemplate=max_array(tempEdgeList,nEdgeTemplate);
 	maxVertTemplate=max_array(tempVertList,nVertTemplate);
-	//printf("\n cell: %i edge: %i vert: %i",maxCellTemplate,maxEdgeTemplate,maxVertTemplate);
+	/*printf("\n cell: %i edge: %i vert: %i",maxCellTemplate,maxEdgeTemplate,maxVertTemplate); */
 	
 	gridCellList=(int*)calloc(nCellGrid,sizeof(int));
 	gridEdgeList=(int*)calloc(nEdgeGrid,sizeof(int));
@@ -1158,7 +1228,7 @@ void GenerateIndMatch(int domSize[dim()], int posCellRefine ,int *posEdgeSideTem
 	maxEdgeGrid=max_array(gridEdgeList,nEdgeGrid);
 	maxVertGrid=max_array(gridVertList,nVertGrid);
 	
-	// Generates matching lists
+	/* Generates matching lists */
 	*convCellList=(int*)calloc((maxCellTemplate+1),sizeof(int));
 	*convEdgeList=(int*)calloc((maxEdgeTemplate+1),sizeof(int));
 	*convVertList=(int*)calloc((maxVertTemplate+1),sizeof(int));
@@ -1229,7 +1299,7 @@ void CopyEdgeStruct(int nCurrEdge,int domSize[dim()],int *posEdgeAddTemp,
 	
 	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
 	
-	//printf("\n");
+	/*printf("\n"); */
 	for(ii=0;ii<(nEdgeTemplate-nCurrEdge);ii++){
 		currPosGrid=nEdgeGrid+ii;
 		memcpy(&(edgestruct[currPosGrid].index),&(edgeCurrentTemplate[posEdgeAddTemp[ii]].index),
@@ -1242,7 +1312,7 @@ void CopyEdgeStruct(int nCurrEdge,int domSize[dim()],int *posEdgeAddTemp,
 		
 		edgestruct[currPosGrid].vertex[0]=convVertList[edgestruct[currPosGrid].vertex[0]];
 		edgestruct[currPosGrid].vertex[1]=convVertList[edgestruct[currPosGrid].vertex[1]];
-		//printf("%i %i %i\n",edgestruct[currPosGrid].index,edgeCurrentTemplate[posEdgeAddTemp[ii]].orientation,edgestruct[currPosGrid].orientation);
+		/*printf("%i %i %i\n",edgestruct[currPosGrid].index,edgeCurrentTemplate[posEdgeAddTemp[ii]].orientation,edgestruct[currPosGrid].orientation); */
 	}
 	
 	
@@ -1259,7 +1329,7 @@ void CopyVertStruct(int nCurrEdge,int domSize[dim()],int *posVertAddTemp,
 	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
 	
 	
-	//printf("\n min Max");
+	/*printf("\n min Max"); */
 	for(jj=0;jj<dim();jj++){
 		minDim[jj]=vertstruct[ordPosVert[0]].coord[jj];
 		maxDim[jj]=vertstruct[ordPosVert[0]].coord[jj];
@@ -1267,7 +1337,7 @@ void CopyVertStruct(int nCurrEdge,int domSize[dim()],int *posVertAddTemp,
 			minDim[jj]=min(minDim[jj],vertstruct[ordPosVert[ii]].coord[jj]);
 			maxDim[jj]=max(maxDim[jj],vertstruct[ordPosVert[ii]].coord[jj]);
 		}
-		//printf("\n %lf %lf",minDim[jj],maxDim[jj]);
+		/*printf("\n %lf %lf",minDim[jj],maxDim[jj]); */
 	}
 	
 	for(ii=0;ii<(nVertTemplate-nCurrEdge);ii++){
@@ -1295,22 +1365,28 @@ void CopyCellStruct(int domSize[dim()],int posCellRefine,int *convCellList){
 	currPosGrid=(int*)calloc(nCellTemplate,sizeof(int));
 	refineVecOrig=(int*)calloc(nLevels,sizeof(int));
 	
+	
+	
 	memcpy(refineVecOrig,cellstruct[posCellRefine].refineVec,sizeof(int)*nLevels);
+	
+	nNewCells[nSplitCells]=nCellTemplate;
+	*(newCellsInd+nSplitCells)=(int*)calloc(nCellTemplate,sizeof(int));
 	
 	currPosGrid[0]=posCellRefine;
 	for (ii=1;ii<nCellTemplate;ii++){currPosGrid[ii]=nCellGrid+ii-1;}
-	//printf("\n cell assign");
+	/*printf("\n cell assign"); */
 	for(ii=0;ii<nCellTemplate;ii++){
 		cellstruct[currPosGrid[ii]].index=convCellList[cellCurrentTemplate[ii].index];
-		//printf("\n%i %i ",cellCurrentTemplate[ii].index,convCellList[cellCurrentTemplate[ii].index]);
-		cellstruct[currPosGrid[ii]].fill=0;
+		*((*(newCellsInd+nSplitCells))+ii)=cellstruct[currPosGrid[ii]].index;
+		/*printf("\n%i %i ",cellCurrentTemplate[ii].index,convCellList[cellCurrentTemplate[ii].index]); */
+		cellstruct[currPosGrid[ii]].fill=cellstruct[posCellRefine].fill;
 		
 		cellstruct[currPosGrid[ii]].refineLvl=cellCurrentTemplate[ii].refineLvl;
 		for(jj=0;jj<nLevels;jj++){
 			cellstruct[currPosGrid[ii]].refineVec[jj]=cellCurrentTemplate[ii].refineVec[jj]+refineVecOrig[jj];
 		}
 	}
-	
+	nSplitCells=nSplitCells+1;
 	free(currPosGrid);
 	free(refineVecOrig);
 }
@@ -1364,11 +1440,12 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	int *posCurrEdge=NULL,*indCurrEdge=NULL;
 	int *ordPosEdge=NULL, *ordIndEdge=NULL, *ordIndVert=NULL,*ordPosVert=NULL;
 	int nCurrEdge;
-	
+	int nEdgepCell=0;
+	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid);
-			
-	//printf("\n***Number of Edge of Cell: %i",nCurrEdge);
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid,nEdgepCell);
+	
+	/*printf("\n***Number of Edge of Cell: %i",nCurrEdge); */
 	ordPosEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndVert=(int*)calloc(nCurrEdge,sizeof(int));
@@ -1382,9 +1459,9 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	
 	MergeNewCell(domSize,posCellRefine, posEdgeSideTemp, posVertSideTemp, posCellAddTemp,
 		posEdgeAddTemp,  posVertAddTemp,  ordPosEdge,  ordPosVert,nCurrEdge);
-	//printf("\n");
-	//for (ii=0;ii<nCurrEdge;ii++)
-	//	printf("nOrdered: %i  ; Ordered Vert: %i ; Ordered Edge: %i \n",indCurrEdge[ii],ordIndEdge[ii],ordIndVert[ii]);
+	/*printf("\n"); */
+	/*for (ii=0;ii<nCurrEdge;ii++) */
+	/*	printf("nOrdered: %i  ; Ordered Vert: %i ; Ordered Edge: %i \n",indCurrEdge[ii],ordIndEdge[ii],ordIndVert[ii]); */
 	
 	free(posCurrEdge);
 	free(indCurrEdge);
@@ -1427,17 +1504,19 @@ void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,
 	int *posCurrEdge=NULL,*indCurrEdge=NULL, indCellRefine[4]={-1,-2,-3,-4};
 	int *ordIndEdge=NULL, *ordIndVert=NULL, *listTempEdge=NULL,*listTempVert=NULL;
 	int nCurrEdge;
-	
 	int nCellTemplate,nEdgeTemplate,nVertTemplate;
+	int nEdgepCell=0;
+	
+	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
-	// Cell
+	/* Cell */
 	*posCellAdd=(int*)calloc(nCellTemplate,sizeof(int));
 	for (ii=0;ii<nCellTemplate;ii++){ (*posCellAdd)[ii] = ii; }
-	// Edge and Vertex Sides
+	/* Edge and Vertex Sides */
 	IdentifyRefineEdge(indCellRefine, indCellRefine,4,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate);
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate,nEdgepCell);
 			
-	//printf("\n***Number of Border Edges for template %i",nCurrEdge);
+	/*printf("\n***Number of Border Edges for template %i",nCurrEdge); */
 	*posEdgeSide=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndVert=(int*)calloc(nCurrEdge,sizeof(int));
@@ -1448,7 +1527,7 @@ void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,
 	/*printf("\nPrepare template order edge index list:\n");
 	for (ii=0;ii<nCurrEdge;ii++){printf("%i ",ordIndEdge[ii]);}
 	printf("\n");*/
-	// Inside 
+	/* Inside  */
 	listTempEdge=(int*)calloc(nEdgeTemplate,sizeof(int));
 	listTempVert=(int*)calloc(nVertTemplate,sizeof(int));
 	for (ii=0;ii<nEdgeTemplate;ii++){listTempEdge[ii]=ii;}
@@ -1458,7 +1537,7 @@ void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,
 	
 	free(posCurrEdge);
 	free(indCurrEdge);
-	//free(ordPosEdge);
+	/*free(ordPosEdge); */
 	free(ordIndEdge);
 	free(ordIndVert);
 	free(listTempEdge);
@@ -1470,20 +1549,33 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 	int ii,jj,kk,ll;
 	int *posEdgeSideTemp=NULL, *posVertSideTemp=NULL, *posCellAddTemp=NULL;
 	int *posEdgeAddTemp=NULL, *posVertAddTemp=NULL;
+	int nSplitCellsStart;
 	PrepareTemplateInfo(domSize,&posEdgeSideTemp,&posVertSideTemp,&posCellAddTemp,
 			&posEdgeAddTemp, &posVertAddTemp);
 	
+	nSplitCellsStart=nSplitCells;
+	newCellsInd=(int**)realloc(newCellsInd,(nSplitCells+nCellRefine)*sizeof(int**));
+	nNewCells=(int*)realloc(nNewCells,(nSplitCells+nCellRefine)*sizeof(int));
+	splitCellsInd=(int*)realloc(splitCellsInd,(nSplitCells+nCellRefine)*sizeof(int));
+	
 	for(ii=0;ii<nCellRefine;ii++){
+	printf("\n			Start Cell %i of %i \n",ii+1,nCellRefine);
 		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii],posEdgeSideTemp,
-		 posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
+			posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
+			
+			splitCellsInd[nSplitCellsStart+ii]=indCellRefine[ii];
 	}
 	
-	
+	free(posEdgeSideTemp);
+	free(posVertSideTemp);
+	free(posCellAddTemp);
+	free(posEdgeAddTemp);
+	free(posVertAddTemp);
 }
 
 
-// UTILITIES
-	//Various
+/* UTILITIES */
+	/*Various */
 
 void* ArrayFromStruct(void* ptr, int nStruct, int sizMember, int sizType){
 	int ii;
@@ -1502,23 +1594,27 @@ void RemoveIdenticalEntries_int(int **array, int nArray, int *nNewArray){
 	
 	qsort((*array),nArray,sizeof(int),SortOrder);
 	jj=1;
-	//printf("\n");
+	/*printf("\n"); */
 	for (ii=1;ii<nArray;ii++){
 		if ((*array)[ii]>(*array)[jj-1]){
+			
+			/*printf("\n%i %i %i",ii,jj,nArray); */
 			(*array)[jj]=(*array)[ii];
 			jj++;
-			//printf("%i ", jj);
+			/*printf("%i ", jj); */
 		}
 	}
-	(*array)=(int*)realloc((*array),jj*sizeof(int));
+	if (jj<nArray){
+		(*array)=(int*)realloc((*array),jj*sizeof(int));
+	}
 	*nNewArray=jj;
 }
 
 void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList){
-	// Look up is the Indices we need the position of
-	// listInd is the list of all indices in the right order
-	// dest is where the position will be stored (-1 means the index wasn't found)
-	// While not the most efficient yet this should be pretty good
+	/* Look up is the Indices we need the position of */
+	/* listInd is the list of all indices in the right order */
+	/* dest is where the position will be stored (-1 means the index wasn't found) */
+	/* While not the most efficient yet this should be pretty good */
 	int ii,jj;
 	
 	for(ii=0;ii<nLook;ii++){
@@ -1547,40 +1643,40 @@ int CompareDouble(double elem1, double elem2) {
     return (f > s) - (f < s);
 }
 
-	// Index functions
+	/* Index functions */
 int edgsub(int I, int J, int l, int domSize[dim()]){
 	/*
-	// l is either 0 for dim() 1 or 1 for dim() 2
-	// domSize is the actual requested domain size rather than the edge domain size
-	// I and J vary normallly from 1:domSize
-	// J can go to domSize[1]+1 with l=0
-	// I can go to domSize[0]+1 with l=1 
+	/* l is either 0 for dim() 1 or 1 for dim() 2 */ /*
+	/* domSize is the actual requested domain size rather than the edge domain size */ /*
+	/* I and J vary normallly from 1:domSize */ /*
+	/* J can go to domSize[1]+1 with l=0 */ /*
+	/* I can go to domSize[0]+1 with l=1  */ /*
 	*/
 	
 	int index;
-	index=-1 // Use of a mathematical switch
-			+(1-l)*(I+(J-1)*domSize[0]) // case where l=0
-			+(l)*((I-1)*(domSize[1])+(J) // case where l=1
+	index=-1 /* Use of a mathematical switch */
+			+(1-l)*(I+(J-1)*domSize[0]) /* case where l=0 */
+			+(l)*((I-1)*(domSize[1])+(J) /* case where l=1 */
 				+((domSize[1]+1)*domSize[0]));
 	return(index);
 }
 
 int vertsub(int I, int J, int domSize[dim()]){
 	/*
-	// domSize is the actual requested domain size rather than the edge domain size
-	// I and J vary normallly from 1:domSize+1
+	/* domSize is the actual requested domain size rather than the edge domain size */ /*
+	/* I and J vary normallly from 1:domSize+1 */ /*
 	*/
 	
 	int index;
 	index=-1+(I+(J-1)*(domSize[0]+1));
-	//printf("domsize %i %i , I %i J %i index %i",domSize[0],domSize[1],I,J,index);
+	/*printf("domsize %i %i , I %i J %i index %i",domSize[0],domSize[1],I,J,index); */
 	return(index);
 }
 
 int cellsub(int I, int J, int domSize[dim()]){
 	/*
-	// domSize is the actual requested domain size rather than the edge domain size
-	// I and J vary normallly from 1:domSize
+	/* domSize is the actual requested domain size rather than the edge domain size */ /*
+	/* I and J vary normallly from 1:domSize */ /*
 	*/
 	
 	int index;
@@ -1588,8 +1684,8 @@ int cellsub(int I, int J, int domSize[dim()]){
 	return(index);
 }
 
-	// Min Max functions 
-	// (see Macro)
+	/* Min Max functions  */
+	/* (see Macro) */
 int min_array(int *array, int nArray){
 	int ii,minNum;
 	minNum=array[0];

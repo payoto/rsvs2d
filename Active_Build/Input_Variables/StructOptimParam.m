@@ -791,11 +791,12 @@ end
 function paroptim=test_invdes()
     [paroptim]=Inverse_CG();
     
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_L');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=16;
+    paroptim.general.maxIter=2;
     paroptim.general.worker=4;
 end
 

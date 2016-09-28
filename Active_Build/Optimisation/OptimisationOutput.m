@@ -101,6 +101,12 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     savStruct.restartsnak=restartsnak;
     savStruct.snakSave=snakSave;
     savStruct.loop=loop;
+    if nIter==0
+        savStruct.grid.base=tecStruct.baseGrid;
+        savStruct.grid.refined=tecStruct.fineGrid;
+        savStruct.grid.cellrefined=restartsnak.cellCentredGrid;
+        savStruct.grid.connec=restartsnak.volfracconnec;
+    end
     
     % Output boundary data file
     [fidBoundary]=OpenBoundaryFile(writeDirectory,markerShort);
