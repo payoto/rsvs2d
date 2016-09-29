@@ -731,8 +731,9 @@ function [snaxel]=TestSnaxelLoopDirection(snaxel)
     
     nextSnaxInd=snaxel(leftMostCorner).snaxnext;
     precSnaxInd=snaxel(leftMostCorner).snaxprec;
-    nextSnaxSub=FindObjNum(snaxel,nextSnaxInd);
-    precSnaxSub=FindObjNum(snaxel,precSnaxInd);
+    snaxInd=[snaxel(:).index];
+    nextSnaxSub=FindObjNum([],nextSnaxInd,snaxInd);
+    precSnaxSub=FindObjNum([],precSnaxInd,snaxInd);
     
     precVec=coord(precSnaxSub,:)-coord(leftMostCorner,:);
     nextVec=coord(nextSnaxSub,:)-coord(leftMostCorner,:);
@@ -796,7 +797,7 @@ function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertI
             end
             
             connecOrder=CCWOrderAroundNode(snaxelNotOrdered,currLoopEdgeIndex(baseEdgeExploit));
-            generateOrder=FindObjNum(snaxelNotOrdered,connecOrder);
+            generateOrder=FindObjNum([],connecOrder,[snaxelNotOrdered(:).index]);
             if isInside
                 generateOrder=generateOrder(end:-1:1);
             end
@@ -1029,7 +1030,8 @@ function [snaxel]=AddSnaxel(snaxel,additionsnaxel)
     
     [connection,indexSnaxCon]=ExtractConnection(additionsnaxel);
     %connection=additionsnaxel.connectivity;
-    subConnection=FindObjNum(snaxel,connection);
+    
+    subConnection=FindObjNum([],connection,[snaxel(:).index]);
     for ii=1:length(connection)
         % in the iith connected snaxel find the index to the other connection
         singlesnaxel=snaxel(subConnection(ii));
@@ -1473,12 +1475,12 @@ function [cellCentredGrid]=CalculateEdgeCellNormals(cellCentredGrid)
         [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges);
         orderedVertices=cellOrderedVertex{1}(:,1);
         orderedEdges=[cellCentredGrid(ii).edge(cellOrderedEdges{1}).index];
-        orderedVertexSub=FindObjNum(cellCentredGrid(ii).vertex,orderedVertices);
+        orderedVertexSub=FindObjNum([],orderedVertices,[cellCentredGrid(ii).vertex(:).index]);
         coord=vertcat(cellCentredGrid(ii).vertex(orderedVertexSub).coord);
         [isCCW]=CCWLoop(coord);
         for jj=1:length(orderedEdges)
             
-            edgeVertSub=FindObjNum(cellCentredGrid(ii).vertex,cellOrderedVertex{1}(jj,:));
+            edgeVertSub=FindObjNum([],cellOrderedVertex{1}(jj,:),[cellCentredGrid(ii).vertex(:).index]);
             edgeTanVector=cellCentredGrid(ii).vertex(edgeVertSub(2)).coord...
                 -cellCentredGrid(ii).vertex(edgeVertSub(1)).coord;
             normalVector=CalcNormVec2DClockWise(edgeTanVector);
@@ -1895,7 +1897,7 @@ function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourIn
         else
             delIndex=[];
         end
-        delSub=FindObjNum(snaxel,delIndex);
+        delSub=FindObjNum([],delIndex,[snaxel(:).index]);
         insideEdgesInd=[snaxel(delSub).edge];
         snaxel=DeleteSnaxel(snaxel,delIndex);
         [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
@@ -2207,7 +2209,7 @@ end
 function [snaxel]=MergeTopologies(snaxel,workPair,precSnak,nextSnak)
     % Merges topologies by inverting connections
     
-    workSub=FindObjNum(snaxel,workPair);
+    workSub=FindObjNum([],workPair,[snaxel(:).index]);
     snakSave=snaxel(workSub);
     snaxel=DeleteSnaxel(snaxel,workPair);
     

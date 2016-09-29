@@ -81,10 +81,10 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     isFreeze=[snaxel(:).isfreeze];
     %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
-    %[Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
-    [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
-    [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
-    [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
+    [Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+%     [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+     [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
+%     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
     
     SQPOptim(Df,Hf,hessA,areaConstrMat',areaTargVec,lagMulti);
     
@@ -703,7 +703,8 @@ function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     
     Bkinv=(Hf)^(-1);
     matToInv=(Dh'*Bkinv*Dh);
-    if rcond(matToInv)>1e-10
+    fprintf(' - cond: %.3e -', rcond(matToInv))
+    if rcond(matToInv)>1e-20
         u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
     else
         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);

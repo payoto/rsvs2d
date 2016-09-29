@@ -9,7 +9,7 @@ function [] = include_GridCheck()
 end
 
 
-function []=CheckGrid(gridreshape,axRatio,figh,format)
+function []=CheckGrid(gridreshape,axRatio,figh,format,pText)
     %domainBounds=[0 1 ; 0 1];
     
     [unstructured]=ModifReshape(gridreshape);
@@ -26,13 +26,16 @@ function []=CheckGrid(gridreshape,axRatio,figh,format)
     if nargin<4
         format='b-';
     end
+    if nargin<5
+        pText=true;
+    end
     
     hold on
     
     
     isEdgeSub=find(unstructured.edge.index);
     for ii=1:length(isEdgeSub)
-        PlotEdgeGrid(figh,axRatio,unstructured,isEdgeSub(ii),format)
+        PlotEdgeGrid(figh,axRatio,unstructured,isEdgeSub(ii),format,pText)
     end
     
 %     isEdgeSub=find(~unstructured.edge.boundaryis0);
@@ -47,7 +50,7 @@ function []=CheckGrid(gridreshape,axRatio,figh,format)
     
 end
 
-function []=PlotEdgeGrid(figh,axRatio,unstructured,subEdge,format)
+function []=PlotEdgeGrid(figh,axRatio,unstructured,subEdge,format,pText)
     figure(figh)
     %axes(axh)
     
@@ -57,9 +60,11 @@ function []=PlotEdgeGrid(figh,axRatio,unstructured,subEdge,format)
     coord=unstructured.vertex.coord(vertsub,:);
     coord(:,2)=coord(:,2)*axRatio;
     plot(coord(:,1),coord(:,2),format)
+    if pText
     text(mean(coord(:,1)),mean(coord(:,2)),int2str(unstructured.edge.index(subEdge)),'color','b')
     text(mean(coord(1,1)),mean(coord(1,2)),int2str(vertices(1)),'color','g')
     text(mean(coord(2,1)),mean(coord(2,2)),int2str(vertices(2)),'color','g')
+    end
 end
 
 function []=PlotLoopGrid(figh,axh,loop,indexLoop,format)

@@ -97,10 +97,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	printf("\nCalculations Started . . .");
 	RefineGrid_MEX(nRefine,cellrefineInd,cellrefinePos);
 	
-	/*OutputGridStruct(&plhs[0]);*/
-	/*OutputConnectStruct(&plhs[1]);*/
-	/*free(levelSize); */
-	/* ClearWorkSpace(); */
+	OutputGridStruct(&plhs[0]);
+	OutputConnectStruct(&plhs[1]);
+	/*free(levelSize);
+	ClearWorkSpace(); */
 	free(cellrefineInd);
 	free(cellrefinePos);
 	/*
