@@ -8,13 +8,14 @@
 /*int dim() = 2; */
 #define MEX_COMPILE
 
-void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList);
+void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nFound);
+void FindObjNum_Deprecated(int *lookup, int *listInd, int *dest, int nLook, int nList);
 
 void mexFunction(int nlhs, mxArray *plhs[], 
 	int nrhs, const mxArray *prhs[]){
 	
 	int *lookup, *listInd,*dest;
-	int nList, nLook,ii;
+	int nList, nLook,ii,nFound;
 	double *outPtr;
 	double *inputArrayPtr;
 	/* Read Integers */
@@ -24,7 +25,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	
 	/* Allocation */
 	lookup=(int*)calloc(nLook,sizeof(int));
-	dest=(int*)calloc(nLook,sizeof(int));
+	dest=(int*)calloc(nLook*nList,sizeof(int));
 	listInd=(int*)calloc(nList,sizeof(int));
 	
 	/* Assignement */
@@ -39,12 +40,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		/*printf("%i ", cellrefineInd[ii]); */
 	}
 	/* ACTION */
-	FindObjNum(lookup, listInd, dest, nLook, nList);
+	FindObjNum(lookup, listInd, dest, nLook, nList,&nFound);
+	/*dest=(int*)realloc(dest,nFound*sizeof(int));*/
 	
 	/* Output */
-	plhs[0]=(mxCreateDoubleMatrix(1,nLook,mxREAL));
+	plhs[0]=(mxCreateDoubleMatrix(1,nFound,mxREAL));
 	outPtr=mxGetPr(plhs[0]);
-	for (ii=0;ii<nLook;ii++){outPtr[ii]=(double)(dest[ii]+1);}
+	for (ii=0;ii<nFound;ii++){outPtr[ii]=(double)(dest[ii]+1);}
 	
 	free(lookup);
 	free(listInd);
@@ -53,7 +55,31 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	return;
 }
 
-void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList){
+
+void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nFound){
+	/* Look up is the Indices we need the position of */
+	/* listInd is the list of all indices in the right order */
+	/* dest is where the position will be stored (-1 means the index wasn't found) */
+	/* While not the most efficient yet this should be pretty good */
+	int ii,jj,kk,kkStart;
+	kk=0;
+	for(ii=0;ii<nLook;ii++){
+		dest[kk]=-1;
+		jj=0;
+		kkStart=kk;
+		do{
+			
+			dest[kk]=(-(listInd[jj]!=lookup[ii])*(jj+1))+jj;
+			/*dest[ii]=(-(memcmp((listInd+jj),(lookup+ii),sizeof(int))!=0)*(jj+1))+jj; */
+			kk=kk+(listInd[jj]==lookup[ii]);
+			jj++;
+		} while((jj<nList));
+		kk=kk+(kkStart==kk);
+	}
+	*nFound=kk;
+}
+
+void FindObjNum_Deprecated(int *lookup, int *listInd, int *dest, int nLook, int nList){
 	/* Look up is the Indices we need the position of */
 	/* listInd is the list of all indices in the right order */
 	/* dest is where the position will be stored (-1 means the index wasn't found) */

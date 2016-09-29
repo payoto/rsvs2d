@@ -78,7 +78,7 @@ function paramsnakesstep=default_snakes_step()
     
     paramsnakesstep.snakesSteps=100;
     paramsnakesstep.mergeTopo=true;
-    paramsnakesstep.maxStep=0.4;
+    paramsnakesstep.maxStep=0.3;
     paramsnakesstep.maxDt=0.5;
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=1e-2;
@@ -166,10 +166,10 @@ end
 function param=AvoidLocalOptim(param)
     
 
-    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.lengthEpsilon=1e-5;
     param.snakes.force.typeSmear='length';
-    param.snakes.step.arrivalTolerance=10e-2;
-    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
+    param.snakes.step.arrivalTolerance=1e-1;
+    param.snakes.step.snaxInitPos=1*param.snakes.force.lengthEpsilon;
 end
 
 function param=SmoothFEDynamic(param)
@@ -672,7 +672,7 @@ function [param]=optimInverseDesign()
     param.general.restart=true;
     param.general.refineSteps=2;
     
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=[4 4];
     param.snakes.refine.typeRefine='all';
     
     param.snakes.step.mergeTopo=true;
@@ -797,16 +797,16 @@ function [param]=testRefinement()
     param=AvoidLocalOptim(param);
     
     param.general.typDat='testsmooth1';
-    param.snakes.step.snakesSteps=5;
-    param.snakes.refine.refineGrid=[2 1];
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=[3 2];
     param.snakes.refine.typeRefine='all';
-    param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
+    param.general.passDomBounds=[-1,1;-1,1];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=true;
     param.snakes.step.convLevel=10^-8;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=SnakNaca0012()
@@ -973,7 +973,7 @@ function [param]=SnakesFoilVVSmall4()
     
     param.general.typDat='vvlofoil4';
     param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=[3 2];
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.25,0.25];
     param.general.refineSteps=5;

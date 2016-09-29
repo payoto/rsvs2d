@@ -10,7 +10,7 @@
 /*int dim() = 2; */
 #ifndef GRIDGEN_VAR_INCLUDED
 #define GRIDGEN_VAR_INCLUDED
-int plotFlag=1;
+int plotFlag=0;
 int outCount=0;
 /* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;
@@ -861,7 +861,7 @@ void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
 	
 	int ii,jj,ll,kk,kkStart,flagEdge;
 	
-	*posEdgeRefine=(int*)calloc(nCellRefine*nEdgepCell,sizeof(int));
+	*posEdgeRefine=(int*)calloc(nCellRefine*nEdgepCell+1,sizeof(int));
 	kk=0;
 	for(ii=0;ii<nEdge;ii++){
 		for(jj=0;jj<nCellRefine;jj++){
@@ -869,6 +869,11 @@ void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
 			kkStart=kk;
 			do{
 				flagEdge=((edgestructAct[ii].cellind[ll]==indCellRefine[jj]));
+				/*
+				if(kk>=(nCellRefine*nEdgepCell)){
+					printf("We have a problem here! %i : %i\n",kk,(nCellRefine*nEdgepCell));
+				}
+				*/
 				(*posEdgeRefine)[kk]=ii*flagEdge;
 				kk=kk+flagEdge;
 				ll++;

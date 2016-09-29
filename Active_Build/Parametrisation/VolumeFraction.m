@@ -277,8 +277,9 @@ function [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
     edgeInd=[cellStruct.edge(:).index];
     vertEdgeInd=vertcat(cellStruct.edge(:).vertexindex);
     
-    edgeSnakSub=FindObjNum(cellStruct.snaxel,edgeSnak(:,1));
-    edgeSnakSub(:,2)=FindObjNum(cellStruct.snaxel,edgeSnak(:,2));
+    snaxInd=[cellStruct.snaxel(:).index];
+    edgeSnakSub=FindObjNum([],edgeSnak(:,1),snaxInd);
+    edgeSnakSub(:,2)=FindObjNum([],edgeSnak(:,2),snaxInd);
     areablockTemp=struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0]));
     areablock=repmat(areablockTemp,[1 nBordBlocks]);
     for ii=nBordBlocks:-1:1
@@ -433,9 +434,10 @@ function [areablock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks
     % Area
     vertInd=[cellStruct.vertex(:).index];
     edgeInd=[cellStruct.edge(:).index];
+    snaxInd=[cellStruct.snaxel(:).index];
     
-    edgeSnakSub=FindObjNum(cellStruct.snaxel,edgeSnak(:,1));
-    edgeSnakSub(:,2)=FindObjNum(cellStruct.snaxel,edgeSnak(:,2));
+    edgeSnakSub=FindObjNum([],edgeSnak(:,1),snaxInd);
+    edgeSnakSub(:,2)=FindObjNum([],edgeSnak(:,2),snaxInd);
     areablockTemp=struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0]));
     areablock=repmat(areablockTemp,[1 nBordBlocks]);
     for ii=nBordBlocks:-1:1
