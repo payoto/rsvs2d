@@ -47,6 +47,15 @@ function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefin
     else
         [gridrefined,connecstructinfo]=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]', nRefine(1:2));
     end
+    
+    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+        {connecstructinfo.cell(:).new},...
+        {connecstructinfo.cell(:).old},'UniformOutput',false));
+    newSubs=FindObjNum([],[connecstructinfo.cell(:).new],[gridrefined.cell(:).index]);
+    oldSubs=FindObjNum([],oldIndsNewOrd,[gridreshape.cell(:).index]);
+    
+    [gridrefined.cell(newSubs).isactive]=deal(gridreshape.cell(oldSubs).isactive);
+    
 %     CheckResultsRefineGrid(gridreshape)
 %     CheckResultsRefineGrid(gridedgerefined)
 %     CheckResultsRefineGrid(gridrefined)

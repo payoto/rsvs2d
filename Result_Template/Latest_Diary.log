@@ -1,6 +1,33 @@
   
 -----------------------
 INITIAL GRID OPERATIONS start
+<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_Utilities.m',66,1)">66  </a>            warning('cellLevels used')
+ExecuteOptimisation('test_refine');
+  
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+OPTIMISATION - test_refine start
+30-Sep-2016 10:57:33
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+INITIALISE OPTIMISATION PROCESS start
+30-Sep-2016 10:57:33
+--------------------------------------------------------------------------------------------
+  
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+WRITING AUTOMATIC FUNCTIONS
+  
+-----------------------
+INITIAL GRID OPERATIONS start
 
 Calculations Started . . .
 ***** START GRID INITIALISATION *****
@@ -24,769 +51,2248 @@ Calculations Started . . .
     ACTION: Edges Refined
     ACTION: Cells Refined
      OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:281
+Connect . . .Edge . . .Cell . . .    Time Elapsed:00:00:00:249
 INITIAL GRID OPERATIONS end
 -----------------------
   
-{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExtractAngle360', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractAngle360.m', 2)" style="font-weight:bold">ExtractAngle360</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\ExtractAngle360.m',2,0)">line 2</a>)
-
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>CalculateCWdirectionEdge', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 359)" style="font-weight:bold">VolumeFraction>CalculateCWdirectionEdge</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',359,0)">line 359</a>)
-    [vecAngles]=ExtractAngle360(baseVector,testVector);
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>AddSnaxelBorders', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 216)" style="font-weight:bold">VolumeFraction>AddSnaxelBorders</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',216,0)">line 216</a>)
-    [edgeSnakSub]=CalculateCWdirectionEdge(activeCoord,...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractBorderStructure', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 288)" style="font-weight:bold">VolumeFraction>ExtractBorderStructure</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',288,0)">line 288</a>)
-        [bordstruct1,edgeSnakSub(ii,:)]=AddSnaxelBorders(cellStruct,edgeSnakSub(ii,:));
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction>ExtractCellFillInformation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 169)" style="font-weight:bold">VolumeFraction>ExtractCellFillInformation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',169,0)">line 169</a>)
-            [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('VolumeFraction', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m', 26)" style="font-weight:bold">VolumeFraction</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\VolumeFraction.m',26,0)">line 26</a>)
-        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>VelocityAndVolumeProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 411)" style="font-weight:bold">Snakes>VelocityAndVolumeProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',411,0)">line 411</a>)
-    [volumefraction,coeffstructure,cellCentredGridSnax]=VolumeFraction(snaxel,...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>IterSnakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 148)" style="font-weight:bold">Snakes>IterSnakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',148,0)">line 148</a>)
-        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes>RunSnakesProcess', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 88)" style="font-weight:bold">Snakes>RunSnakesProcess</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',88,0)">line 88</a>)
-        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume]...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Snakes', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m', 34)" style="font-weight:bold">Snakes</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\Snakes.m',34,0)">line 34</a>)
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSnakes_Optim_ExecuteSnakes_Optim_snak', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m', 50)" style="font-weight:bold">ExecuteSnakes_Optim_ExecuteSnakes_Optim_snak</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m',50,0)">line 50</a>)
-    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteSnakes_Optim', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m', 21)" style="font-weight:bold">ExecuteSnakes_Optim</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteSnakes_Optim.m',21,0)">line 21</a>)
-            [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation>InitialiseOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 197)" style="font-weight:bold">ExecuteOptimisation>InitialiseOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',197,0)">line 197</a>)
-    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
-
-In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ExecuteOptimisation', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m', 20)" style="font-weight:bold">ExecuteOptimisation</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Optimisation\ExecuteOptimisation.m',20,0)">line 20</a>)
-    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
-} 
-clc
-newParam=StructOptimParam('test_invdes')
-
-newParam = 
-
-            general: [1x1 struct]
-              optim: [1x1 struct]
-             spline: [1x1 struct]
-                obj: [1x1 struct]
-         constraint: [1x1 struct]
-          structdat: [1x1 struct]
-    parametrisation: [1x1 struct]
-          initparam: [1x1 struct]
-
-load('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2016_09\Day_2016-09-29\Dir_2016-09-29T155041_test_invdes\iteration_0\profile_0\restart_0_0.mat')
-newGrid=grid
-
-newGrid = 
-
-           base: [1x1 struct]
-        refined: [1x1 struct]
-    cellrefined: [112x1 struct]
-         connec: [1x1 struct]
-
-include_GridCheck
-WRITING AUTOMATIC FUNCTIONS
-figh=figure
-
-figh = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
-
-      Number: 1
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('figh', 'var'), matlab.graphics.internal.getForDisplay('figh', figh, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('figh'), end">all properties</a>
-
-CheckGrid(newGrid.refined,figh,'r--')
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('findobj')" style="font-weight:bold">findobj</a>
-Incomplete parameter-value pair.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_GridCheck>CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m', 24)" style="font-weight:bold">include_GridCheck>CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m',24,0)">line 24</a>)
-        axh=findobj(figh,'type','axes');
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m', 6)" style="font-weight:bold">CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=CheckGrid_Handle(varargin{:});
-} 
-figure
-figh=figure,hold on
-
-figh = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (2) with properties:
-
-      Number: 2
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('figh', 'var'), matlab.graphics.internal.getForDisplay('figh', figh, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('figh'), end">all properties</a>
-
-CheckGrid(newGrid.refined,figh,'r--')
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('findobj')" style="font-weight:bold">findobj</a>
-Incomplete parameter-value pair.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_GridCheck>CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m', 24)" style="font-weight:bold">include_GridCheck>CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m',24,0)">line 24</a>)
-        axh=findobj(figh,'type','axes');
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m', 6)" style="font-weight:bold">CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=CheckGrid_Handle(varargin{:});
-} 
-close all
-figh=figure,hold on
-
-figh = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
-
-      Number: 1
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('figh', 'var'), matlab.graphics.internal.getForDisplay('figh', figh, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('figh'), end">all properties</a>
-
-CheckGrid(newGrid.refined,figh,'r--')
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('findobj')" style="font-weight:bold">findobj</a>
-Incomplete parameter-value pair.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_GridCheck>CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m', 24)" style="font-weight:bold">include_GridCheck>CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m',24,0)">line 24</a>)
-        axh=findobj(figh,'type','axes');
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m', 6)" style="font-weight:bold">CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=CheckGrid_Handle(varargin{:});
-} 
-matlab.internal.language.introspective.errorDocCallback('include_GridCheck>CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m', 24)
-figh=figure,hold on
-
-figh = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (2) with properties:
-
-      Number: 2
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('figh', 'var'), matlab.graphics.internal.getForDisplay('figh', figh, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('figh'), end">all properties</a>
-
-CheckGrid(newGrid.refined,1,figh,'r--')
-CheckGrid(oldGrid.refined,figh,'b--')
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('findobj')" style="font-weight:bold">findobj</a>
-Incomplete parameter-value pair.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('include_GridCheck>CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m', 24)" style="font-weight:bold">include_GridCheck>CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Include_Files\include_GridCheck.m',24,0)">line 24</a>)
-        axh=findobj(figh,'type','axes');
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('CheckGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m', 6)" style="font-weight:bold">CheckGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Automated_Function_Directory\CheckGrid.m',6,0)">line 6</a>)
-[varargout{1:nOut}]=CheckGrid_Handle(varargin{:});
-} 
-CheckGrid(oldGrid.refined,1,figh,'b--')
-close all
-clc
-figh=figure,hold on
-
-figh = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
-
-      Number: 1
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('figh', 'var'), matlab.graphics.internal.getForDisplay('figh', figh, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('figh'), end">all properties</a>
-
-CheckGrid(newGrid.refined,1,figh,'r-',false)
-CheckGrid(oldGrid.refined,1,figh,'b--',false)
-figh=figure,hold on
-
-figh = 
-
-  <a href="matlab:helpPopup matlab.ui.Figure" style="font-weight:bold">Figure</a> (1) with properties:
-
-      Number: 1
-        Name: ''
-       Color: [0.9400 0.9400 0.9400]
-    Position: [680 558 560 420]
-       Units: 'pixels'
-
-  Show <a href="matlab:if exist('figh', 'var'), matlab.graphics.internal.getForDisplay('figh', figh, 'matlab.ui.Figure'), else, matlab.graphics.internal.getForDisplay('figh'), end">all properties</a>
-
-
-CheckGrid(oldGrid.refined,1,figh,'b--',false)
-CheckGrid(newGrid.refined,1,figh,'r-',false)
-edit GridRefinement.m
-[gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
-        GridRefinement(newGrid,newParam.parametrisation)
-{Reference to non-existent field 'index'.
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement>IdentifyRefineCell', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m', 65)" style="font-weight:bold">GridRefinement>IdentifyRefineCell</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m',65,0)">line 65</a>)
-            cellRefine=[gridreshape.cell(:).index];
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement>RefineGrid', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m', 44)" style="font-weight:bold">GridRefinement>RefineGrid</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m',44,0)">line 44</a>)
-    [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine);
-
-Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridRefinement', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m', 28)" style="font-weight:bold">GridRefinement</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Active_Build\Parametrisation\GridRefinement.m',28,0)">line 28</a>)
-    [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
-} 
-[gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
-GridRefinement(newGrid.refined,newParam.parametrisation)
-got here fine!
-
-     OUTPUT:Skipped
-Calculations Started . . .
-***** START GRID REFINEMENT 1 of 1 *****
-
-     OUTPUT:Skipped
-    ACTION: Template Generated
-    ACTION: Refinement Targets Identified
-    ACTION: Edges Refined
-    ACTION: Cells Refined
-     OUTPUT:SkippedOutput Grid . . .Edge . . .Vertex . . .Cell . . .done !
-Connect . . .Edge . . .Cell . . .
-gridrefined2 = 
-
-      edge: [3712x1 struct]
-    vertex: [1921x1 struct]
-      cell: [1792x1 struct]
-
-
-connectstructinfo = 
-
-    edge: [256x1 struct]
-    cell: [112x1 struct]
-
-
-unstructuredrefined = 
-
-      edge: [1x1 struct]
-    vertex: [1x1 struct]
-      cell: [1x1 struct]
-
-
-loop = 
-
-    vertex: [1x1 struct]
-      edge: [1x1 struct]
-
-cellPat=reshape(1:4*3,[4 3])
-
-cellPat =
-
-     1     5     9
-     2     6    10
-     3     7    11
-     4     8    12
-
-mod([3 4 5],1)
-
-ans =
-
-     0     0     0
-
-mod([3 4 5],2)
-
-ans =
-
-     1     0     1
-
-mod([3 4 5],6)
-
-ans =
-
-     3     4     5
-
-mod([3 4 5],[1 2])
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mod')" style="font-weight:bold">mod</a>
-Matrix dimensions must agree.
-} 
-mod([3 4 5],[1 2]')
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mod')" style="font-weight:bold">mod</a>
-Matrix dimensions must agree.
-} 
-mod([3 4],[1 2]')
-{Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('mod')" style="font-weight:bold">mod</a>
-Matrix dimensions must agree.
-} 
-mod([3 4],[1 2])
-
-ans =
-
-     0     0
-
-help cat
- <strong>cat</strong> Concatenate arrays.
-    <strong>cat</strong>(DIM,A,B) concatenates the arrays A and B along
-    the dimension DIM.  
-    <strong>cat</strong>(2,A,B) is the same as [A,B].
-    <strong>cat</strong>(1,A,B) is the same as [A;B].
- 
-    B = <strong>cat</strong>(DIM,A1,A2,A3,A4,...) concatenates the input
-    arrays A1, A2, etc. along the dimension DIM.
- 
-    When used with comma separated list syntax, <strong>cat</strong>(DIM,C{:}) or 
-    <strong>cat</strong>(DIM,C.FIELD) is a convenient way to concatenate a cell or
-    structure array containing numeric matrices into a single matrix.
- 
-    Examples:
-      a = magic(3); b = pascal(3); 
-      c = cat(4,a,b)
-    produces a 3-by-3-by-1-by-2 result and
-      s = {a b};
-      for i=1:length(s), 
-        siz{i} = size(s{i});
-      end
-      sizes = cat(1,siz{:})
-    produces a 2-by-2 array of size vectors.
-      
-    See also <a href="matlab:help num2cell">num2cell</a>.
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('cat')">Other functions named cat</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc cat">doc cat</a>
-
-GridMatching([],[],5,3)
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',25,1)">25  </a>end
-if system_dependent('IsDebugMode')==1, dbquit; end
-GridMatching([],[],5,3)
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',63,1)">63  </a>end
-min(starts,[],3)-max(ends,[],3)
-
-ans =
-
-         0   -0.2000   -0.4000   -0.6000   -0.8000
-   -0.3333   -0.1333   -0.0667   -0.2667   -0.4667
-   -0.6667   -0.4667   -0.2667   -0.0667   -0.1333
-
-starts
-
-starts(:,:,1) =
-
-         0         0         0         0         0
-    0.3333    0.3333    0.3333    0.3333    0.3333
-    0.6667    0.6667    0.6667    0.6667    0.6667
-
-
-starts(:,:,2) =
-
-         0    0.2000    0.4000    0.6000    0.8000
-         0    0.2000    0.4000    0.6000    0.8000
-         0    0.2000    0.4000    0.6000    0.8000
-
-GridMatching([],[],5,3)
-
-coeffs =
-
-     0     0     0     0     0
-     0     0     0     0     0
-     0     0     0     0     0
-
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',63,1)">63  </a>end
-min(ends,[],3)-max(starts,[],3)
-
-ans =
-
-         0   -0.2000   -0.4000   -0.6000   -0.8000
-   -0.3333   -0.1333   -0.0667   -0.2667   -0.4667
-   -0.6667   -0.4667   -0.2667   -0.0667   -0.1333
-
-min(ends,[],3)-max(starts,[],3)
-{Undefined function or variable 'ends'.
-} 
-GridMatching([],[],5,3)
-
-coeffs =
-
-    0.2000    0.1333         0         0         0
-         0    0.0667    0.2000    0.0667         0
-         0         0         0    0.1333    0.2000
-
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',63,1)">63  </a>end
-GridMatching([],[],5,3)
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',63,1)">63  </a>end
-GridMatching([],[],5,3)
-
-coeffs =
-
-    1.0000    0.6667         0         0         0
-         0    0.3333    1.0000    0.3333         0
-         0         0         0    0.6667    1.0000
-
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',63,1)">63  </a>end
-if system_dependent('IsDebugMode')==1, dbquit; end
-GridMatching([],[],3,5)
-
-coeffs =
-
-    0.6000         0         0
-    0.4000    0.2000         0
-         0    0.6000         0
-         0    0.2000    0.4000
-         0         0    0.6000
-
-GridMatching([],[],[2 3],[2 5])
-[Warning: New Mesh is finer than old refined mesh, Data will not pass well] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 34)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',34,0)">line 34</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)] 
-[Warning: Meshes do not match exactly data transfer will be approximate] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 37)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',37,0)">line 37</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)] 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',46,1)">46  </a>end
-if system_dependent('IsDebugMode')==1, dbquit; end
-GridMatching([],[],[2 5],[2 3])
-[Warning: Meshes do not match exactly data transfer will be approximate] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 37)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',37,0)">line 37</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)] 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',46,1)">46  </a>end
-linearCoeffs{:}
-
-ans =
-
-     1     0
-     0     1
-
-
-ans =
-
-    1.0000    0.6667         0         0         0
-         0    0.3333    1.0000    0.3333         0
-         0         0         0    0.6667    1.0000
-
-indN
-
-indN =
-
-     1     2     3     4     5     6
-
-indO
-
-indO =
-
-     1     2     3     4     5     6     7     8     9    10
-
-help diag
- <strong>diag</strong> Diagonal matrices and diagonals of a matrix.
-    <strong>diag</strong>(V,K) when V is a vector with N components is a square matrix
-    of order N+ABS(K) with the elements of V on the K-th diagonal. K = 0
-    is the main diagonal, K > 0 is above the main diagonal and K < 0
-    is below the main diagonal. 
- 
-    <strong>diag</strong>(V) is the same as <strong>diag</strong>(V,0) and puts V on the main diagonal.
- 
-    <strong>diag</strong>(X,K) when X is a matrix is a column vector formed from
-    the elements of the K-th diagonal of X.
- 
-    <strong>diag</strong>(X) is the main diagonal of X. <strong>diag</strong>(<strong>diag</strong>(X)) is a diagonal matrix.
- 
-    Example
-       m = 5;
-       diag(-m:m) + diag(ones(2*m,1),1) + diag(ones(2*m,1),-1)
-    produces a tridiagonal matrix of order 2*m+1.
- 
-    See also <a href="matlab:help spdiags">spdiags</a>, <a href="matlab:help triu">triu</a>, <a href="matlab:help tril">tril</a>, <a href="matlab:help blkdiag">blkdiag</a>.
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('diag')">Other functions named diag</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc diag">doc diag</a>
-
-help spdiags
- <strong>spdiags</strong> Sparse matrix formed from diagonals.
-    <strong>spdiags</strong>, which generalizes the function "diag", deals with three
-    matrices, in various combinations, as both input and output.
- 
-    [B,d] = <strong>spdiags</strong>(A) extracts all nonzero diagonals from the m-by-n
-    matrix A.  B is a min(m,n)-by-p matrix whose columns are the p
-    nonzero diagonals of A.  d is a vector of length p whose integer
-    components specify the diagonals in A.
- 
-    B = <strong>spdiags</strong>(A,d) extracts the diagonals specified by d.
-    A = <strong>spdiags</strong>(B,d,A) replaces the diagonals of A specified by d with
-        the columns of B.  The output is sparse.
-    A = <strong>spdiags</strong>(B,d,m,n) creates an m-by-n sparse matrix from the
-        columns of B and places them along the diagonals specified by d.
- 
-    Roughly, A, B and d are related by
-        for k = 1:p
-            B(:,k) = diag(A,d(k))
-        end
- 
-    Example: These commands generate a sparse tridiagonal representation
-    of the classic second difference operator on n points.
-        e = ones(n,1);
-        A = spdiags([e -2*e e], -1:1, n, n)
- 
-    Some elements of B, corresponding to positions "outside" of A, are
-    not actually used.  They are not referenced when B is an input and
-    are set to zero when B is an output.  If a column of B is longer than
-    the diagonal it's representing, elements of super-diagonals of A
-    correspond to the lower part of the column of B, while elements of
-    sub-diagonals of A correspond to the upper part of the column of B.
- 
-    Example: This uses the top of the first column of B for the second
-    sub-diagonal and the bottom of the third column of B for the first
-    super-diagonal.
-        B = repmat((1:n)',1,3);
-        S = spdiags(B,[-2 0 1],n,n);
- 
-    See also <a href="matlab:help diag">diag</a>, <a href="matlab:help speye">speye</a>.
-
-    Reference page in Help browser
-       <a href="matlab:doc spdiags">doc spdiags</a>
-
-help speye
- <strong>speye</strong>  Sparse identity matrix.
-    <strong>speye</strong>(M,N) and <strong>speye</strong>([M N]) form an M-by-N sparse 
-    matrix with 1's on the main diagonal.  <strong>speye</strong>(N) 
-    abbreviates <strong>speye</strong>(N,N).
- 
-    <strong>speye</strong>(SIZE(A)) is a space-saving SPARSE(EYE(SIZE(A)))
-    if A is a 2-D matrix.
- 
-    See also <a href="matlab:help spones">spones</a>, <a href="matlab:help spdiags">spdiags</a>, <a href="matlab:help spalloc">spalloc</a>, <a href="matlab:help sprand">sprand</a>, <a href="matlab:help sprandn">sprandn</a>.
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('speye')">Other functions named speye</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc speye">doc speye</a>
-
-help sprand
- <strong>sprand</strong> Sparse uniformly distributed random matrix.
-    R = <strong>sprand</strong>(S) has the same sparsity structure as S, but uniformly
-        distributed random entries.
- 
-    R = <strong>sprand</strong>(m,n,density) is a random, m-by-n, sparse matrix with 
-        approximately density*m*n uniformly distributed nonzero entries.
-        <strong>sprand</strong> is designed to produce large matrices with small density
-        and will generate significantly fewer nonzeros than requested
-        if m*n is small or density is large.
- 
-    R = <strong>sprand</strong>(m,n,density,rc) also has reciprocal condition number
-        approximately equal to rc.  R is constructed from a sum of
-        matrices of rank one. 
- 
-        If rc is a vector of length lr <= min(m,n), then R has 
-        rc as its first lr singular values, all others are zero.
-        In this case, R is generated by random plane rotations
-        applied to a diagonal matrix with the given singular values
-        It has a great deal of topological and algebraic structure.
- 
-    See also <a href="matlab:help sprandn">sprandn</a>, <a href="matlab:help sprandsym">sprandsym</a>.
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('sprand')">Other functions named sprand</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc sprand">doc sprand</a>
-
-help repmat
- <strong>repmat</strong> Replicate and tile an array.
-    B = <strong>repmat</strong>(A,M,N) or B = <strong>repmat</strong>(A,[M,N]) creates a large matrix B 
-    consisting of an M-by-N tiling of copies of A. If A is a matrix, 
-    the size of B is [size(A,1)*M, size(A,2)*N].
- 
-    B = <strong>repmat</strong>(A,N) creates an N-by-N tiling.  
-    
-    B = <strong>repmat</strong>(A,P1,P2,...,Pn) or B = <strong>repmat</strong>(A,[P1,P2,...,Pn]) tiles the array 
-    A to produce an n-dimensional array B composed of copies of A. The size 
-    of B is [size(A,1)*P1, size(A,2)*P2, ..., size(A,n)*Pn].
-    If A is m-dimensional with m > n, an m-dimensional array B is returned.
-    In this case, the size of B is [size(A,1)*P1, size(A,2)*P2, ..., 
-    size(A,n)*Pn, size(A, n+1), ..., size(A, m)].
- 
-    <strong>repmat</strong>(A,M,N) when A is a scalar is commonly used to produce an M-by-N
-    matrix filled with A's value and having A's CLASS. For certain values,
-    you may achieve the same results using other functions. Namely,
-       <strong>repmat</strong>(NAN,M,N)           is the same as   NAN(M,N)
-       <strong>repmat</strong>(SINGLE(INF),M,N)   is the same as   INF(M,N,'single')
-       <strong>repmat</strong>(INT8(0),M,N)       is the same as   ZEROS(M,N,'int8')
-       <strong>repmat</strong>(UINT32(1),M,N)     is the same as   ONES(M,N,'uint32')
-       <strong>repmat</strong>(EPS,M,N)           is the same as   EPS(ONES(M,N))
- 
-    Example:
-        repmat(magic(2), 2, 3)
-        repmat(uint8(5), 2, 3)
- 
-    Class support for input A:
-       float: double, single
-       integer: uint8, int8, uint16, int16, uint32, int32, uint64, int64
-       char, logical
- 
-    See also <a href="matlab:help bsxfun">bsxfun</a>, <a href="matlab:help meshgrid">meshgrid</a>, <a href="matlab:help ones">ones</a>, <a href="matlab:help zeros">zeros</a>, <a href="matlab:help nan">nan</a>, <a href="matlab:help inf">inf</a>.
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('repmat')">Other functions named repmat</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc repmat">doc repmat</a>
-
-help bsxfun
-  <strong>bsxfun</strong>  Binary Singleton Expansion Function
-    C = <strong>bsxfun</strong>(FUNC,A,B) applies the element-by-element binary operation
-    specified by the function handle FUNC to arrays A and B, with singleton
-    expansion enabled. FUNC can be one of the following built-in functions:
- 
-                @plus           Plus
-                @minus          Minus
-                @times          Array multiply
-                @rdivide        Right array divide
-                @ldivide        Left array divide
-                @power          Array power
-                @max            Binary maximum
-                @min            Binary minimum
-                @rem            Remainder after division
-                @mod            Modulus after division
-                @atan2	        Four-quadrant inverse tangent; result in radians
-                @atan2d	        Four-quadrant inverse tangent; result in dgrees
-                @hypot	        Square root of sum of squares
-                @eq             Equal
-                @ne             Not equal
-                @lt             Less than
-                @le             Less than or equal
-                @gt             Greater than
-                @ge             Greater than or equal
-                @and            Element-wise logical AND
-                @or             Element-wise logical OR
-                @xor            Logical EXCLUSIVE OR
- 
-    FUNC can also be a handle to any binary element-wise function not listed
-    above. A binary element-wise function in the form of C = FUNC(A,B)
-    accepts arrays A and B of arbitrary but equal size and returns output
-    of the same size. Each element in the output array C is the result
-    of an operation on the corresponding elements of A and B only. FUNC must
-    also support scalar expansion, such that if A or B is a scalar, C is the
-    result of applying the scalar to every element in the other input array.
- 
-    The corresponding dimensions of A and B must be equal to each other, or 
-    equal to one. Whenever a dimension of A or B is singleton (equal to 
-    one), <strong>bsxfun</strong> virtually replicates the array along that dimension to 
-    match the other array. In the case where a dimension of A or B is 
-    singleton and the corresponding dimension in the other array is zero,
-    <strong>bsxfun</strong> virtually diminishes the singleton dimension to zero.
- 
-    The size of the output array C is equal to
-    max(size(A),size(B)).*(size(A)>0 & size(B)>0). For example, if
-    size(A) == [2 5 4] and size(B) == [2 1 4 3], then size(C) == [2 5 4 3].
- 
-    Examples:
- 
-    Subtract the column means from the matrix A:
-      A = magic(5);
-      A = bsxfun(@minus, A, mean(A));
- 
-    Scale each row of A by its maximum absolute value:
-      A = rand(5);
-      A = bsxfun(@rdivide, A, max(abs(A),[],2));
- 
-    Compute z(x, y) = x.*sin(y) on a grid:
-      x = 1:10;
-      y = x.';
-      z = bsxfun(@(x, y) x.*sin(y), x, y);
- 
-    See also <a href="matlab:help repmat">repmat</a>, <a href="matlab:help arrayfun">arrayfun</a>
-
-    <a href="matlab:matlab.internal.language.introspective.displayOverloads('bsxfun')">Other functions named bsxfun</a>
-
-    Reference page in Help browser
-       <a href="matlab:doc bsxfun">doc bsxfun</a>
-
-GridMatching([],[],[2 5],[2 3])
-[Warning: Meshes do not match exactly data transfer will be approximate] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 37)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',37,0)">line 37</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)] 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',48,1)">48  </a>end
-GridMatching([],[],[2 5],[2 3])
-[Warning: Meshes do not match exactly data transfer will be approximate] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 37)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',37,0)">line 37</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)] 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',49,1)">49  </a>end
-mod(0:4:20*4,20)+1
-
-ans =
-
-  Columns 1 through 16
-
-     1     5     9    13    17     1     5     9    13    17     1     5     9    13    17     1
-
-  Columns 17 through 21
-
-     5     9    13    17     1
-
-mod(0:4:20*4,19)+1
-
-ans =
-
-  Columns 1 through 16
-
-     1     5     9    13    17     2     6    10    14    18     3     7    11    15    19     4
-
-  Columns 17 through 21
-
-     8    12    16     1     5
-
-mod(1:4:20*4,20)
-
-ans =
-
-  Columns 1 through 16
-
-     1     5     9    13    17     1     5     9    13    17     1     5     9    13    17     1
-
-  Columns 17 through 20
-
-     5     9    13    17
-
-mod(0:4:20*4-1,19)
-
-ans =
-
-  Columns 1 through 16
-
-     0     4     8    12    16     1     5     9    13    17     2     6    10    14    18     3
-
-  Columns 17 through 20
-
-     7    11    15     0
-
-mod(0:4:20*4-1,19)+1
-
-ans =
-
-  Columns 1 through 16
-
-     1     5     9    13    17     2     6    10    14    18     3     7    11    15    19     4
-
-  Columns 17 through 20
-
-     8    12    16     1
-
- function []=GridMatching(origGrid,newGrid,refineOrig,refineNew)
- |
-{Error: Function definitions are not permitted in this context.
-} 
-GridMatching([],[],[2 5],[2 3])
-[Warning: Meshes do not match exactly data transfer will be approximate] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 37)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',37,0)">line 37</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)] 
-<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',52,1)">52  </a>end
-GridMatching([],[],[4 5],[2 3])
-[Warning: Meshes do not match exactly data transfer will be approximate] 
-[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching>BuildCellMatchTemplate', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 37)" style="font-weight:bold">GridMatching>BuildCellMatchTemplate</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',37,0)">line 37</a>)
-  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('GridMatching', 'C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m', 22)" style="font-weight:bold">GridMatching</a> (<a href="matlab: opentoline('C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\GridMatching.m',22,0)">line 22</a>)
-  In <a href="matlab:matlab.internal.language.introspec
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+    Generate Cell Centred Grid
+    Establish Cell Colume Information
+    Find Border Vertices
+    Initialise Snaxel Grid
+  Initialisation time:00:00:01:076
+  Start Time Stepping
+  20 Steps Performed
+  Iteration Time:00:00:06:602
+  Volume converged to 1.75661e-03
+Time Elapsed:00:00:09:457
+SNAKE PROCESS end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:00:10:426
+INITIALISE OPTIMISATION PROCESS end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 1 start
+30-Sep-2016 10:57:43
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  71 Steps Performed
+  Iteration Time:00:00:23:218
+  Volume converged to 1.05052e-10
+Time Elapsed:00:00:24:233
+SNAKE PROCESS end
+-----------------------
+  
+
+    Build Fill information from sensitivity .... done!
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:294
+  Volume converged to 4.83120e-11
+Time Elapsed:00:00:25:605
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:357
+  Volume converged to 5.02233e-11
+Time Elapsed:00:00:25:511
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:967
+  Volume converged to 5.01751e-11
+Time Elapsed:00:00:25:200
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:951
+  Volume converged to 5.02232e-11
+Time Elapsed:00:00:25:153
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:626
+  Volume converged to 5.02531e-11
+Time Elapsed:00:00:24:812
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:938
+  Volume converged to 5.01759e-11
+Time Elapsed:00:00:25:170
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:047
+  Volume converged to 5.02041e-11
+Time Elapsed:00:00:25:248
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:049
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:24:044
+  Volume converged to 5.20601e-11
+Time Elapsed:00:00:25:264
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:642
+  Volume converged to 5.02200e-11
+Time Elapsed:00:00:23:734
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:954
+  Volume converged to 5.02027e-11
+Time Elapsed:00:00:24:077
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:907
+  Volume converged to 5.06853e-11
+Time Elapsed:00:00:24:014
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:281
+  Volume converged to 5.06843e-11
+Time Elapsed:00:00:24:435
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:856
+  Volume converged to 5.02522e-11
+Time Elapsed:00:00:24:026
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:325
+  Volume converged to 5.01924e-11
+Time Elapsed:00:00:24:416
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:981
+  Volume converged to 5.02232e-11
+Time Elapsed:00:00:24:152
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:122
+  Volume converged to 5.20603e-11
+Time Elapsed:00:00:24:463
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:063
+  Volume converged to 5.02223e-11
+Time Elapsed:00:00:24:218
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:188
+  Volume converged to 4.97541e-11
+Time Elapsed:00:00:24:327
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:344
+  Volume converged to 5.02515e-11
+Time Elapsed:00:00:24:436
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:985
+  Volume converged to 5.20600e-11
+Time Elapsed:00:00:24:124
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:22:968
+  Volume converged to 5.02041e-11
+Time Elapsed:00:00:24:076
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:108
+  Volume converged to 5.06841e-11
+Time Elapsed:00:00:24:311
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:046
+  Volume converged to 4.83136e-11
+Time Elapsed:00:00:24:310
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:342
+  Volume converged to 5.06849e-11
+Time Elapsed:00:00:24:513
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:679
+  Volume converged to 5.02037e-11
+Time Elapsed:00:00:24:709
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:022
+  Volume converged to 5.02519e-11
+Time Elapsed:00:00:24:129
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:178
+  Volume converged to 4.97540e-11
+Time Elapsed:00:00:24:288
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:536
+  Volume converged to 5.20600e-11
+Time Elapsed:00:00:24:818
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:347
+  Volume converged to 5.01930e-11
+Time Elapsed:00:00:24:642
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:721
+  Volume converged to 5.01749e-11
+Time Elapsed:00:00:24:877
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:378
+  Volume converged to 5.01924e-11
+Time Elapsed:00:00:24:534
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:206
+  Volume converged to 5.02198e-11
+Time Elapsed:00:00:24:346
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:387
+  Volume converged to 5.02207e-11
+Time Elapsed:00:00:24:559
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:418
+  Volume converged to 5.02202e-11
+Time Elapsed:00:00:24:572
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:402
+  Volume converged to 4.97536e-11
+Time Elapsed:00:00:24:619
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:605
+  Volume converged to 5.01749e-11
+Time Elapsed:00:00:24:838
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:822
+  Volume converged to 5.01919e-11
+Time Elapsed:00:00:25:008
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:806
+  Volume converged to 4.83131e-11
+Time Elapsed:00:00:24:992
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:853
+  Volume converged to 4.97535e-11
+Time Elapsed:00:00:24:992
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  58 Steps Performed
+  Iteration Time:00:00:23:791
+  Volume converged to 4.83132e-11
+Time Elapsed:00:00:24:868
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:031
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:37:795
+ITERATION 1 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 2 start
+30-Sep-2016 11:02:21
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  67 Steps Performed
+  Iteration Time:00:00:25:452
+  Volume converged to 5.86217e-11
+Time Elapsed:00:00:26:685
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  69 Steps Performed
+  Iteration Time:00:00:26:638
+  Volume converged to 9.89345e-11
+Time Elapsed:00:00:27:793
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  91 Steps Performed
+  Iteration Time:00:00:35:111
+  Volume converged to 5.63531e-11
+Time Elapsed:00:00:36:297
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  95 Steps Performed
+  Iteration Time:00:00:36:828
+  Volume converged to 4.51581e-11
+Time Elapsed:00:00:38:013
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  66 Steps Performed
+  Iteration Time:00:00:24:822
+  Volume converged to 1.07914e-10
+Time Elapsed:00:00:26:008
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  70 Steps Performed
+  Iteration Time:00:00:27:367
+  Volume converged to 9.39762e-11
+Time Elapsed:00:00:28:537
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  71 Steps Performed
+  Iteration Time:00:00:27:585
+  Volume converged to 1.05053e-10
+Time Elapsed:00:00:28:693
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  93 Steps Performed
+  Iteration Time:00:00:36:400
+  Volume converged to 5.52220e-11
+Time Elapsed:00:00:37:585
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  66 Steps Performed
+  Iteration Time:00:00:24:840
+  Volume converged to 3.42615e-11
+Time Elapsed:00:00:25:996
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  65 Steps Performed
+  Iteration Time:00:00:24:294
+  Volume converged to 6.44880e-11
+Time Elapsed:00:00:25:386
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  65 Steps Performed
+  Iteration Time:00:00:22:515
+  Volume converged to 2.54048e-10
+Time Elapsed:00:00:23:514
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:21:067
+  Volume converged to 1.22968e-10
+Time Elapsed:00:00:22:049
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:01:38:193
+ITERATION 2 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 3 start
+30-Sep-2016 11:03:59
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:20:363
+  Volume converged to 1.22968e-10
+Time Elapsed:00:00:21:363
+SNAKE PROCESS end
+-----------------------
+  
+
+    Build Fill information from sensitivity .... done!
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:013
+  Volume converged to 9.61623e-11
+Time Elapsed:00:00:25:136
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:076
+  Volume converged to 9.62116e-11
+Time Elapsed:00:00:25:152
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:434
+  Volume converged to 9.62116e-11
+Time Elapsed:00:00:25:542
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  69 Steps Performed
+  Iteration Time:00:00:25:245
+  Volume converged to 2.15537e-10
+Time Elapsed:00:00:26:448
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:993
+  Volume converged to 9.52504e-11
+Time Elapsed:00:00:26:055
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:057
+  Volume converged to 9.62126e-11
+Time Elapsed:00:00:26:555
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:964
+  Volume converged to 9.62116e-11
+Time Elapsed:00:00:26:211
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:931
+  Volume converged to 9.62125e-11
+Time Elapsed:00:00:26:179
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:200
+  Volume converged to 8.05069e-11
+Time Elapsed:00:00:25:324
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:917
+  Volume converged to 9.62610e-11
+Time Elapsed:00:00:25:994
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:652
+  Volume converged to 9.62107e-11
+Time Elapsed:00:00:25:792
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:544
+  Volume converged to 9.62119e-11
+Time Elapsed:00:00:25:651
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:777
+  Volume converged to 1.21029e-10
+Time Elapsed:00:00:25:868
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:886
+  Volume converged to 9.61619e-11
+Time Elapsed:00:00:26:055
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:777
+  Volume converged to 9.62115e-11
+Time Elapsed:00:00:26:804
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:917
+  Volume converged to 9.73146e-11
+Time Elapsed:00:00:26:867
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:450
+  Volume converged to 9.62122e-11
+Time Elapsed:00:00:25:604
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:247
+  Volume converged to 9.52501e-11
+Time Elapsed:00:00:25:308
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  69 Steps Performed
+  Iteration Time:00:00:24:855
+  Volume converged to 9.98322e-11
+Time Elapsed:00:00:26:119
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:996
+  Volume converged to 9.62116e-11
+Time Elapsed:00:00:26:166
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:056
+  Volume converged to 9.62117e-11
+Time Elapsed:00:00:26:288
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:119
+  Volume converged to 8.05072e-11
+Time Elapsed:00:00:26:414
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:994
+  Volume converged to 9.62112e-11
+Time Elapsed:00:00:26:306
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:978
+  Volume converged to 9.62105e-11
+Time Elapsed:00:00:26:198
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:26:479
+  Volume converged to 9.62117e-11
+Time Elapsed:00:00:27:713
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:047
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:26:091
+  Volume converged to 1.21028e-10
+Time Elapsed:00:00:27:401
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:652
+  Volume converged to 9.62113e-11
+Time Elapsed:00:00:27:258
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:26:026
+  Volume converged to 9.62099e-11
+Time Elapsed:00:00:27:244
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:353
+  Volume converged to 9.73149e-11
+Time Elapsed:00:00:25:414
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:993
+  Volume converged to 9.62125e-11
+Time Elapsed:00:00:26:117
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:619
+  Volume converged to 9.62118e-11
+Time Elapsed:00:00:25:790
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:025
+  Volume converged to 9.62110e-11
+Time Elapsed:00:00:26:164
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  69 Steps Performed
+  Iteration Time:00:00:25:218
+  Volume converged to 9.98325e-11
+Time Elapsed:00:00:26:309
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:093
+  Volume converged to 9.62610e-11
+Time Elapsed:00:00:25:248
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:436
+  Volume converged to 9.62117e-11
+Time Elapsed:00:00:25:530
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:610
+  Volume converged to 9.62119e-11
+Time Elapsed:00:00:25:796
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  69 Steps Performed
+  Iteration Time:00:00:25:106
+  Volume converged to 2.15537e-10
+Time Elapsed:00:00:26:463
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:013
+  Volume converged to 9.62120e-11
+Time Elapsed:00:00:26:323
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:822
+  Volume converged to 9.62112e-11
+Time Elapsed:00:00:25:961
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:900
+  Volume converged to 9.62107e-11
+Time Elapsed:00:00:26:070
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:015
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:016
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:04:49:935
+ITERATION 3 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+ITERATION 4 start
+30-Sep-2016 11:08:49
+--------------------------------------------------------------------------------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:635
+  Volume converged to 1.23662e-10
+Time Elapsed:00:00:25:727
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:838
+  Volume converged to 1.31810e-10
+Time Elapsed:00:00:25:961
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:822
+  Volume converged to 1.23144e-10
+Time Elapsed:00:00:25:976
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:25:087
+  Volume converged to 1.24900e-10
+Time Elapsed:00:00:26:257
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:356
+  Volume converged to 1.27282e-10
+Time Elapsed:00:00:25:480
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  67 Steps Performed
+  Iteration Time:00:00:24:418
+  Volume converged to 1.65218e-10
+Time Elapsed:00:00:25:589
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:016
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:996
+  Volume converged to 1.23319e-10
+Time Elapsed:00:00:26:119
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  68 Steps Performed
+  Iteration Time:00:00:24:653
+  Volume converged to 1.22968e-10
+Time Elapsed:00:00:26:010
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  66 Steps Performed
+  Iteration Time:00:00:22:644
+  Volume converged to 2.78644e-10
+Time Elapsed:00:00:23:986
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:015
+  Start Time Stepping
+  67 Steps Performed
+  Iteration Time:00:00:24:204
+  Volume converged to 1.86304e-10
+Time Elapsed:00:00:25:218
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:032
+  Start Time Stepping
+  67 Steps Performed
+  Iteration Time:00:00:24:079
+  Volume converged to 1.94430e-10
+Time Elapsed:00:00:25:187
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+SNAKE PROCESS start
+  Start initialisation
+  Initialisation time:00:00:00:031
+  Start Time Stepping
+  71 Steps Performed
+  Iteration Time:00:00:24:672
+  Volume converged to 1.50568e-10
+Time Elapsed:00:00:25:717
+SNAKE PROCESS end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:016
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Calculate Objective - InverseDesign start
+    Time Elapsed:00:00:00:000
+Calculate Objective - InverseDesign end
+-----------------------
+  
+  
+-----------------------
+Generate New Population start
+    Time Elapsed:00:00:00:000
+Generate New Population end
+-----------------------
+  
+  
+--------------------------------------------------------------------------------------------
+    Time Elapsed:00:01:19:779
+ITERATION 4 end
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+  
+  
+--------------------------------------------------------------------------------------------
+OPTIMISATION - test_refine end
+    Time Elapsed:00:12:36:518
+30-Sep-2016 10:57:33
+--------------------------------------------------------------------------------------------
+********************************************************************************************
+--------------------------------------------------------------------------------------------
+  
