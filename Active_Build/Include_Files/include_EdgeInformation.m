@@ -221,3 +221,34 @@ function [edgeFill]=EdgeFillInformation(unstructured)
 end
 
 %% Function cell centred grid extraction
+
+
+function normalVector=CalcNormVec2DClockWise(tanVector)
+    % Calculates a vector normal to another in 2D by rotating it 90 degrees
+    % clockwise
+    
+    %     normTan=norm(tanVector);
+    %     if tanVector(2)~=0
+    %         normalVector(1)=1;
+    %         normalVector(2)=-normalVector(1)*tanVector(1)/tanVector(2);
+    %         normalVector=normalVector/norm(normalVector)*normTan;
+    %     elseif tanVector(1)~=0
+    %         normalVector(2)=1;
+    %         normalVector(1)=-normalVector(2)*tanVector(2)/tanVector(1);
+    %         normalVector=normalVector/norm(normalVector)*normTan;
+    %     else
+    %         normalVector=[0 0];
+    %     end
+    
+    sizTanVec=size(tanVector);
+    tanVector=reshape(tanVector,[2 1]);
+    rot90=[0 1;-1 0];
+    normalVector=rot90*tanVector;
+    normalVector=reshape(normalVector,sizTanVec);
+    
+    %     if sum(abs(normalVector-normalVector2))>10^-15
+    %         if sum(abs(normalVector+normalVector2))>10^-15
+    %             warning('whyyyy?')
+    %         end
+    %     end
+end

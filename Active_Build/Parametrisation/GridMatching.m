@@ -80,17 +80,18 @@ end
 function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs)
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
-        {newGrid.connec.cell(:).newCellInd},...
-        {newGrid.connec.cell(:).oldCellInd},'UniformOutput',false));
-    oldIndsN=[origGrid.connec.cell(:).oldCellInd];
+        {newGrid.connec.cell(:).new},...
+        {newGrid.connec.cell(:).old},'UniformOutput',false));
+    
+    oldIndsN=[origGrid.connec.cell(:).old];
     oldSubsNewOrd=FindObjNum([],oldIndsNewOrd,oldIndsN);
-    newIndsNewOrd=[newGrid.connec.cell(:).newCellInd];
+    newIndsNewOrd=[newGrid.connec.cell(:).new];
     newSubGridOrd=FindObjNum([],[newGrid.cellrefined(:).index],newIndsNewOrd);
     oldIndRef=[origGrid.cellrefined(:).index];
     
     for ii=1:numel(newGrid.cellrefined)
         matchstruct(ii).newGridInd=newGrid.cellrefined(ii).index;
-        matchstruct(ii).oldGridInd=origGrid.connec.cell(oldSubsNewOrd(newSubGridOrd(ii))).newCellInd;
+        matchstruct(ii).oldGridInd=origGrid.connec.cell(oldSubsNewOrd(newSubGridOrd(ii))).new;
         matchstruct(ii).newvolume=newGrid.cellrefined(ii).volume;
         oldCellSub=FindObjNum([],matchstruct(ii).oldGridInd,oldIndRef);
         oldRefVec=vertcat(origGrid.cellrefined(oldCellSub).refineVec);

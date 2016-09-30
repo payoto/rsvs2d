@@ -225,7 +225,7 @@ function [varStr]=GenerateVariableString(startVar)
             
             openStr='[';
             closeStr=']';
-            varStrCell{1,1}=' ';
+            [varStrCell{1:max([m 1]),1:max([n 1])}]=deal(' ');
             for ii=1:m
                 for jj=1:n
                     varStrCell{ii,jj}=num2str(startVar(ii,jj),12);
@@ -247,7 +247,7 @@ function [varStr]=GenerateVariableString(startVar)
             end
             [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
         otherwise
-            if ~isempty(regexp(classVer,'int','once'))
+            if ~isempty(regexp(classVar,'int','once'))
                 
             openStr='[';
             closeStr=']';
@@ -267,6 +267,12 @@ function [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n)
 
     
     varStr=openStr;
+    if m==0
+        m=1;
+    end
+    if n==0
+        n=1;
+    end
     for ii=1:m-1
         for jj=1:n-1
             varStr=[varStr,varStrCell{ii,jj},','];
@@ -276,12 +282,7 @@ function [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n)
     for jj=1:n-1
         varStr=[varStr,varStrCell{m,jj},','];
     end
-    if m==0
-        m=1;
-    end
-    if n==0
-        n=1;
-    end
+    
     varStr=[varStr,varStrCell{m,n},closeStr];
 end
 
