@@ -75,6 +75,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.iterGap=1;
     paroptimgeneral.desvarconnec=[]; % Structure assigned later
     
+    paroptimgeneral.refineOptim=[];
+    
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
     paroptimgeneral.varOverflow='spill'; % 'truncate' 'spill'
@@ -789,9 +791,11 @@ end
 
 function paroptim=test_refine()
     [paroptim]=Inverse_CG();
-    paroptim.parameterisation.optiminit.refineCellLvl=[2 1; 2 1];
+    paroptim.refineOptim=[2 1; 2 1];
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
     paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.general.refineOptim=[2 1; 2 1];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;

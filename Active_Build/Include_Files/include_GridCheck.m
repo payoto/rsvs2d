@@ -100,3 +100,26 @@ function []=PlotCellGrid(figh,axh,unstructured,indexCell,format)
     
 end
 
+function []=PlotCellCentredGrid(cellCentredGrid,format,figh)
+    
+    plotPoints= @(points,format) plot(points([1:end,1],1),points([1:end,1],2),format);
+    if nargin<2
+        format='+';
+    end
+    if nargin<3
+        figh=figure;
+    end
+    figure(figh);
+    hold on
+    for ii=1:length(cellCentredGrid)
+        
+        
+        coord=vertcat(cellCentredGrid(ii).vertex(:).coord);
+        
+        plotPoints(coord,format)
+        text(mean(coord(:,1)),mean(coord(:,2)),int2str(cellCentredGrid(ii).index))
+    end
+    
+    
+    
+end
