@@ -32,7 +32,6 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
 end
 
 
-
 function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
         =ExecuteSnakes_Optim_snak(gridrefined,looprestart,baseGrid,connectstructinfo...
         ,param,paramspline,outinfo,nIter,nProf,nPop)
@@ -77,8 +76,6 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
     [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
     fprintf([textOut1,textOut,textOut2])
 end
-
-
 
 
 function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]...

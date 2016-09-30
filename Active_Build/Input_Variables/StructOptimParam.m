@@ -785,6 +785,20 @@ function [paroptim]=SmoothCG_outmis_Aero()
     paroptim.general.worker=4;
 end
 
+%% refinement
+
+function paroptim=test_refine()
+    [paroptim]=Inverse_CG();
+    paroptim.parameterisation.optiminit.refineCellLvl=[2 1; 2 1];
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
+    paroptim.obj.invdes.aeroName='0012';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniform';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=4;
+end
+
 %% Inverse Design Cases
 
 

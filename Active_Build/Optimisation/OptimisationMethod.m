@@ -67,7 +67,7 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
     varExtract={'cellLevels'};
     [cellLevels]=ExtractVariables(varExtract,paramoptim.parametrisation);
     nFill=length(iterCurr(1).fill);
-    
+    warning('Use of cellLevels here, needs to be deprecated')
     newPop=zeros([nPop,nFill]);
     
     % selection

@@ -62,6 +62,9 @@ function [varargout]=ExtractVariables(varNames,param)
     for ii=1:length(varNames)
         
         targLocation=regexp(varInStruct,varNames{ii}, 'once');
+%         if strcmp(varNames{ii},'cellLevels')
+%             warning('cellLevels used')
+%         end
         if isempty(targLocation) || varPosInStruct(targLocation)==0
             error([varNames{ii},' is an invalid variable name'])
         end

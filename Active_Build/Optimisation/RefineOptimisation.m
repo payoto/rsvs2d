@@ -51,7 +51,6 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
         [~]=PrintEnd(procStr,1,tStart);
     end
-    save('RefinementTest.mat')
     %% Finish Optimisation
     iterstruct(end)=[];
     [~]=PrintEnd(procStr2,0,tStartOpt);
@@ -169,12 +168,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     paramoptim=StructOptimParam(caseStr);
     [outinfo]=OptimisationOutput('init',paramoptim);
     [~,paramoptim]=ConstraintMethod('init',paramoptim,[]);
-    % Initialise Grid
-    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
-        =GridInitAndRefine(paramoptim.parametrisation);
-    [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [paramoptim.general.desvarconnec]=...
-        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    
+    
     % Start Parallel Pool
     
     if numel(gcp('nocreate'))==0
@@ -190,7 +185,17 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         parpool(poolName)
     end
     
+    
+    % Initialise Grid
+    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
+        =GridInitAndRefine(paramoptim.parametrisation);
+    [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
+    [paramoptim.general.desvarconnec]=...
+        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    
+    
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
+    
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim);
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
@@ -199,8 +204,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
         paramoptim.spline,outinfo,0,0,0);
     
-    [outinfo]=OptimisationOutput('iteration',...
-        paramoptim,0,outinfo,iterstruct(1),{});
+    
     
     [~]=PrintEnd(procStr,1,tStart);
 end
@@ -273,12 +277,12 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     [captureErrors{1:nPop}]=deal('');
     supportstruct=repmat(struct('loop',[]),[1,nPop]);
     parfor ii=1:nPop
-        %for ii=flip(1:nPop)
+    %for ii=flip(1:nPop)
         
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
             restartsnake,connectstructinfo,currentMember);
-        try
+         try
             % Normal Execution
             [population(ii),supportstruct(ii)]=NormalExecutionIteration(population(ii),newRefGrid,newrestartsnake,...
                 newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,paramoptim);
@@ -320,7 +324,7 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
     
     if strcmp('analytical',sensCalc)
         [supportstructsens]=ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
-            population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstructsens);
+        population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstructsens);
         
     end
     
@@ -523,16 +527,14 @@ end
 %% Parametrisation Interface
 
 function [unstructured,unstructReshape,gridrefined,connectstructinfo,...
-        unstructuredrefined,loop]=GridInitAndRefine(param,unstructReshape)
+        unstructuredrefined,loop]=GridInitAndRefine(param)
     % Executes the Grid Initialisation process
     procStr='INITIAL GRID OPERATIONS';
     [tStart]=PrintStart(procStr,2);
     
-    if nargin<2
-        [unstructured,~,unstructReshape]=GridInitialisationV2(param);
-    else
-        [unstructured]=ModifReshape(unstructReshape);
-    end
+    
+    [unstructured,~,unstructReshape]=...
+        GridInitialisationV2(param);
     [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
         GridRefinement(unstructReshape,param);
     
@@ -1122,8 +1124,6 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
         ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','');
     
 end
-
-
 
 %% Print to screen functions
 
