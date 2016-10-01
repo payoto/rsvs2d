@@ -11,7 +11,7 @@ function []=HandleRefinement(paramoptim,iterstruct,outinfo,oldBase,gridrefined,.
     % grid refinement
     [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
-        InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep)
+        InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep);
     
     % parameter update
     
@@ -37,8 +37,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     varNames={'optimCase'};
     optimCase=ExtractVariables(varNames,paramoptim);
     paramoptim=SetVariables(varNames,{[optimCase,'_',int2str(refStep)]},paramoptim);
-    varNames={'boundstr'};
-    boundstr=ExtractVariables(varNames,paramoptim.parametrisation);
+    varNames={'boundstr','corneractive','defaultCorner'};
+    [boundstr,corneractive,defaultCorner]=ExtractVariables(varNames,paramoptim.parametrisation);
     
     paramoptim.general.desvarconnec=[];
     
@@ -87,9 +87,16 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Generate new snake restarts.
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
         connectstructinfo,profloops(1).newFracs);
+    
+    if ~corneractive
+        [baseGrid,gridrefined]=ReduceCornerFrac(baseGrid,gridrefined,...
+        connectstructinfo,defaultCorner);
+    end
+    
     [gridrefined]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
-    CellCentreGridInformation(gridrefined)
+    
+    
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
         paramoptim.spline,outinfo,0,0,0);
@@ -224,6 +231,31 @@ function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
         newGrid.cell(activeCellSub(ii)).fill=newFracs(ii);
         newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
         [newRefGrid.cell(newSub).fill]=deal(newFracs(ii));
+    end
+    
+end
+
+
+function [newGrid,newRefGrid]=ReduceCornerFrac(baseGrid,refinedGrid,...
+        connectstructinfo,cornerFill)
+    
+    activeCell=~logical([baseGrid.cell(:).isactive]);
+    activeFill=logical([baseGrid.cell(:).fill]~=0);
+    activeCell=activeCell & activeFill;
+    activeInd=[baseGrid.cell((activeCell)).index];
+    
+    connecInd=[connectstructinfo.cell(:).old];
+    activConnecSub=FindObjNum([],activeInd,connecInd);
+    activeCellSub=find(activeCell);
+    refCellInd=[refinedGrid.cell(:).index];
+    
+    newGrid=baseGrid;
+    newRefGrid=refinedGrid;
+    
+    for ii=1:length(activeCellSub)
+        newGrid.cell(activeCellSub(ii)).fill=cornerFill;
+        newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
+        [newRefGrid.cell(newSub).fill]=deal(cornerFill);
     end
     
 end
