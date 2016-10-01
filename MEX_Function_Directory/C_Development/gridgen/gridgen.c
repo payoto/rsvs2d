@@ -10,7 +10,7 @@
 /*int dim() = 2; */
 #ifndef GRIDGEN_VAR_INCLUDED
 #define GRIDGEN_VAR_INCLUDED
-int plotFlag=1;
+int plotFlag=0;
 int outCount=0;
 /* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;
@@ -732,8 +732,6 @@ void BuildLvlTemplate(int domSize[dim()], int baseRefineLvl, int nLevelsInput,
 
 /* Grid Refinement Processes */
 
-
-
 void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRefineCell){
 	/* Identify cells which still need refinement */
 	/*	 This is done by going through the data and finding the  */
@@ -862,7 +860,7 @@ void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
 	
 	int ii,jj,ll,kk,kkStart,flagEdge;
 	
-	*posEdgeRefine=(int*)calloc(nCellRefine*nEdgepCell,sizeof(int));
+	*posEdgeRefine=(int*)calloc(nCellRefine*nEdgepCell+1,sizeof(int));
 	kk=0;
 	for(ii=0;ii<nEdge;ii++){
 		for(jj=0;jj<nCellRefine;jj++){
@@ -1004,7 +1002,7 @@ void ExtractEdgeChain(int *posEdge, int *indEdge,int nEdge ,int *ordPosEdge,
 		actInd=listIndVert[actPos];
 		ordIndVert[ii]=actInd;
 		if (actInd==0){
-			printf("\n **** active Vertex Index is 0 ii= %i ; nEdge= %i \n",ii,nEdge);
+			/*printf("\n **** active Vertex Index is 0 ii= %i ; nEdge= %i \n",ii,nEdge);*/
 			/*
 			for(ii=0;ii<nEdge;ii++){
 				listIndVert[2*ii]=edgestructAct[posEdge[ii]].vertex[0];
@@ -1153,9 +1151,10 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	
 	int ii,jj;
 	int minVertPos,cwPos;
-	int *newOrder;
+	int *newOrder,*newOrderEdge;
 	
 	newOrder=(int*)calloc(nEdge,sizeof(int));
+	newOrderEdge=(int*)calloc(nEdge,sizeof(int));
 	
 	cwPos=IsClockWiseChain(&minVertPos,nEdge, ordIndVert, ordPosVert, vertstructAct, nVertAct);
 	/*printf("\n lower left corner detected as %i isCW %i\n",ordIndVert[minVertPos], cwPos); */
@@ -1172,10 +1171,10 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	}
 	printf("\n");
 	*/
-	printf("				Cell Was Clockwise: %i\n",cwPos);
+	/*printf("				Cell Was Clockwise: %i\n",cwPos);*/
 	for(ii=0;ii<nEdge;ii++){
-		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*ii)%nEdge;
-		
+		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*(ii))%nEdge;
+		newOrderEdge[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*(ii+1))%nEdge;
 		/*printf("neworder: %i orderedPos: %i \n",newOrder[ii],ordIndVert[ii]); */
 	}
 	ReorderArray(ordIndVert, newOrder ,nEdge, sizeof(int));
@@ -1185,8 +1184,8 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*(ii+1))%nEdge;
 		printf(" %i ",newOrder[ii]);
 	}*/
-	ReorderArray(ordPosEdge, newOrder ,nEdge, sizeof(int));
-	ReorderArray(ordIndEdge, newOrder ,nEdge, sizeof(int));
+	ReorderArray(ordPosEdge, newOrderEdge ,nEdge, sizeof(int));
+	ReorderArray(ordIndEdge, newOrderEdge ,nEdge, sizeof(int));
 	/*
 	printf("\n  ");
 	for(ii=0;ii<nEdge;ii++){
@@ -1194,6 +1193,7 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	}
 	*/
 	free(newOrder);
+	free(newOrderEdge);
 }
 
 void GenerateIndMatch(int domSize[dim()], int posCellRefine ,int *posEdgeSideTemp,int *posVertSideTemp,int *posCellAddTemp,
@@ -1444,7 +1444,7 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	int *ordPosEdge=NULL, *ordIndEdge=NULL, *ordIndVert=NULL,*ordPosVert=NULL;
 	int nCurrEdge;
 	int nEdgepCell=0;
-	printf("Operating on cell %i;  ",indCellRefine);
+	/*printf("Operating on cell %i;  ",indCellRefine);*/
 	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
 			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid,nEdgepCell);
@@ -1563,7 +1563,7 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 	splitCellsInd=(int*)realloc(splitCellsInd,(nSplitCells+nCellRefine)*sizeof(int));
 	
 	for(ii=0;ii<nCellRefine;ii++){
-	printf("\n			Start Cell %i of %i \n",ii+1,nCellRefine);
+	/*printf("\n			Start Cell %i of %i \n",ii+1,nCellRefine);*/
 		 RefineCell(domSize,posCellRefine[ii],indCellRefine[ii],posEdgeSideTemp,
 			posVertSideTemp,posCellAddTemp,posEdgeAddTemp, posVertAddTemp);
 			
