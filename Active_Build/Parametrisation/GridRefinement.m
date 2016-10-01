@@ -28,11 +28,17 @@ function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
     [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
     
     [gridrefined2]=EdgePropertiesReshape(gridrefined);
+    [loop]=GenerateSnakStartLoop(gridrefined2,boundstr);
+    
+    [unstructuredrefined]=ModifReshape(gridrefined2);
+end
+
+function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
+    
     isEdge=[gridrefined2.edge(:).(boundstr{1})];
     cond=boundstr{3};
     [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
     
-    [unstructuredrefined]=ModifReshape(gridrefined2);
 end
 
 function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine)
