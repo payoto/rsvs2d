@@ -37,6 +37,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     varNames={'optimCase'};
     optimCase=ExtractVariables(varNames,paramoptim);
     paramoptim=SetVariables(varNames,{[optimCase,'_',int2str(refStep)]},paramoptim);
+    varNames={'boundstr'};
+    boundstr=ExtractVariables(varNames,paramoptim.parametrisation);
     
     paramoptim.general.desvarconnec=[];
     
@@ -85,7 +87,9 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Generate new snake restarts.
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
         connectstructinfo,profloops(1).newFracs);
-    
+    [gridrefined]=EdgePropertiesReshape(gridrefined);
+    [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
+    CellCentreGridInformation(gridrefined)
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
         paramoptim.spline,outinfo,0,0,0);
@@ -188,7 +192,7 @@ end
 
 function [profloops]=ConvertProfToFill(profloops,transformstruct)
     for ii=1:length(profloops)
-        volSubs=FindObjNum([],profloops(ii).refinevolfrac.index,transformstruct.indOld);
+        volSubs=FindObjNum([],transformstruct.indOld,profloops(ii).refinevolfrac.index);
         profloops(ii).newFracs=(transformstruct.coeff*...
             profloops(ii).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
     end
@@ -224,7 +228,13 @@ function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
     
 end
 
-
+function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
+    
+    isEdge=[gridrefined2.edge(:).(boundstr{1})];
+    cond=boundstr{3};
+    [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
+    
+end
 
 
 

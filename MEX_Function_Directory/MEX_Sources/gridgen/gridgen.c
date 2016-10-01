@@ -10,7 +10,7 @@
 /*int dim() = 2; */
 #ifndef GRIDGEN_VAR_INCLUDED
 #define GRIDGEN_VAR_INCLUDED
-int plotFlag=0;
+int plotFlag=1;
 int outCount=0;
 /* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;
@@ -778,7 +778,8 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	posCellRef=(int*)realloc(posCellRef,sizeof(int)*(kk*(refinLvl-1)+1));
 	
 	nPosRefine=kk;
-	(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));
+	/*(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));*/
+	(*posGridRef)=(int*)calloc(nPosRefine,sizeof(int));
 	kk=0;
 	
 	/* Match vectors to cell location  */

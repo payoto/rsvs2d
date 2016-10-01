@@ -778,7 +778,8 @@ void IdentifyRefineCell(int refinLvl,int** posGridRef,int **indGridRef, int *nRe
 	posCellRef=(int*)realloc(posCellRef,sizeof(int)*(kk*(refinLvl-1)+1));
 	
 	nPosRefine=kk;
-	(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));
+	/*(*posGridRef)=(int*)calloc(nCellGrid,sizeof(int));*/
+	(*posGridRef)=(int*)calloc(nPosRefine,sizeof(int));
 	kk=0;
 	
 	/* Match vectors to cell location  */
@@ -1171,8 +1172,10 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 	}
 	printf("\n");
 	*/
+	printf("				Cell Was Clockwise: %i\n",cwPos);
 	for(ii=0;ii<nEdge;ii++){
 		newOrder[ii]=(nEdge+minVertPos+cwPos*ii-(1-cwPos)*ii)%nEdge;
+		
 		/*printf("neworder: %i orderedPos: %i \n",newOrder[ii],ordIndVert[ii]); */
 	}
 	ReorderArray(ordIndVert, newOrder ,nEdge, sizeof(int));
@@ -1441,6 +1444,7 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	int *ordPosEdge=NULL, *ordIndEdge=NULL, *ordIndVert=NULL,*ordPosVert=NULL;
 	int nCurrEdge;
 	int nEdgepCell=0;
+	printf("Operating on cell %i;  ",indCellRefine);
 	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
 			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid,nEdgepCell);
