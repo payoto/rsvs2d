@@ -1,7 +1,10 @@
 %% Refined Optimisation steps
 
-function []=HandleRefinement(paramoptim,iterstruct,outinfo,oldBase,gridrefined,...
-        connectstructinfo,refStep)
+function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+        connectstructinfo,unstrRef,restartsnake]=...
+        HandleRefinement(paramoptim,iterstruct,outinfo,oldBase,gridrefined,...
+        connectstructinfo,refStep,nIter,firstValidIter)
+    % This must only recieve a portion of iterstruct
     
     oldGrid.base=oldBase;
     oldGrid.refined=gridrefined;
@@ -13,12 +16,8 @@ function []=HandleRefinement(paramoptim,iterstruct,outinfo,oldBase,gridrefined,.
         connectstructinfo,unstrRef,restartsnake]=...
         InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep);
     
-    % parameter update
-    
-    % grid matching
-    
-    % Fill matching
-    
+   
+    [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter);
     
 end
 
@@ -96,6 +95,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridrefined]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
     
+    iterstruct=RewriteHistory(iterstruct,profloops,baseGrid);
     
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
@@ -268,7 +268,38 @@ function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     
 end
 
-
+function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid)
+    
+    actFill=logical([baseGrid.cell(:).isactive]);
+    
+    for ii=find([profloops(:).iter]~=0)
+        
+        iterstruct(profloops(ii).iter).population(profloops(ii).prof).fill=...
+            profloops(ii).newFracs(actFill)';
+        
+    end
+    
+    % rewrite optimdat
+    iterstruct(1).population(1).optimdat.value=0;
+    iterstruct(1).population(1).optimdat.var=1;
+    for ii=3:2:length(iterstruct)
+        iterstruct(ii).population(1).optimdat.value=iterstruct(ii).population(1).fill...
+            -iterstruct(ii-1).population(1).fill;
+        
+        iterstruct(ii).population(1).optimdat.var=1:numel(iterstruct(ii-1).population(1).fill);
+    end
+    for ii=1:length(iterstruct)
+        for jj=2:length(iterstruct(ii).population)
+            iterstruct(ii).population(jj).optimdat.value=...
+                iterstruct(ii).population(jj).fill-iterstruct(ii).population(1).fill;
+            iterstruct(ii).population(jj).optimdat.var=find(...
+                iterstruct(ii).population(jj).optimdat.value~=0);
+            iterstruct(ii).population(jj).optimdat.value=...
+                iterstruct(ii).population(jj).optimdat.value(...
+                iterstruct(ii).population(jj).optimdat.var);
+        end
+    end
+end
 
 
 
@@ -284,7 +315,7 @@ end
 
 
 %% From executeoptimisation
-
+%{
 function [unstructured,unstructReshape,gridrefined,connectstructinfo,...
         unstructuredrefined,loop]=GridInitAndRefine(param,unstructReshape)
     % Executes the Grid Initialisation process
@@ -541,6 +572,7 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
             disp('--------------------------------------------------------------------------------------------')
             disp(procStart)
             disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            
             disp(datestr(tStart,0))
             disp('--------------------------------------------------------------------------------------------')
             disp('********************************************************************************************')
@@ -568,3 +600,4 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
     end
     
 end
+%}

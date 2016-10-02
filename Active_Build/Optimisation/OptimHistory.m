@@ -688,7 +688,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     %% figure 2
     
     
-    
+    if false
     h(2)=figure('Name','Design Variable Evolution','Position',[20 100 1000 600]);
     
     axh=subplot(2,2,1,'ticklabelinterpreter','latex');
@@ -710,7 +710,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
         axc(ii).Label.FontSize=14;
     end
     
-    
+    end
 end
 
 
