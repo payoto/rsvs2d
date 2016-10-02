@@ -799,7 +799,7 @@ function paroptim=test_refine()
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=4;
+    paroptim.general.maxIter=10;
     paroptim.general.worker=4;
 end
 

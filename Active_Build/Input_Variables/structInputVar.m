@@ -687,7 +687,7 @@ function [param]=optimInverseDesign()
     
     param.snakes.refine.axisRatio=1;
     
-    param.optiminit.cellLevels=[12,2];
+    param.optiminit.cellLevels=[10,2];
     param.optiminit.defaultCorner=1e-5;
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
