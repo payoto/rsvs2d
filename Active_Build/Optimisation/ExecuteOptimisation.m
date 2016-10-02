@@ -38,7 +38,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     
     % Specify starting population
     nOptimRef=size(refineOptim,1);
-    for refStage=1:nOptimRef
+    for refStage=1:nOptimRef+1
     
         % Start optimisation Loop
         for nIter=startIter:maxIter
@@ -66,7 +66,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             
         end
         
-        if refStage~=nOptimRef
+        if refStage<(nOptimRef+1)
             
             [paramoptim,outinfo,iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
