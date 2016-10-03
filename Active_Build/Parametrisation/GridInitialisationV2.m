@@ -54,6 +54,11 @@ function [unstructured,loop,unstructReshape]=...
     else
         datPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.mat'];
         load(datPath);
+        if ~exist('loop','var')
+            isEdge=unstructured.edge.(boundstr{1});
+            cond=boundstr{3};
+            [loop]=OrderSurfaceVertex(unstructured,isEdge,cond);
+        end
     end
 
     if isCheckRes

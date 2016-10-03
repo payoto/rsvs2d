@@ -11,7 +11,6 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     close all
     clc
@@ -37,7 +36,11 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     end
     
     % Specify starting population
-    nOptimRef=size(refineOptim,1);
+    if ~any(refineOptim==0)
+        nOptimRef=size(refineOptim,1);
+    else
+        nOptimRef=0;
+    end
     for refStage=1:nOptimRef+1
     
         % Start optimisation Loop
@@ -70,10 +73,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             
             [paramoptim,outinfo,iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
-                HandleRefinement(paramoptim,iterstruct(startIter:end),outinfo,baseGrid,gridrefined,...
+                HandleRefinement(paramoptim,iterstruct,outinfo,baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
-            iterstruct=[iterstruct(1:startIter-1),iterstruct2];
-            maxIter2=2*maxIter-startIter;
+            iterstruct=iterstruct2;
+            maxIter2=2*maxIter-(startIter-1);
             startIter=maxIter+1;
             maxIter=maxIter2;
             
@@ -610,7 +613,7 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     paramoptim.general.nDesVar=nDesVar;
     
     paramoptim.general.symDesVarList...
-        =BuildSymmetryLists(symType,cellLevels,corneractive);
+        =BuildSymmetryLists(symType,cellLevels,corneractive,baseGrid);
     
     paramoptim.general.notDesInd...
         =BuildExclusionList(paramoptim.general.symDesVarList);
@@ -641,12 +644,15 @@ function [paramoptim]=CheckiterGap(paramoptim)
     end
 end
 
-function [symDesVarList]=BuildSymmetryLists(symType,cellLevels,corneractive)
+function [symDesVarList]=BuildSymmetryLists(symType,cellLevels,corneractive,baseGrid)
     
     switch symType
         case 'none'
             symDesVarList=zeros([2,0]);
+            
         case 'horz'
+            [symDesVarList]=RobustSymmetryAssignement(baseGrid,2);
+        case 'horzold'
             warning('Symmetry assignement not robust when taken with the rest of the program')
             nRows=cellLevels(2);
             rowMatch=zeros([2,floor(nRows/2)]);
@@ -675,10 +681,43 @@ function [symDesVarList]=BuildSymmetryLists(symType,cellLevels,corneractive)
             symDesVarList=cellMatch;
             
         case 'vert'
-            error('Not coded yet')
+            
+            [symDesVarList]=RobustSymmetryAssignement(baseGrid,1);
             
     end
     
+end
+
+function [symList]=RobustSymmetryAssignement(baseGrid,dim)
+    % finds symmetric sites by matching coordinates and volumes.
+    
+    cellBaseGrid=CellCentreGridInformation(baseGrid);
+    %cellInd=[cellBaseGrid(:).index];
+    for ii=1:numel(cellBaseGrid)
+        
+        cellBaseGrid(ii).coord=mean(vertcat(cellBaseGrid(ii).vertex(:).coord));
+        
+    end
+    cellCoords=vertcat(cellBaseGrid(:).coord);
+    symLines=mean(cellCoords);
+    
+    symCompCoord=cellCoords;
+    symCompCoord(:,dim)=abs(symCompCoord(:,dim)-symLines(dim));
+    symCompCoord=[symCompCoord,vertcat(cellBaseGrid(:).volume)];
+    compMat1=repmat(reshape(symCompCoord,[1 size(symCompCoord)]),[numel(cellBaseGrid),1]);
+    compMat2=repmat(reshape(symCompCoord,[size(symCompCoord,1) 1 size(symCompCoord,2)]),[1 numel(cellBaseGrid)]);
+    
+    [sub1,sub2]=find(triu(all((abs(compMat1-compMat2)<1e-14),3),1));
+    
+    
+    subFillPos=find(logical([baseGrid.cell(:).isactive]));
+    
+    subFill1=FindObjNum([],sub1,subFillPos);
+    subFill2=FindObjNum([],sub2,subFillPos);
+    
+    symList=[subFill1,subFill2];
+    
+    symList=RemoveIdenticalVectors(symList(find(all(symList~=0,2)),:))';
 end
 
 function notDesInd=BuildExclusionList(symDesVarList)
@@ -1304,7 +1343,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % grid refinement
     [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
-        InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep);
+        InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
     
    
     [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter);
@@ -1316,7 +1355,7 @@ end
 
 function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
-        InitialiseRefinement(paramoptim,iterstruct,outinfoOld,oldGrid,refStep)
+        InitialiseRefinement(paramoptim,iterstruct,outinfoOld,oldGrid,refStep,firstValidIter)
     
     procStr='REFINE OPTIMISATION PROCESS';
     [tStart]=PrintStart(procStr,1);
@@ -1340,6 +1379,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     refparamsnake=SetVariables({'refineGrid'},{refineCellLvl(refStep,:)},...
         paramoptim.parametrisation);
     
+    
+    
     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
         =GridInitAndRefine(refparamsnake,oldGrid.base);
     
@@ -1359,7 +1400,12 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     
-    iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
+    %iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
+    
+    varNames={'lineSearch'};
+    lineSearch=ExtractVariables(varNames,paramoptim);
+    paramoptim=SetVariables(varNames,{~lineSearch},...
+        paramoptim);
     
     % Update Fill Information to match snake
     varNames={'refineGrid'};
@@ -1371,7 +1417,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [profloops]=ExtractVolInfo(outinfoOld.rootDir);
     
-    [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops);
+    [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter);
     
     % Generate new snake restarts.
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
@@ -1385,7 +1431,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridrefined]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
     
-    iterstruct=RewriteHistory(iterstruct,profloops,baseGrid);
+    iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter);
     
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
@@ -1459,11 +1505,11 @@ function [profloops]=FindProfileLoops(rootDir,iterNum)
     
 end
 
-function [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops)
+function [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter)
     
     [transformstruct,~]=BuildMatrix(gridmatch);
     
-    [profloops]=ConvertProfToFill(profloops,transformstruct);
+    [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter);
 end
 
 function [transformstruct,coeffMat]=BuildMatrix(gridmatch)
@@ -1487,8 +1533,11 @@ function [transformstruct,coeffMat]=BuildMatrix(gridmatch)
     transformstruct.volumeNew=[gridmatch.matchstruct(:).newvolume]';
 end
 
-function [profloops]=ConvertProfToFill(profloops,transformstruct)
-    for ii=1:length(profloops)
+function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
+    
+    iterProf=[profloops(:).iter];
+    
+    for ii=find((iterProf>=firstValidIter) | (0==iterProf))
         volSubs=FindObjNum([],transformstruct.indOld,profloops(ii).refinevolfrac.index);
         profloops(ii).newFracs=(transformstruct.coeff*...
             profloops(ii).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
@@ -1558,11 +1607,13 @@ function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     
 end
 
-function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid)
+function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter)
     
     actFill=logical([baseGrid.cell(:).isactive]);
+    iterProf=[profloops(:).iter];
     
-    for ii=find([profloops(:).iter]~=0)
+    for ii=find((iterProf>=firstValidIter))
+    
         
         iterstruct(profloops(ii).iter).population(profloops(ii).prof).fill=...
             profloops(ii).newFracs(actFill)';
@@ -1572,13 +1623,13 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid)
     % rewrite optimdat
     iterstruct(1).population(1).optimdat.value=0;
     iterstruct(1).population(1).optimdat.var=1;
-    for ii=3:2:length(iterstruct)
+    for ii=(firstValidIter+2):2:length(iterstruct)
         iterstruct(ii).population(1).optimdat.value=iterstruct(ii).population(1).fill...
             -iterstruct(ii-1).population(1).fill;
         
         iterstruct(ii).population(1).optimdat.var=1:numel(iterstruct(ii-1).population(1).fill);
     end
-    for ii=1:length(iterstruct)
+    for ii=firstValidIter:length(iterstruct)
         for jj=2:length(iterstruct(ii).population)
             iterstruct(ii).population(jj).optimdat.value=...
                 iterstruct(ii).population(jj).fill-iterstruct(ii).population(1).fill;

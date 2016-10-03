@@ -791,7 +791,6 @@ end
 
 function paroptim=test_refine()
     [paroptim]=Inverse_CG();
-    paroptim.refineOptim=[2 1; 2 1];
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
     paroptim.obj.invdes.aeroName='0012';
     
@@ -890,18 +889,20 @@ end
 function paroptim=bp32_0012cos()
     [paroptim]=Inverse_CG();
     
+    
+    paroptim.general.refineOptim=[2 1; 2 1];
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.validVol=0.3;
     paroptim.spline.splineCase='inversedesign3';
     paroptim.optim.CG.varActive='snaksensiv';
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_Lcos');
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
     paroptim.obj.invdes.aeroName='0012';
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=40;
+    paroptim.general.maxIter=10;
     paroptim.general.worker=8;
-    paroptim.parametrisation.snakes.refine.axisRatio=2;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
     
 end
 
@@ -937,6 +938,7 @@ function paroptim=bp3_invdes_L()
     paroptim.general.startPop='halfuniform';
      paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_L');
 end
+
 %% Full Aero Optimisations
 
 % Desktop
@@ -2027,7 +2029,7 @@ function [paroptim]=LocOptim_12to24_24()
     [paroptim]=LocOptim_12to24_12();
     
     nDes=24;
-    
+    paroptim.general.refineOptim=[2 1; 2 1];
     paroptim.parametrisation.optiminit.cellLevels(1)=nDes+2;
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(...
@@ -2233,6 +2235,47 @@ function [paroptim]=LocOptim_12to24_2_24()
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
     paroptim.parametrisation.snakes.refine.axisRatio=1.25*nDes/12;
     
+end
+
+%% Refinement
+
+
+function [paroptim]=Refine10to40()
+    [paroptim]=CG_Aero();
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25;
+    paroptim.general.startPop='halfuniformsharp';
+    
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.general.refineOptim=[2 1; 2 1];
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=16;
+    paroptim.general.worker=12;
+end
+
+
+function [paroptim]=Refine40()
+    [paroptim]=CG_Aero();
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
+    paroptim.parametrisation.optiminit.cellLevels=[42,2];
+    paroptim.parametrisation.general.passDomBounds=MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    paroptim.parametrisation.snakes.refine.axisRatio=1.25*4;
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+    paroptim.general.startPop='halfuniformsharp';
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.3;
+    paroptim.general.refineOptim=[0];
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=32;
+    paroptim.general.worker=12;
 end
 
 %% Component
