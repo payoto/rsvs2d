@@ -510,7 +510,7 @@ function [param]=optimSupersonic()
     
     param.snakes.refine.axisRatio=0.25;
     
-    param.optiminit.cellLevels=[14,2];
+    param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     param.general.subdivType='chaikin';
@@ -723,6 +723,19 @@ function [param]=optimInverseDesign_Lcos()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
+function [param]=optimInverseDesign_cosref()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[6 1];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[10,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
 %% Surrogate modelling Cases
 
 function [param]=surrogateDefault()
@@ -789,6 +802,30 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
 end
+
+
+function [param]=ManualRefine()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='ManualRefine';
+    param.snakes.step.snakesSteps=150;
+    
+    param.general.loadLogical=true;
+    param.snakes.refine.refineGrid=[4 4];
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.convLevel=10^-8;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='sharpen';
+end
+
+
 
 function [param]=testRefinement()
     

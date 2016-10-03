@@ -447,7 +447,7 @@ void RefineGrid(){
 		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
 		
 		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
-				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,4);
+				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,8);
 		
 		printf("\n    ACTION: Refinement Targets Identified");
 		domSize[0]=levelSize[2*(ii-1)];
@@ -872,6 +872,11 @@ void IdentifyRefineEdge(int *posCellRefine, int *indCellRefine,int nCellRefine,
 				flagEdge=((edgestructAct[ii].cellind[ll]==indCellRefine[jj]));
 				(*posEdgeRefine)[kk]=ii*flagEdge;
 				kk=kk+flagEdge;
+				if (kk==124){
+					printf("problem here?\n");
+				}
+
+					
 				ll++;
 			} while((kkStart==kk)&(ll<2));
 		}
@@ -1449,7 +1454,7 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	/*printf("Operating on cell %i;  ",indCellRefine);*/
 	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	IdentifyRefineEdge(&posCellRefine, &indCellRefine,1,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid,nEdgepCell);
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid,nEdgepCell*2);
 	
 	/*printf("\n***Number of Edge of Cell: %i",nCurrEdge); */
 	ordPosEdge=(int*)calloc(nCurrEdge,sizeof(int));
@@ -1520,7 +1525,7 @@ void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,
 	for (ii=0;ii<nCellTemplate;ii++){ (*posCellAdd)[ii] = ii; }
 	/* Edge and Vertex Sides */
 	IdentifyRefineEdge(indCellRefine, indCellRefine,4,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate,nEdgepCell);
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate,nEdgepCell*2);
 			
 	/*printf("\n***Number of Border Edges for template %i",nCurrEdge); */
 	*posEdgeSide=(int*)calloc(nCurrEdge,sizeof(int));

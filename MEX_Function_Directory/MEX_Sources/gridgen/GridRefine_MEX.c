@@ -404,7 +404,7 @@ void RefineGrid_MEX(int nCellRefine, int *indCellRefine,int *posCellRefine){
 	
 	printf("\n    ACTION: Template Generated");
 	IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
-			&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,4);
+			&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,8);
 	
 	printf("\n    ACTION: Refinement Targets Identified");
 	domSize[0]=levelSize[2*(ii-1)];

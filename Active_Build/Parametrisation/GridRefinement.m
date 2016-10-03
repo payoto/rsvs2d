@@ -93,7 +93,9 @@ function [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine)
             cellRefineLog=logical([gridreshape.cell(:).isactive]);
             cellRefine=[gridreshape.cell(cellRefineLog).index];
             cellRefinePos=find(cellRefineLog);
-            
+        case 'special'
+            cellRefine=[19,20];
+            cellRefinePos=[19,20];
         otherwise 
             error('Unsupported refinement type')
     end
