@@ -2253,7 +2253,7 @@ function [paroptim]=Refine10to40()
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.general.refineOptim=[2 1; 2 1];
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=16;
+    paroptim.general.maxIter=32;
     paroptim.general.worker=12;
 end
 

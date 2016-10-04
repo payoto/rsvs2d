@@ -81,6 +81,10 @@ int imin(int a, int b);
 int imax(int a, int b);
 double f_min(double a, double b);
 double f_max(double a, double b);
+double fsum(double *array, int nArray);
+double fprod(double *array, int nArray);
+int isum(int *array, int nArray);
+int iprod(int *array, int nArray);
 int min_array(int *array, int nArray);
 int pos_min_array(int *array, int nArray);
 int max_array(int *array, int nArray);
@@ -119,8 +123,12 @@ void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefin
 int CompareDouble(double elem1, double elem2);
 void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLevelsAct,
 		cellTemplate **cellstructTempOut,vertexTemplate **vertstructTempOut,edgeTemplate **edgestructTempOut);
-
-/*void OutputTemplateGrid(int domSize[2], int lvlGrid); */
+void IdentifyCellEdges(int *posCellRefine, int *indCellRefine,int nCellRefine,
+		int **posEdgeRefine, int **indEdgeCell,int *nEdgeCell, edgeTemplate *edgestructAct, int nEdge);
+void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefine
+	,int *posVertRefine,int *indVertRefine, int nEdgeRefine);
+void AddVertexToStruct(double *newCoord, int nCoord, int *newVertInd);
+		/*void OutputTemplateGrid(int domSize[2], int lvlGrid); */
 /*void GenerateTemplateGrids(); */
 
 #endif
