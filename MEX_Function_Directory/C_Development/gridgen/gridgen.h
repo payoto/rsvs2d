@@ -128,6 +128,10 @@ void IdentifyCellEdges(int *posCellRefine, int *indCellRefine,int nCellRefine,
 void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefine
 	,int *posVertRefine,int *indVertRefine, int nEdgeRefine);
 void AddVertexToStruct(double *newCoord, int nCoord, int *newVertInd);
+void AddEdgeToStruct(int *newVertInd, int *edgeVertInd,int *edgeVertPos,int *nSplitinEdge,
+	int *posEdgeRefine,int *indEdgeRefine,int *posVertRefine,int *indVertRefine,
+	int nEdgeRefine,int nNewVert);
+
 		/*void OutputTemplateGrid(int domSize[2], int lvlGrid); */
 /*void GenerateTemplateGrids(); */
 

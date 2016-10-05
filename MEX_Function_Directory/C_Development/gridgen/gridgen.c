@@ -10,7 +10,7 @@
 /*int dim() = 2; */
 #ifndef GRIDGEN_VAR_INCLUDED
 #define GRIDGEN_VAR_INCLUDED
-int plotFlag=0;
+int plotFlag=1;
 int outCount=0;
 /* Global Variables declaration */
 int nLevels, nCells,nEdges,nVerts,nCellGrid,nEdgeGrid,nVertGrid;
@@ -441,25 +441,27 @@ void RefineGrid(){
 		printf("\n");
 	}*/
 	for (ii=2;ii<=nLevels;ii++){
+		domSize[0]=levelSize[2*(ii-1)];
+		domSize[1]=levelSize[2*(ii-1)+1];
 		printf("\n***** START GRID REFINEMENT %i of %i *****\n",ii-1,nLevels-1);
 		GenerateTemplateGrid(ii);
 		printf("\n    ACTION: Template Generated");
 		IdentifyRefineCell(ii,&posCellRefine,&indCellRefine,&nCellRefine);
-		
+		/*
 		IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
 				&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,4);
 		
 		printf("\n    ACTION: Refinement Targets Identified");
-		domSize[0]=levelSize[2*(ii-1)];
-		domSize[1]=levelSize[2*(ii-1)+1];
+		
+		
+		RefineSelectedEdges(domSize,posEdgeRefine,indEdgeRefine,nEdgeRefine);
+		printf("\n    ACTION: Edges Refined");*/
 		/*
 		printf("\n Edge Orientation start\n");
 		for(jj=0;jj<nEdgeGrid;jj++){
 			printf("%i %i",edgestruct[jj].index,edgestruct[jj].orientation);
 			printf("\n");
 		}*/
-		RefineSelectedEdges(domSize,posEdgeRefine,indEdgeRefine,nEdgeRefine);
-		printf("\n    ACTION: Edges Refined");
 		/*
 		printf("\n Edge Orientation post edge refine\n");
 		for(jj=0;jj<nEdgeGrid;jj++){
@@ -487,8 +489,8 @@ void RefineGrid(){
 		}*/
 		free(posCellRefine);
 		free(indCellRefine);
-		free(posEdgeRefine);
-		free(indEdgeRefine);
+		//free(posEdgeRefine);
+		//free(indEdgeRefine);
 		DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
 		OutputGrid(ii);
 		
@@ -1058,7 +1060,7 @@ double* ExtractCoord(int nEdge, int *ordIndVert,int * ordPosVert, vertexTemplate
 	double *coordList=NULL;
 	int *listIndVert=NULL;
 	
-	listIndVert=(int*)calloc(nVertGrid,sizeof(int));
+	listIndVert=(int*)calloc(nVertAct,sizeof(int));
 	coordList=(double*)calloc(dim()*nEdge,sizeof(double));
 	
 	
@@ -1240,9 +1242,11 @@ void GenerateIndMatch(int domSize[dim()], int posCellRefine ,int *posEdgeSideTem
 	/*These lines need Modification to work with the new method th implication here is that the template edges and the 
 	existing edges will be the same number need to add another input to cater for template edges being represented by 
 	Multiple grid edges.*/
+	
 	for(ii=0;ii<nCurrEdge;ii++){
-		(*convEdgeList)[edgeCurrentTemplate[posEdgeSideTemp[ii]].index]=edgestruct[ordPosEdge[ii]].index;
-		(*convVertList)[vertCurrentTemplate[posVertSideTemp[ii]].index]=vertstruct[ordPosVert[ii]].index;
+		/*(*convEdgeList)[edgeCurrentTemplate[posEdgeSideTemp[ii]].index]=edgestruct[ordPosEdge[ii]].index;*/
+		/*Need to pass shortened vertex list not full on*/
+		(*convVertList)[vertCurrentTemplate[posVertSideTemp[ii]].index]=vertstruct[ordPosVert[ii]].index; 
 	}
 	(*convCellList)[cellCurrentTemplate[0].index]=cellstruct[posCellRefine].index;
 	for(ii=0;ii<(nCellTemplate-1);ii++){(*convCellList)[cellCurrentTemplate[ii+1].index]=maxCellGrid+1+ii;}
@@ -1442,6 +1446,82 @@ void MergeNewCell(int domSize[dim()], int posCellRefine ,int *posEdgeSideTemp,in
 	free(convVertList);
 }
 
+int* OppositeList(int *fullList, int *partial, int nFull, int nPart){
+	int ii,jj,kk,test;
+	int *oppList=NULL;
+	
+	oppList=(int*)calloc(nFull-nPart+1,sizeof(int));
+	kk=0;
+	for(ii=0;ii<nFull;ii++){
+		jj=0;
+		do{
+			test=fullList[ii]!=partial[jj];
+			jj++;
+		} while (test & (jj<nPart));
+		oppList[kk]=fullList[ii];
+		kk=kk+((jj==nPart) & test);
+	}
+	oppList=(int*)realloc(oppList,(nFull-nPart)*sizeof(int));
+	
+	if (kk!=(nFull-nPart)){
+		printf("OppositeList Not Working as expected\n");
+		printf("%i %i %i",kk, nFull, nPart);
+		exit(EXIT_FAILURE);
+	}
+	
+	return(oppList);
+}
+
+void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,int **posCellAdd,
+	int **posEdgeAdd,int **posVertAdd){
+	
+	int ii;
+	int *posCurrEdge=NULL,*indCurrEdge=NULL, indCellRefine[4]={-1,-2,-3,-4};
+	int *ordIndEdge=NULL, *ordIndVert=NULL, *listTempEdge=NULL,*listTempVert=NULL,*listIndTempEdge=NULL;
+	int nCurrEdge;
+	int nCellTemplate,nEdgeTemplate,nVertTemplate;
+	int nEdgepCell=0;
+	
+	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
+	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
+	/* Cell */
+	*posCellAdd=(int*)calloc(nCellTemplate,sizeof(int));
+	for (ii=0;ii<nCellTemplate;ii++){ (*posCellAdd)[ii] = ii; }
+	/* Edge and Vertex Sides */
+	IdentifyRefineEdge(indCellRefine, indCellRefine,4,
+			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate,nEdgepCell);
+			
+	/*printf("\n***Number of Border Edges for template %i",nCurrEdge); */
+	*posEdgeSide=(int*)calloc(nCurrEdge,sizeof(int));
+	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
+	ordIndVert=(int*)calloc(nCurrEdge,sizeof(int));
+	*posVertSide=(int*)calloc(nCurrEdge,sizeof(int));		
+	
+	ExtractEdgeChain(posCurrEdge, indCurrEdge,nCurrEdge ,*posEdgeSide, ordIndEdge, ordIndVert,edgeCurrentTemplate);
+	listIndTempEdge=(int*)ArrayFromStruct(edgeCurrentTemplate, nEdgeTemplate, sizeof(edgeTemplate),sizeof(int));
+	FindObjNum(ordIndVert, listIndTempEdge, *posVertSide, nCurrEdge, nEdgeTemplate);
+	OrderEdgeChain(nCurrEdge, *posEdgeSide, ordIndEdge, ordIndVert,*posVertSide, vertCurrentTemplate,nVertTemplate);
+	/*printf("\nPrepare template order edge index list:\n");
+	for (ii=0;ii<nCurrEdge;ii++){printf("%i ",ordIndEdge[ii]);}
+	printf("\n");*/
+	/* Inside  */
+	listTempEdge=(int*)calloc(nEdgeTemplate,sizeof(int));
+	listTempVert=(int*)calloc(nVertTemplate,sizeof(int));
+	for (ii=0;ii<nEdgeTemplate;ii++){listTempEdge[ii]=ii;}
+	for (ii=0;ii<nVertTemplate;ii++){listTempVert[ii]=ii;}
+	*posEdgeAdd=(int*)OppositeList(listTempEdge, *posEdgeSide, nEdgeTemplate, nCurrEdge);
+	*posVertAdd=(int*)OppositeList(listTempVert, *posVertSide, nVertTemplate, nCurrEdge);
+	
+	free(posCurrEdge);
+	free(indCurrEdge);
+	/*free(ordPosEdge); */
+	free(ordIndEdge);
+	free(ordIndVert);
+	free(listTempEdge);
+	free(listTempVert);
+	free(listIndTempEdge);
+}
+
 void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posEdgeSideTemp,
 	int *posVertSideTemp,int *posCellAddTemp,int *posEdgeAddTemp, int *posVertAddTemp){
 	
@@ -1474,8 +1554,7 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	for (ii=0;ii<nCurrEdge;ii++){printf("%i ",ordIndEdge[ii]);}
 	printf("\n");*/
 	
-	MergeNewCell(domSize,posCellRefine, posEdgeSideTemp, posVertSideTemp, posCellAddTemp,
-		posEdgeAddTemp,  posVertAddTemp,  ordPosEdge,  ordPosVert,nCurrEdge);
+	
 	/*printf("\n"); */
 	/*for (ii=0;ii<nCurrEdge;ii++) */
 	/*	printf("nOrdered: %i  ; Ordered Vert: %i ; Ordered Edge: %i \n",indCurrEdge[ii],ordIndEdge[ii],ordIndVert[ii]); */
@@ -1486,79 +1565,29 @@ void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posE
 	free(ordIndEdge);
 	free(ordIndVert);
 	free(ordPosVert);
-}
-
-int* OppositeList(int *fullList, int *partial, int nFull, int nPart){
-	int ii,jj,kk,test;
-	int *oppList=NULL;
 	
-	oppList=(int*)calloc(nFull-nPart+1,sizeof(int));
-	kk=0;
-	for(ii=0;ii<nFull;ii++){
-		jj=0;
-		do{
-			test=fullList[ii]!=partial[jj];
-			jj++;
-		} while (test & (jj<nPart));
-		oppList[kk]=fullList[ii];
-		kk=kk+((jj==nPart) & test);
-	}
-	oppList=(int*)realloc(oppList,(nFull-nPart)*sizeof(int));
+	IdentifyCellEdges(&posCellRefine, &indCellRefine,1,
+		&posCurrEdge, &indCurrEdge,&nCurrEdge,edgestruct,nEdgeGrid);
+		
 	
-	if (kk!=(nFull-nPart)){
-		printf("OppositeList Not Working as expected\n");
-		printf("%i %i %i",kk, nFull, nPart);
-		exit(EXIT_FAILURE);
-	}
-	
-	return(oppList);
-}
-
-void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,int **posCellAdd,
-	int **posEdgeAdd,int **posVertAdd){
-	
-	int ii;
-	int *posCurrEdge=NULL,*indCurrEdge=NULL, indCellRefine[4]={-1,-2,-3,-4};
-	int *ordIndEdge=NULL, *ordIndVert=NULL, *listTempEdge=NULL,*listTempVert=NULL;
-	int nCurrEdge;
-	int nCellTemplate,nEdgeTemplate,nVertTemplate;
-	int nEdgepCell=0;
-	
-	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
-	CalculateNumElements(domSize,&nCellTemplate,&nEdgeTemplate,&nVertTemplate);
-	/* Cell */
-	*posCellAdd=(int*)calloc(nCellTemplate,sizeof(int));
-	for (ii=0;ii<nCellTemplate;ii++){ (*posCellAdd)[ii] = ii; }
-	/* Edge and Vertex Sides */
-	IdentifyRefineEdge(indCellRefine, indCellRefine,4,
-			&posCurrEdge, &indCurrEdge,&nCurrEdge,edgeCurrentTemplate,nEdgeTemplate,nEdgepCell);
-			
-	/*printf("\n***Number of Border Edges for template %i",nCurrEdge); */
-	*posEdgeSide=(int*)calloc(nCurrEdge,sizeof(int));
+	/*printf("\n***Number of Edge of Cell: %i",nCurrEdge); */
+	ordPosEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndEdge=(int*)calloc(nCurrEdge,sizeof(int));
 	ordIndVert=(int*)calloc(nCurrEdge,sizeof(int));
-	*posVertSide=(int*)calloc(nCurrEdge,sizeof(int));		
+	ordPosVert=(int*)calloc(nCurrEdge,sizeof(int));		
+			
+	ExtractEdgeChain(posCurrEdge, indCurrEdge,nCurrEdge ,ordPosEdge, ordIndEdge, ordIndVert,edgestruct);
+	OrderEdgeChain(nCurrEdge, ordPosEdge, ordIndEdge, ordIndVert,ordPosVert, vertstruct,nVertGrid);
 	
-	ExtractEdgeChain(posCurrEdge, indCurrEdge,nCurrEdge ,*posEdgeSide, ordIndEdge, ordIndVert,edgeCurrentTemplate);
-	OrderEdgeChain(nCurrEdge, *posEdgeSide, ordIndEdge, ordIndVert,*posVertSide, vertCurrentTemplate,nVertTemplate);
-	/*printf("\nPrepare template order edge index list:\n");
-	for (ii=0;ii<nCurrEdge;ii++){printf("%i ",ordIndEdge[ii]);}
-	printf("\n");*/
-	/* Inside  */
-	listTempEdge=(int*)calloc(nEdgeTemplate,sizeof(int));
-	listTempVert=(int*)calloc(nVertTemplate,sizeof(int));
-	for (ii=0;ii<nEdgeTemplate;ii++){listTempEdge[ii]=ii;}
-	for (ii=0;ii<nVertTemplate;ii++){listTempVert[ii]=ii;}
-	*posEdgeAdd=(int*)OppositeList(listTempEdge, *posEdgeSide, nEdgeTemplate, nCurrEdge);
-	*posVertAdd=(int*)OppositeList(listTempVert, *posVertSide, nVertTemplate, nCurrEdge);
-	
+	MergeNewCell(domSize,posCellRefine, posEdgeSideTemp, posVertSideTemp, posCellAddTemp,
+		posEdgeAddTemp,  posVertAddTemp,  ordPosEdge,  ordPosVert,nCurrEdge);
+		
 	free(posCurrEdge);
 	free(indCurrEdge);
-	/*free(ordPosEdge); */
+	free(ordPosEdge);
 	free(ordIndEdge);
 	free(ordIndVert);
-	free(listTempEdge);
-	free(listTempVert);
+	free(ordPosVert);
 }
 
 void RefineSelectedCells(int domSize[dim()],int *posCellRefine,int *indCellRefine,int nCellRefine){
@@ -1637,16 +1666,24 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 	/* Reallocate the gridstruct arrays to match that */
 	/* Then actually do the modification */
 	
-	int ii,jj,kk,kkStart,ll,mm,lls,mms;
-	int nSides,prevOrientation,nSplits,nNewVert;
-	int *sideOfEdge=NULL, *nEdgeSide=NULL,*splitType=NULL,*newVertInd=NULL;
-	double *sideSplitPos=NULL,*refSplitPos=NULL, *allSplit=NULL,*newCoord=NULL;
+	int ii,jj,kk,kkStart,ll,mm,lls,mms,llTemp;
+	int nSides,prevOrientation,nSplits,nNewVert,nSplitsAll,nNewVertAll;
+	int *sideOfEdge=NULL, *nEdgeSide=NULL,*splitType=NULL,*newVertInd=NULL,
+		*edgeIndVertSplit=NULL,*edgePosVertSplit=NULL,*nSplitinEdge=NULL,
+		*edgeIndVertSplitAll=NULL,*edgePosVertSplitAll=NULL,*nSplitinEdgeAll=NULL,
+		*newVertIndAll=NULL,*edgeTempRepeat=NULL;
+	double *sideSplitPos=NULL,*refSplitPos=NULL, *allSplit=NULL,*newCoord=NULL,*newSplits=NULL;
+	int nEdgepCell=0;
+	
+	for (ii=0;ii<dim();ii++){nEdgepCell=nEdgepCell+2*domSize[ii];}
 	// find number of sides and which edges make those sides
 	prevOrientation=1; /* First Edge is vertical due to clockwise order */
 	nSides=0;
 	
+	edgeTempRepeat=(int*)calloc(nEdgepCell,sizeof(int));
 	sideOfEdge=(int*)calloc(nEdgeRefine,sizeof(int));
 	nEdgeSide=(int*)calloc(nEdgeRefine,sizeof(int));
+	nSplitinEdgeAll=(int*)calloc(nEdgeRefine,sizeof(int));
 	
 	for(ii=0;ii<nEdgeRefine;ii++){
 		nSides=(edgestruct[posEdgeRefine[ii]].orientation!=prevOrientation)+nSides;
@@ -1660,6 +1697,9 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 	// Identify necessary refinement action for each side
 	
 	kk=0;
+	nNewVertAll=0;
+	nSplitsAll=0;
+	llTemp=0;
 	/*printf(" \n ");*/
 	for(ii=0;ii<=nSides;ii++){
 		kkStart=kk;
@@ -1699,9 +1739,9 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 			allSplit[jj]=min(refSplitPos[ll],sideSplitPos[mm]);
 			ll=ll+(fabs(refSplitPos[ll]-allSplit[jj])<pow(10.0,-15));
 			mm=mm+(fabs(sideSplitPos[mm]-allSplit[jj])<pow(10.0,-15));
-			splitType[jj]=(ll==lls)+(mm==mms)*2;
+			splitType[jj]=(mm==mms)+(ll==lls)*2;
 			jj++;
-		}while((ll<domSize[prevOrientation]) &  (mm<nEdgeSide[ii]));
+		}while((ll<(domSize[prevOrientation]+1)) &  (mm<(nEdgeSide[ii]+1)));
 		nSplits=jj;
 		allSplit=(double*)realloc(allSplit,nSplits*sizeof(double));
 		splitType=(int*)realloc(splitType,nSplits*sizeof(int));
@@ -1716,9 +1756,11 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 		/* Build coord first */
 		
 		newCoord=(double*)calloc(2*(nSplits),sizeof(double));
+		newSplits=(double*)calloc((nSplits),sizeof(double));
 		ll=0;
 		for(jj=0;jj<nSplits;jj++){
 			if(splitType[jj]==1){
+				newSplits[ll]=allSplit[jj];
 				newCoord[ll*2]=allSplit[jj]*(vertstruct[posVertRefine[(kkStart+nEdgeSide[ii])%nEdgeRefine]].coord[0]
 					-vertstruct[posVertRefine[kkStart]].coord[0])+vertstruct[posVertRefine[kkStart]].coord[0];
 				newCoord[ll*2+1]=allSplit[jj]*(vertstruct[posVertRefine[(kkStart+nEdgeSide[ii])%nEdgeRefine]].coord[1]
@@ -1727,33 +1769,82 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 			}
 		}
 		nNewVert=ll;
-		if(nNewVert>0){ /* If no new vertices or edges needed pass this section*/
+		
+		 /*if(nNewVert>0){ If no new vertices or edges needed pass this section*/
 			
 			
-			newVertInd=(int*)calloc(nNewVert,sizeof(int));
-			AddVertexToStruct(newCoord, nNewVert,newVertInd);
-			
-			
-			
-			
-			free(newVertInd);
+		newVertInd=(int*)calloc(nNewVert,sizeof(int));
+		edgeIndVertSplit=(int*)calloc(nNewVert+1,sizeof(int));
+		edgePosVertSplit=(int*)calloc(nNewVert+1,sizeof(int));
+		nSplitinEdge=(int*)calloc(nEdgeSide[ii],sizeof(int));
+		edgeIndVertSplitAll=(int*)realloc(edgeIndVertSplitAll,(nNewVertAll+nNewVert)*sizeof(int));
+		edgePosVertSplitAll=(int*)realloc(edgePosVertSplitAll,(nNewVertAll+nNewVert)*sizeof(int));
+		newVertIndAll=(int*)realloc(newVertIndAll,(nNewVertAll+nNewVert)*sizeof(int));
+		
+		AddVertexToStruct(newCoord, nNewVert,newVertInd); /*Creates new vertices*/
+		ll=0;
+		
+		
+		for(jj=0;jj<nEdgeSide[ii];jj++){ /* Matches new vertices to edges that are split*/
+			for(ll=0;ll<nNewVert;ll++){
+				lls=((sideSplitPos[jj]<newSplits[ll]) 
+					& (sideSplitPos[jj+1]>newSplits[ll])); 
+				edgeIndVertSplit[ll]=edgeIndVertSplit[ll]+lls*indEdgeRefine[kkStart+jj];
+				edgePosVertSplit[ll]=edgePosVertSplit[ll]+lls*posEdgeRefine[kkStart+jj];
+				nSplitinEdge[jj]=nSplitinEdge[jj]+lls;
+			}
 		}
+		for(jj=0;jj<nSplits;jj++){ /*Assign edgeTempRepeat the number of times each template edge is repeated.*/
+			if(splitType[jj]==2){
+				for(ll=0;ll<domSize[prevOrientation];ll++){
+					lls=((refSplitPos[ll]<allSplit[jj]) 
+						& (refSplitPos[ll+1]>allSplit[jj])); 
+					edgeTempRepeat[llTemp+ll]=edgeTempRepeat[llTemp+ll]+lls;
+				}
+			}
+		}
+		llTemp=llTemp+domSize[prevOrientation];
+		
+		/*printf("\n new vertices %i  - nEdgeSplits:",nNewVert);
+		for (jj=0;jj<nEdgeSide[ii];jj++){printf(" %i ",nSplitinEdge[jj]);}*/
+		
+		for(jj=0;jj<nNewVert;jj++){ /* Builds the complete lists*/
+			edgeIndVertSplitAll[nNewVertAll+jj]=edgeIndVertSplit[jj];
+			edgePosVertSplitAll[nNewVertAll+jj]=edgePosVertSplit[jj];
+			newVertIndAll[nNewVertAll+jj]=newVertInd[jj];
+		}
+		for(jj=0;jj<nEdgeSide[ii];jj++){
+			nSplitinEdgeAll[kkStart+jj]=nSplitinEdge[jj];
+		}
+		nNewVertAll=nNewVertAll+nNewVert;
 		
 		
-		
-		
-		
+		free(edgeIndVertSplit);
+		free(edgePosVertSplit);
+		free(newVertInd);
+		free(nSplitinEdge);
+		free(newSplits);
 		free(newCoord);
+		/*}// End of if statement*/
 		free(allSplit);
 		free(splitType);
 		free(refSplitPos);
 		free(sideSplitPos);
 	}
+	/*printf("\n new vertices %i  - nEdgeSplits:",nNewVertAll);
+	for (ii=0;ii<nEdgeRefine;ii++){printf(" %i ",nSplitinEdgeAll[ii]);}*/
 	
+	AddEdgeToStruct(newVertIndAll, edgeIndVertSplitAll,edgePosVertSplitAll,nSplitinEdgeAll,
+		posEdgeRefine,indEdgeRefine,posVertRefine,indVertRefine,
+		nEdgeRefine,nNewVertAll);
 	
-	
+	free(edgeIndVertSplitAll);
+	free(edgePosVertSplitAll);
+	free(newVertIndAll);
+	free(nSplitinEdgeAll);
 	free(sideOfEdge);
 	free(nEdgeSide);
+	free(edgeTempRepeat);
 }
 
 void AddVertexToStruct(double *newCoord, int nCoord, int *newVertInd){
@@ -1773,8 +1864,47 @@ void AddVertexToStruct(double *newCoord, int nCoord, int *newVertInd){
 		vertstruct[nVertGrid+ii].coord[0]=newCoord[2*ii];
 		vertstruct[nVertGrid+ii].coord[1]=newCoord[2*ii+1];
 	}
-	
+	nVertGrid=nVertGrid+nCoord;
 	free(listIndVert);
+}
+
+void AddEdgeToStruct(int *newVertInd, int *edgeVertInd,int *edgeVertPos,int *nSplitinEdge,
+	int *posEdgeRefine,int *indEdgeRefine,int *posVertRefine,int *indVertRefine,
+	int nEdgeRefine,int nNewVert){
+	
+	
+	int ii,jj,kk,vIndMatch;
+	int maxEdgeIndex,currPos,startPos,firstValidPos,delInd;
+	int *listIndEdge;
+	
+	
+	listIndEdge=(int*)ArrayFromStruct(edgestruct, nEdgeGrid, sizeof(edgeTemplate),sizeof(int));
+	maxEdgeIndex=max_array(listIndEdge, nEdgeGrid);
+	edgestruct=(edgeTemplate*)realloc(edgestruct,(nEdgeGrid+nNewVert)*sizeof(edgeTemplate));
+	
+	kk=0;
+	firstValidPos=nEdgeGrid;
+	for(ii=0;ii<nEdgeRefine;ii++){
+		vIndMatch=(edgestruct[posEdgeRefine[ii]].vertex[1]==indVertRefine[ii]); /*vIndMatch is the index that must be kept*/
+		startPos=posEdgeRefine[ii];
+		currPos=startPos;
+		delInd=edgestruct[posEdgeRefine[ii]].vertex[(vIndMatch+1)%2];
+		for(jj=0;jj<nSplitinEdge[ii];jj++){
+			vIndMatch=(vIndMatch+1)%2;
+			edgestruct[startPos].vertex[vIndMatch]=newVertInd[kk];
+			kk++;
+			currPos=firstValidPos;firstValidPos++;
+			memcpy(&(edgestruct[currPos].index),
+				&(edgestruct[startPos].index),sizeof(edgeTemplate));
+			maxEdgeIndex++;
+			edgestruct[currPos].index=maxEdgeIndex;
+			startPos=currPos;
+		}
+		edgestruct[currPos].vertex[(vIndMatch+1)%2]=delInd;
+		
+	}
+	nEdgeGrid=nEdgeGrid+nNewVert;
+	free(listIndEdge);
 }
 
 /* UTILITIES */
