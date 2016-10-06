@@ -1542,7 +1542,7 @@ function maxDist=MaxTravelDistance(snaxel)
             end
             
         elseif numel(sameEdgeSnax)>1
-            warning('More than 2 snaxels on the same edge')
+            disp('More than 2 snaxels on the same edge')
         end
     end
     
