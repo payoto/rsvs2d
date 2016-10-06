@@ -788,7 +788,7 @@ function [param]=SnakesFoilVVSmall()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
-    param.general.typDat='vvlofoil';
+    param.general.typDat='vvlofoil_extra';
     param.snakes.step.snakesSteps=150;
     
     
@@ -810,8 +810,15 @@ function [param]=ManualRefine()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     
-    param.general.typDat='ManualRefine';
+    param.general.typDat='ManualRefine2';
     param.snakes.step.snakesSteps=150;
+    
+    param.snakes.force.typeSmear='dir';
+    param.snakes.step.arrivalTolerance=3e-2;
+    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.distEpsilon=0;
+    param.snakes.force.dirEpsilon=0;
+    param.snakes.step.snaxInitPos=1e-5;
     
     param.general.loadLogical=true;
     param.snakes.refine.refineGrid=[4 4];

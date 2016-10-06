@@ -88,7 +88,7 @@ function [volume,areablock]=CalculateCellVolume(areablock,totalVol)
 end
 
 function [cellCentredGrid]=CalculateEdgeCellNormals(cellCentredGrid)
-    
+    errorCount=0;
     for ii=1:length(cellCentredGrid)
         blockEdges=vertcat(cellCentredGrid(ii).edge(:).vertexindex);
         [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges);
@@ -97,27 +97,33 @@ function [cellCentredGrid]=CalculateEdgeCellNormals(cellCentredGrid)
         orderedVertexSub=FindObjNum([],orderedVertices,[cellCentredGrid(ii).vertex(:).index]);
         coord=vertcat(cellCentredGrid(ii).vertex(orderedVertexSub).coord);
         [isCCW]=CCWLoop(coord);
-        for jj=1:length(orderedEdges)
-            
-            edgeVertSub=FindObjNum([],cellOrderedVertex{1}(jj,:),[cellCentredGrid(ii).vertex(:).index]);
-            edgeTanVector=cellCentredGrid(ii).vertex(edgeVertSub(2)).coord...
-                -cellCentredGrid(ii).vertex(edgeVertSub(1)).coord;
-            normalVector=CalcNormVec2DClockWise(edgeTanVector);
-            normalVector=normalVector/norm(normalVector);
-            
-            [vecAngles]=ExtractAnglepm180(edgeTanVector,normalVector);
-            if (isCCW && vecAngles>0) || (~isCCW && vecAngles<0)
-                normalVector=-normalVector;
+        try
+            for jj=1:length(orderedEdges)
+                
+                edgeVertSub=FindObjNum([],cellOrderedVertex{1}(jj,:),[cellCentredGrid(ii).vertex(:).index]);
+                edgeTanVector=cellCentredGrid(ii).vertex(edgeVertSub(2)).coord...
+                    -cellCentredGrid(ii).vertex(edgeVertSub(1)).coord;
+                normalVector=CalcNormVec2DClockWise(edgeTanVector);
+                normalVector=normalVector/norm(normalVector);
+                
+                [vecAngles]=ExtractAnglepm180(edgeTanVector,normalVector);
+                
+                if (isCCW && vecAngles>0) || (~isCCW && vecAngles<0)
+                    normalVector=-normalVector;
+                end
+                cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).normalvector=normalVector;
+                vertCoord=vertcat(cellCentredGrid(ii).vertex(edgeVertSub).coord);
+                cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).edgecentre=...
+                    mean(vertCoord);
+                cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).edgelength=...
+                    norm(vertCoord(1,:)-vertCoord(2,:));
+                
             end
-            cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).normalvector=normalVector;
-            vertCoord=vertcat(cellCentredGrid(ii).vertex(edgeVertSub).coord);
-            cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).edgecentre=...
-                mean(vertCoord);
-            cellCentredGrid(ii).edge(cellOrderedEdges{1}(jj)).edgelength=...
-                norm(vertCoord(1,:)-vertCoord(2,:));
+        catch
+            errorCount=errorCount+1;
+            errSave(errorCount)=ii;
         end
-        
     end
-    
+    if errorCount, error('There were errors here');end
     
 end

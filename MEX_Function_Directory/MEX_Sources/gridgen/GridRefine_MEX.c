@@ -401,23 +401,23 @@ void RefineGrid_MEX(int nCellRefine, int *indCellRefine,int *posCellRefine){
 	ii=nLevels;
 	printf("\n***** START GRID REFINEMENT %i of %i *****\n",ii-1,nLevels-1);
 	GenerateTemplateGrid(ii);
-	
+	/*
 	printf("\n    ACTION: Template Generated");
 	IdentifyRefineEdge(posCellRefine, indCellRefine,nCellRefine,
 			&posEdgeRefine,&indEdgeRefine,&nEdgeRefine,edgestruct,nEdgeGrid,8);
-	
+	*/
 	printf("\n    ACTION: Refinement Targets Identified");
 	domSize[0]=levelSize[2*(ii-1)];
 	domSize[1]=levelSize[2*(ii-1)+1];
-	
+	/*
 	RefineSelectedEdges(domSize,posEdgeRefine,indEdgeRefine,nEdgeRefine);
-	printf("\n    ACTION: Edges Refined");
+	printf("\n    ACTION: Edges Refined");*/
 
 	RefineSelectedCells(domSize,posCellRefine,indCellRefine,nCellRefine);
 	printf("\n    ACTION: Cells Refined");
 
-	free(posEdgeRefine);
-	free(indEdgeRefine);
+	/*free(posEdgeRefine);
+	free(indEdgeRefine);*/
 	DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
 	
 	OutputGrid(ii);

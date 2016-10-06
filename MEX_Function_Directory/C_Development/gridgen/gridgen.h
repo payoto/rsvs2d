@@ -106,7 +106,8 @@ void OrderEdgeChain(int nEdge, int *ordPosEdge, int *ordIndEdge, int *ordIndVert
 void GenerateIndMatch(int domSize[dim()], int posCellRefine ,int *posEdgeSideTemp,int *posVertSideTemp,int *posCellAddTemp,
 	int *posEdgeAddTemp, int *posVertAddTemp, int *ordPosEdge, int *ordPosVert, int nCurrEdge,
 	int **convCellList, int **convEdgeList, int **convVertList);
-void ModifBorderEdges(int nCurrEdge, int posCellRefine, int *ordPosEdge, int *posEdgeSideTemp, int *convCellList);
+void ModifBorderEdges(int nCurrEdge,int nTempEdge, int posCellRefine, int *ordPosEdge, 
+	int *posEdgeSideTemp, int *convCellList,int*edgeTempRepeat);
 void ExtendGridStructures(int nCurrEdge,int nCellTemplate,int nEdgeTemplate,int nVertTemplate);
 void CopyEdgeStruct(int nCurrEdge,int domSize[dim()],int *posEdgeAddTemp,
 	int *convEdgeList,int *convCellList,int *convVertList);
@@ -114,7 +115,8 @@ void CopyVertStruct(int nCurrEdge,int domSize[dim()],int *posVertAddTemp,
 	int *convVertList, int *ordPosVert);
 void CopyCellStruct(int domSize[dim()],int posCellRefine,int *convCellList);
 void MergeNewCell(int domSize[dim()], int posCellRefine ,int *posEdgeSideTemp,int *posVertSideTemp,int *posCellAddTemp,
-	int *posEdgeAddTemp, int *posVertAddTemp, int *ordPosEdge, int *ordPosVert, int nCurrEdge);
+	int *posEdgeAddTemp, int *posVertAddTemp, int *ordPosEdge, int *ordPosVert,int *edgeTempRepeat, 
+	int nCurrEdge,int nEdgeTemp);
 void RefineCell(int domSize[dim()],int posCellRefine,int indCellRefine,int *posEdgeSideTemp,
 	int *posVertSideTemp,int *posCellAddTemp,int *posEdgeAddTemp, int *posVertAddTemp);
 void PrepareTemplateInfo(int domSize[dim()],int **posEdgeSide,int **posVertSide,int **posCellAdd,
@@ -126,7 +128,7 @@ void AllocateSolutionStruct(int nCellCurr, int nEdgeCurr, int nVertCurr, int nLe
 void IdentifyCellEdges(int *posCellRefine, int *indCellRefine,int nCellRefine,
 		int **posEdgeRefine, int **indEdgeCell,int *nEdgeCell, edgeTemplate *edgestructAct, int nEdge);
 void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdgeRefine
-	,int *posVertRefine,int *indVertRefine, int nEdgeRefine);
+	,int *posVertRefine,int *indVertRefine, int nEdgeRefine,int *edgeTempRepeat,int *indVertBorder);
 void AddVertexToStruct(double *newCoord, int nCoord, int *newVertInd);
 void AddEdgeToStruct(int *newVertInd, int *edgeVertInd,int *edgeVertPos,int *nSplitinEdge,
 	int *posEdgeRefine,int *indEdgeRefine,int *posVertRefine,int *indVertRefine,

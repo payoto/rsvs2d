@@ -82,6 +82,10 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
     [Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    if mean(abs(Deltax))>5
+        warning('Mean DeltaX is large %.3e',mean(abs(Deltax)))
+        Deltax=Deltax*10/mean(abs(Deltax));
+    end
 %     [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
      [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
 %     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
