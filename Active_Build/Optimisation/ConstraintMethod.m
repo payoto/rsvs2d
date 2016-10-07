@@ -13,7 +13,17 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [population,varargout]=ConstraintMethod(entryPoint,paramoptim,population,varargin)
+function [] = ConstraintMethod()
+    %FUNCTIONLIST allows local functions to be used globally once it has
+    %been used.
+    
+    funcHandles=localfunctions;
+    funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
+    HeaderActivation(funcHandles,funcDir)
+    
+end
+
+function [population,varargout]=ConstraintMethod2(entryPoint,paramoptim,population,varargin)
     % Function distributing the optimisation to various methods
     
     varargout{1}=[];
@@ -174,6 +184,8 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
         case 'MinSumVolFrac'
             [population]=MinSumVolumeFraction(constrVal,paroptim,population);
         case 'Naca0012'
+            [constrVal]=NacaOuterLimit0012(varargin{1},paroptim);
+            [population]=LocalVolumeFraction_min(constrVal,population);
             
         case 'LocalVolFrac_min'
             [population]=LocalVolumeFraction_min(constrVal,population);
@@ -222,6 +234,86 @@ function [population]=MeanVolumeFraction(constrVal,paroptim,population)
     
     
     
+end
+
+function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
+    
+    naca4t=@(x,t,c,xMin)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-0.1036*((x-xMin)/c).^4);
+    integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
+        (tDistrib(1:end-1)+tDistrib(2:end))/2]);
+    
+    warning('Will only work with square or rectangular grids')
+    varExtract={'axisRatio'};
+    axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
+    
+    
+    t=0.12;
+    cellCentredGrid=CellCentreGridInformation(gridrefined);
+    isActive=logical([cellCentredGrid(:).isactive]);
+    actVerts=[cellCentredGrid(isActive).vertex];
+    coord=vertcat(actVerts(:).coord);
+    
+    coord(:,2)=coord(:,2)*axisRatio;%;
+    
+    xPos=RemoveIdenticalEntries(coord(:,1));
+    xMax=max(xPos);
+    xMin=min(xPos);
+    fillSub=zeros([1,sum(isActive)]);
+    reqFrac=zeros([1,sum(isActive)]);
+    actCellSub=find(isActive);
+    figure
+    hold on
+    for ii=1:numel(actCellSub)
+        
+        cellCoords=vertcat(cellCentredGrid(actCellSub(ii)).vertex(:).coord);
+        cellCoords(:,2)=cellCoords(:,2)*axisRatio;
+        [cornerCoord]=IdentifyCorners(cellCoords);
+        posMin=min(cornerCoord);
+        posMax=max(cornerCoord);
+        
+        x=linspace(posMin(1),posMax(1),200);
+        tDistrib=naca4t(x,t,(xMax-xMin),xMin);
+        y=min(max(tDistrib,posMin(2)),posMax(2))-min(max(-tDistrib,posMin(2)),posMax(2));
+        plot(x,y+posMin(2))
+        vol=integr(x,y);
+        fillSub(ii)=ii;
+        reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
+    end
+    constrVal={fillSub,reqFraq};
+end
+
+function [cornersCoord]=IdentifyCorners(coord)
+    
+    minXPos=find(coord(:,1)==min(coord(:,1)));
+    maxXPos=find(coord(:,1)==max(coord(:,1)));
+    minYPos=find(coord(:,2)==min(coord(:,2)));
+    maxYPos=find(coord(:,2)==max(coord(:,2)));
+    
+    [~,loleCorn]=min(coord(minXPos,2));
+    loleCorn=minXPos(loleCorn);
+    [~,hileCorn]=max(coord(minXPos,2));
+    hileCorn=minXPos(hileCorn);
+    [~,loriCorn]=min(coord(maxXPos,2));
+    loriCorn=maxXPos(loriCorn);
+    [~,hiriCorn]=max(coord(maxXPos,2));
+    hiriCorn=maxXPos(hiriCorn);
+    
+    
+    [~,leloCorn]=min(coord(minYPos,1));
+    leloCorn=minYPos(leloCorn);
+    [~,riloCorn]=max(coord(minYPos,1));
+    riloCorn=minYPos(riloCorn);
+    [~,lehiCorn]=min(coord(maxYPos,1));
+    lehiCorn=maxYPos(lehiCorn);
+    [~,rihiCorn]=max(coord(maxYPos,1));
+    rihiCorn=maxYPos(rihiCorn);
+    
+    tests=(loleCorn==leloCorn) && (loriCorn==riloCorn) &&(hileCorn==lehiCorn) && (hiriCorn==rihiCorn);
+    if tests==false
+        warning('Unexpected Corners returning only one set')
+    end
+    cornersCoord=coord([loleCorn,loriCorn,hileCorn,hiriCorn],:);
 end
 
 function [population]=LocalVolumeFraction_min(constrVal,population)

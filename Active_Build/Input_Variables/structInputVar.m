@@ -803,7 +803,6 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.refine.edgeFinish='sharpen';
 end
 
-
 function [param]=ManualRefine()
     
     [param]=DefaultCase();
@@ -814,10 +813,10 @@ function [param]=ManualRefine()
     param.snakes.step.snakesSteps=150;
     
     param.snakes.force.typeSmear='dir';
-    param.snakes.step.arrivalTolerance=3e-2;
+    param.snakes.step.arrivalTolerance=1e-5;
     param.snakes.force.lengthEpsilon=1e-5;
     param.snakes.force.distEpsilon=0;
-    param.snakes.force.dirEpsilon=0;
+    param.snakes.force.dirEpsilon=1e-5;
     param.snakes.step.snaxInitPos=1e-5;
     
     param.general.loadLogical=true;
@@ -831,8 +830,6 @@ function [param]=ManualRefine()
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
 end
-
-
 
 function [param]=testRefinement()
     
