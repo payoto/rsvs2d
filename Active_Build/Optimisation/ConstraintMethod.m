@@ -13,17 +13,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [] = ConstraintMethod()
-    %FUNCTIONLIST allows local functions to be used globally once it has
-    %been used.
-    
-    funcHandles=localfunctions;
-    funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
-    HeaderActivation(funcHandles,funcDir)
-    
-end
-
-function [population,varargout]=ConstraintMethod2(entryPoint,paramoptim,population,varargin)
+function [population,varargout]=ConstraintMethod(entryPoint,paramoptim,population,varargin)
     % Function distributing the optimisation to various methods
     
     varargout{1}=[];
@@ -278,12 +268,12 @@ function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
         x=linspace(posMin(1),posMax(1),200);
         tDistrib=naca4t(x,t,(xMax-xMin),xMin);
         y=min(max(tDistrib,posMin(2)),posMax(2))-min(max(-tDistrib,posMin(2)),posMax(2));
-        plot(x,y+posMin(2))
+        %plot(x,y+posMin(2))
         vol=integr(x,y);
         fillSub(ii)=ii;
         reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
     end
-    constrVal={fillSub,reqFraq};
+    constrVal={fillSub,reqFrac};
 end
 
 function [cornersCoord]=IdentifyCorners(coord)

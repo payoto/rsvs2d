@@ -96,7 +96,7 @@ function [unstructured]=CosGridDistrib(unstructured,xMax,xMin)
         
         Dx=xMax-x;
         
-        Dx=min(abs(Dx(Dx~=0)));
+        Dx=min(abs(Dx(Dx>1e-10)));
         
         xNorm=(coord(:,1)-xMin)/(xMax-xMin);
         newX=(1-cos(xNorm*pi))/2*(xMax-xMin)+xMin;

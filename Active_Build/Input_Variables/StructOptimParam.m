@@ -260,6 +260,16 @@ function [paroptim]=NoConstraint(paroptim)
     
 end
 
+function [paroptim]=NACA0012Constraint(paroptim)
+    
+    paroptim.constraint.desVarConstr={'Naca0012'};
+    paroptim.constraint.desVarVal={[]};
+    paroptim.constraint.resConstr={'AeroResidualBarrier'};
+    paroptim.constraint.resVal={[-0.5,0.5]};
+    
+end
+
+
 function [paroptim]=SnaxVolResConstraint(paroptim)
     paroptim.constraint.initConstr={};
     paroptim.constraint.initVal={};
@@ -392,6 +402,37 @@ function [paroptim]=DE_Aero()
     paroptim.general.symType='horz'; % 'horz'
     
 end
+
+function [paroptim]=CG_NACA0012()
+    
+    [paroptim]=DefaultOptim();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012');
+    
+    [paroptim]=NACA0012Constraint(paroptim);
+    paroptim=CutCellObjective(paroptim);
+    
+    [paroptim]=OptimCG(paroptim);
+    
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.validVol=0.2;
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=5;
+    paroptim.obj.flow.nMach=0.85;
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
+    paroptim.obj.flow.stoponerror=false;
+    paroptim.obj.flow.targConv=-6;
+    paroptim.obj.flow.lengthConvTest=100;
+    paroptim.obj.flow.restartIter=2000;
+    paroptim.obj.flow.maxRestart=10;
+    
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.general.symType='horz'; % 'horz'
+    
+end
+
 
 function [paroptim]=MultiTopo_DEhoriz()
     
@@ -799,6 +840,18 @@ function paroptim=test_refine()
     paroptim.general.startPop='halfuniform';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=10;
+    paroptim.general.worker=4;
+end
+
+
+function paroptim=test_NACA0012()
+    
+    [paroptim]=CG_NACA0012();
+    
+    paroptim.general.refineOptim=[2 1; 2 1];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=6;
     paroptim.general.worker=4;
 end
 
@@ -2239,7 +2292,6 @@ end
 
 %% Refinement
 
-
 function [paroptim]=Refine10to40()
     [paroptim]=CG_Aero();
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic');
@@ -2256,7 +2308,6 @@ function [paroptim]=Refine10to40()
     paroptim.general.maxIter=32;
     paroptim.general.worker=12;
 end
-
 
 function [paroptim]=Refine40()
     [paroptim]=CG_Aero();
