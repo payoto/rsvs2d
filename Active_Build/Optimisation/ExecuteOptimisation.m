@@ -295,7 +295,7 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
-    [population]=ConstraintMethod('DesVar',paramoptim,population);
+    [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     [captureErrors{1:nPop}]=deal('');
     supportstruct=repmat(struct('loop',[]),[1,nPop]);
@@ -329,14 +329,14 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
     paramsnake=paramoptim.parametrisation;
     paramspline=paramoptim.spline;
     
-    [population]=ConstraintMethod('DesVar',paramoptim,population);
+    [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     [population,supportstruct,restartsnake,paramsnake,paramoptim,captureErrors]=ComputeRootSensitivityPopFill...
         (paramsnake,paramspline,paramoptim,population,baseGrid,gridrefined,...
         restartsnake,connectstructinfo,outinfo,nIter);
     
     population=ApplySymmetry(paramoptim,population);
-    [population]=ConstraintMethod('DesVar',paramoptim,population);
+    [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     varExtract={'nPop','sensCalc'};
     [nPop,sensCalc]=ExtractVariables(varExtract,paramoptim);
