@@ -180,9 +180,9 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
     
     switch constrName
         case 'MeanVolFrac'
-            [population]=MeanVolumeFraction(constrVal,paroptim,population);
+            [population]=MeanVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'MinSumVolFrac'
-            [population]=MinSumVolumeFraction(constrVal,paroptim,population);
+            [population]=MinSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'Naca0012'
             [constrVal]=NacaOuterLimit0012(varargin{1},paroptim);
             [population]=LocalVolumeFraction_min(constrVal,population);
@@ -203,17 +203,20 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
     
 end
 
-function [population]=MeanVolumeFraction(constrVal,paroptim,population)
+function [population]=MeanVolumeFraction(constrVal,paroptim,population,baseGrid)
     
     varExtract={'desVarRange'};
     [desVarRange]=ExtractVariables(varExtract,paroptim);
-    
+    cellCentred=CellCentreGridInformation(baseGrid);
+    isActive=logical([cellCentred(:).isactive]);
+    volVec=[cellCentred(isActive).isactive];
+    totvol=sum(volVec);
     
     for ii=1:length(population)
         
         fillStart=population(ii).fill;
         
-        meanFill=mean(fillStart);
+        meanFill=(sum(fillStart.*volVec)/totvol);
         ratio=constrVal/meanFill;
         if ratio<=1
             population(ii).fill=fillStart*ratio;
@@ -224,7 +227,7 @@ function [population]=MeanVolumeFraction(constrVal,paroptim,population)
             else
                 
                 [population(ii).fill,population(ii).constraint]=...
-                    IterativeMeanFill(fillStart,desVarRange,constrVal);
+                    IterativeMeanFill(fillStart,desVarRange,constrVal,volVec,totvol);
                 
             end
         end
@@ -367,9 +370,9 @@ function [population]=LocalVolumeFraction_equal(constrVal,population)
     end
 end
 
-function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal)
+function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal,volVec,totvol)
     isConstr=true;
-    ratio=constrVal/mean(fill);
+    ratio=constrVal/(sum(fillStart.*volVec)/totvol);
     kk=0;
     n=length(fill);
     while ratio~=constrVal && kk<=n+1;
@@ -378,7 +381,7 @@ function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal)
         fillBound=((fill*ratio)>=maxFill);
         fill(fillBound)=maxFill;
         fill(~fillBound)=fill(~fillBound)*ratio;
-        ratio=constrVal/mean(fill);
+        ratio=constrVal/(sum(fill.*volVec)/totvol);
         kk=kk+1;
     end
     if kk>n+1
@@ -386,17 +389,20 @@ function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal)
     end
 end
 
-function [population]=MinSumVolumeFraction(constrVal,paroptim,population)
+function [population]=MinSumVolumeFraction(constrVal,paroptim,population,baseGrid)
     
     varExtract={'desVarRange'};
     [desVarRange]=ExtractVariables(varExtract,paroptim);
-    
+    cellCentred=CellCentreGridInformation(baseGrid);
+    isActive=logical([cellCentred(:).isactive]);
+    volVec=[cellCentred(isActive).isactive];
+    totvol=sum(volVec);
     
     for ii=1:length(population)
         
         fillStart=population(ii).fill;
         
-        sumFill=sum(fillStart);
+        sumFill=sum(fillStart.*volVec)/totvol;
         ratio=constrVal/sumFill;
         if ~isfinite(ratio)
             population(ii).fill=fillStart;
@@ -410,7 +416,7 @@ function [population]=MinSumVolumeFraction(constrVal,paroptim,population)
             else
                 
                 [population(ii).fill,population(ii).constraint]=...
-                    IterativeMinFill(fillStart,desVarRange,constrVal);
+                    IterativeMinFill(fillStart,desVarRange,constrVal,volVec,totvol);
                 
             end
             
@@ -423,7 +429,7 @@ function [population]=MinSumVolumeFraction(constrVal,paroptim,population)
     
 end
 
-function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal)
+function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal,volVec,totvol)
     isConstr=true;
     ratio=constrVal/sum(fill);
     kk=0;
@@ -434,7 +440,7 @@ function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal)
         fillBound=((fill*ratio)>=maxFill);
         fill(fillBound)=maxFill;
         fill(~fillBound)=fill(~fillBound)*ratio;
-        ratio=constrVal/sum(fill);
+        ratio=constrVal/sum(fill.*volVec)*totvol;
         kk=kk+1;
     end
     if kk>n+1
