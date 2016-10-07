@@ -780,6 +780,15 @@ function [param]=optimNACA0012()
     param.optiminit.corneractive=false;
 end
 
+function [param]=optimNACA0012L()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=2;
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[22,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
 %% Surrogate modelling Cases
 
 function [param]=surrogateDefault()

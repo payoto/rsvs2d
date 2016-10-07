@@ -28,7 +28,7 @@ function [newPop,iterCurr,paramoptim,deltas]=OptimisationMethod(paramoptim,varar
             [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,varargin{1},varargin{2});
             
         case 'conjgrad'
-            [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,varargin{1},varargin{2});
+            [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,varargin{1},varargin{2},varargin{3});
         
         case 'DEStrip'
             
@@ -139,7 +139,7 @@ end
 
 %% Conjugate gradient
 
-function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1)
+function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1,baseGrid)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
@@ -162,7 +162,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     if lineSearch
         if ~isRestart
             [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,validCurr,direction);
-            [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim);
+            [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
             paramoptim.general.isRestart=false;
@@ -563,12 +563,12 @@ function [yy]=ParabolicVal(coeff,xx)
     yy=parabola(xx)*coeff;
 end
 
-function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim)
+function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim,baseGrid)
     
     newRoot=rootFill+stepVector;
     popVec.fill=newRoot;
     popVec=ApplySymmetry(paramoptim,popVec);
-    [popVec]=ConstraintMethod('DesVar',paramoptim,popVec);
+    [popVec]=ConstraintMethod('DesVar',paramoptim,popVec,baseGrid);
     newRoot=popVec.fill;
     
     [newRoot]=OverflowHandling(paramoptim,newRoot);

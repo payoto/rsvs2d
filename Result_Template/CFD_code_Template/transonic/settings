@@ -4,7 +4,7 @@
 2.9e-3               | Tinf    |  close to 1 for these values                                                    |
 1.4                  | gam     |                                                                                 |
 287.0                | Runiv   -----------------------------------------------------------------------------------
-50000                 | Timesteps ("pseudo" time) -----------------------------------------------------------------
+5000                 | Timesteps ("pseudo" time) -----------------------------------------------------------------
 2.0                  | CFL                   | VNSA max CFL is 2.8 - 2 normally, sometimes needs to be lower     |
 1.0                  | 2nd order dissipation |      Solver settings - some tweaking may be required              |
 0.05                 | 4th order dissipation |      esp. for 2nd/4th dissipation                                 |
