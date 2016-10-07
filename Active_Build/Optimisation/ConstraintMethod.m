@@ -255,8 +255,6 @@ function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
     fillSub=zeros([1,sum(isActive)]);
     reqFrac=zeros([1,sum(isActive)]);
     actCellSub=find(isActive);
-    figure
-    hold on
     for ii=1:numel(actCellSub)
         
         cellCoords=vertcat(cellCentredGrid(actCellSub(ii)).vertex(:).coord);

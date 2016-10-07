@@ -32,7 +32,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             restartSource=restartFromPop;
         end
         [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions(paramoptim,inNFlag,...
-            restartSource,maxIter,iterstruct);
+            restartSource,maxIter,iterstruct,baseGrid);
     end
     
     % Specify starting population
@@ -52,7 +52,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
                 baseGrid,connectstructinfo);
             % Evaluate Objective Function
-            [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter);
+            [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
             % create new population
             OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
@@ -88,7 +88,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
 end
 
 function [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions(paramoptim,inNFlag,...
-        restartSource,maxIter,iterstruct)
+        restartSource,maxIter,iterstruct,baseGrid)
     
     
     
@@ -98,7 +98,8 @@ function [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions
     maxIter=startIter+maxIter;
     iterstruct=[optimstruct,iterstruct];
     
-    [iterstruct,paramoptim,firstValidIter]=GenerateRestartPop(paramoptim,iterstruct,startIter,restartSource{2});
+    [iterstruct,paramoptim,firstValidIter]=GenerateRestartPop(paramoptim,...
+        iterstruct,startIter,restartSource{2},baseGrid);
     
     paramoptim.general.restartSource=restartSource;
     startIter=startIter+1;
@@ -108,7 +109,8 @@ function [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions
     
 end
 
-function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,iterstruct,startIter,precOptMeth)
+function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
+        iterstruct,startIter,precOptMeth,baseGrid)
     
     varExtract={'optimMethod','direction','iterGap','nPop'};
     [optimMethod,direction,iterGap,nPop]=ExtractVariables(varExtract,paroptim);
@@ -133,7 +135,7 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,iterst
             paroptim.optim.CG.lineSearch=precOptMeth{2};
             [origPop,~,paroptim,deltas]...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
-                iterstruct(max([startIter-iterGap,1])).population);
+                iterstruct(max([startIter-iterGap,1])).population,baseGrid);
             firstValidIter=1;
         else
             
@@ -218,7 +220,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     end
     
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
-    [iterstruct,paramoptim]=InitialisePopulation(paramoptim);
+    [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     
@@ -512,7 +514,7 @@ function population=EnforceConstraintViolation(population,defaultVal)
 end
 
 function [iterstruct,paramoptim]...
-        =GenerateNewPop(paramoptim,iterstruct,nIter,iterStart)
+        =GenerateNewPop(paramoptim,iterstruct,nIter,iterStart,baseGrid)
     procStr=['Generate New Population'];
     [tStart]=PrintStart(procStr,2);
     
@@ -523,7 +525,7 @@ function [iterstruct,paramoptim]...
     
     [newPop,iterstruct(nIter).population,paramoptim,deltas]=OptimisationMethod(paramoptim,...
         iterstruct(nIter).population,...
-        iterstruct(max([nIter-iterGap,iterStart])).population);
+        iterstruct(max([nIter-iterGap,iterStart])).population,baseGrid);
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
     [iterstruct(nIter+1).population]=GeneratePopulationStruct(paramoptim);
@@ -796,7 +798,7 @@ end
 
 %% Optimisation Specific Operations
 
-function [iterstruct,paroptim]=InitialisePopulation(paroptim)
+function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
     
     varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal',...
         'optimMethod','desvarconnec','specificFillName','initInterp'};
@@ -890,6 +892,9 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim)
         case 'initinterp'
             [rootFill]=InitialiseFromFunction(cellLevels,corneractive,initInterp,nDesVar);
             origPop=ones([nPop 1])*rootFill;
+        case 'NACA0012'
+            [rootFill]=NacaOuterLimit0012(baseGrid,paroptim);
+            origPop=ones([nPop 1])*rootFill{2};
     end
     
     

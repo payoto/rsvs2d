@@ -489,8 +489,8 @@ void RefineGrid(){
 		}*/
 		free(posCellRefine);
 		free(indCellRefine);
-		//free(posEdgeRefine);
-		//free(indEdgeRefine);
+		/*free(posEdgeRefine);*/
+		/*free(indEdgeRefine);*/
 		DeAllocateTemplate(domSize, cellCurrentTemplate, edgeCurrentTemplate, vertCurrentTemplate);
 		OutputGrid(ii);
 		
@@ -1689,7 +1689,7 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 		*newVertIndAll=NULL;
 	double *sideSplitPos=NULL,*refSplitPos=NULL, *allSplit=NULL,*newCoord=NULL,*newSplits=NULL;
 	
-	// find number of sides and which edges make those sides
+	/*// find number of sides and which edges make those sides*/
 	prevOrientation=1; /* First Edge is vertical due to clockwise order */
 	nSides=0;
 	
@@ -1709,7 +1709,7 @@ void RefineSelectedEdgesRobust(int domSize[dim()],int *posEdgeRefine,int *indEdg
 	
 	if(nSides!=3){printf("\n number of sides is not four at start of edge refinement process: %i \n",nSides+1);exit(EXIT_FAILURE);}
 	
-	// Identify necessary refinement action for each side
+	/* // Identify necessary refinement action for each side*/
 	
 	kk=0;
 	nNewVertAll=0;

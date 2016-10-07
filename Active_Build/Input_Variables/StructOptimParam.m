@@ -414,6 +414,7 @@ function [paroptim]=CG_NACA0012()
     
     [paroptim]=OptimCG(paroptim);
     
+    paroptim.general.startPop='NACA0012';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.2;
@@ -422,7 +423,7 @@ function [paroptim]=CG_NACA0012()
     paroptim.obj.flow.nMach=0.85;
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
     paroptim.obj.flow.stoponerror=false;
-    paroptim.obj.flow.targConv=-6;
+    paroptim.obj.flow.targConv=-4;
     paroptim.obj.flow.lengthConvTest=100;
     paroptim.obj.flow.restartIter=2000;
     paroptim.obj.flow.maxRestart=10;
@@ -854,7 +855,28 @@ function paroptim=test_NACA0012()
     paroptim.general.maxIter=6;
     paroptim.general.worker=4;
 end
+function paroptim=bp3_NACA0012()
+    
+    [paroptim]=CG_NACA0012();
+    
+    paroptim.general.refineOptim=[2 1; 2 1];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=40;
+    paroptim.general.worker=12;
+end
 
+function paroptim=bp3_NACA0012L()
+    
+    [paroptim]=CG_NACA0012();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012L');
+    paroptim.general.refineOptim=[2 1];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=60;
+    paroptim.general.worker=12;
+end
 %% Inverse Design Cases
 
 
