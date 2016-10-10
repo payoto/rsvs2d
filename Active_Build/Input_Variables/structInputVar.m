@@ -522,6 +522,15 @@ function [param]=optimSupersonic()
     param.optiminit.corneractive=false;
 end
 
+function [param]=optimSupersonicCos()
+    [param]=optimSupersonic();
+    
+    param.snakes.refine.axisRatio=1;
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[12,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
 function [param]=optimSupersonic_Long()
    
     [param]=optimSupersonic();
@@ -746,7 +755,7 @@ function [param]=optimNACA0012()
     
     param.general.typDat='optimInit';
     param.general.restart=true;
-    param.general.refineSteps=[6 1];
+    param.general.refineSteps=4;
     param.general.subdivType='area';
     
     param.snakes.refine.refineGrid=4;
@@ -786,6 +795,15 @@ function [param]=optimNACA0012L()
     param.snakes.refine.axisRatio=2;
     param.snakes.refine.gridDistrib='cosX1';
     param.optiminit.cellLevels=[22,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
+function [param]=optimNACA0012S()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=0.5;
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[7,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
