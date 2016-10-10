@@ -11,6 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     close all
     clc
@@ -42,7 +43,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         nOptimRef=0;
     end
     for refStage=1:nOptimRef+1
-    
+        
         % Start optimisation Loop
         for nIter=startIter:maxIter
             % Assign design variables to grid
@@ -56,14 +57,18 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             % create new population
             OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
+            if ConvergenceTest(paramoptim,iterstruct,nIter)
+                fprintf('\n Optimisation Stopped By convergence condition \n');
+                break
+            end
         end
-
+        
         % Finish Optimisation
         iterstruct(end)=[];
         [~]=PrintEnd(procStr2,0,tStartOpt);
         pause(0.01)
         diary off
-        try 
+        try
             OptimisationOutput('final',paramoptim,outinfo,iterstruct);
         catch
             
@@ -75,10 +80,18 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct,outinfo,baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
+
+            if size(refineOptim,2)==3
+                startIter=maxIter+1;
+                maxIter=startIter+refineOptim(refStage,3);
+            else
+                maxIter2=2*maxIter-(startIter-1);
+                startIter=maxIter+1;
+                maxIter=maxIter2;
+            end
+
             iterstruct=iterstruct2;
-            maxIter2=2*maxIter-(startIter-1);
-            startIter=maxIter+1;
-            maxIter=maxIter2;
+            
             
         end
         
@@ -262,7 +275,6 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
     
 end
 
-
 function [population,captureErrors]=ParallelObjectiveCalc...
         (objectiveName,paramoptim,population,supportstruct,captureErrors)
     
@@ -283,6 +295,27 @@ function [population,captureErrors]=ParallelObjectiveCalc...
             population(ii).exception=[population(ii).exception,'error: ',MEexception.identifier];
             captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
         end
+    end
+    
+end
+
+function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter)
+    
+    varExtract={'optimMethod','iterGap'};
+    [optimMethod,iterGap]=ExtractVariables(varExtract,paramoptim);
+    isConv=false;
+    if CheckIfGradient(optimMethod) && (nIter>(3*iterGap+1))
+        
+        
+        isConv=all(iterstruct(nIter).population(1).fill==iterstruct(nIter-iterGap).population(1).fill) ...
+            && all(iterstruct(nIter).population(1).fill==iterstruct(nIter-2*iterGap).population(1).fill)...
+            && all(iterstruct(nIter).population(1).fill==iterstruct(nIter-3*iterGap).population(1).fill);
+        
+        
+    else
+        
+        isConv=false; % Need to find a convergence condition for non grad optim
+        
     end
     
 end
@@ -812,6 +845,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             origPop=rand([nPop,nDesVar]);
         case 'halfuniform'
             origPop=ones([nPop nDesVar])*0.5;
+        case 'halfuniformthin'
+            origPop=ones([nPop nDesVar])*0.05;
             
         case 'randuniform'
             
@@ -1350,13 +1385,13 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
         InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
     
-   
-    [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter);
+    
+    [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
     
 end
 
 
-% 
+%
 
 function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
@@ -1377,7 +1412,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [outinfo]=OptimisationOutput('init',paramoptim);
     warning ('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
-
+    
     % Refine Grid
     varNames={'refineOptim'};
     refineCellLvl=ExtractVariables(varNames,paramoptim);
@@ -1418,7 +1453,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     if numel(refineGrid)==1; refineGrid=ones(1,2)*refineGrid;end
     [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refineCellLvl(refStep,:));
     
-        % Fill follows the order of activeCells
+    % Fill follows the order of activeCells
     
     [profloops]=ExtractVolInfo(outinfoOld.rootDir);
     
@@ -1430,7 +1465,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     if ~corneractive
         [baseGrid,gridrefined]=ReduceCornerFrac(baseGrid,gridrefined,...
-        connectstructinfo,defaultCorner);
+            connectstructinfo,defaultCorner);
     end
     
     [gridrefined]=EdgePropertiesReshape(gridrefined);
@@ -1618,7 +1653,7 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
     iterProf=[profloops(:).iter];
     
     for ii=find((iterProf>=firstValidIter))
-    
+        
         
         iterstruct(profloops(ii).iter).population(profloops(ii).prof).fill=...
             profloops(ii).newFracs(actFill)';

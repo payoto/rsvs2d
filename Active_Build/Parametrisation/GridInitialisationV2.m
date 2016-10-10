@@ -92,23 +92,23 @@ end
 function [unstructured]=CosGridDistrib(unstructured,xMax,xMin)
     
     coord=unstructured.vertex.coord;
-        x=coord(:,1);
-        
-        Dx=xMax-x;
-        
-        Dx=min(abs(Dx(Dx>1e-10)));
-        
-        xNorm=(coord(:,1)-xMin)/(xMax-xMin);
-        newX=(1-cos(xNorm*pi))/2*(xMax-xMin)+xMin;
-        DminNx=newX(xNorm<1 & xNorm>0)-1;
-        DminNx=min(abs(DminNx(DminNx~=0)));
-        
-        newX((xNorm>1))=(x(x>xMax)-xMax)/Dx*DminNx+xMax;
-        
-        newX((xNorm<0))=(x(x<xMin)-xMin)/Dx*DminNx+xMin;
-        
-        coord(:,1)=newX;
-        unstructured.vertex.coord=coord;
+    x=coord(:,1);
+
+    Dx=xMax-x;
+
+    Dx=min(abs(Dx(Dx>1e-10)));
+
+    xNorm=(coord(:,1)-xMin)/(xMax-xMin);
+    newX=(1-cos(xNorm*pi))/2*(xMax-xMin)+xMin;
+    DminNx=newX(xNorm<1 & xNorm>0)-1;
+    DminNx=min(abs(DminNx(DminNx~=0)));
+
+    newX((x>xMax))=(x(x>xMax)-xMax)/Dx*DminNx+xMax;
+
+    newX((x<xMin))=(x(x<xMin)-xMin)/Dx*DminNx+xMin;
+
+    coord(:,1)=newX;
+    unstructured.vertex.coord=coord;
     
 end
 %% Initialisation Functions

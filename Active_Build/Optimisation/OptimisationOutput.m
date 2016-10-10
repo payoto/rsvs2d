@@ -460,12 +460,14 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         system(['cat ''',destPath,''' > ''',tecPlotFile{2},'''']);
     end
     
-    
-    
     for ii=1:nIter
-        nAct=length(optimstruct(ii).population);
-        iterRes(ii,1:nAct)=[optimstruct(ii).population(:).objective];
+        itL=[optimstruct(ii).population(:).objective];
+        nVarLoc=length(itL);
+        iterRes(ii,1:nVarLoc)=itL;
+        %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
     end
+    
+    
     
     switch dirOptim
         case 'min'
@@ -1055,7 +1057,9 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     hold on
     for ii=1:nIter
         nVarLoc=length(optimstruct(ii).population);
-        iterRes(ii,1:nVarLoc)=[optimstruct(ii).population(:).objective];
+        itL=[optimstruct(ii).population(:).objective];
+        nVarLoc=length(itL);
+        iterRes(ii,1:nVarLoc)=itL;
         %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
     end
     for ii=2:2:nIter
@@ -1109,7 +1113,7 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     text(xT,yT,strT, 'interpreter','latex','HorizontalAlignment','right');
     
     
-    % Plot 2
+   % Plot 2
     axh=subplot(1,2,2,'ticklabelinterpreter','latex');
     
     switch dirOptim
@@ -1119,7 +1123,13 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
             errMeasure=knownOptim-minRes;
     end
     
-    
+    for ii=1:2:nIter
+        nFill(ceil(ii/2))=numel(optimstruct(ii).population(1).fill);
+    end
+    changeIter=find(nFill(2:end)~=nFill(1:end-1));
+    iterList=1:2:nIter;
+    changeIter=iterList(changeIter+1);
+    changeIter=[1,changeIter,nIter];
     %     for ii=1:nIter
     %         nPop=length(optimstruct(ii).population);
     %         for jj=1:nPop
@@ -1129,32 +1139,33 @@ function [h]=OptimHistory_grad(optimstruct,knownOptim,defaultVal,dirOptim)
     %             hold on
     %         end
     %     end
-    
-    popNominal=zeros([ceil(nIter/2),numel(optimstruct(1).population(1).fill)]);
-    objNominal=zeros([ceil(nIter/2),1]);
-    kk=0;
-    for ii=1:2:nIter
-        kk=kk+1;
-        popNominal(kk,:)=optimstruct(ii).population(1).fill;
-        objNominal(kk)=optimstruct(ii).population(1).objective;
+    for ll=1:(numel(changeIter)-1)
+        popNominal=zeros([ceil((changeIter(ll+1)-1-changeIter(ll))/2),numel(optimstruct(changeIter(ll)).population(1).fill)]);
+        objNominal=zeros([ceil((changeIter(ll+1)-1-changeIter(ll))/2),1]);
+        kk=0;
+        for ii=changeIter(ll):2:(changeIter(ll+1)-1)
+            kk=kk+1;
+            popNominal(kk,:)=optimstruct(ii).population(1).fill;
+            objNominal(kk)=optimstruct(ii).population(1).objective;
+        end
+
+
+        iterVec=((changeIter(ll):2:(changeIter(ll+1)-1))+1)/2;
+        varVec=(1:length(popNominal(1,:)))/length(popNominal(1,:));
+
+        [iterGrid,varGrid]=meshgrid(iterVec,varVec);
+        [objGrid,~]=meshgrid(objNominal,varVec);
+
+        surf(iterGrid,varGrid,popNominal',objGrid)
+        hold on
     end
-    
-    
-    iterVec=((1:2:nIter)+1)/2;
-    varVec=1:length(popNominal(1,:));
-    
-    [iterGrid,varGrid]=meshgrid(iterVec,varVec);
-    [objGrid,~]=meshgrid(objNominal,varVec);
-    
-    surf(iterGrid,varGrid,popNominal',objGrid)
-    
     colorbar;
     
     xlabel('Iteration', 'interpreter','latex','fontsize',12)
     ylabel('Variable Index', 'interpreter','latex','fontsize',12)
     zlabel('Variable Value', 'interpreter','latex','fontsize',12)
     set(axh,'ticklabelinterpreter','latex')
-    
+     
     
     
     

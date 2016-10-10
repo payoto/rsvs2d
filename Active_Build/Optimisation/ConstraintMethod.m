@@ -171,6 +171,8 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
     switch constrName
         case 'MeanVolFrac'
             [population]=MeanVolumeFraction(constrVal,paroptim,population,varargin{1});
+        case 'ValVolFrac'
+            [population]=ValSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'MinSumVolFrac'
             [population]=MinSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'Naca0012'
@@ -199,7 +201,7 @@ function [population]=MeanVolumeFraction(constrVal,paroptim,population,baseGrid)
     [desVarRange]=ExtractVariables(varExtract,paroptim);
     cellCentred=CellCentreGridInformation(baseGrid);
     isActive=logical([cellCentred(:).isactive]);
-    volVec=[cellCentred(isActive).isactive];
+    volVec=[cellCentred(isActive).volume];
     totvol=sum(volVec);
     
     for ii=1:length(population)
@@ -227,6 +229,41 @@ function [population]=MeanVolumeFraction(constrVal,paroptim,population,baseGrid)
     
     
     
+end
+
+function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal,volVec,totvol)
+    %{
+    isConstr=true;
+    ratio=constrVal/(sum(fillStart.*volVec)/totvol);
+    kk=0;
+    n=length(fill);
+    while ratio~=constrVal && kk<=n+1;
+        maxFill=max(desVarRange);
+        
+        fillBound=((fill*ratio)>=maxFill);
+        fill(fillBound)=maxFill;
+        fill(~fillBound)=fill(~fillBound)*ratio;
+        ratio=constrVal/(sum(fill.*volVec)/totvol);
+        kk=kk+1;
+    end
+    if kk>n+1
+        isConstr=false;
+    end
+    %}
+    isConstr=true;
+    ratio=2;
+    kk=0;
+    n=length(fill);
+    maxFill=max(desVarRange);
+    while ratio>1 && kk<=n+1;
+        fillBound=(fill>=maxFill);
+        ratio=(constrVal*totvol-sum(volVec(fillBound).*fill(fillBound)))/sum(volVec(~fillBound).*fill(~fillBound));
+        fill(~fillBound)=min(fill(~fillBound)*ratio,maxFill);
+        kk=kk+1;
+    end
+    if kk>n+1
+        isConstr=false;
+    end
 end
 
 function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
@@ -358,32 +395,13 @@ function [population]=LocalVolumeFraction_equal(constrVal,population)
     end
 end
 
-function [fill,isConstr]=IterativeMeanFill(fill,desVarRange,constrVal,volVec,totvol)
-    isConstr=true;
-    ratio=constrVal/(sum(fillStart.*volVec)/totvol);
-    kk=0;
-    n=length(fill);
-    while ratio~=constrVal && kk<=n+1;
-        maxFill=max(desVarRange);
-        
-        fillBound=((fill*ratio)>=maxFill);
-        fill(fillBound)=maxFill;
-        fill(~fillBound)=fill(~fillBound)*ratio;
-        ratio=constrVal/(sum(fill.*volVec)/totvol);
-        kk=kk+1;
-    end
-    if kk>n+1
-        isConstr=false;
-    end
-end
-
 function [population]=MinSumVolumeFraction(constrVal,paroptim,population,baseGrid)
     
     varExtract={'desVarRange'};
     [desVarRange]=ExtractVariables(varExtract,paroptim);
     cellCentred=CellCentreGridInformation(baseGrid);
     isActive=logical([cellCentred(:).isactive]);
-    volVec=[cellCentred(isActive).isactive];
+    volVec=[cellCentred(isActive).volume];
     totvol=sum(volVec);
     
     for ii=1:length(population)
@@ -419,7 +437,7 @@ end
 
 function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal,volVec,totvol)
     isConstr=true;
-    ratio=constrVal/sum(fill);
+    ratio=constrVal/sum(fill.*volVec)*totvol;
     kk=0;
     n=length(fill);
     while ratio>1 && kk<=n+1;
@@ -429,6 +447,64 @@ function [fill,isConstr]=IterativeMinFill(fill,desVarRange,constrVal,volVec,totv
         fill(fillBound)=maxFill;
         fill(~fillBound)=fill(~fillBound)*ratio;
         ratio=constrVal/sum(fill.*volVec)*totvol;
+        kk=kk+1;
+    end
+    if kk>n+1
+        isConstr=false;
+    end
+end
+
+function [population]=ValSumVolumeFraction(constrVal,paroptim,population,baseGrid)
+    
+    varExtract={'desVarRange'};
+    [desVarRange]=ExtractVariables(varExtract,paroptim);
+    varExtract={'axisRatio'};
+    [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
+    cellCentred=CellCentreGridInformation(baseGrid);
+    isActive=logical([cellCentred(:).isactive]);
+    volVec=[cellCentred(isActive).volume]*axisRatio;
+    totvol=sum(volVec);
+    
+    for ii=1:length(population)
+        
+        fillStart=population(ii).fill;
+        
+        sumFill=sum(fillStart.*volVec)/totvol;
+        ratio=constrVal/sumFill;
+        if ~isfinite(ratio)
+            population(ii).fill=fillStart;
+            population(ii).constraint=false;
+        elseif ratio<=1
+            population(ii).fill=fillStart*ratio;
+        elseif ratio>1
+            maxFill=max(fillStart);
+            if maxFill*ratio<=max(desVarRange)
+                population(ii).fill=fillStart*ratio;
+            else
+                
+                [population(ii).fill,population(ii).constraint]=...
+                    IterativeValFill(fillStart,desVarRange,constrVal,volVec,totvol);
+                
+            end
+            
+        end
+        
+        
+    end
+    
+    
+end
+
+function [fill,isConstr]=IterativeValFill(fill,desVarRange,constrVal,volVec,totvol)
+    isConstr=true;
+    ratio=2;
+    kk=0;
+    n=length(fill);
+    maxFill=max(desVarRange);
+    while ratio>1 && kk<=n+1;
+        fillBound=(fill>=maxFill);
+        ratio=(constrVal-sum(volVec(fillBound)))/sum(volVec(~fillBound).*fill(~fillBound));
+        fill(~fillBound)=min(fill(~fillBound)*ratio,maxFill);
         kk=kk+1;
     end
     if kk>n+1
