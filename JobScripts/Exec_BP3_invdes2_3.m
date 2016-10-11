@@ -3,4 +3,4 @@ MoveToDir('source',1)
 InitialiseSnakeFlow;
 
 
-ExecuteOptimisation('bp32_4412cos');
+ExecuteOptimisation('bp3_refine6');
