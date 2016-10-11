@@ -82,12 +82,11 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
                 connectstructinfo,refStage,nIter,startIter);
 
             if size(refineOptim,2)==3
-                startIter=maxIter+1;
+                startIter=nIter+1;
                 maxIter=startIter+refineOptim(refStage,3);
             else
-                maxIter2=2*maxIter-(startIter-1);
-                startIter=maxIter+1;
-                maxIter=maxIter2;
+                maxIter=nIter+maxIter-(startIter-1);
+                startIter=nIter+1;
             end
 
             iterstruct=iterstruct2;
@@ -306,11 +305,11 @@ function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter)
     isConv=false;
     if CheckIfGradient(optimMethod) && (nIter>(3*iterGap+1))
         
-        
-        isConv=all(iterstruct(nIter).population(1).fill==iterstruct(nIter-iterGap).population(1).fill) ...
-            && all(iterstruct(nIter).population(1).fill==iterstruct(nIter-2*iterGap).population(1).fill)...
-            && all(iterstruct(nIter).population(1).fill==iterstruct(nIter-3*iterGap).population(1).fill);
-        
+        if numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-iterGap).population(1).fill) ...
+                && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-2*iterGap).population(1).fill)
+            isConv=all(iterstruct(nIter).population(1).fill==iterstruct(nIter-iterGap).population(1).fill) ...
+                && all(iterstruct(nIter).population(1).fill==iterstruct(nIter-2*iterGap).population(1).fill);
+        end
         
     else
         
@@ -846,7 +845,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         case 'halfuniform'
             origPop=ones([nPop nDesVar])*0.5;
         case 'halfuniformthin'
-            origPop=ones([nPop nDesVar])*0.05;
+            origPop=ones([nPop nDesVar])*0.2;
             
         case 'randuniform'
             
@@ -1451,7 +1450,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     varNames={'refineGrid'};
     refineGrid=ExtractVariables(varNames,paramoptim.parametrisation);
     if numel(refineGrid)==1; refineGrid=ones(1,2)*refineGrid;end
-    [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refineCellLvl(refStep,:));
+    [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refineCellLvl(refStep,1:2));
     
     % Fill follows the order of activeCells
     

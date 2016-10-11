@@ -99,6 +99,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.sensAnalyticalType='raw'; % 'raw' 'smooth'
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
+    paroptimoptimCG.lineSearchType='backbisection';
     paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
     paroptimoptimCG.openVol=0.1;
     paroptimoptimCG.nLineSearch=12;
@@ -840,16 +841,79 @@ end
 
 %% refinement
 
-function paroptim=test_refine()
+function paroptim=test_refine1()
     [paroptim]=Inverse_CG();
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
     paroptim.obj.invdes.aeroName='0012';
     
-    paroptim.general.refineOptim=[2 1 16; 2 1 10];
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=14;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=4;
+end
+function paroptim=test_refine2()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=4;
+end
+function paroptim=test_refine3()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.optim.CG.lineSearchType='polydistrib';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=4;
+end
+function paroptim=test_refine4()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim.optim.CG.lineSearchType='polydistrib';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=4;
+end
+function paroptim=test_refine5()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='4412';
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=4;
+end
+function paroptim=test_refine6()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='4412';
+    
+    paroptim.optim.CG.lineSearchType='polydistrib';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
     paroptim.general.worker=4;
 end
 
@@ -868,7 +932,7 @@ function paroptim=bp3_NACA0012()
     
     [paroptim]=CG_NACA0012();
     
-    paroptim.general.refineOptim=[2 1 40; 2 1 40];
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=60;
@@ -879,7 +943,7 @@ function paroptim=bp3_NACA0012S()
     
     [paroptim]=CG_NACA0012();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012S');
-    paroptim.general.refineOptim=[2 1 60; 2 1 60; 2 1 60];
+    paroptim.general.refineOptim=[2 1 60; 2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=60;
@@ -964,6 +1028,84 @@ function [paroptim]=Refine40()
     paroptim.general.maxIter=32;
     paroptim.general.worker=12;
 end
+
+
+function paroptim=bp3_refine1()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+function paroptim=bp3_refine2()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+function paroptim=bp3_refine3()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.optim.CG.lineSearchType='polydistrib';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+function paroptim=bp3_refine4()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim.optim.CG.lineSearchType='polydistrib';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+function paroptim=bp3_refine5()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='4412';
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+function paroptim=bp3_refine6()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim.obj.invdes.aeroName='4412';
+    
+    paroptim.optim.CG.lineSearchType='polydistrib';
+    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=20;
+    paroptim.general.worker=8;
+end
+
 
 %% Inverse Design Cases
 

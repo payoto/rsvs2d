@@ -143,10 +143,10 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
-        'isRestart','borderActivation'};
+        'isRestart','borderActivation','lineSearchType'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
-        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation]...
+        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,lineSearchType]...
         =ExtractVariables(varExtract,paramoptim);
     
     
@@ -161,7 +161,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     % Case dependant statements
     if lineSearch
         if ~isRestart
-            [stepVector]=FindOptimalStepVector(iterCurr,nLineSearch,validCurr,direction);
+            [stepVector]=FindOptimalStepVector(iterCurr,...
+                UnitStepLength(nLineSearch,lineSearchType),direction);
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
@@ -192,7 +193,10 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
             (gradF_curr,gradF_m1,modestruct,iterCurr,direction);
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
-        [stepLengths]=StepLengthsForLS(rootPop,stepVector,nLineSearch,validVol,desVarRange);
+        [unitSteps]=UnitStepLength(nLineSearch,lineSearchType);
+        
+        [stepLengths]=StepLengthsForLS(rootPop,stepVector,unitSteps,validVol,desVarRange);
+            
         [newPop,deltas]=...
             GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim);
         % Population trimming for invalid values
@@ -397,7 +401,8 @@ function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,d
     prevStep(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
     
     modes=vertcat(modestruct(:).mode)';
-    
+    gradF_curr(isnan(gradF_curr))=0;
+    gradF_m1(isnan(gradF_m1))=0;
     gradDes_curr=(modes*gradF_curr)';
     gradDes_m1=(modes*gradF_m1)';
     
@@ -419,8 +424,7 @@ function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,d
     
 end
 
-function [stepLengths]=StepLengthsForLS(rootPop,stepVector,worker,validVol,desVarRange)
-    
+function [stepLengths]=StepLengthsForLS(rootPop,stepVector,unitStep,validVol,desVarRange)
     
     
     % Limit Imposed by design variable range
@@ -437,14 +441,28 @@ function [stepLengths]=StepLengthsForLS(rootPop,stepVector,worker,validVol,desVa
     stepHigh=stepToLim;
     
     % Step Length will be bisecting backtrack
-    stepLengths=zeros([1,worker]);
-    stepLengths(end)=stepHigh;
+    stepLengths=unitStep*stepHigh;
     
-    for ii=worker-1:-1:2
-        stepLengths(ii)=stepLengths(ii+1)/2;
+end
+
+function [stepLengths]=UnitStepLength(worker,lineSearchType)
+    
+    switch lineSearchType
+        case 'backbisection'
+            stepLengths=zeros([1,worker]);
+            stepLengths(end)=1;
+            
+            for ii=worker-1:-1:2
+                stepLengths(ii)=stepLengths(ii+1)/2;
+            end
+        case 'polydistrib'
+            coeffs=@(vol,v0,g1,g0) [g1+g0-2*vol,3*vol-2*g0-g1,g0,v0]';
+            Yfunc=@(x,coeffs) [x.^3 x.^2 x.^1 x.^0]*coeffs;
+            stepLengths=Yfunc(linspace(0,1,worker)',coeffs(1,0,1/3,0))';
     end
     
 end
+
 
 function [minChange]=FindMinPosMov(change,step)
     
@@ -471,7 +489,7 @@ function [newPop,deltas]=...
 end
 
 
-function [stepVector]=FindOptimalStepVector(iterstruct,worker,validCurr,direction)
+function [stepVector]=FindOptimalStepVector(iterstruct,unitSteps,direction)
     
     f=[iterstruct(:).objective];
     g=[iterstruct(:).constraint];
@@ -487,8 +505,7 @@ function [stepVector]=FindOptimalStepVector(iterstruct,worker,validCurr,directio
             [~,bestPoint]=max(f);
     end
     
-    stepLengths=1./2.^[inf,worker-validCurr(2:end)];
-    stepLengths=stepLengths/stepLengths(end);
+    stepLengths=unitSteps;
     if bestPoint==1
         bestPoint=2;
     end
