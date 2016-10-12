@@ -10,29 +10,29 @@ function sub=FindObjNum(object,index,objInd)
      %sub2=FindObjNum_Matlab(index,objInd);
      
      % Mex
-    sub=FindObjNum_MEX(index,objInd,length(index),length(objInd));
-    if numel(index)~=1
-        sub=sub';
-    end
+%     sub=FindObjNum_MEX(index,objInd,length(index),length(objInd));
+%     if numel(index)~=1
+%         sub=sub';
+%     end
     
   % Matlab  
-%     sub=zeros(length(index),1);
-%     additionalSlots=0;
-%     for ii=1:length(index)
-%         
-%         snaxLog=objInd==index(ii);
-%         jj=ii+additionalSlots;
-%         subInter=find(snaxLog);
-%         if isempty(subInter)
-%             sub(jj)=0;
-%         elseif numel(subInter)>1
-%             sub(jj:jj+length(subInter)-1)=subInter;
-%             additionalSlots=additionalSlots+numel(subInter)-1;
-%         else
-%             sub(jj)=subInter;
-%             
-%         end
-%     end
+    sub=zeros(length(index),1);
+    additionalSlots=0;
+    for ii=1:length(index)
+        
+        snaxLog=objInd==index(ii);
+        jj=ii+additionalSlots;
+        subInter=find(snaxLog);
+        if isempty(subInter)
+            sub(jj)=0;
+        elseif numel(subInter)>1
+            sub(jj:jj+length(subInter)-1)=subInter;
+            additionalSlots=additionalSlots+numel(subInter)-1;
+        else
+            sub(jj)=subInter;
+            
+        end
+    end
 
 
 % Test match

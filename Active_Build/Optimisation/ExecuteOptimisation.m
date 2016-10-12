@@ -10,7 +10,17 @@
 %         parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%{
+function [] = ExecuteOptimisation()
+    %FUNCTIONLIST allows local functions to be used globally once it has
+    %been used.
+    
+    funcHandles=localfunctions;
+    funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
+    HeaderActivation(funcHandles,funcDir)
+    
+end
+%}
 
 function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     close all
@@ -57,7 +67,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             % create new population
             OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
-            if ConvergenceTest(paramoptim,iterstruct,nIter)
+            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
                 fprintf('\n Optimisation Stopped By convergence condition \n');
                 break
             end
@@ -78,7 +88,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             
             [paramoptim,outinfo,iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
-                HandleRefinement(paramoptim,iterstruct,outinfo,baseGrid,gridrefined,...
+                HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo,baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
 
             if size(refineOptim,2)==3
@@ -298,12 +308,12 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
 end
 
-function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter)
+function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter,startIter)
     
     varExtract={'optimMethod','iterGap'};
     [optimMethod,iterGap]=ExtractVariables(varExtract,paramoptim);
     isConv=false;
-    if CheckIfGradient(optimMethod) && (nIter>(3*iterGap+1))
+    if CheckIfGradient(optimMethod) && ((nIter-startIter)>(3*iterGap+1))
         
         if numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-iterGap).population(1).fill) ...
                 && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-2*iterGap).population(1).fill)
@@ -406,7 +416,7 @@ function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,
             end
             
         catch MEexception
-            Error Capture
+            % Error Capture
             population(ii+1).constraint=false;
             population(ii+1).exception=['error: ',MEexception.identifier];
             captureErrors{ii+1}=MEexception.getReport;
@@ -1459,8 +1469,9 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter);
     
     % Generate new snake restarts.
+    [newFrac]=BuildNewRestartFrac(iterstruct,profloops);
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
-        connectstructinfo,profloops(1).newFracs);
+        connectstructinfo,newFrac);
     
     if ~corneractive
         [baseGrid,gridrefined]=ReduceCornerFrac(baseGrid,gridrefined,...
@@ -1572,6 +1583,16 @@ function [transformstruct,coeffMat]=BuildMatrix(gridmatch)
     transformstruct.volumeNew=[gridmatch.matchstruct(:).newvolume]';
 end
 
+function [newFrac]=BuildNewRestartFrac(iterstruct,profloops)
+    
+    iterProf=[profloops(:).iter];
+    profProf=[profloops(:).prof];
+    iterProfSubs=FindObjNum([],max(iterProf),iterProf);
+    profSub=find(profProf(iterProfSubs)==1);
+    newFrac=profloops(iterProfSubs(profSub)).newFracs;
+    newFrac(newFrac~=0)=0.5;
+    
+end
 function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
     
     iterProf=[profloops(:).iter];
@@ -1650,11 +1671,12 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
     
     actFill=logical([baseGrid.cell(:).isactive]);
     iterProf=[profloops(:).iter];
-    
+    profProf=[profloops(:).prof];
     for ii=find((iterProf>=firstValidIter))
         
+        profSub=find(sort(profProf(FindObjNum([],profloops(ii).iter,iterProf)))==profloops(ii).prof);
         
-        iterstruct(profloops(ii).iter).population(profloops(ii).prof).fill=...
+        iterstruct(profloops(ii).iter).population(profSub).fill=...
             profloops(ii).newFracs(actFill)';
         
     end
@@ -1678,6 +1700,10 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
                 iterstruct(ii).population(jj).optimdat.value(...
                 iterstruct(ii).population(jj).optimdat.var);
         end
+        iterstruct(ii).population(1).optimdat.value=...
+            iterstruct(ii).population(jj).optimdat.value;
+        iterstruct(ii).population(1).optimdat.var=...
+            iterstruct(ii).population(jj).optimdat.var;
     end
 end
 

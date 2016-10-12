@@ -427,7 +427,7 @@ function [paroptim]=CG_NACA0012()
     paroptim.general.startPop='NACA0012';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.varActive='snaksensiv';
-    paroptim.optim.CG.validVol=0.2;
+    paroptim.optim.CG.validVol=0.3;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=5;
     paroptim.obj.flow.nMach=0.85;
@@ -942,10 +942,21 @@ end
 function paroptim=bp3_NACA0012S()
     
     [paroptim]=CG_NACA0012();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012S');
-    paroptim.general.refineOptim=[2 1 60; 2 1 100; 2 1 100];
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=12;
+end
+
+function paroptim=bp3_NACA0012Su()
+    
+    [paroptim]=CG_NACA0012();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.nPop=100;
     paroptim.general.maxIter=60;
     paroptim.general.worker=12;
 end
@@ -1029,81 +1040,312 @@ function [paroptim]=Refine40()
     paroptim.general.worker=12;
 end
 
+% NACA 0012 sweep
 
-function paroptim=bp3_refine1()
+function paroptim=bp3_NACA0012_sweep()
+    
+    [paroptim]=CG_NACA0012();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=8;
+end
+
+function paroptim=NACA0012sweep_Sc()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+end
+function paroptim=NACA0012sweep_Su()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+end
+function paroptim=NACA0012sweep_Nc()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+end
+function paroptim=NACA0012sweep_Nu()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nu');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+end
+function paroptim=NACA0012sweep_Lc()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim.general.refineOptim=[2 1 100];
+end
+function paroptim=NACA0012sweep_Lu()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lu');
+    paroptim.general.refineOptim=[2 1 100];
+end
+function paroptim=NACA0012sweep_Vc()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vc');
+    paroptim.general.refineOptim=[0];
+end
+function paroptim=NACA0012sweep_Vu()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vu');
+    paroptim.general.refineOptim=[0];
+end
+
+% Bp3 Inverse design sweep
+
+function paroptim=bp3_refsweep_cv00012()
     [paroptim]=Inverse_CG();
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv');
     paroptim.obj.invdes.aeroName='0012';
     
     paroptim.optim.CG.lineSearchType='backbisection';
-    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=100;
     paroptim.general.worker=8;
 end
-function paroptim=bp3_refine2()
-    [paroptim]=Inverse_CG();
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+function paroptim=bp3_refsweep_cv02212()
+    paroptim=bp3_refsweep_cv00012();
     paroptim.obj.invdes.aeroName='2212';
-    paroptim.optim.CG.lineSearchType='backbisection';
-    paroptim.general.refineOptim=[2 1 20; 2 1 20];
-    %paroptim.optim.CG.varActive='all';
-    paroptim.general.startPop='halfuniformthin';
-    paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
-    paroptim.general.worker=8;
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv');
+    
 end
-function paroptim=bp3_refine3()
+function paroptim=bp3_refsweep_cu00012()
+    paroptim=bp3_refsweep_cv00012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu');
+    paroptim.general.refineOptim=[2 2 100; 2 2 100];
+    
+    
+end
+function paroptim=bp3_refsweep_cu02212()
+    paroptim=bp3_refsweep_cu00012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu');
+    
+end
+function paroptim=bp3_refsweep_uv02212()
+    paroptim=bp3_refsweep_cv00012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uv');
+    
+end
+function paroptim=bp3_refsweep_uv00012()
+    paroptim=bp3_refsweep_cv00012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uv');
+    
+    
+end
+function paroptim=bp3_refsweep_uu02212()
+    paroptim=bp3_refsweep_cu00012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu');
+    
+end
+function paroptim=bp3_refsweep_uu00012()
+    paroptim=bp3_refsweep_cu00012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu');
+    
+end
+
+
+function paroptim=bp3_refsweep_cv10012()
     [paroptim]=Inverse_CG();
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv1');
     paroptim.obj.invdes.aeroName='0012';
     
-    paroptim.optim.CG.lineSearchType='polydistrib';
-    paroptim.general.refineOptim=[2 1 20; 2 1 20];
-    %paroptim.optim.CG.varActive='all';
-    paroptim.general.startPop='halfuniformthin';
-    paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
-    paroptim.general.worker=8;
-end
-function paroptim=bp3_refine4()
-    [paroptim]=Inverse_CG();
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
-    paroptim.obj.invdes.aeroName='2212';
-    paroptim.optim.CG.lineSearchType='polydistrib';
-    paroptim.general.refineOptim=[2 1 20; 2 1 20];
-    %paroptim.optim.CG.varActive='all';
-    paroptim.general.startPop='halfuniformthin';
-    paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
-    paroptim.general.worker=8;
-end
-function paroptim=bp3_refine5()
-    [paroptim]=Inverse_CG();
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
-    paroptim.obj.invdes.aeroName='4412';
     paroptim.optim.CG.lineSearchType='backbisection';
-    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+    paroptim.general.refineOptim=[2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=100;
     paroptim.general.worker=8;
 end
-function paroptim=bp3_refine6()
-    [paroptim]=Inverse_CG();
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cosref');
-    paroptim.obj.invdes.aeroName='4412';
+function paroptim=bp3_refsweep_cv12212()
+    paroptim=bp3_refsweep_cv10012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv1');
     
-    paroptim.optim.CG.lineSearchType='polydistrib';
-    paroptim.general.refineOptim=[2 1 20; 2 1 20];
+end
+function paroptim=bp3_refsweep_cu10012()
+    paroptim=bp3_refsweep_cv10012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu1');
+    paroptim.general.refineOptim=[2 2 100];
+    
+    
+end
+function paroptim=bp3_refsweep_cu12212()
+    paroptim=bp3_refsweep_cu10012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu1');
+    
+end
+function paroptim=bp3_refsweep_uv12212()
+    paroptim=bp3_refsweep_cv10012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uv1');
+    
+end
+function paroptim=bp3_refsweep_uv10012()
+    paroptim=bp3_refsweep_cv10012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uv1');
+    
+    
+end
+function paroptim=bp3_refsweep_uu12212()
+    paroptim=bp3_refsweep_cu10012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu1');
+    
+end
+function paroptim=bp3_refsweep_uu10012()
+    paroptim=bp3_refsweep_cu10012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu1');
+    
+end
+
+
+function paroptim=bp3_refsweep_cv20012()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv2');
+    paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[0];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=100;
     paroptim.general.worker=8;
+end
+function paroptim=bp3_refsweep_cv22212()
+    paroptim=bp3_refsweep_cv20012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv2');
+    
+end
+function paroptim=bp3_refsweep_cu20012()
+    paroptim=bp3_refsweep_cv20012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu2');
+    paroptim.general.refineOptim=[2 2 100];
+    
+    
+end
+function paroptim=bp3_refsweep_cu22212()
+    paroptim=bp3_refsweep_cu20012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu2');
+    
+end
+function paroptim=bp3_refsweep_uv22212()
+    paroptim=bp3_refsweep_cv20012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uv2');
+    
+end
+function paroptim=bp3_refsweep_uv20012()
+    paroptim=bp3_refsweep_cv20012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uv2');
+    
+    
+end
+function paroptim=bp3_refsweep_uu22212()
+    paroptim=bp3_refsweep_cu20012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu2');
+    
+end
+function paroptim=bp3_refsweep_uu20012()
+    paroptim=bp3_refsweep_cu20012();
+    paroptim.obj.invdes.aeroName='0012';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu2');
+    
+end
+
+
+% Area M2 sweep
+
+function paroptim=bp3_AreaM2sweep()
+    
+    [paroptim]=CG_Aero();
+    [paroptim]=ValVolumeConstraint(paroptim);
+    paroptim.general.startPop='halfuniformsharp';
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=8;
+end
+
+function paroptim=AreaM2sweep_Sc()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+end
+function paroptim=AreaM2sweep_Su()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
+end
+function paroptim=AreaM2sweep_Nc()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nc');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+end
+function paroptim=AreaM2sweep_Nu()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nu');
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+end
+function paroptim=AreaM2sweep_Lc()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim.general.refineOptim=[2 1 100];
+end
+function paroptim=AreaM2sweep_Lu()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lu');
+    paroptim.general.refineOptim=[2 1 100];
+end
+function paroptim=AreaM2sweep_Vc()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vc');
+    paroptim.general.refineOptim=[0];
+end
+function paroptim=AreaM2sweep_Vu()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vu');
+    paroptim.general.refineOptim=[0];
 end
 
 
