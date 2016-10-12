@@ -139,7 +139,7 @@ end
 
 %% Conjugate gradient
 
-function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1,baseGrid)
+function [newPop,iterOrig,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1,baseGrid)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
@@ -149,7 +149,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,lineSearchType]...
         =ExtractVariables(varExtract,paramoptim);
     
-    
+    iterOrig=iterCurr;
     % Extract previous iteration information
     [iterCurr,validCurr]=ExtractValidIter(iterCurr);
     [iterm1,validM1]=ExtractValidIter(iterm1);
@@ -161,7 +161,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     % Case dependant statements
     if lineSearch
         if ~isRestart
-            [stepVector]=FindOptimalStepVector(iterCurr,...
+            [stepVector]=FindOptimalStepVector(iterOrig,...
                 UnitStepLength(nLineSearch,lineSearchType),direction);
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
         else
@@ -213,7 +213,7 @@ end
 
 function [population,validIter]=ExtractValidIter(population)
     
-    validIter=[1,find([population(2:end).constraint]>0.9)+1];
+    validIter=[1,find([population(2:end).constraint]>0.8)+1];
     population=population(validIter);
     
 end
@@ -463,7 +463,6 @@ function [stepLengths]=UnitStepLength(worker,lineSearchType)
     
 end
 
-
 function [minChange]=FindMinPosMov(change,step)
     
     change=change./step;
@@ -485,16 +484,15 @@ function [newPop,deltas]=...
         deltas{ii}=[actVar;deltaDes(ii,actVar)];
         [newPop(ii,:)]=OverflowHandling(paramoptim,newPop(ii,:));
     end
-    
+    deltas{1}=deltas{end};
 end
-
 
 function [stepVector]=FindOptimalStepVector(iterstruct,unitSteps,direction)
     
     f=[iterstruct(:).objective];
     g=[iterstruct(:).constraint];
     vec=zeros(size(iterstruct(1).fill));
-    vec(iterstruct(end).optimdat.var)=iterstruct(end).optimdat.value;
+    vec(iterstruct(1).optimdat.var)=iterstruct(1).optimdat.value;
     
     invalidPoints=g<0.9;
     
@@ -506,6 +504,8 @@ function [stepVector]=FindOptimalStepVector(iterstruct,unitSteps,direction)
     end
     
     stepLengths=unitSteps;
+    stepLength=stepLengths(bestPoint);
+    %{
     if bestPoint==1
         bestPoint=2;
     end
@@ -527,12 +527,11 @@ function [stepVector]=FindOptimalStepVector(iterstruct,unitSteps,direction)
         case 'max'
             [targObj,indexLoc]=max(ParabolicVal(pp,iTest));
     end
-    stepLength=iTest(indexLoc);
-    
+    %stepLength=iTest(indexLoc);
+    %}
     if stepLength==0
         warning('Step Length is stagnant this iteration')
     end
-    
     stepVector=vec*stepLength;
     
 end

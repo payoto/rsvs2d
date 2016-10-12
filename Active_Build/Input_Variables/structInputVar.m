@@ -697,7 +697,7 @@ function [param]=optimInverseDesign()
     param.snakes.refine.axisRatio=1;
     
     param.optiminit.cellLevels=[10,2];
-    param.optiminit.defaultCorner=1e-5;
+    param.optiminit.defaultCorner=1e-4;
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     param.general.subdivType='chaikin';
@@ -738,13 +738,12 @@ function [param]=optimInverseDesign_cosref()
     
     param.snakes.refine.axisRatio=1;
     
-    param.snakes.refine.refineGrid=[6 1];
+    param.snakes.refine.refineGrid=[4 4];
     
     param.snakes.refine.gridDistrib='cosX1';
     param.optiminit.cellLevels=[10,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
-
 
 function [param]=optimNACA0012()
    
@@ -798,12 +797,221 @@ function [param]=optimNACA0012L()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
-function [param]=optimNACA0012S()
+
+% NACA0012
+
+function [param]=optimNACA0012Sc()
     [param]=optimNACA0012();
     
     param.snakes.refine.axisRatio=0.5;
     param.snakes.refine.gridDistrib='cosX1';
     param.optiminit.cellLevels=[7,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Su()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=0.5;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[7,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Nc()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=1;
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[12,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Nu()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=1;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[12,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Lc()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=2;
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[22,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Lu()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=2;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[22, 2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Vc()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=4;
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[42,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Vu()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=4;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[42, 2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
+% BP3 inverse design testing procedure
+
+function [param]=optimInverseDesign_cv()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 1];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[10,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_cu()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[10,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_uv()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 1];
+    
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[10,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_uu()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[10,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
+% Bp3 inverse design reference grids
+
+function [param]=optimInverseDesign_cv1()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=2;
+    
+    param.snakes.refine.refineGrid=[4 1];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[18,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_cu1()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[18,4];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_uv1()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=2;
+    
+    param.snakes.refine.refineGrid=[4 1];
+    
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[18,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_uu1()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[18,4];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_cv2()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=4;
+    
+    param.snakes.refine.refineGrid=[4 1];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[34,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_cu2()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    
+    param.snakes.refine.gridDistrib='cosX1';
+    param.optiminit.cellLevels=[34,8];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_uv2()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=4;
+    
+    param.snakes.refine.refineGrid=[4 1];
+    
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[34,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_uu2()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=1;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[34,8];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
