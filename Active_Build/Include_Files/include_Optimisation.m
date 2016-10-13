@@ -12,6 +12,8 @@ end
 %%
 function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
     
+    [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,'0012');
+    %{
     naca4t=@(x,t,c,xMin)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
         -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-0.1036*((x-xMin)/c).^4);
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
@@ -53,6 +55,83 @@ function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
         reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
     end
     constrVal={fillSub,reqFrac};
+    %}
+end
+
+function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
+    
+    naca4t=@(x,t,c,xMin)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-0.1036*((x-xMin)/c).^4);
+    
+    naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
+        m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
+%     ((x(x>=(p*c))-xMin)/c)
+%     
+%     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
+%         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
+    
+    integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
+        (tDistrib(1:end-1)+tDistrib(2:end))/2]);
+    
+    warning('Will only work with square or rectangular grids')
+    varExtract={'axisRatio'};
+    axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
+    [m,p,t,refFlag]=ReadNacaString(nacaStr);
+    if m==0 || p==0
+        p=0.0001;
+        m=0;
+    end
+    
+    cellCentredGrid=CellCentreGridInformation(gridrefined);
+    isActive=logical([cellCentredGrid(:).isactive]);
+    actVerts=[cellCentredGrid(isActive).vertex];
+    coord=vertcat(actVerts(:).coord);
+    figure, hold on
+    coord(:,2)=coord(:,2)*axisRatio;%;
+    
+    xPos=RemoveIdenticalEntries(coord(:,1));
+    xMax=max(xPos);
+    xMin=min(xPos);
+    fillSub=zeros([1,sum(isActive)]);
+    reqFrac=zeros([1,sum(isActive)]);
+    actCellSub=find(isActive);
+    for ii=1:numel(actCellSub)
+        
+        cellCoords=vertcat(cellCentredGrid(actCellSub(ii)).vertex(:).coord);
+        cellCoords(:,2)=cellCoords(:,2)*axisRatio;
+        [cornerCoord]=IdentifyCorners(cellCoords);
+        posMin=min(cornerCoord);
+        posMax=max(cornerCoord);
+        
+        x=linspace(posMin(1),posMax(1),200);
+        tDistrib=naca4t(x,t,(xMax-xMin),xMin);
+        cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
+        y=min(max(cDistrib+tDistrib,posMin(2)),posMax(2))-min(max(cDistrib-tDistrib,posMin(2)),posMax(2));
+        plot(x,cDistrib+y+posMin(2))
+        vol=integr(x,y);
+        fillSub(ii)=ii;
+        reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
+    end
+    constrVal={fillSub,reqFrac};
+end
+
+function [ctc,pct,ttc,refFlag]=ReadNacaString(nacaStr)
+    refFlag=0;
+    if numel(nacaStr)==4
+        ctc=str2num(nacaStr(1))/100;
+        pct=str2num(nacaStr(2))/10;
+        ttc=str2num(nacaStr(3:4))/100;
+        
+        
+    elseif numel(nacaStr)==5
+        ctc=str2num(nacaStr(1))/100;
+        pct=str2num(nacaStr(2))/10;
+        refFlag=str2num(nacaStr(3));
+        ttc=str2num(nacaStr(4:5))/100;
+        %error('Five digits not implemented - need for tabulated data')
+    else
+        error('Invalid string length')
+    end
 end
 
 function [cornersCoord]=IdentifyCorners(coord)

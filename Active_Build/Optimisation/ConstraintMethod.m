@@ -469,7 +469,7 @@ function [population]=ValSumVolumeFraction(constrVal,paroptim,population,baseGri
         
         fillStart=population(ii).fill;
         
-        sumFill=sum(fillStart.*volVec)/totvol;
+        sumFill=sum(fillStart.*volVec);
         ratio=constrVal/sumFill;
         if ~isfinite(ratio)
             population(ii).fill=fillStart;
