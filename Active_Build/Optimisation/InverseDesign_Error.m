@@ -92,13 +92,13 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
    x(x>1)=1;
    x(x<0)=0;
     
+   [ctc,pct,tmax,refFlag]=ReadNacaString(nacaStr);
+   
     if numel(nacaStr)==4
-        m=str2num(nacaStr(1))/100;
-        p=str2num(nacaStr(2))/10;
-        tmax=str2num(nacaStr(3:4))/100;
+        
         
         tDist=naca45t(x,tmax,a4_closed);
-        cDist=naca4c(x,m,p);
+        cDist=naca4c(x,ctc,pct);
         if any(abs(uplow)~=1)
             warning('Vector uplow indicating uppper or lower surface is not well formed')
         end
@@ -109,10 +109,7 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
             nacaCoord=[x,y];
         end
     elseif numel(nacaStr)==5
-        m=str2num(nacaStr(1))/100;
-        p=str2num(nacaStr(2))/10;
-        reflexFlag=str2num(nacaStr(3));
-        tmax=str2num(nacaStr(4:5))/100;
+        
         error('Five digits not implemented - need for tabulated data')
     else
         error('Unrecognised naca String length')
@@ -121,12 +118,7 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     
 end
 
-function []=GenerateUUICCoord()
-    
-    
-    
-    
-end
+
 
 
 %% Error Matching

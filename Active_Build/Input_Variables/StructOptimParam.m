@@ -1040,6 +1040,15 @@ function [paroptim]=Refine40()
     paroptim.general.worker=12;
 end
 
+function paroptim=bp3_refsweep_cv02212_interp()
+    paroptim=bp3_refsweep_cv00012();
+    paroptim.obj.invdes.aeroName='2212';
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv');
+    
+    paroptim.general.startPop='NACA0012';
+end
+
+
 % NACA 0012 sweep
 
 function paroptim=bp3_NACA0012_sweep()

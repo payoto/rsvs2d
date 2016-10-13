@@ -21,7 +21,6 @@ function [] = ExecuteOptimisation()
     
 end
 %}
-
 function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
     close all
     clc
@@ -309,16 +308,17 @@ function [population,captureErrors]=ParallelObjectiveCalc...
 end
 
 function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter,startIter)
-    
+    comEps=@(f1,f2,eps) all(abs(f1-f2)<eps);
     varExtract={'optimMethod','iterGap'};
     [optimMethod,iterGap]=ExtractVariables(varExtract,paramoptim);
     isConv=false;
-    if CheckIfGradient(optimMethod) && ((nIter-startIter)>(3*iterGap+1))
+    eps=1e-10;
+    if CheckIfGradient(optimMethod) && ((nIter-startIter)>(2*iterGap+1))
         
         if numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-iterGap).population(1).fill) ...
                 && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-2*iterGap).population(1).fill)
-            isConv=all(iterstruct(nIter).population(1).fill==iterstruct(nIter-iterGap).population(1).fill) ...
-                && all(iterstruct(nIter).population(1).fill==iterstruct(nIter-2*iterGap).population(1).fill);
+            isConv=comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-iterGap).population(1).fill,eps) ...
+                && comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-2*iterGap).population(1).fill,eps);
         end
         
     else
