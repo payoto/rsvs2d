@@ -781,7 +781,7 @@ function [param]=optimNACA0012()
     
     param.general.subdivType='chaikin';
     param.snakes.refine.TEShrink=true;
-    param.snakes.refine.LEShrink=true;
+    param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
     param.general.refineSteps=3;
