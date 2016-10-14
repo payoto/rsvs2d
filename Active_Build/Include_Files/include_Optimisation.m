@@ -86,7 +86,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
     isActive=logical([cellCentredGrid(:).isactive]);
     actVerts=[cellCentredGrid(isActive).vertex];
     coord=vertcat(actVerts(:).coord);
-    figure, hold on
+    %figure, hold on
     coord(:,2)=coord(:,2)*axisRatio;%;
     
     xPos=RemoveIdenticalEntries(coord(:,1));
@@ -107,7 +107,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         tDistrib=naca4t(x,t,(xMax-xMin),xMin);
         cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
         y=min(max(cDistrib+tDistrib,posMin(2)),posMax(2))-min(max(cDistrib-tDistrib,posMin(2)),posMax(2));
-        plot(x,cDistrib+y+posMin(2))
+        %plot(x,cDistrib+y+posMin(2))
         vol=integr(x,y);
         fillSub(ii)=ii;
         reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;

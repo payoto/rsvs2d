@@ -1365,7 +1365,7 @@ function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     [obj]=InverseDesign_Error(paramoptim,loop);
     
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
-    objValue=obj.sum;
+    objValue=obj.max;
     
     additional=obj;
     additional.A=areaAdd.A;

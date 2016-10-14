@@ -14,9 +14,19 @@ function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,shar
     switch refineMethod
         case 'chaikin'
             [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
+            
+        case 'chaikinNaca0012'
+            
+            [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
+            [xMax,ii]=max(newPoints(:,1));
+            [xMin,~]=min(newPoints(:,1));
+            sChange=sign(newPoints(ii+1,2)-newPoints(ii,2));
+            addPts=ones(3,1)*newPoints(ii,:)+[0 sChange*1e-6;(xMax-xMin)/4 0;0 -1e-6*sChange];
+            newPoints=[newPoints(1:ii-1,:);addPts;newPoints(ii+1:end,:)];
         case 'bspline'
             
             [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
+           
         case 'test'
             figure
             hold on
