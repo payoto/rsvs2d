@@ -25,7 +25,7 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                 [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
                 resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
                 
-                parfor jj=1:length(loop)
+                for jj=1:length(loop)
                     [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);
@@ -37,7 +37,7 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                 [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
                 resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
                 
-                parfor jj=1:length(loop)
+                for jj=1:length(loop)
                     [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);

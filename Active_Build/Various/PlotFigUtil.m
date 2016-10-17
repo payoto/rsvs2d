@@ -17,6 +17,7 @@ function [h]=PreplotFiles(pltPaths,dir,nameStr)
     end
     
 end
+
 function [h]=PlotFiles(matPath,dir,nameStr)
     
     if ~exist('nameStr','var'),
@@ -87,6 +88,8 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     
     
 end
+
+
 
 function [addFolders]=ExploreFolderTree(rootDir)
     % adds a set of paths to the active path
