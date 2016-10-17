@@ -496,7 +496,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
-    parfor jj=1:kk
+    for jj=1:kk
         
         ii=needRerun(jj);
         
