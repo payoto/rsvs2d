@@ -65,7 +65,7 @@
 
       do t=1,nstep
 
-	  do nv=1,nvert
+		do nv=1,nvert
 		read(303,*) (grd(nv,j),j=1,2)
 	  enddo
 	  !close(100)
@@ -170,7 +170,7 @@
 	 
 	  
 	  
-	  do i=1,nvert
+    do i=1,nvert
 		!if(i.eq.381) then
 		!  print *,m(i),rhov(i)
 		!endif
@@ -263,7 +263,6 @@
 		do ii=1,nLines
 			lStart=lEnd+1
 			lEnd=min(lStart+lineLength-1,nvert)
-			
 			do np=(lStart),(lEnd-1)
 				write(unitno2,"(ES14.6E2) ",advance="no") (grd(np,j))
 			enddo
