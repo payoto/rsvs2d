@@ -1177,7 +1177,6 @@ function paroptim=bp3_refsweep_uu00012()
     paroptim=bp3_refsweep_cu00012();
     paroptim.obj.invdes.aeroName='0012';
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu');
-    
 end
 
 
