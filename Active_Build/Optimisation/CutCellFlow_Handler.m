@@ -4,8 +4,8 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     varExtract={'CFDfolder','stoponerror','targConv','restartIter','lengthConvTest',...
-        'maxRestart','nMach'};
-    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart,nMach]...
+        'maxRestart','nMach','isSymFlow'};
+    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart,nMach,isSymFlow]...
         =ExtractVariables(varExtract,paramoptim);
     
     compType=computer;
@@ -22,16 +22,24 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
         flowCommand=['cp -rp ''',CFDfolder,''' ''',targFolder,''''];
         [status,stdout]=system(flowCommand);
     end
+    if numel(nMach)<3
+        nMach=[1 nMach(1) 0.25];
+    end
     RestartModifiedSettings(targFolder,'mach',1,nMach);
     CopyBoundaryFile(boundaryLoc,targFolder);
     
-    % Run system command
+    %% Get an initial solution running
     compType=computer;
+    if isSymFlow
+        batchFlow='RunFlowSym';
+    else
+        batchFlow='RunFlow';
+    end
     if strcmp(compType(1:2),'PC')
-        flowCommand=['"',targFolder,filesep,'RunFlow.bat"'];
+        flowCommand=['"',targFolder,filesep,batchFlow,'.bat"'];
         [status,stdout]=system(flowCommand);
     else
-        flowCommand=['''',targFolder,filesep,'RunFlow.sh'''];
+        flowCommand=['''',targFolder,filesep,batchFlow,'.sh'''];
         [status,stdout]=system(flowCommand);
     end
     
@@ -45,18 +53,14 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
         errFlag=CutCellErrorHandling(endstr,stoponerror);
         kk=kk+1;
     end
+    
     if kk<10
-        datastr=endstr(end-60:end);
-        data=str2num(datastr); %#ok<ST2NM>
-        obj.iter=data(1);
-        obj.err=data(2);
-        obj.cl=data(3);
-        obj.cd=data(4);
+        [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
         iterN=obj.iter;
         % test convergence
         
         [isfinished,restartNormal,restartCFL,theoretConvIter]=...
-            TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
+            TestCutCellConvergence(obj.res,targConv,targFolder,lengthConvTest);
         kk=0;
         while ~isfinished && kk<maxRestart
             theoretConvIter(theoretConvIter<=0)=Inf;
@@ -64,7 +68,7 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
             if restartNormal || restartCFL
                 RestartModifiedSettings(targFolder,'restart',12,1);
                 RestartModifiedSettings(targFolder,'iter',7,...
-                    min([restartIter,theoretConvIter]));
+                    [2, min([restartIter,theoretConvIter]), targConv]);
             end
             
             if restartCFL
@@ -79,15 +83,10 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
                 restartNormal=false;
                 restartCFL=true;
             else
-                datastr=endstr(end-60:end);
-                data=str2num(datastr); %#ok<ST2NM>
-                obj.iter=data(1);
-                obj.err=data(2);
-                obj.cl=data(3);
-                obj.cd=data(4);
+                [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
                 [isfinished,restartNormal,restartCFL,theoretConvIter]=...
-                    TestCutCellConvergence(obj.err,targConv,targFolder,lengthConvTest);
-                iterN=iterN+obj.iter;
+                    TestCutCellConvergence(obj.res,targConv,targFolder,lengthConvTest);
+                iterN=obj.iter;
             end
         end
     end
@@ -114,7 +113,7 @@ function [obj]=ExtractFinalData(targFolder,iter,isErr)
         end
     end
     fclose('all');
-    obj.iter=iter;
+    obj.iter=obj.iter+iter;
     
 end
 
@@ -296,19 +295,19 @@ end
 
 function strOut=ReplaceMachNum(strIn,nMach)
     
-   cflStr=regexp(strIn,'\d*\.\d*','match','once');
-    strOut=regexprep(strIn,cflStr,'%.2f');
+   cflStr=regexp(strIn,'\d*\s*\d*\.\d*\s*\d*\.\d*','match','once');
+    strOut=regexprep(strIn,cflStr,'%i %.2f %.2f');
     
-    strOut=sprintf([strOut,'\n'],nMach);
+    strOut=sprintf([strOut,'\n'],nMach(1),nMach(2),nMach(3));
     
 end
 
 function strOut=ReplaceIter(strIn,iterNum)
     
-    cflStr=regexp(strIn,'\d*','match','once');
-    strOut=regexprep(strIn,cflStr,'%i');
+    cflStr=regexp(strIn,'\d*\s*\d*\s*\d*\.\d*','match','once');
+    strOut=regexprep(strIn,cflStr,'%i %i %.2f');
     
-    strOut=sprintf([strOut,'\n'],iterNum);
+    strOut=sprintf([strOut,'\n'],iterNum(1),iterNum(2),iterNum(3));
     
 end
 

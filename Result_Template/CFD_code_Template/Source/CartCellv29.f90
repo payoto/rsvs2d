@@ -251,8 +251,8 @@
         shiftx=0.0
         shifty=0.0
       else
-        shiftx=0.001*pi
-        shifty=0.001*pi
+        shiftx=10.0**(-1.0*6)*pi/3.14
+        shifty=10.0**(-1.0*6)*pi/3.14
       endif
 
       surfpt(:,1)=surfpt(:,1)+shiftx
