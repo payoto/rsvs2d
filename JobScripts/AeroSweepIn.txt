@@ -1,0 +1,16 @@
+AreaM2sweep_Sc
+AreaM2sweep_Su
+NACA0012sweep_Sc
+NACA0012sweep_Su
+AreaM2sweep_Nc
+AreaM2sweep_Nu
+NACA0012sweep_Nc
+NACA0012sweep_Nu
+AreaM2sweep_Lc
+AreaM2sweep_Lu
+NACA0012sweep_Lc
+NACA0012sweep_Lu
+AreaM2sweep_Vc
+AreaM2sweep_Vu
+NACA0012sweep_Vc
+NACA0012sweep_Vu

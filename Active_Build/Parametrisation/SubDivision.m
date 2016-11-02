@@ -7,6 +7,7 @@
 %          Subdivision for Shape refinement
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
 
 function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,sharpen,typeLocal)
     %include_Utilities
@@ -19,10 +20,26 @@ function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,shar
             
             [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
             [xMax,ii]=max(newPoints(:,1));
-            [xMin,~]=min(newPoints(:,1));
-            sChange=-sign(newPoints(ii+1,2)-newPoints(ii-1,2));
-            addPts=ones(3,1)*newPoints(ii,:)+[0 sChange*1e-6;(xMax-xMin)/4 0;0 -1e-6*sChange];
+            [xMin,jj]=min(newPoints(:,1));
+            nP=size(newPoints,1);
+            sChange=-sign(newPoints(mod(ii-1+1,nP)+1,2)-newPoints(mod(ii-1-1,nP)+1,2));
+            eps=1e-7;
+            inds{1}=(min(ii,jj)+1):(max(ii,jj)-1);
+            inds{2}=[1:(min(ii,jj)-1),(max(ii,jj)+1):size(newPoints,1)];
+            
+            indUpper=inds{1+xor(ii<jj,sChange<0)};
+            indLower=inds{1+(~xor(ii<jj,sChange<0))};
+            
+            newPoints(indUpper,2)=newPoints(indUpper,2)+eps;
+            newPoints(indLower,2)=newPoints(indLower,2)-eps;
+            
+            addPts=ones(2,1)*newPoints(ii,:)+[0 sChange*eps; 0 -eps*sChange];
             newPoints=[newPoints(1:ii-1,:);addPts;newPoints(ii+1:end,:)];
+            
+            [xMin,jj]=min(newPoints(:,1));
+            
+            addPts=ones(2,1)*newPoints(jj,:)+[0 -sChange*eps; 0 eps*sChange];
+            newPoints=[newPoints(1:jj-1,:);addPts;newPoints(jj+1:end,:)];
         case 'bspline'
             
             [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
