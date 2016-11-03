@@ -196,7 +196,7 @@ function [domainBounds]=MakeCartesianGridBounds(cellLevels)
     domainBounds=[-axRatio,axRatio];
     
 end
-
+%{
 function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
     
     cellNorm=cellLevels;
@@ -208,17 +208,17 @@ function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
     domainBounds=[-axRatio,axRatio];
     
 end
-
-function [domainBounds]=MakeCartesianGridBoundsInactEunit(cellLevels)
+%}
+function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
     
     cellNorm=cellLevels;
     cellNorm(1)=cellNorm(1)-2;
     
-    cellLength=1/cellNorm(1);
+    cellLength=1/cellNorm(1)/2;
     
     axRatio=(cellLevels'+2)*cellLength;
     domainBounds=[-axRatio,axRatio];
-    
+    domainBounds(1,:)=domainBounds(1,:)+1/2;
 end
 
 function [xMin,xMax,t,L,A]=ClosedLoopProperties(points)

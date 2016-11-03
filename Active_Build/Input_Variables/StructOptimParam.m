@@ -109,10 +109,11 @@ end
 function paroptimobjflow=DefaultCutCell_Flow()
     
     paroptimobjflow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogive'];
-    paroptimobjflow.stoponerror=false;
+    paroptimobjflow.stoponerror=true;
     paroptimobjflow.targConv=-6;
     paroptimobjflow.lengthConvTest=100;
     paroptimobjflow.restartIter=1000;
+    paroptimobjflow.startIterFlow=4000;
     paroptimobjflow.maxRestart=5;
     paroptimobjflow.nMach=2;
     paroptimobjflow.isSymFlow=false;
@@ -432,10 +433,11 @@ function [paroptim]=CG_NACA0012()
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=5;
     paroptim.obj.flow.nMach=0.85;
-    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
     paroptim.obj.flow.stoponerror=false;
     paroptim.obj.flow.targConv=-6;
     paroptim.obj.flow.lengthConvTest=100;
+    paroptim.obj.flow.startIterFlow=10000;
     paroptim.obj.flow.restartIter=5000;
     paroptim.obj.flow.maxRestart=10;
     paroptim.obj.flow.isSymFlow=true;

@@ -374,7 +374,7 @@ function cellLoops=DataToString(loopout)
             cellLoops{kk}='';
             for ll=1:length(loopout.surf(ii).coord(jj,:))
                 cellLoops{kk}=[cellLoops{kk},...
-                    num2str(loopout.surf(ii).coord(jj,ll),8),'  '];
+                    num2str(loopout.surf(ii).coord(jj,ll),15),'  '];
             end
             kk=kk+1;
         end

@@ -4,8 +4,8 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     varExtract={'CFDfolder','stoponerror','targConv','restartIter','lengthConvTest',...
-        'maxRestart','nMach','isSymFlow'};
-    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart,nMach,isSymFlow]...
+        'maxRestart','nMach','isSymFlow','startIterFlow'};
+    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart,nMach,isSymFlow,startIterFlow]...
         =ExtractVariables(varExtract,paramoptim);
     
     compType=computer;
@@ -35,6 +35,8 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     else
         batchFlow='RunFlow';
     end
+    RestartModifiedSettings(targFolder,'iter',7,...
+                    [2, startIterFlow, targConv]);
     if strcmp(compType(1:2),'PC')
         flowCommand=['"',targFolder,filesep,batchFlow,'.bat"'];
         [status,stdout]=system(flowCommand);
@@ -164,7 +166,7 @@ function [errFlag]=CutCellErrorHandling(endstr,stoponerror)
     
 end
 
-function [errFlag]=CutCellErrorDetection(errorTerms,endstr)
+function [errFlag,errorstr]=CutCellErrorDetection(errorTerms,endstr)
     
     errorList=regexp(endstr,errorTerms, 'once');
     errorstr=[];

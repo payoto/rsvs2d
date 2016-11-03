@@ -78,6 +78,10 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
         xMax=1; %max(coord(:,1));
         xMin=-1; %min(coord(:,1));
         [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        case 'cosX01'        
+        xMax=1; %max(coord(:,1));
+        xMin=0; %min(coord(:,1));
+        [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
         case 'cosX'
         xMax=max(unstructured.vertex.coord(:,1));
         xMin=min(unstructured.vertex.coord(:,1));
