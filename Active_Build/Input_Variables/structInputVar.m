@@ -775,7 +775,7 @@ function [param]=optimNACA0012()
     param.results.tags={'snakes','optimisation'};
     
     param.snakes.refine.axisRatio=1;
-    param.snakes.refine.gridDistrib='cosX1';
+    param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
@@ -804,7 +804,7 @@ function [param]=optimNACA0012Sc()
     [param]=optimNACA0012();
     
     param.snakes.refine.axisRatio=0.5;
-    param.snakes.refine.gridDistrib='cosX1';
+    param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[7,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
@@ -820,7 +820,7 @@ function [param]=optimNACA0012Nc()
     [param]=optimNACA0012();
     
     param.snakes.refine.axisRatio=1;
-    param.snakes.refine.gridDistrib='cosX1';
+    param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
@@ -836,7 +836,7 @@ function [param]=optimNACA0012Lc()
     [param]=optimNACA0012();
     
     param.snakes.refine.axisRatio=2;
-    param.snakes.refine.gridDistrib='cosX1';
+    param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[22,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
@@ -852,7 +852,7 @@ function [param]=optimNACA0012Vc()
     [param]=optimNACA0012();
     
     param.snakes.refine.axisRatio=4;
-    param.snakes.refine.gridDistrib='cosX1';
+    param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[42,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end

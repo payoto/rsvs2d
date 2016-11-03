@@ -72,7 +72,7 @@ void DataIn(){
 			fscanf(cellgridFID,"%lf",&(cellVol[ii]));
 		}
 		
-		fclose(cellgridFID);
+		
 		/*printf("Cell Grid Structure succesfully read in\n\n"); */
 		} else {
 		perror("Data file failed to open!");

@@ -23,7 +23,7 @@ function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,shar
             [xMin,jj]=min(newPoints(:,1));
             nP=size(newPoints,1);
             sChange=-sign(newPoints(mod(ii-1+1,nP)+1,2)-newPoints(mod(ii-1-1,nP)+1,2));
-            eps=1e-7;
+            eps=pi*1e-7/3;
             inds{1}=(min(ii,jj)+1):(max(ii,jj)-1);
             inds{2}=[1:(min(ii,jj)-1),(max(ii,jj)+1):size(newPoints,1)];
             
@@ -40,6 +40,7 @@ function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,shar
             
             addPts=ones(2,1)*newPoints(jj,:)+[0 -sChange*eps; 0 eps*sChange];
             newPoints=[newPoints(1:jj-1,:);addPts;newPoints(jj+1:end,:)];
+            newPoints(:,1)=newPoints(:,1)+eps;
         case 'bspline'
             
             [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
