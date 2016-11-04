@@ -93,7 +93,7 @@ end
 function [paroptimoptimCG]=DefaultOptimCG()
     
     paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
-    
+    paroptimoptimCG.minDiffStep=1e-6;
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
     paroptimoptimCG.sensCalc='snake'; % 'analytical'
     paroptimoptimCG.sensAnalyticalType='raw'; % 'raw' 'smooth'
@@ -428,6 +428,7 @@ function [paroptim]=CG_NACA0012()
     
     paroptim.general.startPop='NACA0012';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.3;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
