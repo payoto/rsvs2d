@@ -307,9 +307,18 @@ end
 function strOut=ReplaceIter(strIn,iterNum)
     
     cflStr=regexp(strIn,'\d*\s*\d*\s*\d*\.\d*','match','once');
-    strOut=regexprep(strIn,cflStr,'%i %i %.2f');
+    if isempty(cflStr)
+        cflStr=regexp(strIn,'\d*\s*\d*\s*-\d*\.\d*','match','once');
+    end
+    if isempty(cflStr)
+        cflStr=regexp(strIn,'\d*\s*\d*\s*\d*','match','once');
+    end
+    if isempty(cflStr)
+        cflStr=regexp(strIn,'\d*\s*\d*\s*-\d*','match','once');
+    end
+    strOut=regexprep(strIn,cflStr,'%i %i %.2f ');
     
-    strOut=sprintf([strOut,'\n'],iterNum(1),iterNum(2),iterNum(3));
+    strOut=sprintf(['%i %i %.2f ','\n'],iterNum(1),iterNum(2),iterNum(3));
     
 end
 

@@ -143,10 +143,10 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
-        'isRestart','borderActivation','lineSearchType'};
+        'isRestart','borderActivation','lineSearchType','minDiffStep'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
-        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,lineSearchType]...
+        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,lineSearchType,minDiffStep]...
         =ExtractVariables(varExtract,paramoptim);
     
     iterOrig=iterCurr;
@@ -162,7 +162,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     if lineSearch
         if ~isRestart
             [stepVector]=FindOptimalStepVector(iterOrig,...
-                UnitStepLength(nLineSearch,lineSearchType),direction);
+                UnitStepLength(nLineSearch,lineSearchType),direction,validVol,diffStepSize,minDiffStep);
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
@@ -487,7 +487,8 @@ function [newPop,deltas]=...
     deltas{1}=deltas{end};
 end
 
-function [stepVector]=FindOptimalStepVector(iterstruct,unitSteps,direction)
+function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
+        iterstruct,unitSteps,direction,validVol,diffStepSize,minDiffStep)
     
     f=[iterstruct(:).objective];
     g=[iterstruct(:).constraint];
@@ -531,6 +532,12 @@ function [stepVector]=FindOptimalStepVector(iterstruct,unitSteps,direction)
     %}
     if stepLength==0
         warning('Step Length is stagnant this iteration')
+        validVol=validVol*stepLengths(end-2);
+    end
+    if (stepLength==0) || (validVol*stepLength<2*max(abs(diffStepSize)))
+        
+        diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/4,minDiffStep);
+        
     end
     stepVector=vec*stepLength;
     

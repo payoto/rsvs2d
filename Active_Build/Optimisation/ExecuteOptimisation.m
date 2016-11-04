@@ -78,7 +78,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         pause(0.01)
         diary off
         try
-            OptimisationOutput('final',paramoptim,outinfo,iterstruct);
+            OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
         catch
             
         end
