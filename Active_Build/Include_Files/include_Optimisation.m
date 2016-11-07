@@ -241,6 +241,19 @@ function [isGradient]=CheckIfGradient(optimMethod)
     end
 end
 
+function [isAnalytical]=CheckIfAnalytical(objectiveName)
+    
+    switch objectiveName
+        
+        case 'Rosenbrock'
+            isAnalytical=true;
+        otherwise
+            isAnalytical=false;
+            warning('Objective is not specified assumed non analytical function')
+            
+    end
+end
+
 function [isSnakeSensitivity]=CheckSnakeSensitivityAlgorithm(paramoptim)
     
     varExtract={'varActive','optimMethod'};
@@ -420,7 +433,6 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
     newRootFill=newRootFill+sum(overFlowMat,1);
     
 end
-
 
 function population=ApplySymmetry(paramoptim,population)
     

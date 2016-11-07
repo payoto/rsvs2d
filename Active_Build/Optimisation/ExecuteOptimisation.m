@@ -66,7 +66,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             % create new population
             OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
-            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
+            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0) && false
                 fprintf('\n Optimisation Stopped By convergence condition \n');
                 break
             end
@@ -77,11 +77,11 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         [~]=PrintEnd(procStr2,0,tStartOpt);
         pause(0.01)
         diary off
-        try
+        %try
             OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
-        catch
+        %catch
             
-        end
+        %end
         
         if refStage<(nOptimRef+1)
             
@@ -245,9 +245,13 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     
-    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
-        baseGrid,connectstructinfo,paramoptim.initparam,...
-        paramoptim.spline,outinfo,0,0,0);
+    if ExtractVariables({'useSnake'},paramoptim)
+        [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
+            baseGrid,connectstructinfo,paramoptim.initparam,...
+            paramoptim.spline,outinfo,0,0,0);
+    else
+        restartsnake=struct([]);
+    end
     
     [outinfo]=OptimisationOutput('iteration',...
         paramoptim,0,outinfo,iterstruct(1),{});
@@ -259,13 +263,16 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
     
     
-    varExtract={'nPop','objectiveName','defaultVal','lineSearch'};
-    [nPop,objectiveName,defaultVal,lineSearch]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'nPop','objectiveName','defaultVal','lineSearch','useSnake'};
+    [nPop,objectiveName,defaultVal,lineSearch,useSnake]=ExtractVariables(varExtract,paramoptim);
     
-    
-    if (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
+    if ~useSnake 
+        [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,population,baseGrid);
+        
+    elseif (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
         [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
+    
     else
         [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
@@ -362,6 +369,20 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
             captureErrors{ii}=MEexception.getReport;
         end
     end
+    
+end
+
+
+function [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,population,baseGrid)
+    
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
+   
+    [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
+    
+    [captureErrors{1:nPop}]=deal('');
+    supportstruct=repmat(struct('loop',[]),[1,nPop]);
+    
     
 end
 
@@ -648,14 +669,16 @@ end
 
 function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     
-    varExtract={'symType'};
-    [symType]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'symType','useSnake'};
+    [symType,useSnake]=ExtractVariables(varExtract,paramoptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paramoptim.parametrisation);
-    
+    if useSnake
     nDesVar=sum([baseGrid.cell(:).isactive]);
     paramoptim.general.nDesVar=nDesVar;
-    
+    else
+        
+    end
     paramoptim.general.symDesVarList...
         =BuildSymmetryLists(symType,cellLevels,corneractive,baseGrid);
     
@@ -852,6 +875,10 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
     switch startPop
         case 'rand'
             origPop=rand([nPop,nDesVar]);
+        case 'Rosenrand'
+            origPop=rand([nPop,nDesVar])*4-2;
+        case 'Rosen'
+            origPop=ones([nPop 1])*[-1.101007541223214,-1.983808403042574];
         case 'halfuniform'
             origPop=ones([nPop nDesVar])*0.5;
         case 'halfuniformthin'
@@ -1227,6 +1254,8 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
         case 'InverseDesign'
             addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
                 [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+        otherwise
+            addstruct=struct('y',[]);
             
     end
     optimdatstruct=struct('var',[],'value',[]);
@@ -1375,6 +1404,16 @@ function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     additional.tc=areaAdd.tc;
 end
 
+% Analytical test
+
+function [objValue,additional]=Rosenbrock(paramoptim,member,loop)
+    
+    [objValue] = RosenbrockFunction(member.fill);
+    
+    
+    additional.y=objValue;
+end
+
 %% Refined Optimisation
 
 
@@ -1398,7 +1437,6 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
     
 end
-
 
 %
 
