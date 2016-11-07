@@ -44,7 +44,7 @@ function [paroptim]=DefaultOptim()
     [paroptim.obj.invdes]=DefaultInversedesign();
     [paroptim.constraint]=DefaultConstraint();
     paroptim.structdat=GetStructureData(paroptim);
-    
+    paroptim.optim.supportOptim=[];
     varExtract={'paramCase'};
     [paramCase]=ExtractVariables(varExtract,paroptim);
     paroptim.parametrisation=structInputVar(paramCase);
@@ -67,6 +67,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.direction='max';
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675];
+    paroptimgeneral.useSnake=true;
     
     paroptimgeneral.symType='none'; % 'horz'
     paroptimgeneral.nDesVar=[0];
@@ -96,6 +97,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.minDiffStep=1e-6;
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
     paroptimoptimCG.sensCalc='snake'; % 'analytical'
+    paroptimoptimCG.stepAlgo='conjgrad'; %'BFGS'
     paroptimoptimCG.sensAnalyticalType='raw'; % 'raw' 'smooth'
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
@@ -103,7 +105,8 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
     paroptimoptimCG.openVol=0.1;
     paroptimoptimCG.nLineSearch=12;
-    
+    paroptimoptimCG.wolfeC1=1e-4;
+    paroptimoptimCG.wolfeC2=0.1;
 end
 
 function paroptimobjflow=DefaultCutCell_Flow()
@@ -433,6 +436,7 @@ function [paroptim]=CG_NACA0012()
     paroptim.optim.CG.validVol=0.3;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=5;
+    
     paroptim.obj.flow.nMach=0.85;
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
     paroptim.obj.flow.stoponerror=false;
@@ -448,7 +452,6 @@ function [paroptim]=CG_NACA0012()
     paroptim.general.symType='horz'; % 'horz'
     
 end
-
 
 function [paroptim]=MultiTopo_DEhoriz()
     
@@ -843,6 +846,36 @@ function [paroptim]=SmoothCG_outmis_Aero()
     paroptim.general.maxIter=20;
     paroptim.general.worker=4;
 end
+
+%% Analytical test cases
+
+
+function [paroptim]=Test_Rosenbrock()
+    
+    [paroptim]=DefaultOptim();
+    [paroptim]=NoConstraint(paroptim);
+    
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.minDiffStep=1e-8;
+    paroptim.optim.CG.varActive='all';
+    paroptim.optim.CG.validVol=0.5;
+    paroptim.optim.CG.stepAlgo='BFGS';
+    
+    paroptim.general.startPop='Rosen';
+    paroptim.general.direction='min';
+    paroptim.general.optimMethod='conjgrad';
+    paroptim.general.symType='none';
+    paroptim.general.objectiveName='Rosenbrock';
+    paroptim.general.useSnake=false;
+    paroptim.general.nDesVar=1*2;
+    paroptim.general.varOverflow='truncate';
+    paroptim.general.desVarRange=[-2.048, 2.048];
+    paroptim.general.nPop=25;
+    paroptim.general.maxIter=40;
+    paroptim.general.worker=4;
+    paroptim.general.knownOptim=[0 1 1];
+end
+
 
 %% refinement
 

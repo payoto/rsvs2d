@@ -143,12 +143,13 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
-        'isRestart','borderActivation','lineSearchType','minDiffStep'};
+        'isRestart','borderActivation','lineSearchType','minDiffStep','stepAlgo'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
-        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,lineSearchType,minDiffStep]...
+        nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,...
+        lineSearchType,minDiffStep,stepAlgo]...
         =ExtractVariables(varExtract,paramoptim);
-    
+    supportOptim=paramoptim.optim.supportOptim;
     iterOrig=iterCurr;
     % Extract previous iteration information
     [iterCurr,validCurr]=ExtractValidIter(iterCurr);
@@ -161,7 +162,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     % Case dependant statements
     if lineSearch
         if ~isRestart
-            [stepVector]=FindOptimalStepVector(iterOrig,...
+            [stepVector,validVol,diffStepSize]=FindOptimalStepVector(iterOrig,...
                 UnitStepLength(nLineSearch,lineSearchType),direction,validVol,diffStepSize,minDiffStep);
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
         else
@@ -175,7 +176,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
         newPop=[newRoot;vertcat(newGradPop{:})];
         deltas=[deltaRoot,deltaGrad{:}];
-        
+        paramoptim.optim.CG.validVol=validVol;
+        paramoptim.optim.CG.diffStepSize=diffStepSize;
         paramoptim.optim.CG.lineSearch=false;
     else % Direction Search
         
@@ -189,8 +191,9 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
             =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct);
         
         % Get Corresponding design vector direction
-        [stepVector]=NewStepDirection...
-            (gradF_curr,gradF_m1,modestruct,iterCurr,direction);
+        [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
+        gradF_m1,modestruct,iterCurr,direction,supportOptim);
+        
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
         [unitSteps]=UnitStepLength(nLineSearch,lineSearchType);
@@ -208,7 +211,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     % Securing the end
     [nPop,~]=size(newPop);
     paramoptim.general.nPop=nPop;
-    
+    paramoptim.optim.supportOptim=supportOptim;
 end
 
 function [population,validIter]=ExtractValidIter(population)
@@ -393,12 +396,34 @@ function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2)
     
 end
 
-function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,direction)
+function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
+        gradF_m1,modestruct,iterCurr,direction,supportOptim)
+    
+    switch stepAlgo
+        case 'conjgrad'
+
+             [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,...
+                 gradF_m1,modestruct,iterCurr,direction,supportOptim);
+    
+        case 'BFGS'
+            [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,...
+                gradF_m1,modestruct,iterCurr,direction,supportOptim);
+    
+            
+    end
+    
+end
+
+
+function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,gradF_m1,modestruct,iterCurr,direction,supportOptim)
     
     normVec=@(v) sqrt(sum(v.^2,2));
-    
+    if isempty(supportOptim)
     prevStep=zeros(size(iterCurr(1).fill));
     prevStep(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
+    else
+        prevStep=supportOptim.prevStep;
+    end
     
     modes=vertcat(modestruct(:).mode)';
     gradF_curr(isnan(gradF_curr))=0;
@@ -418,9 +443,54 @@ function [stepVector]=NewStepDirection(gradF_curr,gradF_m1,modestruct,iterCurr,d
         scale=1;
     end
     
-    stepVector=signD*gradDes_curr...
-        +scale*prevStep;
+    stepVector=signD*gradDes_curr+scale*prevStep;
+    supportOptim.prevStep=stepVector;
     
+end
+
+function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,modestruct,iterCurr,direction,supportOptim)
+    
+    normVec=@(v) sqrt(sum(v.^2,2));
+    
+    
+    modes=vertcat(modestruct(:).mode)';
+    gradF_curr(isnan(gradF_curr))=0;
+    gradF_m1(isnan(gradF_m1))=0;
+    gradDes_curr=(modes*gradF_curr)';
+    gradDes_m1=(modes*gradF_m1)';
+    if isempty(supportOptim)
+        
+        Bk=eye(numel(gradDes_curr));
+        Bkinv=eye(numel(gradDes_curr));
+        gradDes_m1=gradDes_m1*0;
+        prevDir=ones([1,numel(gradDes_curr)]);
+    else
+        Bk=supportOptim.Bk;
+        Bkinv=supportOptim.Bkinv;
+        
+        prevDir=supportOptim.prevDir;
+        prevDir=ones(size(iterCurr(1).fill));
+        prevDir(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
+    end
+    
+    switch direction
+        case 'min'
+            signD=-1;
+        case 'max'
+            signD=1;
+    end
+    %scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
+    yk=(gradDes_curr-gradDes_m1)';
+    sk=prevDir';
+    Bk=Bk+(yk*yk')/(yk'*sk)-(Bk*sk*sk'*Bk)/(sk'*Bk*sk);
+    Bkinv=Bkinv+(sk'*yk+yk'*Bkinv*yk)*(sk*sk')/(sk'*yk)^2 ...
+        -(Bkinv*yk*sk'+sk*yk'*Bkinv)/(sk'*yk);
+    
+    stepVector=(Bkinv*signD*gradDes_curr')';
+    
+    supportOptim.prevDir=stepVector;
+    supportOptim.Bk=Bk;
+    supportOptim.Bkinv=Bkinv;
     
 end
 
@@ -530,15 +600,20 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
     end
     %stepLength=iTest(indexLoc);
     %}
+    
+    
     if stepLength==0
         warning('Step Length is stagnant this iteration')
         validVol=validVol*stepLengths(end-2);
     end
-    if (stepLength==0) || (validVol*stepLength<2*max(abs(diffStepSize)))
+    if (stepLength==0) || (validVol*stepLength<10*max(abs(diffStepSize)))
         
         diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/4,minDiffStep);
         
     end
+    volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
+    
+    validVol=validVol*volMulti;
     stepVector=vec*stepLength;
     
 end
