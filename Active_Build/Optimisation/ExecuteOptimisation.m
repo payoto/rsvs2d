@@ -22,7 +22,7 @@ function [] = ExecuteOptimisation()
 end
 %}
 function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
-    close all
+    %close all
     clc
     procStr2=['OPTIMISATION - ',caseStr];
     [tStartOpt]=PrintStart(procStr2,0);
@@ -66,7 +66,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             % create new population
             OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
-            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0) && false
+            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0) 
                 fprintf('\n Optimisation Stopped By convergence condition \n');
                 break
             end
@@ -878,7 +878,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         case 'Rosenrand'
             origPop=rand([nPop,nDesVar])*4-2;
         case 'Rosen'
-            origPop=ones([nPop 1])*[-1.101007541223214,-1.983808403042574];
+            origPop=ones([nPop 1])*[-0.527550124697614,0.621201147399720,0.814520320829864,...
+                0.133167225580308,-1.030580011564433,1.199348401514573,-1.143489960105117,0.541368333874143];
         case 'halfuniform'
             origPop=ones([nPop nDesVar])*0.5;
         case 'halfuniformthin'

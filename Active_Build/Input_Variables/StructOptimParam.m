@@ -855,11 +855,11 @@ function [paroptim]=Test_Rosenbrock()
     [paroptim]=DefaultOptim();
     [paroptim]=NoConstraint(paroptim);
     
-    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6];
     paroptim.optim.CG.minDiffStep=1e-8;
     paroptim.optim.CG.varActive='all';
-    paroptim.optim.CG.validVol=0.5;
-    paroptim.optim.CG.stepAlgo='BFGS';
+    paroptim.optim.CG.validVol=1;
+    paroptim.optim.CG.stepAlgo='conjgrad';
     
     paroptim.general.startPop='Rosen';
     paroptim.general.direction='min';
@@ -867,15 +867,21 @@ function [paroptim]=Test_Rosenbrock()
     paroptim.general.symType='none';
     paroptim.general.objectiveName='Rosenbrock';
     paroptim.general.useSnake=false;
-    paroptim.general.nDesVar=1*2;
+    paroptim.general.nDesVar=4*2;
     paroptim.general.varOverflow='truncate';
     paroptim.general.desVarRange=[-2.048, 2.048];
     paroptim.general.nPop=25;
-    paroptim.general.maxIter=40;
+    paroptim.general.maxIter=300;
     paroptim.general.worker=4;
     paroptim.general.knownOptim=[0 1 1];
 end
 
+function [paroptim]=Test_Rosenbrock_BFGS()
+    [paroptim]=Test_Rosenbrock();
+    
+    paroptim.optim.CG.stepAlgo='BFGS';
+    
+end
 
 %% refinement
 

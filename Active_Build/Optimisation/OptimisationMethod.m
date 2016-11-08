@@ -158,7 +158,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     [gradstruct_m1]=GetIterationInformation(iterm1);
     
     rootPop=iterCurr(1).fill;
-    
+    prevStep=iterCurr(1).fill-iterm1(1).fill;
     % Case dependant statements
     if lineSearch
         if ~isRestart
@@ -192,7 +192,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         
         % Get Corresponding design vector direction
         [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-        gradF_m1,modestruct,iterCurr,direction,supportOptim);
+        gradF_m1,modestruct,prevStep,direction,supportOptim);
         
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
@@ -397,17 +397,17 @@ function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2)
 end
 
 function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-        gradF_m1,modestruct,iterCurr,direction,supportOptim)
+        gradF_m1,modestruct,prevStep,direction,supportOptim)
     
     switch stepAlgo
         case 'conjgrad'
 
              [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,...
-                 gradF_m1,modestruct,iterCurr,direction,supportOptim);
+                 gradF_m1,modestruct,prevStep,direction,supportOptim);
     
         case 'BFGS'
             [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,...
-                gradF_m1,modestruct,iterCurr,direction,supportOptim);
+                gradF_m1,modestruct,prevStep,direction,supportOptim);
     
             
     end
@@ -415,21 +415,33 @@ function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
 end
 
 
-function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,gradF_m1,modestruct,iterCurr,direction,supportOptim)
+function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,gradF_m1,modestruct,prevStep,direction,supportOptim)
     
     normVec=@(v) sqrt(sum(v.^2,2));
-    if isempty(supportOptim)
-    prevStep=zeros(size(iterCurr(1).fill));
-    prevStep(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
-    else
-        prevStep=supportOptim.prevStep;
-    end
+    
     
     modes=vertcat(modestruct(:).mode)';
     gradF_curr(isnan(gradF_curr))=0;
     gradF_m1(isnan(gradF_m1))=0;
     gradDes_curr=(modes*gradF_curr)';
     gradDes_m1=(modes*gradF_m1)';
+    isEmptSupport=isempty(supportOptim);
+    if isEmptSupport
+         prevDir=zeros(size(gradDes_m1));
+    else
+        prevDir=supportOptim.curr.prevStep;
+    end
+    
+    if isEmptSupport
+        ii=1;
+    else
+        ii=numel(supportOptim.hist)+1;
+    end
+    supportOptim.hist(ii).gradfk=gradDes_curr;
+    supportOptim.hist(ii).gradfkm1=gradDes_m1;
+    supportOptim.hist(ii).prevDir =prevDir;
+    supportOptim.hist(ii).prevStep=prevStep;
+    
     
     switch direction
         case 'min'
@@ -439,16 +451,18 @@ function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,gradF_m1,
     end
     %scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
     scale=dot(gradDes_curr,gradDes_curr-gradDes_m1)/dot(gradDes_m1,gradDes_m1);
-    if ~isfinite(scale)
-        scale=1;
+    if ~isfinite(scale) || all(prevStep==0)
+        scale=0;
     end
-    
-    stepVector=signD*gradDes_curr+scale*prevStep;
-    supportOptim.prevStep=stepVector;
+    if all(prevStep==0)
+        pause(0.01)
+    end
+    stepVector=signD*gradDes_curr+scale*prevDir;
+    supportOptim.curr.prevStep=stepVector;
     
 end
 
-function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,modestruct,iterCurr,direction,supportOptim)
+function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,modestruct,prevStep,direction,supportOptim)
     
     normVec=@(v) sqrt(sum(v.^2,2));
     
@@ -458,20 +472,36 @@ function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,mode
     gradF_m1(isnan(gradF_m1))=0;
     gradDes_curr=(modes*gradF_curr)';
     gradDes_m1=(modes*gradF_m1)';
-    if isempty(supportOptim)
+    
+    isEmptSupport=isempty(supportOptim);
+    if isEmptSupport
         
         Bk=eye(numel(gradDes_curr));
         Bkinv=eye(numel(gradDes_curr));
         gradDes_m1=gradDes_m1*0;
         prevDir=ones([1,numel(gradDes_curr)]);
+        iter=0;
     else
-        Bk=supportOptim.Bk;
-        Bkinv=supportOptim.Bkinv;
-        
-        prevDir=supportOptim.prevDir;
-        prevDir=ones(size(iterCurr(1).fill));
-        prevDir(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
+        Bk=supportOptim.curr.Bk;
+        Bkinv=supportOptim.curr.Bkinv;
+        iter=supportOptim.curr.iter;
+        prevDir=supportOptim.curr.prevDir;
+        %prevDir=ones(size(iterCurr(1).fill));
+        %prevDir(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
     end
+    
+    if isEmptSupport
+        ii=1;
+    else
+        ii=numel(supportOptim.hist)+1;
+    end
+    supportOptim.hist(ii).Bk=Bk;
+    supportOptim.hist(ii).Bkinv=Bkinv;
+    supportOptim.hist(ii).gradfk=gradDes_curr;
+    supportOptim.hist(ii).gradfkm1=gradDes_m1;
+    supportOptim.hist(ii).prevDir =prevDir;
+    supportOptim.hist(ii).prevStep=prevStep;
+    supportOptim.hist(ii).iter=iter;
     
     switch direction
         case 'min'
@@ -481,17 +511,52 @@ function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,mode
     end
     %scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
     yk=(gradDes_curr-gradDes_m1)';
-    sk=prevDir';
-    Bk=Bk+(yk*yk')/(yk'*sk)-(Bk*sk*sk'*Bk)/(sk'*Bk*sk);
-    Bkinv=Bkinv+(sk'*yk+yk'*Bkinv*yk)*(sk*sk')/(sk'*yk)^2 ...
-        -(Bkinv*yk*sk'+sk*yk'*Bkinv)/(sk'*yk);
+    sk=prevStep';
     
-    stepVector=(Bkinv*signD*gradDes_curr')';
     
-    supportOptim.prevDir=stepVector;
-    supportOptim.Bk=Bk;
-    supportOptim.Bkinv=Bkinv;
     
+    if isEmptSupport
+        stepVector=(Bkinv*(signD*gradDes_curr)')';
+    else
+        Bk=Bk+(yk*yk')/(yk'*sk)-(Bk*(sk*sk')*Bk)/(sk'*Bk*sk);
+        Bkinv=Bkinv+(sk'*yk+yk'*Bkinv*yk)*(sk*sk')/(sk'*yk)^2 ...
+            -(Bkinv*yk*sk'+sk*yk'*Bkinv)/(sk'*yk);
+        if iter>10
+            %         Bkinv=eye(numel(gradDes_curr));
+            %         Bk=eye(numel(gradDes_curr));
+            Bkinv=diag(diag(Bkinv));
+            Bk=diag(diag(Bk));
+            iter=0;
+            
+        end
+        
+        if any(isnan(Bkinv(:)))
+            Bkinv=eye(numel(gradDes_curr));
+            Bk=eye(numel(gradDes_curr));
+            iter=0;
+        end
+        stepVector=(Bkinv*(signD*gradDes_curr)')';
+    end
+    if any(~isfinite(stepVector))
+        warning('stepVector not finite')
+    end
+    
+    supportOptim.curr.prevDir=stepVector;
+    supportOptim.curr.Bk=Bk;
+    supportOptim.curr.Bkinv=Bkinv;
+    supportOptim.curr.iter=iter+1;
+    
+end
+
+
+function [isWolfe,isStrongWolfe]=WolfeCondition(c1,c2,prevDir,prevStep,gradfk,fk,gradfkp1,fkp1)
+    
+    isWolfe1=fkp1<=(fk+c1*dot(prevStep,gradfk));
+    isWolfe2=(dot(prevDir,gradfkp1))>=(c2*dot(prevDir,gradfk));
+    isWolfe3=abs(dot(prevDir,gradfkp1))<=c2*abs(dot(prevDir,gradfk));
+    
+    isWolfe=isWolfe1 && isWolfe2;
+    isStrongWolfe=isWolfe1 && isWolfe3;
 end
 
 function [stepLengths]=StepLengthsForLS(rootPop,stepVector,unitStep,validVol,desVarRange)
