@@ -320,12 +320,16 @@ function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter,startIter)
     [optimMethod,iterGap]=ExtractVariables(varExtract,paramoptim);
     isConv=false;
     eps=1e-10;
-    if CheckIfGradient(optimMethod) && ((nIter-startIter)>(2*iterGap+1))
+    if CheckIfGradient(optimMethod) && ((nIter-startIter)>(4*iterGap+1))
         
         if numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-iterGap).population(1).fill) ...
-                && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-2*iterGap).population(1).fill)
+                && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-2*iterGap).population(1).fill)...
+                && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-3*iterGap).population(1).fill)...
+                && numel(iterstruct(nIter).population(1).fill)==numel(iterstruct(nIter-4*iterGap).population(1).fill)
             isConv=comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-iterGap).population(1).fill,eps) ...
-                && comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-2*iterGap).population(1).fill,eps);
+                && comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-2*iterGap).population(1).fill,eps)...
+                && comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-3*iterGap).population(1).fill,eps)...
+                && comEps(iterstruct(nIter).population(1).fill,iterstruct(nIter-4*iterGap).population(1).fill,eps);
         end
         
     else

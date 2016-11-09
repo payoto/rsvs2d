@@ -23,7 +23,7 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
         case 'iteration'
             out=OptimisationOutput_iteration(paramoptim,varargin{:});
         case 'optstruct'
-            [out]=OptimisationOutput_iterationFullPop(varargin{:});
+            [out]=OptimisationOutput_iterationFullPop(varargin{:},paramoptim);
         case 'final'
             out=OptimisationOutput_Final(paramoptim,varargin{:});
         case 'finalpost'
@@ -176,7 +176,7 @@ function [out]=OptimisationOutput_iteration(paramoptim,nIter,out,population,erro
     end
 end
 
-function [out]=OptimisationOutput_iterationFullPop(out,optimstruct)
+function [out]=OptimisationOutput_iterationFullPop(out,optimstruct,paroptim)
     
     t=out.tOutput;
     rootDir=out.rootDir;
@@ -185,14 +185,15 @@ function [out]=OptimisationOutput_iterationFullPop(out,optimstruct)
     writeDirectory=MakePathCompliant(writeDirectory);
     
     
-    GenerateIterResultBinary(writeDirectory,[marker,'partial'],optimstruct)
+    GenerateIterResultBinary(writeDirectory,[marker,'partial'],optimstruct,paroptim)
     
 end
 
 function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
     varExtract={'direction','knownOptim','objectiveName','defaultVal','optimMethod','useSnake'};
-    [direction,knownOptim,objectiveName,defaultVal,optimMethod,useSnake]=ExtractVariables(varExtract,paroptim);
+    [direction,knownOptim,objectiveName,defaultVal,optimMethod,useSnake]...
+        =ExtractVariables(varExtract,paroptim);
     varExtract={'axisRatio'};
     [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
     
@@ -204,7 +205,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     writeDirectory=MakePathCompliant(writeDirectory);
     
     CopyDiary(writeDirectory,marker)
-    GenerateIterResultBinary(writeDirectory,marker,optimstruct)
+    GenerateIterResultBinary(writeDirectory,marker,optimstruct,paroptim)
     
     
     % Figure
@@ -1252,11 +1253,14 @@ function []=GeneratePopulationBinary(resultDirectory,marker,population)
     
 end
 
-function []=GenerateIterResultBinary(resultDirectory,marker,optimstruct)
+function []=GenerateIterResultBinary(resultDirectory,marker,optimstruct,paramoptim)
     
     fileName=[resultDirectory,'\OptimRes_',marker,'.mat'];
     fileName=MakePathCompliant(fileName);
     save(fileName,'optimstruct');
+    fileName=[resultDirectory,'\FinalParam_',marker,'.mat'];
+    fileName=MakePathCompliant(fileName);
+    save(fileName,'paramoptim');
     
 end
 
