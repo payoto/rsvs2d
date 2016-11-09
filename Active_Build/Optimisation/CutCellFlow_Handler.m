@@ -158,7 +158,7 @@ end
 function [errFlag]=CutCellErrorHandling(endstr,stoponerror)
     
     errorTerms={'exception','neg','griduns','error','IEEE_INVALID_FLAG','IEEE_UNDERFLOW_FLAG','lam'};
-    [errFlag]=CutCellErrorDetection(errorTerms,endstr);
+    [errFlag,errorstr]=CutCellErrorDetection(errorTerms,endstr);
     
     if sum(errFlag) && stoponerror
         error(errorstr)
@@ -169,7 +169,7 @@ end
 function [errFlag,errorstr]=CutCellErrorDetection(errorTerms,endstr)
     
     errorList=regexp(endstr,errorTerms, 'once');
-    errorstr=[];
+    errorstr='';
     errFlag=false([1 length(errorTerms)]);
     for ii=1:length(errorTerms)
         if ~isempty(errorList{ii})
