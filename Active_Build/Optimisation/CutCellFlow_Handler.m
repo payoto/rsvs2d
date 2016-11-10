@@ -46,13 +46,13 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     end
     
     endstr=stdout(end-200:end);
-    errFlag=CutCellErrorHandling(endstr,stoponerror);
+    errFlag=CutCellErrorHandling(endstr,false);
     kk=0;
     iterN=0;
     while sum(errFlag) && kk<10
         RestartModifiedSettings(targFolder,'cfl',8)
         endstr=RunFlowSolverOnly(compType,targFolder);
-        errFlag=CutCellErrorHandling(endstr,stoponerror);
+        errFlag=CutCellErrorHandling(endstr,false);
         kk=kk+1;
     end
     
@@ -79,7 +79,7 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
             
             endstr=RunFlowSolverOnly(compType,targFolder);
             kk=kk+1;
-            errFlag=CutCellErrorHandling(endstr,stoponerror);
+            
             if sum(errFlag)
                 isfinished=false;
                 restartNormal=false;
@@ -91,6 +91,7 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
                 iterN=obj.iter;
             end
         end
+        errFlag=CutCellErrorHandling(endstr,stoponerror);
     end
     [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
 end

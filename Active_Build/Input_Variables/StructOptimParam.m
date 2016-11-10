@@ -95,6 +95,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     
     paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
     paroptimoptimCG.minDiffStep=1e-6;
+    paroptimoptimCG.maxDiffStep=0;
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
     paroptimoptimCG.sensCalc='snake'; % 'analytical'
     paroptimoptimCG.stepAlgo='conjgrad'; %'BFGS'
@@ -102,7 +103,9 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.borderActivation=0.15;
     paroptimoptimCG.lineSearch=false;
     paroptimoptimCG.lineSearchType='backbisection';
-    paroptimoptimCG.validVol=0.5; % Interval of validity of the derivatives
+    paroptimoptimCG.validVol=0; % Interval of validity of the derivatives
+    paroptimoptimCG.minVol=1e-4;
+    paroptimoptimCG.startVol=0.5;
     paroptimoptimCG.openVol=0.1;
     paroptimoptimCG.nLineSearch=12;
     paroptimoptimCG.wolfeC1=1e-4;
@@ -441,8 +444,10 @@ function [paroptim]=CG_NACA0012()
     paroptim.general.startPop='NACA0012';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.minDiffStep=1e-6;
+    paroptim.optim.CG.maxDiffStep=0;
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.3;
+    
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=5;
     
@@ -1249,6 +1254,7 @@ function paroptim=bp3_AreaM2sweep()
     [paroptim]=ValVolumeConstraint(paroptim);
     paroptim.general.startPop='halfuniformsharp';
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.nPop=12;
@@ -1260,48 +1266,56 @@ function paroptim=AreaM2sweep_Sc()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweep_Su()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweep_Nc()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweep_Nu()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nu');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweep_Lc()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100];
 end
 function paroptim=AreaM2sweep_Lu()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lu');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100];
 end
 function paroptim=AreaM2sweep_Vc()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[0];
 end
 function paroptim=AreaM2sweep_Vu()
     
     paroptim=bp3_AreaM2sweep();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vu');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[0];
 end
 
@@ -1313,6 +1327,7 @@ function paroptim=bp3_AreaM2_sweep_BFGS()
     [paroptim]=ValVolumeConstraint(paroptim);
     paroptim.general.startPop='halfuniformsharp';
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.nPop=12;
@@ -1324,48 +1339,56 @@ function paroptim=AreaM2sweepBFGS_Sc()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweepBFGS_Su()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweepBFGS_Nc()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweepBFGS_Nu()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nu');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
 end
 function paroptim=AreaM2sweepBFGS_Lc()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100];
 end
 function paroptim=AreaM2sweepBFGS_Lu()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lu');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[2 1 100];
 end
 function paroptim=AreaM2sweepBFGS_Vc()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[0];
 end
 function paroptim=AreaM2sweepBFGS_Vu()
     
     paroptim=bp3_AreaM2_sweep_BFGS();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vu');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.general.refineOptim=[0];
 end
 

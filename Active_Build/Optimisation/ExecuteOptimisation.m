@@ -673,19 +673,28 @@ end
 
 function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     
-    varExtract={'symType','useSnake'};
-    [symType,useSnake]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'symType','useSnake','startVol','validVol','diffStepSize','maxDiffStep','minDiffStep'};
+    [symType,useSnake,startVol,validVol,diffStepSize,maxDiffStep,minDiffStep]=ExtractVariables(varExtract,paramoptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paramoptim.parametrisation);
     if useSnake
-    nDesVar=sum([baseGrid.cell(:).isactive]);
-    paramoptim.general.nDesVar=nDesVar;
+        nDesVar=sum([baseGrid.cell(:).isactive]);
+        paramoptim.general.nDesVar=nDesVar;
     else
         
     end
+    if ~isempty(startVol) && startVol~=0
+        validVol=max(validVol,startVol);
+    end
+    if isempty(maxDiffStep) || maxDiffStep==0
+        maxDiffStep=max([abs(diffStepSize),minDiffStep]);
+    end
+    diffStepSize=diffStepSize/max(abs(diffStepSize))*maxDiffStep;
+    paramoptim=SetVariables({'maxDiffStep','validVol','diffStepSize'},...
+        {maxDiffStep,validVol,diffStepSize},paramoptim);
+    
     paramoptim.general.symDesVarList...
         =BuildSymmetryLists(symType,cellLevels,corneractive,baseGrid);
-    
     paramoptim.general.notDesInd...
         =BuildExclusionList(paramoptim.general.symDesVarList);
     

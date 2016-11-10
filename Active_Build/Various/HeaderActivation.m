@@ -19,21 +19,29 @@ function [] = HeaderActivation(funcHandles,funcDir)
     
     c=evalc('display(funcHandles)');
     pattern='@\w*';
-    disp('WRITING AUTOMATIC FUNCTIONS')
+    fprintf('\nWRITING AUTOMATIC FUNCTIONS')
     funcHandlesNamesCell=regexp(c,pattern,'match');
     funcDir=MakePathCompliant(funcDir);
     if ~isdir(funcDir)
         
         mkdir(funcDir);
     end
+    jj=0;
     for ii=1:length(funcHandlesNamesCell)
         funcName=funcHandlesNamesCell{ii}(2:end);
         funcHandleVarname=[funcHandlesNamesCell{ii}(2:end),'_Handle'];
         eval(['global ',funcHandleVarname])
         eval([funcHandleVarname,'=funcHandles{ii};']);
-        WriteContainerFunctionFile(funcName,funcDir);
+        if ~isFindFuncFile(funcDir,[funcName,'.m'])
+            WriteContainerFunctionFile(funcName,funcDir);
+        else
+            jj=jj+1;
+        end
     end
     addpath(funcDir);
+    if jj~=0
+        fprintf(' - %i of %i files skipped\n',jj,ii);
+    end
 end
 
 function pathName=MakePathCompliant(pathName)
@@ -73,4 +81,21 @@ function []=WriteContainerFunctionFile(funcName,funcDir)
     
 end
 
-
+function [isFound]=isFindFuncFile(rootDir,strDir)
+    
+    subDir=dir(rootDir);
+    subDir(1:2)=[];
+    ii=1;
+    isFound=false;
+    while ~isFound && ii<=numel(subDir)
+        
+        isFound=strcmp(subDir(ii).name,strDir);
+        ii=ii+1;
+        
+    end
+    
+    
+    
+    
+    
+end

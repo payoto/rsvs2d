@@ -759,8 +759,6 @@ function [param]=optimNACA0012()
     
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
-    param.snakes.refine.LEShrink=true;
-    param.snakes.refine.TEShrink=true;
     param.snakes.refine.resampleSnak=true;
     
     
