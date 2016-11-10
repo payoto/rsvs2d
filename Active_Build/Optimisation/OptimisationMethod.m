@@ -143,11 +143,11 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
-        'isRestart','borderActivation','lineSearchType','minDiffStep','stepAlgo'};
+        'isRestart','borderActivation','lineSearchType','minDiffStep','stepAlgo','minVol'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
         nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,...
-        lineSearchType,minDiffStep,stepAlgo]...
+        lineSearchType,minDiffStep,stepAlgo,minVol]...
         =ExtractVariables(varExtract,paramoptim);
     supportOptim=paramoptim.optim.supportOptim;
     iterOrig=iterCurr;
@@ -165,7 +165,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     if lineSearch
         if ~isRestart
             [stepVector,validVol,diffStepSize]=FindOptimalStepVector(iterOrig,...
-                UnitStepLength(nLineSearch,lineSearchType),direction,validVol,diffStepSize,minDiffStep);
+                UnitStepLength(nLineSearch,lineSearchType),direction,...
+                validVol,diffStepSize,minDiffStep,minVol);
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
@@ -633,7 +634,7 @@ function [newPop,deltas]=...
 end
 
 function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
-        iterstruct,unitSteps,direction,validVol,diffStepSize,minDiffStep)
+        iterstruct,unitSteps,direction,validVol,diffStepSize,minDiffStep,minVol)
     
     f=[iterstruct(:).objective];
     g=[iterstruct(:).constraint];
@@ -679,7 +680,8 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
     
     if stepLength==0
         warning('Step Length is stagnant this iteration')
-        validVol=validVol*stepLengths(end-2);
+        validVol=max(validVol*stepLengths(end-2),minVol);
+        
     end
     if (stepLength==0) || (validVol*stepLength<10*max(abs(diffStepSize)))
         
@@ -687,8 +689,8 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
         
     end
     volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
-    
     validVol=validVol*volMulti;
+    validVol=max(validVol,minVol);
     stepVector=vec*stepLength;
     
 end
