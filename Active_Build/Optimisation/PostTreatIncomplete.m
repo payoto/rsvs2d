@@ -11,6 +11,11 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
     [outinfo.tOutput,outinfo.marker]=FindTime(pathStr);
     % iterstruct paramoptim
     [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
+    try 
+        paramoptim=StructOptimParam(ExtractVariables({'optimCase'},paramoptim));
+    catch
+        [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
+    end
     % Reconstruct iterstruct
     if nargin<3
         [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim);
