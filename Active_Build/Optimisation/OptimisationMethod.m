@@ -532,7 +532,7 @@ function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,...
         Bkinv=Bkinv+(sk'*yk+yk'*Bkinv*yk)*(sk*sk')/(sk'*yk)^2 ...
             -(Bkinv*yk*sk'+sk*yk'*Bkinv)/(sk'*yk);
         
-        if  ~supportOptim.hist(ii).isStrongWolfe
+        if  ~supportOptim.hist(ii).isStrongWolfe || iter>8
             %         Bkinv=eye(numel(gradDes_curr));
             %         Bk=eye(numel(gradDes_curr));
             Bkinv=diag(diag(Bkinv));
@@ -688,7 +688,7 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
         diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/4,minDiffStep);
         
     end
-    volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
+    volMulti=min(1+round((bestPoint)/numel(unitSteps)*2-1)/2,1);
     validVol=validVol*volMulti;
     validVol=max(validVol,minVol);
     stepVector=vec*stepLength;

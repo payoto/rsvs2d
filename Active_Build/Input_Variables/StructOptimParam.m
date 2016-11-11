@@ -16,7 +16,7 @@ function [paroptim]=StructOptimParam(caseStr)
     % Main function that allows changes
     
     [paroptim]=eval(caseStr);
-    paroptim.general.optimCase=caseStr;
+    paroptim.general.optimCase=regexprep(caseStr,'(\(|\)|,)','_');
     
 end
 
@@ -93,7 +93,7 @@ end
 
 function [paroptimoptimCG]=DefaultOptimCG()
     
-    paroptimoptimCG.diffStepSize=[1e-2,-1e-2]; %[0,2]
+    paroptimoptimCG.diffStepSize=[1e-3,-1e-3]; %[0,2]
     paroptimoptimCG.minDiffStep=1e-6;
     paroptimoptimCG.maxDiffStep=0;
     paroptimoptimCG.varActive='all'; % 'all' 'border' 'wideborder' 'snaksensiv'
@@ -442,14 +442,14 @@ function [paroptim]=CG_NACA0012()
     [paroptim]=OptimCG(paroptim);
     
     paroptim.general.startPop='NACA0012';
-    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
-    paroptim.optim.CG.minDiffStep=1e-6;
-    paroptim.optim.CG.maxDiffStep=0;
+    paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
+    paroptim.optim.CG.minDiffStep=1e-5;
+    paroptim.optim.CG.maxDiffStep=1e-3;
     paroptim.optim.CG.varActive='snaksensiv';
-    paroptim.optim.CG.validVol=0.3;
+    paroptim.optim.CG.validVol=0.05;
     
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
-    paroptim.parametrisation.optiminit.modeSmoothNum=5;
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
     
     paroptim.obj.flow.nMach=0.85;
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
@@ -1392,6 +1392,25 @@ function paroptim=AreaM2sweepBFGS_Vu()
     paroptim.general.refineOptim=[0];
 end
 
+% Test derivatives
+
+function paroptim=TestDerivBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Lc();
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=TestDeriv(e)
+    
+    paroptim=AreaM2sweep_Lc();
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    
+end
 % Bp3 Inverse design sweep
 
 function paroptim=bp3_refsweep_cv00012()
