@@ -4,5 +4,5 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd $DIR
 
-cartcell.exe
+bashtimeout cartcell.exe
 eulerflowuns.exe
