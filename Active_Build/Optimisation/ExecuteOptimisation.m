@@ -880,8 +880,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
     
     varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal',...
         'optimMethod','desvarconnec','specificFillName','initInterp'};
-    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,specificFillName,initInterp]...
-        =ExtractVariables(varExtract,paroptim);
+    [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,...
+        specificFillName,initInterp]=ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paroptim.parametrisation);
     
@@ -980,6 +980,11 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         case 'NACA0012'
             [rootFill]=NacaOuterLimit0012(baseGrid,paroptim);
             origPop=ones([nPop 1])*rootFill{2};
+            
+        case 'loadshape'
+            specificFillName=MakePathCompliant(specificFillName);
+             [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
+             origPop=ones([nPop 1])*rootFill{2};
     end
     
     
@@ -1226,7 +1231,10 @@ function [origPop]=StartFromFill(nDesVar,nPop,fillName)
                 0.499683995000000
                 0.452365100000000
                 0.340267790000000]';
-            
+        case 'testgrad_busemann'
+            % Dir_2016-10-14T195656_AreaM2sweep_Nc_1
+            % iter 62 pop 5
+            rootFill=[0.0177588644125334;0.0880134470734935;0.244766013034044;0.437886860400727;0.596263255527965;0.675462927779081;0.655705870095454;0.577486441976678;0.459524434442214;0.414613928163020;0.0177588644124608;0.0880134470734745;0.244766013033964;0.437886860400853;0.596263255528053;0.675462927778959;0.655705870095593;0.577486441976701;0.459524434442118;0.414613928163050;0.0400911150543920;0.158576855436767;0.341655165814136;0.526237687126564;0.647600512408900;0.677062059567565;0.621064073965241;0.518179829527757;0.432528992901254;0.326783439010478;0.0400911150542984;0.158576855436773;0.341655165814072;0.526237687126764;0.647600512408853;0.677062059567526;0.621064073965397;0.518179829527685;0.432528992901215;0.326783439010473]';
         otherwise
             
             error('invalid fill')

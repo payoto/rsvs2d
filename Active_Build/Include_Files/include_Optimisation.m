@@ -115,6 +115,81 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
     constrVal={fillSub,reqFrac};
 end
 
+function [constrVal]=MatchVoltoShape(gridrefined,paramoptim,shapePath)
+    
+    
+%     ((x(x>=(p*c))-xMin)/c)
+%     
+%     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
+%         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
+    
+    integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
+        (tDistrib(1:end-1)+tDistrib(2:end))/2]);
+    
+    warning('Will only work with square or rectangular grids')
+    varExtract={'axisRatio'};
+    axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
+    [uppersurf,lowersurf]=ReadShapeIn(shapePath);
+   
+    
+    cellCentredGrid=CellCentreGridInformation(gridrefined);
+    isActive=logical([cellCentredGrid(:).isactive]);
+    actVerts=[cellCentredGrid(isActive).vertex];
+    coord=vertcat(actVerts(:).coord);
+    %figure, hold on
+    coord(:,2)=coord(:,2)*axisRatio;%;
+    
+    xPos=RemoveIdenticalEntries(coord(:,1));
+    xMax=max(xPos);
+    xMin=min(xPos);
+    xDist=(xMax-xMin);
+    fillSub=zeros([1,sum(isActive)]);
+    reqFrac=zeros([1,sum(isActive)]);
+    actCellSub=find(isActive);
+    for ii=1:numel(actCellSub)
+        
+        cellCoords=vertcat(cellCentredGrid(actCellSub(ii)).vertex(:).coord);
+        cellCoords(:,2)=cellCoords(:,2)*axisRatio;
+        [cornerCoord]=IdentifyCorners(cellCoords);
+        posMin=min(cornerCoord);
+        posMax=max(cornerCoord);
+        
+        x=linspace(posMin(1),posMax(1),200);
+        
+        yup=interp1(uppersurf(:,1)*xDist+xMin,uppersurf(:,2)*xDist,x);
+        ylow=interp1(lowersurf(:,1)*xDist+xMin,lowersurf(:,2)*xDist,x);
+        y=min(max(yup,posMin(2)),posMax(2))-min(max(ylow,posMin(2)),posMax(2));
+        %plot(x,cDistrib+y+posMin(2))
+        vol=integr(x,y);
+        fillSub(ii)=ii;
+        reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
+    end
+    constrVal={fillSub,reqFrac};
+end
+
+function [uppersurf,lowersurf]=ReadShapeIn(shapepath)
+    
+    filename=dir(shapepath);
+    filename=filename.name;
+    extPos=regexp(filename,'\.');
+    ext=filename(extPos+1:end);
+    
+    switch ext
+        case 'mat'
+            load(shapepath)
+            if ~exist('uppersurf','var');error('Data file loaded did not have the upper surface');end
+            if ~exist('lowersurf','var');error('Data file loaded did not have the lower surface');end
+            
+        case 'dat'
+            error('not coded')
+            
+        otherwise
+            error('Unknown type')
+            
+    end
+        
+end
+
 function [ctc,pct,ttc,refFlag]=ReadNacaString(nacaStr)
     refFlag=0;
     if numel(nacaStr)==4
