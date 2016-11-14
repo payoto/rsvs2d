@@ -16,7 +16,8 @@ function [paroptim]=StructOptimParam(caseStr)
     % Main function that allows changes
     
     [paroptim]=eval(caseStr);
-    paroptim.general.optimCase=regexprep(caseStr,'(\(|\)|,)','_');
+    paroptim.general.optimCase=regexprep(...
+        regexprep(caseStr,'(\(|\)|,)','_'),'\.','_');
     
 end
 
@@ -388,7 +389,9 @@ function [paroptim]=CG_Aero()
     paroptim=CutCellObjective(paroptim);
     
     [paroptim]=OptimCG(paroptim);
-    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=4;
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
@@ -1106,7 +1109,6 @@ function paroptim=bp3_refsweep_cv02212_interp()
     paroptim.general.startPop='NACA0012';
 end
 
-
 % NACA 0012 sweep
 
 function paroptim=bp3_NACA0012_sweep()
@@ -1411,6 +1413,95 @@ function paroptim=TestDeriv(e)
     paroptim.general.refineOptim=0;
     
 end
+function paroptim=BuseDerivBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Lc();
+    paroptim.general.startPop='specificfill';
+    paroptim.general.specificFillName='testgrad_busemann';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=BuseDeriv(e)
+    
+    paroptim=AreaM2sweep_Lc();
+    paroptim.general.startPop='specificfill';
+    paroptim.general.specificFillName='testgrad_busemann';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    
+end
+function paroptim=BuseDerivCoarseBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Lc();
+    paroptim.general.startPop='specificfill';
+    paroptim.general.specificFillName='testgrad_busemann';
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=BuseDerivCoarse(e)
+    
+    paroptim=AreaM2sweep_Lc();
+    paroptim.general.startPop='specificfill';
+    paroptim.general.specificFillName='testgrad_busemann';
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    
+end
+function paroptim=ParaDerivBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Lc();
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=ParaDeriv(e)
+    
+    paroptim=AreaM2sweep_Lc();
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    
+end
+function paroptim=ParaDerivAllBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Lc();
+    paroptim.general.startPop='loadshape';
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=ParaDerivAll(e)
+    
+    paroptim=AreaM2sweep_Lc();
+    paroptim.general.startPop='loadshape';
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    
+end
+
 % Bp3 Inverse design sweep
 
 function paroptim=bp3_refsweep_cv00012()

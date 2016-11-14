@@ -6,7 +6,7 @@ function BP3_TestAeroGrad(caseStr)
     steps=[steps;steps+1e-6;steps-1e-6];
     steps=[steps(:)]';
     for ii=steps
-        ExecuteOptimisation(['TestDeriv',caseStr,'(',num2str(ii,'%.0e'),')']);
+        ExecuteOptimisation([caseStr,'(',num2str(ii,'%e'),')']);
     end
 
 end
