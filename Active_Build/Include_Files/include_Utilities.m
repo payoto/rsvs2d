@@ -61,12 +61,15 @@ function [varargout]=ExtractVariables(varNames,param)
     
     for ii=1:length(varNames)
         
-        targLocation=regexp(varInStruct,varNames{ii}, 'once');
+        targLocation=regexp(varInStruct,[varNames{ii},'#'], 'once');
 %         if strcmp(varNames{ii},'cellLevels')
 %             warning('cellLevels used')
 %         end
         if isempty(targLocation) || varPosInStruct(targLocation)==0
-            error([varNames{ii},' is an invalid variable name'])
+            targLocation=regexp(varInStruct,varNames{ii}, 'once');
+            if isempty(targLocation) || varPosInStruct(targLocation)==0
+                error([varNames{ii},' is an invalid variable name'])
+            end
         end
         
         activeVarNum=varPosInStruct(targLocation);
@@ -93,9 +96,12 @@ function [param]=SetVariables(varNames,varValues,param)
     
     for ii=1:length(varNames)
         
-        targLocation=regexp(varInStruct,varNames{ii}, 'once');
+        targLocation=regexp(varInStruct,[varNames{ii},'#'], 'once');
         if isempty(targLocation) || varPosInStruct(targLocation)==0
-            error([varNames{ii},' is an invalid variable name'])
+            targLocation=regexp(varInStruct,varNames{ii}, 'once');
+            if isempty(targLocation) || varPosInStruct(targLocation)==0
+                error([varNames{ii},' is an invalid variable name'])
+            end
         end
         
         activeVarNum=varPosInStruct(targLocation);
@@ -175,10 +181,11 @@ end
 function structdat=GetStructureData(paroptim)
     
     [structdat]=ExploreStructureTree(paroptim);
-    structdat.vardat.names=[structdat.vars(:).name];
-    structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
+    structdat.vardat.names='';
+    
     for ii=1:length(structdat.vars)
-        jj=regexp(structdat.vardat.names,structdat.vars(ii).name);
+        jj=length(structdat.vardat.names)+1;
+        structdat.vardat.names=[structdat.vardat.names,structdat.vars(ii).name,'#'];
         structdat.vardat.varmatch(jj)=ii;
     end
     

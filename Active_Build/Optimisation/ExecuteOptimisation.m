@@ -66,7 +66,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             % create new population
             OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
-            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0) 
+            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
                 fprintf('\n Optimisation Stopped By convergence condition \n');
                 break
             end
@@ -78,9 +78,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         pause(0.01)
         diary off
         %try
-            OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
+        OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
         %catch
-            
+        
         %end
         
         if refStage<(nOptimRef+1)
@@ -89,7 +89,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo,baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
-
+            
             if size(refineOptim,2)==3
                 startIter=nIter+1;
                 maxIter=startIter+refineOptim(refStage,3);
@@ -97,7 +97,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
                 maxIter=nIter+maxIter-(startIter-1);
                 startIter=nIter+1;
             end
-
+            
             iterstruct=iterstruct2;
             
             
@@ -114,7 +114,7 @@ function [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions
     
     
     load(restartSource{1})
-    
+    if exist('supportOptim','var');paramoptim.optim.supportOptim=supportOptim;end
     startIter=length(optimstruct);
     maxIter=startIter+maxIter;
     iterstruct=[optimstruct,iterstruct];
@@ -266,13 +266,13 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
     varExtract={'nPop','objectiveName','defaultVal','lineSearch','useSnake'};
     [nPop,objectiveName,defaultVal,lineSearch,useSnake]=ExtractVariables(varExtract,paramoptim);
     
-    if ~useSnake 
+    if ~useSnake
         [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,population,baseGrid);
         
     elseif (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
         [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
-    
+        
     else
         [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
@@ -381,7 +381,7 @@ function [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,popu
     
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
-   
+    
     [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     [captureErrors{1:nPop}]=deal('');
@@ -673,15 +673,20 @@ end
 
 function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     
-    varExtract={'symType','useSnake','startVol','validVol','diffStepSize','maxDiffStep','minDiffStep'};
-    [symType,useSnake,startVol,validVol,diffStepSize,maxDiffStep,minDiffStep]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'symType','useSnake','startVol','validVol','diffStepSize',...
+        'maxDiffStep','minDiffStep','gradScaleType','nDesVar'};
+    [symType,useSnake,startVol,validVol,diffStepSize,maxDiffStep,minDiffStep...
+        ,gradScaleType,nDesVar]=ExtractVariables(varExtract,paramoptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paramoptim.parametrisation);
     if useSnake
         nDesVar=sum([baseGrid.cell(:).isactive]);
         paramoptim.general.nDesVar=nDesVar;
+        paramoptim=SetVariables({'gradScale'},{BuildCellRatios(baseGrid,gradScaleType)}...
+            ,paramoptim);
     else
-        
+        paramoptim=SetVariables({'gradScale'},{ones(1,nDesVar)}...
+            ,paramoptim);
     end
     if ~isempty(startVol) && startVol~=0
         validVol=max(validVol,startVol);
@@ -705,6 +710,32 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     % optimisation option
     paramoptim.parametrisation=SetVariables({'resampleSnak'},...
         {ExtractVariables({'resampleSnak'},paramoptim)},paramoptim.parametrisation);
+    
+    
+end
+
+function [gradScale]=BuildCellRatios(baseGrid,gradScaleType)
+    
+    cellCentredInf=CellCentreGridInformation((baseGrid));
+    isAct=logical([cellCentredInf(:).isactive]);
+    volFill=[cellCentredInf(isAct).volume];
+    gradScale=ones(size(volFill));
+    switch gradScaleType
+        case 'volume'
+            
+            % Check for negative Volume
+            if any(sign(volFill)==-1)
+                warning('Negative Volumes in grid data')
+                volFill=abs(volFill);
+            end
+            
+            gradScale=1./volFill;
+            gradScale=gradScale/mean(gradScale);
+            
+        otherwise
+            disp('Gradient scaling inactive')
+            
+    end
     
     
 end
@@ -983,8 +1014,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             
         case 'loadshape'
             specificFillName=MakePathCompliant(specificFillName);
-             [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
-             origPop=ones([nPop 1])*rootFill{2};
+            [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
+            origPop=ones([nPop 1])*rootFill{2};
     end
     
     
@@ -1234,7 +1265,46 @@ function [origPop]=StartFromFill(nDesVar,nPop,fillName)
         case 'testgrad_busemann'
             % Dir_2016-10-14T195656_AreaM2sweep_Nc_1
             % iter 62 pop 5
-            rootFill=[0.0177588644125334;0.0880134470734935;0.244766013034044;0.437886860400727;0.596263255527965;0.675462927779081;0.655705870095454;0.577486441976678;0.459524434442214;0.414613928163020;0.0177588644124608;0.0880134470734745;0.244766013033964;0.437886860400853;0.596263255528053;0.675462927778959;0.655705870095593;0.577486441976701;0.459524434442118;0.414613928163050;0.0400911150543920;0.158576855436767;0.341655165814136;0.526237687126564;0.647600512408900;0.677062059567565;0.621064073965241;0.518179829527757;0.432528992901254;0.326783439010478;0.0400911150542984;0.158576855436773;0.341655165814072;0.526237687126764;0.647600512408853;0.677062059567526;0.621064073965397;0.518179829527685;0.432528992901215;0.326783439010473]';
+            rootFill=[0.017758864412533
+                0.040091115054392
+                0.088013447073493
+                0.158576855436767
+                0.244766013034044
+                0.341655165814136
+                0.437886860400727
+                0.526237687126564
+                0.596263255527965
+                0.647600512408900
+                0.675462927779081
+                0.677062059567565
+                0.655705870095454
+                0.621064073965241
+                0.577486441976678
+                0.518179829527757
+                0.459524434442214
+                0.432528992901254
+                0.414613928163020
+                0.326783439010478
+                0.017758864412461
+                0.040091115054298
+                0.088013447073474
+                0.158576855436773
+                0.244766013033964
+                0.341655165814072
+                0.437886860400853
+                0.526237687126764
+                0.596263255528053
+                0.647600512408853
+                0.675462927778959
+                0.677062059567526
+                0.655705870095593
+                0.621064073965397
+                0.577486441976701
+                0.518179829527685
+                0.459524434442118
+                0.432528992901215
+                0.414613928163050
+                0.326783439010473]';
         otherwise
             
             error('invalid fill')
@@ -1653,6 +1723,7 @@ function [newFrac]=BuildNewRestartFrac(iterstruct,profloops)
     newFrac(newFrac~=0)=0.5;
     
 end
+
 function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
     
     iterProf=[profloops(:).iter];

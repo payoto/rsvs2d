@@ -143,11 +143,12 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
-        'isRestart','borderActivation','lineSearchType','minDiffStep','stepAlgo','minVol'};
+        'isRestart','borderActivation','lineSearchType','minDiffStep',...
+        'stepAlgo','minVol','gradScale'};
     
     [diffStepSize,direction,notDesInd,desVarRange,lineSearch,nLineSearch,...
         nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,...
-        lineSearchType,minDiffStep,stepAlgo,minVol]...
+        lineSearchType,minDiffStep,stepAlgo,minVol,gradScale]...
         =ExtractVariables(varExtract,paramoptim);
     supportOptim=paramoptim.optim.supportOptim;
     iterOrig=iterCurr;
@@ -195,7 +196,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         
         % Get Corresponding design vector direction
         [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-        gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1);
+        gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1,gradScale);
         
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
@@ -400,17 +401,23 @@ function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2)
 end
 
 function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-        gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1)
+        gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1,gradScale)
+    
+    modes=vertcat(modestruct(:).mode)';
+    gradF_curr(isnan(gradF_curr))=0;
+    gradF_m1(isnan(gradF_m1))=0;
+    gradDes_curr=((modes*gradF_curr)'.*gradScale);
+    gradDes_m1=((modes*gradF_m1)'.*gradScale);
     
     switch stepAlgo
         case 'conjgrad'
 
-             [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,...
-                 gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1);
+             [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,...
+                 gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
     
         case 'BFGS'
-            [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,...
-                gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1);
+            [stepVector,supportOptim]=NewStepDirectionBFGS(gradDes_curr,...
+                gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
     
             
     end
@@ -418,17 +425,12 @@ function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
 end
 
 
-function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,gradF_m1,...
-        modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1)
+function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,gradDes_m1,...
+        prevStep,direction,supportOptim,obj_curr,obj_m1)
     
     normVec=@(v) sqrt(sum(v.^2,2));
     
     
-    modes=vertcat(modestruct(:).mode)';
-    gradF_curr(isnan(gradF_curr))=0;
-    gradF_m1(isnan(gradF_m1))=0;
-    gradDes_curr=(modes*gradF_curr)';
-    gradDes_m1=(modes*gradF_m1)';
     isEmptSupport=isempty(supportOptim);
     if isEmptSupport
          prevDir=zeros(size(gradDes_m1));
@@ -467,18 +469,11 @@ function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradF_curr,gradF_m1,
     
 end
 
-function [stepVector,supportOptim]=NewStepDirectionBFGS(gradF_curr,gradF_m1,...
-        modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1)
+function [stepVector,supportOptim]=NewStepDirectionBFGS(gradDes_curr,gradDes_m1,...
+        prevStep,direction,supportOptim,obj_curr,obj_m1)
     
     normVec=@(v) sqrt(sum(v.^2,2));
-    
-    
-    modes=vertcat(modestruct(:).mode)';
-    gradF_curr(isnan(gradF_curr))=0;
-    gradF_m1(isnan(gradF_m1))=0;
-    gradDes_curr=(modes*gradF_curr)';
-    gradDes_m1=(modes*gradF_m1)';
-    
+
     isEmptSupport=isempty(supportOptim);
     if isEmptSupport
         

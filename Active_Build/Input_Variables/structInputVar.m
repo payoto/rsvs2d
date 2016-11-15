@@ -23,18 +23,6 @@ function [param]=structInputVar(caseStr)
     
 end
 
-function structdat=GetStructureData(param)
-        
-    [structdat]=ExploreStructureTree(param);
-    structdat.vardat.names=[structdat.vars(:).name];
-    structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
-    for ii=1:length(structdat.vars)
-        jj=regexp(structdat.vardat.names,structdat.vars(ii).name);
-        structdat.vardat.varmatch(jj)=ii;
-    end
-    
-end
-
 %% Default Inputs
 function paramgeneral=default_general()
     
