@@ -21,17 +21,7 @@ function [paroptim]=StructOptimParam(caseStr)
     
 end
 
-function structdat=GetStructureData(paroptim)
-    
-    [structdat]=ExploreStructureTree(paroptim);
-    structdat.vardat.names=[structdat.vars(:).name];
-    structdat.vardat.varmatch=zeros(size(structdat.vardat.names));
-    for ii=1:length(structdat.vars)
-        jj=regexp(structdat.vardat.names,structdat.vars(ii).name);
-        structdat.vardat.varmatch(jj)=ii;
-    end
-    
-end
+
 
 %% Deafult Optimisation Inputs
 
@@ -44,8 +34,9 @@ function [paroptim]=DefaultOptim()
     paroptim.obj.flow=DefaultCutCell_Flow();
     [paroptim.obj.invdes]=DefaultInversedesign();
     [paroptim.constraint]=DefaultConstraint();
-    paroptim.structdat=GetStructureData(paroptim);
+    
     paroptim.optim.supportOptim=[];
+    paroptim.structdat=GetStructureData(paroptim);
     varExtract={'paramCase'};
     [paramCase]=ExtractVariables(varExtract,paroptim);
     paroptim.parametrisation=structInputVar(paramCase);
@@ -111,6 +102,8 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.nLineSearch=12;
     paroptimoptimCG.wolfeC1=1e-4;
     paroptimoptimCG.wolfeC2=0.1;
+    paroptimoptimCG.gradScaleType='none';
+    paroptimoptimCG.gradScale=[];
 end
 
 function paroptimobjflow=DefaultCutCell_Flow()
@@ -397,6 +390,7 @@ function [paroptim]=CG_Aero()
     paroptim.general.symType='horz'; % 'horz'
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.minDiffStep=1e-6;
+    paroptim.optim.CG.validVol=0.2;
 end
 
 function [paroptim]=CG_Area()
@@ -1248,6 +1242,15 @@ function paroptim=NACA0012sweepBFGS_Vu()
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 
+function paroptim=RestartNACA0012sweep_Lc()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim.general.refineOptim=[0];
+    paroptim.parametrisation.general.subdivType='chaikinNaca0012';
+    paroptim.general.worker=12;
+end
+
 % Area M2 sweep
 
 function paroptim=bp3_AreaM2sweep()
@@ -1447,9 +1450,12 @@ function paroptim=BuseDerivCoarseBFGS(e)
 end
 function paroptim=BuseDerivCoarse(e)
     
-    paroptim=AreaM2sweep_Lc();
+    paroptim=AreaM2sweep_Sc();
     paroptim.general.startPop='specificfill';
     paroptim.general.specificFillName='testgrad_busemann';
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.gradScaleType='none';
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
     paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
     paroptim.optim.CG.minDiffStep=e;
