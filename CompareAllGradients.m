@@ -1,6 +1,10 @@
-function []=CompareAllGradients(rootDir)
+function []=CompareAllGradients(rootDir,maxRecurs)
+    
+    [childFolder]=ExploreFolderTree(rootDir,maxRecurs);
+    [resDir]=FindResDirFolder(childFolder);
     
     
+    [dirDat]=PostTreatFiles(postDir);
     
     
 end
@@ -8,42 +12,38 @@ end
 
 
 
-function []=PlotGradients(paramoptim)
+function [h]=PlotGradients(paramoptim)
     
-    for ii=1:numel(paramoptim)
-        supportOptim=paramoptim(ii).optim.supportOptim;
-       
-        figure('Name',['Gradients_',ExtractVariables({'optimCase'},paramoptim(ii))]...
-            ,'Position',[ 100 150 1400 700])
-        subplot(2,2,1)
-         grads=vertcat(supportOptim.hist(:).gradfk);
-        surf(log10(abs(grads)))
-        ylabel('iteration')
-        xlabel('design variable')
-        title('gradients')
-        grad
-        view(0,90)
-        subplot(2,2,2)
-         grads=vertcat(supportOptim.hist(:).prevDir);
-        surf(log10(abs(grads)))
-        ylabel('iteration')
-        xlabel('design variable')
-        title('previous direction')
-        view(0,90)
-        subplot(2,2,3)
-         grads=vertcat(supportOptim.hist(:).prevStep);
-        surf(((grads)),(abs((grads))))
-        ylabel('iteration')
-        xlabel('design variable')
-        title('previous direction')
-        view(0,90)
-        subplot(2,2,4)
-        plot()
-        
-    end
+    supportOptim=paramoptim.optim.supportOptim;
     
-    
-    
+    h=figure('Name',['Gradients_',ExtractVariables({'optimCase'},paramoptim(ii))]...
+        ,'Position',[ 100 150 1400 700]);
+    subplot(2,2,1)
+    grads=vertcat(supportOptim.hist(:).gradfk);
+    surf(log10(abs(grads)))
+    ylabel('iteration')
+    xlabel('design variable')
+    title('gradients')
+    grad
+    view(0,90)
+    subplot(2,2,2)
+    grads=vertcat(supportOptim.hist(:).prevDir);
+    surf(log10(abs(grads)))
+    ylabel('iteration')
+    xlabel('design variable')
+    title('previous direction')
+    view(0,90)
+    subplot(2,2,3)
+    grads=vertcat(supportOptim.hist(:).prevStep);
+    surf(((grads)),(abs((grads))))
+    ylabel('iteration')
+    xlabel('design variable')
+    title('previous direction')
+    view(0,90)
+    subplot(2,2,4)
+    grads=vertcat(supportOptim.hist(:).gradfk);
+    gradsm1=vertcat(supportOptim.hist(:).gradfkm1);
+    dot(grads,gradsm1,2);
 end
 
 
@@ -69,40 +69,31 @@ function [postDir]=NeedsPostTreat(resDir)
     for ii=1:numel(resDir)
         
         isPost(ii)=isempty(FindDir(resDir{ii},'Optimal__',true)) || ...
-            isempty(FindDir(resDir{ii},'Optimisation_',false));
+            isempty(FindDir(resDir{ii},'GradHistory_',false));
         
     end
     postDir=resDir(isPost);
 end
 
-function [T,errDir]=PostTreatFiles(postDir)
-    isError=false(size(postDir));
+function [dirDat]=PostTreatFiles(postDir)
+    
+    
     fprintf('\n%i folders to be postreated \n',numel(postDir))
     for ii=1:numel(postDir)
         fprintf('%s\n',postDir{ii})
     end
     fprintf('\n')
-    parfor ii=1:numel(postDir)
+    dirDat=repmat(struct('path','','case','','supportOptim',struct([]),...
+        'diffStep',[],'paramoptim',struct([])),[1,numel(postDir)]);
+    for ii=1:numel(postDir)
         
-        try
-            [optimstruct]=ExtractOptimStruct(postDir{ii});
-            
-            [T{ii}]=CaptureOutPostTreatIncomplete(postDir{ii},optimstruct)
-            fprintf('   Folder %i - done ',ii)
-        catch MEIdentif
-            T{ii}=MEIdentif;
-            isError(ii)=true;
-            fprintf('   Folder %i - error ',ii)
-        end
+        dirDat(ii).path=postDir{ii};
+        [dirDat(ii).case,dirDat(ii).supportOptim,dirDat(ii).diffStep,dirDat(ii).paramoptim]=...
+            ExtractParamOptim(postDir{ii});
         
-    end
-    fprintf('\n')
-    errDir=postDir(isError);
-    if numel(errDir)>0
-        warning('Errors detected, %i folders affected. See list below',sum(isError));
-        for ii=1:numel(errDir)
-            fprintf('%s\n',errDir{ii})
-        end
+        [h]=PlotGradients(dirDat(ii).paramoptim);
+        hgsave(h,[postDir{ii},filesep,'GradHistory_',h.Name])
+        close(h)
     end
 end
 
@@ -125,7 +116,8 @@ function [optimstruct]=ExtractOptimStruct(postDir)
     end
     optimstruct=optimstruct(1:maxIter);
 end
-function [optimstruct]=ExtractParamOptim(postDir)
+
+function [caseName,supportOptim,diffStep,paramoptim]=ExtractParamOptim(postDir)
     
     [MatPath,MatName]=FindDir(postDir,'FinalParam',false);
     if isempty(regexp(MatName{1},'partial','once'))
@@ -138,15 +130,16 @@ function [optimstruct]=ExtractParamOptim(postDir)
     if exist('paramoptim','var')
         supportOptim=paramoptim.optim.supportOptim;
         caseName=paramoptim.general.optimCase;
+        diffStep=paroptim.optim.CG.minDiffStep;
     else
         error('paramoptim was not loaded from the .mat file')
     end
     
-%     maxIter=numel(optimstruct);
-%     while isempty(optimstruct(maxIter).population(1).objective)
-%         maxIter=maxIter-1;
-%     end
-%     optimstruct=optimstruct(1:maxIter);
+    %     maxIter=numel(optimstruct);
+    %     while isempty(optimstruct(maxIter).population(1).objective)
+    %         maxIter=maxIter-1;
+    %     end
+    %     optimstruct=optimstruct(1:maxIter);
 end
 
 %

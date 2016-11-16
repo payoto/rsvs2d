@@ -170,7 +170,7 @@ end
 function [uppersurf,lowersurf]=ReadShapeIn(shapepath)
     
     filename=dir(shapepath);
-    filename=filename.name;
+    filename=filename(1).name;
     extPos=regexp(filename,'\.');
     ext=filename(extPos+1:end);
     

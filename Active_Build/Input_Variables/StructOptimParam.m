@@ -1499,11 +1499,32 @@ function paroptim=ParaDeriv(e)
     paroptim.general.refineOptim=0;
     
 end
+function paroptim=ParaDerivUniBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Lu();
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=ParaDerivUni(e)
+    
+    paroptim=AreaM2sweep_Lu();
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    
+end
 function paroptim=ParaDerivAllBFGS(e)
     
     paroptim=AreaM2sweepBFGS_Lc();
     paroptim.general.startPop='loadshape';
-    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.varActive='all';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
     paroptim.optim.CG.minDiffStep=e;
@@ -1514,7 +1535,7 @@ function paroptim=ParaDerivAll(e)
     
     paroptim=AreaM2sweep_Lc();
     paroptim.general.startPop='loadshape';
-    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.varActive='all';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
     paroptim.optim.CG.minDiffStep=e;
