@@ -4,10 +4,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd $DIR
 
-gfortran -O3 -freal-8-real-16 -o cartcell.exe CartCellv29.f90
-gfortran -O3 -freal-8-real-16 -o eulerflowuns.exe EulerFlowUns39.f90
-gfortran -O3 -o postproc.exe pproc11_AP.f90
-gfortran -O3 -o showmesh.exe showmesh1_AP.f90
+gfortran -O3 -o cartcell.exe CartCellv30.f90
+gfortran -O3 -o eulerflowuns.exe EulerFlowUns41_AP.f90
+gfortran -O3 -o postproc.exe pproc12_AP.f90
+gfortran -O3 -o showmesh.exe showmesh2_AP.f90
 gcc -O3 -o meshsym.exe meshsym_1.c
 
 cp -rp cartcell.exe ../supersonic_biplane/cartcell.exe
@@ -27,6 +27,15 @@ chmod 755 ../supersonic_ogive/RunFlow.sh
 chmod 755 ../supersonic_ogive/RunFlowSym.sh
 chmod 755 ../supersonic_ogive/RunOnlyFlow.sh
 chmod 755 ../supersonic_ogive/RunPost.sh
+
+cp -rp cartcell.exe ../supersonic_ogivecoarse/cartcell.exe
+cp -rp eulerflowuns.exe ../supersonic_ogivecoarse/eulerflowuns.exe
+cp -rp postproc.exe ../supersonic_ogivecoarse/postproc.exe
+cp -rp meshsym.exe ../supersonic_ogivecoarse/meshsym.exe
+chmod 755 ../supersonic_ogivecoarse/RunFlow.sh
+chmod 755 ../supersonic_ogivecoarse/RunFlowSym.sh
+chmod 755 ../supersonic_ogivecoarse/RunOnlyFlow.sh
+chmod 755 ../supersonic_ogivecoarse/RunPost.sh
 
 cp -rp cartcell.exe ../transonic/cartcell.exe
 cp -rp eulerflowuns.exe ../transonic/eulerflowuns.exe

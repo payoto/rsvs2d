@@ -13,6 +13,8 @@ function []=PreplotFiles(pltPaths)
     for ii=1:length(pltPaths)
         
        [~,~]=system(['preplot "',pltPaths{ii},'" "',pltPaths{ii}(1:end-4),'_pre.plt" &'])
+       
+       pause(2)
         
     end
     

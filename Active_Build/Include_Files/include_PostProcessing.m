@@ -228,7 +228,7 @@ function [varStr]=GenerateVariableString(startVar)
             [varStrCell{1:max([m 1]),1:max([n 1])}]=deal(' ');
             for ii=1:m
                 for jj=1:n
-                    varStrCell{ii,jj}=num2str(startVar(ii,jj),12);
+                    varStrCell{ii,jj}=num2str(startVar(ii,jj),24);
                 end
             end
             [varStr]=RecursiveStringGeneration(openStr,closeStr,varStrCell,m,n);
@@ -374,7 +374,7 @@ function cellLoops=DataToString(loopout)
             cellLoops{kk}='';
             for ll=1:length(loopout.surf(ii).coord(jj,:))
                 cellLoops{kk}=[cellLoops{kk},...
-                    num2str(loopout.surf(ii).coord(jj,ll),15),'  '];
+                    num2str(loopout.surf(ii).coord(jj,ll),24),'  '];
             end
             kk=kk+1;
         end
