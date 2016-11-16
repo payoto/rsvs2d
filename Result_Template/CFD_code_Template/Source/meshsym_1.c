@@ -262,11 +262,11 @@ void WriteOutGrid(){
 		}
 		for (ii=0;ii<nVertKeep;ii++){
 			fprintf(cellgridFID," %11i",vertMatchList[vertInd[keepVertPos[ii]]]);
-			fprintf(cellgridFID," %18.8E",vertCoord[keepVertPos[ii]*2]);
-			fprintf(cellgridFID," %18.8E\n",vertCoord[keepVertPos[ii]*2+1]);
+			fprintf(cellgridFID," %30.20E",vertCoord[keepVertPos[ii]*2]);
+			fprintf(cellgridFID," %30.20E\n",vertCoord[keepVertPos[ii]*2+1]);
 		}
 		for (ii=nBound;ii<nCellKeep;ii++){
-			fprintf(cellgridFID," %18.8E\n",cellVol[keepCellPos[ii]-1]);
+			fprintf(cellgridFID," %30.20E\n",cellVol[keepCellPos[ii]-1]);
 		}
 	} else {
 		perror("Output file failed to open!");

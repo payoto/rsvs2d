@@ -85,7 +85,7 @@ function [strOut]=ProcesstoString(inputVar,classin)
             if all(mod(inputVar,1)==0)
                 strOut=int2str(inputVar);
             else
-                strOut=num2str(inputVar,' %12.7e ');
+                strOut=num2str(inputVar,' %30.24e ');
             end
         case 'char'
             strOut=inputVar;

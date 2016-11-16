@@ -104,9 +104,11 @@ function [obj]=ExtractFinalData(targFolder,iter,isErr)
     structName={'iter','res','cl','cm','cd','cx','cy'};
     
     if ~isErr
-        fseek(fid,-200,1); % Seek the end of file
-        fgetl(fid);
-        data=str2num(fgetl(fid)); %#ok<ST2NM>
+        fseek(fid,-300,1); % Seek the end of file
+        while ~feof(fid)
+            str=fgetl(fid);
+        end
+        data=str2num(str); %#ok<ST2NM>
         for ii=1:length(structName)
             obj.(structName{ii})=data(ii);
         end

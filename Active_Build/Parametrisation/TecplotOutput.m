@@ -163,7 +163,7 @@ function cellHeader=FELINESEGHeader(numNodes,numElm,strandID,time)
     cellHeader{kk}=elmStr; kk=kk+1;
     if exist('time','var');
         cellHeader{kk}=idStr; kk=kk+1;
-        timeStr=['SOLUTIONTIME=',num2str(time,'%.15f'),' '];
+        timeStr=['SOLUTIONTIME=',num2str(time,'%.24f'),' '];
         cellHeader{kk}=timeStr; kk=kk+1;
     end
     cellHeader{kk}='DATAPACKING=POINT'; kk=kk+1;
@@ -201,7 +201,7 @@ function cellHeader=CellCentredDataHeader(numNodes,numElm,nFaces,vararg)
     if ~isempty(time);
         idStr=['STRANDID=',int2str(strandID)];
         cellHeader{kk}=idStr; kk=kk+1;
-        timeStr=['SOLUTIONTIME=',num2str(time,'%.15f'),' '];
+        timeStr=['SOLUTIONTIME=',num2str(time,'%.24f'),' '];
         cellHeader{kk}=timeStr; kk=kk+1;
     end
     if ~isempty(connecShareZone);
@@ -357,7 +357,7 @@ function cellLoops=CellLoop(loopout)
             cellLoops{kk}='';
             for ll=1:length(loopout.surf(ii).coord(jj,:))
                 cellLoops{kk}=[cellLoops{kk},...
-                    num2str(loopout.surf(ii).coord(jj,ll),8),'  '];
+                    num2str(loopout.surf(ii).coord(jj,ll),24),'  '];
             end
             kk=kk+1;
         end
@@ -382,11 +382,11 @@ function [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID,t
         cellNodeCoord{ii}='';
         for jj=1:nDim
             cellNodeCoord{ii}=[cellNodeCoord{ii},...
-                num2str(coordDat(ii,jj),10),'  '];
+                num2str(coordDat(ii,jj),24),'  '];
         end
         for jj=1:nDim+1
             cellNodeCoord{ii}=[cellNodeCoord{ii},...
-                num2str(vectorDat(ii,jj),10),'  '];
+                num2str(vectorDat(ii,jj),24),'  '];
         end
     end
     % Connectivity
@@ -437,7 +437,7 @@ function [cellStringArray]=WriteNumArrayToCell(array)
         cellStringArray{ii}='';
         for jj=1:sizArray(2)
             cellStringArray{ii}=...
-                [cellStringArray{ii},num2str(array(ii,jj),10),'  '];
+                [cellStringArray{ii},num2str(array(ii,jj),24),'  '];
         end
         
     end

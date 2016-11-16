@@ -1399,6 +1399,21 @@ end
 
 % Test derivatives
 
+
+function paroptim=TestDerivDesktop(e)
+    
+    paroptim=AreaM2sweep_Sc();
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=6;
+    paroptim.general.refineOptim=0;
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.gradScaleType='none';
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
+    paroptim.general.worker=4;
+end
+
 function paroptim=TestDerivBFGS(e)
     
     paroptim=AreaM2sweepBFGS_Lc();
@@ -1450,12 +1465,12 @@ function paroptim=BuseDerivCoarseBFGS(e)
 end
 function paroptim=BuseDerivCoarse(e)
     
-    paroptim=AreaM2sweep_Sc();
+    paroptim=AreaM2sweep_Lc();
     paroptim.general.startPop='specificfill';
     paroptim.general.specificFillName='testgrad_busemann';
-    paroptim.general.startPop='loadshape';
-    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
-    paroptim.optim.CG.gradScaleType='none';
+%     paroptim.general.startPop='loadshape';
+%     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+%     paroptim.optim.CG.gradScaleType='none';
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
     paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
     paroptim.optim.CG.minDiffStep=e;

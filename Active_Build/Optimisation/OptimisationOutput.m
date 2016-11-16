@@ -307,14 +307,14 @@ function [returnEntries]=GenerateIterIndexEntry(FID,nIter,population)
         
         str=[int2str(nIter)];
         str=[str,' , ', int2str(ii)];
-        str=[str,' , ', num2str(population(ii).objective,' %12.7e ')];
+        str=[str,' , ', num2str(population(ii).objective,' %30.24e ')];
         str=[str,' , ', num2str(population(ii).constraint)];
         
         for jj=1:nAdditional
-            str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %12.7e ')];
+            str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %30.24e ')];
         end
         str=[str,' , ', population(ii).exception];
-        str=[str,' , ', num2str(population(ii).fill,' %12.7e ')];
+        str=[str,' , ', num2str(population(ii).fill,' %30.24e ')];
         entryCell{ii+1}=str;
     end
     
