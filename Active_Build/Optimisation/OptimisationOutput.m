@@ -210,6 +210,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
     % Figure
     [isGradient]=CheckIfGradient(optimMethod);
+    isAnalytical=CheckIfAnalytical(objectiveName);
     if useSnake
         dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
         
@@ -220,12 +221,22 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         end
     end
     [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
-    if CheckIfAnalytical(objectiveName)
+    if isAnalytical
         [h2]=PlotAnalyticalPath(paroptim,optimstruct,objectiveName);
         h=[h,h2];
     end
     %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-    figList={'\Optimisation_','\DesVarHist_','\DesVarPath'};
+    if ~isGradient
+        figList={'\Optimisation_','\DesVarHist_'};
+    else
+        figList={'\Optimisation_','\GradHistory_'};
+    end
+    if isAnalytical
+        figList{end+1}={'\DesVarPath'};
+    else
+        %figList{end+1}={'\DesVarPath'};
+    end
+    
     for ii=1:length(h)
         figName=[writeDirectory,figList{ii},marker,'.fig'];
         figName=MakePathCompliant(figName);
