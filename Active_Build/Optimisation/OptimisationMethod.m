@@ -675,7 +675,7 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
     
     if stepLength==0
         warning('Step Length is stagnant this iteration')
-        validVol=max(validVol*stepLengths(end-2),minVol);
+        %validVol=max(validVol*stepLengths(end-2),minVol);
         
     end
     if (stepLength==0) || (validVol*stepLength<10*max(abs(diffStepSize)))
@@ -683,7 +683,7 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
         diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/4,minDiffStep);
         
     end
-    volMulti=min(1+round((bestPoint)/numel(unitSteps)*2-1)/2,1);
+    volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
     validVol=validVol*volMulti;
     validVol=max(validVol,minVol);
     stepVector=vec*stepLength;
