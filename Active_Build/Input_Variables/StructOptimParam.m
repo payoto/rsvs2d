@@ -882,7 +882,7 @@ function [paroptim]=Test_Rosenbrock()
     paroptim.general.varOverflow='truncate';
     paroptim.general.desVarRange=[-2.048, 2.048];
     paroptim.general.nPop=25;
-    paroptim.general.maxIter=300;
+    paroptim.general.maxIter=100;
     paroptim.general.worker=4;
     paroptim.general.knownOptim=[0 1 1];
 end
@@ -1413,6 +1413,16 @@ function paroptim=TestDerivDesktop(e)
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
     paroptim.general.worker=4;
 end
+function paroptim=TestDerivRosen(e)
+    
+    paroptim=Test_Rosenbrock();
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    
+    paroptim.general.refineOptim=0;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=4;
+end
 
 function paroptim=TestDerivBFGS(e)
     
@@ -1543,6 +1553,29 @@ function paroptim=ParaDerivAll(e)
     paroptim.general.refineOptim=0;
     
 end
+
+function paroptim=LongDerivBFGS(e)
+    
+    paroptim=AreaM2sweepBFGS_Nc();
+    %paroptim.general.startPop='loadshape';
+    %paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=100;
+    paroptim.general.refineOptim=0;
+end
+function paroptim=LongDeriv(e)
+    
+    paroptim=AreaM2sweep_Nc();
+    %paroptim.general.startPop='loadshape';
+    %paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
+    paroptim.optim.CG.minDiffStep=e;
+    paroptim.general.maxIter=100;
+    paroptim.general.refineOptim=0;
+    
+end
+
 
 % Bp3 Inverse design sweep
 

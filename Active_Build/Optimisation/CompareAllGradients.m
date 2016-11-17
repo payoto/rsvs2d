@@ -1,33 +1,41 @@
-function []=CompareAllGradients(rootDir,maxRecurs)
+function [dirDat,sortDat]=CompareAllGradients(rootDir,maxRecurs)
     
     [childFolder]=ExploreFolderTree(rootDir,maxRecurs);
     [resDir]=FindResDirFolder(childFolder);
     
     
-    [dirDat]=PostTreatFiles(postDir);
+    [dirDat]=PostTreatFiles(resDir);
     
-    
+    dirSummarryFigs=[rootDir{1},filesep,'GradientComp'];
+    dateStr=datestr(now,'yy_mm_dd_HH_MM');
+    mkdir(dirSummarryFigs)
+    save([dirSummarryFigs,filesep,'AllParam_',dateStr,'.mat'],'dirDat')
+    [sortDat]=AnalyseGradients(dirDat,dirSummarryFigs);
 end
 
-
-
-
-function [h]=PlotGradients(paramoptim)
+function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
+    
+    normVec=@(vec) sqrt(sum(vec.^2,2));
+    normaliseArray=@(array)  array./(sqrt(sum(array.^2,2))*ones(1,size(array,2))); 
     
     supportOptim=paramoptim.optim.supportOptim;
     
-    h=figure('Name',['Gradients_',ExtractVariables({'optimCase'},paramoptim(ii))]...
+    h=figure('Name',['Gradients_',ExtractVariables({'optimCase'},paramoptim)]...
         ,'Position',[ 100 150 1400 700]);
+    symDesVarList=ExtractVariables({'symDesVarList'},paramoptim);
+    rmCol=symDesVarList(2,:);
     subplot(2,2,1)
     grads=vertcat(supportOptim.hist(:).gradfk);
+    grads(:,rmCol)=[];
     surf(log10(abs(grads)))
     ylabel('iteration')
     xlabel('design variable')
     title('gradients')
-    grad
+    
     view(0,90)
     subplot(2,2,2)
     grads=vertcat(supportOptim.hist(:).prevDir);
+    grads(:,rmCol)=[];
     surf(log10(abs(grads)))
     ylabel('iteration')
     xlabel('design variable')
@@ -41,9 +49,63 @@ function [h]=PlotGradients(paramoptim)
     title('previous direction')
     view(0,90)
     subplot(2,2,4)
+    hold on
     grads=vertcat(supportOptim.hist(:).gradfk);
+    grads(:,rmCol)=[];
     gradsm1=vertcat(supportOptim.hist(:).gradfkm1);
-    dot(grads,gradsm1,2);
+    gradsm1(:,rmCol)=[];
+    directionChange.Grad=dot(normaliseArray(grads),normaliseArray(gradsm1),2);
+    directionChange.Grad(1)=1;
+    gradStep=vertcat(supportOptim.hist(:).prevStep);
+    gradStep(:,rmCol)=[];
+    directionChange.Step=dot(normaliseArray(grads),normaliseArray(gradStep),2);
+    gradDir=vertcat(supportOptim.hist(:).prevDir);
+    gradDir(:,rmCol)=[];
+    directionChange.Dir=dot(normaliseArray(grads),normaliseArray(gradDir),2);
+    directionChange.grads=grads;
+    directionChange.gradsm1=gradsm1;
+    kk=1;
+    fillPrec=zeros(size(optimstruct(1).population(1).fill));
+    for ii=1:2:numel(optimstruct)
+        changePos(kk)=normVec(fillPrec-optimstruct(ii).population(1).fill);
+        fillInf(kk,1:numel(optimstruct(ii).population(1).fill))...
+            =optimstruct(ii).population(1).fill;
+        fillPrec=optimstruct(ii).population(1).fill;
+        kk=kk+1;
+    end
+    changePos(1)=ExtractVariables({'startVol'},paramoptim);
+    directionChange.Pos=changePos;
+    
+    step=1:numel(supportOptim.hist);
+    ii=1;
+    l(ii)=plot(step,directionChange.Grad);
+    l(ii).DisplayName='Change in direction - gradient';
+    ii=ii+1;
+    l(ii)=plot(step,directionChange.Step);
+    l(ii).DisplayName='gradient // direction';
+    ii=ii+1;
+    l(ii)=plot(step,directionChange.Dir);
+    l(ii).DisplayName='gradient // step';
+    ii=ii+1;
+    try
+        scaleEvol=[supportOptim.hist(:).scale];
+        l(ii)=plot(step,scaleEvol);
+        l(ii).DisplayName='scale';
+        ii=ii+1;
+    catch
+    end
+    try
+        iterEvol=[supportOptim.hist(:).iter];
+        l(ii)=plot(step,iterEvol);
+        l(ii).DisplayName='iter since last refresh';
+        ii=ii+1;
+    catch
+    end
+    l(ii)=plot(step,changePos);
+    l(ii).DisplayName='Length of movement';
+    ii=ii+1;
+    legend(l)
+    
 end
 
 
@@ -85,15 +147,27 @@ function [dirDat]=PostTreatFiles(postDir)
     fprintf('\n')
     dirDat=repmat(struct('path','','case','','supportOptim',struct([]),...
         'diffStep',[],'paramoptim',struct([])),[1,numel(postDir)]);
+    rmII=[];
     for ii=1:numel(postDir)
         
         dirDat(ii).path=postDir{ii};
-        [dirDat(ii).case,dirDat(ii).supportOptim,dirDat(ii).diffStep,dirDat(ii).paramoptim]=...
-            ExtractParamOptim(postDir{ii});
         
-        [h]=PlotGradients(dirDat(ii).paramoptim);
-        hgsave(h,[postDir{ii},filesep,'GradHistory_',h.Name])
-        close(h)
+        try 
+            [dirDat(ii).case,dirDat(ii).supportOptim,dirDat(ii).diffStep,dirDat(ii).paramoptim]=...
+            ExtractParamOptim(postDir{ii});
+            [optimstruct]=ExtractOptimStruct(postDir{ii});
+            [h,dirDat(ii).dirChange]=PlotGradients(dirDat(ii).paramoptim,optimstruct);
+            hgsave(h,[postDir{ii},filesep,'GradHistory_',h.Name])
+            close(h)
+        catch
+            rmII=[rmII,ii];
+        end
+    end
+    
+    if ~isempty(rmII)
+        dirDat(rmII)=[];
+        warning([int2str(numel(rmII)),' Failed:'])
+        char(postDir{rmII})
     end
 end
 
@@ -120,17 +194,19 @@ end
 function [caseName,supportOptim,diffStep,paramoptim]=ExtractParamOptim(postDir)
     
     [MatPath,MatName]=FindDir(postDir,'FinalParam',false);
-    if isempty(regexp(MatName{1},'partial','once'))
-        load(MatPath{1})
-    else
-        load(MatPath{1})
-        
+    if ~isempty(MatName)
+        if isempty(regexp(MatName{1},'partial','once'))
+            load(MatPath{1})
+        else
+            load(MatPath{1})
+
+        end
     end
     
     if exist('paramoptim','var')
         supportOptim=paramoptim.optim.supportOptim;
         caseName=paramoptim.general.optimCase;
-        diffStep=paroptim.optim.CG.minDiffStep;
+        diffStep=paramoptim.optim.CG.minDiffStep;
     else
         error('paramoptim was not loaded from the .mat file')
     end
