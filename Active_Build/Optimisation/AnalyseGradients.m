@@ -81,10 +81,14 @@ function [h]=GenerateGroupedPlots(sortDat)
     end
     
     h(2)=figure('Name',['GradientEvolution_',sortDat.pattern],'Position',[100 15 800 800]);
-    for ii=1:4
+    for ii=[1 3 4]
         axh(ii)=subplot(2,2,ii);
         hold on
     end
+    axh(2)=subplot(4,2,2);
+    hold on
+    axh(5)=subplot(4,2,4);
+    hold on
     
     axes(axh(1))
     xlabel('Optimisation iteration')
@@ -99,7 +103,6 @@ function [h]=GenerateGroupedPlots(sortDat)
     legend(l,'Location','NorthEast')
     
     axes(axh(2))
-    xlabel('Optimisation iteration')
     ylabel('Objective')
     for ii=1:numel(diffStepOrd)
         iterNum=numel(sortDat.dirDat(ii).supportOptim.hist);
@@ -107,7 +110,16 @@ function [h]=GenerateGroupedPlots(sortDat)
             ['-',markList(mod(ceil(ii/colorNum)-1,13)+1)]);
         l(ii).DisplayName=num2str(-diffStep(ii));
     end 
-    
+    axes(axh(5))
+    xlabel('Optimisation iteration')
+    ylabel('Gradient Norm')
+    for ii=1:numel(diffStepOrd)
+        iterNum=numel(sortDat.dirDat(ii).dirChange.gradNorm);
+        l(ii)=plot(1:iterNum,[sortDat.dirDat(ii).dirChange.gradNorm],...
+            ['-',markList(mod(ceil(ii/colorNum)-1,13)+1)]);
+        l(ii).DisplayName=num2str(-diffStep(ii));
+    end 
+    axh(5).YScale='log';
     axes(axh(3))
     xlabel('Optimisation iteration')
     ylabel('Direction Change - Gradient')
@@ -161,8 +173,10 @@ function [uniqNum,gradsDiff,meanGradsDiff]=BuildGradDiff(diffStep,grads)
     
     meanGradsExp=[zeros([1,size(meanGrads,2)]);meanGrads];
     
-    gradsDiff=log10(abs((grads-meanGradsExp(diffStepComp(3,:),:))./grads));
-    meanGradsDiff=log10(abs((meanGradsExp(1:end-1,:)-meanGradsExp(2:end,:))./meanGradsExp(1:end-1,:)));
+%     gradsDiff=log10(abs((grads-meanGradsExp(diffStepComp(3,:),:))./grads));
+%     meanGradsDiff=log10(abs((meanGradsExp(1:end-1,:)-meanGradsExp(2:end,:))./meanGradsExp(1:end-1,:)));
+    gradsDiff=log10(abs((grads-meanGradsExp(diffStepComp(3,:),:))));
+    meanGradsDiff=log10(abs((meanGradsExp(1:end-1,:)-meanGradsExp(2:end,:))));
     
 end
 

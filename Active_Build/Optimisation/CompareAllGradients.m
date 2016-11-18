@@ -52,6 +52,7 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     hold on
     grads=vertcat(supportOptim.hist(:).gradfk);
     grads(:,rmCol)=[];
+    directionChange.gradNorm=normVec(grads);
     gradsm1=vertcat(supportOptim.hist(:).gradfkm1);
     gradsm1(:,rmCol)=[];
     directionChange.Grad=dot(normaliseArray(grads),normaliseArray(gradsm1),2);
@@ -103,6 +104,9 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     end
     l(ii)=plot(step,changePos);
     l(ii).DisplayName='Length of movement';
+    ii=ii+1;
+    l(ii)=plot(step,directionChange.gradNorm);
+    l(ii).DisplayName='Norm of Gradient';
     ii=ii+1;
     legend(l)
     

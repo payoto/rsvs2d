@@ -84,6 +84,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         %end
         
         if refStage<(nOptimRef+1)
+            warning('Refinement Needs updating it is not currently supported')
+            break
             
             [paramoptim,outinfo,iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
@@ -226,19 +228,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [paramoptim.general.desvarconnec]=...
         ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     % Start Parallel Pool
-    
-    if numel(gcp('nocreate'))==0
-        comStr=computer;
-        if strcmp(comStr(1:2),'PC')
-            poolName=parallel.importProfile('ExportOptimSnakes.settings');
-        else
-            poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
-        end
-        clusterObj=parcluster(poolName);
-        clusterObj.NumWorkers=paramoptim.general.worker;
-        saveProfile(clusterObj);
-        parpool(poolName)
-    end
+    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
     
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
@@ -257,6 +247,35 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         paramoptim,0,outinfo,iterstruct(1),{});
     
     [~]=PrintEnd(procStr,1,tStart);
+end
+
+function []=StartParallelPool(nWorker,nTry)
+    kk=0;
+    while numel(gcp('nocreate'))==0 && kk<nTry
+        comStr=computer;
+        if strcmp(comStr(1:2),'PC')
+            poolName=parallel.importProfile('ExportOptimSnakes.settings');
+        else
+            poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+        end
+        clusterObj=parcluster(poolName);
+        clusterObj.NumWorkers=nWorker;
+        saveProfile(clusterObj);
+        try 
+            parpool(poolName)
+        catch ME
+            
+        end
+        kk=kk+1;
+    end
+    
+    if numel(gcp('nocreate'))~=0 
+        disp(['Parallel Pool succesfully created after ',int2str(kk),' attempt(s)'])
+    else
+        %error('Parrallel pool failed to start')
+        throw(ME)
+    end
+    
 end
 
 function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...

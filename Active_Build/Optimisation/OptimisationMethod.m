@@ -680,7 +680,7 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
     end
     if (stepLength==0) || (validVol*stepLength<10*max(abs(diffStepSize)))
         
-        diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/4,minDiffStep);
+        diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/(10),minDiffStep);
         
     end
     volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
