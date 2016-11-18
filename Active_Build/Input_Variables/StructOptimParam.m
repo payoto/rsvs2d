@@ -388,7 +388,7 @@ function [paroptim]=CG_Aero()
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
-    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
+    paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
     paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.optim.CG.validVol=0.2;
 end
@@ -440,13 +440,13 @@ function [paroptim]=CG_NACA0012()
     
     paroptim.general.startPop='NACA0012';
     paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
-    paroptim.optim.CG.minDiffStep=1e-5;
-    paroptim.optim.CG.maxDiffStep=1e-3;
+    paroptim.optim.CG.minDiffStep=1e-6;
+    paroptim.optim.CG.maxDiffStep=1e-4;
     paroptim.optim.CG.varActive='snaksensiv';
-    paroptim.optim.CG.validVol=0.05;
+    paroptim.optim.CG.validVol=0.2;
     
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
-    paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.parametrisation.optiminit.modeSmoothNum=5;
     
     paroptim.obj.flow.nMach=0.85;
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonic'];
@@ -1575,7 +1575,6 @@ function paroptim=LongDeriv(e)
     paroptim.general.refineOptim=0;
     
 end
-
 
 % Bp3 Inverse design sweep
 

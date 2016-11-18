@@ -29,6 +29,17 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                     [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);
+            case 'ValVolFrac'
+                [loop{1}]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
+                [loop{2}]=ConstantArea_Wedge(xMin,xMax,A);
+                [loop{3}]=ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints);
+                [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
+                resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
+                
+                for jj=1:length(loop)
+                    [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
+                end
+                linTheoryOptim=min([obj(:).cd]);
             case 'MinSumVolFrac'
                 
                 [loop{1}]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
