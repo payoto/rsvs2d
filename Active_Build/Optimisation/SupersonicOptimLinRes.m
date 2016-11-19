@@ -11,7 +11,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,A,nPoints)
+function [linTheoryOptim,obj]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,A,nPoints)
     
     varExtract={'desVarConstr','nMach'};
     linTheoryOptim=0;
@@ -25,7 +25,7 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                 [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
                 resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
                 
-                for jj=1:length(loop)
+                parfor jj=1:length(loop)
                     [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);
@@ -36,7 +36,7 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                 [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
                 resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
                 
-                for jj=1:length(loop)
+                parfor jj=1:length(loop)
                     [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
                 end
                 linTheoryOptim=min([obj(:).cd]);
@@ -48,9 +48,10 @@ function [linTheoryOptim]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,xMax,
                 [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
                 resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
                 
-                for jj=1:length(loop)
+                parfor jj=1:length(loop)
                     [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
                 end
+                
                 linTheoryOptim=min([obj(:).cd]);
                 
         end

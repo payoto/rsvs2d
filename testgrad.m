@@ -31,3 +31,6 @@ l(end+1)=plot(diag(jacobianBkw));
 hold on,
 l(end+1)=plot(graddat(:,3));
 l(end+1)=plot(diag(graddat(:,19:28)));
+
+figure
+plot(((graddat(:,19:28))))

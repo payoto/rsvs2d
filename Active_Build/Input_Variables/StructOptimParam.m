@@ -1576,6 +1576,18 @@ function paroptim=LongDeriv(e)
     
 end
 
+function paroptim=VolSweep(e)
+    
+    paroptim=AreaM2sweep_Nc();
+    %paroptim.general.startPop='loadshape';
+    %paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
+    paroptim.constraint.desVarVal={e};
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.general.maxIter=100;
+    paroptim.general.refineOptim=0;
+    
+end
 % Bp3 Inverse design sweep
 
 function paroptim=bp3_refsweep_cv00012()
