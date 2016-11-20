@@ -1583,7 +1583,8 @@ function paroptim=VolSweep(e)
     %paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.parametrisation.snakes.refine.axisRatio = min(e*1.5,1); 
+    paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.general.maxIter=100;
     paroptim.general.refineOptim=0;
     
