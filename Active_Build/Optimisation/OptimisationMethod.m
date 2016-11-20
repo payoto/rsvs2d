@@ -29,7 +29,7 @@ function [newPop,iterCurr,paramoptim,deltas]=OptimisationMethod(paramoptim,varar
             
         case 'conjgrad'
             [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,varargin{1},varargin{2},varargin{3});
-        
+            
         case 'DEStrip'
             
         case 'GA'
@@ -110,8 +110,8 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
         mutVec=projFunc(projInv(iterCurr(rInd(1)).fill)+diffAmp*...
             (projInv(iterCurr(rInd(2)).fill)-projInv(iterCurr(rInd(3)).fill)));
         %mutVec=mutVec*(max(desVarRange)-min(desVarRange))+min(desVarRange);
-%         mutVec(mutVec>max(desVarRange))=max(desVarRange);
-%         mutVec(mutVec<min(desVarRange))=min(desVarRange);
+        %         mutVec(mutVec>max(desVarRange))=max(desVarRange);
+        %         mutVec(mutVec<min(desVarRange))=min(desVarRange);
         % Crossover
         crossVec=-ones([1,nFill]);
         
@@ -192,18 +192,18 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [modestruct]=RemoveFailedModes(modestruct,gradstruct_curr,iterCurr(1).fill...
             ,desVarRange,direction);
         [gradF_curr,gradF_m1]...
-            =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct);
+            =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim);
         
         % Get Corresponding design vector direction
         [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-        gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1,gradScale);
+            gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1,gradScale);
         
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
         [unitSteps]=UnitStepLength(nLineSearch,lineSearchType);
         
         [stepLengths]=StepLengthsForLS(rootPop,stepVector,unitSteps,validVol,desVarRange);
-            
+        
         [newPop,deltas]=...
             GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim);
         % Population trimming for invalid values
@@ -355,14 +355,25 @@ function [indModeFailing]=FindFailingMode(modestruct,gradstruct,direction)
 end
 
 function [gradF_curr,gradF_m1]=...
-        BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct)
+        BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim)
+    % This build includes a gradient rejection criteria
+    
     
     FDO2= @(fi,fm,fp,dxm,dxp) (fp.*dxm.^2-fm.*dxp.^2+fi.*(dxp.^2-dxm.^2))...
         ./((dxm*dxp.^2)+(dxm.^2*dxp)); % assumes dxm and dxp are on different sides and absolute
     FDO2V2= @(Dfm,Dfp,dxm,dxp) (Dfp.*dxm.^2-Dfm.*dxp.^2)...
         ./((dxp*dxm.^2)-(dxp.^2*dxm));
+    normVec=@(v) sqrt(sum(v.^2,2));
+    
+    
     
     nModes=length(modestruct);
+    if ~isempty(supportOptim);
+        
+        prevGradNorm=(normVec(supportOptim.hist(end).gradfk));
+    else
+        prevGradNorm=1;
+    end
     
     gradF_curr=zeros([nModes,1]);
     gradF_m1=zeros([nModes,1]);
@@ -372,24 +383,36 @@ function [gradF_curr,gradF_m1]=...
         currInd=modestruct(ii).curr.ind;
         currCoeff=modestruct(ii).curr.coeff;
         [gradF_curr(ii)]=GenerateGradientEntry(currInd,currCoeff,...
-            gradstruct_curr,FDO2V2);
+            gradstruct_curr,FDO2V2,prevGradNorm);
         
         m1Ind=modestruct(ii).m1.ind;
         m1Coeff=modestruct(ii).m1.coeff;
         [gradF_m1(ii)]=GenerateGradientEntry(m1Ind,m1Coeff,...
-            gradstruct_m1,FDO2V2);
+            gradstruct_m1,FDO2V2,prevGradNorm);
     end
     
 end
 
-function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2)
+function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevGradNorm)
+    
+    isOutLier=@(gradVec,prevGradNorm) log10(abs(gradVec))> (max(mean(log10(abs(gradVec))),log10(prevGradNorm))+1);   % Takes in absolute values
     
     gradF=0;
     if ~isempty(ind)
+        gradTest=zeros(size(ind));
+        for ii=1:numel(ind)
+            gradTest(ii)=gradstruct(ind(ii)).objective/coeff(ii);
+        end
+%         validStep=~isOutLier(gradTest,prevGradNorm);
+%         ind=ind(validStep);
+%         coeff=coeff(validStep);
+        
         if numel(ind)==1
             gradF=gradstruct(ind(1)).objective/coeff(1);
         else % Additional functionality would be to build recursive process
             % to find right indices of currInd
+            
+            
             Dfm=gradstruct(ind(1)).objective;
             Dfp=gradstruct(ind(2)).objective;
             dxm=coeff(1);
@@ -411,14 +434,14 @@ function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
     
     switch stepAlgo
         case 'conjgrad'
-
-             [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,...
-                 gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
-    
+            
+            [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,...
+                gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
+            
         case 'BFGS'
             [stepVector,supportOptim]=NewStepDirectionBFGS(gradDes_curr,...
                 gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
-    
+            
             
     end
     
@@ -433,7 +456,7 @@ function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,gradDes
     
     isEmptSupport=isempty(supportOptim);
     if isEmptSupport
-         prevDir=zeros(size(gradDes_m1));
+        prevDir=zeros(size(gradDes_m1));
     else
         prevDir=supportOptim.curr.prevStep;
     end
@@ -449,7 +472,7 @@ function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,gradDes
     supportOptim.hist(ii).prevStep=prevStep;
     supportOptim.hist(ii).obj_curr=obj_curr;
     supportOptim.hist(ii).obj_m1=obj_m1;
-     [supportOptim.hist(ii).isWolfe,supportOptim.hist(ii).isStrongWolfe]=...
+    [supportOptim.hist(ii).isWolfe,supportOptim.hist(ii).isStrongWolfe]=...
         WolfeCondition(1e-4,0.9,prevDir,prevStep,...
         gradDes_m1,obj_m1,gradDes_curr,obj_curr);
     switch direction
@@ -473,7 +496,7 @@ function [stepVector,supportOptim]=NewStepDirectionBFGS(gradDes_curr,gradDes_m1,
         prevStep,direction,supportOptim,obj_curr,obj_m1)
     
     normVec=@(v) sqrt(sum(v.^2,2));
-
+    
     isEmptSupport=isempty(supportOptim);
     if isEmptSupport
         
@@ -777,7 +800,7 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
         for ii=1:nActVar
             signMat(ii,ii)=ratioStep(desVarList(ii));
         end
-
+        
         partialSteps=signMat*stepSize(jj);
         newGradPop{jj}(:,desVarList)=newGradPop{jj}(:,desVarList)+partialSteps;
         
