@@ -403,9 +403,9 @@ function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevGradNorm)
         for ii=1:numel(ind)
             gradTest(ii)=gradstruct(ind(ii)).objective/coeff(ii);
         end
-%         validStep=~isOutLier(gradTest,prevGradNorm);
-%         ind=ind(validStep);
-%         coeff=coeff(validStep);
+        validStep=~isOutLier(gradTest,prevGradNorm);
+        ind=ind(validStep);
+        coeff=coeff(validStep);
         
         if numel(ind)==1
             gradF=gradstruct(ind(1)).objective/coeff(1);
@@ -759,12 +759,13 @@ end
 function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim,baseGrid)
     
     newRoot=rootFill+stepVector;
+    [newRoot]=OverflowHandling(paramoptim,newRoot);
     popVec.fill=newRoot;
     popVec=ApplySymmetry(paramoptim,popVec);
     [popVec]=ConstraintMethod('DesVar',paramoptim,popVec,baseGrid);
     newRoot=popVec.fill;
     
-    [newRoot]=OverflowHandling(paramoptim,newRoot);
+    
     
     realStep=newRoot-rootFill;
     
