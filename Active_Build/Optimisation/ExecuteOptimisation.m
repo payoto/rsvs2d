@@ -59,7 +59,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             procStr=['ITERATION ',int2str(nIter)];
             [tStart]=PrintStart(procStr,1);
             % Compute Shape using snakes
-            [iterstruct(nIter).population]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
+            [iterstruct(nIter).population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
                 baseGrid,connectstructinfo);
             % Evaluate Objective Function
             [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
@@ -278,7 +278,7 @@ function []=StartParallelPool(nWorker,nTry)
     
 end
 
-function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
+function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
     
     
@@ -293,7 +293,7 @@ function [population]=PerformIteration(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
         
     else
-        [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+        [population,supportstruct,captureErrors,restartsnake]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
     end
     nPop=numel(population);
@@ -410,7 +410,7 @@ function [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,popu
 end
 
 %% Gradient Iteration
-function [population,supportstruct,captureErrors]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
     
     

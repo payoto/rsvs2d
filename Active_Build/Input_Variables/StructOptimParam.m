@@ -1251,6 +1251,18 @@ function paroptim=RestartNACA0012sweep_Lc()
     paroptim.general.worker=12;
 end
 
+function paroptim=RestartNACA0012sweep_Nc()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Ncv');
+    paroptim.general.refineOptim=[0];
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.validVol=0.01;
+    paroptim.parametrisation.general.subdivType='chaikinNaca0012';
+    paroptim.general.worker=12;
+end
+
 % Area M2 sweep
 
 function paroptim=bp3_AreaM2sweep()
@@ -1583,7 +1595,7 @@ function paroptim=VolSweep(e)
     %paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.parametrisation.snakes.refine.axisRatio = min(e*1.5,1); 
+    paroptim.parametrisation.snakes.refine.axisRatio = min(10*e*1.5,1); 
     paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.general.maxIter=100;
     paroptim.general.refineOptim=0;

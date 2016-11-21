@@ -851,6 +851,16 @@ function [param]=optimNACA0012Vu()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
+
+function [param]=optimNACA0012Ncv()
+    [param]=optimNACA0012();
+    
+    param.snakes.refine.axisRatio=1;
+    param.snakes.refine.refineGrid=[8 1];
+    param.snakes.refine.gridDistrib='cosX01';
+    param.optiminit.cellLevels=[12,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
 % BP3 inverse design testing procedure
 
 function [param]=optimInverseDesign_cv()
