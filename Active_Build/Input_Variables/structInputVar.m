@@ -851,7 +851,22 @@ function [param]=optimNACA0012Vu()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
-
+function [param]=optimNACA0012Scv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=0.5;
+    param.snakes.refine.gridDistrib='cosX01';
+    param.optiminit.cellLevels=[7,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Suv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=0.5;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[7,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
 function [param]=optimNACA0012Ncv()
     [param]=optimNACA0012();
     
@@ -861,6 +876,49 @@ function [param]=optimNACA0012Ncv()
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
+function [param]=optimNACA0012Nuv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=1;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[12,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Lcv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=2;
+    param.snakes.refine.gridDistrib='cosX01';
+    param.optiminit.cellLevels=[22,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Luv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=2;
+    param.snakes.refine.gridDistrib='none';
+    param.optiminit.cellLevels=[22, 2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Vcv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=4;
+    param.snakes.refine.gridDistrib='cosX01';
+    param.optiminit.cellLevels=[42,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimNACA0012Vuv()
+    [param]=optimNACA0012Ncv();
+    
+    param.snakes.refine.axisRatio=4;
+    param.snakes.refine.gridDistrib='cosX01';
+    param.optiminit.cellLevels=[42,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+
+
+
 % BP3 inverse design testing procedure
 
 function [param]=optimInverseDesign_cv()

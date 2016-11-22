@@ -156,16 +156,16 @@ function [dirDat]=PostTreatFiles(postDir)
         
         dirDat(ii).path=postDir{ii};
         
-        try 
+%         try 
             [dirDat(ii).case,dirDat(ii).supportOptim,dirDat(ii).diffStep,dirDat(ii).paramoptim]=...
             ExtractParamOptim(postDir{ii});
             [optimstruct]=ExtractOptimStruct(postDir{ii});
             [h,dirDat(ii).dirChange]=PlotGradients(dirDat(ii).paramoptim,optimstruct);
             hgsave(h,[postDir{ii},filesep,'GradHistory_',h.Name])
             close(h)
-        catch
-            rmII=[rmII,ii];
-        end
+%         catch
+%             rmII=[rmII,ii];
+%         end
     end
     
     if ~isempty(rmII)

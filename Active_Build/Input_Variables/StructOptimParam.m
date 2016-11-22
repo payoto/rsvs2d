@@ -439,9 +439,9 @@ function [paroptim]=CG_NACA0012()
     [paroptim]=OptimCG(paroptim);
     
     paroptim.general.startPop='NACA0012';
-    paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
-    paroptim.optim.CG.minDiffStep=1e-6;
-    paroptim.optim.CG.maxDiffStep=1e-4;
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6];
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.maxDiffStep=1e-5;
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.2;
     
@@ -1119,56 +1119,56 @@ end
 function paroptim=NACA0012sweep_Sc()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Scv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Su()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Suv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Nc()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Ncv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Nu()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nu');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nuv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Lc()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lcv');
     paroptim.general.refineOptim=[2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Lu()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lu');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Luv');
     paroptim.general.refineOptim=[2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Vc()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vcv');
     paroptim.general.refineOptim=[0];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweep_Vu()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vu');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vuv');
     paroptim.general.refineOptim=[0];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
@@ -1177,7 +1177,7 @@ function paroptim=bp3_NACA0012_sweep_BFGS()
     
     [paroptim]=CG_NACA0012();
     [paroptim]=OptimBFGS(paroptim);
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Scv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.nPop=12;
@@ -1188,56 +1188,56 @@ end
 function paroptim=NACA0012sweepBFGS_Sc()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Scv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Su()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Su');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Suv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Nc()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Ncv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Nu()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nu');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Nuv');
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Lc()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lcv');
     paroptim.general.refineOptim=[2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Lu()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lu');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Luv');
     paroptim.general.refineOptim=[2 1 100];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Vc()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vcv');
     paroptim.general.refineOptim=[0];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
 function paroptim=NACA0012sweepBFGS_Vu()
     
     paroptim=bp3_NACA0012_sweep_BFGS();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vu');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Vuv');
     paroptim.general.refineOptim=[0];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
 end
@@ -1245,7 +1245,7 @@ end
 function paroptim=RestartNACA0012sweep_Lc()
     
     paroptim=bp3_NACA0012_sweep();
-    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lc');
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Lcv');
     paroptim.general.refineOptim=[0];
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
     paroptim.general.worker=12;
@@ -1258,7 +1258,7 @@ function paroptim=RestartNACA0012sweep_Nc()
     paroptim.general.refineOptim=[0];
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
     paroptim.optim.CG.minDiffStep=1e-7;
-    paroptim.optim.CG.validVol=0.01;
+    paroptim.optim.CG.validVol=0.0025;
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
     paroptim.general.worker=12;
 end
