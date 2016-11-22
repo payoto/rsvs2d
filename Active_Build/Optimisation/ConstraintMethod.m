@@ -32,13 +32,14 @@ function [population,varargout]=ConstraintMethod(entryPoint,paramoptim,populatio
         case 'DesVar'
             varExtract={'desVarConstr','desVarVal'};
             [desVarConstr,desVarVal]=ExtractVariables(varExtract,paramoptim);
-            
+            constrDistance{max(length(desVarConstr),1)}=[];
             for ii=1:length(desVarConstr)
                 
-                [population]=DesignVariableConsCaller(desVarConstr{ii},desVarVal{ii},...
+                [population,constrDistance{ii}]=DesignVariableConsCaller(desVarConstr{ii},desVarVal{ii},...
                     paramoptim,population,varargin{:});
             end
             
+            varargout{1}=constrDistance;
         case 'Res'
             varExtract={'resConstr','resVal'};
             [resConstr,resVal]=ExtractVariables(varExtract,paramoptim);
@@ -166,8 +167,9 @@ end
 
 %% Design Variable cases
 
-function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,population,varargin)
-    
+function [population,constrDistance]=DesignVariableConsCaller(constrName,constrVal,paroptim,population,varargin)
+    constrDistance=repmat(struct('desvarconstr',...
+        ones([1,numel(population(1).fill)])),[1,numel(population)]);
     switch constrName
         case 'MeanVolFrac'
             [population]=MeanVolumeFraction(constrVal,paroptim,population,varargin{1});
@@ -177,19 +179,20 @@ function [population]=DesignVariableConsCaller(constrName,constrVal,paroptim,pop
             [population]=MinSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'Naca0012'
             [constrVal]=NacaOuterLimit0012(varargin{1},paroptim);
-            [population]=LocalVolumeFraction_min(constrVal,population);
+            [population,constrDistance]=LocalVolumeFraction_min(constrVal,population);
             
         case 'LocalVolFrac_min'
-            [population]=LocalVolumeFraction_min(constrVal,population);
+            [population,constrDistance]=LocalVolumeFraction_min(constrVal,population);
         case 'LocalVolFrac_equal'
             [population]=LocalVolumeFraction_equal(constrVal,population);
         case 'LocalVolFrac_max'
-            [population]=LocalVolumeFraction_max(constrVal,population);
+            [population,constrDistance]=LocalVolumeFraction_max(constrVal,population);
         case ' '
             
         otherwise
             error('Design Variable Constraint Not Recognised')
     end
+    
     
     
     
@@ -273,7 +276,7 @@ function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
         (tDistrib(1:end-1)+tDistrib(2:end))/2]);
     
-    warning('Will only work with square or rectangular grids')
+%    warning('Will only work with square or rectangular grids')
     varExtract={'axisRatio'};
     axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
     
@@ -344,18 +347,21 @@ function [cornersCoord]=IdentifyCorners(coord)
     cornersCoord=coord([loleCorn,loriCorn,hileCorn,hiriCorn],:);
 end
 
-function [population]=LocalVolumeFraction_min(constrVal,population)
+function [population,constrDistance]=LocalVolumeFraction_min(constrVal,population)
     
     
     indConstr=constrVal{1};
     valConstr=constrVal{2};
+    constrDistance=repmat(struct('desvarconstr',...
+        ones([1,numel(population(1).fill)])),[1,numel(population)]);
     for ii=1:length(population)
         
         fillStart=population(ii).fill;
         
         nonSatConstr=fillStart(indConstr)<valConstr;
-        
+        constrDistance(ii).desvarconstr(indConstr)=fillStart(indConstr)-valConstr;
         fillStart(indConstr(nonSatConstr))=valConstr(nonSatConstr);
+        
         population(ii).fill=fillStart;
     end
     
@@ -363,16 +369,19 @@ function [population]=LocalVolumeFraction_min(constrVal,population)
     
 end
 
-function [population]=LocalVolumeFraction_max(constrVal,population)
+function [population,constrDistance]=LocalVolumeFraction_max(constrVal,population)
     
     
     indConstr=constrVal{1};
     valConstr=constrVal{2};
+    constrDistance=repmat(struct('desvarconstr',...
+        ones([1,numel(population(1).fill)])),[1,numel(population)]);
     for ii=1:length(population)
         
         fillStart=population(ii).fill;
         
         nonSatConstr=fillStart(indConstr)>valConstr;
+        constrDistance(ii).desvarconstr(indConstr)=-fillStart(indConstr)+valConstr;
         
         fillStart(indConstr(nonSatConstr))=valConstr(nonSatConstr);
         population(ii).fill=fillStart;

@@ -154,9 +154,11 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     iterOrig=iterCurr;
     % Extract previous iteration information
     [iterCurr,validCurr]=ExtractValidIter(iterCurr);
+    [constrCurr]=ConstraintDistanceExtraction(paramoptim,iterCurr,baseGrid);
     [iterm1,validM1]=ExtractValidIter(iterm1);
-    [gradstruct_curr]=GetIterationInformation(iterCurr);
-    [gradstruct_m1]=GetIterationInformation(iterm1);
+    [constrm1]=ConstraintDistanceExtraction(paramoptim,iterm1,baseGrid);
+    [gradstruct_curr]=GetIterationInformation(iterCurr,constrCurr);
+    [gradstruct_m1]=GetIterationInformation(iterm1,constrm1);
     
     rootPop=iterCurr(1).fill;
     prevStep=iterCurr(1).fill-iterm1(1).fill;
@@ -191,13 +193,16 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1);
         [modestruct]=RemoveFailedModes(modestruct,gradstruct_curr,iterCurr(1).fill...
             ,desVarRange,direction);
-        [gradF_curr,gradF_m1]...
+        [gradF_curr,gradF_m1,gradAdd_curr,gradAdd_m1]...
             =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim);
         
+         [gradDes_curr,gradDes_m1]=GradFtoGradDes(gradF_curr,gradF_m1,modestruct,gradScale);
+         [gradDes_curr]=ConstraintScaleGradient(gradDes_curr,gradAdd_curr,constrCurr,direction,validVol);
+        [gradDes_m1]=ConstraintScaleGradient(gradDes_m1,gradAdd_m1,constrm1,direction,validVol);
         % Get Corresponding design vector direction
-        [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-            gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1,gradScale);
         
+        [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradDes_curr,...
+            gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
         % Generate Linesearch Distances
         rootPop=iterCurr(1).fill;
         [unitSteps]=UnitStepLength(nLineSearch,lineSearchType);
@@ -218,6 +223,42 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     paramoptim.optim.supportOptim=supportOptim;
 end
 
+function [gradF]=ConstraintScaleGradient(gradF,gradAdd,constr,direction,validVol)
+    s=@(x,eps) sqrt(1-((max(0,min(x,eps))-eps)/eps).^2); % elliptical equation governing the scale
+    
+    switch direction
+        case 'min'
+            dir=-1;
+        case 'max'
+            dir=1;
+    end
+    
+    dist=(constr(1).desvarconstr);
+    distGrad=gradAdd.desvarconstr;
+    
+    scaleGrad=min(((((dir*ones(size(distGrad,1),1)*sign(gradF)).*sign(distGrad))>=0)...
+        +(ones(size(distGrad,1),1)*s(dist,validVol))),1);
+    scaleGrad=min(scaleGrad,[],1);
+    gradF=gradF.*scaleGrad;
+end
+
+function [constrRoot]=ConstraintDistanceExtraction(paramoptim,population,baseGrid)
+    
+    constrRoot=repmat(struct('desvarconstr',...
+        ones([1,numel(population(1).fill)])),[1,numel(population)]);
+    [~,constrDistance]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
+    
+    if ~isempty(constrDistance{1})
+        constrRoot=constrDistance{1};
+        for ii=2:length(constrDistance)
+            for jj=1:numel(population)
+                constrRoot(jj).desvarconstr=min(constrRoot(jj).desvarconstr,constrDistance{1}(jj).desvarconstr);
+            end
+        end
+        
+    end
+end
+
 function [population,validIter]=ExtractValidIter(population)
     
     validIter=[1,find([population(2:end).constraint]>0.8)+1];
@@ -225,7 +266,7 @@ function [population,validIter]=ExtractValidIter(population)
     
 end
 
-function [gradientopt]=GetIterationInformation(population)
+function [gradientopt]=GetIterationInformation(population,constr)
     
     
     
@@ -235,17 +276,30 @@ function [gradientopt]=GetIterationInformation(population)
     
     rootPop=population(1).fill;
     rootObj=population(1).objective;
+    rootAdd=catstruct(population(1).additional,constr(1));
+    rootAdd.desvar=rootPop;
     
-    gradientopt=struct('design',zeros(1,nFill),'objective',0,'fill',zeros(1,nFill));
+    gradientopt=struct('design',zeros(1,nFill),'objective',0,'fill',...
+        zeros(1,nFill),'additional',rootAdd);
     gradientopt=repmat(gradientopt,[1,nGrad]);
     
+    fieldsAdd=fieldnames(population(1).additional);
+    fieldsConstr=fieldnames(constr(1));
     for ii=1:nGrad
         
         gradientopt(ii).design(population(ii+1).optimdat.var)...
             =population(ii+1).optimdat.value;
         gradientopt(ii).objective=population(ii+1).objective-rootObj;
         gradientopt(ii).fill=population(ii+1).fill-rootPop;
-        
+        for jj=1:numel(fieldsAdd)
+            gradientopt(ii).additional.(fieldsAdd{jj})=...
+                population(ii+1).additional.(fieldsAdd{jj})-rootAdd.(fieldsAdd{jj});
+        end
+        for jj=1:numel(fieldsConstr)
+            gradientopt(ii).additional.(fieldsConstr{jj})=...
+                constr(ii+1).(fieldsConstr{jj})-rootAdd.(fieldsConstr{jj});
+        end
+        gradientopt(ii).additional.desvar=population(ii+1).fill-rootPop;
     end
     
     
@@ -354,7 +408,7 @@ function [indModeFailing]=FindFailingMode(modestruct,gradstruct,direction)
     indModeFailing=find(isFailing);
 end
 
-function [gradF_curr,gradF_m1]=...
+function [gradF_curr,gradF_m1,gradAdd_curr,gradAdd_m1]=...
         BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim)
     % This build includes a gradient rejection criteria
     
@@ -377,23 +431,27 @@ function [gradF_curr,gradF_m1]=...
     
     gradF_curr=zeros([nModes,1]);
     gradF_m1=zeros([nModes,1]);
+    gradAdd_curr=repmat(opstruct('*',gradstruct_curr(1).additional,0),[nModes,1]);
+    gradAdd_m1=gradAdd_curr;
     
     for ii=1:nModes
         
         currInd=modestruct(ii).curr.ind;
         currCoeff=modestruct(ii).curr.coeff;
-        [gradF_curr(ii)]=GenerateGradientEntry(currInd,currCoeff,...
-            gradstruct_curr,FDO2V2,prevGradNorm);
+        [gradF_curr(ii),gradAdd_curr(ii)]=GenerateGradientEntry(currInd,currCoeff,...
+            gradstruct_curr,FDO2V2,prevGradNorm,gradAdd_curr(ii));
         
         m1Ind=modestruct(ii).m1.ind;
         m1Coeff=modestruct(ii).m1.coeff;
-        [gradF_m1(ii)]=GenerateGradientEntry(m1Ind,m1Coeff,...
-            gradstruct_m1,FDO2V2,prevGradNorm);
+        [gradF_m1(ii),gradAdd_m1(ii)]=GenerateGradientEntry(m1Ind,m1Coeff,...
+            gradstruct_m1,FDO2V2,prevGradNorm,gradAdd_m1(ii));
     end
-    
+    gradAdd_curr=opstruct('vertcat',gradAdd_curr);
+    gradAdd_m1=opstruct('vertcat',gradAdd_m1);
 end
 
-function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevGradNorm)
+
+function [gradF,gradAdd]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevGradNorm,gradAdd)
     
     isOutLier=@(gradVec,prevGradNorm) log10(abs(gradVec))> (max(mean(log10(abs(gradVec))),log10(prevGradNorm))+1);   % Takes in absolute values
     
@@ -409,6 +467,7 @@ function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevGradNorm)
         
         if numel(ind)==1
             gradF=gradstruct(ind(1)).objective/coeff(1);
+            gradAdd=opstruct('/',gradstruct(ind(1)).additional,coeff(1));
         else % Additional functionality would be to build recursive process
             % to find right indices of currInd
             
@@ -418,19 +477,27 @@ function [gradF]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevGradNorm)
             dxm=coeff(1);
             dxp=coeff(2);
             gradF=FDO2V2(Dfm,Dfp,dxm,dxp);
+            gradAdd=opstruct(FDO2V2,gradstruct(ind(1)).additional,gradstruct(ind(2)).additional,dxm,dxp);
         end
+    else
+        warning('Empty Mode')
     end
     
 end
 
-function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradF_curr,...
-        gradF_m1,modestruct,prevStep,direction,supportOptim,obj_curr,obj_m1,gradScale)
+function [gradDes_curr,gradDes_m1]=GradFtoGradDes(gradF_curr,gradF_m1,modestruct,gradScale)
     
     modes=vertcat(modestruct(:).mode)';
     gradF_curr(isnan(gradF_curr))=0;
     gradF_m1(isnan(gradF_m1))=0;
     gradDes_curr=((modes*gradF_curr)'.*gradScale);
     gradDes_m1=((modes*gradF_m1)'.*gradScale);
+end
+
+function [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradDes_curr,...
+        gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1)
+    
+    
     
     switch stepAlgo
         case 'conjgrad'
