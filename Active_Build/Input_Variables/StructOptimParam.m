@@ -1263,6 +1263,18 @@ function paroptim=RestartNACA0012sweep_Nc()
     paroptim.general.worker=12;
 end
 
+function paroptim=RestartNACA0012sweep_Nc2()
+    
+    paroptim=bp3_NACA0012_sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Ncv');
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
+    paroptim.general.refineOptim=[0];
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.validVol=0.0025;
+    paroptim.parametrisation.general.subdivType='chaikinNaca0012';
+    paroptim.general.worker=12;
+end
 % Area M2 sweep
 
 function paroptim=bp3_AreaM2sweep()
