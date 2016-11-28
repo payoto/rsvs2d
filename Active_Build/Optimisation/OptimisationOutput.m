@@ -219,8 +219,13 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
                 dat.xMin,dat.xMax,dat.A,dat.nPoints);
         end
+        if strcmp(objectiveName,'InverseDesignBulk')
+            %[h]=
+        end
     end
-    [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
+    if numel(optimstruct)>=4
+        [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
+    
     if isAnalytical
         [h2]=PlotAnalyticalPath(paroptim,optimstruct,objectiveName);
         h=[h,h2];
@@ -242,7 +247,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         figName=MakePathCompliant(figName);
         hgsave(h(ii),figName);
     end
-    
+    end
     if strcmp(objectiveName,'CutCellFlow')
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];

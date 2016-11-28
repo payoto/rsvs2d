@@ -225,7 +225,6 @@ function [paroptim]=ValVolumeConstraint(paroptim)
     
 end
 
-
 function [paroptim]=MeanVolumeConstraint_30(paroptim)
     
     paroptim.constraint.desVarConstr={'MeanVolFrac'};
@@ -550,6 +549,22 @@ function [paroptim]=Inverse_CG()
     
 end
 
+function [paroptim]=Inverse_Bulk()
+    
+    [paroptim]=DefaultOptim();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
+    [paroptim]=SnaxVolResConstraint(paroptim);
+    paroptim=InvDesObjective(paroptim);
+    [paroptim]=OptimDE(paroptim);
+    paroptim.general.objectiveName='InverseDesignBulk';
+    
+    paroptim.spline.splineCase='inversedesign2';
+    paroptim.spline.resampleSnak=true;
+    
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.general.symType='none'; % 'horz'
+    
+end
 %% Callable functions
 
 function [paroptim]=TestOptim()
@@ -860,7 +875,6 @@ end
 
 %% Analytical test cases
 
-
 function [paroptim]=Test_Rosenbrock()
     
     [paroptim]=DefaultOptim();
@@ -893,7 +907,6 @@ function [paroptim]=Test_Rosenbrock_BFGS()
     paroptim.optim.CG.stepAlgo='BFGS';
     
 end
-
 %% refinement
 
 function paroptim=test_refine1()
@@ -1931,6 +1944,24 @@ function paroptim=bp3_invdes_L()
     paroptim.general.startPop='halfuniform';
      paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_L');
 end
+
+% Bulk inverse design
+
+
+function paroptim=bulkNacaInvDes()
+    [paroptim]=Inverse_Bulk();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu1');
+    paroptim.obj.invdes.aeroName='';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='NACAmulti';
+    initInterp={'0012','1212','2212','4212'};
+    paroptim.general.initInterp=initInterp;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=1;
+    paroptim.general.worker=4;
+end
+
 
 %% Full Aero Optimisations
 
