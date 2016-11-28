@@ -522,12 +522,3 @@ function population=ApplySymmetry(paramoptim,population)
     
 end
 
-
-
-
-
-
-
-
-
-

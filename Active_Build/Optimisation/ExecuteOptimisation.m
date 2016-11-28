@@ -314,7 +314,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
     nPop=numel(population);
     
-    parfor ii=1:nPop %
+    for ii=1:nPop %
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
@@ -1030,7 +1030,13 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         case 'NACA0012'
             [rootFill]=NacaOuterLimit0012(baseGrid,paroptim);
             origPop=ones([nPop 1])*rootFill{2};
+        case 'NACAmulti'
             
+            for ii=1:numel(initInterp)
+                [rootFill]=NacaOuterLimit4d(baseGrid,paroptim,initInterp{ii});
+                origPop(ii,1:numel(rootFill{2}))=rootFill{2};
+            end
+            nPop=numel(initInterp);
         case 'loadshape'
             specificFillName=MakePathCompliant(specificFillName);
             [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
@@ -1056,6 +1062,11 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         [origPop]=OverflowHandling(paroptim,origPop);
         for ii=1:nPop
             iterstruct(1).population(ii).fill=origPop(ii,:);
+        end
+        if strcmp('NACAmulti',startPop)
+            for ii=1:nPop
+                iterstruct(1).population(ii).additional.Airfoil=initInterp{ii};
+            end
         end
     end
 end
@@ -1365,6 +1376,13 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
         case 'InverseDesign'
             addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
                 [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+            
+        case 'InverseDesignBulk'
+            addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
+                [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]...
+                ,'Airfoil','');
+            
+            
         otherwise
             addstruct=struct('y',[]);
             
@@ -1515,6 +1533,23 @@ function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     additional.tc=areaAdd.tc;
 end
 
+
+function [objValue,additional]=InverseDesignBulk(paramoptim,member,loop)
+    
+    paramoptim=SetVariables({'aeroName'},{member.additional.Airfoil},paramoptim);
+    
+    [obj]=InverseDesign_Error(paramoptim,loop);
+    
+    [~,areaAdd]=LengthArea(paramoptim,member,loop);
+    objValue=obj.max;
+    
+    additional=obj;
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
+end
 % Analytical test
 
 function [objValue,additional]=Rosenbrock(paramoptim,member,loop)
