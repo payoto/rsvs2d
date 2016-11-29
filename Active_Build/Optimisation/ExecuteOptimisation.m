@@ -314,7 +314,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
     nPop=numel(population);
     
-    for ii=1:nPop %
+    parfor ii=1:nPop %
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
@@ -1538,8 +1538,8 @@ function [objValue,additional]=InverseDesignBulk(paramoptim,member,loop)
     
     paramoptim=SetVariables({'aeroName'},{member.additional.Airfoil},paramoptim);
     
-    [obj]=InverseDesign_Error(paramoptim,loop);
-    
+    [obj,h]=InverseDesign_Error(paramoptim,loop);
+    hgsave(h,[member.location,filesep,'prof.fig']);
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
     objValue=obj.max;
     

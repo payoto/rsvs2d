@@ -492,7 +492,7 @@ function [parspline]=CaseSpline_inversedesign2()
     
     parspline.distribution='calc';
     parspline.domain='scaleX'; % 'normalizeX' 'normalizeL'
-    parspline.scale=1.000055;
+    parspline.scale=1.0000548;
     
     parspline.samplingParam='param';
     parspline.samplingN=501;

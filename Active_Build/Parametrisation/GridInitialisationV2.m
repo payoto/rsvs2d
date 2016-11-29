@@ -82,6 +82,10 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
         xMax=1; %max(coord(:,1));
         xMin=0; %min(coord(:,1));
         [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        case 'cosXsquared01'        
+        xMax=1; %max(coord(:,1));
+        xMin=0; %min(coord(:,1));
+        [unstructured]=Cos2GridDistrib(unstructured,xMax,xMin);
         case 'cosX'
         xMax=max(unstructured.vertex.coord(:,1));
         xMin=min(unstructured.vertex.coord(:,1));
@@ -115,6 +119,33 @@ function [unstructured]=CosGridDistrib(unstructured,xMax,xMin)
     unstructured.vertex.coord=coord;
     
 end
+
+
+function [unstructured]=Cos2GridDistrib(unstructured,xMax,xMin)
+    
+    coord=unstructured.vertex.coord;
+    x=coord(:,1);
+
+    Dx=xMax-x;
+
+    Dx=min(abs(Dx(Dx>1e-10)));
+
+    xNorm=(coord(:,1)-xMin)/(xMax-xMin);
+    newX=((1-cos(xNorm*pi))/2).^2*(xMax-xMin)+xMin;
+    DminNx=[newX(xNorm<1 & xNorm>0)-1];
+    DminNxBack=min(abs(DminNx(DminNx~=0)));
+    DminNx=[newX(xNorm<1 & xNorm>0)];
+    DminNxFront=min(abs(DminNx(DminNx~=0)));
+
+    newX((x>xMax))=(x(x>xMax)-xMax)/Dx*DminNxBack+xMax;
+
+    newX((x<xMin))=(x(x<xMin)-xMin)/Dx*DminNxFront+xMin;
+
+    coord(:,1)=newX;
+    unstructured.vertex.coord=coord;
+    
+end
+
 %% Initialisation Functions
 
 function [unstructured]=InitialisEdgeGrid(param)

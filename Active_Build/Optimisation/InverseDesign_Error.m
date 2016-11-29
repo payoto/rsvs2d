@@ -10,7 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [errorMeasure]=InverseDesign_Error(paramoptim,loop)
+function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
@@ -34,7 +34,7 @@ function [errorMeasure]=InverseDesign_Error(paramoptim,loop)
             error('not coded yet') 
     end
     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
-    figure,
+    h=figure,
     plotPoints(analysisCoord)
     hold on
     plotPoints(targCoord)
@@ -86,8 +86,13 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     % xTop and xBot need to be normalised
     a4_open=0.1015;
     a4_closed=0.1036;
-    naca45t=@(x,t,a4)  5*t*(0.2969*sqrt(x)-0.1260*x-0.3516*x.^2+0.2843*x.^3-a4*x.^4);
-    naca4c=@(x,m,p) [m*x(x<p)/p^2.*(2*p-x(x<p)) ; m*(1-x(x>=p))/(1-p)^2.*(1+x(x>=p)-2*p)];
+    
+    naca45t=@(x,t,c,xMin,a4)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-a4*((x-xMin)/c).^4);
+    
+    naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
+        m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
+
     
    x(x>1)=1;
    x(x<0)=0;
@@ -97,8 +102,11 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     if numel(nacaStr)==4
         
         
-        tDist=naca45t(x,tmax,a4_closed);
-        cDist=naca4c(x,ctc,pct);
+        tDist=naca45t(x',tmax,1,0,a4_open)';
+        [x2,sortOrd]=sort(x);
+        [~,sortOrd2]=sort(sortOrd);
+        cDist=naca4c(x2',ctc,pct,1,0)';
+        cDist=cDist(sortOrd2);
         if any(abs(uplow)~=1)
             warning('Vector uplow indicating uppper or lower surface is not well formed')
         end
