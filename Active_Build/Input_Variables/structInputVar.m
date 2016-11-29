@@ -685,7 +685,7 @@ function [param]=optimInverseDesign()
     param.snakes.refine.axisRatio=1;
     
     param.optiminit.cellLevels=[10,2];
-    param.optiminit.defaultCorner=1e-4;
+    param.optiminit.defaultCorner=1e-5;
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     param.general.subdivType='chaikin';
@@ -988,12 +988,12 @@ function [param]=optimInverseDesign_cu1()
    
     [param]=optimInverseDesign();
     
-    param.snakes.refine.axisRatio=2;
+    param.snakes.refine.axisRatio=1;
     
     param.snakes.refine.refineGrid=[4 4];
     
     param.snakes.refine.gridDistrib='cosX01';
-    param.optiminit.cellLevels=[18,2];
+    param.optiminit.cellLevels=[18,4];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uv1()
@@ -1026,7 +1026,7 @@ function [param]=optimInverseDesign_cv2()
     
     param.snakes.refine.axisRatio=4;
     
-    param.snakes.refine.refineGrid=[4 1];
+    param.snakes.refine.refineGrid=[8 1];
     
     param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[34,2];
@@ -1069,6 +1069,18 @@ function [param]=optimInverseDesign_uu2()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 
+function [param]=optimInverseDesign_bulk()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=4;
+    
+    param.snakes.refine.refineGrid=[4 4];
+    param.general.restart=false;
+    param.snakes.refine.gridDistrib='cosXsquared01';
+    param.optiminit.cellLevels=[18,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
 %% Surrogate modelling Cases
 
 function [param]=surrogateDefault()

@@ -59,8 +59,9 @@ function [constrVal]=NacaOuterLimit0012(gridrefined,paramoptim)
 end
 
 function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
-    
-    naca4t=@(x,t,c,xMin)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+    a4_open=0.1015;
+    a4_closed=0.1036;
+    naca4t=@(x,t,c,xMin,a4)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
         -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-0.1036*((x-xMin)/c).^4);
     
     naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
@@ -104,7 +105,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         posMax=max(cornerCoord);
         
         x=linspace(posMin(1),posMax(1),200);
-        tDistrib=naca4t(x,t,(xMax-xMin),xMin);
+        tDistrib=naca4t(x,t,(xMax-xMin),xMin,a4_open);
         cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
         y=min(max(cDistrib+tDistrib,posMin(2)),posMax(2))-min(max(cDistrib-tDistrib,posMin(2)),posMax(2));
         %plot(x,cDistrib+y+posMin(2))

@@ -1951,11 +1951,22 @@ end
 function paroptim=bulkNacaInvDes()
     [paroptim]=Inverse_Bulk();
     
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cu1');
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk');
     paroptim.obj.invdes.aeroName='';
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='NACAmulti';
-    initInterp={'0012','1212','2212','4212'};
+    t1={'1','2','3','4'};
+    t2={'1','2','3','4','5','6','7'};
+    t3={'08','10','12','16','18'};
+    initInterp{1}='0012';
+    for ii=1:numel(t1)
+        for jj=1:numel(t1)
+            for kk=1:numel(t1)
+                initInterp{end+1}=[t1{ii},t2{jj},t3{kk}];
+            end
+        end
+    end
+    
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=1;
