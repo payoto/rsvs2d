@@ -61,8 +61,8 @@ end
 function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
     a4_open=0.1015;
     a4_closed=0.1036;
-    naca4t=@(x,t,c,xMin,a4)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
-        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-0.1036*((x-xMin)/c).^4);
+    naca4t=@(x,t,c,xMin,a4,teps)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-a4*((x-xMin)/c).^4)+((x-xMin)/c)*teps;
     
     naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
         m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
@@ -71,6 +71,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
 %     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
 %         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
     
+    teps=5.48e-04;
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
         (tDistrib(1:end-1)+tDistrib(2:end))/2]);
     
@@ -105,7 +106,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         posMax=max(cornerCoord);
         
         x=linspace(posMin(1),posMax(1),200);
-        tDistrib=naca4t(x,t,(xMax-xMin),xMin,a4_open);
+        tDistrib=naca4t(x,t,(xMax-xMin),xMin,a4_closed,teps);
         cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
         y=min(max(cDistrib+tDistrib,posMin(2)),posMax(2))-min(max(cDistrib-tDistrib,posMin(2)),posMax(2));
         %plot(x,cDistrib+y+posMin(2))

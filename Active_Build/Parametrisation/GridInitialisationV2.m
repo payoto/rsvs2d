@@ -131,7 +131,7 @@ function [unstructured]=Cos2GridDistrib(unstructured,xMax,xMin)
     Dx=min(abs(Dx(Dx>1e-10)));
 
     xNorm=(coord(:,1)-xMin)/(xMax-xMin);
-    newX=((1-cos(xNorm*pi))/2).^2*(xMax-xMin)+xMin;
+    newX=((1-cos(xNorm*pi))/2).^1.5*(xMax-xMin)+xMin;
     DminNx=[newX(xNorm<1 & xNorm>0)-1];
     DminNxBack=min(abs(DminNx(DminNx~=0)));
     DminNx=[newX(xNorm<1 & xNorm>0)];
