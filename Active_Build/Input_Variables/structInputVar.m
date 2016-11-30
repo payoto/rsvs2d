@@ -85,6 +85,7 @@ function paramsnakesstep=default_snakes_step()
     
     paramsnakesstep.fillLooseStep=5;
     paramsnakesstep.fillLooseCut=1e-3;
+    paramsnakesstep.vertLooseStep=20;
     
 end
 
@@ -673,7 +674,7 @@ function [param]=optimInverseDesign()
     param.snakes.refine.typeRefine='all';
     
     param.snakes.step.mergeTopo=true;
-    param.snakes.step.snakesSteps=200;
+    param.snakes.step.snakesSteps=300;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     
@@ -1074,10 +1075,42 @@ function [param]=optimInverseDesign_bulk()
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=4;
+    param.optiminit.defaultfill=0.3;
+     param.snakes.step.snakesConsole=false;
+     param.snakes.step.fillLooseStep=10;
+    param.snakes.step.fillLooseCut=1e-2;
     
-    param.snakes.refine.refineGrid=[4 4];
-    param.general.restart=false;
+    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.distEpsilon=2e-5;
+    param.snakes.force.dirEpsilon=1e-5;
+    
+    param.optiminit.defaultCorner=1e-5;
+    
+    param.snakes.force.typeSmear='d';
+    param.general.refineSteps=0;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    
+    param.snakes.step.vertLooseStep=20;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.step.mergeTopo=false;
+    param.snakes.refine.refineGrid=[4 1];
+    param.general.restart=true;
     param.snakes.refine.gridDistrib='cosXsquared01';
+    param.optiminit.cellLevels=[18,2];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+end
+function [param]=optimInverseDesign_bulk2()
+   
+    [param]=optimInverseDesign();
+    
+    param.snakes.refine.axisRatio=4;
+    
+    param.optiminit.defaultfill=0.1;
+    param.snakes.refine.refineGrid=[8 1];
+    param.general.restart=true;
+    param.snakes.refine.gridDistrib='cosX01';
     param.optiminit.cellLevels=[18,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end

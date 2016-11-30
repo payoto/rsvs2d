@@ -200,8 +200,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
         
         % Snaxel Repopulation In both directions
+        [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
         
-        [snaxel,insideContourInfo]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns);
+        
+        [snaxel,insideContourInfo]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert);
         if numel(snaxel)==0
             warning('Contour has collapsed')
             break
@@ -209,7 +211,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxelrev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
             insideContourInfo,refinedGriduns);
         
-        [snaxelrev,insideContourInfoRev]=SnaxelBreeding(snaxelrev,insideContourInfoRev,refinedGriduns);
+        [snaxelrev,insideContourInfoRev]=SnaxelBreeding(snaxelrev,insideContourInfoRev,refinedGriduns,nonBreedVert);
         if numel(snaxelrev)==0
             warning('Contour has collapsed')
             break
@@ -238,6 +240,17 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         
     end
     
+end
+
+function [nonBreedVert]=SetNonBreedVertices(borderVertices,iterNum,param)
+    varExtract={'vertLooseStep'};
+    [vertLooseStep]=ExtractVariables(varExtract,param);
+    nonBreedVert=[];
+    
+    if iterNum<=vertLooseStep
+        nonBreedVert=[nonBreedVert,borderVertices.weak];
+    end
+    nonBreedVert=unique(nonBreedVert);
 end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
@@ -270,9 +283,9 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     
     insideContourInfo=refinedGriduns.edge.(boundstr{2});
     disp('    Find Border Vertices')
-    [borderVertices]=FindBorderVertex(refinedGriduns);
+    [borderVertices.strong]=FindBorderVertex(refinedGriduns);
     disp('    Initialise Snaxel Grid')
-    
+    [borderVertices.weak]=FindWeakBorderVertex(oldGrid,cellCentredGrid,volfracconnec);
     % Inside contour info will change depending on the type of contour under
     % consideration (0 contour or 1 contour)
     [snaxel,insideContourInfo]=SnaxelInitialisation(refinedGriduns,loop,insideContourInfo,boundstr);
@@ -336,11 +349,11 @@ end
 
 %% Iteration sub parts
 
-function [snaxel,insideContourInfo]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns)
+function [snaxel,insideContourInfo]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert)
     
     
     [snaxel,insideContourInfo]=SnaxelRepopulate(refinedGriduns,snaxel,...
-        insideContourInfo);
+        insideContourInfo,nonBreedVert);
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
 end
 
@@ -889,7 +902,7 @@ end
 %% Snaxel Repopulation
 
 function [snaxel,insideContourInfo]=...
-        SnaxelRepopulate(unstructured,snaxel,insideContourInfo)
+        SnaxelRepopulate(unstructured,snaxel,insideContourInfo,nonBreedVert)
     
     global unstructglobal
     % adds snaxels once a corner has been reached
@@ -897,12 +910,16 @@ function [snaxel,insideContourInfo]=...
     edgeSnaxel=[snaxel(:).edge];
     edgeVertIndex=unstructured.edge.vertexindex;
     edgeIndex=unstructured.edge.index;
-    
+    % This ugly line removes snaxel from the finished list which had
+    % arrived at a non breeding vertex
+    if ~isempty(nonBreedVert)
+        finishedSnakes=finishedSnakes(FindObjNum([],[snaxel(finishedSnakes).tovertex],unique(nonBreedVert))==0);
+    end
     %newInsideEdges=[snaxel(finishedSnakes).edge];
     %insideContourInfo(newInsideEdges)=1;
     
     [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal);
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert);
     
     % Removing from repopulation list snaxels that would hit a vertex
     % which has already bred
@@ -917,7 +934,7 @@ function [snaxel,insideContourInfo]=...
 end
 
 function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal)
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert)
     % Iterative Breeding process for the breeding of edges
     
     newInsideEdges=[];
@@ -928,6 +945,7 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
         kk=kk+1;
         breedSub=finishedSnakes(1);
         finishedSnakes(1)=[];
+        nonBreedVert=[nonBreedVert,snaxel(breedSub).tovertex];
         newInsideEdges(kk)=snaxel(breedSub).edge; %#ok<AGROW>
         %insideContourInfo(newInsideEdgesSub(kk))=1;
         snaxelIndexStart=max([snaxel(:).index])+1;
@@ -958,6 +976,9 @@ function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
             rmvFinSnakes=(edgeSnaxel(finishedSnakes)==snaxelRepop(jj).edge);
             finishedSnakes(rmvFinSnakes)=[];
         end
+        
+        %finishedSnakes=finishedSnakes(FindObjNum([],[snaxel(finishedSnakes).tovertex],nonBreedVert)==0);
+        
     end
     if kk>0
         [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL);
@@ -1888,10 +1909,11 @@ function [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo)
         [edgeFreeze]=FreezeEdgeContact(snaxel);
     end
     
-    [borderFreeze]=FreezeBorderContact(snaxel,borderVertices);
+    [borderFreeze]=FreezeBorderContact(snaxel,borderVertices.strong);
     freezeIndex=[edgeFreeze,borderFreeze];
     
     [freezeIndex]=RemoveIdenticalEntries(freezeIndex);
+    [snaxel(:).isfreeze]=deal(false);
     if ~isempty(freezeIndex)
         freezeSub=FindObjNum(snaxel,freezeIndex);
         for ii=1:length(freezeIndex)
@@ -1940,9 +1962,9 @@ function [freezeIndex,pairs]=FreezeEdgeContact(snaxel,saveSingleVal)
                 pairs=[indexSnax(ii),indexSnax(sameEdgeSnax)];
                 break
             end
-            if isFreeze(ii)
-                isImpact(ii)=false;
-            end
+%             if isFreeze(ii)
+%                 isImpact(ii)=false;
+%             end
             
         end
     end
@@ -2030,6 +2052,24 @@ function [borderVertices]=FindBorderVertex(unstructured)
     end
     
     borderVertices=vertexIndex(isBorderVertex);
+end
+
+
+function [borderVertices]=FindWeakBorderVertex(unstrucReshape,cellCentredGrid,connectstructinfo)
+    
+    edgeVertIndex=vertcat(unstrucReshape.edge(:).vertexindex);
+    edgeIndex=[unstrucReshape.edge(:).index];
+    cellIndex=[unstrucReshape.cell(:).index];
+    vertexIndex=[unstrucReshape.vertex(:).index];
+    edgeCellIndex=vertcat(unstrucReshape.edge(:).cellindex);
+    
+    [rowPos,colPos]=find(edgeCellIndex==0);
+    subCellEdge=FindObjNum([],unique(edgeCellIndex(sub2ind(size(edgeCellIndex),rowPos,abs(colPos-3)))),[connectstructinfo.cell(:).oldCellInd]);
+    indFineCell=[connectstructinfo(:).cell(subCellEdge).newCellInd];
+    
+    subFineCellBord=FindObjNum([],indFineCell,[cellCentredGrid(:).index]);
+    vertBord=[cellCentredGrid(unique(subFineCellBord)).vertex];
+    borderVertices=[vertBord(:).index];
 end
 
 function [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo)

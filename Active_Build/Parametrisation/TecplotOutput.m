@@ -99,9 +99,16 @@ function [cellMesh]=CellCentredMeshDataExtraction_Optim(gridStruct,cellCentredGr
     
 %     cellcentredstruct=repmat(struct('targetfill',[],'volumefraction',[]),...
 %         1,length(cellCentredGrid));
-    for ii=1:length(cellCentredGrid.targetfill)
-            cellcentredstruct(ii).targetfill=cellCentredGrid.targetfill(ii);
-            cellcentredstruct(ii).volumefraction=cellCentredGrid.targetfill(ii);
+    if numel(cellCentredGrid)==1
+        for ii=1:length(cellCentredGrid.targetfill)
+                cellcentredstruct(ii).targetfill=cellCentredGrid.targetfill(ii);
+                cellcentredstruct(ii).volumefraction=cellCentredGrid.targetfill(ii);
+        end
+    else
+        for ii=1:length(cellCentredGrid)
+                cellcentredstruct(ii).targetfill=cellCentredGrid(ii).targetfill;
+                cellcentredstruct(ii).volumefraction=cellCentredGrid(ii).volumefraction;
+        end
     end
    [cellMesh]=CellCentredMeshDataExtraction(gridStruct,cellcentredstruct,strandID,time,connShare,varshare);
 end

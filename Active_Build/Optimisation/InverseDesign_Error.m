@@ -28,16 +28,21 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     
     switch profileComp
         case 'distance'
-            [errorMeasure]=CompareProfilesDistance(analysisCoord,targCoord);
+            [errorMeasure,modifiedDistance]=CompareProfilesDistance(analysisCoord,targCoord);
             
         otherwise
             error('not coded yet') 
     end
     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
-    h=figure,
+    h=figure;
+    subplot(2,1,1)
     plotPoints(analysisCoord)
     hold on
     plotPoints(targCoord)
+    legend('snake points','NACA points')
+    ax=subplot(2,1,2);
+    plot(analysisCoord(:,1),modifiedDistance)
+    ax.YScale='log';
     
 end
 
@@ -67,7 +72,10 @@ function [analysisCoord,upperLower]=PrepareLoopCoord(loop)
         analysisCoord=analysisCoord([1:iLE,iLE:end],:);
         upperLower=ones(size(analysisCoord(:,1)));
         upperLower(iLE+1:end)=-1;
-
+        analysisCoord(:,1)=analysisCoord(:,1)-min(analysisCoord(:,1));
+        rmRow=find(analysisCoord(:,1)>1);
+        analysisCoord(rmRow,:)=[];
+        upperLower(rmRow)=[];
         
     else
         warning('More than one loop to compare')
@@ -87,13 +95,13 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     a4_open=0.1015;
     a4_closed=0.1036;
     
-    naca45t=@(x,t,c,xMin,a4)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
-        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-a4*((x-xMin)/c).^4);
+    naca45t=@(x,t,c,xMin,a4,teps)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-a4*((x-xMin)/c).^4)+((x-xMin)/c)*teps;
     
     naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
         m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
 
-    
+   teps=5.48e-04; % true @ corner=1e-5
    x(x>1)=1;
    x(x<0)=0;
     
@@ -102,7 +110,7 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     if numel(nacaStr)==4
         
         
-        tDist=naca45t(x',tmax,1,0,a4_open)';
+        tDist=naca45t(x',tmax,1,0,a4_closed,teps)';
         [x2,sortOrd]=sort(x);
         [~,sortOrd2]=sort(sortOrd);
         cDist=naca4c(x2',ctc,pct,1,0)';
@@ -131,7 +139,7 @@ end
 
 %% Error Matching
 
-function [errorMeasure]=CompareProfilesDistance(profileCoord,targCoord)
+function [errorMeasure,modifiedDistance]=CompareProfilesDistance(profileCoord,targCoord)
     % Compares point to point distance
     
     multipliers=ones(size(targCoord(:,1)));

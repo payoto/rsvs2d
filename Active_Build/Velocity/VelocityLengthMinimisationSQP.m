@@ -78,10 +78,13 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
             [derivtenscalc2]=ExtractDataForDerivatives_directionSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,dirEpsilon);
     end
     [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
-    isFreeze=[snaxel(:).isfreeze];
+    isFreeze=logical([snaxel(:).isfreeze]);
     %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
+    [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
     [Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    Deltax(isFreeze)=DeltaxisFreeze(isFreeze);
+    %lagMulti(isFreeze)=lagMultiisFreeze(isFreeze);
     n=10;
     if mean(abs(Deltax))>n
         warning('Mean DeltaX is large %.3e',mean(abs(Deltax)))
@@ -709,7 +712,7 @@ function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     Bkinv=(Hf)^(-1);
     matToInv=(Dh'*Bkinv*Dh);
     fprintf(' - cond: %.3e -', rcond(matToInv))
-    if rcond(matToInv)>1e-20
+    if true %rcond(matToInv)>1e-20
         u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
     else
         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);

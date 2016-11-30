@@ -7,78 +7,83 @@
 %          Subdivision for Shape refinement
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+%
 
 function [newPoints,projPoints]=SubDivision(startPoints,nSteps,refineMethod,sharpen,typeLocal)
     %include_Utilities
     startPoints=RemoveIdenticalConsecutivePoints(startPoints);
-    switch refineMethod
-        case 'chaikin'
-            [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
-            
-        case 'chaikinNaca0012'
-            
-            [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
-            [xMax,ii]=max(newPoints(:,1));
-            [xMin,jj]=min(newPoints(:,1));
-            nP=size(newPoints,1);
-            sChange=-sign(newPoints(mod(ii-1+1,nP)+1,2)-newPoints(mod(ii-1-1,nP)+1,2));
-            eps=pi*1e-7/3;
-            inds{1}=(min(ii,jj)+1):(max(ii,jj)-1);
-            inds{2}=[1:(min(ii,jj)-1),(max(ii,jj)+1):size(newPoints,1)];
-            
-            indUpper=inds{1+xor(ii<jj,sChange<0)};
-            indLower=inds{1+(~xor(ii<jj,sChange<0))};
-            
-            newPoints(indUpper,2)=newPoints(indUpper,2)+eps;
-            newPoints(indLower,2)=newPoints(indLower,2)-eps;
-            
-            addPts=ones(2,1)*newPoints(ii,:)+[0 sChange*eps; 0 -eps*sChange];
-            newPoints=[newPoints(1:ii-1,:);addPts;newPoints(ii+1:end,:)];
-            
-            [xMin,jj]=min(newPoints(:,1));
-            
-            addPts=ones(2,1)*newPoints(jj,:)+[0 -sChange*eps; 0 eps*sChange];
-            newPoints=[newPoints(1:jj-1,:);addPts;newPoints(jj+1:end,:)];
-            newPoints(:,1)=newPoints(:,1)+eps;
-        case 'bspline'
-            
-            [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
-           
-        case 'test'
-            figure
-            hold on
-            plot(startPoints(:,1),startPoints(:,2),'b--')
-            [newChaik]=SubSurfChainkin(startPoints,nSteps);
-            plot(newChaik(:,1),newChaik(:,2));
-            [newSpline]=SubSurfBSpline(startPoints,nSteps);
-            plot(newSpline(:,1),newSpline(:,2))
-            [newInterp1]=SubSurfinterp1(startPoints,nSteps);
-            plot(newInterp1(:,1),newInterp1(:,2))
-            [newInterp2]=SubSurfinterp2(startPoints,nSteps);
-            plot(newInterp2(:,1),newInterp2(:,2))
-            [newcube]=SubSurfCubic(startPoints,nSteps);
-            plot(newcube(:,1),newcube(:,2))
-            newPoints.chaikin=newChaik;
-            newPoints.bspline=newSpline;
-            newPoints.newInterp1=newInterp1;
-            newPoints.newInterp2=newInterp2;
-            newPoints.newcube=newcube;
-        case 'interp1'
-            [newPoints,projPoints]=SubSurfinterp1(startPoints,nSteps);
-        case 'interp2'
-            [newPoints,projPoints]=SubSurfinterp2(startPoints,nSteps);
-        case 'cubic'
-            [newPoints,projPoints]=SubSurfCubic(startPoints,nSteps);
-        case 'area'
-            [newPoints,projPoints]=SubSurf_AreaConserv(startPoints,nSteps);
-        otherwise
-            
-            error('Invalid method');
+    if nSteps>0
+        switch refineMethod
+            case 'chaikin'
+                [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
+                
+            case 'chaikinNaca0012'
+                
+                [newPoints,projPoints]=SubSurfChainkin(startPoints,nSteps,sharpen,typeLocal);
+                [xMax,ii]=max(newPoints(:,1));
+                [xMin,jj]=min(newPoints(:,1));
+                nP=size(newPoints,1);
+                sChange=-sign(newPoints(mod(ii-1+1,nP)+1,2)-newPoints(mod(ii-1-1,nP)+1,2));
+                eps=pi*1e-7/3;
+                inds{1}=(min(ii,jj)+1):(max(ii,jj)-1);
+                inds{2}=[1:(min(ii,jj)-1),(max(ii,jj)+1):size(newPoints,1)];
+                
+                indUpper=inds{1+xor(ii<jj,sChange<0)};
+                indLower=inds{1+(~xor(ii<jj,sChange<0))};
+                
+                newPoints(indUpper,2)=newPoints(indUpper,2)+eps;
+                newPoints(indLower,2)=newPoints(indLower,2)-eps;
+                
+                addPts=ones(2,1)*newPoints(ii,:)+[0 sChange*eps; 0 -eps*sChange];
+                newPoints=[newPoints(1:ii-1,:);addPts;newPoints(ii+1:end,:)];
+                
+                [xMin,jj]=min(newPoints(:,1));
+                
+                addPts=ones(2,1)*newPoints(jj,:)+[0 -sChange*eps; 0 eps*sChange];
+                newPoints=[newPoints(1:jj-1,:);addPts;newPoints(jj+1:end,:)];
+                newPoints(:,1)=newPoints(:,1)+eps;
+            case 'bspline'
+                
+                [newPoints,projPoints]=SubSurfBSpline(startPoints,nSteps);
+                
+            case 'test'
+                figure
+                hold on
+                plot(startPoints(:,1),startPoints(:,2),'b--')
+                [newChaik]=SubSurfChainkin(startPoints,nSteps);
+                plot(newChaik(:,1),newChaik(:,2));
+                [newSpline]=SubSurfBSpline(startPoints,nSteps);
+                plot(newSpline(:,1),newSpline(:,2))
+                [newInterp1]=SubSurfinterp1(startPoints,nSteps);
+                plot(newInterp1(:,1),newInterp1(:,2))
+                [newInterp2]=SubSurfinterp2(startPoints,nSteps);
+                plot(newInterp2(:,1),newInterp2(:,2))
+                [newcube]=SubSurfCubic(startPoints,nSteps);
+                plot(newcube(:,1),newcube(:,2))
+                newPoints.chaikin=newChaik;
+                newPoints.bspline=newSpline;
+                newPoints.newInterp1=newInterp1;
+                newPoints.newInterp2=newInterp2;
+                newPoints.newcube=newcube;
+            case 'interp1'
+                [newPoints,projPoints]=SubSurfinterp1(startPoints,nSteps);
+            case 'interp2'
+                [newPoints,projPoints]=SubSurfinterp2(startPoints,nSteps);
+            case 'cubic'
+                [newPoints,projPoints]=SubSurfCubic(startPoints,nSteps);
+            case 'area'
+                [newPoints,projPoints]=SubSurf_AreaConserv(startPoints,nSteps);
+            otherwise
+                
+                error('Invalid method');
+        end
+        
+        [newPoints]=RemoveIdenticalPoints(newPoints);
+        [projPoints]=RemoveIdenticalPoints(projPoints);
+    else
+        newPoints=startPoints;
+        projPoints=startPoints;
     end
-    
-    [newPoints]=RemoveIdenticalPoints(newPoints);
-    [projPoints]=RemoveIdenticalPoints(projPoints);
     
 end
 
@@ -471,7 +476,7 @@ function [limCurvMat,eigVal]=LimitCurve(subMask,nStencil)
         
         indX=zeros(1,nI);
         indY=zeros(1,nJ);
-        for iLoop=1:nI 
+        for iLoop=1:nI
             indX(iLoop)=mod(iStart+(iLoop-1),nOld)+1;
         end
         for jLoop=1:nJ
@@ -491,7 +496,7 @@ function [limCurvMat,eigVal]=LimitCurve(subMask,nStencil)
         limCurvMat(ii,indY)=w(:,iEig)';
         eigVal(ii)=d(iEig);
     end
-
+    
 end
 
 function [projPoints]=ProjectPoints(points,eigMat,convFactor)
