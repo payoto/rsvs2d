@@ -93,6 +93,8 @@ function paramsnakesrefine=default_snakes_refine()
     
     paramsnakesrefine.refineGrid=4;
     paramsnakesrefine.gridDistrib='none'; % 'cosX01'
+    paramsnakesrefine.pinnedVertex='none'; % 'LETE'
+    
     paramsnakesrefine.typeRefine='grey';
     paramsnakesrefine.LEShrink=0;
     paramsnakesrefine.TEShrink=0.008175297200000/2;
@@ -755,7 +757,7 @@ function [param]=optimNACA0012()
     param.snakes.refine.resampleSnak=true;
     
     
-    param.snakes.step.mergeTopo=true;
+    param.snakes.step.mergeTopo=false;
     param.snakes.step.snakesSteps=100;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
@@ -767,6 +769,7 @@ function [param]=optimNACA0012()
     
     param.snakes.refine.axisRatio=1;
     param.snakes.refine.gridDistrib='cosX01';
+     param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     

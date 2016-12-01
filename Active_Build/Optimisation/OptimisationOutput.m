@@ -475,7 +475,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
     while ~isempty(regexp(initTecFileName{jj},'copy', 'once'))
         jj=jj+1;
     end
-    [destPath]=EditVariablePLT_FEPOLYGON(1:2,[1,ratio],[0.001*pi,0.001*pi],...
+    [destPath]=EditVariablePLT_FEPOLYGON(1:2,[1,ratio],[1e-6*pi/3.14,1e-6*pi/3.14],...
         regexprep(initTecFile{jj},initTecFileName{jj},''),initTecFileName{jj},2);
     compType=computer;
     if strcmp(compType(1:2),'PC')
