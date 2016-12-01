@@ -62,9 +62,9 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     
     % current Linear
     [areaTargVec,areaConstrMat]=AreaConstraintMatrixAssignement(snaxel,coeffstructure,volumefraction);
-    [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex);
-    [implicitMatTens,forceVec]=BuildImplicitMatrix(derivtenscalc);
-    [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
+%     [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex);
+%     [implicitMatTens,forceVec]=BuildImplicitMatrix(derivtenscalc);
+%     [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
     
     % Current SQP
     smearLengthEps=forceparam.lengthEpsilon;
@@ -85,21 +85,23 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     if isempty(lagMultiPast)
         lagMultiPast=zeros([numel(volumefraction) 1]);
     end
-    [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,lagMultiPast,numel(volumefraction));
+    [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMultiPast,numel(volumefraction));
     isFreeze=logical([snaxel(:).isfreeze]);
     %   [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     warning('OFF','MATLAB:nearlySingularMatrix')
     if true
         [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
         [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+        HL=Hf;
     else
         [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
         [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreeze);
+        HL=Hf+HA;
     end
     
     warning('ON','MATLAB:nearlySingularMatrix')
     Deltax(isFreeze)=DeltaxisFreeze(isFreeze);
-    [feasVal,optVal,posDefVal]=SQPOptim(Df,Hf,HA,areaConstrMat',areaTargVec,lagMulti);
+    [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast);
     
     forceparam.lagMulti=lagMulti;
     
@@ -125,9 +127,9 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         [sensSnax]=CalculateSensitivity(Hf,HA,areaConstrMat,lagMulti);
         
     end
-    velcalcinfostruct.forcingVec=forcingVec;
-    velcalcinfostruct.conditionMat=conditionMat;
-    
+%     velcalcinfostruct.forcingVec=forcingVec;
+%     velcalcinfostruct.conditionMat=conditionMat;
+    velcalcinfostruct=[];
     %[tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
     
     for ii=1:length(snaxeltensvel)
@@ -149,7 +151,7 @@ function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volu
         allOldCellsSub(kk:kk+nCurr-1)=ii;
         kk=kk+nCurr;
     end
-    
+    err=false;
     for ii=1:numel(derivtenscal)
         newCell=unique([coeffstructure(FindObjNum([],[derivtenscal(ii).index],coeffSnaxInd)).cellindex]);
         newCell2=unique([coeffstructure(FindObjNum([],[derivtenscal(ii).snaxprec],coeffSnaxInd)).cellindex]);
@@ -158,8 +160,16 @@ function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volu
         oldCell=unique(allOldCells(subs));
         oldCell2=unique(allOldCells(subs2));
         [i2,i1]=find((ones([numel(oldCell2) 1])*oldCell)==(oldCell2'*ones([1 numel(oldCell)])));
+        err=err || isempty(i1);
         derivtenscal(ii).cellprec=unique(allOldCells(subs(i1)));
         derivtenscal(ii).cellprecsub=unique(allOldCellsSub(subs(i1)));
+        
+    end
+    
+    if err
+        error('snakes:connectivity:nonSharedCell',...
+            'Snaxels do not share a cell despite connection \n connectivity information damaged')
+        
     end
     
 end
@@ -214,7 +224,9 @@ function [areaTargVec,areaConstrMat]=AreaConstraintMatrixAssignement(snaxel,coef
             +coeffstructure(ii).value;
         
     end
-    
+    totVol=[volumefraction(:).totalvolume]';
+    areaConstrMat=areaConstrMat./repmat(totVol,[1,size(areaConstrMat,2)]);
+    areaTargVec=areaTargVec./totVol;
 end
 
 function [snaxeltensvel,snakposition]=CalculateTensileVelocity(snaxel,snakposition,snakPosIndex)
@@ -694,7 +706,7 @@ function [a_i,a_m,a_im,b_i,b_m,c]=Calc_LengthDerivCoeff(Dgi,Dgm,g1i,g1m)
     
 end
 
-function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,lagMulti,nCell)
+function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,volumefraction,lagMulti,nCell)
     rot90=@(vec) ([0,1;-1,0]*(vec'))';
     n=length(derivtenscalc);
     Jacobian=zeros([n n]);
@@ -711,7 +723,8 @@ function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,lagMulti,nCell)
         Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
         
         HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
-            -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)));
+            -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)))...
+            /volumefraction(derivtenscalc(ii).cellprecsub).totalvolume;
         HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=HessConstr;
         HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=HessConstr;
     end
@@ -742,7 +755,7 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
     
 end
 
-function [optVal,feasVal,posDefErr]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
+function [optVal,feasVal,posDefErr]=SQPOptim(Df,HL,Dh,h_vec,lagMulti)
     rmvCol=find(sum(Dh~=0)==0);
     %     Dh(:,rmvCol)=[];
     %     h_vec(rmvCol)=[];
@@ -752,7 +765,7 @@ function [optVal,feasVal,posDefErr]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
     feasVal=RMS(h_vec);
     optVal=RMS(Df+Dh*lagMulti);
     Z=null(Dh');
-    HL=HA+Hf;
+    %HL=HA+Hf;
     optTest=real(eig(Z'*HL*Z));
     posDefErr=RMS([optTest(optTest<0);zeros(size(optTest(optTest>=0)))]);
     fprintf(' feas:%.2e  opt:%.2e  posdef:%.2e - ',feasVal,optVal,posDefErr)

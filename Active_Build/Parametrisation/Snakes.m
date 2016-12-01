@@ -134,6 +134,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     isChangeddtMax=false;
     lastConvCheck=0;
     dtMinStart=dtMin;
+    [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid);
     for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
         
@@ -201,8 +202,9 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
         
         % Snaxel Repopulation In both directions
-        [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
         
+        [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
+        nonBreedVert=[nonBreedVert,nonBreedVertPersist];
         
         [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert);
         if numel(snaxel)==0
@@ -244,14 +246,35 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
 end
 
 function [nonBreedVert]=SetNonBreedVertices(borderVertices,iterNum,param)
-    varExtract={'vertLooseStep'};
-    [vertLooseStep]=ExtractVariables(varExtract,param);
+    varExtract={'vertLooseStep','pinnedVertex'};
+    [vertLooseStep,pinnedVertex]=ExtractVariables(varExtract,param);
     nonBreedVert=[];
     
     if iterNum<=vertLooseStep
         nonBreedVert=[nonBreedVert,borderVertices.weak];
     end
     nonBreedVert=unique(nonBreedVert);
+end
+
+function [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid)
+    normVec=@(vec,ref) sqrt(sum((vec-(ones(size(vec,1),1)*ref)).^2,2));
+    
+    varExtract={'pinnedVertex'};
+    [pinnedVertex]=ExtractVariables(varExtract,param);
+    nonBreedVertPersist=[];
+    
+    switch pinnedVertex
+        case 'none'
+            nonBreedVertPersist=[];
+            
+        case 'LETE'
+            coord=vertcat(refinedGrid.vertex(:).coord);
+            [~,iLE]=min(normVec(coord,[0 0]));
+            [~,iTE]=min(normVec(coord,[1 0]));
+            nonBreedVertPersist=[refinedGrid.vertex(iLE).index,refinedGrid.vertex(iTE).index];
+    end
+    
+    nonBreedVertPersist=unique(nonBreedVertPersist);
 end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
