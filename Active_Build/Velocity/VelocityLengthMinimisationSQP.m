@@ -13,9 +13,10 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %#codegen
-function [snaxel,snakposition,snaxelmodvel,velcalcinfostruct,sensSnax]=VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
+function [snaxel,snakposition,snaxelmodvel,velcalcinfostruct,sensSnax,forceparam]...
+        =VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
-    [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
+    [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
     [snaxel]=AssignVelocityToSnaxel(snaxel,snaxeltensvel);
     
     snaxelmodvel=snaxel;
@@ -40,7 +41,8 @@ end
 
 %% Geometry feature forcing
 % In all code Dt is removed and assumed to be 1
-function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction)
+function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
+        GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction)
     % Calculate a tensile velocity to influence the solution
     snakPosIndex=[snakposition(:).index];
     snaxIndex=[snaxel(:).index];
@@ -69,6 +71,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     distEpsilon=forceparam.distEpsilon;
     dirEpsilon=forceparam.dirEpsilon;
     typeSmear=forceparam.typeSmear;
+    lagMultiPast=forceparam.lagMulti;
     switch typeSmear
         case 'length'
             [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
@@ -77,29 +80,50 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
         case 'dir'
             [derivtenscalc2]=ExtractDataForDerivatives_directionSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,dirEpsilon);
     end
-    [Df,Hf]=BuildJacobianAndHessian(derivtenscalc2);
-    isFreeze=logical([snaxel(:).isfreeze]);
-    %[Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     
-    [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
-    [Deltax,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
-    Deltax(isFreeze)=DeltaxisFreeze(isFreeze);
-    %lagMulti(isFreeze)=lagMultiisFreeze(isFreeze);
-    n=10;
-    if mean(abs(Deltax))>n
-        warning('Mean DeltaX is large %.3e',mean(abs(Deltax)))
-        Deltax=Deltax*n/mean(abs(Deltax));
+    derivtenscalc2=MatchCellToderivtenscal(derivtenscalc2,coeffstructure,volumefraction);
+    if isempty(lagMultiPast)
+        lagMultiPast=zeros([numel(volumefraction) 1]);
     end
-%     [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
-     [hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
-%     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
+    [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,lagMultiPast,numel(volumefraction));
+    isFreeze=logical([snaxel(:).isfreeze]);
+    %   [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
+    warning('OFF','MATLAB:nearlySingularMatrix')
+    if true
+        [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
+        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    else
+        [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
+        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreeze);
+    end
     
-    SQPOptim(Df,Hf,hessA,areaConstrMat',areaTargVec,lagMulti);
+    warning('ON','MATLAB:nearlySingularMatrix')
+    Deltax(isFreeze)=DeltaxisFreeze(isFreeze);
+    [feasVal,optVal,posDefVal]=SQPOptim(Df,Hf,HA,areaConstrMat',areaTargVec,lagMulti);
+    
+    forceparam.lagMulti=lagMulti;
+    
+    %lagMulti(isFreeze)=lagMultiisFreeze(isFreeze);
+    %     [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+    %[hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
+    %     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
+    
+    maxForceMean=forceparam.maxForceMean;
+    maxForceStd=forceparam.maxForceStd;
+    scaleOscil=forceparam.scaleOscil;
+    
+    if (condMat<1e-12 && (mean(abs(Deltax))*maxForceStd<std(abs(Deltax)))) %|| posDefVal~=0
+        fprintf(' ! DeltaX is Oscillatory std/mean: %.2e ! ',std(abs(Deltax))/mean(abs(Deltax)))
+        Deltax=Deltax*scaleOscil/max(abs(Deltax));
+    elseif mean(abs(Deltax))>maxForceMean
+        fprintf(' ! DeltaX is Large %.2e ! ',mean(abs(Deltax)))
+        Deltax=Deltax*maxForceMean/mean(abs(Deltax));
+    end
     
     sensSnax=[];
     if forceparam.isLast
-        sensSnax=SnaxelSensitivity(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2,...
-            Hf,areaConstrMat);
+        [sensSnax]=CalculateSensitivity(Hf,HA,areaConstrMat,lagMulti);
+        
     end
     velcalcinfostruct.forcingVec=forcingVec;
     velcalcinfostruct.conditionMat=conditionMat;
@@ -108,6 +132,34 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax]=GeometryForcing
     
     for ii=1:length(snaxeltensvel)
         snaxeltensvel(ii).forcevel=Deltax(ii);
+    end
+    
+end
+
+function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volumefraction)
+    coeffSnaxInd=[coeffstructure(:).snaxelindex];
+    
+    allNewCells=[volumefraction(:).newCellInd];
+    allOldCells=zeros(size(allNewCells));
+    allOldCellsSub=allOldCells;
+    kk=1;
+    for ii=1:numel(volumefraction)
+        nCurr=numel(volumefraction(ii).newCellInd);
+        allOldCells(kk:kk+nCurr-1)=volumefraction(ii).oldCellInd;
+        allOldCellsSub(kk:kk+nCurr-1)=ii;
+        kk=kk+nCurr;
+    end
+    
+    for ii=1:numel(derivtenscal)
+        newCell=unique([coeffstructure(FindObjNum([],[derivtenscal(ii).index],coeffSnaxInd)).cellindex]);
+        newCell2=unique([coeffstructure(FindObjNum([],[derivtenscal(ii).snaxprec],coeffSnaxInd)).cellindex]);
+        subs=FindObjNum([],newCell,allNewCells);
+        subs2=FindObjNum([],newCell2,allNewCells);
+        oldCell=unique(allOldCells(subs));
+        oldCell2=unique(allOldCells(subs2));
+        [i2,i1]=find((ones([numel(oldCell2) 1])*oldCell)==(oldCell2'*ones([1 numel(oldCell)])));
+        derivtenscal(ii).cellprec=unique(allOldCells(subs(i1)));
+        derivtenscal(ii).cellprecsub=unique(allOldCellsSub(subs(i1)));
     end
     
 end
@@ -362,7 +414,9 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthSmear(snaxel,snakpositi
     
     derivtenscalcTemplate=struct('index',[],...
         'snaxprec',[],...
-        'precsub',[],...
+        'precsub',[],...,...
+        'cellprec',[],...
+        'cellprecsub',[],...
         'Dg_i',[],...
         'Dg_m',[],...
         'g1_i',[],...
@@ -422,10 +476,10 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthSmear(snaxel,snakpositi
         
         [derivtenscalc(ii)]=CalculateDerivatives(derivtenscalc(ii));
         
-%         if (abs(dot(derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m))<=1e-10) ...
-%                 && (sum(derivtenscalc(ii).g1_i==derivtenscalc(ii).g1_m)==numel(derivtenscalc(ii).g1_i))
-%             printf('We''d have a problem')
-%         end
+        %         if (abs(dot(derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m))<=1e-10) ...
+        %                 && (sum(derivtenscalc(ii).g1_i==derivtenscalc(ii).g1_m)==numel(derivtenscalc(ii).g1_i))
+        %             printf('We''d have a problem')
+        %         end
         
     end
     testnan=find(isnan([derivtenscalc(:).d2fiddi2]));
@@ -438,7 +492,9 @@ function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposi
     
     derivtenscalcTemplate=struct('index',[],...
         'snaxprec',[],...
-        'precsub',[],...
+        'precsub',[],...,...
+        'cellprec',[],...
+        'cellprecsub',[],...
         'Dg_i',[],...
         'Dg_m',[],...
         'g1_i',[],...
@@ -484,10 +540,10 @@ function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposi
         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
-%         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+...
-%             sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*...
-%             derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+...
-%             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
+        %         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+...
+        %             sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*...
+        %             derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+...
+        %             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
     end
     
     for ii=length(snakposition):-1:1
@@ -515,7 +571,9 @@ function [derivtenscalc]=ExtractDataForDerivatives_directionSmear...
     
     derivtenscalcTemplate=struct('index',[],...
         'snaxprec',[],...
-        'precsub',[],...
+        'precsub',[],...,...
+        'cellprec',[],...
+        'cellprecsub',[],...
         'Dg_i',[],...
         'Dg_m',[],...
         'g1_i',[],...
@@ -587,23 +645,23 @@ function [snakposition]=ModifySnakposition(snaxel,snakposition,snakPosIndex,eps)
     
     for ii=1:length(snakposition)
         
-         neighSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex)';
+        neighSub=FindObjNum([],[snaxel(ii).snaxprec,snaxel(ii).snaxnext],snakPosIndex)';
         
-         dists=[snaxel([ii,neighSub]).d]';
-         vector=vertcat(snakposition([ii,neighSub]).vector);
-         
-         
-         edgeDist=sqrt(sum((vertcat(snakposition(neighSub).coord)-...
-             ones([2,1])*snakposition(ii).coord).^2,2));
-         edgeNorm=sqrt(sum((vertcat(snakposition(neighSub).vectornotnorm)+...
-             ones([2,1])*snakposition(ii).vectornotnorm).^2,2));
-         edgeDist=edgeDist./edgeNorm;
-         % find intersection vector
-         vertInit=vertcat(snakposition([ii,neighSub]).vertInit);
-         vertEnd=vertcat(snakposition([ii,neighSub]).vertInit)...
-             +vertcat(snakposition([ii,neighSub]).vectornotnorm);
-         isVertInit=all([vertInit;vertEnd]==(ones([6,1])*vertInit(1,:)),2);
-         isVertEnd=all([vertInit;vertEnd]==(ones([6,1])*vertEnd(1,:)),2);
+        dists=[snaxel([ii,neighSub]).d]';
+        vector=vertcat(snakposition([ii,neighSub]).vector);
+        
+        
+        edgeDist=sqrt(sum((vertcat(snakposition(neighSub).coord)-...
+            ones([2,1])*snakposition(ii).coord).^2,2));
+        edgeNorm=sqrt(sum((vertcat(snakposition(neighSub).vectornotnorm)+...
+            ones([2,1])*snakposition(ii).vectornotnorm).^2,2));
+        edgeDist=edgeDist./edgeNorm;
+        % find intersection vector
+        vertInit=vertcat(snakposition([ii,neighSub]).vertInit);
+        vertEnd=vertcat(snakposition([ii,neighSub]).vertInit)...
+            +vertcat(snakposition([ii,neighSub]).vectornotnorm);
+        isVertInit=all([vertInit;vertEnd]==(ones([6,1])*vertInit(1,:)),2);
+        isVertEnd=all([vertInit;vertEnd]==(ones([6,1])*vertEnd(1,:)),2);
         
         initMultipliers=isVertInit(1:3)-isVertInit(4:6);
         endMultipliers=isVertEnd(4:6)-isVertEnd(1:3);
@@ -620,7 +678,7 @@ function [snakposition]=ModifySnakposition(snaxel,snakposition,snakPosIndex,eps)
         %newVec-snakposition(ii).vector
     end
     
-  % pause(0.5) 
+    % pause(0.5)
 end
 
 function [a_i,a_m,a_im,b_i,b_m,c]=Calc_LengthDerivCoeff(Dgi,Dgm,g1i,g1m)
@@ -636,12 +694,12 @@ function [a_i,a_m,a_im,b_i,b_m,c]=Calc_LengthDerivCoeff(Dgi,Dgm,g1i,g1m)
     
 end
 
-function [Df,Hf]=BuildJacobianAndHessian(derivtenscalc)
-    
+function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,lagMulti,nCell)
+    rot90=@(vec) ([0,1;-1,0]*(vec'))';
     n=length(derivtenscalc);
     Jacobian=zeros([n n]);
     Hessian=zeros([n n n]);
-    
+    HessianConst=zeros([n n nCell]);
     for ii=1:n
         neighSub=derivtenscalc(ii).precsub;
         Jacobian(ii,ii)=derivtenscalc(ii).dfiddi;
@@ -651,9 +709,19 @@ function [Df,Hf]=BuildJacobianAndHessian(derivtenscalc)
         Hessian(ii,neighSub,ii)=derivtenscalc(ii).d2fiddim;
         Hessian(neighSub,ii,ii)=derivtenscalc(ii).d2fiddim;
         Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
+        
+        HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
+            -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)));
+        HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=HessConstr;
+        HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=HessConstr;
     end
+    HA=sum(HessConstr.*repmat(reshape(lagMulti,[1,1,numel(lagMulti)]),[n,n]),3);
     Df=sum(Jacobian,2);
     Hf=sum(Hessian,3);
+    
+    %     if any(any(HA~=0))
+    %         fprintf(' Hessian Not 0!! - ')
+    %     end
     
 end
 
@@ -674,24 +742,23 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
     
 end
 
-
-function [optVal,feasVal]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
+function [optVal,feasVal,posDefErr]=SQPOptim(Df,Hf,HA,Dh,h_vec,lagMulti)
     rmvCol=find(sum(Dh~=0)==0);
-%     Dh(:,rmvCol)=[];
-%     h_vec(rmvCol)=[];
-%     lagMulti(rmvCol)=[];
+    %     Dh(:,rmvCol)=[];
+    %     h_vec(rmvCol)=[];
+    %     lagMulti(rmvCol)=[];
     RMS=@(x) sqrt(mean(x.^2));
-
+    
     feasVal=RMS(h_vec);
-    optVal=RMS(Df-Dh*lagMulti);
+    optVal=RMS(Df+Dh*lagMulti);
     Z=null(Dh');
     HL=HA+Hf;
     optTest=real(eig(Z'*HL*Z));
     posDefErr=RMS([optTest(optTest<0);zeros(size(optTest(optTest>=0)))]);
-    %fprintf('\n %.5e  %.5e  %.5e  \n',feasVal,optVal,posDefErr)
+    fprintf(' feas:%.2e  opt:%.2e  posdef:%.2e - ',feasVal,optVal,posDefErr)
 end
 
-function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
+function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     
     rmvCol=find(isFreeze);
     Dh(rmvCol,:)=[];
@@ -711,7 +778,49 @@ function [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     
     Bkinv=(Hf)^(-1);
     matToInv=(Dh'*Bkinv*Dh);
-    fprintf(' - cond: %.3e -', rcond(matToInv))
+    condMat=rcond(matToInv);
+    fprintf(' cond: %.3e -', condMat)
+    if true %rcond(matToInv)>1e-20
+        u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+    else
+        u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+    end
+    Deltax=-Bkinv*(Df+Dh*u_kp1);
+    
+    DeltaxFin=zeros(size(isFreeze));
+    DeltaxFin(~isFreeze)=Deltax;
+    lagMulti(actCol)=u_kp1;
+end
+
+function [DeltaxFin,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,Dh,h_vec,isFreeze)
+    
+    rmvCol=find(isFreeze);
+    
+    Dh(rmvCol,:)=[];
+    Hf(rmvCol,:)=[];
+    Hf(:,rmvCol)=[];
+    HA(rmvCol,:)=[];
+    HA(:,rmvCol)=[];
+    Df(rmvCol)=[];
+    %h_vec(rmvCol)=[];
+    % output vector for lagrange multiplier
+    lagMulti=zeros([length(Dh(1,:)),1]);
+    
+    HL=Hf+HA;
+    %DL=Df+Dh*pastLagMulti;
+    
+    actCol=(sum(Dh~=0)~=0);
+    rmvCol=find(sum(Dh~=0)==0);
+    Dh(:,rmvCol)=[];
+    h_vec(rmvCol)=[];
+    
+    
+    
+    Bkinv=(HL)^(-1);
+    matToInv=(Dh'*Bkinv*Dh);
+    
+    condMat=rcond(matToInv);
+    fprintf(' cond: %.3e -', condMat)
     if true %rcond(matToInv)>1e-20
         u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
     else
@@ -742,14 +851,14 @@ function [DeltaxFin,lagMulti]=SQPStepFreeze_quadprog(Df,Hf,Dh,h_vec,isFreeze)
     
     [Deltax,~,~,~,lambda] = eval('quadprog(Hf,Df,[],[],Dh'',-h_vec);');
     u_kp1=lambda.eqlin;
-%     Bkinv=(Hf)^(-1);
-%     matToInv=(Dh'*Bkinv*Dh);
-%     if rcond(matToInv)>1e-10
-%         u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
-%     else
-%         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
-%     end
-%     Deltax=-Bkinv*(Df+Dh*u_kp1);
+    %     Bkinv=(Hf)^(-1);
+    %     matToInv=(Dh'*Bkinv*Dh);
+    %     if rcond(matToInv)>1e-10
+    %         u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+    %     else
+    %         u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+    %     end
+    %     Deltax=-Bkinv*(Df+Dh*u_kp1);
     
     DeltaxFin=zeros(size(isFreeze));
     DeltaxFin(~isFreeze)=Deltax;
@@ -823,12 +932,12 @@ end
 
 function [derivtenscalcII]=CalculateDerivatives_d(derivtenscalcII,lSmear)
     
-%     varExtract={'a_i','a_m','a_im','b_i','b_m','c','normFi','d_i','d_m'};
-%     
-%     for ii=1:length(varExtract)
-%         eval([varExtract{ii},'=derivtenscalcII.(varExtract{ii});'])
-%     end
-
+    %     varExtract={'a_i','a_m','a_im','b_i','b_m','c','normFi','d_i','d_m'};
+    %
+    %     for ii=1:length(varExtract)
+    %         eval([varExtract{ii},'=derivtenscalcII.(varExtract{ii});'])
+    %     end
+    
     a_i=derivtenscalcII.a_i;
     a_m=derivtenscalcII.a_m;
     a_im=derivtenscalcII.a_im;

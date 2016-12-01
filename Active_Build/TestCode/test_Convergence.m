@@ -2,8 +2,10 @@ function [fill]=test_Convergence(snakSave)
 
 %% Volume
 errorFill=zeros([length(snakSave) length(snakSave(1).volumefraction)]);
+errorFill2=zeros([length(snakSave) length(snakSave(1).volumefraction)]);
 for ii=1:length(snakSave),
     errorFill(ii,1:length(snakSave(ii).volumefraction))=([snakSave(ii).volumefraction(:).targetfill]-[snakSave(ii).volumefraction(:).volumefraction])./[snakSave(ii).volumefraction(:).targetfill];
+    errorFill2(ii,1:length(snakSave(ii).volumefraction))=([snakSave(ii).volumefraction(:).targetfill]-[snakSave(ii).volumefraction(:).volumefraction]);
 end
 fill=[snakSave(1).volumefraction(:).targetfill];
 statError=[mean(errorFill);std(errorFill);mean(errorFill)-3*std(errorFill);mean(errorFill)+3*std(errorFill)];
@@ -13,10 +15,13 @@ subplot(2,2,1)
 plot(errorFill)
 fftErr=fft(errorFill);
 ylabel('fill Evolution')
-subplot(2,2,2)
+subplot(2,4,3)
 %plot(abs(fftErr))
 plot(log10(abs(errorFill)))
-ylabel('fill error')
+ylabel('fill error / fill')
+subplot(2,4,4)
+plot(log10(abs(errorFill2)))
+ylabel('fill error ')
 %% Velocity
 
 errorVel=zeros([length(snakSave) length(snakSave(1).volumefraction)]);
@@ -53,7 +58,7 @@ fftErr=fft(errorVel);
 
 ylabel('Mean Absolute Velocity evolution')
 subplot(2,2,4)
-%plot(abs(fftErr))
+plot(abs(fftErr))
 plot(log10(abs(errorVel)))
 
 ylabel('Logarithm of the mean absolute velocity')
