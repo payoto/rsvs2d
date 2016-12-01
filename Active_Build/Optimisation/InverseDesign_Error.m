@@ -72,8 +72,8 @@ function [analysisCoord,upperLower]=PrepareLoopCoord(loop)
         analysisCoord=analysisCoord([1:iLE,iLE:end],:);
         upperLower=ones(size(analysisCoord(:,1)));
         upperLower(iLE+1:end)=-1;
-        analysisCoord(:,1)=analysisCoord(:,1)-min(analysisCoord(:,1));
-        rmRow=find(analysisCoord(:,1)>1);
+        %analysisCoord(:,1)=analysisCoord(:,1)-min(analysisCoord(:,1));
+        rmRow=find(analysisCoord(:,1)>1 | analysisCoord(:,1)<0);
         analysisCoord(rmRow,:)=[];
         upperLower(rmRow)=[];
         

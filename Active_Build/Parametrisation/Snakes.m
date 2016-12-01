@@ -119,7 +119,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         IterSnakes(param,snaxel,refinedGriduns,refinedGrid,volfracconnec,cellCentredGrid,...
         insideContourInfo,forceparam,oldGrid,maxStep,maxDt,dtMin,borderVertices)
     
-    
+    global snaxInitPos
     varExtract={'snakesSteps','mergeTopo','makeMov','convLevel','debugPlot','plotInterval',...
         'subStep','snakesMinSteps','stepType','vSwitch','convCheckRate',...
         'convCheckRange','convDistance','dtRatio'};
@@ -127,6 +127,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         plotInterval,subStep,snakesMinSteps,stepType,vSwitch,convCheckRate,...
         convCheckRange,convDistance,dtRatio]...
         =ExtractVariables(varExtract,param);
+    
     trigCount=0;
     movFrame=struct([]);
     isConvergingPast=true;
@@ -134,7 +135,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     lastConvCheck=0;
     dtMinStart=dtMin;
     for ii=1:snakesSteps
-        %arrivalTolerance=arrivalTolerance*exp(-decayCoeff*ii);
+        %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
         
         fprintf('     Step %i  -',ii);
         tStepStart=now;
@@ -203,7 +204,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
         
         
-        [snaxel,insideContourInfo]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert);
+        [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert);
         if numel(snaxel)==0
             warning('Contour has collapsed')
             break
@@ -211,7 +212,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxelrev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
             insideContourInfo,refinedGriduns);
         
-        [snaxelrev,insideContourInfoRev]=SnaxelBreeding(snaxelrev,insideContourInfoRev,refinedGriduns,nonBreedVert);
+        [snaxelrev,insideContourInfoRev,~]=SnaxelBreeding(snaxelrev,insideContourInfoRev,refinedGriduns,nonBreedVert);
         if numel(snaxelrev)==0
             warning('Contour has collapsed')
             break
@@ -332,7 +333,7 @@ function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         cellCentredGrid,insideContourInfo);
     forceparam.isLast=true;
     forceparam.lengthEpsilon=0;
-    [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]...
+    [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
     testSensitivity(snaxel,snakposition,sensSnax)
@@ -349,10 +350,10 @@ end
 
 %% Iteration sub parts
 
-function [snaxel,insideContourInfo]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert)
+function [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert)
     
     
-    [snaxel,insideContourInfo]=SnaxelRepopulate(refinedGriduns,snaxel,...
+    [snaxel,insideContourInfo,nonBreedVert]=SnaxelRepopulate(refinedGriduns,snaxel,...
         insideContourInfo,nonBreedVert);
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
 end
@@ -431,7 +432,7 @@ function [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition
     [forceparam,lastAlgo,trigCount]=CheckCurrentVelocityAlgorithm(forceparam,...
         ii,currentConvVolume,trigCount);
     
-    [snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+    [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam]=...
         VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
     
@@ -901,7 +902,7 @@ end
 
 %% Snaxel Repopulation
 
-function [snaxel,insideContourInfo]=...
+function [snaxel,insideContourInfo,nonBreedVert]=...
         SnaxelRepopulate(unstructured,snaxel,insideContourInfo,nonBreedVert)
     
     global unstructglobal
@@ -918,7 +919,7 @@ function [snaxel,insideContourInfo]=...
     %newInsideEdges=[snaxel(finishedSnakes).edge];
     %insideContourInfo(newInsideEdges)=1;
     
-    [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
+    [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingProcess...
         (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert);
     
     % Removing from repopulation list snaxels that would hit a vertex
@@ -933,7 +934,7 @@ function [snaxel,insideContourInfo]=...
     
 end
 
-function [snaxel,newInsideEdges,delIndex]=RepopIterativeBreedingProcess...
+function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingProcess...
         (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert)
     % Iterative Breeding process for the breeding of edges
     
@@ -1245,13 +1246,13 @@ end
 
 %% Velocity Calculation (External Function)
 
-function [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=VelocityCalculationVolumeFraction...
+function [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam,sensSnax]=VelocityCalculationVolumeFraction...
         (snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     velcalcinfo=[];
     sensSnax=[];
     switch forceparam.velType
         case 'default'
-            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=...
+            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax,forceparam]=...
                 VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
         case 'force'
             [snaxel,snakposition,snaxelmodvel]=...
@@ -1282,7 +1283,7 @@ function [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=VelocityCalcula
             snaxelmodvel=snaxel;
             
         otherwise %'default'
-            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=...
+            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax,forceparam]=...
                 VelocityLengthMinimisationSQP(snaxel,snakposition,volumefraction,coeffstructure,forceparam);
     end
     
@@ -1870,7 +1871,7 @@ function snaxel=DeleteSnaxel(snaxel,delIndex)
                 [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace);
                 snaxel(targSnaxSub(jj))=singlesnaxel;
             else
-                warning('Check Topology Collapse')
+                disp('Topology Collapse')
             end
             
         end
@@ -2002,7 +2003,6 @@ function [freezeIndex]=FreezeBorderContact(snaxel,borderVertices)
     
     
     [arrivedSub]=ArrivalCondition(snaxel);
-    arrivedIndex=[snaxel(arrivedSub).index];
     
     indexSnax=[snaxel(arrivedSub).index];
     destVertex=[snaxel(arrivedSub).tovertex];
