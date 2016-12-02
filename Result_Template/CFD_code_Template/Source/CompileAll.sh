@@ -54,3 +54,5 @@ chmod 755 ../transonicfine/RunFlow.sh
 chmod 755 ../transonicfine/RunFlowSym.sh
 chmod 755 ../transonicfine/RunOnlyFlow.sh
 chmod 755 ../transonicfine/RunPost.sh
+
+chmod 755 ../*/bashtimeout
