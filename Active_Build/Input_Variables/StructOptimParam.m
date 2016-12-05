@@ -1966,7 +1966,7 @@ function paroptim=bulkNacaInvDes()
             end
         end
     end
-    %initInterp=initInterp(1:4);
+    initInterp=initInterp(1:4);
     
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;

@@ -310,12 +310,27 @@ function [parametrisation,cellRef]=OptimInit(param,isRand)
         parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=...
             rand(size(parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)));
     end
-    parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
-    
-    parametrisation.fill([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=defaultCorner;
-    parametrisation.isactive([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=corneractive;
-    
-    parametrisation.fill=parametrisation.fill;
+    if islogical(corneractive) || corneractive==0 || corneractive==1
+        parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
+
+        parametrisation.fill([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=defaultCorner;
+        parametrisation.isactive([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=corneractive;
+
+        parametrisation.fill=parametrisation.fill;
+    else
+        LEcol=2;
+        TEcol=nGridSteps(1)-1;
+        vertPosRow=floor(nGridSteps(2)/2);
+        vertPosRow=vertPosRow+rem(vertPosRow,2):vertPosRow+1;
+        switch corneractive
+            case 'LE'
+                
+            case 'TE'
+                
+            case 'LETE'
+                
+        end
+    end
     
     
     

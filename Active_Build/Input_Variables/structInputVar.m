@@ -291,6 +291,22 @@ function [param]=Snakestestsmooth3_1()
     param=AvoidLocalOptim(param);
 end
 
+function [param]=Snakestestsmooth3_2()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    param.general.typDat='testsmooth3_2';
+
+    param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    
+    param.general.passDomBounds=[-1,1;-0.6,0.6];
+    param=AvoidLocalOptim(param);
+end
+
 function [param]=Snakestestsmooth4()
     
     
@@ -1081,9 +1097,9 @@ function [param]=optimInverseDesign_bulk()
    
     [param]=optimInverseDesign();
     
-    param.snakes.refine.axisRatio=4;
+    param.snakes.refine.axisRatio=1.5;
     param.optiminit.defaultfill=0.3;
-     param.snakes.step.snakesConsole=true;
+     param.snakes.step.snakesConsole=false;
      param.snakes.step.fillLooseStep=1;
     param.snakes.step.fillLooseCut=1e-2;
     
@@ -1091,13 +1107,13 @@ function [param]=optimInverseDesign_bulk()
     param.snakes.force.distEpsilon=2e-5;
     param.snakes.force.dirEpsilon=1e-5;
     
-    param.optiminit.defaultCorner=1e-5;
+    param.optiminit.defaultCorner=1e-9;
     
     param.snakes.force.typeSmear='length';
     param.general.refineSteps=0;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
-    
+    param.snakes.refine.pinnedVertex='LETE'; 
     param.snakes.step.vertLooseStep=20;
     param.snakes.step.snakData='all';
     param.snakes.step.snakesSteps=100;
@@ -1105,7 +1121,7 @@ function [param]=optimInverseDesign_bulk()
     param.snakes.refine.refineGrid=[4 4];
     param.general.restart=false;
     param.snakes.refine.gridDistrib='cosXsquared01';
-    param.optiminit.cellLevels=[18,2];
+    param.optiminit.cellLevels=[18,4];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_bulk2()
