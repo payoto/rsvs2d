@@ -1097,33 +1097,38 @@ function [param]=optimInverseDesign_bulk()
    
     [param]=optimInverseDesign();
     
-    param.snakes.refine.axisRatio=1.5;
+    param.snakes.step.maxStep=0.3;
+    param.snakes.step.maxDt=0.5;
+    
+    param.snakes.refine.axisRatio=1;
     param.optiminit.defaultfill=0.3;
      param.snakes.step.snakesConsole=false;
-     param.snakes.step.fillLooseStep=1;
-    param.snakes.step.fillLooseCut=1e-2;
+     param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=1e-1;
     
-    param.snakes.force.lengthEpsilon=1e-5;
+    param.snakes.force.lengthEpsilon=1e-3;
     param.snakes.force.distEpsilon=2e-5;
     param.snakes.force.dirEpsilon=1e-5;
     
-    param.optiminit.defaultCorner=1e-9;
+    param.optiminit.defaultCorner=1e-4;
+    param.optiminit.corneractive='TE';
     
-    param.snakes.force.typeSmear='length';
+    param.snakes.force.typeSmear='lengthD';
     param.general.refineSteps=0;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.pinnedVertex='LETE'; 
     param.snakes.step.vertLooseStep=20;
-    param.snakes.step.snakData='all';
+    param.snakes.step.snakData='light';
     param.snakes.step.snakesSteps=100;
     param.snakes.step.mergeTopo=false;
-    param.snakes.refine.refineGrid=[4 4];
+    param.snakes.refine.refineGrid=[4 1];
     param.general.restart=false;
-    param.snakes.refine.gridDistrib='cosXsquared01';
+    param.snakes.refine.gridDistrib='cosXYsquared01';
     param.optiminit.cellLevels=[18,4];
-    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+    param.general.passDomBounds=MakeCartesianGridBoundsInactTE(param.optiminit.cellLevels);
 end
+
 function [param]=optimInverseDesign_bulk2()
    
     [param]=optimInverseDesign();
