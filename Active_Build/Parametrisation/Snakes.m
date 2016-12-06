@@ -122,10 +122,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     global snaxInitPos
     varExtract={'snakesSteps','mergeTopo','makeMov','convLevel','debugPlot','plotInterval',...
         'subStep','snakesMinSteps','stepType','vSwitch','convCheckRate',...
-        'convCheckRange','convDistance','dtRatio'};
+        'convCheckRange','convDistance','dtRatio','refineGrid'};
     [snakesSteps,mergeTopo,makeMov,convLevel,debugPlot,...
         plotInterval,subStep,snakesMinSteps,stepType,vSwitch,convCheckRate,...
-        convCheckRange,convDistance,dtRatio]...
+        convCheckRange,convDistance,dtRatio,refineGrid]...
         =ExtractVariables(varExtract,param);
     
     trigCount=0;
@@ -135,6 +135,13 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     lastConvCheck=0;
     dtMinStart=dtMin;
     [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid);
+    edgeOrient=[refinedGrid.edge(:).orientation];
+    edgeIndList=[refinedGrid.edge(:).index];
+    if numel(refineGrid)==1
+        refGridRatio=1;
+    else
+        refGridRatio=refineGrid(1)/refineGrid(2);
+    end
     for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
         
@@ -169,7 +176,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         end
         
         [dt,dtSnax,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
-            stepType,vSwitch);
+            stepType,vSwitch,edgeOrient,edgeIndList,refGridRatio);
         % Save and exit conditions
         [snakSave(ii)]=WriteSnakSave(param,snaxel,dt,snakposition,...
             volumefraction,cellCentredGridSnax,currentConvVelocity,...
@@ -205,8 +212,9 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
         nonBreedVert=[nonBreedVert,nonBreedVertPersist];
-        
-        [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert);
+        borderVertices.nonBreedVert=nonBreedVert;
+        [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,...
+            insideContourInfo,refinedGriduns,nonBreedVert,edgeOrient,edgeIndList,refGridRatio);
         if numel(snaxel)==0
             warning('Contour has collapsed')
             break
@@ -214,7 +222,8 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxelrev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
             insideContourInfo,refinedGriduns);
         
-        [snaxelrev,insideContourInfoRev,~]=SnaxelBreeding(snaxelrev,insideContourInfoRev,refinedGriduns,nonBreedVert);
+        [snaxelrev,insideContourInfoRev,~]=SnaxelBreeding(snaxelrev,...
+            insideContourInfoRev,refinedGriduns,nonBreedVert,edgeOrient,edgeIndList,refGridRatio);
         if numel(snaxelrev)==0
             warning('Contour has collapsed')
             break
@@ -232,7 +241,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         
         
         nSnax=length(snaxel);
-        frozen=sum([snaxel(:).isfreeze]);
+        frozen=sum(logical([snaxel(:).isfreeze]));
         tStepEnd=now;
         
         fprintf(['  Time Taken: ',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF'),'\n']);
@@ -373,11 +382,12 @@ end
 
 %% Iteration sub parts
 
-function [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,insideContourInfo,refinedGriduns,nonBreedVert)
+function [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,...
+        insideContourInfo,refinedGriduns,nonBreedVert,edgeOrient,edgeIndList,refGridRatio)
     
     
     [snaxel,insideContourInfo,nonBreedVert]=SnaxelRepopulate(refinedGriduns,snaxel,...
-        insideContourInfo,nonBreedVert);
+        insideContourInfo,nonBreedVert,edgeOrient,edgeIndList,refGridRatio);
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
 end
 
@@ -391,7 +401,8 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     
     
     % Velocity condition
-    vSnax=[snaxel(:).v];
+    vSnax=[snaxel(~logical([snaxel(:).isfreeze])).v];
+    
     currentConvVelocity=(sqrt(sum(vSnax.^2))/length(vSnax));
     conditionVelocity=currentConvVelocity<convLevel;
     % Volume fraction condition
@@ -656,6 +667,8 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     vertCoordFull=unstructured.vertex.coord;
     vertIndex=unstructured.vertex.index;
     
+    [edgeLength]=CalculateEgeLengths(unstructured);
+    
     switch boundstr{3}
         case '1bound'
             isInside=false;
@@ -670,7 +683,7 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
         edgeIndex,vertIndex,insideContourInfo);
     
     [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,loopEdgeIndex,allLoopEdgeIndex,snaxelIndexStart,isInside);
+        edgeIndex,loopEdgeIndex,allLoopEdgeIndex,snaxelIndexStart,isInside,edgeLength);
     
     [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
     if ~isInside
@@ -692,6 +705,14 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     
     insideContourInfo(loopEdgeSubs)=1;
     
+end
+
+function [edgeLength]=CalculateEgeLengths(unstructured)
+    edgeVertIndex=unstructured.edge.vertexindex';
+    vectorEdgeVertIndex=edgeVertIndex(:);
+    edgeCoord=unstructured.vertex.coord(FindObjNum([],vectorEdgeVertIndex,unstructured.vertex.index),:);
+    
+    edgeLength=sqrt(sum((edgeCoord(1:2:end-1,:)-edgeCoord(2:2:end,:)).^2,2));
 end
 
 function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
@@ -799,7 +820,7 @@ function [snaxel]=TestSnaxelLoopDirection(snaxel)
 end
 
 function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,currLoopEdgeIndex,invalidEdgeIndex,snaxelIndexStart,isInside,connectivity)
+        edgeIndex,currLoopEdgeIndex,invalidEdgeIndex,snaxelIndexStart,isInside,edgeLength,connectivity)
     % Creates the basic snaxel structure, no removal of unworthy snaxels is
     % performed
     
@@ -817,7 +838,7 @@ function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertI
         snaxelEdges=FindSnaxelEdges(vertexEdges,invalidEdgeIndex);
         if numel(snaxelEdges)>0
             [kk,cellSimVertex{ii},snaxelNotOrdered]=GenerateVertexSnaxel(snaxelEdges,kk,...
-                snaxelIndexStart,initVertexIndex(ii), edgeVertIndex,edgeIndex);
+                snaxelIndexStart,initVertexIndex(ii), edgeVertIndex,edgeIndex,edgeLength);
             
             % Now Fine
             if numel(currLoopEdgeIndex)>1
@@ -840,7 +861,7 @@ function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertI
             end
             [kk2,cellSimVertex{ii},newsnaxel]=GenerateVertexSnaxel...
                 (snaxelEdges(generateOrder),kk2,snaxelIndexStart,initVertexIndex(ii),...
-                edgeVertIndex,edgeIndex);
+                edgeVertIndex,edgeIndex,edgeLength);
             snaxel=[snaxel,newsnaxel];
         end
     end
@@ -859,19 +880,20 @@ function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertI
 end
 
 function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
-        snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex)
+        snaxelIndexStart,initVertexIndexSingle, edgeVertIndex,edgeIndex,edgeLength)
     
     global snaxInitPos
     
     numSE=length(snaxelEdges); % provides information about snaxel from same vertex
     snaxelEdgesSub=FindObjNum([],snaxelEdges,edgeIndex);
+    distRatio=min(edgeLength(snaxelEdgesSub))./edgeLength(snaxelEdgesSub);
     kkLocal=0;
     for jj=1:numSE
         kk=kk+1;
         kkLocal=kkLocal+1;
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
-        dist=snaxInitPos; % Snaxel initialisation, it starts at the vertex
+        dist=snaxInitPos*distRatio(jj); % Snaxel initialisation, it starts at the vertex
         velocity=0; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);
@@ -926,7 +948,8 @@ end
 %% Snaxel Repopulation
 
 function [snaxel,insideContourInfo,nonBreedVert]=...
-        SnaxelRepopulate(unstructured,snaxel,insideContourInfo,nonBreedVert)
+        SnaxelRepopulate(unstructured,snaxel,insideContourInfo,nonBreedVert...
+        ,edgeOrient,edgeIndList,refGridRatio)
     
     global unstructglobal
     % adds snaxels once a corner has been reached
@@ -943,7 +966,8 @@ function [snaxel,insideContourInfo,nonBreedVert]=...
     %insideContourInfo(newInsideEdges)=1;
     
     [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert);
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal...
+        ,nonBreedVert,edgeOrient,edgeIndList,refGridRatio);
     
     % Removing from repopulation list snaxels that would hit a vertex
     % which has already bred
@@ -958,13 +982,15 @@ function [snaxel,insideContourInfo,nonBreedVert]=...
 end
 
 function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert)
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert,...
+        edgeOrient,edgeIndList,refGridRatio)
     % Iterative Breeding process for the breeding of edges
     
     newInsideEdges=[];
     kk=0;
     delIndex=[];
     rePopInd=[];
+    [edgeLength]=CalculateEgeLengths(unstructglobal);
     while ~isempty(finishedSnakes)
         kk=kk+1;
         breedSub=finishedSnakes(1);
@@ -981,7 +1007,7 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
         
         % Generate the new Snaxels
         snaxelRepop=InitialSnaxelStructure(snaxel(breedSub).tovertex,edgeVertIndex,...
-            edgeIndex,snaxel(breedSub).edge,snaxel(breedSub).edge,snaxelIndexStart,false,connec);
+            edgeIndex,snaxel(breedSub).edge,snaxel(breedSub).edge,snaxelIndexStart,false,edgeLength,connec);
         
         previousV=snaxel(breedSub).v;
         previousACC=snaxel(breedSub).acc;
@@ -1005,21 +1031,23 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
         
     end
     if kk>0
-        [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL);
+        [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeOrient,edgeIndList,refGridRatio);
     end
 end
 
-function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL)
+function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeOrient,edgeIndList,refGridRatio)
     vSnax=[snaxel(:).v];
     
     [snaxel(:).v]=deal(0);
     snaxInd=[snaxel(:).index];
-    
+    [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeOrient,edgeIndList,refGridRatio);
     repopSub=FindObjNum([],rePopInd,snaxInd);
     rePopInd=rePopInd(repopSub~=0);
     repopSub=repopSub(repopSub~=0);
     
-    [snaxel(repopSub).v]=deal(stepL);
+    for ii=1:numel(repopSub)
+        snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
+    end
     
     maxDist=MaxTravelDistance(snaxel);
     
@@ -1516,10 +1544,12 @@ function [finishedSnakesSub]=ArrivalCondition(snaxel)
     v=[snaxel(:).v];
     d=[snaxel(:).d];
     isFreeze=[snaxel(:).isfreeze]; % finds all unfrozen
-    isFwd=v>0;
-    isArrived=d>=(1-arrivalTolerance);
+    isFwd=v>=0;
+    isArriving=d>=(1-arrivalTolerance);
+    isArrived=d>=(1-1e-8);
     willImpact=abs((1-d)./v)<maxDt;
-    finishedSnakesSub=find((isFwd & ~isFreeze & isArrived & willImpact));
+    finishedSnakesSub=find((isFwd & ~isFreeze & isArriving & willImpact)...
+        | (isArrived & ~isFreeze & isFwd));
 end
 
 function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInsideEdges,snaxel)
@@ -1594,7 +1624,7 @@ function maxDist=MaxTravelDistance(snaxel)
 end
 
 function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
-        stepType,vSwitch)
+        stepType,vSwitch,edgeOrient,edgeIndList,refGridRatio)
     % Calculates the timestep to ensure that no snaxel crosses the line without
     % crossing an intersection
     
@@ -1606,10 +1636,10 @@ function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
     
     canMove=[snaxel(:).isfreeze]==0;
     maxDist=MaxTravelDistance(snaxel);
-    
-    maxDist(maxDist>maxStep)=maxStep;
+    [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeOrient,edgeIndList,refGridRatio);
+    maxDist(maxDist>(maxStep*maxStepIndiv))=maxStep*maxStepIndiv(maxDist>(maxStep*maxStepIndiv));
     maxDist=-maxDist;
-    maxDist(maxDist>maxStep)=maxStep;
+    maxDist(maxDist>(maxStep*maxStepIndiv))=maxStep*maxStepIndiv(maxDist>(maxStep*maxStepIndiv));
     maxDist=-maxDist;
     
     vSnax=[snaxel(:).v];
@@ -1640,6 +1670,14 @@ function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
     if dt<0
         warning('Time going back')
     end
+end
+
+function [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeOrient,edgeIndList,refGridRatio)
+   % scales the maximum step depending on the assymetry of the grid
+   edgeSnax=[snaxel(:).edge];
+   maxStepIndiv=ones(size(snaxel));
+   maxStepIndiv(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
+   maxStepIndiv=maxStepIndiv/max(maxStepIndiv);
 end
 
 function [dt]=TimeStep_Strict(dtStep,dtMax,maxDt,dtSnax,dtMin)
@@ -1797,7 +1835,7 @@ function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourIn
     kk=0;
     
     while ~isempty(delIndex)
-        canMove=[snaxel(:).isfreeze]~=1;
+        canMove=true(size(snaxel)); %[snaxel(:).isfreeze]~=1;
         if ~isempty(snaxel(canMove))
             [delIndex]=FindBadSnaxels(snaxel(canMove),insideContourInfo);
         else
@@ -1934,16 +1972,48 @@ function [snaxel]=FreezingFunction(snaxel,borderVertices,mergeTopo)
     end
     
     [borderFreeze]=FreezeBorderContact(snaxel,borderVertices.strong);
+    if isfield(borderVertices,'nonBreedVert')
+        %[nonBreedFreeze]=FreezeNonBreedContact(snaxel,borderVertices.nonBreedVert);
+        % For this to work proper freeze handling is needed at Velocity
+        % level: This means a 2 step process where velocities are based off
+        % the actual freeze status after thawing test (ie is it still frozen)
+        nonBreedFreeze=[];
+    else
+        nonBreedFreeze=[];
+    end
+    
     freezeIndex=[edgeFreeze,borderFreeze];
     
     [freezeIndex]=RemoveIdenticalEntries(freezeIndex);
     [snaxel(:).isfreeze]=deal(false);
     if ~isempty(freezeIndex)
-        freezeSub=FindObjNum(snaxel,freezeIndex);
+        freezeSub=FindObjNum([],freezeIndex,[snaxel(:).index]);
         for ii=1:length(freezeIndex)
             snaxel(freezeSub(ii)).isfreeze=1;
         end
     end
+    if ~isempty(nonBreedFreeze)
+        freezeSub=FindObjNum([],nonBreedFreeze,[snaxel(:).index]);
+        for ii=1:length(nonBreedFreeze)
+            snaxel(freezeSub(ii)).isfreeze=2;
+        end
+    end
+end
+
+function [nonBreedFreeze]=FreezeNonBreedContact(snaxel,nonBreedVert)
+    
+    global arrivalTolerance
+    tol=0*arrivalTolerance/1000;
+    nonBreedFreeze=[];
+    dSnax=[snaxel(:).d];
+    vSnax=[snaxel(:).v];
+    
+    tovertisNonBreed=(FindObjNum([],[snaxel(:).tovertex],unique(nonBreedVert))~=0);
+    fromvertisNonBreed=(FindObjNum([],[snaxel(:).fromvertex],unique(nonBreedVert))~=0);
+    
+    isNonBreedFreeze=(dSnax<=tol & fromvertisNonBreed' & vSnax<0) | ...
+        ((1-dSnax)<=tol & tovertisNonBreed' & vSnax>0);
+    nonBreedFreeze=[snaxel(isNonBreedFreeze).index];
 end
 
 function [freezeIndex,pairs]=FreezeEdgeContact(snaxel,saveSingleVal)
@@ -2076,7 +2146,6 @@ function [borderVertices]=FindBorderVertex(unstructured)
     
     borderVertices=vertexIndex(isBorderVertex);
 end
-
 
 function [borderVertices]=FindWeakBorderVertex(unstrucReshape,cellCentredGrid,connectstructinfo)
     

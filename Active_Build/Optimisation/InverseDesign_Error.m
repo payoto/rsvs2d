@@ -101,7 +101,7 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
         m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
 
-   teps=5.48e-04; % true @ corner=1e-5
+   teps=5.48e-04/2/0.8; % true @ corner=1e-5
    x(x>1)=1;
    x(x<0)=0;
     

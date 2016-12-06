@@ -75,6 +75,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     switch typeSmear
         case 'length'
             [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
+        case 'lengthD'
+            [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
         case 'd'
             [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon);
         case 'dir'
@@ -86,21 +88,31 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         lagMultiPast=zeros([numel(volumefraction) 1]);
     end
     [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMultiPast,numel(volumefraction));
-    isFreeze=logical([snaxel(:).isfreeze]);
+    isFreeze=[snaxel(:).isfreeze];
     %   [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     warning('OFF','MATLAB:nearlySingularMatrix')
     if true
         [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
-        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
+        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze));
+        finIsFreeze=logical(isFreeze);
+        if any(isnan(Deltax))
+            [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,(isFreeze==1));
+            finIsFreeze=(isFreeze==1);
+        end
         HL=Hf;
     else
         [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
-        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreeze);
+        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze));
+        finIsFreeze=logical(isFreeze);
+        if any(isnan(Deltax))
+            [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,(isFreeze==1));
+            finIsFreeze=(isFreeze==1);
+        end
         HL=Hf+HA;
     end
     
     warning('ON','MATLAB:nearlySingularMatrix')
-    Deltax(isFreeze)=DeltaxisFreeze(isFreeze);
+    Deltax(finIsFreeze)=DeltaxisFreeze(finIsFreeze);
     [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast);
     
     forceparam.lagMulti=lagMulti;
@@ -470,6 +482,86 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthSmear(snaxel,snakpositi
         % calculating data
         
         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
+            (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        
+    end
+    
+    
+    for ii=length(snakposition):-1:1
+        [derivtenscalc(ii).a_i,...
+            derivtenscalc(ii).a_m,...
+            derivtenscalc(ii).a_im,...
+            derivtenscalc(ii).b_i,...
+            derivtenscalc(ii).b_m,...
+            derivtenscalc(ii).c]=...
+            Calc_LengthDerivCoeff(...
+            derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
+            derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
+        
+        [derivtenscalc(ii)]=CalculateDerivatives(derivtenscalc(ii));
+        
+        %         if (abs(dot(derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m))<=1e-10) ...
+        %                 && (sum(derivtenscalc(ii).g1_i==derivtenscalc(ii).g1_m)==numel(derivtenscalc(ii).g1_i))
+        %             printf('We''d have a problem')
+        %         end
+        
+    end
+    testnan=find(isnan([derivtenscalc(:).d2fiddi2]));
+    if ~isempty(testnan)
+        testnan
+    end
+end
+
+function [derivtenscalc]=ExtractDataForDerivatives_LengthDSmear(snaxel,snakposition,snakPosIndex,smearLengthEps)
+    
+    normVec=@(vec) sqrt(sum(vec.^2,2));
+    
+    derivtenscalcTemplate=struct('index',[],...
+        'snaxprec',[],...
+        'precsub',[],...,...
+        'cellprec',[],...
+        'cellprecsub',[],...
+        'Dg_i',[],...
+        'Dg_m',[],...
+        'g1_i',[],...
+        'g1_m',[],...
+        'd_i',[],...
+        'd_m',[],...
+        'p_i',[],...
+        'p_m',[],...
+        'normFi',[],...
+        'a_i',[],...
+        'a_m',[],...
+        'a_im',[],...
+        'b_i',[],...
+        'b_m',[],...
+        'c',[],...
+        'dfiddi',[],...
+        'dfiddm',[],...
+        'd2fiddi2',[],...
+        'd2fiddm2',[],...
+        'd2fiddim',[]...
+        );
+    derivtenscalc=repmat(derivtenscalcTemplate,[1,length(snakposition)]);
+    
+    for ii=length(snakposition):-1:1
+        neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
+        
+        derivtenscalc(ii).index=snakposition(ii).index;
+        derivtenscalc(ii).snaxprec=snaxel(ii).snaxprec;
+        derivtenscalc(ii).precsub=neighSub;
+        % extracting data from preexisting arrays
+        derivtenscalc(ii).Dg_i=snakposition(ii).vectornotnorm;
+        derivtenscalc(ii).Dg_m=snakposition(neighSub).vectornotnorm;
+        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
+        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
+        derivtenscalc(ii).p_i=snakposition(ii).coord;
+        derivtenscalc(ii).p_m=snakposition(neighSub).coord;
+        derivtenscalc(ii).d_i=snaxel(ii).d;
+        derivtenscalc(ii).d_m=snaxel(neighSub).d;
+        % calculating data
+        
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*(normVec(derivtenscalc(ii).Dg_i)*normVec(derivtenscalc(ii).Dg_m))+sum(...
             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
     end

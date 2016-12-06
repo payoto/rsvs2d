@@ -71,7 +71,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
 %     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
 %         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
     
-    teps=5.48e-04;
+    teps=5.48e-04/2/0.8;
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
         (tDistrib(1:end-1)+tDistrib(2:end))/2]);
     
@@ -92,8 +92,8 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
     coord(:,2)=coord(:,2)*axisRatio;%;
     
     xPos=RemoveIdenticalEntries(coord(:,1));
-    xMax=max(xPos);
-    xMin=min(xPos);
+    xMax=1; %max(xPos);
+    xMin=0; %min(xPos);
     fillSub=zeros([1,sum(isActive)]);
     reqFrac=zeros([1,sum(isActive)]);
     actCellSub=find(isActive);
@@ -105,7 +105,8 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         posMin=min(cornerCoord);
         posMax=max(cornerCoord);
         
-        x=linspace(posMin(1),posMax(1),200);
+        %x=linspace(posMin(1),posMax(1),200);
+        x=min(max(linspace(posMin(1),posMax(1),200),xMin),xMax);
         tDistrib=naca4t(x,t,(xMax-xMin),xMin,a4_closed,teps);
         cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
         y=min(max(cDistrib+tDistrib,posMin(2)),posMax(2))-min(max(cDistrib-tDistrib,posMin(2)),posMax(2));

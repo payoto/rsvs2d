@@ -553,7 +553,7 @@ function [paroptim]=Inverse_Bulk()
     
     [paroptim]=DefaultOptim();
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign');
-    [paroptim]=SnaxVolResConstraint(paroptim);
+    %[paroptim]=SnaxVolResConstraint(paroptim);
     paroptim=InvDesObjective(paroptim);
     [paroptim]=OptimDE(paroptim);
     paroptim.general.objectiveName='InverseDesignBulk';
@@ -1966,7 +1966,7 @@ function paroptim=bulkNacaInvDes()
             end
         end
     end
-    initInterp=initInterp(1:4);
+    %initInterp=initInterp(1:4);
     
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;

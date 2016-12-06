@@ -77,19 +77,28 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
         case 'cosX1'        
         xMax=1; %max(coord(:,1));
         xMin=-1; %min(coord(:,1));
-        [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
         case 'cosX01'        
         xMax=1; %max(coord(:,1));
         xMin=0; %min(coord(:,1));
-        [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
         case 'cosXsquared01'        
         xMax=1; %max(coord(:,1));
         xMin=0; %min(coord(:,1));
-        [unstructured]=Cos2GridDistrib(unstructured,xMax,xMin);
+        [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
+        case 'cosXYsquared01'        
+        xMax=1; %max(coord(:,1));
+        xMin=0; %min(coord(:,1));
+        [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
+        [unstructured]=CosGridDistribY(unstructured);
+        case 'cosXsquared'        
+        xMax=max(unstructured.vertex.coord(:,1));
+        xMin=min(unstructured.vertex.coord(:,1));
+        [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
         case 'cosX'
         xMax=max(unstructured.vertex.coord(:,1));
         xMin=min(unstructured.vertex.coord(:,1));
-        [unstructured]=CosGridDistrib(unstructured,xMax,xMin);
+        [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
         
         otherwise
             warning('Unrecognised grid distribution Type')
@@ -97,7 +106,7 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
     
 end
 
-function [unstructured]=CosGridDistrib(unstructured,xMax,xMin)
+function [unstructured]=CosGridDistribX(unstructured,xMax,xMin)
     
     coord=unstructured.vertex.coord;
     x=coord(:,1);
@@ -120,7 +129,7 @@ function [unstructured]=CosGridDistrib(unstructured,xMax,xMin)
     
 end
 
-function [unstructured]=Cos2GridDistrib(unstructured,xMax,xMin)
+function [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin)
     
     coord=unstructured.vertex.coord;
     x=coord(:,1);
@@ -145,6 +154,32 @@ function [unstructured]=Cos2GridDistrib(unstructured,xMax,xMin)
     
 end
 
+function [unstructured]=CosGridDistribY(unstructured)
+    % Centred
+    distrib=@(y)-sign(y).*(cos(y*pi)-1)/2;
+    coord=unstructured.vertex.coord;
+    y=coord(:,2);
+    y1=unique(y);
+    [~,I]=min(y1);y1(I)=[];yMin=min(y1);[~,I]=max(y1);y1(I)=[];yMax=max(y1);
+    Dy=yMax-y;
+
+    Dy=min(abs(Dy(Dy>1e-10)));
+
+    yNorm=(y-yMin)/(yMax-yMin);
+    newY=distrib(yNorm-0.5)*(yMax-yMin);
+    DminNx=[newY(yNorm<1 & yNorm>0)-yMax];
+    DminNxBack=min(abs(DminNx(DminNx~=0)));
+    DminNx=[newY(yNorm<1 & yNorm>0)-yMin];
+    DminNxFront=min(abs(DminNx(DminNx~=0)));
+
+    newY((y>yMax))=(y(y>yMax)-yMax)/Dy*DminNxBack+yMax;
+
+    newY((y<yMin))=(y(y<yMin)-yMin)/Dy*DminNxFront+yMin;
+
+    coord(:,2)=newY;
+    unstructured.vertex.coord=coord;
+    
+end
 %% Initialisation Functions
 
 function [unstructured]=InitialisEdgeGrid(param)
@@ -310,8 +345,9 @@ function [parametrisation,cellRef]=OptimInit(param,isRand)
         parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=...
             rand(size(parametrisation.fill(2:nGridSteps(1)-1,2:nGridSteps(2)-1)));
     end
-    if islogical(corneractive) || corneractive==0 || corneractive==1
-        parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
+    parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
+    if islogical(corneractive) || (~ischar(corneractive) && (corneractive==0 || corneractive==1))
+        
 
         parametrisation.fill([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=defaultCorner;
         parametrisation.isactive([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=corneractive;
@@ -321,14 +357,20 @@ function [parametrisation,cellRef]=OptimInit(param,isRand)
         LEcol=2;
         TEcol=nGridSteps(1)-1;
         vertPosRow=floor(nGridSteps(2)/2);
-        vertPosRow=vertPosRow+rem(vertPosRow,2):vertPosRow+1;
+        vertPosRow=vertPosRow+rem(nGridSteps(2),2):vertPosRow+1;
         switch corneractive
             case 'LE'
-                
+                parametrisation.isactive(LEcol,:)=false;
+                parametrisation.fill(LEcol,:)=0;
+                parametrisation.fill(LEcol,vertPosRow)=defaultCorner;
             case 'TE'
-                
+                parametrisation.isactive(TEcol,:)=false;
+                parametrisation.fill(TEcol,:)=0;
+                parametrisation.fill(TEcol,vertPosRow)=defaultCorner;
             case 'LETE'
-                
+                parametrisation.isactive([LEcol,TEcol],:)=false;
+                parametrisation.fill([LEcol,TEcol],:)=0;
+                parametrisation.fill([LEcol,TEcol],vertPosRow)=defaultCorner;
         end
     end
     
