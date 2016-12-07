@@ -1012,11 +1012,11 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
         previousV=snaxel(breedSub).v;
         previousACC=snaxel(breedSub).acc;
         stepL=snaxelRepop(1).d;
-        for ii=1:length(snaxelRepop)
-            snaxelRepop(ii).d=0;
-            snaxelRepop(ii).v=0;%previousV;
-            snaxelRepop(ii).acc=previousACC;
-        end
+%         for ii=1:length(snaxelRepop)
+%             snaxelRepop(ii).d=0;
+%             snaxelRepop(ii).v=0;%previousV;
+%             snaxelRepop(ii).acc=previousACC;
+%         end
         rePopInd=[rePopInd,[snaxelRepop(:).index]];
         [snaxel]=AddSnaxel(snaxel,snaxelRepop);
         % Remove breeding snaxels snaxels
@@ -1036,6 +1036,32 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
 end
 
 function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeOrient,edgeIndList,refGridRatio)
+    vSnax=[snaxel(:).v];
+    
+    [snaxel(:).v]=deal(0);
+    snaxInd=[snaxel(:).index];
+    [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeOrient,edgeIndList,refGridRatio);
+    repopSub=FindObjNum([],rePopInd,snaxInd);
+    rePopInd=rePopInd(repopSub~=0);
+    repopSub=repopSub(repopSub~=0);
+    
+    [snaxel(repopSub).v]=deal(snaxel(repopSub).d);
+    
+%     for ii=1:numel(repopSub)
+%         snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
+%     end
+    
+    maxDist=MaxTravelDistance(snaxel);
+    
+    for ii=1:length(repopSub)
+        snaxel(repopSub(ii)).d=min([maxDist(repopSub(ii)),snaxel(repopSub(ii)).d]);
+    end
+    for ii=1:length(snaxel)
+        snaxel(ii).v=vSnax(ii);
+    end
+end
+
+function [snaxel]=TakePostRepopStepOLD(snaxel,rePopInd,stepL,edgeOrient,edgeIndList,refGridRatio)
     vSnax=[snaxel(:).v];
     
     [snaxel(:).v]=deal(0);
@@ -1540,13 +1566,13 @@ end
 function [finishedSnakesSub]=ArrivalCondition(snaxel)
     % Calculates the arrival condition for repopulation
     
-    global arrivalTolerance maxDt
+    global arrivalTolerance maxDt snaxInitPos
     v=[snaxel(:).v];
     d=[snaxel(:).d];
     isFreeze=[snaxel(:).isfreeze]; % finds all unfrozen
     isFwd=v>=0;
     isArriving=d>=(1-arrivalTolerance);
-    isArrived=d>=(1-1e-8);
+    isArrived=d>=(1-snaxInitPos^2);
     willImpact=abs((1-d)./v)<maxDt;
     finishedSnakesSub=find((isFwd & ~isFreeze & isArriving & willImpact)...
         | (isArrived & ~isFreeze & isFwd));

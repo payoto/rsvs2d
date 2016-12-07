@@ -1097,16 +1097,21 @@ function [param]=optimInverseDesign_bulk()
    
     [param]=optimInverseDesign();
     
-    param.snakes.step.maxStep=0.3;
-    param.snakes.step.maxDt=0.5;
-    
     param.snakes.refine.axisRatio=1;
     param.optiminit.defaultfill=0.3;
-     param.snakes.step.snakesConsole=false;
-     param.snakes.step.fillLooseStep=20;
-    param.snakes.step.fillLooseCut=1e-1;
     
-    param.snakes.force.lengthEpsilon=1e-3;
+    param.snakes.step.maxStep=0.3;
+    param.snakes.step.maxDt=0.5;
+    param.snakes.step.snakesConsole=false;
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=1e-1;
+    param.snakes.step.vertLooseStep=100;
+    param.snakes.step.snakData='all';
+    param.snakes.step.snakesSteps=100;
+    param.snakes.step.mergeTopo=false;
+    param.snakes.step.snaxInitPos=2e-4;
+    
+    param.snakes.force.lengthEpsilon=1e-4;
     param.snakes.force.distEpsilon=2e-5;
     param.snakes.force.dirEpsilon=1e-5;
     
@@ -1118,10 +1123,8 @@ function [param]=optimInverseDesign_bulk()
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.pinnedVertex='LETE'; 
-    param.snakes.step.vertLooseStep=20;
-    param.snakes.step.snakData='light';
-    param.snakes.step.snakesSteps=100;
-    param.snakes.step.mergeTopo=false;
+    
+
     param.snakes.refine.refineGrid=[4 1];
     param.general.restart=false;
     param.snakes.refine.gridDistrib='cosXYsquared01';
