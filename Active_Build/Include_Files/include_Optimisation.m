@@ -525,3 +525,40 @@ function population=ApplySymmetry(paramoptim,population)
     
 end
 
+function [res]=TestDeviationPopStruct(population,cellTest)
+    
+    for ii=1:numel(cellTest)
+        analysisVal=[];
+        for jj=1:numel(population)
+            analysisVal=[analysisVal,population(jj).additional.(cellTest{ii})];
+        end
+        figure('Name',cellTest{ii})
+        subplot(2,2,1)
+        normplot(analysisVal)
+        res.(cellTest{ii}).mean=mean(analysisVal);
+        res.(cellTest{ii}).median=median(analysisVal);
+        res.(cellTest{ii}).std=std(analysisVal);
+        res.(cellTest{ii}).max=max(analysisVal);
+        res.(cellTest{ii}).min=min(analysisVal);
+        res.(cellTest{ii}).decile=quantile(analysisVal,9);
+        subplot(2,2,3)
+        semilogy(res.(cellTest{ii}).decile)
+        grid on
+        xlabel('decile')
+        ylabel('Val')
+        analysisVal=log10(analysisVal);
+        subplot(2,2,2)
+        normplot(analysisVal)
+        res.(cellTest{ii}).logmean=10^mean(analysisVal);
+        res.(cellTest{ii}).logmedian=10^median(analysisVal);
+        res.(cellTest{ii}).logstd=std(analysisVal);
+        res.(cellTest{ii}).logmax=10^max(analysisVal);
+        res.(cellTest{ii}).logmin=10^min(analysisVal);
+        res.(cellTest{ii}).logdecile=10.^quantile(analysisVal,9);
+        subplot(2,2,4)
+        plot(quantile(analysisVal,9))
+        grid on
+        xlabel('decile')
+        ylabel('log10(Val)')
+    end
+end

@@ -561,7 +561,7 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthDSmear(snaxel,snakposit
         derivtenscalc(ii).d_m=snaxel(neighSub).d;
         % calculating data
         
-        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*(normVec(derivtenscalc(ii).Dg_i)*normVec(derivtenscalc(ii).Dg_m))+sum(...
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*min(normVec(derivtenscalc(ii).Dg_i)*normVec(derivtenscalc(ii).Dg_m))^2+sum(...
             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
     end

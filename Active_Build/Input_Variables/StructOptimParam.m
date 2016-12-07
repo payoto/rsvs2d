@@ -1957,7 +1957,7 @@ function paroptim=bulkNacaInvDes()
     paroptim.general.startPop='NACAmulti';
     t1={'1','2','3','4'};
     t2={'1','2','3','4','5','6','7'};
-    t3={'08','10','12','16','18'};
+    t3={'06','08','10','12','16'};
     initInterp{1}='0012';
     for ii=1:numel(t1)
         for jj=1:numel(t1)
@@ -1966,7 +1966,7 @@ function paroptim=bulkNacaInvDes()
             end
         end
     end
-    %initInterp=initInterp(1:4);
+    initInterp=initInterp(1:4);
     
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;
