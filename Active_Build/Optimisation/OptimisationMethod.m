@@ -553,7 +553,7 @@ function [stepVector,supportOptim]=NewStepDirectionConjGrad(gradDes_curr,gradDes
             signD=1;
     end
     %scale=(normVec(gradDes_curr)/normVec(prevStep))^2;
-    scale=dot(gradDes_curr,gradDes_curr-gradDes_m1)/dot(gradDes_m1,gradDes_m1);
+    scale=dot(gradDes_curr,gradDes_curr-gradDes_m1)/dot(gradDes_m1,gradDes_m1); % Polak Ribiere
     if ~isfinite(scale) || all(prevStep==0)
         scale=0;
     end
