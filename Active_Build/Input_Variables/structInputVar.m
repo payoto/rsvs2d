@@ -1106,16 +1106,16 @@ function [param]=optimInverseDesign_bulk()
     param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=1e-1;
     param.snakes.step.vertLooseStep=100;
-    param.snakes.step.snakData='all';
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesSteps=200;
     param.snakes.step.mergeTopo=false;
-    param.snakes.step.snaxInitPos=2e-4;
+    param.snakes.step.snaxInitPos=5e-4;
     
-    param.snakes.force.lengthEpsilon=1e-4;
+    param.snakes.force.lengthEpsilon=1e-3;
     param.snakes.force.distEpsilon=2e-5;
     param.snakes.force.dirEpsilon=1e-5;
     
-    param.optiminit.defaultCorner=1e-4;
+    param.optiminit.defaultCorner=4*1e-4;
     param.optiminit.corneractive='TE';
     
     param.snakes.force.typeSmear='lengthD';

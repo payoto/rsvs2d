@@ -260,7 +260,7 @@ function [nonBreedVert]=SetNonBreedVertices(borderVertices,iterNum,param)
     nonBreedVert=[];
     
     if iterNum<=vertLooseStep
-        nonBreedVert=[nonBreedVert,borderVertices.weak];
+        nonBreedVert=[nonBreedVert,borderVertices.weak,borderVertices.loop'];
     end
     nonBreedVert=unique(nonBreedVert);
 end
@@ -321,6 +321,7 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     [borderVertices.weak]=FindWeakBorderVertex(oldGrid,cellCentredGrid,volfracconnec);
     % Inside contour info will change depending on the type of contour under
     % consideration (0 contour or 1 contour)
+    borderVertices.loop=loop.vertex.index;
     [snaxel,insideContourInfo]=SnaxelInitialisation(refinedGriduns,loop,insideContourInfo,boundstr);
     
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
@@ -1572,7 +1573,7 @@ function [finishedSnakesSub]=ArrivalCondition(snaxel)
     isFreeze=[snaxel(:).isfreeze]; % finds all unfrozen
     isFwd=v>=0;
     isArriving=d>=(1-arrivalTolerance);
-    isArrived=d>=(1-snaxInitPos^2);
+    isArrived=d>=(1-snaxInitPos/100);
     willImpact=abs((1-d)./v)<maxDt;
     finishedSnakesSub=find((isFwd & ~isFreeze & isArriving & willImpact)...
         | (isArrived & ~isFreeze & isFwd));
@@ -2094,7 +2095,7 @@ end
 function [isImpact]=EdgeImpactCondition(dSnax,vSnax,fromvertSnax,sub1,sub2)
     % edge Impact condition
     
-    global arrivalTolerance
+    global snaxInitPos
     sameDir=fromvertSnax(sub1)==fromvertSnax(sub2);
     if sameDir
         warning('Snaxels are adjacent and moving in same direction Impact condition is invalid')
@@ -2111,7 +2112,7 @@ function [isImpact]=EdgeImpactCondition(dSnax,vSnax,fromvertSnax,sub1,sub2)
     isContact=deltaD==0;
     deltaV=signDeltaD*(vSnax(sub1)+vSnax(sub2));
     
-    isClose=abs(deltaD)<=arrivalTolerance;
+    isClose=abs(deltaD)<=snaxInitPos;
     isApproaching=(deltaV)>0;
     isImpact=(isClose && isApproaching) || isContact;
 end

@@ -156,7 +156,7 @@ end
 
 function [unstructured]=CosGridDistribY(unstructured)
     % Centred
-    distrib=@(y)-sign(y).*(cos(y*pi)-1)/2;
+    distrib=@(y) (sign(y).*(1-cos(y*pi)).^1.7)/2;
     coord=unstructured.vertex.coord;
     y=coord(:,2);
     y1=unique(y);

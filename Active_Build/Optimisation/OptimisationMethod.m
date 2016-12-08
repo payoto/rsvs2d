@@ -102,27 +102,31 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
             end
     end
     
-    
-    for ii=1:nPop
-        % Mutation
-        rInd=randperm(nPop-1,3);
-        rInd(rInd>=ii)=rInd(rInd>=ii)+1;
-        mutVec=projFunc(projInv(iterCurr(rInd(1)).fill)+diffAmp*...
-            (projInv(iterCurr(rInd(2)).fill)-projInv(iterCurr(rInd(3)).fill)));
-        %mutVec=mutVec*(max(desVarRange)-min(desVarRange))+min(desVarRange);
-        %         mutVec(mutVec>max(desVarRange))=max(desVarRange);
-        %         mutVec(mutVec<min(desVarRange))=min(desVarRange);
-        % Crossover
-        crossVec=-ones([1,nFill]);
-        
-        [fromMutVecLog]=ExtractDEIndices(nDes,nFill,CR,indexmap);
-        
-        crossVec(fromMutVecLog)=mutVec(fromMutVecLog);
-        crossVec(~fromMutVecLog)=iterCurr(ii).fill(~fromMutVecLog);
-        
-        [crossVec]=OverflowHandling(paramoptim,crossVec);
-        newPop(ii,:)=crossVec;
-        
+    if nPop>=4
+        for ii=1:nPop
+            % Mutation
+            rInd=randperm(nPop-1,3);
+            rInd(rInd>=ii)=rInd(rInd>=ii)+1;
+            mutVec=projFunc(projInv(iterCurr(rInd(1)).fill)+diffAmp*...
+                (projInv(iterCurr(rInd(2)).fill)-projInv(iterCurr(rInd(3)).fill)));
+            %mutVec=mutVec*(max(desVarRange)-min(desVarRange))+min(desVarRange);
+            %         mutVec(mutVec>max(desVarRange))=max(desVarRange);
+            %         mutVec(mutVec<min(desVarRange))=min(desVarRange);
+            % Crossover
+            crossVec=-ones([1,nFill]);
+            
+            [fromMutVecLog]=ExtractDEIndices(nDes,nFill,CR,indexmap);
+            
+            crossVec(fromMutVecLog)=mutVec(fromMutVecLog);
+            crossVec(~fromMutVecLog)=iterCurr(ii).fill(~fromMutVecLog);
+            
+            [crossVec]=OverflowHandling(paramoptim,crossVec);
+            newPop(ii,:)=crossVec;
+            
+        end
+    else
+        warning('Population size is too small for DE - new Pop will be same as old')
+        newPop=vertcat(iterCurr(:).fill);
     end
     
 end
@@ -196,8 +200,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [gradF_curr,gradF_m1,gradAdd_curr,gradAdd_m1]...
             =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim);
         
-         [gradDes_curr,gradDes_m1]=GradFtoGradDes(gradF_curr,gradF_m1,modestruct,gradScale);
-         [gradDes_curr]=ConstraintScaleGradient(gradDes_curr,gradAdd_curr,constrCurr,direction,validVol);
+        [gradDes_curr,gradDes_m1]=GradFtoGradDes(gradF_curr,gradF_m1,modestruct,gradScale);
+        [gradDes_curr]=ConstraintScaleGradient(gradDes_curr,gradAdd_curr,constrCurr,direction,validVol);
         [gradDes_m1]=ConstraintScaleGradient(gradDes_m1,gradAdd_m1,constrm1,direction,validVol);
         % Get Corresponding design vector direction
         
