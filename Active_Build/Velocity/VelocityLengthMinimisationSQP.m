@@ -76,7 +76,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         case 'length'
             [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
         case 'lengthD'
-            [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
+            [derivtenscalc2]=ExtractDataForDerivatives_LengthDSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
         case 'd'
             [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon);
         case 'dir'
@@ -561,7 +561,7 @@ function [derivtenscalc]=ExtractDataForDerivatives_LengthDSmear(snaxel,snakposit
         derivtenscalc(ii).d_m=snaxel(neighSub).d;
         % calculating data
         
-        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*min(normVec(derivtenscalc(ii).Dg_i)*normVec(derivtenscalc(ii).Dg_m))^2+sum(...
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*min(normVec(derivtenscalc(ii).Dg_i),normVec(derivtenscalc(ii).Dg_m))^2+sum(...
             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
     end

@@ -1966,8 +1966,8 @@ function paroptim=bulkNacaInvDes()
             end
         end
     end
-    initInterp=initInterp(1:4);
-    
+    %initInterp=initInterp(1:4);
+    %initInterp={'0012','4412','1108'};
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=1;
@@ -1976,6 +1976,23 @@ function paroptim=bulkNacaInvDes()
     
 end
 
+
+function paroptim=bulkOtherInvDes()
+    [paroptim]=Inverse_Bulk();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk');
+    paroptim.obj.invdes.aeroName='';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='AEROmulti';
+    initInterp={'RAE 2822 AIRFOIL','ONERA NACA CAMBRE AIRFOIL'};
+    paroptim.obj.invdes.aeroClass='lib';
+    paroptim.general.initInterp=initInterp;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=1;
+    paroptim.general.worker=4;
+    paroptim.spline.resampleSnak=false;
+    
+end
 function paroptim=bulkNacaInvDes2()
     [paroptim]=Inverse_Bulk();
     

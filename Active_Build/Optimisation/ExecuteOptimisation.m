@@ -1037,6 +1037,12 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
                 origPop(ii,1:numel(rootFill{2}))=rootFill{2};
             end
             nPop=numel(initInterp);
+        case 'AEROmulti'
+            for ii=1:numel(initInterp)
+                [rootFill]=OuterLimitInverse(baseGrid,paroptim,initInterp{ii});
+                origPop(ii,1:numel(rootFill{2}))=rootFill{2};
+            end
+            nPop=numel(initInterp);
         case 'loadshape'
             specificFillName=MakePathCompliant(specificFillName);
             [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
@@ -1063,7 +1069,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         for ii=1:nPop
             iterstruct(1).population(ii).fill=origPop(ii,:);
         end
-        if strcmp('NACAmulti',startPop)
+        if strcmp('NACAmulti',startPop) || strcmp('AEROmulti',startPop)
             for ii=1:nPop
                 iterstruct(1).population(ii).additional.Airfoil=initInterp{ii};
             end

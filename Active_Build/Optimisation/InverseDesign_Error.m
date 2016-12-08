@@ -21,7 +21,9 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     switch aeroClass
         case 'NACA'
             [targCoord]=GenerateNacaCoord(analysisCoord(:,1),upperLower,aeroName);
+        case 'lib'
             
+            [targCoord]=GenerateLibCoord(analysisCoord(:,1),upperLower,aeroName);
         otherwise
             error('not coded yet') 
     end
@@ -39,7 +41,7 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     plotPoints(analysisCoord)
     hold on
     plotPoints(targCoord)
-    legend('snake points','NACA points')
+    legend('snake points','Target points')
     ax=subplot(2,1,2);
     plot(analysisCoord(:,1),modifiedDistance)
     ax.YScale='log';
@@ -87,6 +89,39 @@ end
 
 %% Profile extraction
 
+function [nacaCoord]=GenerateLibCoord(x,uplow,airfoilstr)
+    % Generates y coordinate for a NACA airfoil.GenerateLibCoord
+    % X are the desired x coordinates, uplow is a vector the same size 
+    
+    % xTop and xBot need to be normalised
+   
+   teps=5.48e-04/2/0.8; % true @ corner=1e-5
+   
+    
+   [airfoilDat,airfoil]=ReadAirfoilData(airfoilstr,'');
+   
+   xMax=airfoil.func.xMax; %max(xPos);
+   xMin=airfoil.func.xMin; %min(xPos);
+   x(x>xMax)=xMax;
+   x(x<xMin)=xMin;
+   
+   if any(abs(uplow)~=1)
+       error('Vector uplow indicating uppper or lower surface is not well formed')
+   end
+   y=zeros(size(x));
+   y(uplow==1)=airfoil.func.upper(x(uplow==1))+(x(uplow==1)-xMin)/(xMax-xMin)*teps;
+   y(uplow==-1)=airfoil.func.lower(x(uplow==-1))-(x(uplow==-1)-xMin)/(xMax-xMin)*teps;
+   
+   
+   if size(x,1)==1
+       nacaCoord=[x;y]';
+   else
+       nacaCoord=[x,y];
+   end
+   
+    
+end
+
 function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     % Generates y coordinate for a NACA airfoil.
     % X are the desired x coordinates, uplow is a vector the same size 
@@ -133,7 +168,6 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     end
     
 end
-
 
 
 
