@@ -130,7 +130,7 @@ write(unitno2,*) 'DATAPACKING=BLOCK'
 write(unitno2,*) 'ZONETYPE=FEPOLYGON'
 
 ! Calculate Linelengh
-lineLength=floor(30000.0/(14.0+1.0))
+lineLength=floor(30000.0/(30.0+1.0))
 nLines=ceiling(dble(nvert)/dble(lineLength))
 
 do j=2,3
@@ -144,7 +144,7 @@ enddo
 write(unitno2,"(ES30.20E2) ") (grd(lEnd,j))
 enddo
 enddo
-lineLength=floor(30000.0/(14.0+1.0))
+lineLength=floor(30000.0/(30.0+1.0))
 nLines=ceiling(dble(ncells)/dble(lineLength))
 
 do ed=1,nedge
