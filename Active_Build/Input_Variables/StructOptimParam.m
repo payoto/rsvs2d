@@ -919,7 +919,7 @@ function paroptim=test_refine1()
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=20;
+    paroptim.general.maxIter=4;
     paroptim.general.worker=4;
 end
 function paroptim=test_refine2()
@@ -1627,6 +1627,22 @@ function paroptim=VolSweep(e)
     
 end
 % Bp3 Inverse design sweep
+
+
+function paroptim=desk_refsweep_cv00012()
+    [paroptim]=Inverse_CG();
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_cv');
+    paroptim.obj.invdes.aeroName='0012';
+    
+    paroptim.optim.CG.lineSearchType='backbisection';
+    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=4;
+end
+
 
 function paroptim=bp3_refsweep_cv00012()
     [paroptim]=Inverse_CG();

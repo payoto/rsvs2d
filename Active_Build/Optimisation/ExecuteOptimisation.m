@@ -84,8 +84,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         %end
         
         if refStage<(nOptimRef+1)
-            warning('Refinement Needs updating it is not currently supported')
-            break
+%             warning('Refinement Needs updating it is not currently supported')
+%             break
             
             [paramoptim,outinfo,iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
@@ -1793,6 +1793,13 @@ function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
         profloops(ii).newFracs=(transformstruct.coeff*...
             profloops(ii).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
     end
+    
+%     profProf=[profloops(:).prof];
+%     indFindRoot=find(iterProf==max(iterProf) & profProf==1);
+%     volSubs=FindObjNum([],transformstruct.indOld,profloops(indFindRoot).refinevolfrac.index);
+%     profloops(indFindRoot).newFracs=(transformstruct.coeff*...
+%         profloops(indFindRoot).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
+    
 end
 
 
@@ -1858,7 +1865,7 @@ function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     
 end
 
-function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter)
+function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,supportOptim)
     
     actFill=logical([baseGrid.cell(:).isactive]);
     iterProf=[profloops(:).iter];
@@ -1896,6 +1903,8 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
         iterstruct(ii).population(1).optimdat.var=...
             iterstruct(ii).population(jj).optimdat.var;
     end
+    
+   % supportOptim.curr.prevStep
 end
 
 
