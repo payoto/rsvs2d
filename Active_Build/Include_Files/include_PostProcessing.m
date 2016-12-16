@@ -194,6 +194,7 @@ function [varStr]=GenerateVariableString(startVar)
     
     classVar=class(startVar);
     [m,n]=size(startVar);
+    varStr='';
     switch classVar
         case 'char'
             
