@@ -197,9 +197,10 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     varExtract={'axisRatio'};
     [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
     
-    t=out.tOutput;
-    rootDir=out.rootDir;
-    marker=out.marker;
+    t=out(end).tOutput;
+    rootDir=out(end).rootDir;
+    allRootDir={out(:).rootDir};
+    marker=out(end).marker;
     markerSmall=datestr(t,'_yymmddTHHMM');
     writeDirectory=[rootDir];
     writeDirectory=MakePathCompliant(writeDirectory);
@@ -258,13 +259,16 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
         tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
         ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
-            tecPlotFile,axisRatio,paroptim);
+            tecPlotFile,axisRatio,paroptim,allRootDir);
         
     end
     
 end
 
 function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
+    
+    
+    error('Function Is Deprecated')
     
     varExtract={'direction','knownOptim','objectiveName'};
     [direction,knownOptim,objectiveName]=ExtractVariables(varExtract,paroptim);
@@ -403,8 +407,18 @@ end
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
     returnName={};
-    subDir=dir(rootDir);
-    subDir(1:2)=[];
+%     if iscell(rootDir)
+%         subDir=dir(rootDir{1});
+%         subDir(1:2)=[];
+%         for ii=2:numel(rootDir)
+%             partsubDir=dir(rootDir{ii});
+%             partsubDir(1:2)=[];
+%             subDir=[subDir,partsubDir];
+%         end
+%     else
+        subDir=dir(rootDir);
+        subDir(1:2)=[];
+%     end
     nameCell={subDir(:).name};
     isprofileDirCell=strfind(nameCell,strDir);
     for ii=1:length(subDir)
@@ -452,15 +466,7 @@ function [FID]=OpenOptimumFlowLayFile(writeDirectory,marker)
     
 end
 
-function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlotFile,ratio,paramoptim)
-    
-    
-    varExtract={'defaultVal','worker'};
-    [defaultVal,worker]=ExtractVariables(varExtract,paramoptim);
-    
-    delete(tecPlotFile{1});
-    delete(tecPlotFile{2});
-    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
+function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
     
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
     isIter0=regexp(iterFolders,'_0');
@@ -477,21 +483,39 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
     end
     [destPath]=EditVariablePLT_FEPOLYGON(1:2,[1,ratio],[1e-6*pi/3.14,1e-6*pi/3.14],...
         regexprep(initTecFile{jj},initTecFileName{jj},''),initTecFileName{jj},2);
+    
     compType=computer;
     if strcmp(compType(1:2),'PC')
-        system(['type "',destPath,'" > "',tecPlotFile{2},'"']);
+        system(['type "',destPath,'" >> "',tecPlotFile{2},'"']);
     else
-        system(['cat ''',destPath,''' > ''',tecPlotFile{2},'''']);
+        system(['cat ''',destPath,''' >> ''',tecPlotFile{2},'''']);
+    end
+    listFileSep=regexp(rootFolder,filesep);
+    rootDirName=rootFolder(listFileSep(end)+1:end);
+end
+
+function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
+        tecPlotFile,ratio,paramoptim,allRootDir)
+    
+    
+    varExtract={'defaultVal','worker'};
+    [defaultVal,worker]=ExtractVariables(varExtract,paramoptim);
+    
+    delete(tecPlotFile{1});
+    delete(tecPlotFile{2});
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
+    
+    for ii=1:numel(allRootDir)
+        rootDirName{ii}=InitOptimalFlowOutput(allRootDir{ii},ratio,tecPlotFile);
     end
     
+    compType=computer;
     for ii=1:nIter
         itL=[optimstruct(ii).population(:).objective];
         nVarLoc=length(itL);
         iterRes(ii,1:nVarLoc)=itL;
         %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
     end
-    
-    
     
     switch dirOptim
         case 'min'
@@ -542,10 +566,17 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         
     end
     
+    minIterRootDirNum=zeros([1,nIter]);
+    
     for ii=1:nIter
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         [~,filename]=FindDir( minIterPos,'tecsubfile',false);
+        jj=1;
+        while isempty(regexp(minIterPos,rootDirName{jj}, 'once')) && jj<numel(rootDirName)
+            jj=jj+1;
+        end
+        minIterRootDirNum(ii)=jj;
         jj=1;
         try
             while ~isempty(regexp(filename{jj},'copy', 'once'))
@@ -567,10 +598,22 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,tecPlot
         copyfile([[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt'],...
             [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
         
-        [snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
+        %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
+        dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
+        expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'};
+        val={ii,3,minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
+        nOccur=[2 2 1 1];
+        [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
+        
         [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'CFD'],...
             ['flowplt_cell.plt',int2str(ii)]);
     end
+    
+    % dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'}
+    % expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'}
+    % val={ii,3,minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5}
+    % nOccur=[2 2 1 1]
+    % [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur)
     
     for ii=1:nIter
         if strcmp(compType(1:2),'PC')
@@ -683,6 +726,45 @@ function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
     fclose('all');
 end
 
+
+function [destPath]=EditPLTHeader(cfdPath,filename,dat,expr,val,nOccur)
+    
+    % dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'}
+    % expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'}
+    % val={time,strand,conneczone,conneczone}
+    % nOccur=[2 2 1 1]
+    %
+    
+    cfdPath=MakePathCompliant(cfdPath);
+    sourceF=fopen([cfdPath,filesep,filename],'r');
+    destPath=[cfdPath,filesep,'copy_',filename];
+    destF=fopen(destPath,'w');
+    
+    flagFinished=false;
+    
+    nOccurCurr=zeros(size(dat));
+    while (~feof(sourceF)) && ~flagFinished
+        str=fgetl(sourceF);
+        
+        for ii=1:numel(dat)
+            if ~isempty(regexp(str,dat{ii},'once'))
+                str=sprintf(expr{ii},val{ii});
+                nOccurCurr(ii)=nOccurCurr(ii)+1;
+                break
+            end
+        end
+        
+        fprintf(destF,[str,'\n']);
+        flagFinished= all(nOccurCurr>=nOccur);
+    end
+    
+    while (~feof(sourceF))
+        str=fgetl(sourceF);
+        fprintf(destF,[str,'\n']);
+    end
+    fclose('all');
+end
+
 function [destPath]=EditVariablePLT_FELINESEG(varList,ratio,cfdPath,filename)
     
     cfdPath=MakePathCompliant(cfdPath);
@@ -718,6 +800,8 @@ function [destPath]=EditVariablePLT_FELINESEG(varList,ratio,cfdPath,filename)
     end
     fclose('all');
 end
+
+
 
 function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,filename,nZone)
     

@@ -59,12 +59,12 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             procStr=['ITERATION ',int2str(nIter)];
             [tStart]=PrintStart(procStr,1);
             % Compute Shape using snakes
-            [iterstruct(nIter).population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
+            [iterstruct(nIter).population,restartsnake]=PerformIteration(paramoptim,outinfo(refStage),nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
                 baseGrid,connectstructinfo);
             % Evaluate Objective Function
             [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
             % create new population
-            OptimisationOutput('optstruct',paramoptim,outinfo,iterstruct);
+            OptimisationOutput('optstruct',paramoptim,outinfo(refStage),iterstruct);
             [~]=PrintEnd(procStr,1,tStart);
             if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
                 fprintf('\n Optimisation Stopped By convergence condition \n');
@@ -78,6 +78,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
         pause(0.01)
         diary off
         %try
+        %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
         OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
         %catch
         
@@ -87,9 +88,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
 %             warning('Refinement Needs updating it is not currently supported')
 %             break
             
-            [paramoptim,outinfo,iterstruct2,~,baseGrid,gridrefined,...
+            %save(['TestRefineFinal',int2str(refStage),'.mat'])
+            [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
-                HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo,baseGrid,gridrefined,...
+                HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
             
             if size(refineOptim,2)==3
@@ -1598,7 +1600,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     procStr='REFINE OPTIMISATION PROCESS';
     [tStart]=PrintStart(procStr,1);
-    
+    supportOptim=paramoptim.optim.supportOptim;
     % Initialise Optimisation
     % Get Parametrisation parameters
     varNames={'optimCase'};
@@ -1658,6 +1660,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter);
     
+    
     % Generate new snake restarts.
     [newFrac]=BuildNewRestartFrac(iterstruct,profloops);
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
@@ -1671,6 +1674,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridrefined]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
     
+    paramoptim.optim.supportOptim=UpdateStepDir(supportOptim,...
+        profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter);
     
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
@@ -1794,12 +1799,43 @@ function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
             profloops(ii).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
     end
     
-%     profProf=[profloops(:).prof];
-%     indFindRoot=find(iterProf==max(iterProf) & profProf==1);
-%     volSubs=FindObjNum([],transformstruct.indOld,profloops(indFindRoot).refinevolfrac.index);
-%     profloops(indFindRoot).newFracs=(transformstruct.coeff*...
-%         profloops(indFindRoot).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
+
+end
+
+
+function [supportOptim]=UpdateStepDir(supportOptim,profloops,transformstruct,connectstructinfo,...
+        iterstruct,oldBaseGrid,newBaseGrid)
     
+    profProf=[profloops(:).prof];
+    iterProf=[profloops(:).iter];
+    indFindRoot=find(iterProf==max(iterProf) & profProf==1);
+    newInd=[connectstructinfo.cell(:).new];
+    matOld2New=zeros(numel(connectstructinfo),numel(newInd));
+    
+    
+    for ii=1:numel(connectstructinfo.cell)
+        matOld2New(ii,FindObjNum([],connectstructinfo.cell(ii).new,...
+            profloops(indFindRoot).refinevolfrac.index))=1;
+    end
+    
+    profFineOldVol=profloops(indFindRoot).refinevolfrac.fractionvol';
+    iterFillOldVol=vertcat(oldBaseGrid.cell(:).fill);
+    iterFillOldVol(logical([oldBaseGrid.cell(:).isactive]))=iterstruct(end).population(1).fill;
+    
+    ratiosFill2Prof=profFineOldVol./(matOld2New'*iterFillOldVol);
+    ratiosFill2Prof(isnan(ratiosFill2Prof))=0;
+    ratiosFill2Prof(~isfinite(ratiosFill2Prof))=0;
+    matOld2New=matOld2New*diag(ratiosFill2Prof);
+    
+    stepOldVol=zeros([numel(oldBaseGrid.cell),1]);
+    stepOldVol(logical([oldBaseGrid.cell(:).isactive]))=supportOptim.curr.prevStep;
+    
+    volSubs=FindObjNum([],transformstruct.indOld,profloops(indFindRoot).refinevolfrac.index);
+    profStepFill=(matOld2New'*stepOldVol);
+    newStep=(transformstruct.coeff*profStepFill(volSubs))./ transformstruct.volumeNew;
+    
+    actFill=logical([newBaseGrid.cell(:).isactive]);
+    supportOptim.curr.prevStep=newStep(actFill)';
 end
 
 

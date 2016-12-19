@@ -160,11 +160,16 @@ end
 
 function param=AvoidLocalOptim(param)
     
-
-    param.snakes.force.lengthEpsilon=1e-5;
-    param.snakes.force.typeSmear='length';
+% 
+%     param.snakes.force.lengthEpsilon=1e-5;
+%     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=1e-1;
-    param.snakes.step.snaxInitPos=1*param.snakes.force.lengthEpsilon;
+    
+    param.snakes.step.snaxInitPos=5e-4;
+    param.snakes.force.lengthEpsilon=1e-3;
+    param.snakes.force.distEpsilon=2e-5;
+    param.snakes.force.dirEpsilon=1e-5;
+    param.snakes.force.typeSmear='lengthD';
 end
 
 function param=SmoothFEDynamic(param)
@@ -589,7 +594,7 @@ function [param]=optimSupersonicMultiTopo()
     
     param.optiminit.corneractive=true;
     param.optiminit.cellLevels=[6,10];
-    param.general.passDomBounds=MakeCartesianGridBounds(param.optiminit.cellLevels);
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
 end
 
@@ -945,7 +950,7 @@ end
 
 % BP3 inverse design testing procedure
 
-function [param]=optimInverseDesign_cv()
+function [param]=optimInverseDesign_cv0()
    
     [param]=optimInverseDesign();
     
@@ -957,7 +962,7 @@ function [param]=optimInverseDesign_cv()
     param.optiminit.cellLevels=[10,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
-function [param]=optimInverseDesign_cu()
+function [param]=optimInverseDesign_cu0()
    
     [param]=optimInverseDesign();
     
@@ -969,7 +974,7 @@ function [param]=optimInverseDesign_cu()
     param.optiminit.cellLevels=[10,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
-function [param]=optimInverseDesign_uv()
+function [param]=optimInverseDesign_uv0()
    
     [param]=optimInverseDesign();
     
@@ -981,7 +986,7 @@ function [param]=optimInverseDesign_uv()
     param.optiminit.cellLevels=[10,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
-function [param]=optimInverseDesign_uu()
+function [param]=optimInverseDesign_uu0()
    
     [param]=optimInverseDesign();
     
