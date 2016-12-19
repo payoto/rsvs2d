@@ -177,6 +177,8 @@ function [population,constrDistance]=DesignVariableConsCaller(constrName,constrV
             [population]=ValSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'MinSumVolFrac'
             [population]=MinSumVolumeFraction(constrVal,paroptim,population,varargin{1});
+        case 'MinValVolFrac'
+            [population]=ValSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'Naca0012'
             [constrVal]=NacaOuterLimit0012(varargin{1},paroptim);
             [population,constrDistance]=LocalVolumeFraction_min(constrVal,population);
@@ -485,6 +487,47 @@ function [population]=ValSumVolumeFraction(constrVal,paroptim,population,baseGri
             population(ii).constraint=false;
         elseif ratio<=1
             population(ii).fill=fillStart*ratio;
+        elseif ratio>1
+            maxFill=max(fillStart);
+            if maxFill*ratio<=max(desVarRange)
+                population(ii).fill=fillStart*ratio;
+            else
+                
+                [population(ii).fill,population(ii).constraint]=...
+                    IterativeValFill(fillStart,desVarRange,constrVal,volVec,totvol);
+                
+            end
+            
+        end
+        
+        
+    end
+    
+    
+end
+
+function [population]=MinValSumVolume(constrVal,paroptim,population,baseGrid)
+    
+    varExtract={'desVarRange'};
+    [desVarRange]=ExtractVariables(varExtract,paroptim);
+    varExtract={'axisRatio'};
+    [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
+    cellCentred=CellCentreGridInformation(baseGrid);
+    isActive=logical([cellCentred(:).isactive]);
+    volVec=[cellCentred(isActive).volume]*axisRatio;
+    totvol=sum(volVec);
+    
+    for ii=1:length(population)
+        
+        fillStart=population(ii).fill;
+        
+        sumFill=sum(fillStart.*volVec);
+        ratio=constrVal/sumFill;
+        if ~isfinite(ratio)
+            population(ii).fill=fillStart;
+            population(ii).constraint=false;
+        elseif ratio<=1
+            population(ii).fill=fillStart;
         elseif ratio>1
             maxFill=max(fillStart);
             if maxFill*ratio<=max(desVarRange)

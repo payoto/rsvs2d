@@ -58,7 +58,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
     paroptimgeneral.direction='max';
     paroptimgeneral.defaultVal=-1e3;
-    paroptimgeneral.knownOptim=[0.146088675];
+    paroptimgeneral.knownOptim=[0.146088675]; %#ok<*NBRAK>
     paroptimgeneral.useSnake=true;
     
     paroptimgeneral.symType='none'; % 'horz'
@@ -331,7 +331,7 @@ function paroptim=FullOpt_bp3(paroptim)
     
 end
 
-function paroptim=FullOpt_bp2(paroptim)
+function paroptim=FullOpt_bp2(paroptim) %#ok<*DEFNU>
     
     paroptim.general.nPop=48;
     paroptim.general.maxIter=100;
@@ -1436,7 +1436,6 @@ end
 
 % Test derivatives
 
-
 function paroptim=TestDerivDesktop(e)
     
     paroptim=AreaM2sweep_Sc();
@@ -1635,7 +1634,7 @@ function paroptim=desk_refsweep_cv00012()
     paroptim.obj.invdes.aeroName='0012';
     
     paroptim.optim.CG.lineSearchType='backbisection';
-    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+    paroptim.general.refineOptim=[2 1 4; 2 1 4];
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
@@ -1821,6 +1820,100 @@ function paroptim=bp3_refsweep_uu20012()
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_uu2');
     
 end
+
+% Test
+
+function paroptim=AreaM2sweep_ScTest()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
+    paroptim.general.refineOptim=[2 1 4; 2 1 4];
+    paroptim.general.maxIter=0;
+    paroptim.general.worker=4;
+end
+function paroptim=AreaM2sweep_ScTest2()
+    
+    paroptim=bp3_AreaM2sweep();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012Sc');
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
+    paroptim.general.refineOptim=[2 1 4; 2 1 4];
+    paroptim.general.maxIter=4;
+    paroptim.general.worker=12;
+end
+
+%% christmas cases
+
+% Busemann sweep
+
+function [paroptim]=areabusesweep(e)
+    
+    [paroptim]=MultiTopo_DEhoriz();
+    [paroptim]=SumVolumeConstraint(paroptim);
+    paroptim=Test_Desktop(paroptim);
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.optimMethod='DE';
+    
+    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=200;
+    paroptim.general.worker=8;
+    
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
+    paroptim.constraint.desVarVal={e};
+    paroptim.constraint.desVarConstr={'MinValVolFrac'};
+end
+
+% Inverse Design refinement
+
+function paroptim=refsweep(gridCase,airfoil,lvl)
+    [paroptim]=Inverse_CG();
+    
+    paroptim.optim.CG.lineSearchType='backbisection';
+    
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=100;
+    paroptim.general.worker=8;
+    
+    paroptim.obj.invdes.aeroName=airfoil;
+    
+    paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
+    
+    switch gridCase(1)
+        case 'c'
+            paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
+        case 'u'
+            paroptim.parametrisation.snakes.refine.gridDistrib='none';
+    end
+    
+    switch gridCase(2)
+        case 'v'
+            paroptim.parametrisation.snakes.refine.axisRatio=2^lvl;
+            paroptim.parametrisation.optiminit.cellLevels=[(6*2^lvl+4),2];
+            paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+            paroptim.general.refineOptim=[2 1 100; 2 1 100];
+        case 'u'
+            paroptim.parametrisation.snakes.refine.axisRatio=1;
+            paroptim.parametrisation.optiminit.cellLevels=[(6*2^lvl+4),2^(lvl+1)];
+            paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
+            paroptim.general.refineOptim=[2 2 100; 2 2 100];
+    end
+    
+    paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
+    
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
+
+% NACA0012 refine
+
+% Supersonic refine
 
 
 
