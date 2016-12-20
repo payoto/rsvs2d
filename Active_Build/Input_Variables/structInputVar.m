@@ -770,8 +770,6 @@ function [param]=optimNACA0012()
     
     param.general.typDat='optimInit';
     param.general.restart=true;
-    param.general.refineSteps=4;
-    param.general.subdivType='area';
     
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
@@ -779,7 +777,7 @@ function [param]=optimNACA0012()
     
     
     param.snakes.step.mergeTopo=false;
-    param.snakes.step.snakesSteps=100;
+    param.snakes.step.snakesSteps=200;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     
@@ -788,9 +786,22 @@ function [param]=optimNACA0012()
     param.results.noteFiles={'CurrentBuild'};
     param.results.tags={'snakes','optimisation'};
     
+    param.snakes.step.maxStep=0.3;
+    param.snakes.step.maxDt=0.5;
+    param.snakes.step.snakesConsole=false;
+    param.snakes.step.fillLooseStep=20;
+    param.snakes.step.fillLooseCut=1e-1;
+    param.snakes.step.vertLooseStep=100;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesSteps=200;
+    param.snakes.step.mergeTopo=false;
+    param.snakes.step.snaxInitPos=5e-4;
+    param.snakes.force.lengthEpsilon=1e-3;
+    
     param.snakes.refine.axisRatio=1;
     param.snakes.refine.gridDistrib='cosX01';
      param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
+    param.optiminit.defaultCorner=1e-4;
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
