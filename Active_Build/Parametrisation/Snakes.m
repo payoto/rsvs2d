@@ -260,7 +260,7 @@ function [nonBreedVert]=SetNonBreedVertices(borderVertices,iterNum,param)
     nonBreedVert=[];
     
     if iterNum<=vertLooseStep
-        nonBreedVert=[nonBreedVert,borderVertices.weak,borderVertices.loop'];
+        nonBreedVert=[nonBreedVert,borderVertices.weak,borderVertices.loop];
     end
     nonBreedVert=unique(nonBreedVert);
 end
@@ -321,7 +321,10 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     [borderVertices.weak]=FindWeakBorderVertex(oldGrid,cellCentredGrid,volfracconnec);
     % Inside contour info will change depending on the type of contour under
     % consideration (0 contour or 1 contour)
-    borderVertices.loop=loop.vertex.index;
+    borderVertices.loop=[];
+    for ii=1:numel(loop)
+        borderVertices.loop=[borderVertices.loop,reshape(loop(ii).vertex.index,[1,numel(loop(ii).vertex.index)])];
+    end
     [snaxel,insideContourInfo]=SnaxelInitialisation(refinedGriduns,loop,insideContourInfo,boundstr);
     
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
@@ -1208,7 +1211,7 @@ function [contourStruct]=ContourNormal2(snaxel,snakposition)
     for ii=1:length(contourStruct)
         indices=[contourStruct(ii).index1,contourStruct(ii).index2];
         
-        [contourStruct(ii).vector]=ContourEdgeNormal(snakposition,snaxel,...
+        [contourStruct(ii).vector]=ContourEdgeNormal(snakposition,...
             indices,snaxIndPos);
     end
     % Backup Method
@@ -1230,25 +1233,29 @@ end
 
 function [contourStruct]=ExtractContourSnaxel(snaxel)
     % Extracts the snaxel connected for each  contour edge
-    snaxInd=[snaxel(:).index]';
-    snaxConnects=vertcat(snaxel(:).connectivity);
-    snaxContour1=[snaxInd,snaxConnects(:,1)];
-    snaxContour2=[snaxInd,snaxConnects(:,2)];
-    snaxContour=[snaxContour1;snaxContour2];
-    cellSimilar=FindIdenticalVector(snaxContour);
-    
-    arraySimilar=vertcat(cellSimilar{:});
-    snaxContour=snaxContour(arraySimilar(:,1),:);
-    for ii=length(snaxContour(:,1)):-1:1
-        contourStruct(ii).index1=snaxContour(ii,1);
-        contourStruct(ii).index2=snaxContour(ii,2);
-    end
+%     snaxInd=[snaxel(:).index]';
+%     snaxConnects=vertcat(snaxel(:).connectivity);
+%     snaxContour1=[snaxInd,snaxConnects(:,1)];
+%     snaxContour2=[snaxInd,snaxConnects(:,2)];
+%     snaxContour=[snaxContour1;snaxContour2];
+%     cellSimilar=FindIdenticalVector(snaxContour);
+%     
+%     arraySimilar=vertcat(cellSimilar{:});
+%     snaxContour=snaxContour(arraySimilar(:,1),:);
+%     for ii=length(snaxContour(:,1)):-1:1
+%         contourStruct(ii).index1=snaxContour(ii,1);
+%         contourStruct(ii).index2=snaxContour(ii,2);
+%     end
+
+    [contourStruct(1:numel(snaxel)).index1]=deal(snaxel(:).index);
+    [contourStruct(1:numel(snaxel)).index2]=deal(snaxel(:).snaxnext);
+
 end
 
-function [normalVector]=ContourEdgeNormal(snakposition,snaxel,indices,snaxIndPos)
+function [normalVector]=ContourEdgeNormal(snakposition,indices,snaxIndPos)
     % Calculates the normal of the contour
     
-    snaxSubPos=FindObjNum(snaxel,indices,snaxIndPos);
+    snaxSubPos=FindObjNum([],indices,snaxIndPos);
     
     [normalVector]=NormalContourBaseMethods(snakposition,snaxSubPos);
     baseVectors=vertcat(snakposition(snaxSubPos).vector);
