@@ -53,7 +53,20 @@ function [linTheoryOptim,obj]=SupersonicOptimLinRes(paramoptim,rootFolder,xMin,x
                 end
                 
                 linTheoryOptim=min([obj(:).cd]);
+                MinValVolFrac
+            case 'MinValVolFrac'
                 
+                [loop{1}]=ConstantArea_Parabola(xMin,xMax,A,nPoints);
+                [loop{2}]=ConstantArea_Wedge(xMin,xMax,A);
+                [loop{3}]=ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints);
+                [loop{4}]=ConstantArea_Busemann(xMin,xMax,A,nMach);
+                resTag={'LinRes_ogive','LinRes_wedge','LinRes_Klunker','LinRes_Busemann'};
+                
+                parfor jj=1:length(loop)
+                    [obj(jj)]=OutputAndRunFlowSolve(loop{jj},rootFolder,resTag{jj},paramoptim);
+                end
+                
+                linTheoryOptim=min([obj(:).cd]);
         end
     end
     
