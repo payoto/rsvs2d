@@ -204,7 +204,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     markerSmall=datestr(t,'_yymmddTHHMM');
     writeDirectory=[rootDir];
     writeDirectory=MakePathCompliant(writeDirectory);
-    
+    for ii=1:numel(optimstruct);for jj=1:numel(optimstruct(1).population);if optimstruct(ii).population(jj).objective<=1e-16;optimstruct(ii).population(jj).objective=1000;optimstruct(ii).population(jj).constraint=0;end;end;end
     CopyDiary(writeDirectory,marker)
     GenerateIterResultBinary(writeDirectory,marker,optimstruct,paroptim)
     
@@ -544,7 +544,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
         
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
-    for jj=1:kk
+    parfor jj=1:kk
         
         ii=needRerun(jj);
         
