@@ -189,7 +189,7 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
         if nPop==length(iterstruct(startIter).population)
             firstValidIter=1;
         end
-        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter);
+        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter,baseGrid);
         
     end
     
