@@ -1370,6 +1370,7 @@ function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,
     optimsolution=optimstruct(end).population(posOpt);
     resultDirectory=[resultDirectory,'\Optimal_',markerSmall];
     resultDirectory=MakePathCompliant(resultDirectory);
+   
     profileDir=optimsolution.location;
     
     %copyfile(profileDir,resultDirectory,'f');
