@@ -21,9 +21,15 @@ function [] = ExecuteOptimisation()
     
 end
 %}
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
+    
+    if nargin==3
+        OptimisationDebug(caseStr,debugArgIn)
+        return
+    end
+    
     procStr2=['OPTIMISATION - ',caseStr];
     [tStartOpt]=PrintStart(procStr2,0);
     %clusterObj=parcluster('OptimSnakes');
@@ -61,10 +67,11 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop)
             % Compute Shape using snakes
             [iterstruct(nIter).population,restartsnake]=PerformIteration(paramoptim,outinfo(refStage),nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
                 baseGrid,connectstructinfo);
+            OptimisationOutput('optstruct',paramoptim,outinfo(refStage),iterstruct);
             % Evaluate Objective Function
             [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
             % create new population
-            OptimisationOutput('optstruct',paramoptim,outinfo(refStage),iterstruct);
+            
             [~]=PrintEnd(procStr,1,tStart);
             if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
                 fprintf('\n Optimisation Stopped By convergence condition \n');
@@ -1943,7 +1950,82 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
    % supportOptim.curr.prevStep
 end
 
+%% Test Function 
 
+function []=OptimisationDebug(caseStr,debugArgIn)
+    
+    
+    [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr);
+    [grid,loop,restartsnake,snakSave,newFill]=RestartSnakeFill(debugArgIn{:});
+    popuDebug=iterstruct(1).population(1);
+    
+    popuDebug.fill=newFill;
+    
+    paramoptim.parametrisation.snakes.step.snakesSteps=126;
+    paramoptim.parametrisation.snakes.step.snakData='all';
+    paramoptim.parametrisation.snakes.step.snakesConsole=true;
+    
+    paramsnake=paramoptim.parametrisation;
+    paramspline=paramoptim.spline;
+    connectstructinfo=grid.connec;
+    oldField = 'oldCellInd';
+    newField = 'old';
+    [connectstructinfo.cell.(newField)] = connectstructinfo.cell.(oldField);...
+        connectstructinfo.cell = rmfield(connectstructinfo.cell,oldField);
+    oldField = 'newCellInd';
+    newField = 'new';
+    [connectstructinfo.cell.(newField)] = connectstructinfo.cell.(oldField);...
+        connectstructinfo.cell = rmfield(connectstructinfo.cell,oldField);
+    
+    baseGrid=grid.base;
+    gridrefined=grid.refined;
+    
+    [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
+        restartsnake,connectstructinfo,newFill);
+        
+    [popuDebug,supportstruct]=NormalExecutionIteration(...
+        popuDebug,newRefGrid,newrestartsnake,newGrid,...
+        connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2},debugArgIn{3},paramoptim);
+    
+end
+
+
+function [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr)
+    
+    procStr='INITIALISE DEBUG PROCESS';
+    % Initialise Workspace
+    include_EdgeInformation
+    include_SnakeParam
+    include_EdgeInformation
+    include_Utilities
+    include_PostProcessing
+    include_Mex_Wrapper
+    include_Optimisation
+    
+    diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
+    diaryFile=MakePathCompliant(diaryFile);
+    fidDiary=fopen(diaryFile,'w');
+    fclose(fidDiary);
+    diary(diaryFile);
+    
+    
+    % Initialise Optimisation
+    % Get Parametrisation parameters
+    paramoptim=StructOptimParam(caseStr);
+    [outinfo]=OptimisationOutput('init',paramoptim);
+    [~,paramoptim]=ConstraintMethod('init',paramoptim,[]);
+    
+    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
+        =GridInitAndRefine(paramoptim.parametrisation);
+    [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
+    [paramoptim.general.desvarconnec]=...
+        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
+    [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
+    
+    %iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
+    
+end
 
 
 

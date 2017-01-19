@@ -32,7 +32,6 @@ function [pltPaths]=FindPLTFiles(childFolder)
     
 end
 
-
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
     returnName={};
@@ -63,7 +62,6 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     
     
 end
-
 
 function [addFolders]=ExploreFolderTree(rootDir)
     % adds a set of paths to the active path

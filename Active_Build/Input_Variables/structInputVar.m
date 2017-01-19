@@ -805,10 +805,10 @@ function [param]=optimNACA0012()
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
-    param.general.subdivType='chaikin';
-    param.snakes.refine.TEShrink=true;
+    param.general.subdivType='chaikinNaca0012';
+    param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
     param.general.refineSteps=3;
     param.optiminit.corneractive=false;
