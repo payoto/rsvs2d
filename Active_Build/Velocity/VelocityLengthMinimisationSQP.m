@@ -92,9 +92,14 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     %   [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     warning('OFF','MATLAB:nearlySingularMatrix')
     if true
+        % THis section needs a clean up
         [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
-        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze));
-        finIsFreeze=logical(isFreeze);
+        [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
+        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreezeRnd2);
+        finIsFreeze=isFreezeRnd2;
+        if any(isnan(DeltaxisFreeze))
+            DeltaxisFreeze(:)=0;
+        end
         if any(isnan(Deltax))
             [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,(isFreeze==1));
             finIsFreeze=(isFreeze==1);
@@ -148,6 +153,15 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         snaxeltensvel(ii).forcevel=Deltax(ii);
     end
     
+end
+
+function [isFreezeRnd2]=VelocityThawing(isFreeze,DxisFreeze)
+    % function handles the thawing of vertices 
+    
+    isThaw=(isFreeze>1 & isFreeze<2 & DxisFreeze>=0) ...
+        | (isFreeze>2 & isFreeze<3 & DxisFreeze<=0);
+    
+    isFreezeRnd2= logical(isFreeze) & ~isThaw;
 end
 
 function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volumefraction)

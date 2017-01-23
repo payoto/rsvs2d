@@ -237,7 +237,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [paramoptim.general.desvarconnec]=...
         ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     % Start Parallel Pool
-    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
+    %StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
     
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
@@ -323,7 +323,8 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
     nPop=numel(population);
     
-    parfor ii=1:nPop %
+    parfor ii=1:nPop %   
+    %for ii=1:nPop
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
@@ -383,6 +384,7 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     [captureErrors{1:nPop}]=deal('');
     supportstruct=repmat(struct('loop',[]),[1,nPop]);
     parfor ii=1:nPop
+    %for ii=1:nPop
         %for ii=flip(1:nPop)
         
         currentMember=population(ii).fill;
@@ -451,7 +453,7 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     rootPop=population(1);
     
     parfor ii=1:nPop-1
-        %for ii=1:nPop
+    %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         try

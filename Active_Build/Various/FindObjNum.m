@@ -10,6 +10,9 @@ function sub=FindObjNum(object,index,objInd)
      %sub2=FindObjNum_Matlab(index,objInd);
      
      % Mex
+%     if isempty(objInd)
+%         warning('list of object passed to findobjnum was empty')
+%     end
     sub=FindObjNum_MEX(index,objInd,length(index),length(objInd));
     if numel(index)~=1
         sub=sub';
