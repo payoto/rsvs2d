@@ -22,35 +22,36 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	nLook=(int)mxGetScalar(prhs[2]);
 	nList=(int)mxGetScalar(prhs[3]);
 	
+	/*if(nList>0){*/
+		/* Allocation */
+		lookup=(int*)calloc(nLook,sizeof(int));
+		dest=(int*)calloc(nLook*(nList+1),sizeof(int));
+		listInd=(int*)calloc(nList+1,sizeof(int));
 	
-	/* Allocation */
-	lookup=(int*)calloc(nLook,sizeof(int));
-	dest=(int*)calloc(nLook*nList,sizeof(int));
-	listInd=(int*)calloc(nList,sizeof(int));
+		/* Assignement */
+		inputArrayPtr=mxGetPr(prhs[0]);
+		for (ii=0;ii<nLook;ii++){
+			lookup[ii]=(int)(*(inputArrayPtr+(ii)));
+			/*printf("%i ", cellrefineInd[ii]); */
+		}
+		inputArrayPtr=mxGetPr(prhs[1]);
+		for (ii=0;ii<nList;ii++){
+			listInd[ii]=(int)(*(inputArrayPtr+(ii)));
+			/*printf("%i ", cellrefineInd[ii]); */
+		}
+		/* ACTION */
+		FindObjNum(lookup, listInd, dest, nLook, nList,&nFound);
+		/*dest=(int*)realloc(dest,nFound*sizeof(int));*/
 	
-	/* Assignement */
-	inputArrayPtr=mxGetPr(prhs[0]);
-	for (ii=0;ii<nLook;ii++){
-		lookup[ii]=(int)(*(inputArrayPtr+(ii)));
-		/*printf("%i ", cellrefineInd[ii]); */
-	}
-	inputArrayPtr=mxGetPr(prhs[1]);
-	for (ii=0;ii<nList;ii++){
-		listInd[ii]=(int)(*(inputArrayPtr+(ii)));
-		/*printf("%i ", cellrefineInd[ii]); */
-	}
-	/* ACTION */
-	FindObjNum(lookup, listInd, dest, nLook, nList,&nFound);
-	/*dest=(int*)realloc(dest,nFound*sizeof(int));*/
+		/* Output */
+		plhs[0]=(mxCreateDoubleMatrix(1,nFound,mxREAL));
+		outPtr=mxGetPr(plhs[0]);
+		for (ii=0;ii<nFound;ii++){outPtr[ii]=(double)(dest[ii]+1);}
 	
-	/* Output */
-	plhs[0]=(mxCreateDoubleMatrix(1,nFound,mxREAL));
-	outPtr=mxGetPr(plhs[0]);
-	for (ii=0;ii<nFound;ii++){outPtr[ii]=(double)(dest[ii]+1);}
-	
-	free(lookup);
-	free(listInd);
-	free(dest);
+		free(lookup);
+		free(listInd);
+		free(dest);
+	/*} else {plhs[0]=(mxCreateDoubleMatrix(1,0,mxREAL));}*/
 	
 	return;
 }

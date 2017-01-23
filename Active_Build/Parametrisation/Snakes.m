@@ -52,8 +52,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     % Unpacking NECESSARY variables
     global maxStep maxDt snaxInitPos
     
-    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos','checkSensitivities'};
-    [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos,checkSensitivities]=ExtractVariables(varExtract,param);
+    varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos','checkSensitivities','refineGrid'};
+    [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos,checkSensitivities,refineGrid]=ExtractVariables(varExtract,param);
     
     forceparam=param.snakes.force;
     dtMin=maxDt/dtRatio;
@@ -62,9 +62,23 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     % Starting process
     disp(['  Start initialisation'])
     tStepStart=now;
+    
+    
+    edgeOrient=[refinedGrid.edge(:).orientation];
+    edgeIndList=[refinedGrid.edge(:).index];
+    if numel(refineGrid)==1
+        refGridRatio=1;
+    else
+        refGridRatio=refineGrid(1)/refineGrid(2);
+    end
+    edgeDat.orient=edgeOrient;
+    edgeDat.indList=edgeIndList;
+    edgeDat.ratio=refGridRatio;
+    
+    
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param);
+        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param,edgeDat);
     
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
@@ -135,6 +149,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     lastConvCheck=0;
     dtMinStart=dtMin;
     [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid);
+    borderVertices.nonbreedpers=nonBreedVertPersist;
     edgeOrient=[refinedGrid.edge(:).orientation];
     edgeIndList=[refinedGrid.edge(:).index];
     if numel(refineGrid)==1
@@ -298,14 +313,14 @@ end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param)
+        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param,edgeDat)
     
     varExtract={'restart'};
     [restart]=ExtractVariables(varExtract,param);
     if ~restart
         [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
             StartSnakeProcess(refinedGriduns,refinedGrid,looprestart,...
-            oldGrid,connectionInfo,mergeTopo,boundstr);
+            oldGrid,connectionInfo,mergeTopo,boundstr,edgeDat);
     else
         [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
             RestartSnakeProcess(looprestart);
@@ -316,7 +331,7 @@ end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
-        oldGrid,connectionInfo,mergeTopo,boundstr)
+        oldGrid,connectionInfo,mergeTopo,boundstr,edgeDat)
     disp('    Generate Cell Centred Grid')
     [cellCentredGrid]=CellCentreGridInformation(refinedGrid);
     disp('    Establish Cell Volume Information')
@@ -481,7 +496,7 @@ function [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition
         ii,currentConvVolume,trigCount);
     
     [volumefraction]=ModifyFillInformationError...
-        (volumefraction,param,nStep);
+        (volumefraction,param,ii-1);
     
     [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam]=...
         VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
@@ -533,7 +548,7 @@ end
 
 function [volumefraction]=ModifyFillInformationError(volumefraction,param,nStep)
    % visualisation of the conditions 
- conds=@(a,c) {a.*c+a,c.*(1-a)+a,-a.*c+a,a-c.*(1-a)}
+ conds=@(a,c) {a.*c+a,c.*(1-a)+a,-a.*c+a,a-c.*(1-a)};
 % [a,c]=meshgrid(linspace(0,1,100),1:100);
 % zVals=conds(a,c);
 % figure,hold on
@@ -553,9 +568,13 @@ function [volumefraction]=ModifyFillInformationError(volumefraction,param,nStep)
     newFill=fill;
     if nStep<fillErrStep
         condVals=conds(currFill,fillErrCut);
-        newFill=min(newFill,min(condVals{1},condVals{2}));
-        newFill=max(newFill,max(condVals{3},condVals{4}));
-        
+        newFill=min(newFill,min(min(condVals{1},condVals{2}),1)*0.8+0.2);
+        newFill=max(newFill,max(max(condVals{3},condVals{4}),0)*0.8);
+        newFill(fill<=0)=-0.1;
+        newFill(fill>=1)=1.1;
+        for ii=1:numel(volumefraction)
+            volumefraction(ii).targetfill=newFill(ii);
+        end
     end
     
 end
@@ -2086,8 +2105,21 @@ function [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo)
         % level: This means a 2 step process where velocities are based off
         % the actual freeze status after thawing test (ie is it still frozen)
         nonBreedFreeze=[];
-    else
+        else
         nonBreedFreeze=[];
+    end
+    if isfield(borderVertices,'nonbreedpers')
+%         if ~isempty(borderVertices.nonbreedpers)
+            [nonBreedFreeze2]=FreezeNonBreedContact(snaxel,borderVertices.nonbreedpers);
+%         else
+%             nonBreedFreeze2=[];
+%         end
+        % For this to work proper freeze handling is needed at Velocity
+        % level: This means a 2 step process where velocities are based off
+        % the actual freeze status after thawing test (ie is it still frozen)
+        nonBreedFreeze=[nonBreedFreeze,nonBreedFreeze2];
+    else
+        
     end
     
     freezeIndex=[edgeFreeze,borderFreeze];
@@ -2103,7 +2135,12 @@ function [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo)
     if ~isempty(nonBreedFreeze)
         freezeSub=FindObjNum([],nonBreedFreeze,[snaxel(:).index]);
         for ii=1:length(nonBreedFreeze)
-            snaxel(freezeSub(ii)).isfreeze=2;
+            snaxel(freezeSub(ii)).isfreeze=2 ...
+            -0.1+round(snaxel(freezeSub(ii)).d)*0.2; 
+        % this indicates if the snaxel is blocked at 0 or 1
+        % 0 -> No negative speeds -> 1.9 
+        % 1 -> No positive speeds -> 2.1
+        
         end
     end
 end
@@ -2264,7 +2301,8 @@ function [borderVertices]=FindWeakBorderVertex(unstrucReshape,cellCentredGrid,co
     edgeCellIndex=vertcat(unstrucReshape.edge(:).cellindex);
     
     [rowPos,colPos]=find(edgeCellIndex==0);
-    subCellEdge=FindObjNum([],unique(edgeCellIndex(sub2ind(size(edgeCellIndex),rowPos,abs(colPos-3)))),[connectstructinfo.cell(:).oldCellInd]);
+    subCellEdge=FindObjNum([],unique(edgeCellIndex(sub2ind(size(edgeCellIndex),...
+        rowPos,abs(colPos-3)))),[connectstructinfo.cell(:).oldCellInd]);
     indFineCell=[connectstructinfo(:).cell(subCellEdge).newCellInd];
     
     subFineCellBord=FindObjNum([],indFineCell,[cellCentredGrid(:).index]);

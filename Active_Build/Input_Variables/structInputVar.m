@@ -86,7 +86,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.fillLooseStep=0;
     paramsnakesstep.fillLooseCut=1e-3;
     paramsnakesstep.fillErrStep=5;
-    paramsnakesstep.fillErrCut=1e-3;
+    paramsnakesstep.fillErrCut=10; % Ratio at which error scaling cuts off
     
     paramsnakesstep.vertLooseStep=20;
     
