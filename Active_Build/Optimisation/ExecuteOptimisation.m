@@ -237,7 +237,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [paramoptim.general.desvarconnec]=...
         ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     % Start Parallel Pool
-    %StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
+    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
     
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
