@@ -83,11 +83,8 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convCheckRange=15;
     paramsnakesstep.convDistance=500;
     
-    paramsnakesstep.fillLooseStep=0;
+    paramsnakesstep.fillLooseStep=5;
     paramsnakesstep.fillLooseCut=1e-3;
-    paramsnakesstep.fillErrStep=5;
-    paramsnakesstep.fillErrCut=10; % Ratio at which error scaling cuts off
-    
     paramsnakesstep.vertLooseStep=20;
     
 end
@@ -586,7 +583,7 @@ function [param]=optimSupersonicMultiTopo()
     param.snakes.step.snakesConsole=false;
     param.snakes.step.maxStep=0.2;
     param.snakes.step.maxDt=0.5;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.stepType='indiv';
      
@@ -632,7 +629,7 @@ function [param]=SupersonicComponent()
     param.snakes.step.snakesConsole=false;
     param.snakes.step.maxStep=0.2;
     param.snakes.step.maxDt=0.5;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.stepType='indiv';
      
@@ -674,7 +671,7 @@ function [param]=TestInitOptim()
     param.snakes.step.snakesConsole=false;
     param.snakes.step.maxStep=0.2;
     param.snakes.step.maxDt=0.5;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.stepType='indiv';
      
@@ -792,7 +789,7 @@ function [param]=optimNACA0012()
     param.snakes.step.maxStep=0.3;
     param.snakes.step.maxDt=0.5;
     param.snakes.step.snakesConsole=false;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=1e-1;
     param.snakes.step.vertLooseStep=100;
     param.snakes.step.snakData='light';
@@ -808,10 +805,10 @@ function [param]=optimNACA0012()
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
-    param.general.subdivType='chaikinNaca0012';
-    param.snakes.refine.TEShrink=false;
+    param.general.subdivType='chaikin';
+    param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='none';
+    param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=false;
     param.general.refineSteps=3;
     param.optiminit.corneractive=false;
@@ -1122,10 +1119,10 @@ function [param]=optimInverseDesign_bulk()
     param.snakes.step.maxStep=0.3;
     param.snakes.step.maxDt=0.5;
     param.snakes.step.snakesConsole=false;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=1e-1;
     param.snakes.step.vertLooseStep=100;
-    param.snakes.step.snakData='all';
+    param.snakes.step.snakData='light';
     param.snakes.step.snakesSteps=200;
     param.snakes.step.mergeTopo=false;
     param.snakes.step.snaxInitPos=5e-4;
@@ -1544,7 +1541,7 @@ function [param]=Square()
     
     param.snakes.step.mergeTopo=true;
     
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=40;
     param.snakes.step.fillLooseCut=0.90;
 end
 
@@ -1565,7 +1562,7 @@ function [param]=HalfWedge()
     
     param.snakes.step.mergeTopo=true;
     
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=40;
     param.snakes.step.fillLooseCut=0.90;
     
     param.snakes.refine.TEShrink=true;
@@ -1613,7 +1610,7 @@ function [param]=BuzmanBiplane3()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=30;
     param.snakes.step.fillLooseCut=0.5;
     param.snakes.step.convCheckRate=25;
     param.snakes.step.convCheckRange=15;
@@ -1631,7 +1628,7 @@ function [param]=BuzmanBiplane4()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=30;
     param.snakes.step.fillLooseCut=1e-4;
     
 end
@@ -1647,7 +1644,7 @@ function [param]=Donught()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=0.5;
     
 end
@@ -1663,7 +1660,7 @@ function [param]=Donught2()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=0.5;
     
 end
@@ -1676,7 +1673,7 @@ function [param]=TestInit()
     param.general.typDat='testinit';
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.axisRatio=1;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=1e-3;
     param.general.passDomBounds=param.general.passDomBounds*1.4;
     param.optiminit.cellLevels=[9,5];
@@ -1711,7 +1708,7 @@ function [param]=CurrentValidation()
     param.snakes.step.convCheckRate=100;
     param.snakes.step.convCheckRange=15;
     param.snakes.step.convDistance=500;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=5;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.maxStep=0.3;
     param.snakes.step.maxDt=0.5;
@@ -1844,7 +1841,7 @@ function [param]=val_Donught()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(2)/sizeRatio(1);
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=0.5;
     
 end
@@ -1856,7 +1853,7 @@ function [param]=val_Donught2()
     param.general.typDat='donught2';
     param.snakes.refine.edgeFinish='none';
     
-    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseStep=20;
     param.snakes.step.fillLooseCut=0.5;
     
 end

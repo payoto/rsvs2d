@@ -107,8 +107,12 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         HL=Hf;
     else
         [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
-        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze));
-        finIsFreeze=logical(isFreeze);
+        [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
+        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreezeRnd2);
+        finIsFreeze=isFreezeRnd2;
+        if any(isnan(DeltaxisFreeze))
+            DeltaxisFreeze(:)=0;
+        end
         if any(isnan(Deltax))
             [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,(isFreeze==1));
             finIsFreeze=(isFreeze==1);
