@@ -1963,7 +1963,7 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     
     popuDebug.fill=newFill;
     
-    paramoptim.parametrisation.snakes.step.snakesSteps=200;
+    paramoptim.parametrisation.snakes.step.snakesSteps=41;
     paramoptim.parametrisation.snakes.step.snakData='all';
     paramoptim.parametrisation.snakes.step.snakesConsole=true;
     
