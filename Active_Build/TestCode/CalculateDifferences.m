@@ -1,7 +1,7 @@
 
 
 function []=CalculateDifferences(sensloops,snakloops)
-    
+    % Calculates differences between 2 loops
     if numel(sensloops)~=numel(snakloops)
         error('Size mismatch beween the two sources')
     end
