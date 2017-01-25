@@ -122,6 +122,12 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     
     warning('ON','MATLAB:nearlySingularMatrix')
     Deltax(finIsFreeze)=DeltaxisFreeze(finIsFreeze);
+    if any(~isfinite(Deltax))
+        warning('Nan and Inf found in velocity')
+        Deltax(~isfinite(Deltax))=0;
+        lagMulti(~isfinite(lagMulti))=0;
+    end
+    
     [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast);
     
     forceparam.lagMulti=lagMulti;
