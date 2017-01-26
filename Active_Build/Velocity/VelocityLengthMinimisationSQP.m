@@ -91,7 +91,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     isFreeze=[snaxel(:).isfreeze];
     %   [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
     warning('OFF','MATLAB:nearlySingularMatrix')
-    if true
+    if false
         % THis section needs a clean up
         [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
         [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
