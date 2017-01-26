@@ -228,10 +228,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
         
-%         [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
-%             volumefraction,cellCentredGridSnax,currentConvVelocity,...
-%             currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
-%         cntSave=cntSave+1;
+        [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
+            volumefraction,cellCentredGridSnax,currentConvVelocity,...
+            currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+        cntSave=cntSave+1;
         % Snaxel Repopulation In both directions
         
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
@@ -351,13 +351,12 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
         borderVertices.loop=[borderVertices.loop,reshape(loop(ii).vertex.index,[1,numel(loop(ii).vertex.index)])];
     end
     [snaxel,insideContourInfo]=SnaxelInitialisation(refinedGriduns,loop,insideContourInfo,boundstr);
-    
+    [snaxel]=InitisaliseSnaxelOrder(snaxel);
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
     [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
 end
-
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(restartsnake)
@@ -368,7 +367,7 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     
     snaxel=restartsnake.snaxel;
     insideContourInfo=restartsnake.insideContourInfo;
-    
+    [snaxel]=AddOrderEdgeField(snaxel);
 end
 
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
@@ -1012,6 +1011,7 @@ function [snaxel]=SnaxelStructure(index,dist,velocity,vertexOrig,...
     snaxel.snaxprec=snaxPrec;
     snaxel.snaxnext=snaxNext;
     snaxel.isfreeze=0;
+    snaxel.orderedge=0; 
 end
 
 %% Snaxel Repopulation
@@ -1106,6 +1106,8 @@ end
 
 function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeDat,mergeTopo)
     
+    [snaxel]=UpdateSnaxelEdgeOrder(snaxel);
+    
     vSnax=[snaxel(:).v];
     
     [snaxel(:).v]=deal(0);
@@ -1126,10 +1128,51 @@ function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeDat,mergeTopo)
     maxDist=MaxTravelDistance(snaxel,mergeTopo);
     
     for ii=1:length(repopSub)
-        snaxel(repopSub(ii)).d=min([maxDist(repopSub(ii)),snaxelRepopD(ii)]);
+        snaxel(repopSub(ii)).d=max(min([maxDist(repopSub(ii)),snaxelRepopD(ii)]),0);
     end
     for ii=1:length(snaxel)
         snaxel(ii).v=vSnax(ii);
+    end
+end
+
+function [snaxel]=UpdateSnaxelEdgeOrder(snaxel)
+    
+    snaxEdge=[snaxel(:).edge];
+    snaxOrder=[snaxel(:).orderedge];
+    snaxToV=[snaxel(:).tovertex];
+    snaxFromV=[snaxel(:).fromvertex];
+    
+    % This extracts only the edges where there are multiple snaxels on one
+    % edge.
+    [edgeSnaxList,firstOccurEdge]=unique(snaxEdge,'first');
+    snaxEdgeDuplicate=snaxEdge;
+    snaxEdgeDuplicate(firstOccurEdge)=[];
+    snaxEdgeDuplicate=unique(snaxEdgeDuplicate);
+    
+    for ii=1:numel(snaxEdgeDuplicate)
+        
+        posSnaxSub=find(snaxEdgeDuplicate(ii)==snaxEdge);
+        snaxOrdAct=snaxOrder(posSnaxSub);
+        if any(snaxOrdAct==0)
+            unOrdLog=snaxOrdAct==0;
+            snaxToSet=snaxToV(posSnaxSub(unOrdLog));
+            snaxFromSet=snaxFromV(posSnaxSub(unOrdLog));
+            
+            newOrders=(snaxFromSet<snaxToSet)+(snaxToSet<snaxFromSet)*(max(snaxOrdAct)+numel(snaxFromSet));
+            
+            if numel(newOrders)>2
+                error('Unexpected number of unclassified snaxels on a single edge')
+            end
+            if any(newOrders==1)
+                snaxOrdAct=snaxOrdAct+1;
+            end
+            snaxOrdAct(unOrdLog)=newOrders;
+            snaxOrder(posSnaxSub)=snaxOrdAct;
+        end
+    end
+    snaxOrder(snaxOrder==0)=1;
+    for ii=1:numel(snaxel)
+        snaxel(ii).orderedge=snaxOrder(ii);
     end
 end
 
@@ -1235,7 +1278,36 @@ function [singlesnaxel]=ModifyConnection(singlesnaxel,connecRemove,connecReplace
     end
 end
 
-
+function [snaxel]=AddOrderEdgeField(snaxel)
+    % Function to add orderedge to preexisting snaxel restarts.
+    
+     
+    snaxEdge=[snaxel(:).edge];
+    snaxD=[snaxel(:).d];
+    snaxToV=[snaxel(:).tovertex];
+    snaxFromV=[snaxel(:).fromvertex];
+    snaxOrder=zeros(size(snaxel));
+    % This extracts only the edges where there are multiple snaxels on one
+    % edge.
+    [edgeSnaxList,firstOccurEdge]=unique(snaxEdge,'first');
+    
+    
+    for ii=1:numel(edgeSnaxList)
+        
+        actSnaxSub=find(edgeSnaxList(ii)==snaxEdge);
+        
+        rootVert=min(snaxToV(actSnaxSub(1)),snaxFromV(actSnaxSub(1)));
+        
+        snaxDAct=snaxD(actSnaxSub)*(snaxFromV(actSnaxSub)==rootVert)+(1-snaxD(actSnaxSub))*(snaxFromV(actSnaxSub)==rootVert);
+        [~,orderedSnax]=sort(snaxDAct);
+        orderedgeAct=1:numel(snaxDAct);
+        snaxOrder(actSnaxSub)=orderedgeAct(orderedSnax);
+    end
+    
+    for ii=1:numel(snaxel)
+        snaxel(ii).orderedge=snaxOrder(ii);
+    end
+end
 %% Contour Normal Calculation
 
 function [snakposition]=SnaxelNormal2(snaxel,snakposition)
@@ -1688,13 +1760,27 @@ function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInside
     
 end
 
-
+function [snaxel]=InitisaliseSnaxelOrder(snaxel)
+   % Initialises the order of all snaxels 
+   % Only valid just after Initialisation
+   
+   snaxFrom=[snaxel(:).fromvertex];
+   snaxTo=[snaxel(:).tovertex];
+   snaxD=[snaxel(:).d];
+   
+   snaxOrd=1+xor(((snaxTo-snaxFrom)<0),logical(round(snaxD)));
+   for ii=1:numel(snaxel)
+       snaxel(ii).orderedge=snaxOrd(ii);
+   end
+   
+end
 %% Time Update
 
 function maxDist=MaxTravelDistance(snaxel,mergeTopo)
     % Calculates the maximum distance that can be travelled by a snaxel
     dSnax=[snaxel(:).d];
     vSnax=[snaxel(:).v];
+    orderSnax=[snaxel(:).orderedge];
     fromvertSnax=[snaxel(:).fromvertex];
     edgeSnax=[snaxel(:).edge];
     nSnax=length(edgeSnax);
@@ -1742,9 +1828,45 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
             
         elseif numel(sameEdgeSnax)>1
             disp('More than 2 snaxels on the same edge')
+            
+            for jj=1:numel(sameEdgeSnax)
+                [impactDist(jj)]=CalcSnaxelRelativeImpact(dSnax(ii),vSnax(ii),fromvertSnax(ii),...
+                    dSnax(sameEdgeSnax(jj)),vSnax(sameEdgeSnax(jj)),fromvertSnax(sameEdgeSnax(jj)));
+            end
+            
+            if any(impactDist==0)
+                orderSnax(ii)
+                orderSnax(sameEdgeSnax)
+                
+            end
+            if vSnax(ii)>=0 && any(impactDist>0)
+                maxDist(ii)=min([maxDist(ii),min(impactDist(impactDist>0))-eps]);
+            elseif vSnax(ii)<0 && any(impactDist<0)
+                maxDist(ii)=max([maxDist(ii),max(impactDist(impactDist<0))+eps]);
+            end
         end
     end
     
+end
+
+function [impactDist]=CalcSnaxelRelativeImpact(rootD,rootV,rootVert,otherD,...
+        otherV,otherVert)
+    
+    sameDir=rootVert==otherVert;
+    if sameDir
+        %disp('Turning Snaxel for impact distance calculation')
+        otherD=1-otherD;
+        otherV=-otherV;
+    end
+    
+    impactDist=(1-rootD-otherD)/(rootV+otherV)*rootV;
+    
+    if isnan(impactDist)
+        impactDist=0;
+    end
+    if isinf(impactDist)
+        impactDist=sign(impactDist)*1;
+    end
 end
 
 function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
@@ -2589,8 +2711,8 @@ function []=PlotSnaxelIndex(figh,axh,snakposition)
     for ii=1:length(snakposition)
         X(ii)=snakposition(ii).coord(1);
         Y(ii)=snakposition(ii).coord(2);
-        U(ii)=snakposition(ii).vector(1)/80;
-        V(ii)=snakposition(ii).vector(2)/80;
+        U(ii)=0*snakposition(ii).vector(1)/80;
+        V(ii)=0*snakposition(ii).vector(2)/80;
         str=num2str(snakposition(ii).index);
         text(X(ii)+U(ii),Y(ii)+V(ii),str)
     end
