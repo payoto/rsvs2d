@@ -75,7 +75,7 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
             restartsnake,snakSave,tecStruct);
     end
     [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
-    fprintf([textOut1,textOut,textOut2])
+    disp([textOut1,textOut,textOut2])
 end
 
 

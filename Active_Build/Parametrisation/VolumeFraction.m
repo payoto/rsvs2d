@@ -270,7 +270,7 @@ function [bordstruct]=AddEdgeBorders(activeStartVertex,previousEdge,cellStruct,e
     bordstruct(ll:end)=[];
 end
 
-function [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
+function [areablock]=ExtractBorderStructureLegacy(cellStruct,edgeSnak,nBordBlocks)
     % Extracts the border information and sets it out in the right
     % structure form
     vertInd=[cellStruct.vertex(:).index];
@@ -299,6 +299,72 @@ function [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
         [bordstruct3,~,~]=...
             AddEdgeSnaxelBorders(cellStruct,edgeSnakSub(ii,2),vertInd,edgeInd);
         areablock(ii).blockstruct=[bordstruct1,bordstruct2,bordstructEdges,bordstruct3];
+    end
+    
+end
+
+function [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
+    
+    snaxInd=[cellStruct.snaxel(:).index];
+    snaxEdge=[cellStruct.snaxel(:).edge];
+    snaxOrder=[cellStruct.snaxel(:).edgeOrder];
+    snaxFrom=[cellStruct.snaxel(:).fromvertex];
+    snaxTo=[cellStruct.snaxel(:).tovertex];
+    
+    while ~isempty(snaxInd)
+        ii=1;
+        snaxStart=snaxInd(ii);
+        
+        coordList=cellStruct.snaxel(ii).coord;
+        
+        currOrder=snaxOrder(ii);
+        currEdge=snaxEdge(ii);
+        currTo=snaxTo(ii);
+        currFrom=snaxFrom(ii);
+        
+        % currently will match with itself (except if vertices set ii=0)
+        isEdgeActSnax=(currEdge==snaxEdge([1:ii-1,ii+1:end])) ...
+            & xor(currTo>currFrom,currOrder<snaxOrder([1:ii-1,ii+1:end]));
+        
+        
+        if any(isEdgeActSnax)
+            % find snaxel index which is closest
+            
+            snaxOrderComp=isfinite(currOrder)*abs((snaxOrder-currOrder))...
+                -snaxOrder*(~isfinite(currOrder));
+            snaxOrderComp(~isEdgeActSnax)=nan;
+            [~,indNewInd]=min(snaxOrderComp);
+            newInd=snaxInd(indNewInd);
+            
+            % Add Snaxel
+            coordList=[coordList;cellStruct.snaxel(indNewInd).coord];
+            
+            % follow to next snaxel along edge
+            nextSnaxSub=FindObjNum([],cellStruct.snaxel(indNewInd).connectivity,snaxInd);
+            nextSnaxSub=nextSnaxSub(nextSnaxSub~=0);
+            if isempty(nextSnaxSub) || numel(nextSnaxSub)>2
+                error('There was a problem trying to follow connections for area')
+            end
+            ii=nextSnaxSub;
+            coordList=[coordList;cellStruct.snaxel(ii).coord];
+            currOrder=snaxOrder(ii);
+            currEdge=snaxEdge(ii);
+            currTo=snaxTo(ii);
+            currFrom=snaxFrom(ii);
+            % repeat
+        else
+            % find vertex which matches
+            % Add vertex
+            
+            % find next edge
+            
+            % look for snaxel on next edge
+            % (currOrder=0 if initial vertex, currOrder=Inf if initial is final)
+            % currTo==itself; currFrom==nextVertex
+            % ii=0
+            
+        end
+        
     end
     
 end

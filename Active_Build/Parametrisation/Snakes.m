@@ -1718,9 +1718,12 @@ function [finishedSnakesSub]=ArrivalCondition(snaxel,edgeDat)
     v=[snaxel(:).v];
     d=[snaxel(:).d];
     fromvertSnax=[snaxel(:).fromvertex];
+    tovertSnax=[snaxel(:).tovertex];
+    ordSnax=[snaxel(:).orderedge];
     edgeSnax=[snaxel(:).edge];
     
-    [isClosest]=IsClosestToEndVertex(edgeSnax,fromvertSnax,d);
+    %[isClosest]=IsClosestToEndVertex(edgeSnax,fromvertSnax,d);
+    [isClosest]=IsClosestToEndVertexOrder(edgeSnax,ordSnax,fromvertSnax,tovertSnax,d);
     [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeDat);
     
     isFreeze=logical([snaxel(:).isfreeze]); % finds all unfrozen
@@ -1740,6 +1743,30 @@ function [isClosest]=IsClosestToEndVertex(edgeSnax,fromvertSnax,d)
     logicalMask=(edgeGrid1 == edgeGrid2)-2*((edgeGrid1 == edgeGrid2) & ~(vertGrid1 == vertGrid2));
     logicalMask(logical(eye(numel(d))))=0;
     isClosest=~any((dGrid1-((logicalMask==-1)+logicalMask.*dGrid2))<=0);
+end
+
+
+function [isClosest]=IsClosestToEndVertexOrder(edgeSnax,ordSnax,fromvertSnax,tovertSnax,d)
+    
+    
+    
+    [edgeSnaxList,~,posEdgeSnax]=unique(edgeSnax);
+    maxOrd=max(ordSnax);
+    posEdgeSnax=posEdgeSnax';
+    ordExtractMat=nan([numel(edgeSnaxList),maxOrd]); % use nan to ensure min and max not skewed
+    indExtractMat=zeros([numel(edgeSnaxList),maxOrd]);
+    
+    ordExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],posEdgeSnax,ordSnax))=ordSnax;
+    indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],posEdgeSnax,ordSnax))=1:numel(ordSnax);
+    
+    [~,isMax]=max(ordExtractMat,[],2);
+    [~,isMin]=min(ordExtractMat,[],2);
+    flagOrder=zeros(size(d));
+    flagOrder(indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],1:size(indExtractMat,1),isMin')))=-1;
+    flagOrder(indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],1:size(indExtractMat,1),isMax')))=1;
+    flagLocation=(~xor(d>=0.5,fromvertSnax<tovertSnax))*2-1;
+    
+    isClosest=flagOrder==flagLocation;
 end
 
 function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInsideEdges,snaxel)
@@ -1782,10 +1809,11 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
     vSnax=[snaxel(:).v];
     orderSnax=[snaxel(:).orderedge];
     fromvertSnax=[snaxel(:).fromvertex];
+    toVertSnax=[snaxel(:).tovertex];
     edgeSnax=[snaxel(:).edge];
     nSnax=length(edgeSnax);
     if ~mergeTopo
-        eps=1e-6; 
+        eps=0;%1e-6; 
     else
         eps=0;
     end
@@ -1802,42 +1830,53 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
         else
             maxDist(ii)=-dSnax(ii);
         end
-        if numel(sameEdgeSnax)==1
+%         if numel(sameEdgeSnax)==1
+%             
+%             dSnaxOther=dSnax(sameEdgeSnax);
+%             vSnaxOther=vSnax(sameEdgeSnax);
+%             sameDir=fromvertSnax(ii)==fromvertSnax(sameEdgeSnax);
+%             if sameDir
+%                 %disp('Turning Snaxel for impact distance calculation')
+%                 dSnaxOther=1-dSnaxOther;
+%                 vSnaxOther=-vSnaxOther;
+%             end
+%             
+%             impactDist=(1-dSnax(ii)-dSnaxOther)/...
+%                 (vSnax(ii)+vSnaxOther)*vSnax(ii);
+%             
+%             if vSnax(ii)+vSnaxOther==0
+%                 impactDist=1;
+%             end
+%             
+%             if vSnax(ii)>=0 && impactDist>=0
+%                 maxDist(ii)=min([maxDist(ii),impactDist-eps]);
+%             elseif vSnax(ii)<0 && impactDist<=0
+%                 maxDist(ii)=max([maxDist(ii),impactDist+eps]);
+%             end
+%             
+%         else
+        if numel(sameEdgeSnax)>0
+%             disp('More than 2 snaxels on the same edge')
             
-            dSnaxOther=dSnax(sameEdgeSnax);
-            vSnaxOther=vSnax(sameEdgeSnax);
-            sameDir=fromvertSnax(ii)==fromvertSnax(sameEdgeSnax);
-            if sameDir
-                %disp('Turning Snaxel for impact distance calculation')
-                dSnaxOther=1-dSnaxOther;
-                vSnaxOther=-vSnaxOther;
-            end
-            
-            impactDist=(1-dSnax(ii)-dSnaxOther)/...
-                (vSnax(ii)+vSnaxOther)*vSnax(ii);
-            
-            if vSnax(ii)+vSnaxOther==0
-                impactDist=1;
-            end
-            
-            if vSnax(ii)>=0 && impactDist>=0
-                maxDist(ii)=min([maxDist(ii),impactDist-eps]);
-            elseif vSnax(ii)<0 && impactDist<=0
-                maxDist(ii)=max([maxDist(ii),impactDist+eps]);
-            end
-            
-        elseif numel(sameEdgeSnax)>1
-            disp('More than 2 snaxels on the same edge')
-            
+            impactDist=[];
             for jj=1:numel(sameEdgeSnax)
                 [impactDist(jj)]=CalcSnaxelRelativeImpact(dSnax(ii),vSnax(ii),fromvertSnax(ii),...
                     dSnax(sameEdgeSnax(jj)),vSnax(sameEdgeSnax(jj)),fromvertSnax(sameEdgeSnax(jj)));
             end
             
             if any(impactDist==0)
-                orderSnax(ii)
-                orderSnax(sameEdgeSnax)
-                
+                ordersAct=[orderSnax(ii),orderSnax(sameEdgeSnax)];
+                [~,orderSortI]=sort(ordersAct);
+
+                orderImpact=sign(toVertSnax(ii)-fromvertSnax(ii))*sign(orderSortI(2:end)-orderSortI(1));
+                % + indicates in the way on positive travel
+                % - indicates in the way on negative travel
+                orderImpact(impactDist~=0)=[];
+                if vSnax(ii)>=0 && any(orderImpact>0)
+                    maxDist(ii)=0;
+                elseif vSnax(ii)<0 && any(orderImpact<0)
+                    maxDist(ii)=0;
+                end
             end
             if vSnax(ii)>=0 && any(impactDist>0)
                 maxDist(ii)=min([maxDist(ii),min(impactDist(impactDist>0))-eps]);
@@ -1858,8 +1897,8 @@ function [impactDist]=CalcSnaxelRelativeImpact(rootD,rootV,rootVert,otherD,...
         otherD=1-otherD;
         otherV=-otherV;
     end
-    
-    impactDist=(1-rootD-otherD)/(rootV+otherV)*rootV;
+    vRatio=rootV/(rootV+otherV);
+    impactDist=(1-rootD-otherD)*vRatio;
     
     if isnan(impactDist)
         impactDist=0;
