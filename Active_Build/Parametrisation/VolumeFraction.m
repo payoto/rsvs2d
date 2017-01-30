@@ -23,11 +23,16 @@ function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snak
     [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid,snakposition);
     
     for ii=1:length(cellCentredGrid)
-        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume]=...
+        [cellCentredGrid(ii).areaBlock,cellCentredGrid(ii).filledvolume,cellCentredGrid(ii).coeffBlock]=...
             ExtractCellFillInformation(cellCentredGrid(ii),insideContourInfoIndex);
     end
     [volumefraction]=ExtractVolumeFractions(cellCentredGrid,volfracconnec);
-    [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid);
+    %[coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid);
+    coeffstruct=[cellCentredGrid(:).coeffBlock];
+    for ii=1:length(coeffstruct)
+        
+        coeffstruct(ii).value=CalculateVolDerivCoeff(coeffstruct(ii));
+    end
 end
 
 function [volumefraction]=ExtractVolumeFractions(cellCentredGrid,volfracconnec)
@@ -61,41 +66,6 @@ function [volumefraction]=ExtractVolumeFractions(cellCentredGrid,volfracconnec)
             jj=jj+1;
         end
         
-    end
-    
-    
-end
-
-function [posDelim2]=regexpREPLACE(str,delim)
-    
-    lD=length(delim);
-    lStr=length(str);
-    posDelim=zeros(size(str));
-    kk=1;
-    for ii=1:(lStr-(lD-1))
-        
-        if strcmp(delim,str(ii:(ii+lD-1)))
-            posDelim(kk)=ii;
-            kk=kk+1;
-        end
-        
-    end
-    posDelim2=posDelim(posDelim~=0);
-    
-end
-
-function strVert=VerticalStringArray(str,delim)
-    
-    delimPos=regexp(str,delim);
-    wS=[1,delimPos+1];
-    wE=[delimPos,length(str)];
-    wL=wE-wS;
-    
-    maxWL=max(wL);
-    
-    strVert=repmat(blanks(maxWL),[length(wL),1]);
-    for ii=1:length(wL)
-        strVert(ii,1:wL(ii))=str(wS(ii):wE(ii)-1);
     end
     
     
@@ -155,24 +125,25 @@ function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid
     
 end
 
-function [areablock,volume]=ExtractCellFillInformation(cellStruct,insideContourInfoIndex)
+function [areablock,volume,coeffblock]=ExtractCellFillInformation(cellStruct,insideContourInfoIndex)
     % Extracts the contour information to calculate the area
     
     nBordBlocks=length(cellStruct.snaxel)/2;
     errFlag=false;
     if nBordBlocks>0
-        [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct);
-        if sum(edgeSnak==0)==2
-            warning('Snaxels are in an unconventional configuration')
-            errFlag=true;
-        else
-            [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks);
+%         [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct);
+%         if sum(edgeSnak==0)==2
+%             warning('Snaxels are in an unconventional configuration')
+%             errFlag=true;
+%         else
+            [areablock,coeffblock]=ExtractBorderStructure(cellStruct,[],nBordBlocks);
             [volume,areablock]=CalculateCellVolume(areablock,cellStruct.volume);
-        end
+            %[coeffblock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks);
+%         end
     end
     
     if nBordBlocks<=0 || errFlag
-        
+        coeffblock=struct([]);
         areablock.border=[0,1];
         isFullCell=prod(FindObjNum([],[cellStruct.edge(:).index],...
             insideContourInfoIndex)>0);
@@ -185,12 +156,252 @@ function [areablock,volume]=ExtractCellFillInformation(cellStruct,insideContourI
     
 end
 
-function [bordstruct]=BorderStructure(bordLength,bordCentre,bordNormal)
+function [areablock,derivblock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
     
+    snaxInd=[cellStruct.snaxel(:).index];
+    snaxEdge=[cellStruct.snaxel(:).edge];
+    snaxOrder=[cellStruct.snaxel(:).orderedge];
+    snaxFrom=[cellStruct.snaxel(:).fromvertex];
+    snaxTo=[cellStruct.snaxel(:).tovertex];
+    vertList=[cellStruct.vertex(:).index];
+    vertEdgeIndex=[cellStruct.edge(:).vertexindex];
+    edgeList=[cellStruct.edge(:).index];
+    exploredSnax=[];
+    jj=0;
+    snaxSubList=1:numel(snaxInd);
+    while numel(exploredSnax)<numel(snaxInd)
+        %ii=1;
+        ii=min(setxor(snaxSubList,exploredSnax));
+        snaxStart=snaxInd(ii);
+        currSnaxList=ii;
+        coordList=cellStruct.snaxel(ii).coord;
+        exploredSnax=[exploredSnax,ii];
+        currOrder=snaxOrder(ii);
+        currEdge=snaxEdge(ii);
+        currTo=snaxTo(ii);
+        currFrom=snaxFrom(ii);
+        flag=true;
+        kk=0;
+        while flag
+            % currently will match with itself (except if vertices set ii=0)
+            isEdgeActSnax=(currEdge==snaxEdge([1:ii-1,ii+1:end])) ...
+                & xor(currTo>currFrom,currOrder<snaxOrder([1:ii-1,ii+1:end]));
+            
+            if any(isEdgeActSnax)
+                % find snaxel index which is closest
+                if isfinite(currOrder)
+                    snaxOrderComp=abs((snaxOrder([1:ii-1,ii+1:end])-currOrder));
+                else
+                    snaxOrderComp=snaxOrder([1:ii-1,ii+1:end]);
+                end
+                snaxOrderComp(~isEdgeActSnax)=nan;
+                [~,indNewInd]=min(snaxOrderComp);
+                indNewInd=indNewInd+(indNewInd>=ii && ii>0);
+                newInd=snaxInd(indNewInd);
+                if FindObjNum([],indNewInd,exploredSnax)~=0
+                    disp('break is at 1st Break - unexpected behaviour')
+                    break
+                end
+                % Add Snaxel
+                coordList=[coordList;cellStruct.snaxel(indNewInd).coord];
+                exploredSnax=[exploredSnax,indNewInd];
+                currSnaxList=[currSnaxList,indNewInd];
+                % follow to next snaxel along edge
+                nextSnaxSub=FindObjNum([],cellStruct.snaxel(indNewInd).connectivity,snaxInd);
+                nextSnaxSub=nextSnaxSub(nextSnaxSub~=0);
+                if isempty(nextSnaxSub) || numel(nextSnaxSub)>2
+                    error('There was a problem trying to follow connections for area')
+                end
+                ii=nextSnaxSub;
+                if any(sort(exploredSnax)~=unique(exploredSnax))
+                    error('Error In volume fraction structure building')
+                end
+                if FindObjNum([],ii,exploredSnax)~=0
+                    %disp('break is at 2nd Break')
+                    break
+                end
+                exploredSnax=[exploredSnax,ii];
+                currSnaxList=[currSnaxList,ii];
+                coordList=[coordList;cellStruct.snaxel(ii).coord];
+                currOrder=snaxOrder(ii);
+                currEdge=snaxEdge(ii);
+                currTo=snaxTo(ii);
+                currFrom=snaxFrom(ii);
+                % repeat
+            else
+                % find vertex which matches
+                coordList=[coordList;cellStruct.vertex(FindObjNum([],currFrom,vertList)).coord];
+                
+                currSnaxList=[currSnaxList,0];
+                % Add vertex
+                currEdgeSub=FindObjNum([],currEdge,edgeList);
+                matchingEdgeVert=ceil(FindObjNum([],currFrom,vertEdgeIndex)/2);
+                matchingEdgeVert(matchingEdgeVert==currEdgeSub)=[];
+                % find next edge
+                if numel(matchingEdgeVert)~=1
+                    error('Problem in the contour extraction of the volume polygon')
+                end
+                currEdge=cellStruct.edge(matchingEdgeVert).index;
+                
+                currTo=currFrom;
+                currFrom=cellStruct.edge(matchingEdgeVert).vertexindex;
+                currFrom(currFrom==currTo)=[];
+                if currTo>currFrom
+                    currOrder=Inf;
+                else
+                    currOrder=0;
+                end
+                ii=0;
+                % look for snaxel on next edge
+                % (currOrder=0 if initial vertex, currOrder=Inf if initial is final)
+                % currTo==itself; currFrom==nextVertex
+                % ii=0
+                kk=kk+1;
+                if kk>4
+                    error('Something is probably wrong')
+                end
+            end
+            flag=true;
+        end
+        jj=jj+1;
+        [areablock(jj).blockstruct]=BuildAreaBlock(coordList,cellStruct.snaxel,currSnaxList);
+        [derivblock(jj).blockstruct]=BuildAreaBlockDeriv(coordList,...
+            currSnaxList,cellStruct.snaxel,cellStruct.index);
+        
+    end
+    derivblock=[derivblock(:).blockstruct];
     
-    bordstruct.length=bordLength;
-    bordstruct.centre=bordCentre;
-    bordstruct.normal=bordNormal;
+end
+
+function [areaBlock]=BuildAreaBlock(coordList,cellSnax,currSnaxList)
+    
+   % if ~CCWLoop(RemoveIdenticalConsecutivePoints(coordList))
+   if ~CCWLoopSnax(cellSnax,currSnaxList)
+        coordList=flip(coordList);
+    end
+    n=size(coordList,1);
+    areaBlock=repmat(struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0])),[1,n]);
+    rotCW=[0 1;-1 0];
+    for ii=1:n
+        iip1=mod(ii,n)+1;
+        areaBlock(ii).length=1;%sqrt(sum((coordList(ii,:)-coordList(iip1,:)).^2));
+        areaBlock(ii).centre=(coordList(ii,:)+coordList(iip1,:))/2;
+        areaBlock(ii).normal=(rotCW*(coordList(iip1,:)-coordList(ii,:))')';
+    end
+    
+end
+
+function [isCCW]=CCWLoopSnax(cellSnax,currSnaxList)
+    
+    n=length(currSnaxList);
+    isCCW=[];
+    for ii=n:-1:2
+        iip1=mod(ii,n)+1;
+        if all(currSnaxList([ii,iip1])~=0)
+            
+            if cellSnax(currSnaxList(ii)).snaxnext==cellSnax(currSnaxList(iip1)).index
+                isCCW=true;
+                break
+            elseif cellSnax(currSnaxList(ii)).snaxprec==cellSnax(currSnaxList(iip1)).index
+                isCCW=false;
+                break
+            else
+                warning('should not get here.')
+            end
+        end
+        
+    end
+    
+    if isempty(isCCW);error('CCW direction unset');end
+end
+
+function [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct)
+    % Extract the connected snaxels from cell information
+    snaxNext=vertcat(cellStruct.snaxel(:).snaxnext);
+    snaxInd=[cellStruct.snaxel(:).index];
+    
+    edgeSnak=zeros([nBordBlocks,2]);
+    kk=0;
+    for ii=1:length(snaxInd)
+        nextIsInCell=sum(snaxNext(ii)==snaxInd)>0;
+        if nextIsInCell
+            kk=kk+1;
+            edgeSnak(kk,:)=[snaxInd(ii),snaxNext(ii)];
+            
+        end
+    end
+    
+    % test statements
+    testEdgeSnak=numel(RemoveIdenticalEntries(edgeSnak(:)))...
+        ~=numel(RemoveIdenticalEntries(snaxInd));
+    if kk~=nBordBlocks || testEdgeSnak
+        warning('You''re fucking up')
+    end
+    
+end
+
+function [volume]=CalculateGreensVolume(bordstruct)
+    % THis function uses green's theorem to calculate the area inside a set
+    % of snaxels
+    volumeArray=zeros(size(bordstruct));
+    for ii=1:length(bordstruct)
+        volumeArray(ii)=dot(bordstruct(ii).centre,bordstruct(ii).normal)...
+            *bordstruct(ii).length;
+    end
+    volume=sum(volumeArray)/2;
+    
+end
+
+function [volume,areablock]=CalculateCellVolume(areablock,totalVol)
+    % Calculate the volume bounded by snaxels within a cell
+    
+    for ii=1:length(areablock)
+        areablock(ii).volume=CalculateGreensVolume(areablock(ii).blockstruct);
+    end
+    volume=sum(([areablock(:).volume]));
+    
+    if volume>totalVol
+        volume=totalVol+sum(([areablock(:).volume]-totalVol));
+    end
+    
+    if volume<0
+        warning('Volume<0')
+    end
+end
+
+%{
+function [posDelim2]=regexpREPLACE(str,delim)
+    
+    lD=length(delim);
+    lStr=length(str);
+    posDelim=zeros(size(str));
+    kk=1;
+    for ii=1:(lStr-(lD-1))
+        
+        if strcmp(delim,str(ii:(ii+lD-1)))
+            posDelim(kk)=ii;
+            kk=kk+1;
+        end
+        
+    end
+    posDelim2=posDelim(posDelim~=0);
+    
+end
+
+function strVert=VerticalStringArray(str,delim)
+    
+    delimPos=regexp(str,delim);
+    wS=[1,delimPos+1];
+    wE=[delimPos,length(str)];
+    wL=wE-wS;
+    
+    maxWL=max(wL);
+    
+    strVert=repmat(blanks(maxWL),[length(wL),1]);
+    for ii=1:length(wL)
+        strVert(ii,1:wL(ii))=str(wS(ii):wE(ii)-1);
+    end
+    
     
 end
 
@@ -270,6 +481,271 @@ function [bordstruct]=AddEdgeBorders(activeStartVertex,previousEdge,cellStruct,e
     bordstruct(ll:end)=[];
 end
 
+function [edgeSnak]=ExtractCellSnaxelConnectedPairsProblem(nBordBlocks,cellStruct)
+    % Extract the connected snaxels from cell information
+    snaxConn=vertcat(cellStruct.snaxel(:).connectivity);
+    snaxInd=[cellStruct.snaxel(:).index];
+    snaxIndWorking=snaxInd;
+    snaxConnWorking=snaxConn;
+    edgeSnak=zeros([nBordBlocks,2]);
+    for ii=1:nBordBlocks
+        connLog=false(size(snaxIndWorking));
+        for jj=1:2
+            connLog=connLog | (snaxConnWorking(1,jj)==snaxIndWorking);
+        end
+        connLog(1)=true;
+        edgeSnak(ii,:)=snaxIndWorking(connLog)';
+        snaxIndWorking(connLog)=[];
+        connRmvSub=find(connLog);
+        snaxConnWorking(connRmvSub,:)=[]; %#ok<FNDSB>
+    end
+    if ~isempty(snaxIndWorking)
+        warning('You''re fucking up')
+    end
+    
+end
+
+
+function [edgeSnakSub]=CalculateCWdirectionEdge(activeCoord,normalVector,edgeSnakSub)
+    
+    testVector=activeCoord-(ones(2,1)*mean(activeCoord));
+    baseVector=normalVector;
+    [vecAngles]=ExtractAngle360(baseVector,testVector);
+    [~,orderedInd]=sort(vecAngles);
+    edgeSnakSub=edgeSnakSub(orderedInd);
+end
+
+function [bordstruct]=BorderStructure(bordLength,bordCentre,bordNormal)
+    
+    
+    bordstruct.length=bordLength;
+    bordstruct.centre=bordCentre;
+    bordstruct.normal=bordNormal;
+    
+end
+%}
+
+%% Volume Derivative calculation
+
+
+function [areaBlock]=BuildAreaBlockDeriv(coordList,currSnaxList,...
+        cellsnax,cellInd)
+    
+    %if ~CCWLoop(RemoveIdenticalConsecutivePoints(coordList))
+    if ~CCWLoopSnax(cellsnax,currSnaxList)
+        coordList=flip(coordList);
+        currSnaxList=flip(currSnaxList);
+    end
+    n=size(coordList,1);
+    areaBlock=repmat(struct('cellindex',[],...
+        'snaxelindex',[],...
+        'diffgrid',[],...
+        'centre',[],...
+        'normal',[],...
+        'ordercorner',[]),[1,sum(currSnaxList~=0)*2]);
+    rotCW=[0 1;-1 0];
+    kk=1;
+    for ii=1:n
+        iip1=mod(ii,n)+1;
+        if currSnaxList(ii)>0
+            areaBlock(kk).centre=(coordList(ii,:)+coordList(iip1,:))/2;
+            areaBlock(kk).normal=(rotCW*(coordList(iip1,:)-coordList(ii,:))')';
+            areaBlock(kk).ordercorner=1;
+            areaBlock(kk).diffgrid=cellsnax(currSnaxList(ii)).vector*cellsnax(currSnaxList(ii)).edgelength;
+            areaBlock(kk).snaxelindex=cellsnax(currSnaxList(ii)).index;
+            areaBlock(kk).cellindex=cellInd;
+            kk=kk+1;
+        end
+        if currSnaxList(iip1)>0
+            areaBlock(kk).centre=(coordList(ii,:)+coordList(iip1,:))/2;
+            areaBlock(kk).normal=(rotCW*(coordList(iip1,:)-coordList(ii,:))')';
+            areaBlock(kk).ordercorner=2;
+            areaBlock(kk).diffgrid=cellsnax(currSnaxList(iip1)).vector*cellsnax(currSnaxList(iip1)).edgelength;
+            areaBlock(kk).snaxelindex=cellsnax(currSnaxList(iip1)).index;
+            areaBlock(kk).cellindex=cellInd;
+            kk=kk+1;
+        end
+    end
+    
+end
+
+function [value]=CalculateVolDerivCoeff(coeffstruct)
+    % calculates the value of the velocity derivative coefficient
+    
+    DgVec=coeffstruct.diffgrid;
+    normalVec=coeffstruct.normal;
+    positionVec=coeffstruct.centre;
+    orderInd= coeffstruct.ordercorner;
+    rotNeg90=[0 -1; 1 0];
+    
+    value=(dot(DgVec,normalVec)/2)...
+        +(((-1)^(orderInd-1))*dot((rotNeg90*DgVec'),positionVec));
+    
+end
+
+%{
+function [areablock]=ExtractBorderDerivStructureLegacy(cellStruct,edgeSnak,nBordBlocks)
+    % Extracts the informaion for the calculation of the derivative of the
+    % Area
+    vertInd=[cellStruct.vertex(:).index];
+    edgeInd=[cellStruct.edge(:).index];
+    snaxInd=[cellStruct.snaxel(:).index];
+    
+    edgeSnakSub=FindObjNum([],edgeSnak(:,1),snaxInd);
+    edgeSnakSub(:,2)=FindObjNum([],edgeSnak(:,2),snaxInd);
+    areablockTemp=struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0]));
+    areablock=repmat(areablockTemp,[1 nBordBlocks]);
+    for ii=nBordBlocks:-1:1
+        % Calculate snaxel to snaxel border
+        [bordstruct1,edgeSnakSub(ii,:)]=AddSnaxelDeriv(cellStruct,edgeSnakSub(ii,:));
+        % First snax-edge border
+        [bordstruct2,~,~]=...
+            AddEdgeSnaxelDeriv(cellStruct,edgeSnakSub(ii,1),vertInd,edgeInd,2);
+        % First snax-edge border
+        [bordstruct3,~,~]=...
+            AddEdgeSnaxelDeriv(cellStruct,edgeSnakSub(ii,2),vertInd,edgeInd,1);
+        
+        areablock(ii).blockstruct=[bordstruct1,bordstruct2,bordstruct3];
+    end
+    areablock=[areablock(:).blockstruct];
+    
+end
+
+function [areablock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks)
+    
+    snaxInd=[cellStruct.snaxel(:).index];
+    snaxEdge=[cellStruct.snaxel(:).edge];
+    snaxOrder=[cellStruct.snaxel(:).orderedge];
+    snaxFrom=[cellStruct.snaxel(:).fromvertex];
+    snaxTo=[cellStruct.snaxel(:).tovertex];
+    vertList=[cellStruct.vertex(:).index];
+    vertEdgeIndex=[cellStruct.edge(:).vertexindex];
+    edgeList=[cellStruct.edge(:).index];
+    exploredSnax=[];
+    jj=0;
+    snaxSubList=1:numel(snaxInd);
+    
+    
+    while numel(exploredSnax)<numel(snaxInd)
+        %ii=1;
+        
+        ii=min(setxor(snaxSubList,exploredSnax));
+        snaxStart=snaxInd(ii);
+        currSnaxList=ii;
+        coordList=cellStruct.snaxel(ii).coord;
+        exploredSnax=[exploredSnax,ii];
+        currOrder=snaxOrder(ii);
+        currEdge=snaxEdge(ii);
+        currTo=snaxTo(ii);
+        currFrom=snaxFrom(ii);
+        flag=true;
+        kk=0;
+        while flag
+            % currently will match with itself (except if vertices set ii=0)
+            isEdgeActSnax=(currEdge==snaxEdge([1:ii-1,ii+1:end])) ...
+                & xor(currTo>currFrom,currOrder<snaxOrder([1:ii-1,ii+1:end]));
+            
+            if any(isEdgeActSnax)
+                % find snaxel index which is closest
+                if isfinite(currOrder)
+                    snaxOrderComp=abs((snaxOrder([1:ii-1,ii+1:end])-currOrder));
+                else
+                    snaxOrderComp=snaxOrder([1:ii-1,ii+1:end]);
+                end
+                snaxOrderComp(~isEdgeActSnax)=nan;
+                [~,indNewInd]=min(snaxOrderComp);
+                indNewInd=indNewInd+(indNewInd>=ii && ii>0);
+                newInd=snaxInd(indNewInd);
+                if FindObjNum([],indNewInd,exploredSnax)~=0
+                    disp('break is at 1st Break - unexpected behaviour')
+                    break
+                end
+                % Add Snaxel
+                coordList=[coordList;cellStruct.snaxel(indNewInd).coord];
+                exploredSnax=[exploredSnax,indNewInd];
+                currSnaxList=[currSnaxList,indNewInd];
+                % follow to next snaxel along edge
+                nextSnaxSub=FindObjNum([],cellStruct.snaxel(indNewInd).connectivity,snaxInd);
+                nextSnaxSub=nextSnaxSub(nextSnaxSub~=0);
+                if isempty(nextSnaxSub) || numel(nextSnaxSub)>2
+                    error('There was a problem trying to follow connections for area')
+                end
+                ii=nextSnaxSub;
+                if any(sort(exploredSnax)~=unique(exploredSnax))
+                    error('Error In volume fraction structure building')
+                end
+                if FindObjNum([],ii,exploredSnax)~=0
+                    %disp('break is at 2nd Break')
+                    break
+                end
+                exploredSnax=[exploredSnax,ii];
+                currSnaxList=[currSnaxList,ii];
+                coordList=[coordList;cellStruct.snaxel(ii).coord];
+                currOrder=snaxOrder(ii);
+                currEdge=snaxEdge(ii);
+                currTo=snaxTo(ii);
+                currFrom=snaxFrom(ii);
+                % repeat
+            else
+                % find vertex which matches
+                coordList=[coordList;cellStruct.vertex(FindObjNum([],currFrom,vertList)).coord];
+                
+                currSnaxList=[currSnaxList,0];
+                % Add vertex
+                currEdgeSub=FindObjNum([],currEdge,edgeList);
+                matchingEdgeVert=ceil(FindObjNum([],currFrom,vertEdgeIndex)/2);
+                matchingEdgeVert(matchingEdgeVert==currEdgeSub)=[];
+                % find next edge
+                if numel(matchingEdgeVert)~=1
+                    error('Problem in the contour extraction of the volume polygon')
+                end
+                currEdge=cellStruct.edge(matchingEdgeVert).index;
+                
+                currTo=currFrom;
+                currFrom=cellStruct.edge(matchingEdgeVert).vertexindex;
+                currFrom(currFrom==currTo)=[];
+                if currTo>currFrom
+                    currOrder=Inf;
+                else
+                    currOrder=0;
+                end
+                ii=0;
+                % look for snaxel on next edge
+                % (currOrder=0 if initial vertex, currOrder=Inf if initial is final)
+                % currTo==itself; currFrom==nextVertex
+                % ii=0
+                kk=kk+1;
+                if kk>4
+                    error('Something is probably wrong')
+                end
+            end
+            flag=true;
+        end
+        jj=jj+1;
+        [areablock(jj).blockstruct]=BuildAreaBlockDeriv(coordList,...
+            currSnaxList,cellStruct.snaxel,cellStruct.index);
+        
+    end
+    areablock=[areablock(:).blockstruct];
+end
+
+function [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid)
+    % Calculates the volume coefficients for the derivative of the volume fraction
+    % In order to calculate the velocities
+    
+    for ii=1:length(cellCentredGrid)
+        [cellCentredGrid(ii).coeffBlock]=...
+            ExtractCellDerivInformation(cellCentredGrid(ii));
+    end
+    
+    coeffstruct=[cellCentredGrid(:).coeffBlock];
+    for ii=1:length(coeffstruct)
+        
+        coeffstruct(ii).value=CalculateVolDerivCoeff(coeffstruct(ii));
+    end
+    
+end
+
 function [areablock]=ExtractBorderStructureLegacy(cellStruct,edgeSnak,nBordBlocks)
     % Extracts the border information and sets it out in the right
     % structure form
@@ -303,176 +779,6 @@ function [areablock]=ExtractBorderStructureLegacy(cellStruct,edgeSnak,nBordBlock
     
 end
 
-function [areablock]=ExtractBorderStructure(cellStruct,edgeSnak,nBordBlocks)
-    
-    snaxInd=[cellStruct.snaxel(:).index];
-    snaxEdge=[cellStruct.snaxel(:).edge];
-    snaxOrder=[cellStruct.snaxel(:).edgeOrder];
-    snaxFrom=[cellStruct.snaxel(:).fromvertex];
-    snaxTo=[cellStruct.snaxel(:).tovertex];
-    
-    while ~isempty(snaxInd)
-        ii=1;
-        snaxStart=snaxInd(ii);
-        
-        coordList=cellStruct.snaxel(ii).coord;
-        
-        currOrder=snaxOrder(ii);
-        currEdge=snaxEdge(ii);
-        currTo=snaxTo(ii);
-        currFrom=snaxFrom(ii);
-        
-        % currently will match with itself (except if vertices set ii=0)
-        isEdgeActSnax=(currEdge==snaxEdge([1:ii-1,ii+1:end])) ...
-            & xor(currTo>currFrom,currOrder<snaxOrder([1:ii-1,ii+1:end]));
-        
-        
-        if any(isEdgeActSnax)
-            % find snaxel index which is closest
-            
-            snaxOrderComp=isfinite(currOrder)*abs((snaxOrder-currOrder))...
-                -snaxOrder*(~isfinite(currOrder));
-            snaxOrderComp(~isEdgeActSnax)=nan;
-            [~,indNewInd]=min(snaxOrderComp);
-            newInd=snaxInd(indNewInd);
-            
-            % Add Snaxel
-            coordList=[coordList;cellStruct.snaxel(indNewInd).coord];
-            
-            % follow to next snaxel along edge
-            nextSnaxSub=FindObjNum([],cellStruct.snaxel(indNewInd).connectivity,snaxInd);
-            nextSnaxSub=nextSnaxSub(nextSnaxSub~=0);
-            if isempty(nextSnaxSub) || numel(nextSnaxSub)>2
-                error('There was a problem trying to follow connections for area')
-            end
-            ii=nextSnaxSub;
-            coordList=[coordList;cellStruct.snaxel(ii).coord];
-            currOrder=snaxOrder(ii);
-            currEdge=snaxEdge(ii);
-            currTo=snaxTo(ii);
-            currFrom=snaxFrom(ii);
-            % repeat
-        else
-            % find vertex which matches
-            % Add vertex
-            
-            % find next edge
-            
-            % look for snaxel on next edge
-            % (currOrder=0 if initial vertex, currOrder=Inf if initial is final)
-            % currTo==itself; currFrom==nextVertex
-            % ii=0
-            
-        end
-        
-    end
-    
-end
-
-function [edgeSnak]=ExtractCellSnaxelConnectedPairsProblem(nBordBlocks,cellStruct)
-    % Extract the connected snaxels from cell information
-    snaxConn=vertcat(cellStruct.snaxel(:).connectivity);
-    snaxInd=[cellStruct.snaxel(:).index];
-    snaxIndWorking=snaxInd;
-    snaxConnWorking=snaxConn;
-    edgeSnak=zeros([nBordBlocks,2]);
-    for ii=1:nBordBlocks
-        connLog=false(size(snaxIndWorking));
-        for jj=1:2
-            connLog=connLog | (snaxConnWorking(1,jj)==snaxIndWorking);
-        end
-        connLog(1)=true;
-        edgeSnak(ii,:)=snaxIndWorking(connLog)';
-        snaxIndWorking(connLog)=[];
-        connRmvSub=find(connLog);
-        snaxConnWorking(connRmvSub,:)=[]; %#ok<FNDSB>
-    end
-    if ~isempty(snaxIndWorking)
-        warning('You''re fucking up')
-    end
-    
-end
-
-function [edgeSnak]=ExtractCellSnaxelConnectedPairs(nBordBlocks,cellStruct)
-    % Extract the connected snaxels from cell information
-    snaxNext=vertcat(cellStruct.snaxel(:).snaxnext);
-    snaxInd=[cellStruct.snaxel(:).index];
-    
-    edgeSnak=zeros([nBordBlocks,2]);
-    kk=0;
-    for ii=1:length(snaxInd)
-        nextIsInCell=sum(snaxNext(ii)==snaxInd)>0;
-        if nextIsInCell
-            kk=kk+1;
-            edgeSnak(kk,:)=[snaxInd(ii),snaxNext(ii)];
-            
-        end
-    end
-    
-    % test statements
-    testEdgeSnak=numel(RemoveIdenticalEntries(edgeSnak(:)))...
-        ~=numel(RemoveIdenticalEntries(snaxInd));
-    if kk~=nBordBlocks || testEdgeSnak
-        warning('You''re fucking up')
-    end
-    
-end
-
-function [edgeSnakSub]=CalculateCWdirectionEdge(activeCoord,normalVector,edgeSnakSub)
-    
-    testVector=activeCoord-(ones(2,1)*mean(activeCoord));
-    baseVector=normalVector;
-    [vecAngles]=ExtractAngle360(baseVector,testVector);
-    [~,orderedInd]=sort(vecAngles);
-    edgeSnakSub=edgeSnakSub(orderedInd);
-end
-
-function [volume]=CalculateGreensVolume(bordstruct)
-    % THis function uses green's theorem to calculate the area inside a set
-    % of snaxels
-    volumeArray=zeros(size(bordstruct));
-    for ii=1:length(bordstruct)
-        volumeArray(ii)=dot(bordstruct(ii).centre,bordstruct(ii).normal)...
-            *bordstruct(ii).length;
-    end
-    volume=sum(volumeArray)/2;
-    
-end
-
-function [volume,areablock]=CalculateCellVolume(areablock,totalVol)
-    % Calculate the volume bounded by snaxels within a cell
-    
-    for ii=1:length(areablock)
-        areablock(ii).volume=CalculateGreensVolume(areablock(ii).blockstruct);
-    end
-    volume=sum(([areablock(:).volume]));
-    
-    if volume>totalVol
-        volume=totalVol+sum(([areablock(:).volume]-totalVol));
-    end
-    
-    
-end
-
-%% Volume Derivative calculation
-
-function [coeffstruct,cellCentredGrid]=VolumeFractionDifferentiated(cellCentredGrid)
-    % Calculates the volume coefficients for the derivative of the volume fraction
-    % In order to calculate the velocities
-    
-    for ii=1:length(cellCentredGrid)
-        [cellCentredGrid(ii).coeffBlock]=...
-            ExtractCellDerivInformation(cellCentredGrid(ii));
-    end
-    
-    coeffstruct=[cellCentredGrid(:).coeffBlock];
-    for ii=1:length(coeffstruct)
-        
-        coeffstruct(ii).value=CalculateVolDerivCoeff(coeffstruct(ii));
-    end
-    
-end
-
 function [coeffblock]=ExtractCellDerivInformation(cellStruct)
     % Extracts the contour information to calculate the area
     
@@ -492,33 +798,6 @@ function [coeffblock]=ExtractCellDerivInformation(cellStruct)
     if nBordBlocks<=0 || errFlag
         coeffblock=struct([]);
     end
-    
-end
-
-function [areablock]=ExtractBorderDerivStructure(cellStruct,edgeSnak,nBordBlocks)
-    % Extracts the informaion for the calculation of the derivative of the
-    % Area
-    vertInd=[cellStruct.vertex(:).index];
-    edgeInd=[cellStruct.edge(:).index];
-    snaxInd=[cellStruct.snaxel(:).index];
-    
-    edgeSnakSub=FindObjNum([],edgeSnak(:,1),snaxInd);
-    edgeSnakSub(:,2)=FindObjNum([],edgeSnak(:,2),snaxInd);
-    areablockTemp=struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0]));
-    areablock=repmat(areablockTemp,[1 nBordBlocks]);
-    for ii=nBordBlocks:-1:1
-        % Calculate snaxel to snaxel border
-        [bordstruct1,edgeSnakSub(ii,:)]=AddSnaxelDeriv(cellStruct,edgeSnakSub(ii,:));
-        % First snax-edge border
-        [bordstruct2,~,~]=...
-            AddEdgeSnaxelDeriv(cellStruct,edgeSnakSub(ii,1),vertInd,edgeInd,2);
-        % First snax-edge border
-        [bordstruct3,~,~]=...
-            AddEdgeSnaxelDeriv(cellStruct,edgeSnakSub(ii,2),vertInd,edgeInd,1);
-        
-        areablock(ii).blockstruct=[bordstruct1,bordstruct2,bordstruct3];
-    end
-    areablock=[areablock(:).blockstruct];
     
 end
 
@@ -591,21 +870,7 @@ function [derivstruct]=BorderDerivCoeffStructure(cellIndex,snaxelIndex,Dg,bordCe
     derivstruct.ordercorner=ordercorner; % Defines wether is negative or positive in coeff cal
     
 end
-
-function [value]=CalculateVolDerivCoeff(coeffstruct)
-    % calculates the value of the velocity derivative coefficient
-    
-    DgVec=coeffstruct.diffgrid;
-    normalVec=coeffstruct.normal;
-    positionVec=coeffstruct.centre;
-    orderInd= coeffstruct.ordercorner;
-    rotNeg90=[0 -1; 1 0];
-    
-    value=(dot(DgVec,normalVec)/2)...
-        +(((-1)^(orderInd-1))*dot((rotNeg90*DgVec'),positionVec));
-    
-end
-
+%}
 %% Compilation Utilities
 
 function [array]=ReferenceCompArray(obj,ref,typeRef,fields)
