@@ -526,7 +526,6 @@ function [indMod]=IndexMod(ind,m)
     
 end
 
-
 function [snakposition]=PositionSnakes(snaxel,unstructured)
     % Returns an array with Snaxel coordinates preceded by snaxel indices
     vertIndex=unstructured.vertex.index;

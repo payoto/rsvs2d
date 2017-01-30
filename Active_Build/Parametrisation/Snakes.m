@@ -228,10 +228,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
         
-        [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
-            volumefraction,cellCentredGridSnax,currentConvVelocity,...
-            currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
-        cntSave=cntSave+1;
+%         [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
+%             volumefraction,cellCentredGridSnax,currentConvVelocity,...
+%             currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+%         cntSave=cntSave+1;
         % Snaxel Repopulation In both directions
         
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
