@@ -1761,12 +1761,13 @@ function [isClosest]=IsClosestToEndVertexOrder(edgeSnax,ordSnax,fromvertSnax,tov
     
     [~,isMax]=max(ordExtractMat,[],2);
     [~,isMin]=min(ordExtractMat,[],2);
-    flagOrder=zeros(size(d));
-    flagOrder(indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],1:size(indExtractMat,1),isMin')))=-1;
-    flagOrder(indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],1:size(indExtractMat,1),isMax')))=1;
+    flagOrderMin=zeros(size(d));
+    flagOrderMax=zeros(size(d));
+    flagOrderMin(indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],1:size(indExtractMat,1),isMin')))=-1;
+    flagOrderMax(indExtractMat(sub2ind([numel(edgeSnaxList),maxOrd],1:size(indExtractMat,1),isMax')))=1;
     flagLocation=(~xor(d>=0.5,fromvertSnax<tovertSnax))*2-1;
     
-    isClosest=flagOrder==flagLocation;
+    isClosest=(flagOrderMin==flagLocation) | (flagOrderMax==flagLocation);
 end
 
 function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInsideEdges,snaxel)
