@@ -40,6 +40,8 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{2}='solidnotIn0';
     paramgeneral.boundstr{3}='0bound';
     paramgeneral.restart=true;
+    paramgeneral.buildInternal=false;
+    paramgeneral.internalConv=1e-4;
     
 end
 
@@ -327,6 +329,22 @@ function [param]=Snakestestsmooth4()
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
     
+end
+
+
+function [param]=SnakestestInternal()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat='internaltest';
+
+    param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.buildInternal=true;
+    param.snakes.step.snakData='all';
 end
 
 function [param]=Snakestestsmooth4_ref()
@@ -1683,6 +1701,22 @@ function [param]=TestInit()
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
     sizeRatio=sizeRatio(1)/sizeRatio(2);
     param.general.passDomBounds(1,:)=param.general.passDomBounds(1,:)*sizeRatio;
+end
+
+
+function [param]=SnakesStructTopo()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat='structtopo2';
+
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.buildInternal=true;
+    param.snakes.step.snakData='all';
 end
 
 %% validation cases

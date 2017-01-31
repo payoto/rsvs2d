@@ -98,34 +98,38 @@ function [isCCW]=CCWLoop(coord)
     % direction of the loop.
     [mCoord,~]=size(coord);
     %coord(end-1:end,:)=[];
-    
-    [leftMostCorner]=LeftMostCorner(coord);
-    switch leftMostCorner
-        case 1
-            precVert=mCoord;
-            nextVert=leftMostCorner+1;
-        case mCoord
-            precVert=leftMostCorner-1;
-            nextVert=1;
-        otherwise
-            precVert=leftMostCorner-1;
-            nextVert=leftMostCorner+1;
+    isCCW=[];
+    kk=0;
+    while isempty(isCCW) && kk<4
+        [leftMostCorner]=LeftMostCorner(coord);
+        switch leftMostCorner
+            case 1
+                precVert=mCoord;
+                nextVert=leftMostCorner+1;
+            case mCoord
+                precVert=leftMostCorner-1;
+                nextVert=1;
+            otherwise
+                precVert=leftMostCorner-1;
+                nextVert=leftMostCorner+1;
+        end
+
+        precVec=coord(precVert,:)-coord(leftMostCorner,:);
+        nextVec=coord(nextVert,:)-coord(leftMostCorner,:);
+        precAngle=ExtractAngle360([-1 -1],precVec);
+        nextAngle=ExtractAngle360([-1 -1],nextVec);
+
+
+        if precAngle>nextAngle
+            isCCW=true;
+        elseif precAngle<nextAngle
+            isCCW=false;
+        else
+            isCCW=[];
+            kk=kk+1;
+            coord=([0 1;-1 0]*coord')';
+        end
     end
-    
-    precVec=coord(precVert,:)-coord(leftMostCorner,:);
-    nextVec=coord(nextVert,:)-coord(leftMostCorner,:);
-    precAngle=ExtractAngle360([-1 -1],precVec);
-    nextAngle=ExtractAngle360([-1 -1],nextVec);
-    
-    
-    if precAngle>nextAngle
-        isCCW=true;
-    elseif precAngle<nextAngle
-        isCCW=false;
-    else
-        isCCW=[];
-    end
-    
 end
 
 function cellSimilar=FindIdenticalVector(blockSegments)
@@ -368,6 +372,14 @@ function surrogatePoints=PointGeneration(ranges,N_surpoints)
 end
 
 %% Loop building
+
+function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
+    
+    isEdge=[gridrefined2.edge(:).(boundstr{1})];
+    cond=boundstr{3};
+    [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
+    
+end
 
 function [loopsnaxel]=ExtractSnaxelLoops(snaxel,param)
     

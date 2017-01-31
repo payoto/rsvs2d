@@ -360,7 +360,7 @@ function [volume,areablock]=CalculateCellVolume(areablock,totalVol)
     end
     volume=sum(([areablock(:).volume]));
     
-    if volume>totalVol
+    if (volume-totalVol)>1e-12
         volume=totalVol+sum(([areablock(:).volume]-totalVol));
     end
     

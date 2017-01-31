@@ -22,8 +22,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     global arrivalTolerance unstructglobal maxStep maxDt
     
     
-    varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole','case'};
-    [arrivalTolerance,maxStep,maxDt,snakesConsole,caseStr]=ExtractVariables(varExtract,param);
+    varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole','case','buildInternal'};
+    [arrivalTolerance,maxStep,maxDt,snakesConsole,caseStr,buildInternal]=ExtractVariables(varExtract,param);
     
     % ACTUALLY DOING STUFF
     refinedGriduns=ModifReshape(refinedGrid);
@@ -31,10 +31,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     
     unstructglobal=refinedGriduns;
     %profile on
-    [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-        RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
-        oldGrid,oldGridUns,connectionInfo,param);
-    %profile viewer
+    if ~buildInternal
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+            RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
+            oldGrid,oldGridUns,connectionInfo,param);
+    else
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+            RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
+            oldGrid,oldGridUns,connectionInfo,param);
+    end
     
     if snakesConsole
         figure('Name',['VolError',caseStr]),semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
@@ -42,6 +47,139 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
         ylabel('Root Mean squared error on volume convergence')
         xlabel('number of iterations')
     end
+end
+
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+            RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
+            oldGrid,oldGridUns,connectionInfo,param)
+        
+        
+        varExtract={'boundstr','snakData','internalConv'};
+        [boundstr,snakData,internalConv]=ExtractVariables(varExtract,param);
+        kk=0;
+        flagCont=true;
+        
+        while flagCont
+            
+            if kk>0
+                
+                [oldGrid,refinedGrid]=ReFracGrids(oldGrid,refinedGrid,...
+                    connectionInfo,newFracs);
+                
+                % Second round
+                [refinedGrid]=EdgePropertiesReshape(refinedGrid);
+                [oldGrid]=EdgePropertiesReshape(oldGrid);
+                
+                refinedGriduns=ModifReshape(refinedGrid);
+                oldGridUns=ModifReshape(oldGrid);
+                [looprestart]=GenerateSnakStartLoop(refinedGrid,boundstr);
+            end
+            
+            [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart]=...
+                RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
+                oldGrid,oldGridUns,connectionInfo,param);
+            
+            switch snakData
+                case 'all'
+                    currFrac=[snakSavePart(end).volumefraction(:).volumefraction];
+                    currTarg=[snakSavePart(end).volumefraction(:).targetfill];
+                case 'light'
+                    currFrac=snakSavePart(end).volumefraction.currentfraction;
+                    currTarg=snakSavePart(end).volumefraction.targetfill;
+            end
+            
+            newFracs=currFrac-currTarg;
+            newFracs(newFracs<internalConv & (currFrac~=0 | currFrac~=1))=0;
+            
+            flagCont=~all(newFracs==0);
+            param=SetVariables({'restart'},{false},param);
+            
+            if mod(kk,2)~=0
+                [snaxelPart]=ReverseSnakes(snaxelPart);
+            end
+            
+            if ~exist('snaxel','var')
+                snaxel=snaxelPart;
+                snakposition=snakpositionPart;
+                snakSave=snakSavePart;
+                loopsnaxel=loopsnaxelPart;
+                restartsnake=restartsnakePart;
+            else
+                
+                [snaxel]=ConcatenateSnaxel(snaxel,snaxelPart);
+                [snakposition]=ConcatenateSnakposition(snakposition,snakpositionPart);
+                isInv=mod(kk,2)~=0;
+                [snakSave]=ConcatenateSnakSave(snakSave,snakSavePart,isInv);
+                %snakSave=[snakSave,snakSavePart];
+                loopsnaxel=[loopsnaxel,loopsnaxelPart];
+                %restartsnake=restartsnakePart;
+                restartsnake.snaxel=snaxel;
+                if isInv
+                    restartsnake.insideContourInfo=xor(restartsnake.insideContourInfo,restartsnakePart.insideContourInfo);
+                else
+                    restartsnake.insideContourInfo=(restartsnake.insideContourInfo | restartsnakePart.insideContourInfo);
+                end
+            end
+            kk=kk+1;
+        end
+end
+
+function [snakposition1]=ConcatenateSnakposition(snakposition1,snakposition2)
+    
+    maxInd=max([snakposition1(:).index]);
+    for ii=1:numel(snakposition2)
+        snakposition2(ii).index=snakposition2(ii).index+maxInd;
+    end
+    snakposition1(end+1:end+numel(snakposition2))=snakposition2;
+    
+end
+
+function [snaxel1]=ConcatenateSnaxel(snaxel1,snaxel2)
+    
+    maxInd=max([snaxel1(:).index]);
+    for ii=1:numel(snaxel2)
+        snaxel2(ii).index=snaxel2(ii).index+maxInd;
+        snaxel2(ii).connectivity=snaxel2(ii).connectivity+maxInd;
+        snaxel2(ii).snaxprec=snaxel2(ii).snaxprec+maxInd;
+        snaxel2(ii).snaxnext=snaxel2(ii).snaxnext+maxInd;
+    end
+    snaxel1(end+1:end+numel(snaxel2))=snaxel2;
+    
+end
+
+function [volfrac1]=ConcatenateVolumeFraction(volfrac1,volfrac2,isInv)
+    
+    isAct=find([volfrac2(:).isSnax]);
+    
+    for ii=isAct
+        volfrac1(ii).splitfraction=isInv*volfrac2(ii).splitvolume-(isInv*2-1)*volfrac2(ii).splitfraction;
+        volfrac1(ii).totalfraction=isInv*volfrac2(ii).totalvolume-(isInv*2-1)*volfrac2(ii).totalfraction;
+        volfrac1(ii).volumefraction=isInv-(isInv*2-1)*volfrac2(ii).volumefraction;
+        volfrac1(ii).isSnax=true;
+    end
+    
+end
+
+function [snakSave1]=ConcatenateSnakSave(snakSave1,snakSave2,isInv)
+    
+    l1=length(snakSave1);
+    l2=length(snakSave2);
+    for ii=1:max(l1,l2)
+        
+        snakSave1(ii).snaxel=ConcatenateSnaxel(snakSave1(min(ii,l1)).snaxel,snakSave2(min(ii,l2)).snaxel);
+        snakSave1(ii).snakposition=ConcatenateSnakposition(snakSave1(min(ii,l1)).snakposition,snakSave2(min(ii,l2)).snakposition);
+        [snakSave1(ii).volumefraction]=ConcatenateVolumeFraction(snakSave1(min(ii,l1)).volumefraction,snakSave2(min(ii,l2)).volumefraction,isInv);
+        snakSave1(ii).dt=min(snakSave1(min(ii,l1)).dt,snakSave2(min(ii,l2)).dt);
+        snakSave1(ii).currentConvVelocity=max(snakSave1(min(ii,l1)).currentConvVelocity,snakSave2(min(ii,l2)).currentConvVelocity);
+        snakSave1(ii).currentConvVolume=max(snakSave1(min(ii,l1)).currentConvVolume,snakSave2(min(ii,l2)).currentConvVolume);
+        snakSave1(ii).lSnak=(snakSave1(min(ii,l1)).lSnak+snakSave2(min(ii,l2)).lSnak);
+        snakSave1(ii).movFrame=snakSave1(min(ii,l1)).movFrame;
+        snakSave1(ii).insideContourInfo=(xor(snakSave1(min(ii,l1)).insideContourInfo,snakSave2(min(ii,l2)).insideContourInfo) & isInv) | ...
+            (~isInv & (snakSave1(min(ii,l1)).insideContourInfo | snakSave2(min(ii,l2)).insideContourInfo));
+        snakSave1(ii).cellCentredGrid=snakSave1(min(ii,l1)).cellCentredGrid;
+        
+    end
+    
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
@@ -1060,6 +1198,7 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
     delIndex=[];
     rePopInd=[];
     [edgeLength]=CalculateEgeLengths(unstructglobal);
+    warning('OFF','MATLAB:catenate:DimensionMismatch')
     while ~isempty(finishedSnakes)
         kk=kk+1;
         breedSub=finishedSnakes(1);
@@ -1099,6 +1238,8 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
         %finishedSnakes=finishedSnakes(FindObjNum([],[snaxel(finishedSnakes).tovertex],nonBreedVert)==0);
         
     end
+    
+    warning('ON','MATLAB:catenate:DimensionMismatch')
     if kk>0
         [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeDat,mergeTopo);
     end
@@ -1744,7 +1885,6 @@ function [isClosest]=IsClosestToEndVertex(edgeSnax,fromvertSnax,d)
     logicalMask(logical(eye(numel(d))))=0;
     isClosest=~any((dGrid1-((logicalMask==-1)+logicalMask.*dGrid2))<=0);
 end
-
 
 function [isClosest]=IsClosestToEndVertexOrder(edgeSnax,ordSnax,fromvertSnax,tovertSnax,d)
     
@@ -2976,6 +3116,36 @@ function [snaxelrev]=ReverseSnakesConnection(snaxel)
     end
     
     
+    
+end
+
+
+function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
+        connectstructinfo,newFracs)
+    
+    activeCell=true(size(baseGrid.cell));
+    activeInd=[baseGrid.cell((activeCell)).index];
+    
+    connecInd=[connectstructinfo.cell(:).old];
+    activConnecSub=FindObjNum([],activeInd,connecInd);
+    activeCellSub=find(activeCell);
+    refCellInd=[refinedGrid.cell(:).index];
+    
+    if numel(newFracs)~=numel(activeCellSub)
+        error('Fill and Active Set do not match in size')
+    end
+    if sum(abs(newFracs))==0
+        newFracs(round(numel(newFracs)/2))=1e-3;
+    end
+    
+    newGrid=baseGrid;
+    newRefGrid=refinedGrid;
+    
+    for ii=1:length(activeCellSub)
+        newGrid.cell(activeCellSub(ii)).fill=newFracs(ii);
+        newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
+        [newRefGrid.cell(newSub).fill]=deal(newFracs(ii));
+    end
     
 end
 
