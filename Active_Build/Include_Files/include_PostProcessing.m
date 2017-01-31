@@ -299,13 +299,22 @@ end
 
 %% Boundary Output to .dat file
 
-function []=BoundaryOutput(loop,FID,typeLoop)
-    if nargin<3
-        typeLoop='subdivision';
-    end
+function []=BoundaryOutput(loop,FID,typeLoop,buildInternal)
     
+    if nargin<4
+        buildInternal=false;
+        if nargin<3
+            typeLoop='subdivision';
+        end
+    end
+    if numel(loop)==0
+        error('Invalid loop input, check ''fill''')
+    end
     % trim loops and extract data
-    [loop]=FindInternalLoop(loop);
+    if ~buildInternal
+        [isInternal]=FindInternalLoop(loop);
+        loop=loop(~isInternal);
+    end
     if numel(loop)==0
         error('Loop is Empty after internal Trimming, check ''fill''')
     end
@@ -315,6 +324,36 @@ function []=BoundaryOutput(loop,FID,typeLoop)
     
     % print string data to file
     WriteToFile(cellLoops,FID)
+    
+end
+
+function [G]=BuildMatlabGeometryMatrix(loop,typeLoop)
+    [isInternal]=FindInternalLoop(loop);
+    
+    nPts=0;
+    for ii=1:numel(loop)
+        nPts=nPts+size(loop(ii).(typeLoop),1);
+    end
+    
+    G=zeros(7,nPts);
+    nDone=0;
+    for ii=1:numel(loop)
+        nDoneNew=nDone+size(loop(ii).(typeLoop),1);
+        padOnes=ones([1,size(loop(ii).(typeLoop),1)]);
+        actCoord=loop(ii).(typeLoop);
+        if ~loop(ii).isccw
+            actCoord=flip(actCoord);
+        end
+        actCoord=actCoord';
+        G(:,nDone+1:nDoneNew)=[padOnes*2;
+            actCoord(1,:);
+            actCoord(1,[2:end,1]);
+            actCoord(2,:);
+            actCoord(2,[2:end,1]);
+            padOnes*mod(isInternal(ii)+1,2);
+            padOnes*mod(isInternal(ii),2)];
+        nDone=nDoneNew;
+    end
     
 end
 
@@ -384,26 +423,28 @@ function cellLoops=DataToString(loopout)
     
 end
 
-function [loop]=FindInternalLoop(loop)
+function [isInternal]=FindInternalLoop(loop)
     % this function works by checkking all the inequalities around a
     % polygon
-    isInternal=false(size(loop));
+    isInternal=zeros(size(loop));
     for ii=1:length(loop)
         polygonPoints=loop(ii).subdivision;
-        polyVec=polygonPoints([2:end,1],:)-polygonPoints;
-        polyNorm=[polyVec(:,2),-polyVec(:,1)];
-        
-        numCond=size(polygonPoints,1);
+%         polyVec=polygonPoints([2:end,1],:)-polygonPoints;
+%         polyNorm=[polyVec(:,2),-polyVec(:,1)];
+%         
+%         numCond=size(polygonPoints,1);
         for jj=[1:ii-1,ii+1:length(loop)]
             
-            comparePoint=ones([size(polyNorm,1),1])*loop(jj).subdivision(1,:);
-            conditionNum=sum(polyNorm.*(comparePoint-polygonPoints),2);
-            allPos=sum(conditionNum>=0)==numCond;
-            allNeg=sum(conditionNum<=0)==numCond;
-            isInternal(jj)=isInternal(jj) || allPos || allNeg;
+%             comparePoint=ones([size(polyNorm,1),1])*loop(jj).subdivision(1,:);
+%             conditionNum=sum(polyNorm.*(comparePoint-polygonPoints),2);
+%             allPos=sum(conditionNum>=0)==numCond;
+%             allNeg=sum(conditionNum<=0)==numCond;
+              isIn=inpolygon(loop(jj).subdivision(1,1),loop(jj).subdivision(1,2),...
+                  loop(ii).subdivision(:,1),loop(ii).subdivision(:,2));
+            isInternal(jj)=isInternal(jj) + (isIn);
         end
     end
-    loop=loop(~isInternal);
+    
 end
 %% Video Output functions
 

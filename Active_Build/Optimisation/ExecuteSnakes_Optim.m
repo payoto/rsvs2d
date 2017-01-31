@@ -244,13 +244,16 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
         %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
         
     end
-    rmLoop=false(size(loop));
-    for ii=1:numel(loop)
-        rmLoop(ii)=isempty(loop(ii).isccw);
-    end
-    loop(rmLoop)=[];
-    if any(rmLoop)
-        warning(' %i empty loops removed.',sum(rmLoop))
+    if ~all(~sharpen)
+        %
+        rmLoop=false(size(loop));
+        for ii=1:numel(loop)
+            rmLoop(ii)=isempty(loop(ii).isccw);
+        end
+        loop(rmLoop)=[];
+        if any(rmLoop)
+            warning(' %i empty loops removed.',sum(rmLoop))
+        end
     end
 end
 

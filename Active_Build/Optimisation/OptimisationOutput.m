@@ -83,6 +83,8 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     
     varExtract={'resampleSnak'};
     [resampleSnak]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'buildInternal'};
+    [buildInternal]=ExtractVariables(varExtract,paramoptim.parameterisation);
     
     
     marker=out.marker;
@@ -130,7 +132,7 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     GenerateProfileBinary(writeDirectory,markerShort,savStruct)
     WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
     
-    BoundaryOutput(loop,fidBoundary,typeLoop);
+    BoundaryOutput(loop,fidBoundary,typeLoop,buildInternal);
     fclose(fidBoundary);
 end
 
