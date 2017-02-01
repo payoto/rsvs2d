@@ -1983,6 +1983,7 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     paroptim.parametrisation.optiminit.cellLevels=[(8*2^lvl+2),2];
     paroptim.parametrisation.snakes.refine.refineGrid=[8 1];
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
         
     
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
