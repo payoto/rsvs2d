@@ -827,7 +827,7 @@ function [param]=optimNACA0012()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     param.general.subdivType='chaikinNaca0012';
-    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
@@ -1704,19 +1704,26 @@ function [param]=TestInit()
 end
 
 
-function [param]=SnakesStructTopo()
+function [param]=SnakesStructTopo(varargin)
     
+    if isempty(varargin)
+        e='6';
+    else
+        e=int2str(varargin{1});
+    end
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
     
-    param.general.typDat='structtopo2';
+    %param.general.typDat='structtopo4';
+    param.general.typDat=['structtopo',e];
 
     param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     param.general.buildInternal=true;
     param.snakes.step.snakData='all';
+    param.snakes.step.convLevel=5*10^-5;
 end
 
 %% validation cases

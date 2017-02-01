@@ -81,10 +81,8 @@ end
 function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,loop,...
         restartsnak,snakSave,tecStruct)
     
-    varExtract={'resampleSnak'};
-    [resampleSnak]=ExtractVariables(varExtract,paramoptim);
-    varExtract={'buildInternal'};
-    [buildInternal]=ExtractVariables(varExtract,paramoptim.parameterisation);
+    varExtract={'resampleSnak','buildInternal'};
+    [resampleSnak,buildInternal]=ExtractVariables(varExtract,paramoptim);
     
     
     marker=out.marker;
@@ -206,7 +204,14 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     markerSmall=datestr(t,'_yymmddTHHMM');
     writeDirectory=[rootDir];
     writeDirectory=MakePathCompliant(writeDirectory);
-    for ii=1:numel(optimstruct);for jj=1:numel(optimstruct(1).population);if optimstruct(ii).population(jj).objective<=1e-16;optimstruct(ii).population(jj).objective=1000;optimstruct(ii).population(jj).constraint=0;end;end;end
+    for ii=1:numel(optimstruct);
+        for jj=1:numel(optimstruct(ii).population);
+            if optimstruct(ii).population(jj).objective<=1e-16;
+                optimstruct(ii).population(jj).objective=1000;
+                optimstruct(ii).population(jj).constraint=0;
+            end;
+        end;
+    end
     CopyDiary(writeDirectory,marker)
     GenerateIterResultBinary(writeDirectory,marker,optimstruct,paroptim)
     

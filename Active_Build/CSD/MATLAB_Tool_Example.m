@@ -24,9 +24,9 @@ g=[ 2 ,2 ,2 ,2 ;  % Number of elements
     1 ,1 ,1 ,1 ; % zone to the left of element (1 = inside)
     0 ,0 ,0 ,0 ]; % zone to the right of element (0=outside)
 %% Create a geometry entity
-geometryFromEdges(pdem,g);
+geometryFromEdges(pdem,G);
 
-
+%%
 % Plot the geometry and display the edge labels for use in the boundary
 % condition definition.
 figure;
@@ -34,11 +34,12 @@ pdegplot(pdem, 'edgeLabels', 'on');
 axis equal
 title 'Geometry With Edge Labels Displayed';
 
-generateMesh(pdem, 'Hmax', hmax);
+generateMesh(pdem, 'Hmax', hmax,'MesherVersion','R2013a');
 %% Boundary Conditions
 k = 1e7; % spring stiffness
 % Define distributed springs on all four edges
-bOuter = applyBoundaryCondition(pdem,'Edge',(1:4), 'g', [0 0], 'q', [0 0; k 0]);
+bOuter = applyBoundaryCondition(pdem,'Edge',([128:129,116:118]), 'g', [0 0], 'q', [0 0; k 0]);
+bOuter = applyBoundaryCondition(pdem,'Edge',([43]), 'g', [0 0], 'q', [0 0; k 0]);
 
 %% Coefficient Definition
 c = [1 0 1 D 0 D]';

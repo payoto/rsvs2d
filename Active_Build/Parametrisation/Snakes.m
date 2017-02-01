@@ -83,13 +83,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
                 case 'all'
                     currFrac=[snakSavePart(end).volumefraction(:).volumefraction];
                     currTarg=[snakSavePart(end).volumefraction(:).targetfill];
+                    isSnax=[snakSavePart(end).volumefraction(:).isSnax];
                 case 'light'
                     currFrac=snakSavePart(end).volumefraction.currentfraction;
                     currTarg=snakSavePart(end).volumefraction.targetfill;
+                    isSnax=[snakSavePart(end).volumefraction.isSnax];
             end
             
             newFracs=currFrac-currTarg;
-            newFracs(newFracs<internalConv & (currFrac~=0 | currFrac~=1))=0;
+            newFracs(isSnax & (currTarg~=0 | currTarg~=1))=0;
             
             flagCont=~all(newFracs==0);
             param=SetVariables({'restart'},{false},param);
@@ -885,11 +887,11 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     end
     
     
-    isInside=CheckInsideFill(vertCoordFull,edgeVertIndex,initVertexIndex,...
+    isInsideFill=CheckInsideFill(vertCoordFull,edgeVertIndex,initVertexIndex,...
         edgeIndex,vertIndex,insideContourInfo);
     
     [snaxel,~]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
-        edgeIndex,loopEdgeIndex,allLoopEdgeIndex,snaxelIndexStart,isInside,edgeLength);
+        edgeIndex,loopEdgeIndex,allLoopEdgeIndex,snaxelIndexStart,isInsideFill,edgeLength);
     
     [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
     if ~isInside
@@ -938,7 +940,6 @@ function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
             
         end
     end
-    
     
     neighboursInd=sort(edgeVertIndex(vertexEdgesSub,:),2);
     
@@ -1068,6 +1069,7 @@ function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertI
             [kk2,cellSimVertex{ii},newsnaxel]=GenerateVertexSnaxel...
                 (snaxelEdges(generateOrder),kk2,snaxelIndexStart,initVertexIndex(ii),...
                 edgeVertIndex,edgeIndex,edgeLength);
+            %any([newsnaxel(:).index]==416)
             snaxel=[snaxel,newsnaxel];
         end
     end
