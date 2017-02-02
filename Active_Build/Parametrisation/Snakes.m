@@ -95,8 +95,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
             
             flagCont=~all(newFracs==0);
             param=SetVariables({'restart'},{false},param);
-            
-            if mod(kk,2)~=0
+            isInv=mod(kk,2)~=0;
+            if isInv
                 [snaxelPart]=ReverseSnakes(snaxelPart);
             end
             
@@ -110,14 +110,14 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
                 
                 [snaxel]=ConcatenateSnaxel(snaxel,snaxelPart);
                 [snakposition]=ConcatenateSnakposition(snakposition,snakpositionPart);
-                isInv=mod(kk,2)~=0;
-                [snakSave]=ConcatenateSnakSave(snakSave,snakSavePart,isInv);
+                
+                [snakSave]=ConcatenateSnakSave(snakSave,snakSavePart,isInv,snakData);
                 %snakSave=[snakSave,snakSavePart];
                 loopsnaxel=[loopsnaxel,loopsnaxelPart];
                 %restartsnake=restartsnakePart;
                 restartsnake.snaxel=snaxel;
                 if isInv
-                    restartsnake.insideContourInfo=xor(restartsnake.insideContourInfo,restartsnakePart.insideContourInfo);
+                    restartsnake.insideContourInfo=(restartsnake.insideContourInfo & ~restartsnakePart.insideContourInfo);
                 else
                     restartsnake.insideContourInfo=(restartsnake.insideContourInfo | restartsnakePart.insideContourInfo);
                 end
@@ -151,37 +151,64 @@ end
 
 function [volfrac1]=ConcatenateVolumeFraction(volfrac1,volfrac2,isInv)
     
-    isAct=find([volfrac2(:).isSnax]);
+    isAct=find(~logical([volfrac1(:).isSnax]) & [volfrac2(:).isSnax]);
     
     for ii=isAct
-        volfrac1(ii).splitfraction=isInv*volfrac2(ii).splitvolume-(isInv*2-1)*volfrac2(ii).splitfraction;
-        volfrac1(ii).totalfraction=isInv*volfrac2(ii).totalvolume-(isInv*2-1)*volfrac2(ii).totalfraction;
+        volfrac1(ii).splitfraction=volfrac2(ii).splitvolume-(isInv*2-1)*volfrac2(ii).splitfraction;
+        volfrac1(ii).totalfraction=volfrac2(ii).totalvolume-(isInv*2-1)*volfrac2(ii).totalfraction;
         volfrac1(ii).volumefraction=isInv-(isInv*2-1)*volfrac2(ii).volumefraction;
         volfrac1(ii).isSnax=true;
     end
     
 end
 
-function [snakSave1]=ConcatenateSnakSave(snakSave1,snakSave2,isInv)
+function [volfrac1]=ConcatenateVolumeFractionLight(volfrac1,volfrac2,isInv)
     
+    isAct=find(~logical([volfrac1.isSnax]) & [volfrac2.isSnax]);
+    volfrac1.refinedInfo.fractionvol=volfrac1.refinedInfo.fractionvol-(isInv*2-1)*volfrac2.refinedInfo.fractionvol;
+    
+%     volfrac1.totalfraction=isInv*volfrac2.totalfraction-(isInv*2-1)*volfrac2.totalfraction;
+    volfrac1.currentfraction(isAct)=volfrac2.currentfraction(isAct)-(isInv*2-1)*volfrac2.currentfraction(isAct);
+    volfrac1.isSnax(isAct)=true;
+    
+    
+end
+
+%snakSave.volumefraction.refinedInfo.fractionvol=[volumefraction(:).splitfraction];
+function [snakSave1]=ConcatenateSnakSave(snakSave1,snakSave2,isInv,snakData)
+
     l1=length(snakSave1);
     l2=length(snakSave2);
-    for ii=1:max(l1,l2)
-        
-        snakSave1(ii).snaxel=ConcatenateSnaxel(snakSave1(min(ii,l1)).snaxel,snakSave2(min(ii,l2)).snaxel);
-        snakSave1(ii).snakposition=ConcatenateSnakposition(snakSave1(min(ii,l1)).snakposition,snakSave2(min(ii,l2)).snakposition);
-        [snakSave1(ii).volumefraction]=ConcatenateVolumeFraction(snakSave1(min(ii,l1)).volumefraction,snakSave2(min(ii,l2)).volumefraction,isInv);
-        snakSave1(ii).dt=min(snakSave1(min(ii,l1)).dt,snakSave2(min(ii,l2)).dt);
-        snakSave1(ii).currentConvVelocity=max(snakSave1(min(ii,l1)).currentConvVelocity,snakSave2(min(ii,l2)).currentConvVelocity);
-        snakSave1(ii).currentConvVolume=max(snakSave1(min(ii,l1)).currentConvVolume,snakSave2(min(ii,l2)).currentConvVolume);
-        snakSave1(ii).lSnak=(snakSave1(min(ii,l1)).lSnak+snakSave2(min(ii,l2)).lSnak);
-        snakSave1(ii).movFrame=snakSave1(min(ii,l1)).movFrame;
-        snakSave1(ii).insideContourInfo=(xor(snakSave1(min(ii,l1)).insideContourInfo,snakSave2(min(ii,l2)).insideContourInfo) & isInv) | ...
-            (~isInv & (snakSave1(min(ii,l1)).insideContourInfo | snakSave2(min(ii,l2)).insideContourInfo));
-        snakSave1(ii).cellCentredGrid=snakSave1(min(ii,l1)).cellCentredGrid;
-        
+
+    switch snakData
+        case 'all'
+            for ii=1:max(l1,l2)
+
+                snakSave1(ii).snaxel=ConcatenateSnaxel(snakSave1(min(ii,l1)).snaxel,snakSave2(min(ii,l2)).snaxel);
+                snakSave1(ii).snakposition=ConcatenateSnakposition(snakSave1(min(ii,l1)).snakposition,snakSave2(min(ii,l2)).snakposition);
+                [snakSave1(ii).volumefraction]=ConcatenateVolumeFraction(snakSave1(min(ii,l1)).volumefraction,snakSave2(min(ii,l2)).volumefraction,isInv);
+                snakSave1(ii).dt=min(snakSave1(min(ii,l1)).dt,snakSave2(min(ii,l2)).dt);
+                snakSave1(ii).currentConvVelocity=max(snakSave1(min(ii,l1)).currentConvVelocity,snakSave2(min(ii,l2)).currentConvVelocity);
+                snakSave1(ii).currentConvVolume=max(snakSave1(min(ii,l1)).currentConvVolume,snakSave2(min(ii,l2)).currentConvVolume);
+                snakSave1(ii).lSnak=(snakSave1(min(ii,l1)).lSnak+snakSave2(min(ii,l2)).lSnak);
+                snakSave1(ii).movFrame=snakSave1(min(ii,l1)).movFrame;
+                snakSave1(ii).insideContourInfo=(xor(snakSave1(min(ii,l1)).insideContourInfo,snakSave2(min(ii,l2)).insideContourInfo) & isInv) | ...
+                    (~isInv & (snakSave1(min(ii,l1)).insideContourInfo | snakSave2(min(ii,l2)).insideContourInfo));
+                snakSave1(ii).cellCentredGrid=snakSave1(min(ii,l1)).cellCentredGrid;
+
+            end
+        case 'light'
+            for ii=1:max(l1,l2)
+
+                [snakSave1(ii).volumefraction]=ConcatenateVolumeFractionLight(snakSave1(min(ii,l1)).volumefraction,snakSave2(min(ii,l2)).volumefraction,isInv);
+                snakSave1(ii).dt=min(snakSave1(min(ii,l1)).dt,snakSave2(min(ii,l2)).dt);
+                snakSave1(ii).currentConvVelocity=max(snakSave1(min(ii,l1)).currentConvVelocity,snakSave2(min(ii,l2)).currentConvVelocity);
+                snakSave1(ii).currentConvVolume=max(snakSave1(min(ii,l1)).currentConvVolume,snakSave2(min(ii,l2)).currentConvVolume);
+                snakSave1(ii).lSnak=(snakSave1(min(ii,l1)).lSnak+snakSave2(min(ii,l2)).lSnak);
+
+
+            end
     end
-    
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
@@ -507,7 +534,9 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     
     snaxel=restartsnake.snaxel;
     insideContourInfo=restartsnake.insideContourInfo;
-    [snaxel]=AddOrderEdgeField(snaxel);
+    if ~(isfield(snaxel,'orderedge'))
+        [snaxel]=AddOrderEdgeField(snaxel);
+    end
 end
 
 function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
@@ -804,6 +833,7 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
         snakSave.volumefraction.targetfill=[volumefraction(:).targetfill];
         snakSave.volumefraction.currentfraction=[volumefraction(:).volumefraction];
         snakSave.volumefraction.totVolume=[volumefraction(:).totalvolume];
+        snakSave.volumefraction.isSnax=[volumefraction(:).isSnax];
         
         snakSave.volumefraction.refinedInfo.index=[volumefraction(:).newCellInd];
         snakSave.volumefraction.refinedInfo.fractionvol=[volumefraction(:).splitfraction];

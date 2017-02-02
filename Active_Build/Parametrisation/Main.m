@@ -111,7 +111,7 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     disp(' once it is saved to resume execution.')
     system(['"C:\Program Files (x86)\Notepad++\notepad++.exe"  ',...
         '"',[cd,'\param_Restart.m'],'"']);
-    pause
+    %pause
     
     param_Restart
     varExtract={'useSnakes'};

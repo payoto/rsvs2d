@@ -826,27 +826,41 @@ function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,volumefraction,lagMult
     rot90=@(vec) ([0,1;-1,0]*(vec'))';
     n=length(derivtenscalc);
     Jacobian=zeros([n n]);
-    Hessian=zeros([n n n]);
-    HessianConst=zeros([n n nCell]);
+    Hessian=zeros([n n ]);
+    % Hessian=zeros([n n n]);
+    %HessianConst=zeros([n n nCell]);
+    HessianConst=zeros([n n]);
     for ii=1:n
         neighSub=derivtenscalc(ii).precsub;
         Jacobian(ii,ii)=derivtenscalc(ii).dfiddi;
         Jacobian(neighSub,ii)=derivtenscalc(ii).dfiddm;
         
-        Hessian(ii,ii,ii)=derivtenscalc(ii).d2fiddi2;
-        Hessian(ii,neighSub,ii)=derivtenscalc(ii).d2fiddim;
-        Hessian(neighSub,ii,ii)=derivtenscalc(ii).d2fiddim;
-        Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
+        Hessian(ii,ii)=Hessian(ii,ii)+derivtenscalc(ii).d2fiddi2;
+        Hessian(ii,neighSub)=Hessian(ii,neighSub)+derivtenscalc(ii).d2fiddim;
+        Hessian(neighSub,ii)=Hessian(neighSub,ii)+derivtenscalc(ii).d2fiddim;
+        Hessian(neighSub,neighSub)=Hessian(neighSub,neighSub)+derivtenscalc(ii).d2fiddm2;
+%         
+%         Hessian(ii,ii,ii)=derivtenscalc(ii).d2fiddi2;
+%         Hessian(ii,neighSub,ii)=derivtenscalc(ii).d2fiddim;
+%         Hessian(neighSub,ii,ii)=derivtenscalc(ii).d2fiddim;
+%         Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
         
         HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
             -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)))...
             /volumefraction(derivtenscalc(ii).cellprecsub).totalvolume;
-        HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=HessConstr;
-        HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=HessConstr;
+        
+        HessianConst(ii,neighSub)=HessianConst(ii,neighSub)+...
+            HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
+        HessianConst(neighSub,ii)=HessianConst(neighSub,ii)+...
+            HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
+%          HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=...
+%             HessConstr;
+%         HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=...
+%             HessConstr;
     end
-    HA=sum(HessConstr.*repmat(reshape(lagMulti,[1,1,numel(lagMulti)]),[n,n]),3);
+    HA=HessConstr; % sum(HessConstr.*repmat(reshape(lagMulti,[1,1,numel(lagMulti)]),[n,n]),3);
     Df=sum(Jacobian,2);
-    Hf=sum(Hessian,3);
+    Hf=Hessian;% sum(Hessian,3);
     
     %     if any(any(HA~=0))
     %         fprintf(' Hessian Not 0!! - ')
