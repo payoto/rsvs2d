@@ -347,6 +347,23 @@ function [param]=SnakestestInternal()
     param.snakes.step.snakData='all';
 end
 
+
+function [param]=SnakestestAltern()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat='testaltern';
+
+    param.snakes.step.snakesSteps=20;
+    param.snakes.refine.refineGrid=2;
+    param.snakes.refine.typeRefine='all';
+    param.general.buildInternal=true;
+    param.snakes.step.snakData='all';
+end
+
+
 function [param]=Snakestestsmooth4_ref()
     
     

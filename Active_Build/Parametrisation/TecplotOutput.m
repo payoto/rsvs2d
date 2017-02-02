@@ -298,7 +298,7 @@ function [cellMesh]=SnaxelToCellOut(snaxel,snakposition,strandID,time)
     
     coordDat=vertcat(snakposition(:).coord);
     vectorDat=vertcat(snakposition(:).vector);
-    velDat=[snaxel(:).v]'*0+1;
+    velDat=[snaxel(:).v]';
     %velDat=[[snaxel(:).isfreeze]']*2+1;
     %velDat=[[snaxel(:).orderedge]'];
     vectorDat(:,1)=vectorDat(:,1).*velDat;
