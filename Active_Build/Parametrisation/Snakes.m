@@ -117,7 +117,9 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
                 %restartsnake=restartsnakePart;
                 restartsnake.snaxel=snaxel;
                 if isInv
-                    restartsnake.insideContourInfo=(restartsnake.insideContourInfo & ~restartsnakePart.insideContourInfo);
+                    
+                    restartsnake.insideContourInfo=xor(restartsnake.insideContourInfo,restartsnakePart.insideContourInfo);
+                    restartsnake.insideContourInfo(FindObjNum([],[snaxel(:).edge],[refinedGrid.edge(:).index]))=false;
                 else
                     restartsnake.insideContourInfo=(restartsnake.insideContourInfo | restartsnakePart.insideContourInfo);
                 end
@@ -926,6 +928,7 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     [delIndex]=FindInsideSnaxels(snaxel,insideContourInfo);
     if ~isInside
         loopEdgeSubs=FindObjNum([],loopEdgeIndex,edgeIndex);
+        insideContourInfo(loopEdgeSubs)=1;
     else
         snaxInd=[snaxel(:).index];
         keepIndex=delIndex;
@@ -933,15 +936,16 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
         logDelInd=true(size(snaxInd));
         logDelInd(keepSub)=false;
         delIndex=snaxInd(logDelInd);
-        loopEdgeSubs=[];
+        loopEdgeSubs=FindObjNum([],loopEdgeIndex,edgeIndex);
+        %loopEdgeSubs=[];
         snaxel=ReverseSnakes(snaxel);
+        insideContourInfo(loopEdgeSubs)=0;
     end
     
     snaxel=DeleteSnaxel(snaxel,delIndex);
     
     [snaxel]=TestSnaxelLoopDirection(snaxel);
     
-    insideContourInfo(loopEdgeSubs)=1;
     
 end
 

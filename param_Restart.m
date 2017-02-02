@@ -1,11 +1,11 @@
 % Parameter File 
-% 02-Feb-2017 17:45:36 
+% 02-Feb-2017 18:34:41 
 % Restart 
 param.general.passDomBounds = [-1,1;-1,1]; 
 param.general.passGridSteps = [3]; 
 param.general.refineSteps = [1]; 
 param.general.passPadding = [1]; 
-param.general.typDat = ['structtopo3']; 
+param.general.typDat = ['testaltern']; 
 param.general.typeBound = ['snaxel']; 
 param.general.subdivType = ['chaikin']; 
 param.general.loadLogical = [false]; 
@@ -13,9 +13,9 @@ param.general.useSnakes = [true];
 param.general.execTest = [false]; 
 param.general.boundstr = {['boundaryis0'],['solidnotIn0'],['0bound']}; 
 param.general.restart = [true]; 
-param.general.buildInternal = [false]; 
+param.general.buildInternal = [true]; 
 param.general.internalConv = [0.0001]; 
-param.general.case = ['SnakesStructTopo(3)']; 
+param.general.case = ['SnakestestAltern']; 
 param.results.archiveName = ['Standard_Execution']; 
 param.results.resultRoot = ['C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\..\results\']; 
 param.results.noteFiles = {['CurrentBuild'],['OptimSQP']}; 
@@ -25,11 +25,11 @@ param.plotting.plotInterval = [0];
 param.plotting.makeMov = [false]; 
 param.plotting.debugPlot = [0]; 
 param.plotting.checkSensitivities = [false]; 
-param.snakes.step.snakesSteps = [60]; 
+param.snakes.step.snakesSteps = [100]; 
 param.snakes.step.mergeTopo = [true]; 
 param.snakes.step.maxStep = [0.29999999999999999]; 
 param.snakes.step.maxDt = [0.5]; 
-param.snakes.step.convLevel = [0.0001]; 
+param.snakes.step.convLevel = [1e-08]; 
 param.snakes.step.arrivalTolerance = [0.01]; 
 param.snakes.step.subStep = [1]; 
 param.snakes.step.snakesMinSteps = [5]; 
