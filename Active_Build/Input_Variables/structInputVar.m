@@ -1718,12 +1718,14 @@ function [param]=SnakesStructTopo(varargin)
     %param.general.typDat='structtopo4';
     param.general.typDat=['structtopo',e];
 
-    param.snakes.step.snakesSteps=100;
-    param.snakes.refine.refineGrid=4;
+    param.snakes.step.snakesSteps=60;
+    param.snakes.refine.refineGrid=2;
     param.snakes.refine.typeRefine='all';
     param.general.buildInternal=true;
     param.snakes.step.snakData='all';
-    param.snakes.step.convLevel=5*10^-5;
+    param.snakes.step.convLevel=1*10^-4;
+    param.general.passDomBounds=[-1,1;-0.33,0.33];
+    param.general.passDomBounds=[-1,1;-1,1];
 end
 
 %% validation cases

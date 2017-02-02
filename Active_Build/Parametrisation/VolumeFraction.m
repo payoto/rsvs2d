@@ -192,7 +192,7 @@ function [areablock,derivblock]=ExtractBorderStructure(cellStruct,edgeSnak,nBord
                 if isfinite(currOrder)
                     snaxOrderComp=abs((snaxOrder([1:ii-1,ii+1:end])-currOrder));
                 else
-                    snaxOrderComp=snaxOrder([1:ii-1,ii+1:end]);
+                    snaxOrderComp=-snaxOrder([1:ii-1,ii+1:end]);
                 end
                 snaxOrderComp(~isEdgeActSnax)=nan;
                 [~,indNewInd]=min(snaxOrderComp);
