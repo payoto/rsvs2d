@@ -331,7 +331,6 @@ function [param]=Snakestestsmooth4()
     
 end
 
-
 function [param]=SnakestestInternal()
     
     
