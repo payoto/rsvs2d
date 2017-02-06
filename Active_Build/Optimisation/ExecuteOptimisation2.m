@@ -21,7 +21,7 @@ function [] = ExecuteOptimisation()
     
 end
 %}
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -90,6 +90,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
         catch ME;
             disp(ME.getReport),
+            nIter=maxIter;
+            startIter=1;
         end
         
         %catch
@@ -242,7 +244,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [paramoptim.general.desvarconnec]=...
         ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     % Start Parallel Pool
-    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
+    
+    %StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
     
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
@@ -1676,6 +1679,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     
     % Generate new snake restarts.
+    %load('TestLine1681.mat')
     [newFrac]=BuildNewRestartFrac(iterstruct,profloops);
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
         connectstructinfo,newFrac);
@@ -1743,7 +1747,7 @@ function [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,co
 end
 
 function [profloops]=ExtractVolInfo(optimRootDir)
-    
+    optimRootDir='/panfs/panasas01/aero/ap1949/SnakVolParam/source/../results//Optimisation/Archive_2017_02/Day_2017-02-02/Dir_2017-02-02T185942_NACA0012Sweep_c_0_BFGS_'
     [iterationPath,iterName]=FindDir(optimRootDir,'iteration',true);
     iterNum=regexp(iterName,'iteration_','split');
     

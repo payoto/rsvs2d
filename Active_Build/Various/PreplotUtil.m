@@ -12,9 +12,9 @@ function []=PreplotFiles(pltPaths)
    
     for ii=1:length(pltPaths)
         
-       [~,~]=system(['preplot "',pltPaths{ii},'" "',pltPaths{ii}(1:end-4),'_pre.plt" &'])
+       launchcmd=['preplot "',pltPaths{ii},'" "',pltPaths{ii}(1:end-4),'_pre.plt"'];
        
-       pause(2)
+       MaxSystemCommandInstances(launchcmd,4,'preplot')
         
     end
     
