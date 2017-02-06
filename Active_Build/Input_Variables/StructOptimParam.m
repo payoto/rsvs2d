@@ -1913,6 +1913,13 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
 end
 
 % NACA0012 refine
+
+function [paroptim]=testRefineNACA()
+    paroptim=NACA0012Sweep('c',0,'BFGS');
+    paroptim.general.maxIter=0;
+    
+end
+
 function paroptim=NACA0012Sweep(gridCase,lvl,optimiser)
     
     paroptim=bp3_NACA0012_sweep();
