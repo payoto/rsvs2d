@@ -307,7 +307,8 @@ function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,pop
             gridrefined,restartsnake,baseGrid,connectstructinfo);
         
     else
-        [population,supportstruct,captureErrors,restartsnake]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+        %[population,supportstruct,captureErrors,restartsnake]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+        [population,supportstruct,captureErrors,~]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
     end
     nPop=numel(population);

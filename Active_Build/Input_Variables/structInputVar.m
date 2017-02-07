@@ -73,7 +73,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=1e-2;
     paramsnakesstep.subStep=1;
-    paramsnakesstep.snakesMinSteps=5;
+    paramsnakesstep.snakesMinSteps=1;
     paramsnakesstep.snakData='all';
     paramsnakesstep.snakesConsole=true;
     paramsnakesstep.stepType='indiv'; % 'strict' 'bounded' 'indiv' 'mixed'
@@ -494,7 +494,7 @@ function [param]=optimDefault()
     param.snakes.step.snakesSteps=50;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
-    
+    param.snakes.step.snakesMinSteps=1;
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
     param.results.noteFiles={'CurrentBuild'};
@@ -833,6 +833,7 @@ function [param]=optimNACA0012()
     param.snakes.step.snakesSteps=200;
     param.snakes.step.mergeTopo=false;
     param.snakes.step.snaxInitPos=5e-4;
+    param.snakes.step.convLevel=10^-10;
     param.snakes.force.lengthEpsilon=1e-3;
     
     param.snakes.refine.axisRatio=1;
