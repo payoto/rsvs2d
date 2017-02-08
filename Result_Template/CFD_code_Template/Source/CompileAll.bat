@@ -1,5 +1,5 @@
 cd %~dp0
-gfortran -O3 -o cartcell.exe CartCellv30.f90
+gfortran -O3 -o cartcell.exe CartCellv31.f90
 gfortran -O3 -o eulerflowuns.exe EulerFlowUns41_AP.f90
 gfortran -O3 -o postproc.exe pproc12_AP.f90
 gfortran -O3 -o showmesh.exe showmesh2_AP.f90
