@@ -236,7 +236,7 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
         loop(ii).isccw=CCWLoop(startPoints);
         [newPoints,projPoints]=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
         loop(ii).subdivision=newPoints;
-        loop(ii).subdivspline=newPoints;
+        loop(ii).subdivspline=projPoints;
         if resampleSnak
             resampPoints=ResampleSpline(projPoints,paramspline);
             loop(ii).subdivspline=resampPoints;
