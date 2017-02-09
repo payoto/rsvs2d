@@ -81,8 +81,8 @@ end
 function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,loop,...
         restartsnak,snakSave,tecStruct)
     
-    varExtract={'resampleSnak','buildInternal'};
-    [resampleSnak,buildInternal]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'resampleSnak','buildInternal','typeLoop'};
+    [resampleSnak,buildInternal,typeLoop]=ExtractVariables(varExtract,paramoptim);
     
     
     marker=out.marker;
@@ -111,10 +111,9 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     % Output boundary data file
     [fidBoundary]=OpenBoundaryFile(writeDirectory,markerShort);
     
-    if resampleSnak
+    if resampleSnak && ~strcmp(typeLoop,'subdivspline')
         typeLoop='subdivspline';
-    else
-        typeLoop='subdivision';
+        warning(['Variable typeLoop was overwritten from value ''',typeLoop,''' to ''subdivspline'''])
     end
     
     

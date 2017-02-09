@@ -25,33 +25,41 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
             
             [targCoord]=GenerateLibCoord(analysisCoord(:,1),upperLower,aeroName);
         otherwise
-            error('not coded yet') 
+            error('not coded yet')
     end
     
     switch profileComp
         case 'distance'
             [errorMeasure,modifiedDistance]=CompareProfilesDistance(analysisCoord,targCoord);
+            plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+            h=figure;
+            subplot(2,1,1)
+            plotPoints(analysisCoord)
+            hold on
+            plotPoints(targCoord)
+            legend('snake points','Target points')
+            ax=subplot(2,1,2);
+            plot(analysisCoord(:,1),modifiedDistance)
+            ax.YScale='log';
         case 'area'
             
             [errorMeasure,modifiedDistance]=CompareProfilesArea(analysisCoord,targCoord);
-            
+            plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+            h=figure;
+            subplot(2,1,1)
+            plotPoints(analysisCoord)
+            hold on
+            plotPoints(targCoord)
+            legend('snake points','Target points')
+            ax=subplot(2,1,2);
+            plotPoints(modifiedDistance)
+            ax.YScale='log';
         otherwise
-            error('not coded yet') 
+            error('not coded yet')
     end
-    plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
-    h=figure;
-    subplot(2,1,1)
-    plotPoints(analysisCoord)
-    hold on
-    plotPoints(targCoord)
-    legend('snake points','Target points')
-    ax=subplot(2,1,2);
-    plot(analysisCoord(:,1),modifiedDistance)
-    ax.YScale='log';
+    
     
 end
-
-
 
 
 %%
@@ -94,40 +102,40 @@ end
 
 function [nacaCoord]=GenerateLibCoord(x,uplow,airfoilstr)
     % Generates y coordinate for a NACA airfoil.GenerateLibCoord
-    % X are the desired x coordinates, uplow is a vector the same size 
+    % X are the desired x coordinates, uplow is a vector the same size
     
     % xTop and xBot need to be normalised
-   
-   teps=5.48e-04/2/0.8; % true @ corner=1e-5
-   
     
-   [airfoilDat,airfoil]=ReadAirfoilData(airfoilstr,'');
-   
-   xMax=airfoil.func.xMax; %max(xPos);
-   xMin=airfoil.func.xMin; %min(xPos);
-   x(x>xMax)=xMax;
-   x(x<xMin)=xMin;
-   
-   if any(abs(uplow)~=1)
-       error('Vector uplow indicating uppper or lower surface is not well formed')
-   end
-   y=zeros(size(x));
-   y(uplow==1)=airfoil.func.upper(x(uplow==1))+(x(uplow==1)-xMin)/(xMax-xMin)*teps;
-   y(uplow==-1)=airfoil.func.lower(x(uplow==-1))-(x(uplow==-1)-xMin)/(xMax-xMin)*teps;
-   
-   
-   if size(x,1)==1
-       nacaCoord=[x;y]';
-   else
-       nacaCoord=[x,y];
-   end
-   
+    teps=5.48e-04/2/0.8; % true @ corner=1e-5
+    
+    
+    [airfoilDat,airfoil]=ReadAirfoilData(airfoilstr,'');
+    
+    xMax=airfoil.func.xMax; %max(xPos);
+    xMin=airfoil.func.xMin; %min(xPos);
+    x(x>xMax)=xMax;
+    x(x<xMin)=xMin;
+    
+    if any(abs(uplow)~=1)
+        error('Vector uplow indicating uppper or lower surface is not well formed')
+    end
+    y=zeros(size(x));
+    y(uplow==1)=airfoil.func.upper(x(uplow==1))+(x(uplow==1)-xMin)/(xMax-xMin)*teps;
+    y(uplow==-1)=airfoil.func.lower(x(uplow==-1))-(x(uplow==-1)-xMin)/(xMax-xMin)*teps;
+    
+    
+    if size(x,1)==1
+        nacaCoord=[x;y]';
+    else
+        nacaCoord=[x,y];
+    end
+    
     
 end
 
 function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     % Generates y coordinate for a NACA airfoil.
-    % X are the desired x coordinates, uplow is a vector the same size 
+    % X are the desired x coordinates, uplow is a vector the same size
     
     % xTop and xBot need to be normalised
     a4_open=0.1015;
@@ -138,13 +146,13 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
     
     naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
         m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
-
-   teps=5.48e-04/2/0.8; % true @ corner=1e-5
-   x(x>1)=1;
-   x(x<0)=0;
     
-   [ctc,pct,tmax,refFlag]=ReadNacaString(nacaStr);
-   
+    teps=5.48e-04/2/0.8; % true @ corner=1e-5
+    x(x>1)=1;
+    x(x<0)=0;
+    
+    [ctc,pct,tmax,refFlag]=ReadNacaString(nacaStr);
+    
     if numel(nacaStr)==4
         
         
@@ -173,7 +181,6 @@ function [nacaCoord]=GenerateNacaCoord(x,uplow,nacaStr)
 end
 
 
-
 %% Error Matching
 
 function [errorMeasure,modifiedDistance]=CompareProfilesDistance(profileCoord,targCoord)
@@ -192,50 +199,91 @@ function [errorMeasure,modifiedDistance]=CompareProfilesDistance(profileCoord,ta
     
 end
 
-function [errorMeasure]=CompareProfilesArea(profileCoord,targCoord)
+function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
     
-    [x0,y0,iout,jout] = intersections(profileCoord(:,1),profileCoord(:,2),...
-        targCoord(:,1),targCoord(:,2));
+    [x0,y0,iout,jout] = intersections(profileCoord([1:end,1],1),profileCoord([1:end,1],2),...
+        targCoord([1:end,1],1),targCoord([1:end,1],2));
+    rmv=isnan(iout) | isnan(jout);
+    iout(rmv)=[];
+    x0(rmv)=[];
+    y0(rmv)=[];
+    jout(rmv)=[];
+    
+    [iout,sortIndex]=sort(iout);
+    x0=x0(sortIndex);
+    y0=y0(sortIndex);
+    jout=jout(sortIndex);
     targArea=abs(CalculatePolyArea(targCoord));
     nX0=numel(x0);
     nP1=size(profileCoord,1);
     nP2=size(targCoord,1);
+    
     if nX0>0
-        areaErr=zeros(size(x0));
-        areaLength=zeros(size(x0));
+        areaErr=zeros(size(x0))';
+        areaLength=zeros(size(x0))';
+        areaPosx=zeros(size(x0))';
+        areaPosXmin=zeros(size(x0))';
+        areaPosXmax=zeros(size(x0))';
         for ii=1:nX0
             % Need to make sure both profiles go in the same direction
             iip1=mod(ii,nX0)+1;
-            if ceil(iout(ii))>floor(iout(iip1))
-                ind1=[ceil(iout(ii)):nP1,1:floor(iout(iip1))];
+            if floor(iout(ii))~=floor(iout(iip1))
+                if ceil(iout(ii))>floor(iout(iip1))
+                    ind1=[ceil(iout(ii)):nP1,1:floor(iout(iip1))];
+                else
+                    ind1=ceil(iout(ii)):floor(iout(iip1));
+                end
             else
-                ind1=ceil(iout(ii)):floor(iout(iip1));
+                ind1=[];
             end
-            if ceil(jout(ii))>floor(jout(iip1))
-                ind2=flip([ceil(jout(ii)):nP2,1:floor(jout(iip1))]);
+            if floor(jout(ii))~=floor(jout(iip1))
+                if ceil(jout(ii))>floor(jout(iip1))
+                    ind2=flip([ceil(jout(ii)):nP2,1:floor(jout(iip1))]);
+                else
+                    ind2=flip(ceil(jout(ii)):floor(jout(iip1)));
+                end
             else
-                ind2=flip(ceil(jout(ii)):floor(jout(iip1)));
+                ind2=[];
             end
             
-            actPts=[[x0(ii),y0(ii)]; 
+            actPts=[[x0(ii),y0(ii)];
                 profileCoord(ind1,:);
-                [x0(iip1),y0(iip1)]; 
+                [x0(iip1),y0(iip1)];
                 targCoord(ind2,:)];
-            
             areaErr(ii)=abs(CalculatePolyArea(actPts));
-            areaLength(ii)=x0(ii)-x0(iip1);
+            areaLength(ii)=max(actPts(:,1))-min(actPts(:,1));
+            areaPosx(ii)=(min(actPts(:,1))+max(actPts(:,1)))/2;
+            areaPosXmin(ii)=min(actPts(:,1));
+            areaPosXmax(ii)=max(actPts(:,1));
         end
-        errorMeasure=sum(areaErr)/targArea;
-        distribError=areaErr./areaLength;
-        xPts=[[profileCoord(1,1),reshape(x0,[1,numel(x0)])];
-            reshape(x0,[1,numel(x0)]),profileCoord(end,1)]]
-        xPts=xPts(:);
-        errPts=[distribError(end),distribError;distribError(end),distribError];
-        errPts=errPts(:);
-        errorDist=[xPts',errPts'];
+        
+        errorMeasure.sum=sum(areaErr)/targArea;
+        errorMeasure.mean=mean(areaErr)/targArea;
+        errorMeasure.std=std(areaErr)/targArea;
+        errorMeasure.max=max(areaErr)/targArea;
+        errorMeasure.min=min(areaErr)/targArea;
+        
+        areaDistrib=[min(areaPosXmin),areaPosx,areaPosXmax;
+            0,areaErr./areaLength*2,-areaErr./areaLength*2];
+        [areaDistrib(1,:),iSortDistrib]=sort(areaDistrib(1,:));
+        eqInd=find(abs(areaDistrib(1,1:end-1)-areaDistrib(1,2:end))<1e-10);
+        areaDistrib(2,:)=(areaDistrib(2,iSortDistrib));
+        areaDistrib(2,eqInd)=areaDistrib(2,eqInd)+areaDistrib(2,eqInd+1);
+        areaDistrib(:,eqInd+1)=[];
+        areaDistrib(2,:)=cumsum(areaDistrib(2,:));
+        areaDistrib(:,find(areaDistrib(2,:)<1e-18))=[];
+        areaDistrib=areaDistrib';
+        %         distribError=areaErr./areaLength;
+        %         xPts=[[profileCoord(1,1),reshape(x0,[1,numel(x0)])];
+        %             [reshape(x0,[1,numel(x0)]),profileCoord(end,1)]];
+        %         xPts=xPts(:);
+        %         errPts=[distribError(end),distribError;distribError(end),distribError];
+        %         errPts=errPts(:);
+        %         errorDist=[xPts',errPts'];
     else
         
-        [errorMeasure]=abs(CalculatePolyArea(profileCoord)-targArea)/targArea;
+        [errorMeasure]=(abs(CalculatePolyArea(profileCoord))-targArea)/targArea;
+        areaDistrib=[(min(profileCoord(:,1))+min(profileCoord(:,1)))/2,errorMeasure];
     end
     
     %error('Compare Profile through area integration has not been coded yet')

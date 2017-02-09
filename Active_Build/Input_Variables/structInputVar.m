@@ -33,6 +33,7 @@ function paramgeneral=default_general()
     paramgeneral.typDat='vvlofoil';
     paramgeneral.typeBound='snaxel'; % 'vertex' or 'snaxel'
     paramgeneral.subdivType='chaikin';
+    paramgeneral.typeLoop='subdivision';
     paramgeneral.loadLogical=false;
     paramgeneral.useSnakes=true;
     paramgeneral.execTest=false;
@@ -737,10 +738,6 @@ function [param]=optimInverseDesign()
     param.snakes.refine.refineGrid=[4 4];
     param.snakes.refine.typeRefine='all';
     
-    param.snakes.step.mergeTopo=true;
-    param.snakes.step.snakesSteps=300;
-    param.snakes.step.snakData='light';
-    param.snakes.step.snakesConsole=false;
     
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
@@ -749,16 +746,28 @@ function [param]=optimInverseDesign()
     
     param.snakes.refine.axisRatio=1;
     
-    param.optiminit.cellLevels=[10,2];
-    param.optiminit.defaultCorner=1e-5;
+    param.snakes.step.maxStep=0.3;
+    param.snakes.step.maxDt=0.5;
+    param.snakes.step.snakesConsole=false;
+    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseCut=1e-1;
+    param.snakes.step.vertLooseStep=100;
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.snakesSteps=300;
+    param.snakes.step.snakData='light';
+    param.snakes.step.snakesConsole=false;
+    param.snakes.step.snaxInitPos=5e-4;
+    param.snakes.step.convLevel=10^-10;
+    param.snakes.force.lengthEpsilon=1e-3;
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     param.general.subdivType='chaikin';
+    param.general.typeLoop='subdivspline';
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=true;
-    param.general.refineSteps=2;
+    param.general.refineSteps=4;
     param.optiminit.corneractive=false;
 end
 
@@ -839,7 +848,7 @@ function [param]=optimNACA0012()
     param.snakes.refine.axisRatio=1;
     param.snakes.refine.gridDistrib='cosX01';
      param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
-    param.optiminit.defaultCorner=1e-4;
+    param.optiminit.defaultCorner=1e-6;
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
@@ -848,7 +857,7 @@ function [param]=optimNACA0012()
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
-    param.general.refineSteps=3;
+    param.general.refineSteps=4;
     param.optiminit.corneractive=false;
 end
 

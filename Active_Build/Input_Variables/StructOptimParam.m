@@ -1869,16 +1869,16 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
     [paroptim]=Inverse_CG();
     
     paroptim.optim.CG.lineSearchType='backbisection';
-    
+    nIter=50;
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
-    paroptim.general.maxIter=100;
+    paroptim.general.maxIter=nIter;
     paroptim.general.worker=8; 
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
     paroptim.optim.CG.minDiffStep=1e-7;
     paroptim.optim.CG.validVol=0.2;
-    
+    paroptim.obj.invdes.profileComp='area';
     paroptim.obj.invdes.aeroName=airfoil;
     
     paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
@@ -1895,14 +1895,15 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
             paroptim.parametrisation.snakes.refine.axisRatio=2^lvl;
             paroptim.parametrisation.optiminit.cellLevels=[(6*2^lvl+2),2];
             paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
-            paroptim.general.refineOptim=[2 1 100; 2 1 100];
+            paroptim.general.refineOptim=[2 1 nIter; 2 1 nIter];
         case 'u'
             paroptim.parametrisation.snakes.refine.axisRatio=1;
             paroptim.parametrisation.optiminit.cellLevels=[(6*2^lvl+2),2^(lvl+1)];
             paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
-            paroptim.general.refineOptim=[2 2 100; 2 2 100];
+            paroptim.general.refineOptim=[2 2 nIter; 2 2 nIter];
     end
     
+    paroptim.parametrisation.general.typeLoop='subdivspline';
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
     
     paroptim.parametrisation.general.passDomBounds=...
@@ -1993,7 +1994,6 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.parametrisation.optiminit.defaultCorner=1e-6;
         
-    
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
     
     paroptim.parametrisation.general.passDomBounds=...

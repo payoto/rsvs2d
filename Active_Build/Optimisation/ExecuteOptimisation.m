@@ -84,6 +84,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         [~]=PrintEnd(procStr2,0,tStartOpt);
         pause(0.01)
         diary off
+%         if isempty(nIter)
+%             nIter=numel(iterstruct);
+%             startIter=1;
+%         end
         %try
         %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
         try
@@ -1670,14 +1674,13 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refineCellLvl(refStep,1:2));
     
     % Fill follows the order of activeCells
-    
     [profloops]=ExtractVolInfo(outinfoOld.rootDir);
     
     [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter);
     
     
     % Generate new snake restarts.
-    [newFrac]=BuildNewRestartFrac(iterstruct,profloops);
+    [newFrac]=BuildNewRestartFrac(iterstruct,profloops,baseGrid);
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
         connectstructinfo,newFrac);
     
@@ -1833,14 +1836,15 @@ function [transformstruct,coeffMat]=BuildMatrix(gridmatch)
     transformstruct.volumeNew=[gridmatch.matchstruct(:).newvolume]';
 end
 
-function [newFrac]=BuildNewRestartFrac(iterstruct,profloops)
+function [newFrac]=BuildNewRestartFrac(iterstruct,profloops,baseGrid)
     
     iterProf=[profloops(:).iter];
     profProf=[profloops(:).prof];
     iterProfSubs=FindObjNum([],max(iterProf),iterProf);
     profSub=find(profProf(iterProfSubs)==1);
     newFrac=profloops(iterProfSubs(profSub)).newFracs;
-    newFrac(newFrac~=0)=0.5;
+    
+    newFrac(newFrac~=0 & logical([baseGrid.cell(:).isactive]'))=0.5;
     
 end
 
