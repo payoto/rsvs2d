@@ -31,6 +31,9 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     switch profileComp
         case 'distance'
             [errorMeasure,modifiedDistance]=CompareProfilesDistance(analysisCoord,targCoord);
+        case 'area'
+            
+            [errorMeasure,modifiedDistance]=CompareProfilesArea(analysisCoord,targCoord);
             
         otherwise
             error('not coded yet') 
@@ -191,6 +194,57 @@ end
 
 function [errorMeasure]=CompareProfilesArea(profileCoord,targCoord)
     
-    error('Compare Profile through area integration has not been coded yet')
+    [x0,y0,iout,jout] = intersections(profileCoord(:,1),profileCoord(:,2),...
+        targCoord(:,1),targCoord(:,2));
+    targArea=abs(CalculatePolyArea(targCoord));
+    nX0=numel(x0);
+    nP1=size(profileCoord,1);
+    nP2=size(targCoord,1);
+    if nX0>0
+        areaErr=zeros(size(x0));
+        areaLength=zeros(size(x0));
+        for ii=1:nX0
+            % Need to make sure both profiles go in the same direction
+            iip1=mod(ii,nX0)+1;
+            if ceil(iout(ii))>floor(iout(iip1))
+                ind1=[ceil(iout(ii)):nP1,1:floor(iout(iip1))];
+            else
+                ind1=ceil(iout(ii)):floor(iout(iip1));
+            end
+            if ceil(jout(ii))>floor(jout(iip1))
+                ind2=flip([ceil(jout(ii)):nP2,1:floor(jout(iip1))]);
+            else
+                ind2=flip(ceil(jout(ii)):floor(jout(iip1)));
+            end
+            
+            actPts=[[x0(ii),y0(ii)]; 
+                profileCoord(ind1,:);
+                [x0(iip1),y0(iip1)]; 
+                targCoord(ind2,:)];
+            
+            areaErr(ii)=abs(CalculatePolyArea(actPts));
+            areaLength(ii)=x0(ii)-x0(iip1);
+        end
+        errorMeasure=sum(areaErr)/targArea;
+        distribError=areaErr./areaLength;
+        xPts=[[profileCoord(1,1),reshape(x0,[1,numel(x0)])];
+            reshape(x0,[1,numel(x0)]),profileCoord(end,1)]]
+        xPts=xPts(:);
+        errPts=[distribError(end),distribError;distribError(end),distribError];
+        errPts=errPts(:);
+        errorDist=[xPts',errPts'];
+    else
+        
+        [errorMeasure]=abs(CalculatePolyArea(profileCoord)-targArea)/targArea;
+    end
+    
+    %error('Compare Profile through area integration has not been coded yet')
 end
+
+
+
+
+
+
+
 

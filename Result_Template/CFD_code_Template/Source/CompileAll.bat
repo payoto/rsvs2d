@@ -20,6 +20,11 @@ copy eulerflowuns.exe ..\supersonic_ogivecoarse\eulerflowuns.exe
 copy postproc.exe ..\supersonic_ogivecoarse\postproc.exe
 copy meshsym.exe ..\supersonic_ogivecoarse\meshsym.exe
 
+copy "cartcell.exe" "..\supersonic_ogivefine\cartcell.exe"
+copy eulerflowuns.exe ..\supersonic_ogivefine\eulerflowuns.exe
+copy postproc.exe ..\supersonic_ogivefine\postproc.exe
+copy meshsym.exe ..\supersonic_ogivefine\meshsym.exe
+
 copy "cartcell.exe" "..\transonic\cartcell.exe"
 copy eulerflowuns.exe ..\transonic\eulerflowuns.exe
 copy postproc.exe ..\transonic\postproc.exe

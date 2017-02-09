@@ -37,6 +37,15 @@ chmod 755 ../supersonic_ogivecoarse/RunFlowSym.sh
 chmod 755 ../supersonic_ogivecoarse/RunOnlyFlow.sh
 chmod 755 ../supersonic_ogivecoarse/RunPost.sh
 
+cp -rp cartcell.exe ../supersonic_ogivefine/cartcell.exe
+cp -rp eulerflowuns.exe ../supersonic_ogivefine/eulerflowuns.exe
+cp -rp postproc.exe ../supersonic_ogivefine/postproc.exe
+cp -rp meshsym.exe ../supersonic_ogivefine/meshsym.exe
+chmod 755 ../supersonic_ogivefine/RunFlow.sh
+chmod 755 ../supersonic_ogivefine/RunFlowSym.sh
+chmod 755 ../supersonic_ogivefine/RunOnlyFlow.sh
+chmod 755 ../supersonic_ogivefine/RunPost.sh
+
 cp -rp cartcell.exe ../transonic/cartcell.exe
 cp -rp eulerflowuns.exe ../transonic/eulerflowuns.exe
 cp -rp postproc.exe ../transonic/postproc.exe
