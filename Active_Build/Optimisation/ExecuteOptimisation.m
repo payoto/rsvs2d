@@ -1681,7 +1681,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [baseGrid,gridrefined]=ReFracGrids(baseGrid,gridrefined,...
         connectstructinfo,newFrac);
     
-    if ~corneractive
+    if false % ~corneractive
         [baseGrid,gridrefined]=ReduceCornerFrac(baseGrid,gridrefined,...
             connectstructinfo,defaultCorner);
     end
@@ -1857,7 +1857,6 @@ function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
 
 end
 
-
 function [stepModif]=UpdateStepDir(stepModif,profloops,transformstruct,connectstructinfo,...
         iterstruct,oldBaseGrid,newBaseGrid)
     
@@ -1894,7 +1893,6 @@ function [stepModif]=UpdateStepDir(stepModif,profloops,transformstruct,connectst
     stepModif=newStep(actFill)'; %supportOptim.curr.prevStep=...
 end
 
-
 function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
         connectstructinfo,newFracs)
     
@@ -1923,7 +1921,6 @@ function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
     end
     
 end
-
 
 function [newGrid,newRefGrid]=ReduceCornerFrac(baseGrid,refinedGrid,...
         connectstructinfo,cornerFill)
@@ -2074,8 +2071,4 @@ function [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr)
     %iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     
 end
-
-
-
-
 

@@ -1970,7 +1970,6 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.parametrisation.snakes.refine.axisRatio = min(2*e*1.5,1); 
     paroptim.optim.CG.minDiffStep=1e-7;
     paroptim.general.maxIter=100;
     paroptim.general.worker=8;
@@ -1986,7 +1985,8 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     end
     
     % only horizontal refinement
-    paroptim.parametrisation.snakes.refine.axisRatio=2^lvl;
+    %paroptim.parametrisation.snakes.refine.axisRatio=2^lvl;
+    paroptim.parametrisation.snakes.refine.axisRatio = min(2*e*1.5,1); 
     paroptim.parametrisation.optiminit.cellLevels=[(8*2^lvl+2),2];
     paroptim.parametrisation.snakes.refine.refineGrid=[8 1];
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
