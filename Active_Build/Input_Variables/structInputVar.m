@@ -767,7 +767,7 @@ function [param]=optimInverseDesign()
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=true;
-    param.general.refineSteps=4;
+    param.general.refineSteps=5;
     param.optiminit.corneractive=false;
 end
 

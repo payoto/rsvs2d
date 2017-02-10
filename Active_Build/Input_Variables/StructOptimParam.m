@@ -1869,7 +1869,7 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
     [paroptim]=Inverse_CG();
     
     paroptim.optim.CG.lineSearchType='backbisection';
-    nIter=50;
+    nIter=40;
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;

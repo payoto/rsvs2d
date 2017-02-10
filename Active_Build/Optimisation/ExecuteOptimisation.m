@@ -109,7 +109,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
-            
+            save('Debugrefine')
             if size(refineOptim,2)==3
                 startIter=nIter+1;
                 maxIter=startIter+refineOptim(refStage,3);
@@ -1606,7 +1606,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
         InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
     
-    
+    paramoptim.general.isRestart=true;
+    paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
     [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
     
 end
