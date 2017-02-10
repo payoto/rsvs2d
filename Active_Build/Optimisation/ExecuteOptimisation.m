@@ -109,10 +109,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
-            save('Debugrefine')
+            
             if size(refineOptim,2)==3
                 startIter=nIter+1;
-                maxIter=startIter+refineOptim(refStage,3);
+                maxIter=nIter+refineOptim(refStage,3);
             else
                 maxIter=nIter+maxIter-(startIter-1);
                 startIter=nIter+1;
@@ -1548,6 +1548,7 @@ end
 function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     
     [obj]=InverseDesign_Error(paramoptim,loop);
+    hgsave(h,[member.location,filesep,'prof.fig']);
     
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
     objValue=obj.sum;
@@ -1577,6 +1578,7 @@ function [objValue,additional]=InverseDesignBulk(paramoptim,member,loop)
     additional.c=areaAdd.c;
     additional.tc=areaAdd.tc;
 end
+
 % Analytical test
 
 function [objValue,additional]=Rosenbrock(paramoptim,member,loop)
@@ -2012,7 +2014,7 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     
     popuDebug.fill=newFill;
     
-    paramoptim.parametrisation.snakes.step.snakesSteps=200;
+    paramoptim.parametrisation.snakes.step.snakesSteps=100;
     paramoptim.parametrisation.snakes.step.snakData='all';
     paramoptim.parametrisation.snakes.step.snakesConsole=true;
     

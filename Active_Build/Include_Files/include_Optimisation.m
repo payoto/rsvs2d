@@ -322,7 +322,7 @@ function [ctc,pct,ttc,refFlag]=ReadNacaString(nacaStr)
         ttc=str2num(nacaStr(4:5))/100;
         %error('Five digits not implemented - need for tabulated data')
     else
-        error('Invalid string length')
+        error('Invalid string of length %i',numel(nacaStr))
     end
 end
 

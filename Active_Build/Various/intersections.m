@@ -225,6 +225,7 @@ B = -[x1(i) x2(j) y1(i) y2(j)].';
 if robust
 	overlap = false(n,1);
 	warning_state = warning('off','MATLAB:singularMatrix');
+    warning_state2=warning('off','MATLAB:nearlySingularMatrix');
 	% Use try-catch to guarantee original warning state is restored.
 	try
 		lastwarn('')
@@ -232,7 +233,7 @@ if robust
 			T(:,k) = AA(:,:,k)\B(:,k);
 			[unused,last_warn] = lastwarn;
 			lastwarn('')
-			if strcmp(last_warn,'MATLAB:singularMatrix')
+			if strcmp(last_warn,'MATLAB:singularMatrix') || strcmp(last_warn,'MATLAB:nearlySingularMatrix')
 				% Force in_range(k) to be false.
 				T(1,k) = NaN;
 				% Determine if these segments overlap or are just parallel.
@@ -240,8 +241,10 @@ if robust
 			end
 		end
 		warning(warning_state)
+		warning(warning_state2)
 	catch err
 		warning(warning_state)
+		warning(warning_state2)
 		rethrow(err)
 	end
 	% Find where t1 and t2 are between 0 and 1 and return the corresponding

@@ -100,9 +100,25 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         if any(isnan(DeltaxisFreeze))
             DeltaxisFreeze(:)=0;
         end
+        
         if any(isnan(Deltax))
             [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,(isFreeze==1));
             finIsFreeze=(isFreeze==1);
+            if any(isnan(Deltax))
+                [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze));
+                finIsFreeze=logical(isFreeze) ;
+                if any(isnan(Deltax))
+                    if any(~isfinite(lagMulti))
+                        %frzCell=find(~isfinite(lagMulti));
+                        %snaxFreezeCell=logical(sum(areaConstrMat(frzCell,:)~=0));
+                        %if all(snaxFreezeCell | logical(isFreeze))
+                        snaxFreezeCell=~((sum(Hf~=0,1)>1) | (sum(Hf~=0,2)>1)');
+                    end
+                    %end
+                    [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
+                    finIsFreeze=logical(isFreeze) | snaxFreezeCell;
+                end
+            end
         end
         HL=Hf;
     else
