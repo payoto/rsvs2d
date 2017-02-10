@@ -1,5 +1,5 @@
-function [err1,err2]=TestProfileDifferences(optimstruct,rootDir)
-    
+function [err1,err2,optimstruct]=TestProfileDifferences(optimstruct,rootDir)
+    % Compares the difference between profiles
     
     % Edit position of profiles
     for ii=1:numel(optimstruct)
