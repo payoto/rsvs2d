@@ -1639,10 +1639,11 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Refine Grid
     varNames={'refineOptim'};
     refineCellLvl=ExtractVariables(varNames,paramoptim);
-    refparamsnake=SetVariables({'refineGrid'},{refineCellLvl(refStep,:)},...
+    refparamsnake=SetVariables({'refineGrid','typeRefine'},{refineCellLvl(refStep,:),'automatic'},...
         paramoptim.parametrisation);
+    % Need to add here the additional refinement options
     
-    
+    oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
         =GridInitAndRefine(refparamsnake,oldGrid.base);
@@ -2001,6 +2002,123 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
     end
     
    % supportOptim.curr.prevStep
+end
+
+%% Refinement Cells Selection
+
+function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
+    % function 
+    
+    varNames={'refineOptimType','refineOptimRatio','symDesVarList'};
+    [refineOptimType,refineOptimRatio,symDesVarList]=ExtractVariables(varNames,paramoptim);
+    
+    % for all gradient based and non gradient use the entire last
+    % population has a guide. ie evaluate the condition for each member.
+    
+    isRefine=false(size(oldGrid.base.cell));
+    switch refineOptimType
+        case 'all'
+            % refines all cells
+            isRefine=true(size(isRefine));
+        case 'contour'
+            % refines all cells with snaxels
+            for ii=1:numel(lastpopulation);
+                isRefine=isRefine | REFINE_contour(lastpopulation(ii));
+            end
+        case 'desvargrad'
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            edgeCellSub=FindObjNum([],[oldGrid.base.edge(:).cellindex],cellInd);
+            
+            for ii=1:numel(lastpopulation);
+                isRefine=isRefine | REFINE_desvargrad(lastpopulation(ii),...
+                    oldGrid.base,actInd,cellInd,edgeCellSub,refineOptimRatio);
+            end
+            
+        case 'contlength'
+            % refines cells based on the L/sqrt(A)
+        case 'contcurve'
+            % refines cells based on the curvature*A
+        otherwise
+            error('Unsupported Cell Selection refinement')
+    end
+    
+    if all(~isRefine)
+        error('isRefine not set properly, no refinement has taken place')
+    end
+    
+    % Match Symmetry
+    isRefine(symDesVarList(1,:))=isRefine(symDesVarList(1,:)) | isRefine(symDesVarList(2,:));
+    isRefine(symDesVarList(2,:))=isRefine(symDesVarList(1,:)) | isRefine(symDesVarList(2,:));
+    
+    for ii=1:numel(oldGrid.base.cell)
+        oldGrid.base.cell(ii).isrefine=isRefine(ii);
+    end
+end
+
+function [isSnax]=REFINE_contour(population)
+            % refines all cells with snaxels
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+end
+
+function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
+        edgeCellSub,refineOptimRatio)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        gridBase.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+    
+    isAct=false(size(gridBase.cell));
+    isAct(actInd)=true;
+    
+    cellFillExt=[0,[gridBase.cell(:).fill]];
+    isSnaxExt=[false,isSnax];
+    isActExt=[false,isAct];
+    
+    edgeFill=cellFillExt(edgeCellSub+1);
+    edgeIsSnax=isSnaxExt(edgeCellSub+1);
+    edgeIsAct=isActExt(edgeCellSub+1);
+    
+    edgeSnax=edgeIsSnax(1:2:end) & edgeIsSnax(2:2:end);
+    edgeAct=edgeIsAct(1:2:end) & edgeIsAct(2:2:end);
+    edgeGrad=abs(edgeFill(1:2:end)-edgeFill(2:2:end));
+    
+    cond=~edgeSnax;
+    %cond=~edgeAct | ~edgeAct;
+    
+    cond=cond | edgeGrad==0;
+    edgeRank=zeros(size(edgeGrad));
+    edgeSub=1:numel(edgeGrad);
+    edgeGrad(cond)=[];
+    edgeSub(cond)=[];
+    
+    
+    [~,~,edgeRank(edgeSub)]=unique(edgeGrad);
+    edgeRank=edgeRank/max(edgeRank);
+    
+    isEdgeRefine=edgeRank>=(1-refineOptimRatio);
+    
+    cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
+    isRefine=false(size(gridBase.cell));
+    isRefine(cellSub)=true;
 end
 
 %% Test Function 
