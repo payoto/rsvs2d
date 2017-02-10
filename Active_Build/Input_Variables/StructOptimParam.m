@@ -69,6 +69,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.desvarconnec=[]; % Structure assigned later
     
     paroptimgeneral.refineOptim=[];
+    paroptimgeneral.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength'
+    paroptimgeneral.refineOptimRatio=1; % ratio of optimisation
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
@@ -1865,11 +1867,18 @@ function [paroptim]=areabusesweep(e)
 end
 
 % Inverse Design refinement
+function paroptim=TestLocalRefine()
+    paroptim=refsweep('cu','0012',0);
+    paroptim.general.refineOptimType='desvargrad';
+    paroptim.general.refineOptimRatio=0.1;
+    
+end
+
 function paroptim=refsweep(gridCase,airfoil,lvl)
     [paroptim]=Inverse_CG();
     
     paroptim.optim.CG.lineSearchType='backbisection';
-    nIter=40;
+    nIter=20;
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
