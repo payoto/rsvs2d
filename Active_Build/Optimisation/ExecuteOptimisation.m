@@ -1547,7 +1547,7 @@ end
 
 function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     
-    [obj]=InverseDesign_Error(paramoptim,loop);
+    [obj,h]=InverseDesign_Error(paramoptim,loop);
     hgsave(h,[member.location,filesep,'prof.fig']);
     
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
@@ -2049,6 +2049,9 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
     end
     
     % Match Symmetry
+    if isempty(symDesVarList)
+        symDesVarList=zeros([2,0]);
+    end
     isRefine(symDesVarList(1,:))=isRefine(symDesVarList(1,:)) | isRefine(symDesVarList(2,:));
     isRefine(symDesVarList(2,:))=isRefine(symDesVarList(1,:)) | isRefine(symDesVarList(2,:));
     
@@ -2105,20 +2108,29 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
     %cond=~edgeAct | ~edgeAct;
     
     cond=cond | edgeGrad==0;
-    edgeRank=zeros(size(edgeGrad));
     edgeSub=1:numel(edgeGrad);
     edgeGrad(cond)=[];
     edgeSub(cond)=[];
     
     
-    [~,~,edgeRank(edgeSub)]=unique(edgeGrad);
-    edgeRank=edgeRank/max(edgeRank);
+%     [~,~,edgeRank(edgeSub)]=unique(edgeGrad);
+%     edgeRank=edgeRank/max(edgeRank);
     
-    isEdgeRefine=edgeRank>=(1-refineOptimRatio);
     
-    cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
-    isRefine=false(size(gridBase.cell));
-    isRefine(cellSub)=true;
+    cellGrad=zeros([1,numel(gridBase.cell)+1]);
+    for jj=1:numel(edgeGrad)
+        ii=edgeSub(jj);
+        cellGrad(edgeCellSub((ii-1)*2+(1:2))+1)=max([edgeGrad(jj),edgeGrad(jj);
+            cellGrad(edgeCellSub((ii-1)*2+(1:2))+1)],[],1);
+    end
+    %[~,~,cellRank]=unique(cellGrad(2:end));
+    cellRank=cellGrad(2:end);
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    
+%     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
+%     isRefine=false(size(gridBase.cell));
+%    isRefine(cellSub)=true;
 end
 
 %% Test Function 

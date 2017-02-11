@@ -1874,6 +1874,15 @@ function paroptim=TestLocalRefine()
     
 end
 
+function paroptim=RestartLocalRefine()
+    paroptim=refsweep('cv','0012',0);
+    paroptim.general.refineOptimType='desvargrad';
+    paroptim.general.refineOptimRatio=0.1;
+    
+    paroptim.general.maxIter=2;
+    paroptim.general.worker=12; 
+end
+
 function paroptim=refsweep(gridCase,airfoil,lvl)
     [paroptim]=Inverse_CG();
     
@@ -1914,6 +1923,55 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
     
     paroptim.parametrisation.general.typeLoop='subdivspline';
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
+    
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
+
+function paroptim=refsweeplocal(gridCase,airfoil)
+    [paroptim]=Inverse_CG();
+    lvl=5;
+    paroptim.optim.CG.lineSearchType='backbisection';
+    nIter=20;
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=nIter;
+    paroptim.general.worker=8; 
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.validVol=0.2;
+    paroptim.obj.invdes.profileComp='area';
+    paroptim.obj.invdes.aeroName=airfoil;
+    
+    paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
+    
+    switch gridCase(1)
+        case 'c'
+            paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
+        case 'u'
+            paroptim.parametrisation.snakes.refine.gridDistrib='none';
+    end
+    
+    switch gridCase(2)
+        case 'v'
+            paroptim.parametrisation.snakes.refine.axisRatio=2^0;
+            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2];
+            paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+            paroptim.general.refineOptim=ones([lvl,1])*[2 1 nIter];
+        case 'u'
+            paroptim.parametrisation.snakes.refine.axisRatio=1;
+            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2^(0+1)];
+            paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
+            paroptim.general.refineOptim=ones([lvl,1])*[2 2 nIter];
+    end
+    
+    paroptim.parametrisation.general.typeLoop='subdivision';
+    paroptim.general.refineOptimType='desvargrad';
+    paroptim.general.refineOptimRatio=0.1;
     
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
@@ -2012,6 +2070,55 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
+function paroptim=volsweeplocal(e,gridCase)
+    
+    lvl=5;
+    nIter=20;
+    paroptim=AreaM2sweep_Nc();
+    paroptim.general.startPop='loadshape';
+    paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
+    paroptim.constraint.desVarVal={e};
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.general.maxIter=nIter;
+    paroptim.general.worker=8;
+    paroptim.general.refineOptim=0;
+    
+    paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
+    
+    switch gridCase(1)
+        case 'c'
+            paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
+        case 'u'
+            paroptim.parametrisation.snakes.refine.gridDistrib='none';
+    end
+    
+    switch gridCase(2)
+        case 'v'
+            paroptim.parametrisation.snakes.refine.axisRatio=2^0;
+            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2];
+            paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+            paroptim.general.refineOptim=ones([lvl,1])*[2 1 nIter];
+        case 'u'
+            paroptim.parametrisation.snakes.refine.axisRatio=1;
+            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2^(0+1)];
+            paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
+            paroptim.general.refineOptim=ones([lvl,1])*[2 2 nIter];
+    end
+    
+    paroptim.parametrisation.snakes.refine.axisRatio = min(4*e*1.5,1); 
+    paroptim.parametrisation.general.typeLoop='subdivision';
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    paroptim.general.refineOptimType='desvargrad';
+    paroptim.general.refineOptimRatio=0.1;
+    
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
 %% Inverse Design Cases
 
 

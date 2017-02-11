@@ -54,6 +54,24 @@ function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefin
         [gridrefined,connecstructinfo]=GridRefine_Wrapper(gridreshape,[cellRefine;cellRefinePos]', nRefine(1:2));
     end
     
+    % Shit codfe written under the influence
+    connecstructinfoCell=connecstructinfo.cell;
+    kk=1;
+    for ii=1:numel(gridreshape.cell)
+        connecstructinfo.cell(ii).old=gridreshape.cell(ii).index;
+        if gridreshape.cell(ii).index==connecstructinfoCell(kk).old;
+            connecstructinfo.cell(ii).new=connecstructinfoCell(kk).new;
+            kk=kk+1;
+            kk=min(kk,numel(connecstructinfoCell));
+        else
+        connecstructinfo.cell(ii).new=gridreshape.cell(ii).index;
+        end
+    end
+    
+    for ii=1:numel(gridrefined.cell)
+        gridrefined.cell(ii).refineVec(gridrefined.cell(ii).refineVec==0)=1;
+    end
+    
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
         {connecstructinfo.cell(:).new},...
         {connecstructinfo.cell(:).old},'UniformOutput',false));
