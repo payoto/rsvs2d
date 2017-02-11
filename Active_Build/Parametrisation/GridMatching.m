@@ -79,11 +79,13 @@ end
 
 function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs)
     
+    
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
         {newGrid.connec.cell(:).new},...
         {newGrid.connec.cell(:).old},'UniformOutput',false));
     
     oldIndsN=[origGrid.connec.cell(:).old];
+    oldCoarseInds=[origGrid.base.cell(:).index];
     oldSubsNewOrd=FindObjNum([],oldIndsNewOrd,oldIndsN);
     newIndsNewOrd=[newGrid.connec.cell(:).new];
     newSubGridOrd=FindObjNum([],[newGrid.cellrefined(:).index],newIndsNewOrd);
@@ -92,18 +94,29 @@ function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs)
     for ii=1:numel(newGrid.cellrefined)
         matchstruct(ii).newGridInd=newGrid.cellrefined(ii).index;
         matchstruct(ii).oldGridInd=origGrid.connec.cell(oldSubsNewOrd(newSubGridOrd(ii))).new;
+        oldCoarseSub=FindObjNum([],origGrid.connec.cell(oldSubsNewOrd(newSubGridOrd(ii))).old,oldCoarseInds);
+        
         matchstruct(ii).newvolume=newGrid.cellrefined(ii).volume;
         oldCellSub=FindObjNum([],matchstruct(ii).oldGridInd,oldIndRef);
         oldRefVec=vertcat(origGrid.cellrefined(oldCellSub).refineVec);
         
         [~,ordOldCell]=sort(oldRefVec(:,end));
-        matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(ordOldCell);
-        matchstruct(ii).coeff=coeffs(newGrid.cellrefined(ii).refineVec(end),:);
-        
-        isact=matchstruct(ii).coeff~=0;
-        matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(isact);
-        matchstruct(ii).coeff=matchstruct(ii).coeff(isact);
-        matchstruct(ii).oldvolume=[origGrid.cellrefined(oldCellSub(ordOldCell(isact))).volume];
+        if origGrid.base.cell(oldCoarseSub).isrefine
+            matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(ordOldCell);
+            matchstruct(ii).coeff=coeffs(newGrid.cellrefined(ii).refineVec(end),:);
+            
+            isact=matchstruct(ii).coeff~=0;
+            matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(isact);
+            matchstruct(ii).coeff=matchstruct(ii).coeff(isact);
+            matchstruct(ii).oldvolume=[origGrid.cellrefined(oldCellSub(ordOldCell(isact))).volume];
+        else
+            
+            matchstruct(ii).coeff=ones(size(matchstruct(ii).oldGridInd));
+            matchstruct(ii).oldvolume=[origGrid.cellrefined(oldCellSub(ordOldCell)).volume];
+        end
+%         if ~origGrid.base.cell(oldCellSub(ordOldCell(isact))).isrefine
+%             matchstruct(ii).coeff=1;
+%         end
     end
     
     
