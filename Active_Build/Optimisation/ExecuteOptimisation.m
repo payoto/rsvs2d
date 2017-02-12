@@ -1678,6 +1678,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refineCellLvl(refStep,1:2));
     
     % Fill follows the order of activeCells
+    %outinfoOld.rootDir='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Debug_17-02-11\Dir_2017-02-11T150949_volsweeplocal_1_000000e-01_cv_'
     [profloops]=ExtractVolInfo(outinfoOld.rootDir);
     
     [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter);
@@ -2009,20 +2010,23 @@ end
 function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
     % function 
     
-    varNames={'refineOptimType','refineOptimRatio','symDesVarList'};
-    [refineOptimType,refineOptimRatio,symDesVarList]=ExtractVariables(varNames,paramoptim);
+    varNames={'refineOptimType','refineOptimRatio','refineOptimPopRatio','symDesVarList','direction'};
+    [refineOptimType,refineOptimRatio,refineOptimPopRatio,symDesVarList,...
+        direction]=ExtractVariables(varNames,paramoptim);
     
     % for all gradient based and non gradient use the entire last
     % population has a guide. ie evaluate the condition for each member.
     
     isRefine=false(size(oldGrid.base.cell));
+    [indexPop]=SelectRefinementForPop(lastpopulation,refineOptimPopRatio,direction);
+    
     switch refineOptimType
         case 'all'
             % refines all cells
             isRefine=true(size(isRefine));
         case 'contour'
             % refines all cells with snaxels
-            for ii=1:numel(lastpopulation);
+            for ii=indexPop;
                 isRefine=isRefine | REFINE_contour(lastpopulation(ii));
             end
         case 'desvargrad'
@@ -2031,15 +2035,63 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             cellInd=[oldGrid.base.cell(:).index];
             edgeCellSub=FindObjNum([],[oldGrid.base.edge(:).cellindex],cellInd);
             
-            for ii=1:numel(lastpopulation);
-                isRefine=isRefine | REFINE_desvargrad(lastpopulation(ii),...
-                    oldGrid.base,actInd,cellInd,edgeCellSub,refineOptimRatio);
+            for ii=indexPop;
+                isRefine=isRefine | reshape(REFINE_desvargrad(lastpopulation(ii),...
+                    oldGrid.base,actInd,cellInd,edgeCellSub,refineOptimRatio),size(isRefine));
             end
+        case 'desvargradadvanced'
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            edgeCellSub=FindObjNum([],[oldGrid.base.edge(:).cellindex],cellInd);
             
+            oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            for ii=indexPop;
+                isRefine=isRefine | reshape(REFINE_desvargradadvanced(lastpopulation(ii),...
+                    oldGrid.base,actInd,cellInd,edgeCellSub,refineOptimRatio,...
+                    oldIndsNewOrd),size(isRefine));
+            end
         case 'contlength'
             % refines cells based on the L/sqrt(A)
+            
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            edgeCellSub=FindObjNum([],[oldGrid.base.edge(:).cellindex],cellInd);
+            
+            oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            
+            cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
+            newIndsCell=[oldGrid.connec.cell(:).new];
+            for ii=indexPop;
+                isRefine=isRefine | reshape(REFINE_contlength(lastpopulation(ii),...
+                    oldGrid,actInd,cellInd,refineOptimRatio,...
+                    oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+            end
+            
         case 'contcurve'
-            % refines cells based on the curvature*A
+            % refines cells based on the sqrt(curvature)*A
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            edgeCellSub=FindObjNum([],[oldGrid.base.edge(:).cellindex],cellInd);
+            
+            oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            
+            cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
+            newIndsCell=[oldGrid.connec.cell(:).new];
+            for ii=indexPop;
+                isRefine=isRefine | reshape(REFINE_contcurve(lastpopulation(ii),...
+                    oldGrid,actInd,cellInd,refineOptimRatio,...
+                    oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+            end
+            
         otherwise
             error('Unsupported Cell Selection refinement')
     end
@@ -2052,12 +2104,29 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
     if isempty(symDesVarList)
         symDesVarList=zeros([2,0]);
     end
-    isRefine(symDesVarList(1,:))=isRefine(symDesVarList(1,:)) | isRefine(symDesVarList(2,:));
-    isRefine(symDesVarList(2,:))=isRefine(symDesVarList(1,:)) | isRefine(symDesVarList(2,:));
+    isActSub=find([oldGrid.base.cell(:).isactive]);
+    isRefine(isActSub(symDesVarList(1,:)))=isRefine(isActSub(symDesVarList(1,:))) ...
+        | isRefine(isActSub(symDesVarList(2,:)));
+    isRefine(isActSub(symDesVarList(2,:)))=isRefine(isActSub(symDesVarList(1,:))) ...
+        | isRefine(isActSub(symDesVarList(2,:)));
     
     for ii=1:numel(oldGrid.base.cell)
         oldGrid.base.cell(ii).isrefine=isRefine(ii);
     end
+end
+
+function [indexPop]=SelectRefinementForPop(population,ratio,optimDir)
+    
+    objPop=[population(:).objective];
+    
+    switch optimDir
+        case 'min'
+            [~,indexPop]=sort(objPop,'ascend');
+        case 'max'
+            
+            [~,indexPop]=sort(objPop,'descend');
+    end
+    indexPop=indexPop(1:max(round(numel(objPop)*ratio),1));
 end
 
 function [isSnax]=REFINE_contour(population)
@@ -2089,7 +2158,7 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
     end
     
     
-    isAct=false(size(gridBase.cell));
+    isAct=false([1,numel(gridBase.cell)]);
     isAct(actInd)=true;
     
     cellFillExt=[0,[gridBase.cell(:).fill]];
@@ -2105,7 +2174,7 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
     edgeGrad=abs(edgeFill(1:2:end)-edgeFill(2:2:end));
     
     cond=~edgeSnax;
-    %cond=~edgeAct | ~edgeAct;
+    %cond=~edgeSnax | ~edgeAct;
     
     cond=cond | edgeGrad==0;
     edgeSub=1:numel(edgeGrad);
@@ -2131,6 +2200,307 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
 %     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
 %     isRefine=false(size(gridBase.cell));
 %    isRefine(cellSub)=true;
+end
+
+
+function [isRefine]=REFINE_desvargradadvanced(population,gridBase,actInd,cellInd,...
+        edgeCellSub,refineOptimRatio,oldIndsNewOrd)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave','restartsnak')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        gridBase.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+     isAct=false([1,numel(gridBase.cell)]);
+    isAct(actInd)=true;
+    
+    cellFillExt=[0,[gridBase.cell(:).fill]];
+    
+    [cellGrad]=IdentifiedCrossedEdge(restartsnak.volfracconnec,restartsnak.snaxel...
+        ,cellInd,cellFillExt,oldIndsNewOrd);
+    cellRank=cellGrad(2:end);
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    isRefine(~isAct)=false;
+%     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
+%     isRefine=false(size(gridBase.cell));
+%    isRefine(cellSub)=true;
+end
+
+function [cellGrad]=IdentifiedCrossedEdge(connec,snaxel,cellInd,fillExt,oldIndsNewOrd)
+    % THis is going to return all the edges along which the gradient should
+    % be calculated
+    
+    connecEdgeNewInd=[connec.edge(:).newedge];
+    connecCellNew=[connec.cell(:).newCellInd];
+    snaxEdge=[snaxel(:).edge];
+    snaxNewCell=[connec.edge(FindObjNum([],snaxEdge,connecEdgeNewInd)).newcell];
+    snaxCell=oldIndsNewOrd(FindObjNum([],snaxNewCell,connecCellNew));
+    snaxCellSub=FindObjNum([],snaxCell,cellInd);
+    
+    snaxFill=fillExt(snaxCellSub+1);
+    snaxGrad=abs(snaxFill(1:2:end)-snaxFill(2:2:end));
+    
+    cellGrad=zeros([1,numel(cellInd)+1]);
+    for jj=1:numel(snaxGrad)
+        ii=(jj);
+        cellGrad(snaxCellSub((ii-1)*2+(1:2))+1)=max([snaxGrad(jj),snaxGrad(jj);
+            cellGrad(snaxCellSub((ii-1)*2+(1:2))+1)],[],1);
+    end
+    
+end
+
+function [isRefine]=REFINE_contlength(population,grid,actInd,cellInd,...
+        refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave','restartsnak')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        grid.base.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+     isAct=false([1,numel(gridBase.cell)]);
+    isAct(actInd)=true;
+    
+    [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
+        grid.cellrefined,cellCentredCoarse,oldIndsNewOrd,newIndsCell);
+    
+    cellRank=[cellCentredCoarse(:).lSnax]./sqrt([cellCentredCoarse(:).volume]);
+    cellRank(~isfinite(cellRank))=0;
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    isRefine(~isAct)=false;
+    
+end
+
+
+function [isRefine]=REFINE_contcurve(population,grid,actInd,cellInd,...
+        refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave','restartsnak')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        grid.base.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+     isAct=false([1,numel(gridBase.cell)]);
+    isAct(actInd)=true;
+    
+    [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
+        grid.cellrefined,cellCentredCoarse,oldIndsNewOrd,newIndsCell);
+    
+    % This was shown to leave no effect of cell size on the refinement
+    % criterion "TestCurvChangeArea"
+    cellRank=([cellCentredCoarse(:).curvSnax]).*([cellCentredCoarse(:).volume]);
+    
+    cellRank(~isfinite(cellRank))=0;
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    isRefine(~isAct)=false;
+    
+end
+
+% Build a cellCentredGrid with Snaxels
+
+function [cellCentredCoarse]=CoarseCellCentred(snaxel,refinedGrid,...
+        cellCentredFine,cellCentredCoarse,oldIndsNewOrd,newIndsCell)
+    
+    
+    [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
+    
+    % this line matches each Fine cell to its coarse cell in the
+    % cellCentredGrid
+    newToOldCell=FindObjNum([],oldIndsNewOrd(FindObjNum([],[cellCentredFine(:).index],...
+        newIndsCell)),[cellCentredCoarse(:).index]);
+    cellCentredCoarse(1).snaxel=struct([]);
+    for ii=1:numel(newToOldCell)
+        cellCentredCoarse(newToOldCell(ii)).snaxel=[cellCentredCoarse(newToOldCell(ii)).snaxel, ...
+            cellCentredFine(ii).snaxel];
+    end
+    for ii=1:numel(cellCentredCoarse)
+        cellCentredCoarse(ii).lSnax=0;
+        cellCentredCoarse(ii).curvSnax=0;
+        if ~isempty(cellCentredCoarse(ii).snaxel)
+            [cellCentredCoarse(ii).snaxel]...
+                =CompressSnaxelChain(cellCentredCoarse(ii).snaxel);
+        end
+    end
+    for ii=1:numel(cellCentredCoarse)
+        if ~isempty(cellCentredCoarse(ii).snaxel)
+            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax]...
+                =ExploreSnaxelChain(cellCentredCoarse(ii).snaxel);
+        end
+    end
+    
+end
+
+function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid)
+    % Extracts the snaxel data and matches it to the cells
+    
+    cellCentredGrid(1).snaxel=struct([]);
+    [snakposition]=PositionSnakesStruct(snaxel,refinedGrid);
+    [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition);
+    %     [snakPosInd]=ReferenceCompArray(snakposition,inf,'inf','index');
+    %     [edgeInd]=ReferenceCompArray(refinedGrid.edge,inf,'inf','index');
+    %     [cellInd]=ReferenceCompArray(cellCentredGrid,inf,'inf','index');
+    %     [vertIndex]=ReferenceCompArray(refinedGrid.vertex,inf,'inf','index');
+    %     [vertCoord]=ReferenceCompArrayVertCat(refinedGrid.vertex,inf,'inf','coord');
+    
+    snakPosInd=[snakposition(:).index];
+    edgeInd=[refinedGrid.edge(:).index];
+    cellInd=[cellCentredGrid(:).index];
+    vertIndex=[refinedGrid.vertex(:).index];
+    vertCoord=vertcat(refinedGrid.vertex(:).coord);
+    
+    
+    
+    %     snakPosFields='coord,vector,vectorprec,vectornext,normvector,edgelength';
+    %     snakPosFields=VerticalStringArray(snakPosFields,',');
+    snakPosFields={'coord','vector','vectorprec','vectornext','normvector','edgelength'};
+    for ii=1:length(snaxel)
+        snaxEdge=snaxel(ii).edge;
+        snaxEdgeSub=FindObjNum(refinedGrid.edge,snaxEdge,edgeInd);
+        snaxCells=refinedGrid.edge(snaxEdgeSub).cellindex;
+        snaxCells=snaxCells(snaxCells~=0);
+        snaxCellsSub=FindObjNum(cellCentredGrid,snaxCells,cellInd);
+        snaxPosSub=FindObjNum(snakposition,snaxel(ii).index,snakPosInd);
+        
+        for jj=1:length(snaxCellsSub)
+            iToVert=vertCoord(find(vertIndex==snaxel(ii).tovertex),:); %#ok<FNDSB> % extract vertex coordinates
+            iFromVert=vertCoord(find(vertIndex==snaxel(ii).fromvertex),:); %#ok<FNDSB>
+            
+            snaxelCell=snaxel(ii);
+            for kk=1:length(snakPosFields(:,1))
+                fieldNam=deblank(snakPosFields{kk});
+                snaxelCell.(fieldNam)=0;
+            end
+            
+            snaxelCell.coord=snakposition(snaxPosSub).coord;
+            snaxelCell.vector=snakposition(snaxPosSub).vector;
+%             snaxelCell.vectorprec=snakposition(snaxPosSub).vectorprec;
+%             snaxelCell.vectornext=snakposition(snaxPosSub).vectornext;
+%             snaxelCell.normvector=snakposition(snaxPosSub).normvector;
+            snaxelCell.edgelength=norm(iToVert-iFromVert);
+            
+            cellCentredGrid(snaxCellsSub(jj)).snaxel=...
+                [cellCentredGrid(snaxCellsSub(jj)).snaxel,snaxelCell];
+        end
+    end
+    
+end
+
+function [snakposition]=PositionSnakesStruct(snaxel,unstructured)
+    % Returns an array with Snaxel coordinates preceded by snaxel indices
+    vertIndex=[unstructured.vertex(:).index];
+    vertCoord=vertcat(unstructured.vertex(:).coord);
+    fromVertex=[snaxel(:).fromvertex];
+    toVertex=[snaxel(:).tovertex];
+    
+    nSnaxel=length(snaxel);
+    
+    for ii=nSnaxel:-1:1
+        iToVert=vertCoord(find(vertIndex==toVertex(ii)),:); %#ok<FNDSB> % extract vertex coordinates
+        iFromVert=vertCoord(find(vertIndex==fromVertex(ii)),:); %#ok<FNDSB>
+        
+        snakposition(ii).index=snaxel(ii).index;
+        snakposition(ii).coord=iFromVert+(iToVert-iFromVert)*snaxel(ii).d;
+        snakposition(ii).vectornotnorm=(iToVert-iFromVert);
+        snakposition(ii).vertInit=iFromVert;
+        snakposition(ii).vector=(iToVert-iFromVert)/norm(iToVert-iFromVert);
+    end
+    
+end
+
+function [lSnax,curvSnax]=ExploreSnaxelChain(snaxelpart)
+    
+    [snaxInd]=[snaxelpart(:).index];
+    [snaxPrec]=[snaxelpart(:).snaxprec];
+    [snaxNext]=[snaxelpart(:).snaxnext];
+    snaxCon=[snaxPrec;snaxNext];
+    isVisited=false(size(snaxInd));
+    lSnax=0;
+    curvSnax=sum(sqrt(sum(vertcat(snaxelpart(:).curv).^2,2)));
+%     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+%     plotPoints(vertcat(snaxelpart(:).coord));
+    while ~all(isVisited)
+        
+        startSub=find(~isVisited,1,'first');
+        
+        for isfwd=0:1
+            currSub=startSub;
+            flag=true;
+            while flag
+                isVisited(currSub)=true;
+                nextSub=FindObjNum([],snaxCon(isfwd+1,currSub),snaxInd);
+                if nextSub==0
+                    break
+                end
+                coord1=snaxelpart(currSub).coord;
+                coord2=snaxelpart(nextSub).coord;
+                lSnax=lSnax+sqrt(sum((coord2-coord1).^2));
+                currSub=nextSub;
+                flag=~isVisited(currSub);
+            end
+        end
+        
+    end
+    
+end
+
+function [snaxel]=CompressSnaxelChain(snaxel)
+    
+    snaxInd=[snaxel(:).index];
+    
+    [~,uniqSub]=unique(snaxInd);
+    
+    snaxel=snaxel(uniqSub);
+    
+end
+
+function [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition)
+    
+    curvFunc=@(pi,pip1,pim1,s1,s2)(-pi*(s1+s2)+pip1*s2+pim1*s1)/(s1^2*s2+s2^2*s1);
+    
+    
+    snaxInd=[snakposition(:).index];
+    snaxPrecSub=FindObjNum([],[snaxel(:).snaxprec],snaxInd);
+    snaxNextSub=FindObjNum([],[snaxel(:).snaxnext],snaxInd);
+%     figure,hold on
+    for ii=1:numel(snaxel)
+        pi1=snakposition(ii).coord;
+        pip1=snakposition(snaxNextSub(ii)).coord;
+        pim1=snakposition(snaxPrecSub(ii)).coord;
+        snaxel(ii).curv=curvFunc(pi1,pip1,pim1,norm(pi1-pip1),norm(pi1-pim1));
+%         quiver(pi1(1),pi1(2),snaxel(ii).curv(1)/50,snaxel(ii).curv(2)/50)
+%         plot(pi1(1),pi1(2),'r*')
+    end
+    
+    
 end
 
 %% Test Function 
