@@ -69,8 +69,9 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.desvarconnec=[]; % Structure assigned later
     
     paroptimgeneral.refineOptim=[];
-    paroptimgeneral.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength'
+    paroptimgeneral.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' , 'desvargradadvanced' , 'contcurve'
     paroptimgeneral.refineOptimRatio=1; % ratio of optimisation
+    paroptimgeneral.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
@@ -1875,12 +1876,13 @@ function paroptim=TestLocalRefine()
 end
 
 function paroptim=RestartLocalRefine()
-    paroptim=refsweep('cv','0012',0);
+    paroptim=refsweeplocal('cv','0012');
     paroptim.general.refineOptimType='desvargrad';
     paroptim.general.refineOptimRatio=0.1;
     
     paroptim.general.maxIter=2;
     paroptim.general.worker=12; 
+    paroptim.general.refineOptim(:,end)=4;
 end
 
 function paroptim=refsweep(gridCase,airfoil,lvl)
@@ -2118,6 +2120,34 @@ function paroptim=volsweeplocal(e,gridCase)
     
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
+
+function paroptim=TestCrashLocRefineSym()
+    paroptim=volsweeplocal(0.10,'cv');
+    paroptim.general.refineOptimType='contlength';
+    paroptim.general.maxIter=0;
+    paroptim.general.worker=4; 
+    paroptim.general.refineOptim(:,end)=4;
+    
+end
+
+
+% test Local refinement methods
+
+function [paroptim]=volsweeplocal_test(refrat,refmethod)
+    
+    paroptim=volsweeplocal(1e-1,'uv');
+    
+    paroptim.general.refineOptimType=refmethod;
+    paroptim.general.refineOptimRatio=refrat;
+end
+
+function [paroptim]=invdeslocal_test(refmethod,gridCase)
+    
+    paroptim=refsweeplocal(gridCase,'4412');
+    
+    paroptim.general.refineOptimType=refmethod;
+    paroptim.general.refineOptimRatio=0.25;
 end
 %% Inverse Design Cases
 
