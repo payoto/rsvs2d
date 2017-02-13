@@ -1,0 +1,39 @@
+13/02/2017 - 
+
+
+
+Due to the same problem as debug 1 of the day
+
+
+Full Error Message:
+
+cu_desvargrad
+
+
+Error in OptimisationOutput>FindProfile (line 403)
+    [returnPath]=FindDir(iterDir,'profile',true);
+
+{Output argument "profPaths" (and maybe others) not assigned during call to
+"OptimisationOutput>FindProfile".
+
+Error in OptimisationOutput>ConcatenateTecplotFile (line 384)
+    [profPaths]=FindProfile(iterDir);
+
+Error in OptimisationOutput_OptimisationOutput_iteration (line 174)
+        ConcatenateTecplotFile(writeDirectory,tecFilePath)
+
+Error in OptimisationOutput (line 24)
+            out=OptimisationOutput_iteration(paramoptim,varargin{:});
+
+Error in ExecuteOptimisation>PerformIteration (line 327)
+    [outinfo]=OptimisationOutput('iteration',paramoptim,nIter,outinfo,population,captureErrors);
+    
+
+Error in ExecuteOptimisation (line 68)
+            [iterstruct(nIter).population,restartsnake]=PerformIteration(paramoptim,outinfo(refStage),nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
+            
+
+Error in BP3_invdeslocaltest (line 6)
+    ExecuteOptimisation(sprintf('invdeslocal_test(''%s'',''%s'')',gridCase,airfoil));
+    
+} 

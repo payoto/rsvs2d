@@ -1,0 +1,31 @@
+13/02/2017 - 
+
+In contcurve the leading edge have by far the most curvature and will lead to no refinement. being started in the cells.
+
+
+
+
+Full Error Message:
+
+uu_contcurve
+
+{Error using ExecuteOptimisation>SelectRefinementCells (line 2100)
+isRefine not set properly, no refinement has taken place
+
+Error in ExecuteOptimisation>InitialiseRefinement (line 1646)
+    oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
+    
+
+Error in ExecuteOptimisation>HandleRefinement (line 1607)
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+
+
+Error in ExecuteOptimisation (line 108)
+            [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
+            
+
+Error in BP3_invdeslocaltest (line 6)
+    ExecuteOptimisation(sprintf('invdeslocal_test(''%s'',''%s'')',gridCase,airfoil));
+    
+} 
+

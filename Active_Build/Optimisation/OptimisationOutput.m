@@ -106,6 +106,15 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
         savStruct.grid.refined=tecStruct.fineGrid;
         savStruct.grid.cellrefined=restartsnak.cellCentredGrid;
         savStruct.grid.connec=restartsnak.volfracconnec;
+        try
+            h=CheckGrid(tecStruct.baseGrid);
+            hgsave(h,[writeDirectory,filesep,'gridFig.fig'])
+            print(h,'-dpng','-r600',[writeDirectory,filesep,'gridFig.png'])
+            close(h)
+        catch ME
+            disp(ME.getReport)
+        end
+        
     end
     
     % Output boundary data file

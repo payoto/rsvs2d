@@ -9,7 +9,7 @@ function [] = include_GridCheck()
 end
 
 
-function []=CheckGrid(gridreshape,axRatio,figh,format,pText)
+function [figh]=CheckGrid(gridreshape,axRatio,figh,format,pText)
     %domainBounds=[0 1 ; 0 1];
     
     [unstructured]=ModifReshape(gridreshape);

@@ -1,0 +1,17 @@
+07/02/2017 - Debug log relating to the spikes in iteration histories and the failure of some cases
+
+
+Spikes in Iteration:
+
+Identified changes in profiles with the same volume fractions of the order of the conv level requested
+
+On these very anisotropic grid this convergence level might need to be tuned to be in absolute coordinates. (ie: introduce vel*d)
+
+Issue is due to meshing process and inconsistant merging of cells -> clear sign that the mesh used is not at a sufficient resolution. 
+Solution is to refine the mesh and reduce the cell merging process 
+
+
+
+Failure of case:
+
+Due to the mergeTopo=false, leads to Nans which freeze the profile. This is saved in the restartSnake which means that none of the sensitivity yields modes.

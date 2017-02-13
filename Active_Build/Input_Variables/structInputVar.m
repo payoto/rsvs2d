@@ -347,7 +347,6 @@ function [param]=SnakestestInternal()
     param.snakes.step.snakData='all';
 end
 
-
 function [param]=SnakestestAltern()
     
     
@@ -362,7 +361,6 @@ function [param]=SnakestestAltern()
     param.general.buildInternal=true;
     param.snakes.step.snakData='all';
 end
-
 
 function [param]=Snakestestsmooth4_ref()
     
@@ -763,12 +761,14 @@ function [param]=optimInverseDesign()
     
     param.general.subdivType='chaikin';
     param.general.typeLoop='subdivspline';
-    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='sharpen';
     param.snakes.refine.resampleSnak=true;
-    param.general.refineSteps=5;
+    param.general.refineSteps=4;
     param.optiminit.corneractive=false;
+    param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
+    param.optiminit.defaultCorner=1e-6;
 end
 
 function [param]=optimInverseDesign_L()

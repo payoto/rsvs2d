@@ -1,0 +1,43 @@
+13/02/2017 - Error in the fill matching at refinement
+
+
+This bug is due to the handling of previously crashed profiles, which did not generate a profile 
+This means that the fill cannot be transformed and then cannot be used in the optimdat
+
+Fix Options: 
+Add a default option for transferring a fill by splitting it evenly
+	-> Unlikey to have huge negative effects as these are failed profiles anyway.
+	-> Could have negative effects as the problem occurs in the direction field would lead to innacurate direction.
+
+
+Fix 
+Created a default Fill transform which is used where there is no better information.
+
+
+full error message:
+
+invdeslocal_test('cu','contcurve');
+
+{Error using -
+Matrix dimensions must agree.
+
+Error in ExecuteOptimisation>RewriteHistory (line 1991)
+            iterstruct(ii).population(jj).optimdat.value=...
+
+
+Error in ExecuteOptimisation>InitialiseRefinement (line 1703)
+    iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter);
+
+
+Error in ExecuteOptimisation>HandleRefinement (line 1607)
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+
+
+Error in ExecuteOptimisation (line 108)
+            [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
+            
+
+Error in BP3_invdeslocaltest (line 6)
+    ExecuteOptimisation(sprintf('invdeslocal_test(''%s'',''%s'')',gridCase,airfoil));
+    
+} 

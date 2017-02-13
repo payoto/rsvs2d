@@ -16,7 +16,7 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     
     
-    [analysisCoord,upperLower]=PrepareLoopCoord(loop);
+    [analysisCoord,upperLower]=PrepareLoopCoord(loop,profileComp);
     
     switch aeroClass
         case 'NACA'
@@ -64,7 +64,7 @@ end
 
 %%
 
-function [analysisCoord,upperLower]=PrepareLoopCoord(loop)
+function [analysisCoord,upperLower]=PrepareLoopCoord(loop,profileComp)
     % prepares the loop into the right coordinates
     
     nLoop=numel(loop);
@@ -87,8 +87,16 @@ function [analysisCoord,upperLower]=PrepareLoopCoord(loop)
         upperLower(iLE+1:end)=-1;
         %analysisCoord(:,1)=analysisCoord(:,1)-min(analysisCoord(:,1));
         rmRow=find(analysisCoord(:,1)>1 | analysisCoord(:,1)<0);
-        analysisCoord(rmRow,:)=[];
-        upperLower(rmRow)=[];
+        
+        switch profileComp
+            case 'distance'
+              analysisCoord(rmRow,:)=[];  
+              upperLower(rmRow)=[];
+            case 'area'
+                
+                
+        end
+        
         
     else
         warning('More than one loop to compare')

@@ -69,7 +69,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.desvarconnec=[]; % Structure assigned later
     
     paroptimgeneral.refineOptim=[];
-    paroptimgeneral.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' , 'desvargradadvanced' , 'contcurve'
+    paroptimgeneral.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' ,
+    %'desvargradadvanced' , 'contcurve', 'contlengthnorm' 'contcurvescale'
     paroptimgeneral.refineOptimRatio=1; % ratio of optimisation
     paroptimgeneral.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
     
@@ -105,7 +106,7 @@ function [paroptimoptimCG]=DefaultOptimCG()
     paroptimoptimCG.nLineSearch=12;
     paroptimoptimCG.wolfeC1=1e-4;
     paroptimoptimCG.wolfeC2=0.1;
-    paroptimoptimCG.gradScaleType='none';
+    paroptimoptimCG.gradScaleType='none'; % 'volume'
     paroptimoptimCG.gradScale=[];
 end
 
@@ -1937,7 +1938,7 @@ function paroptim=refsweeplocal(gridCase,airfoil)
     [paroptim]=Inverse_CG();
     lvl=5;
     paroptim.optim.CG.lineSearchType='backbisection';
-    nIter=20;
+    nIter=30;
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
@@ -2029,6 +2030,55 @@ function paroptim=NACA0012Sweep(gridCase,lvl,optimiser)
     
 end
 
+function paroptim=NACA0012Sweeplocal(gridCase,lvl,optimiser)
+    
+    paroptim=bp3_NACA0012_sweep();
+    
+    nIter=50;
+    paroptim.general.maxIter=nIter;
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012');
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
+    paroptim.general.refineOptim=[0];
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2]
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.validVol=0.2;
+    paroptim.parametrisation.general.subdivType='chaikinNaca0012';
+    paroptim.general.worker=8;
+    
+    paroptim=ModifySnakesParam(paroptim,['optimNACA0012']);
+    
+    switch gridCase(1)
+        case 'c'
+            paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
+        case 'u'
+            paroptim.parametrisation.snakes.refine.gridDistrib='none';
+    end
+    
+    switch gridCase(2)
+        case 'v'
+            [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl);
+        case 'u'
+            [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
+        case 'a'
+            [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+        otherwise
+            error('Unknown gridcase')
+    end
+    
+    paroptim.optim.CG.stepAlgo=optimiser;
+    % only horizontal refinement
+    
+    paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
+    
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+end
+
+
 % Supersonic refine
 function paroptim=volsweeprefine(e,gridCase,lvl)
     % e= [0.01:0.12]
@@ -2056,10 +2106,25 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     
     % only horizontal refinement
     %paroptim.parametrisation.snakes.refine.axisRatio=2^lvl;
-    paroptim.parametrisation.snakes.refine.axisRatio = min(2*e*1.5,1); 
-    paroptim.parametrisation.optiminit.cellLevels=[(8*2^lvl+2),2];
-    paroptim.parametrisation.snakes.refine.refineGrid=[8 1];
-    paroptim.general.refineOptim=[2 1 100; 2 1 100];
+    if numel(gridCase)==2
+        switch gridCase(2)
+            case 'v'
+                [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl);
+            case 'u'
+                [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
+            case 'a'
+                [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+            otherwise
+                error('Unknown gridcase')
+        end
+    else
+        paroptim.parametrisation.snakes.refine.axisRatio = min(2*e*1.5,1);
+        paroptim.parametrisation.optiminit.cellLevels=[(8*2^lvl+2),2];
+        paroptim.parametrisation.snakes.refine.refineGrid=[8 1];
+        paroptim.general.refineOptim=[2 1 100; 2 1 100];
+    end
+    
+    paroptim.parametrisation.snakes.refine.axisRatio = min(2*e*1.5,1);
     paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.parametrisation.optiminit.defaultCorner=1e-6;
         
@@ -2075,7 +2140,7 @@ end
 function paroptim=volsweeplocal(e,gridCase)
     
     lvl=5;
-    nIter=20;
+    nIter=30;
     paroptim=AreaM2sweep_Nc();
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
@@ -2097,19 +2162,18 @@ function paroptim=volsweeplocal(e,gridCase)
     
     switch gridCase(2)
         case 'v'
-            paroptim.parametrisation.snakes.refine.axisRatio=2^0;
-            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2];
-            paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
-            paroptim.general.refineOptim=ones([lvl,1])*[2 1 nIter];
+            [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl);
         case 'u'
-            paroptim.parametrisation.snakes.refine.axisRatio=1;
-            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2^(0+1)];
-            paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
-            paroptim.general.refineOptim=ones([lvl,1])*[2 2 nIter];
+            [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
+        case 'a'
+            [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+        otherwise
+            error('Unknown gridcase')
     end
     
     paroptim.parametrisation.snakes.refine.axisRatio = min(4*e*1.5,1); 
     paroptim.parametrisation.general.typeLoop='subdivision';
+    
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     paroptim.general.refineOptimType='desvargrad';
@@ -2122,6 +2186,90 @@ function paroptim=volsweeplocal(e,gridCase)
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
+function [paroptim]=volsweeplocal_test(refmethod)
+    
+    paroptim=volsweeplocal(1e-1,'uv');
+    
+    paroptim.general.refineOptimType=refmethod;
+    paroptim.general.refineOptimRatio=PickRatioForRefineMethod(refmethod);
+    paroptim.general.refineOptim(end,end)=50;
+end
+
+function [paroptim]=NACA0012local(refmethod,gridCase)
+    
+    paroptim=NACA0012Sweeplocal(gridCase,4,'conjgrad');
+    
+    paroptim.general.refineOptimType=refmethod;
+    paroptim.general.refineOptimRatio=PickRatioForRefineMethod(refmethod);
+    paroptim.general.refineOptim(end,end)=50;
+end
+
+function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
+    
+    paroptim=refsweeplocal(gridCase,'4412');
+    
+    paroptim.general.refineOptimType=refmethod;
+    [refineOptimRatio]=PickRatioForRefineMethod(refmethod);
+    paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    
+    paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
+    paroptim.general.refineOptimRatio=refineOptimRatio;
+    paroptim.general.refineOptim(end,end)=50;
+end
+
+% Grid Cases
+
+function [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl)
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.cellLevels=[6,2];
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
+    paroptim.general.refineOptim=ones([lvl,1])*[2 2 nIter];
+    
+end
+function [paroptim]=gridrefcase_horizontal(paroptim,nIter,lvl)
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.cellLevels=[6,2];
+    paroptim.parametrisation.snakes.refine.refineGrid=[1 4];
+    paroptim.general.refineOptim=ones([lvl,1])*[1 2 nIter];
+    
+end
+function [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl)
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.cellLevels=[6,2];
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+    paroptim.general.refineOptim=ones([lvl,1])*[2 1 nIter];
+    
+end
+function [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl)
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.cellLevels=[6,2];
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
+    paroptim.general.refineOptim(1:2:(ceil(lvl/2)*2),1:3)...
+        =ones([ceil(lvl/2),1])*[2 1 nIter];
+    paroptim.general.refineOptim(1:2:(ceil(lvl/2)*2),1:3)...
+        =ones([ceil(lvl/2),1])*[1 2 nIter];
+    
+end
+function [refineOptimRatio]=PickRatioForRefineMethod(refmethod)
+    switch refmethod
+        case 'contlength'
+            refineOptimRatio=0.3;
+        case 'desvargradadvanced'
+            refineOptimRatio=0.3;
+        case 'contcurve'
+            refineOptimRatio=0.3;
+        case 'contlengthnorm'
+            refineOptimRatio=0.35;
+        case 'desvargrad'
+            refineOptimRatio=0.3;
+        case 'contcurvescale'
+            refineOptimRatio=0.3;
+        otherwise
+            error('unknown refinement method %s',refmethod)
+    end
+end
+
+% test Local refinement methods
 function paroptim=TestCrashLocRefineSym()
     paroptim=volsweeplocal(0.10,'cv');
     paroptim.general.refineOptimType='contlength';
@@ -2131,24 +2279,6 @@ function paroptim=TestCrashLocRefineSym()
     
 end
 
-
-% test Local refinement methods
-
-function [paroptim]=volsweeplocal_test(refrat,refmethod)
-    
-    paroptim=volsweeplocal(1e-1,'uv');
-    
-    paroptim.general.refineOptimType=refmethod;
-    paroptim.general.refineOptimRatio=refrat;
-end
-
-function [paroptim]=invdeslocal_test(gridCase,refmethod)
-    
-    paroptim=refsweeplocal(gridCase,'4412');
-    
-    paroptim.general.refineOptimType=refmethod;
-    paroptim.general.refineOptimRatio=0.25;
-end
 
 % Debug
 
@@ -2300,7 +2430,6 @@ end
 
 % Bulk inverse design
 
-
 function paroptim=bulkNacaInvDes()
     [paroptim]=Inverse_Bulk();
     
@@ -2329,7 +2458,6 @@ function paroptim=bulkNacaInvDes()
     paroptim.spline.resampleSnak=false;
     
 end
-
 
 function paroptim=bulkOtherInvDes()
     [paroptim]=Inverse_Bulk();
@@ -2371,6 +2499,48 @@ function paroptim=bulkNacaInvDes2()
     paroptim.general.worker=4;
 end
 
+function paroptim=bulkOtherInvDesA()
+    [paroptim]=Inverse_Bulk();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk');
+    paroptim.obj.invdes.aeroName='';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='AEROmulti';
+    initInterp={'RAE 2822 AIRFOIL','ONERA NACA CAMBRE AIRFOIL'};
+    paroptim.obj.invdes.aeroClass='lib';
+    paroptim.general.initInterp=initInterp;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=1;
+    paroptim.general.worker=4;
+    paroptim.spline.resampleSnak=false;
+    paroptimobjinvdes.profileComp='area';
+    
+end
+function paroptim=bulkNacaInvDes2A()
+    [paroptim]=Inverse_Bulk();
+    
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk2');
+    paroptim.obj.invdes.aeroName='';
+    %paroptim.optim.CG.varActive='all';
+    paroptim.general.startPop='NACAmulti';
+    t1={'1','2','3','4'};
+    t2={'1','2','3','4','5','6','7'};
+    t3={'08','10','12','16','18'};
+    initInterp{1}='0012';
+    for ii=1:numel(t1)
+        for jj=1:numel(t1)
+            for kk=1:numel(t1)
+                initInterp{end+1}=[t1{ii},t2{jj},t3{kk}];
+            end
+        end
+    end
+    paroptim.general.initInterp=initInterp;
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=1;
+    paroptim.general.worker=4;
+    
+    paroptimobjinvdes.profileComp='area';
+end
 
 %% Full Aero Optimisations
 
