@@ -1,0 +1,77 @@
+13/02/2017 - 
+
+
+This bug is due to the way the cell in whicvh a connection is established is defined
+
+when on highly anisotropic grids certain snake configurations are created the where they are in the same (refined)cell on one side
+
+Fix if this happens use the cell which corresponds to the refined cell which appears twice
+
+
+
+
+
+
+
+
+
+Full Error Message:
+
+happened in:
+uu_desvargrad
+uu_desvargradadvanced
+
+{Error using /
+Too many input arguments.
+
+Error in VelocityLengthMinimisationSQP>BuildJacobianAndHessian (line 864)
+        HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
+        
+
+Error in VelocityLengthMinimisationSQP>GeometryForcingVelocity (line 90)
+    [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMultiPast,numel(volumefraction));
+    
+
+Error in VelocityLengthMinimisationSQP (line 19)
+    [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=GeometryForcingVelocity(snaxel,snakposition,forceparam,coeffstructure,volumefraction);
+    
+
+Error in Snakes>VelocityCalculationVolumeFraction (line 1657)
+            [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax,forceparam]=...
+            
+Error in Snakes>VelocityAndVolumeProcess (line 671)
+    [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam]=...
+
+Error in Snakes>IterSnakes (line 345)
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+        
+Error in Snakes>RunSnakesProcess (line 271)
+        [~,ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume,edgeDat]...
+        
+Error in Snakes (line 35)
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+
+Error in ExecuteSnakes_Optim_ExecuteSnakes_Optim_snak (line 49)
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+    
+Error in ExecuteSnakes_Optim (line 21)
+            [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
+
+Error in ExecuteOptimisation>InitialiseRefinement (line 1705)
+    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
+
+
+Error in ExecuteOptimisation>HandleRefinement (line 1607)
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+
+
+Error in ExecuteOptimisation (line 108)
+            [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
+            
+
+Error in BP3_invdeslocaltest (line 6)
+    ExecuteOptimisation(sprintf('invdeslocal_test(''%s'',''%s'')',gridCase,airfoil));
+    
+} 
+
+

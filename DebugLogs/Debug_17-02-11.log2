@@ -1,0 +1,4 @@
+
+Debug the symmetry crash of the local refinement function:
+
+Crashes after symmetry assignement I suspect this is due to unsymmetric grids being fed to it.
