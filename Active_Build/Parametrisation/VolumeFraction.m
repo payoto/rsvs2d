@@ -258,7 +258,7 @@ function [areablock,derivblock]=ExtractBorderStructure(cellStruct,edgeSnak,nBord
                 % ii=0
                 kk=kk+1;
                 if kk>4
-                    error('Something is probably wrong')
+                    %warning('Something could be wrong')
                 end
             end
             flag=true;
