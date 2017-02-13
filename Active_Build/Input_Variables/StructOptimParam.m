@@ -2142,12 +2142,24 @@ function [paroptim]=volsweeplocal_test(refrat,refmethod)
     paroptim.general.refineOptimRatio=refrat;
 end
 
-function [paroptim]=invdeslocal_test(refmethod,gridCase)
+function [paroptim]=invdeslocal_test(gridCase,refmethod)
     
     paroptim=refsweeplocal(gridCase,'4412');
     
     paroptim.general.refineOptimType=refmethod;
     paroptim.general.refineOptimRatio=0.25;
+end
+
+% Debug
+
+function [paroptim]=Debug170213_1()
+    [paroptim]=invdeslocal_test('uu','desvargradadvanced');
+    
+end
+
+function [paroptim]=Debug170213_2()
+    [paroptim]=invdeslocal_test('cu','contcurve');
+    
 end
 %% Inverse Design Cases
 

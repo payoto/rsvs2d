@@ -29,7 +29,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         OptimisationDebug(caseStr,debugArgIn)
         return
     end
-    
+    flagOut=true;
     procStr2=['OPTIMISATION - ',caseStr];
     [tStartOpt]=PrintStart(procStr2,0);
     %clusterObj=parcluster('OptimSnakes');
@@ -50,6 +50,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions(paramoptim,inNFlag,...
             restartSource,maxIter,iterstruct,baseGrid);
     end
+    
+    % Introduce debug lines of code
+    debugScrip
     
     % Specify starting population
     if ~any(refineOptim==0)
@@ -91,7 +94,11 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         %try
         %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
         try
-            OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
+            if exist('flagOut','var') && ~flagOut
+                disp('Output Skipped')
+            else
+                OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
+            end
         catch ME;
             disp(ME.getReport),
         end
@@ -99,7 +106,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         %catch
         
         %end
-        
+        debugScript2
         if refStage<(nOptimRef+1)
 %             warning('Refinement Needs updating it is not currently supported')
 %             break
@@ -1647,6 +1654,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
         =GridInitAndRefine(refparamsnake,oldGrid.base);
+    defaultFillRefMat=BuildDefaultFillRef(oldGrid,gridrefined,connectstructinfo);
     
     newgrid.base=baseGrid;
     newgrid.refined=gridrefined;
@@ -1700,7 +1708,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
 %     paramoptim.optim.supportOptim=UpdateStepDir(supportOptim,...
 %         profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
-    iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter);
+    iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,defaultFillRefMat);
     
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
@@ -1963,11 +1971,17 @@ function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     
 end
 
-function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,supportOptim)
+function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,...
+        defaultFillRefMat)
     
     actFill=logical([baseGrid.cell(:).isactive]);
     iterProf=[profloops(:).iter];
     profProf=[profloops(:).prof];
+    for ii=firstValidIter:numel(iterstruct) % enforce 
+        for jj=1:numel(iterstruct(ii).population)
+            iterstruct(ii).population(jj).fill=(defaultFillRefMat*iterstruct(ii).population(jj).fill')';
+        end
+    end
     for ii=find((iterProf>=firstValidIter))
         
         profSub=find(sort(profProf(FindObjNum([],profloops(ii).iter,iterProf)))==profloops(ii).prof);
@@ -2005,6 +2019,22 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
    % supportOptim.curr.prevStep
 end
 
+function [defaultFillRef]=BuildDefaultFillRef(grid,newGrid,connectToNew)
+    
+    actSubOld=find([grid.base.cell(:).isactive]);
+    actSubNew=logical([newGrid.cell(:).isactive]);
+    newFillInd=[connectToNew.cell(actSubOld).new];
+    newFillIndOrd=[newGrid.cell(actSubNew).index];
+    
+    
+    defaultFillRef=zeros([numel(newFillInd),numel(actSubOld)]);
+    for ii=1:numel(actSubOld)
+        nRef=numel(connectToNew.cell(actSubOld(ii)).new);
+        newFillSub=FindObjNum([],connectToNew.cell(actSubOld(ii)).new,newFillIndOrd);
+        defaultFillRef(newFillSub,ii)=1/nRef;
+    end
+    
+end
 %% Refinement Cells Selection
 
 function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
@@ -2276,7 +2306,7 @@ function [isRefine]=REFINE_contlength(population,grid,actInd,cellInd,...
         grid.base.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(gridBase.cell)]);
+     isAct=false([1,numel(grid.base.cell)]);
     isAct(actInd)=true;
     
     [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
@@ -2308,7 +2338,7 @@ function [isRefine]=REFINE_contcurve(population,grid,actInd,cellInd,...
         grid.base.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(gridBase.cell)]);
+     isAct=false([1,numel(grid.base.cell)]);
     isAct(actInd)=true;
     
     [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...

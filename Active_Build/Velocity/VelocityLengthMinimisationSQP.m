@@ -213,6 +213,10 @@ function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volu
         oldCell2=unique(allOldCells(subs2));
         [i2,i1]=find((ones([numel(oldCell2) 1])*oldCell)==(oldCell2'*ones([1 numel(oldCell)])));
         err=err || isempty(i1);
+        if numel(i1)==2
+            [i2,i1]=find((ones([numel(subs) 1])*subs2')==(subs*ones([1 numel(subs2)])));
+        end
+        
         derivtenscal(ii).cellprec=unique(allOldCells(subs(i1)));
         derivtenscal(ii).cellprecsub=unique(allOldCellsSub(subs(i1)));
         
