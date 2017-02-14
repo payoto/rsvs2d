@@ -1,11 +1,11 @@
-uu contcurve 0 
-ua contcurve 0 
-uu contlengthnorm 0 
-ua contlengthnorm 0 
-uu contcurvescale 0 
 ua contcurvescale 0 
 ua contlength 0 
 ua desvargradadvanced 0 
+ua contcurve 0 
+ua contlengthnorm 0 
+uu contlengthnorm 0 
+uu contcurve 0 
+uu contcurvescale 0 
 uv contcurve 0 
 uv contlengthnorm 0 
 uv contcurvescale 0  

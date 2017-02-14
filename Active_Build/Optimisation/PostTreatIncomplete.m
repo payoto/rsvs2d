@@ -39,23 +39,27 @@ function [t,marker]=FindTime(pathStr)
 end
 
 function [paramoptim]=ReconstructParameter(pathStr,marker)
-    
-    fileName=['param_',marker];
-    matName=matlab.lang.makeValidName(fileName);
-    
-    copyfile([pathStr,filesep,fileName,'.dat'],['.',filesep,matName,'.m']);
-    eval(matName)
-    paramoptim=param;
-   paramoptim.structdat=GetStructureData(paramoptim);
-   
-   fileName=['param_',marker,'_parametrisation'];
-    matName=matlab.lang.makeValidName(fileName);
-    
-    copyfile([pathStr,filesep,fileName,'.dat'],['.',filesep,matName,'.m']);
-    eval(matName)
-    paramoptim.parametrisation=param;
-   paramoptim.parametrisation.structdat=...
-       GetStructureData(paramoptim.parametrisation);
+    try
+        [returnPath,returnName]=FindDir(pathStr,'FinalParam',0);
+        load(returnPath{1})
+        if ~exist('paramoptim','var')
+            error('Failure to load')
+        end
+    catch
+        fileName=['param_',marker];
+        matName=matlab.lang.makeValidName(fileName);
+        copyfile([pathStr,filesep,fileName,'.dat'],['.',filesep,matName,'.m']);
+        eval(matName)
+        paramoptim=param;
+        paramoptim.structdat=GetStructureData(paramoptim);
+        fileName=['param_',marker,'_parametrisation'];
+        matName=matlab.lang.makeValidName(fileName);
+        copyfile([pathStr,filesep,fileName,'.dat'],['.',filesep,matName,'.m']);
+        eval(matName)
+        paramoptim.parametrisation=param;
+        paramoptim.parametrisation.structdat=...
+            GetStructureData(paramoptim.parametrisation);
+    end
 end
 
 function [iterstruct]=ReconstructIterationStructure(pathStr,nIter,paramoptim)

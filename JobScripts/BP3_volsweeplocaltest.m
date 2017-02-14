@@ -1,4 +1,4 @@
-function BP3_volsweeplocaltest(e,gridCase)
+function BP3_volsweeplocaltest(gridCase)
     MoveToDir('source',1)
     InitialiseSnakeFlow;
 % 

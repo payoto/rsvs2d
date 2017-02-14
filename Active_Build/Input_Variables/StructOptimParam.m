@@ -1959,17 +1959,15 @@ function paroptim=refsweeplocal(gridCase,airfoil)
             paroptim.parametrisation.snakes.refine.gridDistrib='none';
     end
     
-    switch gridCase(2)
+     switch gridCase(2)
         case 'v'
-            paroptim.parametrisation.snakes.refine.axisRatio=2^0;
-            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2];
-            paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
-            paroptim.general.refineOptim=ones([lvl,1])*[2 1 nIter];
+            [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl);
         case 'u'
-            paroptim.parametrisation.snakes.refine.axisRatio=1;
-            paroptim.parametrisation.optiminit.cellLevels=[(6*2^0+2),2^(0+1)];
-            paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
-            paroptim.general.refineOptim=ones([lvl,1])*[2 2 nIter];
+            [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
+        case 'a'
+            [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+        otherwise
+            error('Unknown gridcase')
     end
     
     paroptim.parametrisation.general.typeLoop='subdivision';
@@ -2067,8 +2065,6 @@ function paroptim=NACA0012Sweeplocal(gridCase,lvl,optimiser)
     
     paroptim.optim.CG.stepAlgo=optimiser;
     % only horizontal refinement
-    
-    paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
     
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
@@ -2191,16 +2187,18 @@ function [paroptim]=volsweeplocal_test(refmethod)
     paroptim=volsweeplocal(1e-1,'uv');
     
     paroptim.general.refineOptimType=refmethod;
-    paroptim.general.refineOptimRatio=PickRatioForRefineMethod(refmethod);
+    ratio=PickRatioForRefineMethod(refmethod);
+    paroptim.general.refineOptimRatio=ratio(1);
     paroptim.general.refineOptim(end,end)=50;
 end
 
-function [paroptim]=NACA0012local(refmethod,gridCase)
+function [paroptim]=NACA0012local(gridCase,refmethod)
     
     paroptim=NACA0012Sweeplocal(gridCase,4,'conjgrad');
     
     paroptim.general.refineOptimType=refmethod;
-    paroptim.general.refineOptimRatio=PickRatioForRefineMethod(refmethod);
+    ratio=PickRatioForRefineMethod(refmethod);
+    paroptim.general.refineOptimRatio=ratio(1);
     paroptim.general.refineOptim(end,end)=50;
 end
 
@@ -2209,11 +2207,25 @@ function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
     paroptim=refsweeplocal(gridCase,'4412');
     
     paroptim.general.refineOptimType=refmethod;
-    [refineOptimRatio]=PickRatioForRefineMethod(refmethod);
     paroptim.optim.CG.gradScaleType='volume'; % 'volume'
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
-    paroptim.general.refineOptimRatio=refineOptimRatio;
+    ratio=PickRatioForRefineMethod(refmethod);
+    paroptim.general.refineOptimRatio=ratio(1);
+    paroptim.general.refineOptim(end,end)=50;
+end
+
+
+function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
+    
+    paroptim=refsweeplocal(gridCase,'4412');
+    
+    paroptim.general.refineOptimType=refmethod;
+    paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    
+    paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
+    ratio=PickRatioForRefineMethod(refmethod);
+    paroptim.general.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
     paroptim.general.refineOptim(end,end)=50;
 end
 
@@ -2246,7 +2258,7 @@ function [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
     paroptim.general.refineOptim(1:2:(ceil(lvl/2)*2),1:3)...
         =ones([ceil(lvl/2),1])*[2 1 nIter];
-    paroptim.general.refineOptim(1:2:(ceil(lvl/2)*2),1:3)...
+    paroptim.general.refineOptim(2:2:(ceil(lvl/2)*2),1:3)...
         =ones([ceil(lvl/2),1])*[1 2 nIter];
     
 end
@@ -2267,6 +2279,7 @@ function [refineOptimRatio]=PickRatioForRefineMethod(refmethod)
         otherwise
             error('unknown refinement method %s',refmethod)
     end
+    refineOptimRatio(2:4)=[0.1 0.5 0.7];
 end
 
 % test Local refinement methods
@@ -2513,7 +2526,7 @@ function paroptim=bulkOtherInvDesA()
     paroptim.general.maxIter=1;
     paroptim.general.worker=4;
     paroptim.spline.resampleSnak=false;
-    paroptimobjinvdes.profileComp='area';
+    paroptim.obj.invdes.profileComp='area';
     
 end
 function paroptim=bulkNacaInvDes2A()
@@ -2539,7 +2552,7 @@ function paroptim=bulkNacaInvDes2A()
     paroptim.general.maxIter=1;
     paroptim.general.worker=4;
     
-    paroptimobjinvdes.profileComp='area';
+    paroptim.obj.invdes.profileComp='area';
 end
 
 %% Full Aero Optimisations
