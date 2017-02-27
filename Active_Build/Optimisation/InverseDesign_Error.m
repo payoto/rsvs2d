@@ -16,14 +16,14 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     
     
-    [analysisCoord,upperLower]=PrepareLoopCoord(loop,profileComp);
+    [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp);
     
     switch aeroClass
         case 'NACA'
-            [targCoord]=GenerateNacaCoord(analysisCoord(:,1),upperLower,aeroName);
+            [targCoord]=GenerateNacaCoord(targPrep(:,1),targPrep(:,2),aeroName);
         case 'lib'
             
-            [targCoord]=GenerateLibCoord(analysisCoord(:,1),upperLower,aeroName);
+            [targCoord]=GenerateLibCoord(targPrep(:,1),targPrep(:,2),aeroName);
         otherwise
             error('not coded yet')
     end
@@ -64,7 +64,7 @@ end
 
 %%
 
-function [analysisCoord,upperLower]=PrepareLoopCoord(loop,profileComp)
+function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp)
     % prepares the loop into the right coordinates
     
     nLoop=numel(loop);
@@ -92,8 +92,11 @@ function [analysisCoord,upperLower]=PrepareLoopCoord(loop,profileComp)
             case 'distance'
               analysisCoord(rmRow,:)=[];  
               upperLower(rmRow)=[];
+              targPrep=[analysisCoord(:,1),upperLower];
             case 'area'
-                
+                x=[linspace(1,0,sum(upperLower>0)),...
+                    linspace(0,1,sum(upperLower<0))];
+              targPrep=[x',upperLower];
                 
         end
         

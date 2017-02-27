@@ -2215,7 +2215,6 @@ function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
     paroptim.general.refineOptim(end,end)=50;
 end
 
-
 function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     
     paroptim=refsweeplocal(gridCase,'4412');

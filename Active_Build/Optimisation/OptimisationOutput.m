@@ -513,8 +513,8 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
         tecPlotFile,ratio,paramoptim,allRootDir)
     
     
-    varExtract={'defaultVal','worker'};
-    [defaultVal,worker]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'defaultVal','worker','CFDfolder'};
+    [defaultVal,worker,CFDfolder]=ExtractVariables(varExtract,paramoptim);
     
     delete(tecPlotFile{1});
     delete(tecPlotFile{2});
@@ -572,7 +572,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
                 CutCellFlow_Handler(paramoptim,minIterPos)
                 RunCFDPostProcessing(minIterPos);
                 if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                    PrepareCFDPostProcessing(minIterPos);
+                    PrepareCFDPostProcessing(minIterPos,CFDfolder);
                     CutCellFlow_Handler(paramoptim,minIterPos)
                     RunCFDPostProcessing(minIterPos);
                 end
@@ -679,14 +679,13 @@ function RunCFDPostProcessing(profilePath)
     
 end
 
-function PrepareCFDPostProcessing(profilePath)
+function PrepareCFDPostProcessing(profilePath,CFDfolder)
     
     compType=computer;
     profilePath=MakePathCompliant(profilePath);
     
     cfdPath=[profilePath,filesep,'CFD',filesep];
-    rootCode=['.',filesep,'Result_Template',filesep,'CFD_code_Template',...
-        filesep,'supersonic_biplane',filesep];
+    rootCode=MakePathCompliant(CFDfolder);
     
     
     

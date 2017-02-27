@@ -1617,7 +1617,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
     
     paramoptim.general.isRestart=true;
-    paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
+    % This line causes problems and exceeding boundmax
+    %paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
     [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
     
 end
