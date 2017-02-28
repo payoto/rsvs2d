@@ -464,7 +464,7 @@ function [FID]=OpenOptimLayFile(writeDirectory,marker)
     fileName=['tec360lay_',marker,'.lay'];
     originalLayFile=[cd,'\Result_Template\Layout_ViewIterOptim.lay'];
     originalLayFile=MakePathCompliant(originalLayFile);
-    copyfile(originalLayFile,[writeDirectory,filesep,fileName])
+    copyfileRobust(originalLayFile,[writeDirectory,filesep,fileName])
     FID=fopen([writeDirectory,filesep,fileName],'r+');
     
 end
@@ -476,7 +476,7 @@ function [FID]=OpenOptimumFlowLayFile(writeDirectory,marker)
     fileName=['EvolOptim_',marker,'.lay'];
     originalLayFile=[cd,'\Result_Template\Layout_EvolOptim.lay'];
     originalLayFile=MakePathCompliant(originalLayFile);
-    copyfile(originalLayFile,[writeDirectory,filesep,fileName])
+    copyfileRobust(originalLayFile,[writeDirectory,filesep,fileName])
     FID=fopen([writeDirectory,filesep,fileName],'r+');
     
 end
@@ -608,9 +608,9 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
         end
         
         
-        copyfile([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
+        copyfileRobust([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
         
-        copyfile([[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt'],...
+        copyfileRobust([[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt'],...
             [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
         
         %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
@@ -696,7 +696,7 @@ function PrepareCFDPostProcessing(profilePath,CFDfolder)
         catch ME
             disp(ME.getReport)
         end
-        copyfile([rootCode],[cfdPath])
+        copyfileRobust([rootCode],[cfdPath])
         
     else
         try
@@ -1390,7 +1390,7 @@ function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,
     %copyfile(profileDir,resultDirectory,'f');
     compType=computer;
     if strcmp(compType(1:2),'PC')
-        copyfile(profileDir,resultDirectory);
+        copyfileRobust(profileDir,resultDirectory);
     else
         [~,~]=system(['rsync -r --exclude=*.*[0-9]* ''',profileDir,'/'' ''',resultDirectory,'''']);
         

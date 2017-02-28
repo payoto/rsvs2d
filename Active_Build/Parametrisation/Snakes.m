@@ -959,8 +959,12 @@ end
 
 function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
         edgeIndex,vertIndex,insideContourInfo)
+    % Checks wether the fill is inside or outside of the profile being
+    % created.
     
+    % Avoids starting from a vertex with degenerate connections
     flag=true;
+    
     while flag
         rootVert=initVertexIndex(1);
         vertexEdges=FindEdgesIndex(rootVert,edgeVertIndex,edgeIndex);
@@ -1000,7 +1004,15 @@ function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
     indNoEx([posExit,posRoot])=[];
     anglesExt=angles(indNoEx);
     
+    flagRet=0;
     indOut=indNoEx(find((anglesExt>=angles(posRoot)) & (anglesExt<=angles(posExit))));
+    % This is added to ensure that the sum does not default to 0 when
+    % indOut is empty.
+    if isempty(indOut)
+        flagRet=1;
+        indOut=indNoEx(find(~(anglesExt>=angles(posRoot)) & ~(anglesExt<=angles(posExit))));
+    end
+    
     testIsOut=insideContourInfo(vertexEdgesSub(indOut));
     
     if sum(testIsOut)==0
@@ -1009,6 +1021,9 @@ function isInside=CheckInsideFill(vertCoord,edgeVertIndex,initVertexIndex,...
         isInside=false;
     else
         error('Cannot decide if is inside or not')
+    end
+    if flagRet
+        isInside=~isInside;
     end
     
 end

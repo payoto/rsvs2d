@@ -2208,11 +2208,13 @@ function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
     
     paroptim.general.refineOptimType=refmethod;
     paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
     ratio=PickRatioForRefineMethod(refmethod);
     paroptim.general.refineOptimRatio=ratio(1);
     paroptim.general.refineOptim(end,end)=50;
+    paroptim.spline.resampleSnak=false;
 end
 
 function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
@@ -2221,11 +2223,13 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     
     paroptim.general.refineOptimType=refmethod;
     paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
     ratio=PickRatioForRefineMethod(refmethod);
     paroptim.general.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
     paroptim.general.refineOptim(end,end)=50;
+    paroptim.spline.resampleSnak=false;
 end
 
 % Grid Cases
@@ -2509,6 +2513,7 @@ function paroptim=bulkNacaInvDes2()
     paroptim.general.nPop=12;
     paroptim.general.maxIter=1;
     paroptim.general.worker=4;
+    paroptim.spline.resampleSnak=false;
 end
 
 function paroptim=bulkOtherInvDesA()
@@ -2526,6 +2531,7 @@ function paroptim=bulkOtherInvDesA()
     paroptim.general.worker=4;
     paroptim.spline.resampleSnak=false;
     paroptim.obj.invdes.profileComp='area';
+    paroptim.spline.resampleSnak=false;
     
 end
 function paroptim=bulkNacaInvDes2A()
@@ -2552,6 +2558,7 @@ function paroptim=bulkNacaInvDes2A()
     paroptim.general.worker=4;
     
     paroptim.obj.invdes.profileComp='area';
+    paroptim.spline.resampleSnak=false;
 end
 
 %% Full Aero Optimisations
