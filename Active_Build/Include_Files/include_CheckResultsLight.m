@@ -194,8 +194,8 @@ function []=PlotSnaxelIndex(figh,axh,snakposition)
     for ii=1:length(snakposition)
         X(ii)=snakposition(ii).coord(1);
         Y(ii)=snakposition(ii).coord(2);
-        U(ii)=snakposition(ii).vector(1)/80;
-        V(ii)=snakposition(ii).vector(2)/80;
+        U(ii)=snakposition(ii).vector(1)/5000;
+        V(ii)=snakposition(ii).vector(2)/5000;
         str=num2str(snakposition(ii).index);
         text(X(ii)+U(ii),Y(ii)+V(ii),str)
     end

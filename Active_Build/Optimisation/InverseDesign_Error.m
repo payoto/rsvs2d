@@ -14,9 +14,10 @@ function [errorMeasure,h]=InverseDesign_Error(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'typeLoop'};
+    [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
     
-    
-    [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp);
+    [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,typeLoop);
     
     switch aeroClass
         case 'NACA'
@@ -64,11 +65,11 @@ end
 
 %%
 
-function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp)
+function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,typeLoop)
     % prepares the loop into the right coordinates
     
     nLoop=numel(loop);
-    analysisCoord=vertcat(loop(:).subdivspline);
+    analysisCoord=vertcat(loop(:).(typeLoop));
     
     if true % nLoop==1;
         [isCCW]=CCWLoop(analysisCoord);
