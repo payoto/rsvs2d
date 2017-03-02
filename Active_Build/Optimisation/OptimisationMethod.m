@@ -484,7 +484,7 @@ function [gradF,gradAdd]=GenerateGradientEntry(ind,coeff,gradstruct,FDO2V2,prevG
             gradAdd=opstruct(FDO2V2,gradstruct(ind(1)).additional,gradstruct(ind(2)).additional,dxm,dxp);
         end
     else
-        warning('Empty Mode')
+        disp('Warning: Empty Mode')
     end
     
 end

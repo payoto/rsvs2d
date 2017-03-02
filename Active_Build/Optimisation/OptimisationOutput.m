@@ -165,7 +165,7 @@ function [out]=OptimisationOutput_iteration(paramoptim,nIter,out,population,erro
         if ~isdir(writeDirectory)
             mkdir(writeDirectory);
         end
-        CopyDiary(writeDirectory,marker)
+        %CopyDiary(writeDirectory,marker)
         GeneratePopulationBinary(writeDirectory,marker,population)
         
         
@@ -220,7 +220,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             end;
         end;
     end
-    CopyDiary(writeDirectory,marker)
+    %CopyDiary(writeDirectory,marker)
     GenerateIterResultBinary(writeDirectory,marker,optimstruct,paroptim)
     
     
@@ -241,28 +241,30 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     end
     if numel(optimstruct)>=4
         [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
-    
-    if isAnalytical
-        [h2]=PlotAnalyticalPath(paroptim,optimstruct,objectiveName);
-        h=[h,h2];
-    end
-    %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
-    if ~isGradient
-        figList={'\Optimisation_','\DesVarHist_'};
-    else
-        figList={'\Optimisation_','\GradHistory_'};
-    end
-    if isAnalytical
-        figList{end+1}={'\DesVarPath'};
-    else
-        %figList{end+1}={'\DesVarPath'};
-    end
-    
-    for ii=1:length(h)
-        figName=[writeDirectory,figList{ii},marker,'.fig'];
-        figName=MakePathCompliant(figName);
-        hgsave(h(ii),figName);
-    end
+        
+        if isAnalytical
+            [h2]=PlotAnalyticalPath(paroptim,optimstruct,objectiveName);
+            h=[h,h2];
+        end
+        %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
+        if ~isGradient
+            figList={'\Optimisation_','\DesVarHist_'};
+        else
+            figList={'\Optimisation_','\GradHistory_'};
+            [h2]=PlotGradientsRefine(paroptim,optimstruct);
+            h=[h,h2];
+        end
+        if isAnalytical
+            figList{end+1}={'\DesVarPath'};
+        else
+            %figList{end+1}={'\DesVarPath'};
+        end
+        
+        for ii=1:length(h)
+            figName=[writeDirectory,figList{ii},marker,'.fig'];
+            figName=MakePathCompliant(figName);
+            hgsave(h(ii),figName);
+        end
     end
     if strcmp(objectiveName,'CutCellFlow')
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
@@ -277,7 +279,20 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             tecPlotFile,axisRatio,paroptim,allRootDir);
         
     end
-    
+    if strcmp(objectiveName,'InverseDesign')
+        tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
+        tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
+        tecPlotPre{2}=['Tec360plt_Snak_',marker,'_pre.plt'];
+        
+        [FID]=OpenOptimumSnakLayFile(writeDirectory,marker);
+        PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
+        tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
+        tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
+        ExtractOptimalSnake(optimstruct,writeDirectory,direction,...
+            tecPlotFile,axisRatio,paroptim,allRootDir);
+        
+    end
 end
 
 function [out]=OptimisationOutput_Final_Post(paroptim,out,optimstruct)
@@ -481,6 +496,18 @@ function [FID]=OpenOptimumFlowLayFile(writeDirectory,marker)
     
 end
 
+function [FID]=OpenOptimumSnakLayFile(writeDirectory,marker)
+    % Creates a file in the current directory to write data to.
+    
+    writeDirectory=MakePathCompliant(writeDirectory);
+    fileName=['EvolSnake_',marker,'.lay'];
+    originalLayFile=[cd,'\Result_Template\Layout_OptimSnak.lay'];
+    originalLayFile=MakePathCompliant(originalLayFile);
+    copyfileRobust(originalLayFile,[writeDirectory,filesep,fileName])
+    FID=fopen([writeDirectory,filesep,fileName],'r+');
+    
+end
+
 function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
     
     [~,iterFolders]=FindDir( rootFolder,'iteration',true);
@@ -616,7 +643,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
         %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
         dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
         expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'};
-        val={ii,3,minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
+        val={ii,[3 4],minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
         nOccur=[2 2 1 1];
         [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
         
@@ -642,6 +669,148 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     tecPlotPre=regexprep(tecPlotFile,'\.plt','_pre.plt');
     if strcmp(compType(1:2),'PC')
         [d,c]=system(['preplot "',tecPlotFile{1},'" "',tecPlotPre{1},'"']);
+        [d,c]=system(['preplot "',tecPlotFile{2},'" "',tecPlotPre{2},'"']);
+    end
+    
+    
+    
+    
+end
+
+
+function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
+        tecPlotFile,ratio,paramoptim,allRootDir)
+    
+    
+    varExtract={'defaultVal','worker'};
+    [defaultVal,worker]=ExtractVariables(varExtract,paramoptim);
+    
+    delete(tecPlotFile{1});
+    delete(tecPlotFile{2});
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
+    
+    for ii=1:numel(allRootDir)
+        rootDirName{ii}=InitOptimalFlowOutput(allRootDir{ii},ratio,tecPlotFile);
+    end
+    
+    compType=computer;
+    for ii=1:nIter
+        itL=[optimstruct(ii).population(:).objective];
+        nVarLoc=length(itL);
+        iterRes(ii,1:nVarLoc)=itL;
+        %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
+    end
+    
+    switch dirOptim
+        case 'min'
+            [minRes,minPos]=min(iterRes,[],2);
+        case 'max'
+            [minRes,minPos]=max(iterRes,[],2);
+    end
+    % Prepare CFD file with newest version
+    for ii=1:nIter
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        %         PrepareCFDPostProcessing(minIterPos);
+        
+    end
+    
+%     kk=1;
+%     needRerun(kk)=1;
+%     for ii=2:nIter
+%         
+%         precIterPos=optimstruct(ii-1).population(minPos(ii-1)).location;
+%         minIterPos=optimstruct(ii).population(minPos(ii)).location;
+%         if ~strcmp(precIterPos,minIterPos)
+%             kk=kk+1;
+%             needRerun(kk)=ii;
+%             
+%         end
+%         
+%     end
+%     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
+%     parfor jj=1:kk
+%         
+%         ii=needRerun(jj);
+%         
+%         minIterPos=optimstruct(ii).population(minPos(ii)).location;
+%         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+%             
+%             
+%             RunCFDPostProcessing(minIterPos);
+%             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+%                 CutCellFlow_Handler(paramoptim,minIterPos)
+%                 RunCFDPostProcessing(minIterPos);
+%                 if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+%                     PrepareCFDPostProcessing(minIterPos,CFDfolder);
+%                     CutCellFlow_Handler(paramoptim,minIterPos)
+%                     RunCFDPostProcessing(minIterPos);
+%                 end
+%             end
+%         end
+%         
+%    end
+    
+    minIterRootDirNum=zeros([1,nIter]);
+    
+    for ii=1:nIter
+        
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        [~,filename]=FindDir( minIterPos,'tecsubfile',false);
+        jj=1;
+        while isempty(regexp(minIterPos,rootDirName{jj}, 'once')) && jj<numel(rootDirName)
+            jj=jj+1;
+        end
+        minIterRootDirNum(ii)=jj;
+        jj=1;
+        try
+            while ~isempty(regexp(filename{jj},'copy', 'once'))
+                jj=jj+1;
+            end
+        catch ME
+            ME.getReport
+            minIterPos
+            optimstruct(ii).population
+            jj=jj
+            ii=ii
+            filename
+            throw(ME)
+        end
+        
+        
+        copyfileRobust([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
+        
+%         copyfileRobust([[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt'],...
+%             [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
+        
+        %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
+        dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
+        expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'};
+        val={ii,[3 4],minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
+        nOccur=[2 2 1 1];
+        [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
+        
+%         [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'CFD'],...
+%             ['flowplt_cell.plt',int2str(ii)]);
+    end
+    
+    % dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'}
+    % expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'}
+    % val={ii,3,minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5}
+    % nOccur=[2 2 1 1]
+    % [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur)
+    
+    for ii=1:nIter
+        if strcmp(compType(1:2),'PC')
+            %[~,~]=system(['type "',flowPlt{ii},'" >> "',tecPlotFile{1},'"']);
+            [~,~]=system(['type "',snakPlt{ii},'" >> "',tecPlotFile{2},'"']);
+        else
+            %[~,~]=system(['cat ''',flowPlt{ii},''' >> ''',tecPlotFile{1},'''']);
+            [~,~]=system(['cat ''',snakPlt{ii},''' >> ''',tecPlotFile{2},'''']);
+        end
+    end
+    tecPlotPre=regexprep(tecPlotFile,'\.plt','_pre.plt');
+    if strcmp(compType(1:2),'PC')
+        %[d,c]=system(['preplot "',tecPlotFile{1},'" "',tecPlotPre{1},'"']);
         [d,c]=system(['preplot "',tecPlotFile{2},'" "',tecPlotPre{2},'"']);
     end
     
@@ -755,15 +924,15 @@ function [destPath]=EditPLTHeader(cfdPath,filename,dat,expr,val,nOccur)
     destF=fopen(destPath,'w');
     
     flagFinished=false;
-    
+    jj=ones(size(dat));
     nOccurCurr=zeros(size(dat));
     while (~feof(sourceF)) && ~flagFinished
         str=fgetl(sourceF);
         
         for ii=1:numel(dat)
             if ~isempty(regexp(str,dat{ii},'once'))
-                str=sprintf(expr{ii},val{ii});
                 nOccurCurr(ii)=nOccurCurr(ii)+1;
+                str=sprintf(expr{ii},val{ii}(min(nOccurCurr(ii),numel(val{ii}))));
                 break
             end
         end
@@ -1349,6 +1518,122 @@ function [h]=PlotAnalyticalPath(paramoptim,optimstruct,objectiveName)
 %     end
     
 end
+
+function [h]=PlotGradientsRefine(paramoptim,optimstruct)
+    
+    supportOptim=paramoptim.optim.supportOptim;
+    maxNums=numel(supportOptim.hist(end).gradfk);
+    for ii=numel(supportOptim.hist)-1:-1:1
+        if numel(supportOptim.hist(ii).gradfk)<maxNums
+            break
+        end
+    end
+    ii=ii+1;
+    iterstart=(ii-1)*2+1;
+    supportOptim.hist=supportOptim.hist(ii:end);
+    paramoptim.optim.supportOptim=supportOptim;
+    [h,~]=PlotGradients(paramoptim,optimstruct(iterstart:end));
+end
+
+function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
+    
+    normVec=@(vec) sqrt(sum(vec.^2,2));
+    normaliseArray=@(array)  array./(sqrt(sum(array.^2,2))*ones(1,size(array,2))); 
+    
+    supportOptim=paramoptim.optim.supportOptim;
+    
+    h=figure('Name',['Gradients_',ExtractVariables({'optimCase'},paramoptim)]...
+        ,'Position',[ 100 150 1400 700]);
+    symDesVarList=ExtractVariables({'symDesVarList'},paramoptim);
+    rmCol=symDesVarList(2,:);
+    subplot(2,2,1)
+    grads=vertcat(supportOptim.hist(:).gradfk);
+    grads(:,rmCol)=[];
+    surf(log10(abs(grads)))
+    ylabel('iteration')
+    xlabel('design variable')
+    title('gradients')
+    
+    view(0,90)
+    subplot(2,2,2)
+    grads=vertcat(supportOptim.hist(:).prevDir);
+    grads(:,rmCol)=[];
+    surf(log10(abs(grads)))
+    ylabel('iteration')
+    xlabel('design variable')
+    title('previous direction')
+    view(0,90)
+    subplot(2,2,3)
+    grads=vertcat(supportOptim.hist(:).prevStep);
+    surf(((grads)),(abs((grads))))
+    ylabel('iteration')
+    xlabel('design variable')
+    title('previous direction')
+    view(0,90)
+    subplot(2,2,4)
+    hold on
+    grads=vertcat(supportOptim.hist(:).gradfk);
+    grads(:,rmCol)=[];
+    directionChange.gradNorm=normVec(grads);
+    gradsm1=vertcat(supportOptim.hist(:).gradfkm1);
+    gradsm1(:,rmCol)=[];
+    directionChange.Grad=dot(normaliseArray(grads),normaliseArray(gradsm1),2);
+    directionChange.Grad(1)=1;
+    gradStep=vertcat(supportOptim.hist(:).prevStep);
+    gradStep(:,rmCol)=[];
+    directionChange.Step=dot(normaliseArray(grads),normaliseArray(gradStep),2);
+    gradDir=vertcat(supportOptim.hist(:).prevDir);
+    gradDir(:,rmCol)=[];
+    directionChange.Dir=dot(normaliseArray(grads),normaliseArray(gradDir),2);
+    directionChange.grads=grads;
+    directionChange.gradsm1=gradsm1;
+    kk=1;
+    fillPrec=zeros(size(optimstruct(1).population(1).fill));
+    for ii=1:2:numel(optimstruct)
+        changePos(kk)=normVec(fillPrec-optimstruct(ii).population(1).fill);
+        fillInf(kk,1:numel(optimstruct(ii).population(1).fill))...
+            =optimstruct(ii).population(1).fill;
+        fillPrec=optimstruct(ii).population(1).fill;
+        kk=kk+1;
+    end
+    changePos(1)=ExtractVariables({'startVol'},paramoptim);
+    directionChange.Pos=changePos;
+    
+    step=1:numel(supportOptim.hist);
+    ii=1;
+    l(ii)=plot(step,directionChange.Grad);
+    l(ii).DisplayName='Change in direction - gradient';
+    ii=ii+1;
+    l(ii)=plot(step,directionChange.Step);
+    l(ii).DisplayName='gradient // direction';
+    ii=ii+1;
+    l(ii)=plot(step,directionChange.Dir);
+    l(ii).DisplayName='gradient // step';
+    ii=ii+1;
+    try
+        scaleEvol=[supportOptim.hist(:).scale];
+        l(ii)=plot(step,scaleEvol);
+        l(ii).DisplayName='scale';
+        ii=ii+1;
+    catch
+    end
+    try
+        iterEvol=[supportOptim.hist(:).iter];
+        l(ii)=plot(step,iterEvol);
+        l(ii).DisplayName='iter since last refresh';
+        ii=ii+1;
+    catch
+    end
+    l(ii)=plot(step,changePos);
+    l(ii).DisplayName='Length of movement';
+    ii=ii+1;
+    l(ii)=plot(step,directionChange.gradNorm);
+    l(ii).DisplayName='Norm of Gradient';
+    ii=ii+1;
+    legend(l)
+    
+end
+
 %% Binaries
 
 function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)

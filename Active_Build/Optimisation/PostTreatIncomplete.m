@@ -10,10 +10,16 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
     outinfo.rootDir=pathStr;
     [outinfo.tOutput,outinfo.marker]=FindTime(pathStr);
     % iterstruct paramoptim
-    [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
+    [paramoptim2]=ReconstructParameter(pathStr,outinfo.marker);
     try 
-        paramoptim=StructOptimParam(ExtractVariables({'optimCase'},paramoptim));
-    catch
+        paramoptim=StructOptimParam(ExtractVariables({'optimCase'},paramoptim2));
+        outVars={paramoptim.structdat(:).vars.name};
+        for ii=numel(outVars):-1:1
+            [valVars{ii}]=ExtractVariables(outVars(ii),paramoptim2);
+        end
+        paramoptim=SetVariables(outVars,valVars,paramoptim);
+    catch ME
+        throw(ME)
         [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
     end
     % Reconstruct iterstruct
