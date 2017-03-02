@@ -93,15 +93,16 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
 %         end
         %try
         %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
-        try
+         try
             if exist('flagOut','var') && ~flagOut
                 disp('Output Skipped')
             else
                 OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
             end
-        catch ME;
-            disp(ME.getReport),
-        end
+         catch ME;
+             disp(ME.getReport),
+             
+         end
         
         %catch
         
@@ -235,17 +236,18 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     include_Optimisation
     include_GridCheck
     
-    diaryFile=[cd,'\Result_Template\Latest_Diary.log'];
-    diaryFile=MakePathCompliant(diaryFile);
-    fidDiary=fopen(diaryFile,'w');
-    fclose(fidDiary);
-    diary(diaryFile);
     
     
     % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
     [outinfo]=OptimisationOutput('init',paramoptim);
+    diaryFile=[outinfo.rootDir,'\Latest_Diary.log'];
+    diaryFile=MakePathCompliant(diaryFile);
+    fidDiary=fopen(diaryFile,'w');
+    fclose(fidDiary);
+    diary(diaryFile);
+    
     [~,paramoptim]=ConstraintMethod('init',paramoptim,[]);
     % Initialise Grid
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
@@ -998,15 +1000,20 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             if ~corneractive
                 LEind=1+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
                 TEind=cellLevels(1)-2+(cellLevels(1)-2)*[0:(cellLevels(2)-1)];
+                origPop=ones([nPop nDesVar])*0.5;
+                
+                origPop(:,LEind)=origPop(:,LEind)/2;
+                origPop(:,TEind)=origPop(:,TEind)/2;
             else
                 LEind=1+(cellLevels(1))*[0:(cellLevels(2)-1)];
                 TEind=cellLevels(1)+(cellLevels(1))*[0:(cellLevels(2)-1)];
+                origPop=ones([nPop nDesVar])*0.5;
+                
+                origPop(:,LEind)=origPop(:,LEind)/4;
+                origPop(:,TEind)=origPop(:,TEind)/4;
             end
             
-            origPop=ones([nPop nDesVar])*0.5;
             
-            origPop(:,LEind)=origPop(:,LEind)/2;
-            origPop(:,TEind)=origPop(:,TEind)/2;
             
         case 'outerbound'
             origPop=ones([nPop,nDesVar]);

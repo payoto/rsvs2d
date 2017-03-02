@@ -2221,15 +2221,23 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     
     paroptim=refsweeplocal(gridCase,'4412');
     
+    %paroptim.general.maxIter=6;
     paroptim.general.refineOptimType=refmethod;
     paroptim.optim.CG.gradScaleType='volume'; % 'volume'
     paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
+    paroptim.parametrisation.snakes.refine.pinnedVertex='';
     ratio=PickRatioForRefineMethod(refmethod);
     paroptim.general.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
     paroptim.general.refineOptim(end,end)=50;
     paroptim.spline.resampleSnak=false;
+end
+
+function [paroptim]=TestNewOut()
+   [paroptim]=invdeslocal_test2('uu','contcurvescale',1,3);
+   paroptim.general.maxIter=6;
+    
 end
 
 % Grid Cases
@@ -2278,6 +2286,8 @@ function [refineOptimRatio]=PickRatioForRefineMethod(refmethod)
         case 'desvargrad'
             refineOptimRatio=0.3;
         case 'contcurvescale'
+            refineOptimRatio=0.3;
+        case 'contour'
             refineOptimRatio=0.3;
         otherwise
             error('unknown refinement method %s',refmethod)
