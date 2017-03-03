@@ -297,6 +297,7 @@ function []=CopyDiary(writeDirectory,marker)
     
 end
 
+
 %% Boundary Output to .dat file
 
 function []=BoundaryOutput(loop,FID,typeLoop,buildInternal)
@@ -354,6 +355,14 @@ function [G]=BuildMatlabGeometryMatrix(loop,typeLoop)
             padOnes*mod(isInternal(ii),2)];
         nDone=nDoneNew;
     end
+    
+end
+
+
+function []=OutputFreefempp(loop,typeLoop)
+    [isInternal]=FindInternalLoop(loop);
+    
+    
     
 end
 
