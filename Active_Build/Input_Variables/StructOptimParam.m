@@ -1940,7 +1940,7 @@ function paroptim=refsweeplocal(gridCase,airfoil)
     paroptim.optim.CG.lineSearchType='backbisection';
     nIter=30;
     %paroptim.optim.CG.varActive='all';
-    paroptim.general.startPop='halfuniformthin';
+    paroptim.general.startPop='halfuniformsharp';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=nIter;
     paroptim.general.worker=8; 
@@ -2235,9 +2235,10 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
 end
 
 function [paroptim]=TestNewOut()
-   [paroptim]=invdeslocal_test2('uu','contcurvescale',1,3);
-   paroptim.general.maxIter=6;
-    
+   [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
+   paroptim.general.maxIter=2;
+    paroptim.parametrisation.general.passDomBounds(2,:)=paroptim.parametrisation.general.passDomBounds(2,:)/2;
+    paroptim.parametrisation.general.passDomBounds(1,:)=paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
 end
 
 % Grid Cases

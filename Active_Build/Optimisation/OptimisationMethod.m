@@ -353,10 +353,6 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
             end
         end
     end
-    
-    
-    
-    
 end
 
 function [modestruct]=RemoveFailedModes(modestruct,gradstruct,rootfill,desVarRange,direction)

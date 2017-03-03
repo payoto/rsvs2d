@@ -113,6 +113,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
 %             break
             
             %save(['TestRefineFinal',int2str(refStage),'.mat'])
+            save('DebugRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
@@ -1658,7 +1659,9 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     refparamsnake=SetVariables({'refineGrid','typeRefine'},{refineCellLvl(refStep,:),'automatic'},...
         paramoptim.parametrisation);
     % Need to add here the additional refinement options
-    
+    refinementStruct.oldgrid=oldGrid;
+    refinementStruct.pop=iterstruct(end).population;
+    refinementStruct.param=paramoptim;
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
@@ -1725,7 +1728,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [outinfo]=OptimisationOutput('iteration',...
         paramoptim,0,outinfo,iterstruct(1),{});
-    
+    save([outinfo.rootDir,filesep,'iteration_0',filesep,'refinementinfo.mat'],'refinementStruct')
     [~]=PrintEnd(procStr,1,tStart);
 end
 
