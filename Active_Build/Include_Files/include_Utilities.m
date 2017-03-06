@@ -250,6 +250,13 @@ function [xMin,xMax,t,L,A]=ClosedLoopProperties(points)
     
 end
 
+function [oldIndsNewOrd]=ReverseStructInfo(struct1,fieldShort,fieldLong)
+    % this is designed to distribute the content of fieldShort in the same
+    % length as the content of fieldLong
+   oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {struct1(:).(fieldLong)},...
+                {struct1(:).(fieldShort)},'UniformOutput',false)); 
+end
 % function [A]=CalculatePolyArea(points)
 %     
 %     pointsVec=points';

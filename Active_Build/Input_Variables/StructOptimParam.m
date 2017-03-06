@@ -77,6 +77,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
     paroptimgeneral.varOverflow='spill'; % 'truncate' 'spill'
+    paroptimgeneral.spillCutOff=2e-2;
     paroptimgeneral.initInterp={};
 end
 
