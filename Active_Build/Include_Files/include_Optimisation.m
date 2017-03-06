@@ -625,11 +625,143 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
     newRootFill=newRootFill+sum(overFlowMat,1);
     
 end
+%%
+function []=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel)
+    
+    snakGridRef=ExtractVariables({'refineGrid'},paramoptim.parametrisation);
+    
+    try
+        varExtract={'spillCutOff'};
+        [spillCutOff]=ExtractVariables(varExtract,paramoptim);
+    catch ME
+        disp(ME.getReport)
+        spillCutOff=2e-2;
+    end
+    
+    [snaxCorn,snaxBord]=ExtractVerticesForFlow(gridBase,gridRefined,gridConnec,snaxel,snakGridRef);
+    snaxFlow=[snaxCorn;snaxBord];
+    
+    vertAct=[cellCentredGrid([cellCentredGrid(:).fill]==0 | [cellCentredGrid(:).fill]==1).vertex];
+    vertAct=[vertAct(:).index];
+    
+    snaxFlow=snaxFlow(find(FindObjNum([],snaxFlow(:,1),vertAct)~=0),:);
+    
+    % Fill dist provides an indication of the fill distance rather than the
+    % actual
+    fillDist=unique(snaxFlow(:,1));
+    for ii=1:numel(fillDist)
+        fillDist(ii,2)=prod(snaxFlow(find(snaxFlow(:,1)==fillDist(ii,1)),2));
+    end
+    fillDist=fillDist(find(fillDist(:,2)<spillCutOff),:);
+    
+    % need to transform fill dist into a relationship between cells (ie
+    % filling cells and emptying ones)
+    
+    vertflowinfo=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid);
+    BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec)
+end
 
-function []=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,snaxel)
+function [vertflowinfo]=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid)
     
     
+    edgeVertInd=[gridRefined.edge(:).vertexindex];
+    vertInd=[gridRefined.vertex(:).index];
+    cellInd=[cellCentredGrid(:).index];
+    vertflowinfo=repmat(struct('vertex',[],'cells',repmat(struct('index',[],'edges',[],...
+        'issource',[]),[1 0]),'filldist',[]),[1,size(fillDist,1)]);
     
+    for ii=1:size(fillDist,1)
+        
+        vertflowinfo(ii).vertex=fillDist(ii,1);
+        vertflowinfo(ii).filldist=fillDist(ii,2);
+        currEdges=ceil(FindObjNum([],fillDist(ii,1),edgeVertInd)/2);
+        
+        currVertind=[gridRefined.edge(currEdges).vertexindex];
+        currVertind=currVertind(currVertind~=fillDist(ii,1));
+        currCoords=vertcat(gridRefined.vertex(FindObjNum([],[fillDist(ii,1),currVertind],vertInd)).coord);
+        currVecs=currCoords(2:end,:)-(ones([size(currCoords,1)-1,1]))*currCoords(1,:);
+        
+        [~,iVec]=sort(ExtractAngle360(currVecs(1,:),currVecs));
+        currVecs=currVecs(iVec,:);
+        currEdges=currEdges(iVec);
+        currEdgesInd=[gridRefined.edge(currEdges).index];
+        
+        [currcells,~,cells2edges]=unique([gridRefined.edge(currEdges).cellindex]);
+        
+        for jj=numel(currcells):-1:1;
+            
+            vertflowinfo(ii).cells(jj).index=currcells(jj);
+            c2e=ceil(find(cells2edges==jj)/2);
+            vertflowinfo(ii).cells(jj).edges=currEdgesInd(c2e);
+            
+            vertflowinfo(ii).cells(jj).angleratio=abs(ExtractAngle360(...
+                currVecs(c2e(1),:),currVecs(c2e(2),:))/2/pi);
+            if abs(c2e(2)-c2e(1))>1
+                vertflowinfo(ii).cells(jj).angleratio=1-vertflowinfo(ii).cells(jj).angleratio;
+            end
+            
+            currSub=FindObjNum([],currcells(jj),cellInd);
+            if currSub~=0
+                vertflowinfo(ii).cells(jj).issource=~(cellCentredGrid(currSub).fill==0 ...
+                || cellCentredGrid(currSub).fill==1);
+            end
+        end
+        
+    end
+    
+end
+
+function []=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec)
+    
+    oldCellInd=ReverseStructInfo(gridConnec.cell,'oldCellInd','newCellInd');
+    newCellInd=[gridConnec.cell(:).newCellInd];
+    % In each vertex connect each source with each non source
+    for ii=1:numel(vertflowinfo)
+        
+        currOld=oldCellInd(FindObjNum([],[vertflowinfo(ii).cells(:).index],newCellInd));
+        rmRow=false(size(currOld));
+        for jj=1:numel(vertflowinfo(ii).cells)
+            vertflowinfo(ii).cells(jj).index=currOld(jj);
+        end
+    end
+    
+end
+
+function [snaxCorn,snaxBord]=ExtractVerticesForFlow(gridBase,gridRefined,...
+        gridConnec,snaxel,snakGridRef)
+    % Finds vertices where the snake is close to the edge of a design
+    % variable and returns the concerned vertices along with the normalised
+    % length away from it.
+    
+    
+    vertInd=[gridBase.vertex(:).index];
+    if numel(snakGridRef)>1
+        
+        edgeInd=[gridRefined.edge(:).index];
+        edgeOrient=[gridRefined.edge(:).orientation];
+        edgeOrient=edgeOrient(FindObjNum([],[snaxel(:).edge],edgeInd))+1;
+        snaxD=[[[snaxel(:).tovertex];(1-[snaxel(:).d])./snakGridRef(edgeOrient)],...
+            [[snaxel(:).fromvertex];[snaxel(:).d]./snakGridRef(edgeOrient)]]';
+    else
+        
+        snaxD=[[[snaxel(:).tovertex];(1-[snaxel(:).d])/snakGridRef(1)],...
+            [[snaxel(:).fromvertex];[snaxel(:).d]/snakGridRef(1)]]';
+    end
+    snaxVertSub=FindObjNum([],snaxD(:,1),vertInd);
+    snaxCorn=snaxD(find(snaxVertSub~=0),:);
+    snaxCornVertS=snaxVertSub(snaxVertSub~=0);
+    %
+    
+    oldCellDat=[gridConnec.edge(:).newcell];
+   [oldIndsNewOrd]=[0,ReverseStructInfo(gridConnec.cell,'oldCellInd','newCellInd')];
+    oldCellDat=oldIndsNewOrd(FindObjNum([],oldCellDat,[0,gridConnec.cell(:).newCellInd]));
+    borderedges=[gridConnec.edge(oldCellDat(1:2:end)~=oldCellDat(2:2:end)).newedge];
+    borderVertex=unique([gridRefined.edge(FindObjNum([],borderedges,...
+        [gridRefined.edge(:).index])).vertexindex]);
+    borderVertex(FindObjNum([],vertInd,borderVertex))=[];
+    snaxVertSub=FindObjNum([],snaxD(:,1),borderVertex);
+    snaxBord=snaxD(find(snaxVertSub~=0),:);
+    snaxBordVertS=snaxVertSub(snaxVertSub~=0);
     
 end
 
@@ -637,6 +769,8 @@ function []=VertexOverFlowExecute(paramoptim)
     
     
 end
+
+%%
 
 function population=ApplySymmetry(paramoptim,population)
     
