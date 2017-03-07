@@ -646,7 +646,7 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
     newRootFill=newRootFill+sum(overFlowMat,1);
     
 end
-%%
+%% Vertex flow functions
 
 
 function [newFill,fillflow]=RunVertexOverflow(paramoptim,newFill,pathSnak)
@@ -882,7 +882,7 @@ end
 function [cellRatio]=CalculateFloodRatio(cellSource,cellDest,cellflowinfo)
     % calculates the bleed ratio between the source and destination cell
     % based on wether it is a corner bleed and 
-    cellRatio=cellSource.volume/cellDest.volume;
+    cellRatio=1/4*cellSource.volume/cellDest.volume;
     
 end
 
@@ -931,7 +931,7 @@ function [newFill]=VertexOverFlowExecute(fillflow,newFill)
         if sign(bleedOff)~=(fillflow(ii).dir*2-1)
             bleedOff=0;
         end
-        bleedOff=bleedOff*abs(bleedOff)*(fillflow(ii).floodratio);
+        bleedOff=bleedOff*(fillflow(ii).floodratio);
         newFill(fillflow(ii).celldest)=newFill(fillflow(ii).celldest)+bleedOff;
     end
     

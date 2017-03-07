@@ -401,11 +401,11 @@ function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startI
         if knownOptim~=0
             mma=MovingAverage(objDat(1:iterGap:end),mmaSpan);
             mmaSlope=abs(mma(2:end)-mma(1:end-1));
-            isConv=(mmaSlope(end)/max(mmaSlope))<slopeConv;
+            isConv=(max(mmaSlope(end-(mmaSpan-1):end))/max(mmaSlope))<slopeConv;
         else
             mma=MovingAverage(log10(objDat(1:iterGap:end)),mmaSpan);
             mmaSlope=abs(mma(2:end)-mma(1:end-1));
-            isConv=(mmaSlope(end)/max(mmaSlope))<slopeConv;
+            isConv=(max(mmaSlope(end-(mmaSpan-1):end))/max(mmaSlope))<slopeConv;
         end
     else
         
