@@ -73,6 +73,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     %'desvargradadvanced' , 'contcurve', 'contlengthnorm' 'contcurvescale'
     paroptimgeneral.refineOptimRatio=1; % ratio of optimisation
     paroptimgeneral.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
+    paroptimgeneral.slopeConv=0.1; % ratio of converged slope to maximum slope.
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
@@ -443,8 +444,8 @@ function [paroptim]=CG_NACA0012()
     [paroptim]=OptimCG(paroptim);
     
     paroptim.general.startPop='NACA0012';
-    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6];
-    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5];
+    paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.optim.CG.maxDiffStep=1e-5;
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.validVol=0.2;
@@ -465,6 +466,7 @@ function [paroptim]=CG_NACA0012()
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
+    paroptim.general.knownOptim=0;
     
 end
 
@@ -551,7 +553,7 @@ function [paroptim]=Inverse_CG()
     
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
-    
+    paroptim.general.knownOptim=0;
 end
 
 function [paroptim]=Inverse_Bulk()
@@ -2083,11 +2085,12 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     % lvl=[0:2]
     
     paroptim=AreaM2sweep_Nc();
+    paroptim.general.knownOptim=0.1;
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
-    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.general.maxIter=100;
     paroptim.general.worker=8;
     paroptim.general.refineOptim=0;
@@ -2141,12 +2144,13 @@ function paroptim=volsweeplocal(e,gridCase)
     paroptim=AreaM2sweep_Nc();
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
-    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.general.maxIter=nIter;
     paroptim.general.worker=8;
     paroptim.general.refineOptim=0;
+    paroptim.general.knownOptim=0.1;
     
     paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
     

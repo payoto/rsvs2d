@@ -76,7 +76,13 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             % create new population
             
             [~]=PrintEnd(procStr,1,tStart);
-            if ConvergenceTest(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
+            % Convergence tests
+            if ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startIter) ...
+                    && (mod(nIter,2)==0) && (refStage~=nOptimRef+1)
+                fprintf('\n Optimisation Stopped By Slope convergence condition \n');
+                break
+            end
+            if ConvergenceTest_static(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
                 fprintf('\n Optimisation Stopped By convergence condition \n');
                 break
             end
@@ -101,18 +107,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             end
          catch ME;
              disp(ME.getReport),
-             
          end
-        
-        %catch
-        
-        %end
+
         %debugScript2
         if refStage<(nOptimRef+1)
-%             warning('Refinement Needs updating it is not currently supported')
-%             break
-            
-            %save(['TestRefineFinal',int2str(refStage),'.mat'])
             save('DebugRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
@@ -126,10 +124,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
                 maxIter=nIter+maxIter-(startIter-1);
                 startIter=nIter+1;
             end
-            
             iterstruct=iterstruct2;
-            
-            
         end
         
         
@@ -364,7 +359,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
 end
 
-function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter,startIter)
+function [isConv]=ConvergenceTest_static(paramoptim,iterstruct,nIter,startIter)
     comEps=@(f1,f2,eps) all(abs(f1-f2)<eps);
     varExtract={'optimMethod','iterGap'};
     [optimMethod,iterGap]=ExtractVariables(varExtract,paramoptim);
@@ -390,6 +385,35 @@ function [isConv]=ConvergenceTest(paramoptim,iterstruct,nIter,startIter)
     
 end
 
+function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startIter)
+    comEps=@(f1,f2,eps) all(abs(f1-f2)<eps);
+    varExtract={'optimMethod','iterGap','knownOptim','slopeConv'};
+    [optimMethod,iterGap,knownOptim,slopeConv]=ExtractVariables(varExtract,paramoptim);
+    mmaSpan=3;
+    
+    isConv=false;
+    if CheckIfGradient(optimMethod) && ((nIter-startIter)>=(mmaSpan*iterGap))
+        
+        objDat=zeros([1,nIter-startIter+1]);
+        for ii=startIter:nIter
+            objDat(ii-startIter+1)=min([iterstruct(ii).population(:).objective]);
+        end
+        if knownOptim~=0
+            mma=MovingAverage(objDat(1:iterGap:end),mmaSpan);
+            mmaSlope=abs(mma(2:end)-mma(1:end-1));
+            isConv=(mmaSlope(end)/max(mmaSlope))<slopeConv;
+        else
+            mma=MovingAverage(log10(objDat(1:iterGap:end)),mmaSpan);
+            mmaSlope=abs(mma(2:end)-mma(1:end-1));
+            isConv=(mmaSlope(end)/max(mmaSlope))<slopeConv;
+        end
+    else
+        
+        isConv=false; % Need to find a convergence condition for non grad optim
+        
+    end
+    
+end
 %% Normal Iteration
 
 function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
@@ -1305,7 +1329,6 @@ function [rootFill]=InitialiseFromFunction(cellLevels,corneractive,initInterp,nD
     end
     
 end
-
 
 function [origPop]=StartFromFill(nDesVar,nPop,fillName)
     
