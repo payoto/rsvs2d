@@ -76,7 +76,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
-    paroptimgeneral.varOverflow='spill'; % 'truncate' 'spill'
+    paroptimgeneral.varOverflow='vertexflow'; % ''vertexflow'' 'truncate' 'spill'
     paroptimgeneral.spillCutOff=2e-2;
     paroptimgeneral.initInterp={};
 end
@@ -1945,8 +1945,8 @@ function paroptim=refsweeplocal(gridCase,airfoil)
     paroptim.general.nPop=12;
     paroptim.general.maxIter=nIter;
     paroptim.general.worker=8; 
-    paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
-    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2]
+    paroptim.optim.CG.minDiffStep=1e-5;
     paroptim.optim.CG.validVol=0.2;
     paroptim.obj.invdes.profileComp='area';
     paroptim.obj.invdes.aeroName=airfoil;
@@ -2237,7 +2237,7 @@ end
 
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
-   paroptim.general.maxIter=2;
+   
     paroptim.parametrisation.general.passDomBounds(2,:)=paroptim.parametrisation.general.passDomBounds(2,:)/2;
     paroptim.parametrisation.general.passDomBounds(1,:)=paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
 end

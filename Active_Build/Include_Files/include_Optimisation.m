@@ -459,12 +459,12 @@ function [isSnakeSensitivity]=CheckSnakeSensitivityAlgorithm(paramoptim)
     end
 end
 
-function [newRootFill]=OverflowHandling(paramoptim,newRootFill)
+function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraarguments)
     % Function which handles steps overflowing the fill constraint
     
     varExtract={'desVarRange','varOverflow'};
     [desVarRange,varOverflow]=ExtractVariables(varExtract,paramoptim);
-    
+    optionOut=[];
     switch varOverflow
         case 'truncate'
             minD=min(desVarRange);
@@ -482,6 +482,26 @@ function [newRootFill]=OverflowHandling(paramoptim,newRootFill)
             maxD=max(desVarRange);
             newRootFill(newRootFill<minD)=minD;
             newRootFill(newRootFill>maxD)=maxD;
+        case 'vertexflow'
+            
+            if nargin>2
+                try 
+                    [newRootFill,optionOut]=RunVertexOverflow(paramoptim,newRootFill,extraarguments);
+                catch ME
+                    disp(ME.getReport)
+                    warning('Vertex Flow Failed')
+                end
+            end
+            
+            newFill=zeros(size(newRootFill));
+            for ii=1:size(newRootFill,1)
+                [newFill(ii,:)]=SpillOverflow(paramoptim,newRootFill(ii,:));
+            end
+            newRootFill=newFill;
+            minD=min(desVarRange);
+            maxD=max(desVarRange);
+            newRootFill(newRootFill<minD)=minD;
+            newRootFill(newRootFill>maxD)=maxD;
         otherwise
             error('No valid design variable overflow mechanism')
             
@@ -490,6 +510,7 @@ function [newRootFill]=OverflowHandling(paramoptim,newRootFill)
     
     
 end
+
 
 function [newFill]=SpillOverflow(paramoptim,newRootFill)
     
@@ -626,7 +647,79 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
     
 end
 %%
-function []=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel)
+
+
+function [newFill,fillflow]=RunVertexOverflow(paramoptim,newFill,pathSnak)
+    if ~isstruct(pathSnak)
+        [gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel]=ExtractSnakInfo_vertflow(pathSnak);
+        [fillflow]=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel);
+    else
+        fillflow=pathSnak;
+    end
+    for ii=1:size(newFill,1)
+        [newFill(ii,:)]=VertexOverFlowExecute(fillflow,newFill(ii,:));
+        
+    end
+end
+
+function [gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel]=ExtractSnakInfo_vertflow(pathSnak)
+    
+    [returnPath,returnName]=FindDir(pathSnak,'restart',0);
+    
+    load(returnPath{1},'restartsnak')
+    cellCentredGrid=restartsnak.cellCentredGrid;
+    snaxel=restartsnak.snaxel;
+    
+    gridPath=[regexprep(returnPath{1},returnName{1},''),filesep,'..',filesep,...
+        '..',filesep,'iteration_0',filesep,'profile_0',filesep];
+    
+    [returnPath,returnName]=FindDir(gridPath,'restart',0);
+    load(returnPath{1},'grid')
+    gridBase=grid.base;
+    gridRefined=grid.refined;
+    gridConnec=grid.connec;
+end
+
+
+function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
+    returnPath={};
+    returnName={};
+%     if iscell(rootDir)
+%         subDir=dir(rootDir{1});
+%         subDir(1:2)=[];
+%         for ii=2:numel(rootDir)
+%             partsubDir=dir(rootDir{ii});
+%             partsubDir(1:2)=[];
+%             subDir=[subDir,partsubDir];
+%         end
+%     else
+        subDir=dir(rootDir);
+        subDir(1:2)=[];
+%     end
+    nameCell={subDir(:).name};
+    isprofileDirCell=strfind(nameCell,strDir);
+    for ii=1:length(subDir)
+        subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
+            ~xor(subDir(ii).isdir,isTargDir);
+    end
+    
+    returnSub=find([subDir(:).isProfile]);
+    
+    
+    if isempty(returnSub)
+        disp('FindDir Could not find requested item')
+    end
+    for ii=1:length(returnSub)
+        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+        returnName{ii}=subDir(returnSub(ii)).name;
+        
+    end
+    
+    
+    
+end
+
+function [fillflow]=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel)
     
     snakGridRef=ExtractVariables({'refineGrid'},paramoptim.parametrisation);
     
@@ -658,7 +751,7 @@ function []=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridConnec,cell
     % filling cells and emptying ones)
     
     vertflowinfo=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid);
-    BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec)
+    fillflow=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec);
 end
 
 function [vertflowinfo]=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid)
@@ -711,19 +804,85 @@ function [vertflowinfo]=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentr
     
 end
 
-function []=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec)
+function [fillflow]=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec)
     
     oldCellInd=ReverseStructInfo(gridConnec.cell,'oldCellInd','newCellInd');
     newCellInd=[gridConnec.cell(:).newCellInd];
-    % In each vertex connect each source with each non source
+    cellInd=[cellCentredGrid(:).index];
+    activeInd=[cellCentredGrid(logical([cellCentredGrid(:).isactive])).index];
+    % Normalise and pass the data to the large cell
     for ii=1:numel(vertflowinfo)
         
         currOld=oldCellInd(FindObjNum([],[vertflowinfo(ii).cells(:).index],newCellInd));
         rmRow=false(size(currOld));
         for jj=1:numel(vertflowinfo(ii).cells)
             vertflowinfo(ii).cells(jj).index=currOld(jj);
+            firstMatch=min(find(currOld==currOld(jj)));
+            rmRow(jj)=firstMatch<jj;
+            if rmRow(jj)
+                vertflowinfo(ii).cells(firstMatch).angleratio=...
+                    vertflowinfo(ii).cells(firstMatch).angleratio...
+                    +vertflowinfo(ii).cells(jj).angleratio;
+                
+                tempEdge=sort([vertflowinfo(ii).cells(firstMatch).edges,...
+                    vertflowinfo(ii).cells(jj).edges]);
+                iskeep=~((tempEdge-tempEdge([2:end,1]))==0 | (tempEdge-tempEdge([end,1:end-1]))==0);
+                vertflowinfo(ii).cells(firstMatch).edges=tempEdge(iskeep);
+                    
+            end
+        end
+        vertflowinfo(ii).cells(rmRow)=[];
+    end
+    for ii=1:numel(vertflowinfo)
+        angleRat=[vertflowinfo(ii).cells(:).angleratio];
+        isSource=[vertflowinfo(ii).cells(:).issource];
+        angleRat(isSource)=angleRat(isSource)/sum(angleRat(isSource));
+        angleRat(~isSource)=angleRat(~isSource)/sum(angleRat(~isSource));
+        
+        
+        for jj=1:numel(vertflowinfo(ii).cells)
+            vertflowinfo(ii).cells(jj).angleratio=angleRat(jj);
         end
     end
+    
+    %
+    fillflow=repmat(struct('cellsource',[],'celldest',[],'fillcutoff',[],'floodratio',[],'dir',[]),[1 0]);
+    kk=0;
+    for ii=1:numel(vertflowinfo)
+        
+        for jj=find([vertflowinfo(ii).cells(:).issource])
+            for ll=find(~[vertflowinfo(ii).cells(:).issource])
+                kk=kk+1;
+                fillflow(kk).cellsource=vertflowinfo(ii).cells(jj).index;
+                fillflow(kk).celldest=vertflowinfo(ii).cells(ll).index;
+                sourceSub=FindObjNum([],fillflow(kk).cellsource,cellInd);
+                destSub=FindObjNum([],fillflow(kk).celldest,cellInd);
+                dir=((cellCentredGrid(destSub).fill<0.5)-0.5)*2;
+                fillflow(kk).fillcutoff=cellCentredGrid(sourceSub).fill...
+                    +dir*vertflowinfo(ii).filldist;
+                fillflow(kk).dir=dir;
+                
+                fillflow(kk).floodratio=CalculateFloodRatio(cellCentredGrid(sourceSub)...
+                    ,cellCentredGrid(destSub),vertflowinfo(ii).cells([jj,ll]));
+                fillPos=FindObjNum([],[fillflow(kk).cellsource,fillflow(kk).celldest],activeInd);
+                if any(fillPos==0)
+                    fillflow(kk)=[];
+                    kk=kk-1;
+                else
+                    fillflow(kk).cellsource=fillPos(1);
+                    fillflow(kk).celldest=fillPos(2);
+                end
+            end
+        end
+        
+        
+    end
+end
+
+function [cellRatio]=CalculateFloodRatio(cellSource,cellDest,cellflowinfo)
+    % calculates the bleed ratio between the source and destination cell
+    % based on wether it is a corner bleed and 
+    cellRatio=cellSource.volume/cellDest.volume;
     
 end
 
@@ -765,7 +924,16 @@ function [snaxCorn,snaxBord]=ExtractVerticesForFlow(gridBase,gridRefined,...
     
 end
 
-function []=VertexOverFlowExecute(paramoptim)
+function [newFill]=VertexOverFlowExecute(fillflow,newFill)
+    
+    for ii=1:numel(fillflow)
+        bleedOff=newFill(fillflow(ii).cellsource)-fillflow(ii).fillcutoff;
+        if sign(bleedOff)~=(fillflow(ii).dir*2-1)
+            bleedOff=0;
+        end
+        bleedOff=bleedOff*abs(bleedOff)*(fillflow(ii).floodratio);
+        newFill(fillflow(ii).celldest)=newFill(fillflow(ii).celldest)+bleedOff;
+    end
     
     
 end
