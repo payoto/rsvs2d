@@ -1314,10 +1314,6 @@ end
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
    %paroptim.general.maxIter=2;
-    paroptim.parametrisation.general.passDomBounds(2,:)=...
-        paroptim.parametrisation.general.passDomBounds(2,:)/2;
-    paroptim.parametrisation.general.passDomBounds(1,:)=...
-        paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
     paroptim.general.worker=12;
 end
 
@@ -1325,8 +1321,9 @@ end
 function [paroptim]=RefLocOut(e)
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
    %paroptim.general.maxIter=2;
-    paroptim.parametrisation.general.passDomBounds(2,:)=...
-        paroptim.parametrisation.general.passDomBounds(2,:)/2;
+    
+    paroptim.parametrisation.general.passDomBounds(1,:)=...
+        (paroptim.parametrisation.general.passDomBounds(1,:)-0.05)*1.1;
     paroptim.parametrisation.general.passDomBounds(1,:)=...
         paroptim.parametrisation.general.passDomBounds(1,:)/(1+e)+e/2;
     paroptim.general.worker=8;
