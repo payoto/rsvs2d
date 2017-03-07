@@ -257,6 +257,21 @@ function [oldIndsNewOrd]=ReverseStructInfo(struct1,fieldShort,fieldLong)
                 {struct1(:).(fieldLong)},...
                 {struct1(:).(fieldShort)},'UniformOutput',false)); 
 end
+
+function [mma]=MovingAverage(dat,span)
+    
+    mma=zeros(size(dat));
+    mmaspanned=zeros(size(dat));
+    for ii=0:span-1
+        inds=(1:size(dat,2))-ii;
+        indsDest=find(inds>0);
+        inds=inds(inds>0);
+        mmaspanned(:,indsDest)=mmaspanned(:,indsDest)+1;
+        mma(:,indsDest)=mma(:,indsDest)+dat(:,inds);
+    end
+    mma=mma./mmaspanned;
+end
+
 % function [A]=CalculatePolyArea(points)
 %     
 %     pointsVec=points';
