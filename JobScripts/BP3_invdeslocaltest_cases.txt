@@ -21,4 +21,4 @@ uu contour 0
 uu contlengthnorm 1  
 uu contour 1  
 uu desvargradadvanced 1  
-uu contcurvescale 1  
+uu contcurve 1  
