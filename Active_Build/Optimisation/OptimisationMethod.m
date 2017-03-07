@@ -168,13 +168,18 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
     prevStep=iterCurr(1).fill-iterm1(1).fill;
     obj_curr=iterCurr(1).objective;
     obj_m1=iterm1(1).objective;
+    lll=0;
+    precRoot=[];
+    while isempty(precRoot) && lll<numel(iterCurr)
+        lll=lll+1;precRoot=iterCurr(lll).location;
+    end
     % Case dependant statements
     if lineSearch
         if ~isRestart
             [stepVector,validVol,diffStepSize]=FindOptimalStepVector(iterOrig,...
                 UnitStepLength(nLineSearch,lineSearchType),direction,...
                 validVol,diffStepSize,minDiffStep,minVol);
-            [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid);
+            [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid,precRoot);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
             paramoptim.general.isRestart=false;
@@ -214,7 +219,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [stepLengths]=StepLengthsForLS(rootPop,stepVector,unitSteps,validVol,desVarRange);
         
         [newPop,deltas]=...
-            GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim);
+            GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim,precRoot);
         % Population trimming for invalid values
         
         % Declare linesearch
@@ -703,7 +708,7 @@ function [minChange]=FindMinPosMov(change,step)
 end
 
 function [newPop,deltas]=...
-        GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim)
+        GenerateNewLineSearchPop(rootPop,stepVector,stepLengths,paramoptim,precRoot)
     
     nNew=length(stepLengths);
     nFill=length(rootPop);
@@ -713,7 +718,7 @@ function [newPop,deltas]=...
     for ii=nNew:-1:1
         actVar=find(deltaDes(ii,:));
         deltas{ii}=[actVar;deltaDes(ii,actVar)];
-        [newPop(ii,:)]=OverflowHandling(paramoptim,newPop(ii,:));
+        [newPop(ii,:),precRoot]=OverflowHandling(paramoptim,newPop(ii,:),precRoot);
     end
     deltas{1}=deltas{end};
 end
@@ -823,10 +828,10 @@ function [yy]=ParabolicVal(coeff,xx)
     yy=parabola(xx)*coeff;
 end
 
-function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim,baseGrid)
+function [newRoot,deltas]=GenerateNewRootFill(rootFill,stepVector,paramoptim,baseGrid,precRoot)
     
     newRoot=rootFill+stepVector;
-    [newRoot]=OverflowHandling(paramoptim,newRoot);
+    [newRoot]=OverflowHandling(paramoptim,newRoot,precRoot);
     popVec.fill=newRoot;
     popVec=ApplySymmetry(paramoptim,popVec);
     [popVec]=ConstraintMethod('DesVar',paramoptim,popVec,baseGrid);
