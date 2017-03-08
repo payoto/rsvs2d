@@ -487,6 +487,7 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
             if nargin>2
                 try 
                     [newRootFill,optionOut]=RunVertexOverflow(paramoptim,newRootFill,extraarguments);
+                    disp('Vertex Flow succesful')
                 catch ME
                     disp(ME.getReport)
                     warning('Vertex Flow Failed')
@@ -510,7 +511,6 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
     
     
 end
-
 
 function [newFill]=SpillOverflow(paramoptim,newRootFill)
     
@@ -648,7 +648,6 @@ function [newRootFill]=SpillOverflowVarHandling(newRootFill,desvarconnec,flowVar
 end
 %% Vertex flow functions
 
-
 function [newFill,fillflow]=RunVertexOverflow(paramoptim,newFill,pathSnak)
     if ~isstruct(pathSnak)
         [gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel]=ExtractSnakInfo_vertflow(pathSnak);
@@ -679,7 +678,6 @@ function [gridBase,gridRefined,gridConnec,cellCentredGrid,snaxel]=ExtractSnakInf
     gridRefined=grid.refined;
     gridConnec=grid.connec;
 end
-
 
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
@@ -735,7 +733,7 @@ function [fillflow]=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridCon
     snaxFlow=[snaxCorn;snaxBord];
     
     vertAct=[cellCentredGrid([cellCentredGrid(:).fill]==0 | [cellCentredGrid(:).fill]==1).vertex];
-    vertAct=[vertAct(:).index];
+    vertAct=unique([vertAct(:).index]);
     
     snaxFlow=snaxFlow(find(FindObjNum([],snaxFlow(:,1),vertAct)~=0),:);
     
@@ -877,6 +875,30 @@ function [fillflow]=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridB
         
         
     end
+    
+    delFillFlow=false(size(fillflow));
+    fillSource=[fillflow(:).cellsource];
+    fillDest=[fillflow(:).celldest];
+    for ii=1:numel(fillflow)
+        if ~delFillFlow(ii)
+            
+            isSame=find(fillSource(ii)==fillSource & fillDest(ii)==fillDest);
+            if numel(isSame)>1
+                if fillflow(ii).dir
+                    fillCutOff=min([fillflow(isSame).fillcutoff]);
+                    floodRatio=max([fillflow(isSame).floodratio]);
+                else
+                    fillCutOff=max([fillflow(isSame).fillcutoff]);
+                    floodRatio=max([fillflow(isSame).floodratio]);
+                end
+                fillflow(isSame(1)).fillcutoff=fillCutOff;
+                fillflow(isSame(1)).floodratio=floodRatio;
+                delFillFlow(isSame(2:end))=true;
+            end
+            
+        end
+    end
+    fillflow(delFillFlow)=[];
 end
 
 function [cellRatio]=CalculateFloodRatio(cellSource,cellDest,cellflowinfo)

@@ -579,7 +579,7 @@ function [population]=ResultVariableConsCaller(constrName,constrVal,paroptim,pop
             
         case 'SnakResBarrier'
             constrVal=ExtractVariables({'convLevel'},paroptim.parametrisation);
-            constrVal=[constrVal*1e6,1];
+            constrVal=[1e-1,1];
             population=BarrierSnaxelVolResidual(constrVal,population);
         case ' '
             
