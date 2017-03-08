@@ -1,0 +1,2 @@
+outinfo.rootDir='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_03\Day_2017-03-07\Dir_2017-03-07T122344_TestNewOut';
+outinfo.marker='2017-03-07T122344_TestNewOut';

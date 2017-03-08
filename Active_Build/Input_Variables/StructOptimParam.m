@@ -1278,7 +1278,7 @@ function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
     paroptim=refsweeplocal(gridCase,'4412');
     
     paroptim.general.refineOptimType=refmethod;
-    paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    paroptim.optim.CG.gradScaleType=''; % 'volume'
     paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
@@ -1294,11 +1294,14 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     
     %paroptim.general.maxIter=6;
     paroptim.general.refineOptimType=refmethod;
-    paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    paroptim.optim.CG.gradScaleType=''; % 'volume'
     paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
-    paroptim.parametrisation.snakes.refine.pinnedVertex='';
+    paroptim.parametrisation.snakes.refine.pinnedVertex='LETE';
+    if cornAct
+        paroptim.parametrisation.snakes.refine.pinnedVertex='';
+    end
     ratio=PickRatioForRefineMethod(refmethod);
     paroptim.general.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
     paroptim.general.refineOptim(end,end)=50;
@@ -1313,7 +1316,7 @@ end
 
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
-   %paroptim.general.maxIter=2;
+   paroptim.general.maxIter=0;
     paroptim.general.worker=12;
 end
 

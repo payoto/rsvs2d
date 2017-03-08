@@ -93,10 +93,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         [~]=PrintEnd(procStr2,0,tStartOpt);
         pause(0.01)
         diary off
-%         if isempty(nIter)
-%             nIter=numel(iterstruct);
-%             startIter=1;
-%         end
+        if isempty(nIter)
+            nIter=numel(iterstruct);
+            startIter=1;
+        end
         %try
         %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
          try
@@ -109,7 +109,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
              disp(ME.getReport),
          end
 
-        %debugScript2
+        debugScript2
         if refStage<(nOptimRef+1)
             save('DebugRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
@@ -1600,7 +1600,6 @@ function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     additional.tc=areaAdd.tc;
 end
 
-
 function [objValue,additional]=InverseDesignBulk(paramoptim,member,loop)
     
     paramoptim=SetVariables({'aeroName'},{member.additional.Airfoil},paramoptim);
@@ -1674,6 +1673,11 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     paramoptim.general.desvarconnec=[];
     
     [outinfo]=OptimisationOutput('init',paramoptim);
+    diaryFile=[outinfo.rootDir,'\Latest_Diary.log'];
+    diaryFile=MakePathCompliant(diaryFile);
+    fidDiary=fopen(diaryFile,'w');
+    fclose(fidDiary);
+    diary(diaryFile);
     warning ('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
     
     % Refine Grid
@@ -1684,11 +1688,14 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Need to add here the additional refinement options
     refinementStruct.oldgrid=oldGrid;
     refinementStruct.pop=iterstruct(end).population;
-    refinementStruct.param=paramoptim;
+    refinementStruct.param=paramoptim; %#ok<STRNU>
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
         =GridInitAndRefine(refparamsnake,oldGrid.base);
+    
+    
+    
     defaultFillRefMat=BuildDefaultFillRef(oldGrid,gridrefined,connectstructinfo);
     
     newgrid.base=baseGrid;
