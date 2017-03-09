@@ -1408,6 +1408,19 @@ function [paroptim]=Debug170213_2()
     
 end
 
+function [paroptim]=Debug170309()
+    % debug for the corner problems try to find  better sets of parameters
+    % to avoid the minimum getting stuck on corners.
+    
+   paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
+   paroptim.parametrisation.snakes.step.arrivalTolerance=1e-1;
+    paroptim.parametrisation.snakes.step.snaxInitPos=5e-7;
+    paroptim.parametrisation.snakes.force.lengthEpsilon=1e-6;
+    paroptim.parametrisation.snakes.force.distEpsilon=5e-7;
+    paroptim.parametrisation.snakes.force.dirEpsilon=1e-6;
+    paroptim.parametrisation.snakes.force.typeSmear='d';
+    
+end
 %% refinement
 
 function paroptim=test_refine1()

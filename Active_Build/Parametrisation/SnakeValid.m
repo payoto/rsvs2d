@@ -14,13 +14,13 @@ function [procdat,out]=SnakeValid(validationName,parampreset,procdat)
     runValid=true;
     if nargin==1
         parampreset=structInputVar('CurrentValidation');
-        parampreset.structdat=GetStructureData(parampreset);
+        %parampreset.structdat=GetStructureData(parampreset);
     end
     if nargin>2
         runValid=false;
     end
     
-    param=ImposePresets(structInputVar('CurrentValidation'),parampreset);
+    param=ImposePresets(structInputVar('DefaultCase'),parampreset);
     
     snakCell={'Snakestestsmooth1','Snakestestsmooth1_2','Snakestestsmooth2',...
         'Snakestestsmooth3','Snakestestsmooth3_1','Donught','Donught2',...
