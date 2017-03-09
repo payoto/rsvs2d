@@ -406,6 +406,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
         nonBreedVert=[nonBreedVert,nonBreedVertPersist];
         borderVertices.nonBreedVert=nonBreedVert;
+        newSnaxInd=max([snaxel(:).index]);
         [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,...
             insideContourInfo,refinedGriduns,nonBreedVert,edgeDat,mergeTopo);
         if numel(snaxel)==0
@@ -429,6 +430,9 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         
         % Topology Trimming, Merging and Freezing
         [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd,edgeDat,mergeTopo);
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
@@ -1292,12 +1296,45 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
     
     warning('ON','MATLAB:catenate:DimensionMismatch')
     if kk>0
-        [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeDat,mergeTopo);
+        [snaxel]=NotTakePostRepopStep(snaxel,rePopInd,edgeDat,mergeTopo);
     end
 end
 
-function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeDat,mergeTopo)
+function [snaxel]=NotTakePostRepopStep(snaxel,rePopInd,edgeDat,mergeTopo)
+    % Needs to be modified to set them at 0.
+    % which is assigned later
+    [snaxel]=UpdateSnaxelEdgeOrder(snaxel);
     
+    vSnax=[snaxel(:).v];
+    
+    [snaxel(:).v]=deal(0);
+    snaxInd=[snaxel(:).index];
+    [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeDat);
+    repopSub=FindObjNum([],rePopInd,snaxInd);
+    rePopInd=rePopInd(repopSub~=0);
+    repopSub=repopSub(repopSub~=0);
+    
+    [snaxel(repopSub).v]=deal(snaxel(repopSub).d);
+    snaxelRepopD=[snaxel(repopSub).d];
+    [snaxel(repopSub).d]=deal(0);
+    
+%     for ii=1:numel(repopSub)
+%         snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
+%     end
+    
+    maxDist=MaxTravelDistance(snaxel,mergeTopo);
+    
+%     for ii=1:length(repopSub)
+%         snaxel(repopSub(ii)).d=max(min([maxDist(repopSub(ii)),snaxelRepopD(ii)]),0);
+%     end
+    for ii=1:length(snaxel)
+        snaxel(ii).v=vSnax(ii);
+    end
+end
+
+function [snaxel]=TakePostRepopStep(snaxel,rePopInd,edgeDat,mergeTopo)
+    % Needs to be modified to set them at 0.
+    % which is assigned later
     [snaxel]=UpdateSnaxelEdgeOrder(snaxel);
     
     vSnax=[snaxel(:).v];
@@ -1325,6 +1362,95 @@ function [snaxel]=TakePostRepopStep(snaxel,rePopInd,stepL,edgeDat,mergeTopo)
     for ii=1:length(snaxel)
         snaxel(ii).v=vSnax(ii);
     end
+end
+
+function [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd,edgeDat,mergeTopo)
+    
+    maxDist=MaxTravelDistance(snaxel,mergeTopo);
+    
+    snaxInd=[snaxel(:).index];
+    rePopLog=snaxInd>newSnaxInd;
+    rePopSub=find(rePopLog);
+    rePopInd=snaxInd(rePopLog);
+    isAtStartVert=~logical([snaxel(rePopLog).d]);
+    
+    vertList=[[snaxel(rePopSub(isAtStartVert)).fromvertex],[snaxel(rePopSub(~isAtStartVert)).tovertex]];
+    indList=[[snaxel(rePopSub(isAtStartVert)).index],[snaxel(rePopSub(~isAtStartVert)).index]];
+    singleVertList=unique(vertList);
+    [snaxToVert,iSort]=sort(FindObjNum([],vertList,singleVertList));
+    snaxOccurLog=(snaxToVert-[0;snaxToVert(1:end-1)])==0;
+    snaxOccur=ones(size(snaxOccurLog));
+    kk=0;
+    for ii=1:numel(snaxOccur)
+        kk=(kk+snaxOccurLog(ii))*snaxOccurLog(ii);
+        snaxOccur(ii)=snaxOccur(ii)+kk;
+    end
+    snaxPairs=zeros([numel(singleVertList),max(snaxOccur)]);
+    snaxPairs(sub2ind(size(snaxPairs),snaxToVert,snaxOccur))=indList(iSort);
+    snaxPairsSub=zeros([numel(singleVertList),max(snaxOccur)]);
+    tempArr=[rePopSub(isAtStartVert),rePopSub(~isAtStartVert)];
+    snaxPairsSub(sub2ind(size(snaxPairs),snaxToVert,snaxOccur))=tempArr(iSort);
+    
+    currTravel=maxDist-[snaxel(:).d];
+    currTravel(~rePopLog)=0;
+    currTravel(rePopSub(isAtStartVert))=min(currTravel(rePopSub(isAtStartVert)),snaxInitPos);
+    currTravel(rePopSub(~isAtStartVert))=max(currTravel(rePopSub(~isAtStartVert)),-snaxInitPos);
+    
+    for ii=find(sum(snaxPairs~=0,2)>1)'
+        
+        currSub=TrimZeros(snaxPairsSub(ii,:));
+        currTravel(currSub)=DefineDesiredDistanceRatios(snaxel(currSub),...
+            snakposition(currSub),currTravel(currSub));
+        
+    end
+    
+    for ii=rePopSub
+        snaxel(ii).d=snaxel(ii).d+currTravel(ii);
+    end
+    
+end
+
+function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTravel)
+    % this function takes in a snaxel pair at the same vertex and defines
+    % the desired distance ratio.
+    % returns the distance ratio in the format [d1/d2 i1 i2]
+    snaxInds=[snaxpart(:).index];
+    snaxprec=[snaxpart(:).snaxprec];
+    snaxnext=[snaxpart(:).snaxnext];
+    
+    precSub=FindObjNum([],snaxprec,snaxInds);
+    nextSub=FindObjNum([],snaxnext,snaxInds);
+    kk=0;
+    for ii=find(precSub~=0)'
+        kk=kk+1;
+        [ratio(kk,1)]=CalculateDistanceRatios(snakpospart(precSub(ii)),snakpospart(ii));
+        if ratio(kk,1)>=1
+            ratio(kk,2:3)=[(precSub(ii)),(ii)];
+        else
+            ratio(kk,1)=1/ratio(kk,1);
+            ratio(kk,3:-1:2)=[(precSub(ii)),(ii)];
+        end
+    end
+    for jj=1:size(ratio,1)
+    for ii=1:size(ratio,1)
+        currTravel(ratio(ii,2))=sign(currTravel(ratio(ii,2)))*min(abs(currTravel(ratio(ii,2))),...
+            abs(currTravel(ratio(ii,3)))/ratio(ii,1));
+        currTravel(ratio(ii,3))=sign(currTravel(ratio(ii,3)))*min(abs(currTravel(ratio(ii,3))),...
+            abs(currTravel(ratio(ii,2)))/ratio(ii,1));
+    end
+    end
+    
+end
+
+function [ratio]=CalculateDistanceRatios(snakpos1,snakpos2)
+    
+    maxRatio=100;
+    target=snakpos1.vectorprec+snakpos2.vectornext;
+    r=target(1)/target(2);
+    ratio=(r*snakpos1.vectornotnorm(1)+snakpos1.vectornotnorm(2))...
+        /(r*snakpos2.vectornotnorm(1)+snakpos2.vectornotnorm(2));
+    ratio(~isfinite(ratio))=1;
+    ratio=sign(ratio)*min(max(abs(ratio),1/maxRatio),maxRatio);
 end
 
 function [snaxel]=UpdateSnaxelEdgeOrder(snaxel)

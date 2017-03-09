@@ -11,6 +11,10 @@ end
 
 %%
 
+function [trimmedarr]=TrimZeros(arr)
+    trimmedarr=arr(arr~=0);
+end
+
 function [structdat]=ExploreStructureTree(rootstruct)
     % Recursively explores a structure to return the structures and
     % variables contained within
@@ -60,11 +64,13 @@ function [varargout]=ExtractVariables(varNames,param)
     varargout{length(varNames)}=[];
     
     for ii=1:length(varNames)
-        
-        targLocation=regexp(varInStruct,[varNames{ii},'#'], 'once');
-%         if strcmp(varNames{ii},'cellLevels')
+        %         if strcmp(varNames{ii},'cellLevels')
 %             warning('cellLevels used')
 %         end
+        targLocation=regexp(varInStruct,['#',varNames{ii},'#'], 'once');
+        if ~isempty(targLocation)
+            targLocation=targLocation+1;
+        end
         if isempty(targLocation) || varPosInStruct(targLocation)==0
             targLocation=regexp(varInStruct,varNames{ii}, 'once');
             if isempty(targLocation) || varPosInStruct(targLocation)==0
@@ -96,7 +102,10 @@ function [param]=SetVariables(varNames,varValues,param)
     
     for ii=1:length(varNames)
         
-        targLocation=regexp(varInStruct,[varNames{ii},'#'], 'once');
+        targLocation=regexp(varInStruct,['#',varNames{ii},'#'], 'once');
+        if ~isempty(targLocation)
+            targLocation=targLocation+1;
+        end
         if isempty(targLocation) || varPosInStruct(targLocation)==0
             targLocation=regexp(varInStruct,varNames{ii}, 'once');
             if isempty(targLocation) || varPosInStruct(targLocation)==0
@@ -181,7 +190,7 @@ end
 function structdat=GetStructureData(paroptim)
     
     [structdat]=ExploreStructureTree(paroptim);
-    structdat.vardat.names='';
+    structdat.vardat.names='#';
     
     for ii=1:length(structdat.vars)
         jj=length(structdat.vardat.names)+1;

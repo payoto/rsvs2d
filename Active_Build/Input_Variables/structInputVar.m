@@ -170,12 +170,20 @@ function param=AvoidLocalOptim(param)
 %     param.snakes.force.lengthEpsilon=1e-5;
 %     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=1e-1;
+    % convergence seems linked to the ratio of snaxInitPos to lengthEpsilon
     
-    param.snakes.step.snaxInitPos=5e-4;
-    param.snakes.force.lengthEpsilon=1e-3;
-    param.snakes.force.distEpsilon=2e-5;
-    param.snakes.force.dirEpsilon=1e-5;
-    param.snakes.force.typeSmear='lengthD';
+%     param.snakes.step.snaxInitPos=5e-4;
+%     param.snakes.force.lengthEpsilon=1e-3;
+%     param.snakes.force.distEpsilon=2e-5;
+%     param.snakes.force.dirEpsilon=1e-5;
+%     param.snakes.force.typeSmear='lengthD';
+    
+    param.snakes.step.arrivalTolerance=1e-1;
+    param.snakes.step.snaxInitPos=5e-7;
+    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.distEpsilon=5e-7;
+    param.snakes.force.dirEpsilon=1e-6;
+    param.snakes.force.typeSmear='d';
 end
 
 function param=SmoothFEDynamic(param)
@@ -1761,7 +1769,7 @@ end
 %   param.snakes.step.snakesSteps
 function [param]=CurrentValidation()
     
-    [param]=DefaultCase();
+    %[param]=DefaultCase();
     
     % Note Files
     param.results.noteFiles={'CurrentBuild'};
@@ -1769,14 +1777,15 @@ function [param]=CurrentValidation()
     param.results.archiveName='ParamValidation';
     
     % Local optimum avoidance params
-    param.snakes.step.mergeTopo=true;
+    param.snakes.step.mergeTopo=false;
 
-    param.snakes.force.typeSmear='dir';
     param.snakes.step.arrivalTolerance=1e-1;
-    param.snakes.force.lengthEpsilon=1e-5;
-    param.snakes.force.distEpsilon=0;
-    param.snakes.force.dirEpsilon=1e-4;
-    param.snakes.step.snaxInitPos=2e-4;
+    param.snakes.step.snaxInitPos=1e-6;
+    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.distEpsilon=5e-7;
+    param.snakes.force.dirEpsilon=1e-6;
+    param.snakes.force.typeSmear='d';
+    
     param.snakes.step.convCheckRate=100;
     param.snakes.step.convCheckRange=15;
     param.snakes.step.convDistance=500;
@@ -1794,8 +1803,7 @@ function [param]=CurrentValidation()
 end
 
 function [param]=val_Snakestestsmooth1()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='testsmooth1';
     
@@ -1806,8 +1814,7 @@ function [param]=val_Snakestestsmooth1()
 end
 
 function [param]=val_Snakestestsmooth1_2()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='testsmooth1_2';
     
@@ -1818,8 +1825,7 @@ end
 
 function [param]=val_Snakestestsmooth2()
     
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='testsmooth2';
 
@@ -1832,8 +1838,7 @@ end
 
 function [param]=val_Snakestestsmooth3()
     
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='testsmooth3';
 
@@ -1845,8 +1850,7 @@ end
 
 function [param]=val_Snakestestsmooth3_1()
     
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='testsmooth3_1';
 
@@ -1859,8 +1863,7 @@ function [param]=val_Snakestestsmooth3_1()
 end
 
 function [param]=val_SnakesFoilVVSmall()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='vvlofoil';
     param.snakes.step.snakesSteps=150;
@@ -1876,8 +1879,7 @@ function [param]=val_SnakesFoilVVSmall()
 end
 
 function [param]=val_SnakesFoilVVSmall4()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='vvlofoil4';
     param.snakes.step.snakesSteps=150;
@@ -1890,8 +1892,7 @@ function [param]=val_SnakesFoilVVSmall4()
 end
 
 function [param]=val_BuzmanBiplane3()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='buzmanbiplane3';
     
@@ -1903,8 +1904,7 @@ function [param]=val_BuzmanBiplane3()
 end
 
 function [param]=val_Donught()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='donught';
     param.snakes.refine.edgeFinish='none';
@@ -1919,8 +1919,7 @@ function [param]=val_Donught()
 end
 
 function [param]=val_Donught2()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='donught2';
     param.snakes.refine.edgeFinish='none';
@@ -1931,8 +1930,7 @@ function [param]=val_Donught2()
 end
 
 function [param]=val_WeirdShapeIn()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='low5shape';
     
@@ -1944,8 +1942,7 @@ function [param]=val_WeirdShapeIn()
 end
 
 function [param]=val_WeirdShapeOut()
-    
-    [param]=CurrentValidation();
+    [param]=DefaultCase();
     
     param.general.typDat='low5shape';
    
