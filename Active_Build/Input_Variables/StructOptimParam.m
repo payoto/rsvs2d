@@ -1414,7 +1414,7 @@ function [paroptim]=Debug170309()
     
    paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
    paroptim.parametrisation.snakes.step.arrivalTolerance=1e-1;
-    paroptim.parametrisation.snakes.step.snaxInitPos=5e-7;
+    paroptim.parametrisation.snakes.step.snaxInitPos=1e-5;
     paroptim.parametrisation.snakes.force.lengthEpsilon=1e-6;
     paroptim.parametrisation.snakes.force.distEpsilon=5e-7;
     paroptim.parametrisation.snakes.force.dirEpsilon=1e-6;

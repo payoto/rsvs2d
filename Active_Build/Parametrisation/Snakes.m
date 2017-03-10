@@ -330,6 +330,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     edgeDat.indList=edgeIndList;
     edgeDat.ratio=refGridRatio;
     cntSave=1;
+    nonBreedNextIter=[];
     for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
         
@@ -347,8 +348,6 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
             VelocityAndVolumeProcess(param,snaxel,snakposition,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,trigCount);
-        
-        
         
         if convergenceCondition && ii>snakesMinSteps && lastAlgo
             
@@ -404,10 +403,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         % Snaxel Repopulation In both directions
         
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
-        nonBreedVert=[nonBreedVert,nonBreedVertPersist];
+        nonBreedVert=[nonBreedVert,nonBreedVertPersist]; %#ok<AGROW>
         borderVertices.nonBreedVert=nonBreedVert;
         newSnaxInd=max([snaxel(:).index]);
-        [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,...
+        [snaxel,insideContourInfo,newNonBreedVert]=SnaxelBreeding(snaxel,...
             insideContourInfo,refinedGriduns,nonBreedVert,edgeDat,mergeTopo);
         if numel(snaxel)==0
             warning('Contour has collapsed')
@@ -417,8 +416,8 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxelrev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
             insideContourInfo,refinedGriduns);
         
-        [snaxelrev,insideContourInfoRev,~]=SnaxelBreeding(snaxelrev,...
-            insideContourInfoRev,refinedGriduns,nonBreedVert,edgeDat,mergeTopo);
+        [snaxelrev,insideContourInfoRev,newNonBreedVertRev]=SnaxelBreeding(snaxelrev,...
+            insideContourInfoRev,refinedGriduns,[nonBreedVert,newNonBreedVert],edgeDat,mergeTopo);
         if numel(snaxelrev)==0
             warning('Contour has collapsed')
             break
@@ -426,7 +425,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         
         [snaxel,insideContourInfo]=ReverseSnaxelInformation(snaxelrev,...
             insideContourInfoRev,refinedGriduns);
-        
+        nonBreedNextIter=[newNonBreedVert,newNonBreedVertRev];
         
         % Topology Trimming, Merging and Freezing
         [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
@@ -585,11 +584,11 @@ end
 
 %% Iteration sub parts
 
-function [snaxel,insideContourInfo,nonBreedVert]=SnaxelBreeding(snaxel,...
+function [snaxel,insideContourInfo,newNonBreedVert]=SnaxelBreeding(snaxel,...
         insideContourInfo,refinedGriduns,nonBreedVert,edgeDat,mergeTopo)
     
     
-    [snaxel,insideContourInfo,nonBreedVert]=SnaxelRepopulate(refinedGriduns,snaxel,...
+    [snaxel,insideContourInfo,newNonBreedVert]=SnaxelRepopulate(refinedGriduns,snaxel,...
         insideContourInfo,nonBreedVert,edgeDat,mergeTopo);
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
 end
@@ -1209,7 +1208,7 @@ end
 
 %% Snaxel Repopulation
 
-function [snaxel,insideContourInfo,nonBreedVert]=...
+function [snaxel,insideContourInfo,newNonBreedVert]=...
         SnaxelRepopulate(unstructured,snaxel,insideContourInfo,nonBreedVert...
         ,edgeDat,mergeTopo)
     
@@ -1227,7 +1226,7 @@ function [snaxel,insideContourInfo,nonBreedVert]=...
     %newInsideEdges=[snaxel(finishedSnakes).edge];
     %insideContourInfo(newInsideEdges)=1;
     
-    [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingProcess...
+    [snaxel,newInsideEdges,delIndex,newNonBreedVert]=RepopIterativeBreedingProcess...
         (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal...
         ,nonBreedVert,edgeDat,mergeTopo);
     
@@ -1243,7 +1242,7 @@ function [snaxel,insideContourInfo,nonBreedVert]=...
     
 end
 
-function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingProcess...
+function [snaxel,newInsideEdges,delIndex,newNonBreedVert]=RepopIterativeBreedingProcess...
         (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert,...
         edgeDat,mergeTopo)
     % Iterative Breeding process for the breeding of edges
@@ -1254,11 +1253,12 @@ function [snaxel,newInsideEdges,delIndex,nonBreedVert]=RepopIterativeBreedingPro
     rePopInd=[];
     [edgeLength]=CalculateEgeLengths(unstructglobal);
     warning('OFF','MATLAB:catenate:DimensionMismatch')
+    newNonBreedVert=[];
     while ~isempty(finishedSnakes)
         kk=kk+1;
         breedSub=finishedSnakes(1);
         finishedSnakes(1)=[];
-        nonBreedVert=[nonBreedVert,snaxel(breedSub).tovertex];
+        newNonBreedVert=[newNonBreedVert,snaxel(breedSub).tovertex];
         newInsideEdges(kk)=snaxel(breedSub).edge; %#ok<AGROW>
         %insideContourInfo(newInsideEdgesSub(kk))=1;
         snaxelIndexStart=max([snaxel(:).index])+1;
@@ -1366,7 +1366,7 @@ end
 
 function [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd,edgeDat,mergeTopo)
     
-    maxDist=MaxTravelDistance(snaxel,mergeTopo);
+    
     
     snaxInd=[snaxel(:).index];
     rePopLog=snaxInd>newSnaxInd;
@@ -1391,6 +1391,11 @@ function [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd
     tempArr=[rePopSub(isAtStartVert),rePopSub(~isAtStartVert)];
     snaxPairsSub(sub2ind(size(snaxPairs),snaxToVert,snaxOccur))=tempArr(iSort);
     
+    [snaxel(rePopSub(isAtStartVert)).v]=deal(1);
+    [snaxel(rePopSub(~isAtStartVert)).v]=deal(-1);
+    maxDist=MaxTravelDistance(snaxel,mergeTopo);
+    [snaxel(rePopSub).v]=deal(0);
+    
     currTravel=maxDist-[snaxel(:).d];
     currTravel(~rePopLog)=0;
     currTravel(rePopSub(isAtStartVert))=min(currTravel(rePopSub(isAtStartVert)),snaxInitPos);
@@ -1407,7 +1412,9 @@ function [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd
     for ii=rePopSub
         snaxel(ii).d=snaxel(ii).d+currTravel(ii);
     end
-    
+    if any([snaxel(rePopSub).d]==0 | [snaxel(rePopSub).d]==1)
+        disp('Stop here')
+    end
 end
 
 function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTravel)
@@ -1420,6 +1427,10 @@ function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTrave
     
     precSub=FindObjNum([],snaxprec,snaxInds);
     nextSub=FindObjNum([],snaxnext,snaxInds);
+    isPrecNext=false(size(snaxInds));
+    isPrecNext(precSub & nextSub)=true;
+    [snakpospart(isPrecNext).vectornext]=deal(snakpospart(isPrecNext).vector);
+    [snakpospart(isPrecNext).vectorprec]=deal(snakpospart(isPrecNext).vector);
     kk=0;
     for ii=find(precSub~=0)'
         kk=kk+1;
@@ -1436,10 +1447,9 @@ function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTrave
         currTravel(ratio(ii,2))=sign(currTravel(ratio(ii,2)))*min(abs(currTravel(ratio(ii,2))),...
             abs(currTravel(ratio(ii,3)))/ratio(ii,1));
         currTravel(ratio(ii,3))=sign(currTravel(ratio(ii,3)))*min(abs(currTravel(ratio(ii,3))),...
-            abs(currTravel(ratio(ii,2)))/ratio(ii,1));
+            abs(currTravel(ratio(ii,2)))*ratio(ii,1));
     end
     end
-    
 end
 
 function [ratio]=CalculateDistanceRatios(snakpos1,snakpos2)
@@ -1449,8 +1459,9 @@ function [ratio]=CalculateDistanceRatios(snakpos1,snakpos2)
     r=target(1)/target(2);
     ratio=(r*snakpos1.vectornotnorm(1)+snakpos1.vectornotnorm(2))...
         /(r*snakpos2.vectornotnorm(1)+snakpos2.vectornotnorm(2));
-    ratio(~isfinite(ratio))=1;
-    ratio=sign(ratio)*min(max(abs(ratio),1/maxRatio),maxRatio);
+    %ratio(~isfinite(ratio))=sign(ratio)*maxRatio;
+    %ratio(ratio==0)=1/maxRatio;
+    ratio=min(max(abs(ratio),1/maxRatio),maxRatio);
 end
 
 function [snaxel]=UpdateSnaxelEdgeOrder(snaxel)
@@ -2182,14 +2193,14 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
                     dSnax(sameEdgeSnax(jj)),vSnax(sameEdgeSnax(jj)),fromvertSnax(sameEdgeSnax(jj)));
             end
             
-            if any(impactDist==0)
+            if any(abs(impactDist)<1e-16)
                 ordersAct=[orderSnax(ii),orderSnax(sameEdgeSnax)];
                 [~,orderSortI]=sort(ordersAct);
 
                 orderImpact=sign(toVertSnax(ii)-fromvertSnax(ii))*sign(orderSortI(2:end)-orderSortI(1));
                 % + indicates in the way on positive travel
                 % - indicates in the way on negative travel
-                orderImpact(impactDist~=0)=[];
+                orderImpact(abs(impactDist)>=1e-16)=[];
                 if vSnax(ii)>=0 && any(orderImpact>0)
                     maxDist(ii)=0;
                 elseif vSnax(ii)<0 && any(orderImpact<0)
@@ -2340,8 +2351,9 @@ function snaxel=TimeInaccurateDistanceUpdate(snaxel,dtSnax,maxDist)
     count=0;
     for ii=1:length(snaxel)
         movDist=snaxel(ii).v*dtSnax(ii);
-        if abs(movDist)>abs(maxDist(ii))
-            if (abs(movDist)-abs(maxDist(ii))) > 1e-15
+        if (abs(movDist)>abs(maxDist(ii))) || ...
+                ((sign(movDist)~=0) && (sign(movDist)~=sign(maxDist(ii))))
+            if (abs(movDist)-abs(maxDist(ii))) > 0
                 count=count+1;
             end
             movDist=maxDist(ii);

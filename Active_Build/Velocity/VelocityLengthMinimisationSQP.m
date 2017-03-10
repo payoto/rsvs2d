@@ -89,8 +89,58 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     end
     [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMultiPast,numel(volumefraction));
     isFreeze=[snaxel(:).isfreeze];
-    %   [Deltax]=SQPStep(Df,Hf,areaConstrMat',areaTargVec);
+    
     warning('OFF','MATLAB:nearlySingularMatrix')
+    [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze]=...
+            RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction);
+    warning('ON','MATLAB:nearlySingularMatrix')
+    
+    Deltax(finIsFreeze)=DeltaxisFreeze(finIsFreeze);
+    if any(~isfinite(Deltax))
+        warning('Nan and Inf found in velocity')
+        Deltax(~isfinite(Deltax))=0;
+        lagMulti(~isfinite(lagMulti))=0;
+    end
+    
+    [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast);
+    
+    forceparam.lagMulti=lagMulti;
+    %forceparam.BFGS=HL;
+    forceparam.feasVal=feasVal;
+    forceparam.optVal=optVal;
+    forceparam.posDefVal=posDefVal;
+    
+    maxForceMean=forceparam.maxForceMean;
+    maxForceStd=forceparam.maxForceStd;
+    scaleOscil=forceparam.scaleOscil;
+    
+    if (condMat<1e-12 && (mean(abs(Deltax))*maxForceStd<std(abs(Deltax)))) %|| posDefVal~=0
+        fprintf(' ! DeltaX is Oscillatory std/mean: %.2e ! ',std(abs(Deltax))/mean(abs(Deltax)))
+        Deltax=Deltax*scaleOscil/max(abs(Deltax));
+    elseif mean(abs(Deltax))>maxForceMean
+        fprintf(' ! DeltaX is Large %.2e ! ',mean(abs(Deltax)))
+        Deltax=Deltax*maxForceMean/mean(abs(Deltax));
+    end
+    
+    sensSnax=[];
+    if forceparam.isLast
+        [sensSnax]=CalculateSensitivity(Hf,HA,areaConstrMat,lagMulti);
+        
+    end
+%     velcalcinfostruct.forcingVec=forcingVec;
+%     velcalcinfostruct.conditionMat=conditionMat;
+    velcalcinfostruct=[];
+    %[tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
+    
+    for ii=1:length(snaxeltensvel)
+        snaxeltensvel(ii).forcevel=Deltax(ii);
+    end
+    
+end
+
+function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze]=...
+        RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction)
+    
     if true
         % THis section needs a clean up
         [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
@@ -122,6 +172,9 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         end
         HL=Hf;
     else
+
+        [DeltaxisFreeze,lagMulti2]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
+        [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMulti2,numel(volumefraction));
         [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
         [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
         [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreezeRnd2);
@@ -129,58 +182,30 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         if any(isnan(DeltaxisFreeze))
             DeltaxisFreeze(:)=0;
         end
+        
         if any(isnan(Deltax))
             [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,(isFreeze==1));
             finIsFreeze=(isFreeze==1);
+            if any(isnan(Deltax))
+                [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze));
+                finIsFreeze=logical(isFreeze) ;
+                if any(isnan(Deltax))
+                    if any(~isfinite(lagMulti))
+                        %frzCell=find(~isfinite(lagMulti));
+                        %snaxFreezeCell=logical(sum(areaConstrMat(frzCell,:)~=0));
+                        %if all(snaxFreezeCell | logical(isFreeze))
+                        snaxFreezeCell=~((sum(Hf~=0,1)>1) | (sum(Hf~=0,2)>1)');
+                    end
+                    %end
+                    [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
+                    finIsFreeze=logical(isFreeze) | snaxFreezeCell;
+                end
+            end
         end
         HL=Hf+HA;
     end
     
-    warning('ON','MATLAB:nearlySingularMatrix')
-    Deltax(finIsFreeze)=DeltaxisFreeze(finIsFreeze);
-    if any(~isfinite(Deltax))
-        warning('Nan and Inf found in velocity')
-        Deltax(~isfinite(Deltax))=0;
-        lagMulti(~isfinite(lagMulti))=0;
-    end
-    
-    [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast);
-    
-    forceparam.lagMulti=lagMulti;
-    
-    %lagMulti(isFreeze)=lagMultiisFreeze(isFreeze);
-    %     [DeltaxFin,lagMulti]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreeze);
-    %[hessA]=BuildDAdd2(snaxel,coeffstructure,volumefraction,lagMulti,derivtenscalc2);
-    %     [Deltax,lagMulti]=SQPStepFreeze(Df,(Hf+hessA),areaConstrMat',areaTargVec,isFreeze);
-    
-    maxForceMean=forceparam.maxForceMean;
-    maxForceStd=forceparam.maxForceStd;
-    scaleOscil=forceparam.scaleOscil;
-    
-    if (condMat<1e-12 && (mean(abs(Deltax))*maxForceStd<std(abs(Deltax)))) %|| posDefVal~=0
-        fprintf(' ! DeltaX is Oscillatory std/mean: %.2e ! ',std(abs(Deltax))/mean(abs(Deltax)))
-        Deltax=Deltax*scaleOscil/max(abs(Deltax));
-    elseif mean(abs(Deltax))>maxForceMean
-        fprintf(' ! DeltaX is Large %.2e ! ',mean(abs(Deltax)))
-        Deltax=Deltax*maxForceMean/mean(abs(Deltax));
-    end
-    
-    sensSnax=[];
-    if forceparam.isLast
-        [sensSnax]=CalculateSensitivity(Hf,HA,areaConstrMat,lagMulti);
-        
-    end
-%     velcalcinfostruct.forcingVec=forcingVec;
-%     velcalcinfostruct.conditionMat=conditionMat;
-    velcalcinfostruct=[];
-    %[tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
-    
-    for ii=1:length(snaxeltensvel)
-        snaxeltensvel(ii).forcevel=Deltax(ii);
-    end
-    
 end
-
 function [isFreezeRnd2]=VelocityThawing(isFreeze,DxisFreeze)
     % function handles the thawing of vertices 
     
