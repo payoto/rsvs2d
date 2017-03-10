@@ -1767,7 +1767,7 @@ end
 %   CurrentValidation()
 %   param.snakes.refine.refineGrid
 %   param.snakes.step.snakesSteps
-function [param]=CurrentValidation()
+function [param]=CurrentValidation(param)
     
     %[param]=DefaultCase();
     
@@ -1780,22 +1780,22 @@ function [param]=CurrentValidation()
     param.snakes.step.mergeTopo=false;
 
     param.snakes.step.arrivalTolerance=1e-1;
-    param.snakes.step.snaxInitPos=1e-6;
+    param.snakes.step.snaxInitPos=1e-5;
     param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.distEpsilon=5e-7;
-    param.snakes.force.dirEpsilon=1e-6;
+    param.snakes.force.dirEpsilon=1e-7;
     param.snakes.force.typeSmear='d';
     
-    param.snakes.step.convCheckRate=100;
+    param.snakes.step.convCheckRate=10;
     param.snakes.step.convCheckRange=15;
-    param.snakes.step.convDistance=500;
+    param.snakes.step.convDistance=200;
     param.snakes.step.fillLooseStep=0;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.maxStep=0.3;
     param.snakes.step.maxDt=0.5;
     
+    param.snakes.step.convLevel=10^-10;
     % Default stepping params for validation (some cases might need more)
-    param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     
@@ -1804,7 +1804,7 @@ end
 
 function [param]=val_Snakestestsmooth1()
     [param]=DefaultCase();
-    
+    [param]=CurrentValidation(param);
     param.general.typDat='testsmooth1';
     
     
@@ -1815,6 +1815,7 @@ end
 
 function [param]=val_Snakestestsmooth1_2()
     [param]=DefaultCase();
+    [param]=CurrentValidation(param);
     
     param.general.typDat='testsmooth1_2';
     
@@ -1827,6 +1828,7 @@ function [param]=val_Snakestestsmooth2()
     
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='testsmooth2';
 
     param.snakes.step.snakesSteps=100;
@@ -1840,6 +1842,7 @@ function [param]=val_Snakestestsmooth3()
     
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='testsmooth3';
 
     param.snakes.step.snakesSteps=200;
@@ -1852,6 +1855,7 @@ function [param]=val_Snakestestsmooth3_1()
     
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='testsmooth3_1';
 
     param.snakes.step.snakesSteps=200;
@@ -1865,8 +1869,9 @@ end
 function [param]=val_SnakesFoilVVSmall()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='vvlofoil';
-    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakesSteps=70;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.4,0.4];
@@ -1881,6 +1886,7 @@ end
 function [param]=val_SnakesFoilVVSmall4()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='vvlofoil4';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=4;
@@ -1894,6 +1900,7 @@ end
 function [param]=val_BuzmanBiplane3()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='buzmanbiplane3';
     
     param.optiminit.cellLevels=[6,9];
@@ -1906,6 +1913,7 @@ end
 function [param]=val_Donught()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='donught';
     param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=1;
@@ -1921,6 +1929,7 @@ end
 function [param]=val_Donught2()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='donught2';
     param.snakes.refine.edgeFinish='none';
     
@@ -1932,6 +1941,7 @@ end
 function [param]=val_WeirdShapeIn()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='low5shape';
     
    
@@ -1944,6 +1954,7 @@ end
 function [param]=val_WeirdShapeOut()
     [param]=DefaultCase();
     
+    [param]=CurrentValidation(param);
     param.general.typDat='low5shape';
    
     
