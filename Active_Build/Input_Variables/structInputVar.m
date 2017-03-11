@@ -777,6 +777,13 @@ function [param]=optimInverseDesign()
     param.optiminit.corneractive=false;
     param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
     param.optiminit.defaultCorner=1e-6;
+    
+     param.snakes.step.arrivalTolerance=1e-1;
+    param.snakes.step.snaxInitPos=1e-5;
+    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.distEpsilon=5e-7;
+    param.snakes.force.dirEpsilon=1e-7;
+    param.snakes.force.typeSmear='d';
 end
 
 function [param]=optimInverseDesign_L()
