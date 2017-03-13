@@ -28,6 +28,7 @@ end
 function [paroptim]=DefaultOptim()
     
     paroptim.general=DefaultOptimGeneral();
+    paroptim.refine=DefaultOptimRefine();
     [paroptim.optim.DE]=DefaultOptimDE();
     [paroptim.optim.CG]=DefaultOptimCG();
     [paroptim.spline]=DefaultOptimSpline();
@@ -68,18 +69,25 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.iterGap=1;
     paroptimgeneral.desvarconnec=[]; % Structure assigned later
     
-    paroptimgeneral.refineOptim=[];
-    paroptimgeneral.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' ,
-    %'desvargradadvanced' , 'contcurve', 'contlengthnorm' 'contcurvescale'
-    paroptimgeneral.refineOptimRatio=1; % ratio of optimisation
-    paroptimgeneral.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
-    paroptimgeneral.slopeConv=0.2; % ratio of converged slope to maximum slope.
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
     paroptimgeneral.varOverflow='vertexflow'; % ''vertexflow'' 'truncate' 'spill'
     paroptimgeneral.spillCutOff=2e-2;
     paroptimgeneral.initInterp={};
+end
+
+function [paroptimrefine]=DefaultOptimRefine()
+    paroptimrefine.refineSteps=0;
+    paroptimrefine.refineIter=40;
+    paroptimrefine.refineOptim=[]; % semi deprecated option
+    paroptimrefine.refinePattern='preset'; % 'edgecross' 'curvature'
+    paroptimrefine.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' ,
+    %'desvargradadvanced' , 'contcurve', 'contlengthnorm' 'contcurvescale'
+    paroptimrefine.refineOptimRatio=1; % ratio of optimisation
+    paroptimrefine.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
+    paroptimrefine.slopeConv=0.2; % ratio of converged slope to maximum slope.
+    
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -1396,6 +1404,17 @@ function paroptim=TestCrashLocRefineSym()
     
 end
 
+function paroptim=dvp_anisotropicrefine()
+    
+    paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
+    paroptim.general.maxIter=4;
+    paroptim.refine.refineSteps=2;
+    paroptim.refine.refineIter=6;
+    paroptim.refine.refineOptim=[]; % semi deprecated option
+    paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
+    %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+end
+
 % Debug
 
 function [paroptim]=Debug170213_1()
@@ -1419,6 +1438,14 @@ function [paroptim]=Debug170309()
     paroptim.parametrisation.snakes.force.distEpsilon=5e-7;
     paroptim.parametrisation.snakes.force.dirEpsilon=1e-6;
     paroptim.parametrisation.snakes.force.typeSmear='d';
+    
+end
+
+function [paroptim]=Debug170313()
+    % debug for the corner problems try to find  better sets of parameters
+    % to avoid the minimum getting stuck on corners.
+    
+    paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
     
 end
 %% refinement
