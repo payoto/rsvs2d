@@ -755,8 +755,12 @@ function [param]=optimInverseDesign()
     param.snakes.step.maxStep=0.3;
     param.snakes.step.maxDt=0.5;
     param.snakes.step.snakesConsole=false;
+    
     param.snakes.step.fillLooseStep=0;
     param.snakes.step.fillLooseCut=1e-1;
+    param.snakes.step.fillErrStep=0;
+    param.snakes.step.fillErrCut=1000;
+    
     param.snakes.step.vertLooseStep=100;
     param.snakes.step.mergeTopo=true;
     param.snakes.step.snakesSteps=300;

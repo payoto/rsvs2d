@@ -10,7 +10,7 @@
 %         parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%{
+
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -20,8 +20,8 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-%}
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -37,8 +37,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         connectstructinfo,~,restartsnake]...
         =InitialiseOptimisation(caseStr);
     
-    varExtract={'maxIter','restartSource','refineOptim'};
-    [maxIter,restartSource,refineOptim]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'maxIter','restartSource','refineSteps','refineIter'};
+    [maxIter,restartSource,refineSteps,refineIter]=ExtractVariables(varExtract,paramoptim);
     startIter=1;
     firstValidIter=1;
     % Restart
@@ -55,12 +55,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
     %debugScrip
     
     % Specify starting population
-    if ~any(refineOptim==0)
-        nOptimRef=size(refineOptim,1);
-    else
-        nOptimRef=0;
-    end
-    for refStage=1:nOptimRef+1
+    for refStage=1:refineSteps+1
         
         % Start optimisation Loop
         for nIter=startIter:maxIter
@@ -78,7 +73,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             [~]=PrintEnd(procStr,1,tStart);
             % Convergence tests
             if ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startIter) ...
-                    && (mod(nIter,2)==0) && (refStage~=nOptimRef+1)
+                    && (mod(nIter,2)==0) && (refStage~=refineSteps+1)
                 fprintf('\n Optimisation Stopped By Slope convergence condition \n');
                 break
             end
@@ -109,25 +104,25 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
              disp(ME.getReport),
          end
 
-        debugScript2
-        if refStage<(nOptimRef+1)
-            save('DebugRefineMat.mat')
+        %debugScript2
+        
+        save('DvpAnisRefineMat.mat')
+        if refStage<(refineSteps+1)
+            save('DvpAnisRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
                 connectstructinfo,refStage,nIter,startIter);
             
-            if size(refineOptim,2)==3
+            if ~isempty(refineIter)
                 startIter=nIter+1;
-                maxIter=nIter+refineOptim(refStage,3);
+                maxIter=nIter+refineIter(min(refStage,numel(refineIter)));
             else
                 maxIter=nIter+maxIter-(startIter-1);
                 startIter=nIter+1;
             end
             iterstruct=iterstruct2;
         end
-        
-        
     end
     
 end
@@ -1664,13 +1659,12 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     supportOptim=paramoptim.optim.supportOptim;
     % Initialise Optimisation
     % Get Parametrisation parameters
-    varNames={'optimCase'};
-    optimCase=ExtractVariables(varNames,paramoptim);
-    paramoptim=SetVariables(varNames,{[optimCase,'_',int2str(refStep)]},paramoptim);
+    varNames={'optimCase','desvarconnec'};
+    [optimCase]=ExtractVariables(varNames(1),paramoptim);
+    paramoptim=SetVariables(varNames,{[optimCase,'_',int2str(refStep)],[]},paramoptim);
     varNames={'boundstr','corneractive','defaultCorner'};
     [boundstr,corneractive,defaultCorner]=ExtractVariables(varNames,paramoptim.parametrisation);
     
-    paramoptim.general.desvarconnec=[];
     
     [outinfo]=OptimisationOutput('init',paramoptim);
     diaryFile=[outinfo.rootDir,'\Latest_Diary.log'];
@@ -1683,13 +1677,15 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Refine Grid
     varNames={'refineOptim'};
     refineCellLvl=ExtractVariables(varNames,paramoptim);
-    refparamsnake=SetVariables({'refineGrid','typeRefine'},{refineCellLvl(refStep,:),'automatic'},...
-        paramoptim.parametrisation);
+%     refparamsnake=SetVariables({'refineGrid','typeRefine'},{refineCellLvl(refStep,:),'automatic'},...
+%         paramoptim.parametrisation);
     % Need to add here the additional refinement options
     refinementStruct.oldgrid=oldGrid;
     refinementStruct.pop=iterstruct(end).population;
     refinementStruct.param=paramoptim; %#ok<STRNU>
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
+    
+    AnisotropicRefinement(oldGrid.base,oldGrid,paramoptim,iterstruct,refStep)
     
     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
         =GridInitAndRefine(refparamsnake,oldGrid.base);
@@ -2686,6 +2682,97 @@ function [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition)
     
 end
 
+
+%% Cell Refinement Orientation
+
+function []=AnisotropicRefinement(baseGrid,oldGrid,paramoptim,iterstruct,refStep)
+    
+    varNames={'refinePattern','refineOptim','refineOptimPopRatio','direction'};
+    [refinePattern,refineOptim,refineOptimPopRatio,direction]=ExtractVariables(varNames,paramoptim);
+    
+    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            
+    switch refinePattern
+        case 'preset'
+            refineList=[[baseGrid.cell(:).index];[baseGrid.cell(:).isrefine]];
+            refCellLevels=refineOptim(refStep,:);
+            refSubSteps=1;
+        case 'edgecross'
+            [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,...
+                oldGrid.refined,iterstruct(end).population,refineOptimPopRatio,...
+                direction,oldIndsNewOrd);
+        case 'curvature'
+            
+        otherwise
+            error('Refinement Pattern does not exist')
+    end
+    
+    
+    
+    % Need to add here the additional refinement options
+    
+    gridrefined=baseGrid;
+    for ii=1:refSubSteps
+        refparamsnake=SetVariables({'refineGrid','typeRefine'},{refCellLevels(refSubSteps,:),'automatic'},...
+                    paramoptim.parametrisation);
+        cellSub=FindObjNum([],refineList(1,:),[gridrefined.cell(:).index]);
+        [gridrefined.cell(:).isrefine]=deal(false);
+        for jj=1:numel(cellSub)
+            gridrefined.cell(cellSub(jj)).isrefine=refineList(2,jj)==ii;
+        end
+        [~,newbaseGrid{ii},gridrefined,connectstructinfo{ii},~,~]...
+            =GridInitAndRefine(refparamsnake,gridrefined); %#ok<AGROW,ASGLU,NASGU>
+    end
+    
+    
+end
+
+function [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,...
+        refinedGrid,population,refineOptimPopRatio,direction,oldIndsNewOrd)
+    
+    refineList=[[baseGrid.cell(:).index];[baseGrid.cell(:).isrefine]];
+    cellGrad=false([2,size(refineList,2)]);
+    [indexPop]=SelectRefinementForPop(population,refineOptimPopRatio,direction);
+    
+    for ii=indexPop
+        [restartPath,~]=FindDir(population(ii).location,'restart',false);
+        load(restartPath{1},'snakSave','restartsnak')
+        [cellGrad]=cellGrad | CrossedEdgeRefinementOrientation(restartsnak.volfracconnec,restartsnak.snaxel,...
+            refinedGrid,refineList(1,:),oldIndsNewOrd);
+    end
+    
+    cellGrad=(cellGrad'*[1;2])';
+    
+    refineList(2,find(refineList(2,:)))=cellGrad(find(refineList(2,:)));
+    refSubSteps=3;
+    refCellLevels=[2 1;1 2;2 2];
+    actLevels=unique(refineList(2,:));
+    actLevels(actLevels==0)=[];
+    refSubSteps=numel(actLevels);
+    refCellLevels=refCellLevels(actLevels,:);
+    
+end
+
+function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,refineGrid,cellInd,oldIndsNewOrd)
+    % Returns the orientation of the active edges of each cell
+    
+    connecEdgeNewInd=[connec.edge(:).newedge];
+    connecCellNew=[connec.cell(:).newCellInd];
+    snaxEdge=[snaxel(:).edge];
+    snaxNewCell=[connec.edge(FindObjNum([],snaxEdge,connecEdgeNewInd)).newcell];
+    snaxCell=oldIndsNewOrd(FindObjNum([],snaxNewCell,connecCellNew));
+    snaxCellSub=FindObjNum([],snaxCell,cellInd);
+    snaxOrient=[refineGrid.edge(FindObjNum([],snaxEdge,[refineGrid.edge(:).index])).orientation]+1;
+    
+    cellEdgeOrient=zeros([2,numel(cellInd)+1]);
+    for jj=1:numel(snaxOrient)
+        ii=(jj);
+        cellEdgeOrient(snaxOrient(ii),snaxCellSub((ii-1)*2+(1:2))+1)=true;
+    end
+    cellEdgeOrient(:,1)=[];
+end
 %% Test Function 
 
 function []=OptimisationDebug(caseStr,debugArgIn)
