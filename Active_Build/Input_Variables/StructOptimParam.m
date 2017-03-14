@@ -1048,8 +1048,8 @@ function paroptim=refsweeplocal(gridCase,airfoil)
     end
     
     paroptim.parametrisation.general.typeLoop='subdivision';
-    paroptim.general.refineOptimType='desvargrad';
-    paroptim.general.refineOptimRatio=0.1;
+    paroptim.refine.refineOptimType='desvargrad';
+    paroptim.refine.refineOptimRatio=0.1;
     
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
@@ -1285,14 +1285,14 @@ function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
     
     paroptim=refsweeplocal(gridCase,'4412');
     
-    paroptim.general.refineOptimType=refmethod;
+    paroptim.refine.refineOptimType=refmethod;
     paroptim.optim.CG.gradScaleType=''; % 'volume'
     paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
     ratio=PickRatioForRefineMethod(refmethod);
-    paroptim.general.refineOptimRatio=ratio(1);
-    paroptim.general.refineOptim(end,end)=50;
+    paroptim.refine.refineOptimRatio=ratio(1);
+    paroptim.refine.refineOptim(end,end)=50;
     paroptim.spline.resampleSnak=false;
 end
 
@@ -1301,7 +1301,7 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     paroptim=refsweeplocal(gridCase,'4412');
     
     %paroptim.general.maxIter=6;
-    paroptim.general.refineOptimType=refmethod;
+    paroptim.refine.refineOptimType=refmethod;
     paroptim.optim.CG.gradScaleType=''; % 'volume'
     paroptim.parametrisation.general.typeLoop='subdivision';
     
@@ -1311,8 +1311,8 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
         paroptim.parametrisation.snakes.refine.pinnedVertex='';
     end
     ratio=PickRatioForRefineMethod(refmethod);
-    paroptim.general.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
-    paroptim.general.refineOptim(end,end)=50;
+    paroptim.refine.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
+    paroptim.refine.refineOptim(end,end)=50;
     paroptim.spline.resampleSnak=false;
     paroptim.parametrisation.general.passDomBounds(2,:)=...
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
@@ -1345,21 +1345,21 @@ function [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.parametrisation.optiminit.cellLevels=[6,2];
     paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
-    paroptim.general.refineOptim=ones([lvl,1])*[2 2 nIter];
+    paroptim.refine.refineOptim=ones([lvl,1])*[2 2 nIter];
     
 end
 function [paroptim]=gridrefcase_horizontal(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.parametrisation.optiminit.cellLevels=[6,2];
     paroptim.parametrisation.snakes.refine.refineGrid=[1 4];
-    paroptim.general.refineOptim=ones([lvl,1])*[1 2 nIter];
+    paroptim.refine.refineOptim=ones([lvl,1])*[1 2 nIter];
     
 end
 function [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.parametrisation.optiminit.cellLevels=[6,2];
     paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
-    paroptim.general.refineOptim=ones([lvl,1])*[2 1 nIter];
+    paroptim.refine.refineOptim=ones([lvl,1])*[2 1 nIter];
     
 end
 function [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl)
@@ -1407,9 +1407,9 @@ end
 function paroptim=dvp_anisotropicrefine()
     
     paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
-    paroptim.general.maxIter=4;
+    paroptim.general.maxIter=20;
     paroptim.refine.refineSteps=2;
-    paroptim.refine.refineIter=6;
+    paroptim.refine.refineIter=20;
     paroptim.refine.refineOptim=[]; % semi deprecated option
     paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
