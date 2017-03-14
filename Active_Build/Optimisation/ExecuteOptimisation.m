@@ -2698,7 +2698,7 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
     switch refinePattern
         case 'preset'
             refineList=[[baseGrid.cell(:).index];[baseGrid.cell(:).isrefine]];
-            refCellLevels=refineOptim(refStep,:);
+            refCellLevels=refineOptim(refStep,1:2);
             refSubSteps=1;
         case 'edgecross'
             [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,...
