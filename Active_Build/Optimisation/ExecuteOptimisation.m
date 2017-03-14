@@ -10,7 +10,7 @@
 %         parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -20,8 +20,8 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+%}
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -1685,16 +1685,16 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     refinementStruct.param=paramoptim; %#ok<STRNU>
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
-    AnisotropicRefinement(oldGrid.base,oldGrid,paramoptim,iterstruct,refStep)
+    [gridrefined,connectstructinfo,oldGrid,refCellLevels]=AnisotropicRefinement...
+        (oldGrid.base,oldGrid,paramoptim,iterstruct,refStep);
     
-    [~,baseGrid,gridrefined,connectstructinfo,~,~]...
-        =GridInitAndRefine(refparamsnake,oldGrid.base);
-    
+%     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
+%         =GridInitAndRefine(refparamsnake,oldGrid.base);
     
     
     defaultFillRefMat=BuildDefaultFillRef(oldGrid,gridrefined,connectstructinfo);
     
-    newgrid.base=baseGrid;
+    newgrid.base=oldGrid.base;
     newgrid.refined=gridrefined;
     newgrid.connec=connectstructinfo;
     newgrid.cellrefined=CellCentreGridInformation(gridrefined);
@@ -1721,7 +1721,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     varNames={'refineGrid'};
     refineGrid=ExtractVariables(varNames,paramoptim.parametrisation);
     if numel(refineGrid)==1; refineGrid=ones(1,2)*refineGrid;end
-    [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refineCellLvl(refStep,1:2));
+    [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refCellLevels);
     
     % Fill follows the order of activeCells
     %outinfoOld.rootDir='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Debug_17-02-11\Dir_2017-02-11T150949_volsweeplocal_1_000000e-01_cv_'
@@ -2685,7 +2685,8 @@ end
 
 %% Cell Refinement Orientation
 
-function []=AnisotropicRefinement(baseGrid,oldGrid,paramoptim,iterstruct,refStep)
+function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(baseGrid,oldGrid,...
+        paramoptim,iterstruct,refStep)
     
     varNames={'refinePattern','refineOptim','refineOptimPopRatio','direction'};
     [refinePattern,refineOptim,refineOptimPopRatio,direction]=ExtractVariables(varNames,paramoptim);
@@ -2715,18 +2716,39 @@ function []=AnisotropicRefinement(baseGrid,oldGrid,paramoptim,iterstruct,refStep
     
     gridrefined=baseGrid;
     for ii=1:refSubSteps
-        refparamsnake=SetVariables({'refineGrid','typeRefine'},{refCellLevels(refSubSteps,:),'automatic'},...
+        refparamsnake=SetVariables({'refineGrid','typeRefine'},...
+            {refCellLevels(ii,:),'automatic'},...
                     paramoptim.parametrisation);
         cellSub=FindObjNum([],refineList(1,:),[gridrefined.cell(:).index]);
         [gridrefined.cell(:).isrefine]=deal(false);
         for jj=1:numel(cellSub)
             gridrefined.cell(cellSub(jj)).isrefine=refineList(2,jj)==ii;
         end
-        [~,newbaseGrid{ii},gridrefined,connectstructinfo{ii},~,~]...
-            =GridInitAndRefine(refparamsnake,gridrefined); %#ok<AGROW,ASGLU,NASGU>
+        [~,newbaseGrid{ii},gridrefinedcell{ii},connectstructinfo{ii},~,~]...
+            =GridInitAndRefine(refparamsnake,gridrefined); %#ok<AGROW,ASGLU>
+        gridrefined=gridrefinedcell{ii};
     end
-    
-    
+    for ii=1:numel(oldGrid.base.cell)
+        oldGrid.base.cell(ii).isrefine=refineList(2,ii);
+    end
+    fullconnect=connectstructinfo{1};
+    for ii=2:refSubSteps
+        % Build connection information
+        cellSub1=FindObjNum([],refineList(1,find(refineList(2,:)==ii)),...
+            [fullconnect.cell(:).old]);
+        cellSub2=FindObjNum([],refineList(1,find(refineList(2,:)==ii)),...
+            [connectstructinfo{ii}.cell(:).old]);
+        [fullconnect.cell(cellSub1).new]=...
+            deal(connectstructinfo{ii}.cell(cellSub2).new);
+    end
+    for ii=1:refSubSteps
+        % Build the correct refinement vectors
+        currActiveSub=find(FindObjNum([],[gridrefinedcell{ii}.cell(:).index],...
+            [newbaseGrid{ii}.cell(:).index])==0)';
+        currActiveSub=sort([currActiveSub,find(refineList(2,:)==ii)]);
+        [gridrefined.cell(currActiveSub).refineVec]=...
+            deal(gridrefinedcell{ii}.cell(currActiveSub).refineVec);
+    end
 end
 
 function [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,...
@@ -2747,15 +2769,18 @@ function [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,..
     
     refineList(2,find(refineList(2,:)))=cellGrad(find(refineList(2,:)));
     refSubSteps=3;
-    refCellLevels=[2 1;1 2;2 2];
+    refCellLevels=[1 2;2 1;2 2];
     actLevels=unique(refineList(2,:));
     actLevels(actLevels==0)=[];
+    refineList(2,:)=reshape(FindObjNum([],refineList(2,:),actLevels),...
+        [1 size(refineList,2)]);
     refSubSteps=numel(actLevels);
     refCellLevels=refCellLevels(actLevels,:);
     
 end
 
-function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,refineGrid,cellInd,oldIndsNewOrd)
+function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,...
+        refineGrid,cellInd,oldIndsNewOrd)
     % Returns the orientation of the active edges of each cell
     
     connecEdgeNewInd=[connec.edge(:).newedge];
@@ -2769,7 +2794,10 @@ function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,refineG
     cellEdgeOrient=zeros([2,numel(cellInd)+1]);
     for jj=1:numel(snaxOrient)
         ii=(jj);
-        cellEdgeOrient(snaxOrient(ii),snaxCellSub((ii-1)*2+(1:2))+1)=true;
+        curSub=snaxCellSub((ii-1)*2+(1:2))+1;
+        if curSub(1)~=curSub(2)
+            cellEdgeOrient(snaxOrient(ii),curSub)=true;
+        end
     end
     cellEdgeOrient(:,1)=[];
 end
