@@ -398,6 +398,7 @@ function [paroptim]=CG_Aero()
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvol';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.general.symType='horz'; % 'horz'
@@ -553,6 +554,7 @@ function [paroptim]=Inverse_CG()
     paroptim.optim.CG.sensCalc='snake';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvol';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.validVol=0.2;
     
@@ -1412,6 +1414,33 @@ function paroptim=dvp_anisotropicrefine()
     paroptim.refine.refineIter=20;
     paroptim.refine.refineOptim=[]; % semi deprecated option
     paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
+    %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+end
+
+
+function paroptim=test_smoothmode1()
+    
+    paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
+    paroptim.general.maxIter=8;
+    paroptim.refine.refineSteps=0;
+    paroptim.refine.refineIter=20;
+    paroptim.refine.refineOptim=[]; % semi deprecated option
+    paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvol';
+    %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+end
+
+function paroptim=test_smoothmode2()
+    
+    paroptim=test_smoothmode1();
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+end
+
+function paroptim=test_smoothmode3()
+    
+    paroptim=test_smoothmode1();
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormvol';
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 

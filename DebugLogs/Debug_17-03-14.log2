@@ -24,7 +24,7 @@ as a smoothing, or the current scalings could be scaled at posteriory to reflect
 
 Scaling could be:
 
-Ti= Si * Tim1/Si * (Li/Lim1)*(Vim1/Vi)
+Ti= Si * Tim1/Sim1 * (Li/Lim1)*(Vim1/Vi)
 Where 
 T true applied scaling
 S Theoretical scaling

@@ -560,3 +560,189 @@ function [snakposition]=PositionSnakes(snaxel,unstructured)
     
 end
 
+%% Grid Operation
+% From ExecuteOptimisation
+function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
+        cellCentredFine,cellCentredCoarse,connecstruct)
+    
+    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {connecstruct.cell(:).newCellInd},...
+                {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
+    newIndsCell=[connecstruct.cell(:).newCellInd];
+    
+    [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
+    
+    % this line matches each Fine cell to its coarse cell in the
+    % cellCentredGrid
+    newToOldCell=FindObjNum([],oldIndsNewOrd(FindObjNum([],[cellCentredFine(:).index],...
+        newIndsCell)),[cellCentredCoarse(:).index]);
+    cellCentredCoarse(1).snaxel=struct([]);
+    for ii=1:numel(newToOldCell)
+        cellCentredCoarse(newToOldCell(ii)).snaxel=[cellCentredCoarse(newToOldCell(ii)).snaxel, ...
+            cellCentredFine(ii).snaxel];
+    end
+    for ii=1:numel(cellCentredCoarse)
+        cellCentredCoarse(ii).lSnax=0;
+        cellCentredCoarse(ii).curvSnax=0;
+        cellCentredCoarse(ii).lSnaxNorm=0;
+        coord=vertcat(cellCentredCoarse(ii).vertex(:).coord);
+        
+        cellCentredCoarse(ii).cellLength=max(coord)-min(coord);
+        if ~isempty(cellCentredCoarse(ii).snaxel)
+            [cellCentredCoarse(ii).snaxel]...
+                =CompressSnaxelChain(cellCentredCoarse(ii).snaxel);
+        end
+    end
+    for ii=1:numel(cellCentredCoarse)
+        if ~isempty(cellCentredCoarse(ii).snaxel)
+            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,cellCentredCoarse(ii).lSnaxNorm]...
+                =ExploreSnaxelChain(cellCentredCoarse(ii).snaxel,cellCentredCoarse(ii).cellLength);
+        end
+    end
+    
+end
+
+function [lSnax,curvSnax,lSnaxNorm]=ExploreSnaxelChain(snaxelpart,cellLength)
+    
+    [snaxInd]=[snaxelpart(:).index];
+    [snaxPrec]=[snaxelpart(:).snaxprec];
+    [snaxNext]=[snaxelpart(:).snaxnext];
+    snaxCon=[snaxPrec;snaxNext];
+    isVisited=false(size(snaxInd));
+    lSnax=0;
+    curvSnax=sum(sqrt(sum(vertcat(snaxelpart(:).curv).^2,2)));
+%     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+%     plotPoints(vertcat(snaxelpart(:).coord));
+    while ~all(isVisited)
+        
+        startSub=find(~isVisited,1,'first');
+        
+        for isfwd=0:1
+            currSub=startSub;
+            flag=true;
+            while flag
+                isVisited(currSub)=true;
+                nextSub=FindObjNum([],snaxCon(isfwd+1,currSub),snaxInd);
+                if nextSub==0
+                    break
+                end
+                coord1=snaxelpart(currSub).coord;
+                coord2=snaxelpart(nextSub).coord;
+                lSnax=lSnax+sqrt(sum((coord2-coord1).^2));
+                lSnaxNorm=lSnax+sqrt(sum(((coord2-coord1)./cellLength).^2));
+                currSub=nextSub;
+                flag=~isVisited(currSub);
+            end
+        end
+        
+    end
+    
+end
+
+function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid)
+    % Extracts the snaxel data and matches it to the cells
+    
+    cellCentredGrid(1).snaxel=struct([]);
+    [snakposition]=PositionSnakesStruct(snaxel,refinedGrid);
+    [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition);
+    %     [snakPosInd]=ReferenceCompArray(snakposition,inf,'inf','index');
+    %     [edgeInd]=ReferenceCompArray(refinedGrid.edge,inf,'inf','index');
+    %     [cellInd]=ReferenceCompArray(cellCentredGrid,inf,'inf','index');
+    %     [vertIndex]=ReferenceCompArray(refinedGrid.vertex,inf,'inf','index');
+    %     [vertCoord]=ReferenceCompArrayVertCat(refinedGrid.vertex,inf,'inf','coord');
+    
+    snakPosInd=[snakposition(:).index];
+    edgeInd=[refinedGrid.edge(:).index];
+    cellInd=[cellCentredGrid(:).index];
+    vertIndex=[refinedGrid.vertex(:).index];
+    vertCoord=vertcat(refinedGrid.vertex(:).coord);
+    
+    
+    
+    %     snakPosFields='coord,vector,vectorprec,vectornext,normvector,edgelength';
+    %     snakPosFields=VerticalStringArray(snakPosFields,',');
+    snakPosFields={'coord','vector','vectorprec','vectornext','normvector','edgelength'};
+    for ii=1:length(snaxel)
+        snaxEdge=snaxel(ii).edge;
+        snaxEdgeSub=FindObjNum(refinedGrid.edge,snaxEdge,edgeInd);
+        snaxCells=refinedGrid.edge(snaxEdgeSub).cellindex;
+        snaxCells=snaxCells(snaxCells~=0);
+        snaxCellsSub=FindObjNum(cellCentredGrid,snaxCells,cellInd);
+        snaxPosSub=FindObjNum(snakposition,snaxel(ii).index,snakPosInd);
+        
+        for jj=1:length(snaxCellsSub)
+            iToVert=vertCoord(find(vertIndex==snaxel(ii).tovertex),:); %#ok<FNDSB> % extract vertex coordinates
+            iFromVert=vertCoord(find(vertIndex==snaxel(ii).fromvertex),:); %#ok<FNDSB>
+            
+            snaxelCell=snaxel(ii);
+            for kk=1:length(snakPosFields(:,1))
+                fieldNam=deblank(snakPosFields{kk});
+                snaxelCell.(fieldNam)=0;
+            end
+            
+            snaxelCell.coord=snakposition(snaxPosSub).coord;
+            snaxelCell.vector=snakposition(snaxPosSub).vector;
+%             snaxelCell.vectorprec=snakposition(snaxPosSub).vectorprec;
+%             snaxelCell.vectornext=snakposition(snaxPosSub).vectornext;
+%             snaxelCell.normvector=snakposition(snaxPosSub).normvector;
+            snaxelCell.edgelength=norm(iToVert-iFromVert);
+            
+            cellCentredGrid(snaxCellsSub(jj)).snaxel=...
+                [cellCentredGrid(snaxCellsSub(jj)).snaxel,snaxelCell];
+        end
+    end
+    
+end
+
+function [snakposition]=PositionSnakesStruct(snaxel,unstructured)
+    % Returns an array with Snaxel coordinates preceded by snaxel indices
+    vertIndex=[unstructured.vertex(:).index];
+    vertCoord=vertcat(unstructured.vertex(:).coord);
+    fromVertex=[snaxel(:).fromvertex];
+    toVertex=[snaxel(:).tovertex];
+    
+    nSnaxel=length(snaxel);
+    
+    for ii=nSnaxel:-1:1
+        iToVert=vertCoord(find(vertIndex==toVertex(ii)),:); %#ok<FNDSB> % extract vertex coordinates
+        iFromVert=vertCoord(find(vertIndex==fromVertex(ii)),:); %#ok<FNDSB>
+        
+        snakposition(ii).index=snaxel(ii).index;
+        snakposition(ii).coord=iFromVert+(iToVert-iFromVert)*snaxel(ii).d;
+        snakposition(ii).vectornotnorm=(iToVert-iFromVert);
+        snakposition(ii).vertInit=iFromVert;
+        snakposition(ii).vector=(iToVert-iFromVert)/norm(iToVert-iFromVert);
+    end
+    
+end
+
+function [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition)
+    
+    curvFunc=@(pi,pip1,pim1,s1,s2)(-pi*(s1+s2)+pip1*s2+pim1*s1)/(s1^2*s2+s2^2*s1);
+    
+    
+    snaxInd=[snakposition(:).index];
+    snaxPrecSub=FindObjNum([],[snaxel(:).snaxprec],snaxInd);
+    snaxNextSub=FindObjNum([],[snaxel(:).snaxnext],snaxInd);
+%     figure,hold on
+    for ii=1:numel(snaxel)
+        pi1=snakposition(ii).coord;
+        pip1=snakposition(snaxNextSub(ii)).coord;
+        pim1=snakposition(snaxPrecSub(ii)).coord;
+        snaxel(ii).curv=curvFunc(pi1,pip1,pim1,norm(pi1-pip1),norm(pi1-pim1));
+%         quiver(pi1(1),pi1(2),snaxel(ii).curv(1)/50,snaxel(ii).curv(2)/50)
+%         plot(pi1(1),pi1(2),'r*')
+    end
+    
+    
+end
+
+function [snaxel]=CompressSnaxelChain(snaxel)
+    
+    snaxInd=[snaxel(:).index];
+    
+    [~,uniqSub]=unique(snaxInd);
+    
+    snaxel=snaxel(uniqSub);
+    
+end

@@ -47,8 +47,15 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         if inNFlag==2
             restartSource=restartFromPop;
         end
-        [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions(paramoptim,inNFlag,...
-            restartSource,maxIter,iterstruct,baseGrid);
+        [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
+            connectstructinfo,restartsnake,startIter,maxIter]=...
+            HandleVariableRestart(restartSource{1},paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
+            connectstructinfo,restartsnake,startIter,maxIter);
+        [iterstruct,paramoptim,firstValidIter]=GenerateRestartPop(paramoptim,...
+            iterstruct,startIter,restartSource{2},baseGrid);
+        
+        paramoptim.general.restartSource=restartSource;
+        startIter=startIter+1;
     end
     
     % Introduce debug lines of code
@@ -94,21 +101,21 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         end
         %try
         %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
-         try
+        try
             if exist('flagOut','var') && ~flagOut
                 disp('Output Skipped')
             else
                 OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
             end
-         catch ME;
-             disp(ME.getReport),
-         end
-
+        catch ME;
+            disp(ME.getReport),
+        end
+        
         %debugScript2
         
-        save('DvpAnisRefineMat.mat')
+        %save('DvpAnisRefineMat.mat')
         if refStage<(refineSteps+1)
-            save('DvpAnisRefineMat.mat')
+            %save('DvpAnisRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
@@ -127,27 +134,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
     
 end
 
-function [iterstruct,startIter,maxIter,paramoptim,firstValidIter]=RestartOptions(paramoptim,inNFlag,...
-        restartSource,maxIter,iterstruct,baseGrid)
-    
-    
-    
-    load(restartSource{1})
-    if exist('supportOptim','var');paramoptim.optim.supportOptim=supportOptim;end
-    startIter=length(optimstruct);
-    maxIter=startIter+maxIter;
-    iterstruct=[optimstruct,iterstruct];
-    
-    [iterstruct,paramoptim,firstValidIter]=GenerateRestartPop(paramoptim,...
-        iterstruct,startIter,restartSource{2},baseGrid);
-    
-    paramoptim.general.restartSource=restartSource;
-    startIter=startIter+1;
-    
-    
-    
-    
-end
+%% Handle Restarting of previous runs
+
 
 function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
         iterstruct,startIter,precOptMeth,baseGrid)
@@ -199,7 +187,6 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
         iterstruct(startIter+1).population=ApplySymmetry(paroptim,...
             iterstruct(startIter+1).population);
     else
-        nPop
         length(iterstruct(startIter).population)
         if nPop==length(iterstruct(startIter).population)
             firstValidIter=1;
@@ -208,6 +195,97 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
         
     end
     
+end
+
+function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
+        connectstructinfo,restartsnake,startIter,maxIter]=...
+        HandleVariableRestart...
+        (restartPath,paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
+        connectstructinfo,restartsnake,startIter,maxIter)
+    % handles variability of restart inputs
+    [optionalin]=LoadRestart(restartPath);
+    fieldsIn=fieldnames(optionalin);
+    
+    for ii=1:numel(fieldsIn)
+        repeatflag=true; % allows to rerun a field if they appear in wrong order
+        while repeatflag
+            switch fieldsIn{ii}
+                case 'optimstruct'
+                    startIter=length(optionalin.(fieldsIn{ii}));
+                    maxIter=startIter+maxIter;
+                    iterstruct=[optionalin.(fieldsIn{ii}),iterstruct]; %#ok<AGROW>
+                    isOptimStruct=true;
+                    repeatflag=false;
+                case 'grid'
+                    baseGrid=optionalin.(fieldsIn{ii}).base;
+                    gridrefined=optionalin.(fieldsIn{ii}).refined;
+                    connectstructinfo=optionalin.(fieldsIn{ii}).connec;
+                    connectstructinfo.edge=struct([]);
+                    fieldsConnec=fieldnames(connectstructinfo.cell);
+                    if ~strcmp(fieldsConnec{1},'old')
+                        newFields={'old','new','targetfill'};
+                        connectstructinfo.cell=cell2struct(struct2cell...
+                            (connectstructinfo.cell),newFields(1:numel(fieldsConnec)),1);
+                    end
+                    [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim);
+                    isGrid=true;
+                    
+                    if exist('isOptimStruct','var');
+                        repeatflag=isOptimStruct;
+                        fieldsIn{ii}='optimstruct';
+                    else
+                        repeatflag=false;
+                    end
+                case 'paramoptim'
+                    paramoptim=ImposePresets(paramoptim,optionalin.(fieldsIn{ii}));
+                    paramoptim.parametrisation=ImposePresets(paramoptim.parametrisation,optionalin.(fieldsIn{ii}).parametrisation);
+                    paramoptim.initparam=ImposePresets(paramoptim.initparam,optionalin.(fieldsIn{ii}).initparam);
+                    
+                    if exist('isSupport','var');
+                        repeatflag=isSupport;
+                        fieldsIn{ii}='supportOptim';
+                    elseif exist('isGrid','var');
+                        repeatflag=isGrid;
+                        fieldsIn{ii}='grid';
+                    else
+                        repeatflag=false;
+                    end
+                case 'supportOptim'
+                    paramoptim.optim.supportOptim=optionalin.(fieldsIn{ii});
+                    repeatflag=false;
+                    isSupport=true;
+                case 'restartsnak'
+                    restartsnake=optionalin.(fieldsIn{ii});
+                    repeatflag=false;
+                case 'outinfo'
+                    
+                    outinfo=optionalin.(fieldsIn{ii});
+                    repeatflag=false;
+                otherwise
+                    warning([fieldsIn{ii},' is an unhandled restart input'])
+            end
+        end
+    end
+    
+end
+
+function param=ImposePresets(param,parampreset)
+    
+    for ii=1:length(parampreset.structdat.vars)
+        param=SetVariables({parampreset.structdat.vars(ii).name},...
+            {ExtractVariables({parampreset.structdat.vars(ii).name},parampreset)},param);
+    end
+    
+end
+
+function [optionalin]=LoadRestart(restartPath)
+    
+    load(restartPath)
+    clear restartPath
+    c=whos;
+    for ii=1:length(c)
+        optionalin.(c(ii).name)=eval(c(ii).name);
+    end
 end
 
 %%  Optimisation Operation Blocks
@@ -243,17 +321,12 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Initialise Grid
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
-    [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [paramoptim.general.desvarconnec]=...
-        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
-    % Start Parallel Pool
-    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
-    
-    [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
-    [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
+    % Update Parameters using grid information
+    [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim);
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
-    
+    % Start Parallel Pool
+    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
     if ExtractVariables({'useSnake'},paramoptim)
         [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
             baseGrid,connectstructinfo,paramoptim.initparam,...
@@ -268,6 +341,15 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [~]=PrintEnd(procStr,1,tStart);
 end
 
+function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
+    [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
+    [paramoptim.general.desvarconnec]=...
+        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
+    [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
+    
+end
+
 function []=StartParallelPool(nWorker,nTry)
     kk=0;
     while numel(gcp('nocreate'))==0 && kk<nTry
@@ -280,7 +362,7 @@ function []=StartParallelPool(nWorker,nTry)
         clusterObj=parcluster(poolName);
         clusterObj.NumWorkers=nWorker;
         saveProfile(clusterObj);
-        try 
+        try
             parpool(poolName)
         catch ME
             
@@ -288,7 +370,7 @@ function []=StartParallelPool(nWorker,nTry)
         kk=kk+1;
     end
     
-    if numel(gcp('nocreate'))~=0 
+    if numel(gcp('nocreate'))~=0
         disp(['Parallel Pool succesfully created after ',int2str(kk),' attempt(s)'])
     else
         %error('Parrallel pool failed to start')
@@ -334,8 +416,8 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
     nPop=numel(population);
     
-    parfor ii=1:nPop %   
-    %for ii=1:nPop
+    parfor ii=1:nPop %
+        %for ii=1:nPop
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
@@ -424,7 +506,7 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     [captureErrors{1:nPop}]=deal('');
     supportstruct=repmat(struct('loop',[]),[1,nPop]);
     parfor ii=1:nPop
-    %for ii=1:nPop
+        %for ii=1:nPop
         %for ii=flip(1:nPop)
         
         currentMember=population(ii).fill;
@@ -493,7 +575,7 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     rootPop=population(1);
     
     parfor ii=1:nPop-1
-    %for ii=1:nPop-1
+        %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
         try
@@ -1677,8 +1759,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Refine Grid
     varNames={'refineOptim'};
     refineCellLvl=ExtractVariables(varNames,paramoptim);
-%     refparamsnake=SetVariables({'refineGrid','typeRefine'},{refineCellLvl(refStep,:),'automatic'},...
-%         paramoptim.parametrisation);
+    %     refparamsnake=SetVariables({'refineGrid','typeRefine'},{refineCellLvl(refStep,:),'automatic'},...
+    %         paramoptim.parametrisation);
     % Need to add here the additional refinement options
     refinementStruct.oldgrid=oldGrid;
     refinementStruct.pop=iterstruct(end).population;
@@ -1688,8 +1770,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridrefined,connectstructinfo,oldGrid,refCellLevels]=AnisotropicRefinement...
         (oldGrid.base,oldGrid,paramoptim,iterstruct,refStep);
     
-%     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
-%         =GridInitAndRefine(refparamsnake,oldGrid.base);
+    %     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
+    %         =GridInitAndRefine(refparamsnake,oldGrid.base);
     
     
     defaultFillRefMat=BuildDefaultFillRef(oldGrid,gridrefined,connectstructinfo);
@@ -1743,8 +1825,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [gridrefined]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
     
-%     paramoptim.optim.supportOptim=UpdateStepDir(supportOptim,...
-%         profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
+    %     paramoptim.optim.supportOptim=UpdateStepDir(supportOptim,...
+    %         profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,defaultFillRefMat);
     
@@ -1909,7 +1991,7 @@ function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
             profloops(ii).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
     end
     
-
+    
 end
 
 function [stepModif]=UpdateStepDir(stepModif,profloops,transformstruct,connectstructinfo,...
@@ -2015,7 +2097,7 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
     actFill=logical([baseGrid.cell(:).isactive]);
     iterProf=[profloops(:).iter];
     profProf=[profloops(:).prof];
-    for ii=firstValidIter:numel(iterstruct) % enforce 
+    for ii=firstValidIter:numel(iterstruct) % enforce
         for jj=1:numel(iterstruct(ii).population)
             iterstruct(ii).population(jj).fill=(defaultFillRefMat*iterstruct(ii).population(jj).fill')';
         end
@@ -2054,7 +2136,7 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
             iterstruct(ii).population(jj).optimdat.var;
     end
     
-   % supportOptim.curr.prevStep
+    % supportOptim.curr.prevStep
 end
 
 function [defaultFillRef]=BuildDefaultFillRef(grid,newGrid,connectToNew)
@@ -2076,7 +2158,7 @@ end
 %% Refinement Cells Selection
 
 function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
-    % function 
+    % function
     
     varNames={'refineOptimType','refineOptimRatio','refineOptimPopRatio','symDesVarList','direction'};
     [refineOptimType,refineOptimRatio,refineOptimPopRatio,symDesVarList,...
@@ -2232,7 +2314,7 @@ function [indexPop]=SelectRefinementForPop(population,ratio,optimDir)
 end
 
 function [isSnax]=REFINE_contour(population)
-            % refines all cells with snaxels
+    % refines all cells with snaxels
     
     [restartPath,~]=FindDir(population.location,'restart',false);
     
@@ -2284,8 +2366,8 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
     edgeSub(cond)=[];
     
     
-%     [~,~,edgeRank(edgeSub)]=unique(edgeGrad);
-%     edgeRank=edgeRank/max(edgeRank);
+    %     [~,~,edgeRank(edgeSub)]=unique(edgeGrad);
+    %     edgeRank=edgeRank/max(edgeRank);
     
     
     cellGrad=zeros([1,numel(gridBase.cell)+1]);
@@ -2300,9 +2382,9 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
     cellRank=cellRank/max(cellRank);
     isRefine=cellRank>=(1-refineOptimRatio);
     
-%     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
-%     isRefine=false(size(gridBase.cell));
-%    isRefine(cellSub)=true;
+    %     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
+    %     isRefine=false(size(gridBase.cell));
+    %    isRefine(cellSub)=true;
 end
 
 
@@ -2323,7 +2405,7 @@ function [isRefine]=REFINE_desvargradadvanced(population,gridBase,actInd,cellInd
         gridBase.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(gridBase.cell)]);
+    isAct=false([1,numel(gridBase.cell)]);
     isAct(actInd)=true;
     
     cellFillExt=[0,[gridBase.cell(:).fill]];
@@ -2335,9 +2417,9 @@ function [isRefine]=REFINE_desvargradadvanced(population,gridBase,actInd,cellInd
     cellRank=cellRank/max(cellRank);
     isRefine=cellRank>=(1-refineOptimRatio);
     isRefine(~isAct)=false;
-%     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
-%     isRefine=false(size(gridBase.cell));
-%    isRefine(cellSub)=true;
+    %     cellSub=FindObjNum([],[gridBase.edge(isEdgeRefine).cellindex],cellInd);
+    %     isRefine=false(size(gridBase.cell));
+    %    isRefine(cellSub)=true;
 end
 
 function [cellGrad]=IdentifiedCrossedEdge(connec,snaxel,cellInd,fillExt,oldIndsNewOrd)
@@ -2380,7 +2462,7 @@ function [isRefine]=REFINE_contlength(population,grid,actInd,cellInd,...
         grid.base.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(grid.base.cell)]);
+    isAct=false([1,numel(grid.base.cell)]);
     isAct(actInd)=true;
     
     [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
@@ -2413,7 +2495,7 @@ function [isRefine]=REFINE_contlengthnorm(population,grid,actInd,cellInd,...
         grid.base.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(grid.base.cell)]);
+    isAct=false([1,numel(grid.base.cell)]);
     isAct(actInd)=true;
     
     [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
@@ -2445,7 +2527,7 @@ function [isRefine]=REFINE_contcurve(population,grid,actInd,cellInd,...
         grid.base.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(grid.base.cell)]);
+    isAct=false([1,numel(grid.base.cell)]);
     isAct(actInd)=true;
     
     [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
@@ -2480,7 +2562,7 @@ function [isRefine]=REFINE_contcurvescale(population,grid,actInd,cellInd,...
         grid.base.cell(actInd(ii)).fill=population.fill(ii);
     end
     
-     isAct=false([1,numel(grid.base.cell)]);
+    isAct=false([1,numel(grid.base.cell)]);
     isAct(actInd)=true;
     cellFill=[grid.base.cell(:).fill];
     [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
@@ -2537,6 +2619,8 @@ function [cellCentredCoarse]=CoarseCellCentred(snaxel,refinedGrid,...
     
 end
 
+% These functions are now in include_SnakeParam
+%{
 function [cellCentredGrid]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredGrid)
     % Extracts the snaxel data and matches it to the cells
     
@@ -2681,7 +2765,7 @@ function [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition)
     
     
 end
-
+%}
 
 %% Cell Refinement Orientation
 
@@ -2692,9 +2776,9 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
     [refinePattern,refineOptim,refineOptimPopRatio,direction]=ExtractVariables(varNames,paramoptim);
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
-                {oldGrid.connec.cell(:).new},...
-                {oldGrid.connec.cell(:).old},'UniformOutput',false));
-            
+        {oldGrid.connec.cell(:).new},...
+        {oldGrid.connec.cell(:).old},'UniformOutput',false));
+    
     switch refinePattern
         case 'preset'
             refineList=[[baseGrid.cell(:).index];[baseGrid.cell(:).isrefine]];
@@ -2718,7 +2802,7 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
     for ii=1:refSubSteps
         refparamsnake=SetVariables({'refineGrid','typeRefine'},...
             {refCellLevels(ii,:),'automatic'},...
-                    paramoptim.parametrisation);
+            paramoptim.parametrisation);
         cellSub=FindObjNum([],refineList(1,:),[gridrefined.cell(:).index]);
         [gridrefined.cell(:).isrefine]=deal(false);
         for jj=1:numel(cellSub)
@@ -2801,7 +2885,7 @@ function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,...
     end
     cellEdgeOrient(:,1)=[];
 end
-%% Test Function 
+%% Test Function
 
 function []=OptimisationDebug(caseStr,debugArgIn)
     
@@ -2833,7 +2917,7 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     
     [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
         restartsnake,connectstructinfo,newFill);
-        
+    
     [popuDebug,supportstruct]=NormalExecutionIteration(...
         popuDebug,newRefGrid,newrestartsnake,newGrid,...
         connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2},debugArgIn{3},paramoptim);

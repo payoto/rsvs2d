@@ -361,6 +361,10 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
 end
 
 function [modestruct]=RemoveFailedModes(modestruct,gradstruct,rootfill,desVarRange,direction)
+    % Removes modes which are "failing" from the gradients. This is to
+    % avoid one discontinuity dominating the gradients and causing the
+    % optimisation to stall. This is used to avoid "The opening of new
+    % cells" to be detrimental
     
     [newModeInd]=FindNewModes(modestruct,rootfill,desVarRange);
     

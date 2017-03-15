@@ -56,7 +56,8 @@ function [out]=...
     
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(looprestart);
-    
+    [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
+        cellCentredGrid,CellCentreGridInformation(oldGrid),volfracconnec);
     %CheckResultsLight(refinedGriduns,snakposition,snaxel)
     switch entryPoint
         case 'fill'
@@ -64,6 +65,7 @@ function [out]=...
             [cellordstruct]=BuildCellConnectivity(snaxel,oldGrid,refinedGrid,volfracconnec);
             fprintf('.')
             [cellordstruct]=BuildModeMixing(cellordstruct,paramsnake);
+            [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,paramsnake);
             fprintf('.')
             [cellordstruct]=BuildFillMode(oldGrid,cellordstruct);
             fprintf('.')
@@ -323,7 +325,6 @@ end
 function [newfillstruct]=GenerateSensitivityFillPop(cellordstruct,rootFill,diffStepSize,paramoptim)
     
     kk=1;
-    
     
     actCell=[cellordstruct(:).index];
     actCell=RemoveIdenticalEntries(actCell);
@@ -1519,6 +1520,75 @@ function [coeffList]=ReturnSmoothingCoeff(smoothType,nCell,nSmooth)
     end
     
     
+    
+end
+
+function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,param)
+    
+    try
+        [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},param);
+    catch
+        warning('Old param fed given to sensitivity calculation defaulting to scaled mode.')
+        modeSmoothScale='lengthvolnormvol';
+    end
+    
+    
+    switch modeSmoothScale
+        case 'lengthvol'
+            [cellInd]=[cellCentredCoarse(:).index];
+            [cellVol]=[cellCentredCoarse(:).volume];
+            [cellLength]=[cellCentredCoarse(:).lSnax];
+            
+            for ii=1:numel(cellordstruct)
+                [cellordstruct(ii).coeffMode]=ScaleModeSnake_lengthvol(...
+                    cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength);
+            end
+        case 'lengthvolnormfill' 
+            % Normalizes to the original fill mode value change
+            [cellInd]=[cellCentredCoarse(:).index];
+            [cellVol]=[cellCentredCoarse(:).volume];
+            [cellLength]=[cellCentredCoarse(:).lSnax];
+            normVec= @(x) sqrt(sum(x.^2));
+            for ii=1:numel(cellordstruct)
+                [coeffMode]=ScaleModeSnake_lengthvol(...
+                    cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength);
+                cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
+                    normVec(coeffMode(:,2))*normVec( cellordstruct(ii).coeffMode(:,2));
+            end
+            
+        case 'lengthvolnormvol' 
+            % Normalizes to the original fill mode value change
+            [cellInd]=[cellCentredCoarse(:).index];
+            [cellVol]=[cellCentredCoarse(:).volume];
+            [cellLength]=[cellCentredCoarse(:).lSnax];
+            normVec= @(x) sqrt(sum(x.^2));
+            for ii=1:numel(cellordstruct)
+                [coeffMode,actVol]=ScaleModeSnake_lengthvol(...
+                    cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength);
+                cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
+                    normVec(coeffMode(:,2).*actVol')*normVec(cellordstruct(ii).coeffMode(:,2).*actVol');
+            end
+        case 'none'
+            
+        otherwise
+            error('Invalid value for modeSmoothScale: %s ',modeSmoothScale)
+    end
+    
+end
+
+function [coeffMode,actVol]=ScaleModeSnake_lengthvol(coeffMode,cellInd,cellVol,cellLength)
+    
+    
+        actSub=FindObjNum([],coeffMode(:,1),cellInd);
+        actVol=cellVol(actSub);
+        actLength=cellLength(actSub);
+        actCoeff=ones(size(coeffMode(:,2)));
+        n=numel(actSub);
+        actCoeff(2:end)=(actLength(2:n)./actLength(max((2:n)-2,1)))...
+            .*(actVol(max((2:n)-2,1))./(actVol(2:n)));
+        actCoeff(2:2:end)=cumprod(actCoeff(2:2:end));
+        actCoeff(3:2:end)=cumprod(actCoeff(3:2:end));
+        coeffMode(:,2)=coeffMode(:,2).*actCoeff;
     
 end
 
