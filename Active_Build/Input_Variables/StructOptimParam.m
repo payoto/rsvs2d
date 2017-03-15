@@ -1434,6 +1434,7 @@ function paroptim=test_smoothmode2()
     
     paroptim=test_smoothmode1();
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    paroptim.general.worker=12;
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 
@@ -1441,6 +1442,7 @@ function paroptim=test_smoothmode3()
     
     paroptim=test_smoothmode1();
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormvol';
+    paroptim.general.worker=12;
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 
