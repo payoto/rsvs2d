@@ -1303,7 +1303,6 @@ function [paroptim]=invdeslocal_test(gridCase,refmethod,cornAct)
     paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
     ratio=PickRatioForRefineMethod(refmethod);
     paroptim.refine.refineOptimRatio=ratio(1);
-    paroptim.refine.refineOptim(end,end)=50;
     paroptim.spline.resampleSnak=false;
 end
 
@@ -1323,7 +1322,6 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     end
     ratio=PickRatioForRefineMethod(refmethod);
     paroptim.refine.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
-    paroptim.refine.refineOptim(end,end)=50;
     paroptim.spline.resampleSnak=false;
     paroptim.parametrisation.general.passDomBounds(2,:)=...
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
