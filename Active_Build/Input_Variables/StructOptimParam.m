@@ -1030,6 +1030,7 @@ function paroptim=refsweeplocal(gridCase,airfoil)
     paroptim.obj.invdes.aeroName=airfoil;
     
     paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormvol';
     
     switch gridCase(1)
         case 'c'
@@ -1045,6 +1046,8 @@ function paroptim=refsweeplocal(gridCase,airfoil)
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+         case 'o'
+             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
@@ -1138,6 +1141,8 @@ function paroptim=NACA0012Sweeplocal(gridCase,lvl,optimiser)
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+         case 'o'
+             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
@@ -1190,6 +1195,8 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
                 [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
             case 'a'
                 [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+         case 'o'
+             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
             otherwise
                 error('Unknown gridcase')
         end
@@ -1244,6 +1251,8 @@ function paroptim=volsweeplocal(e,gridCase)
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+         case 'o'
+             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
@@ -1330,7 +1339,6 @@ function [paroptim]=TestNewOut()
     paroptim.general.worker=12;
 end
 
-
 function [paroptim]=RefLocOut(e)
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
    %paroptim.general.maxIter=2;
@@ -1341,14 +1349,28 @@ function [paroptim]=RefLocOut(e)
         paroptim.parametrisation.general.passDomBounds(1,:)/(1+e)+e/2;
     paroptim.general.worker=8;
 end
-% Grid Cases
 
+% Grid Cases
+function [paroptim]=gridrefcase_auto(paroptim,nIter,lvl)
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.cellLevels=[6,2];
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
+    paroptim.refine.refineOptim=[];
+    
+    paroptim.refine.refineSteps=lvl;
+    paroptim.refine.refineIter=nIter;
+    paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
+end
 function [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     paroptim.parametrisation.optiminit.cellLevels=[6,2];
     paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
     paroptim.refine.refineOptim=ones([lvl,1])*[2 2 nIter];
     
+    paroptim.refine.refineSteps=lvl;
+    paroptim.refine.refineIter=nIter;
+    paroptim.refine.refineOptim=ones([lvl,1])*[2 2 nIter]; % semi deprecated option
+    paroptim.refine.refinePattern='preset'; % 'edgecross' 'curvature'
 end
 function [paroptim]=gridrefcase_horizontal(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
@@ -1356,6 +1378,10 @@ function [paroptim]=gridrefcase_horizontal(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.refineGrid=[1 4];
     paroptim.refine.refineOptim=ones([lvl,1])*[1 2 nIter];
     
+    paroptim.refine.refineSteps=lvl;
+    paroptim.refine.refineIter=nIter;
+    paroptim.refine.refineOptim=ones([lvl,1])*[1 2 nIter]; % semi deprecated option
+    paroptim.refine.refinePattern='preset'; % 'edgecross' 'curvature'
 end
 function [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
@@ -1363,6 +1389,11 @@ function [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
     paroptim.refine.refineOptim=ones([lvl,1])*[2 1 nIter];
     
+    
+    paroptim.refine.refineSteps=lvl;
+    paroptim.refine.refineIter=nIter;
+    paroptim.refine.refineOptim=ones([lvl,1])*[2 1 nIter]; % semi deprecated option
+    paroptim.refine.refinePattern='preset'; % 'edgecross' 'curvature'
 end
 function [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;
@@ -1372,6 +1403,10 @@ function [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl)
         =ones([ceil(lvl/2),1])*[2 1 nIter];
     paroptim.general.refineOptim(2:2:(ceil(lvl/2)*2),1:3)...
         =ones([ceil(lvl/2),1])*[1 2 nIter];
+    
+    paroptim.refine.refineSteps=lvl;
+    paroptim.refine.refineIter=nIter;
+    paroptim.refine.refinePattern='preset'; % 'edgecross' 'curvature'
     
 end
 function [refineOptimRatio]=PickRatioForRefineMethod(refmethod)

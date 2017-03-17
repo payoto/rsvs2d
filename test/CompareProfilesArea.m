@@ -1,4 +1,4 @@
-function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
+function [errorMeasure,areaDistrib,a]=CompareProfilesArea(profileCoord,targCoord)
     
     [x0,y0,iout,jout] = intersections(profileCoord([1:end,1],1),profileCoord([1:end,1],2),...
         targCoord([1:end,1],1),targCoord([1:end,1],2));
@@ -7,7 +7,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
     x0(rmv)=[];
     y0(rmv)=[];
     jout(rmv)=[];
-    
+    a=[];
     [iout,sortIndex]=sort(iout);
     x0=x0(sortIndex);
     y0=y0(sortIndex);
@@ -56,6 +56,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
             areaPosXmin(ii)=min(actPts(:,1));
             areaPosXmax(ii)=max(actPts(:,1));
         end
+        a=[areaErr*10000;areaLength;areaPosx;areaPosy]';
         
         errorMeasure.sum=sum(areaErr)/targArea;
         errorMeasure.mean=mean(areaErr)/targArea;
