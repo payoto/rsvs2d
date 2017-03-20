@@ -1512,6 +1512,11 @@ function [paroptim]=Debug170313()
     paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
     
 end
+
+function [paroptim]=Debug170320()
+    
+    paroptim=invdeslocal_test2('uu','contcurve',0,1);
+end
 %% refinement
 
 function paroptim=test_refine1()
