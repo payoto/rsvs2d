@@ -10,7 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [errorMeasure,h,targCoord]=InverseDesign_Error(paramoptim,loop)
+function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
@@ -69,7 +69,8 @@ function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,t
     % prepares the loop into the right coordinates
     
     nLoop=numel(loop);
-    analysisCoord=vertcat(loop(:).(typeLoop));
+    %analysisCoord=vertcat(loop(:).(typeLoop));
+    analysisCoord=vertcat(loop(:).snaxel.coord);
     
     if true % nLoop==1;
         [isCCW]=CCWLoop(analysisCoord);

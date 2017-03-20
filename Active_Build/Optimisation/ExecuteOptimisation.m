@@ -637,6 +637,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
         captureErrors{1}=MEexception.getReport;
         newpopulation=population;
         supportstruct.loop=[];
+        disp(MEexception.getReport)
         warning('Sensitivity Extraction has failed, basis will not be smoothed.')
     end
     
