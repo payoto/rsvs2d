@@ -69,8 +69,8 @@ function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,t
     % prepares the loop into the right coordinates
     
     nLoop=numel(loop);
-    %analysisCoord=vertcat(loop(:).(typeLoop));
-    analysisCoord=vertcat(loop(:).snaxel.coord);
+    analysisCoord=vertcat(loop(:).(typeLoop));
+    %analysisCoord=vertcat(loop(:).snaxel.coord);
     
     if true % nLoop==1;
         [isCCW]=CCWLoop(analysisCoord);

@@ -495,7 +495,7 @@ function [parspline]=CaseSpline_inversedesign2()
     parspline.scale=1;
     
     parspline.samplingParam='param';
-    parspline.samplingN=501;
+    parspline.samplingN=2000;
     parspline.samplingDistrib='2cosine';
     parspline.typeInterp='linear';
     %parspline.samplingScope='local';
