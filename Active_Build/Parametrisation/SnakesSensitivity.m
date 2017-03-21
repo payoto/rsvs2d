@@ -1546,14 +1546,14 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
         case 'lengthvol'
             
             for ii=1:numel(cellordstruct)
-                [cellordstruct(ii).coeffMode]=ScaleModeSnake_lengthvol2(...
+                [cellordstruct(ii).coeffMode]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,cellAct,diffStepSize);
             end
         case 'lengthvolnormfill' 
             % Normalizes to the original fill mode value change
             normVec= @(x) sqrt(sum(x.^2));
             for ii=1:numel(cellordstruct)
-                [coeffMode]=ScaleModeSnake_lengthvol2(...
+                [coeffMode]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,cellAct,diffStepSize);
                 cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
                     normVec(coeffMode(:,2))*normVec( cellordstruct(ii).coeffMode(:,2));
@@ -1563,10 +1563,19 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             % Normalizes to the original fill mode value change
             normVec= @(x) sqrt(sum(x.^2));
             for ii=1:numel(cellordstruct)
-                [coeffMode,actVol]=ScaleModeSnake_lengthvol2(...
+                [coeffMode,actVol]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,cellAct,diffStepSize);
                 cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
                     normVec(coeffMode(:,2).*actVol')*normVec(cellordstruct(ii).coeffMode(:,2).*actVol');
+            end  
+        case 'lengthvolnormvolfill' 
+            % Normalizes to the original fill mode value change
+            normVec= @(x) sqrt(sum(x.^2));
+            for ii=1:numel(cellordstruct)
+                [coeffMode,actVol]=ScaleModeSnake_lengthvol(...
+                    cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,cellAct,diffStepSize);
+                cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
+                    normVec(coeffMode(:,2).*actVol')*normVec(cellordstruct(ii).coeffMode(:,2))*normVec(actVol');
             end
         case 'none'
             
@@ -1576,8 +1585,8 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
     
 end
 
-function [coeffMode,actVol]=ScaleModeSnake_lengthvol(coeffMode,cellInd,cellVol,...
-        cellLength,cellAct)
+function [coeffMode,actVol]=ScaleModeSnake_lengthvol2(coeffMode,cellInd,cellVol,...
+        cellLength,cellAct,dumpin)
     
     
         actSub=FindObjNum([],coeffMode(:,1),cellInd);
@@ -1595,7 +1604,7 @@ function [coeffMode,actVol]=ScaleModeSnake_lengthvol(coeffMode,cellInd,cellVol,.
 end
 
 
-function [coeffMode,actVol]=ScaleModeSnake_lengthvol2(coeffMode,cellInd,cellVol,...
+function [coeffMode,actVol]=ScaleModeSnake_lengthvol(coeffMode,cellInd,cellVol,...
         cellLength,cellAct,diffStepSize)
     
     
@@ -1765,8 +1774,8 @@ function [snaxmove]=CalculateMoveDataPure(snaxmove,snakposition,sensSnax,loopsna
         snaxmove.edge(kk).normal=snakposition(ii).vectornext;
         
         [vecAngles]=ExtractAnglepm180(snaxmove.vertex(kk).normal,snakposition(ii).vector);
-        snaxmove.snax(kk).rT=1;
-        snaxmove.snax(kk).rN=0;
+        snaxmove.snax(kk).rT=0;
+        snaxmove.snax(kk).rN=1;
         kk=kk+1;
     end
     
@@ -1805,8 +1814,7 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
     nFill=size(deltaFill,1);
     newloop=repmat(struct('snaxel',struct('index',[],'coord',[],'vector',[],...
         'coordnoscale',[])),[nFill,numel(snaxmove)]);
-    figure
-    hold on
+    
     % deltaFill must be trimmed to only have active snax boxes
     for ii=1:numel(snaxmove)
         % each column represent a different fill
@@ -1834,7 +1842,7 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
         newLpos(newLpos>snaxmove(ii).support.maxL)=...
             newLpos(newLpos>snaxmove(ii).support.maxL)-snaxmove(ii).support.maxL;
         [~,newOrder]=sort(newLpos);
-        plot(newOrder)
+%         plot(newOrder)
         [distVert,closeVert]=min(abs(vertPosL-repmat(newLpos,[1 1 nVert])),[],3);
         [distEdge,closeEdge]=min(abs(edgePosL-repmat(newLpos,[1 1 nEdge])),[],3);
         

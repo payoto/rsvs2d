@@ -1,5 +1,5 @@
-function []=ShowAreaError(entryPoint,isfig,varargin)
-    
+function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin)
+    modeSmoothScale='';
     switch entryPoint
         
         case 'folder'
@@ -14,22 +14,48 @@ function []=ShowAreaError(entryPoint,isfig,varargin)
                     end
                 end
             end
+            [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},paramoptim.parametrisation);
+            h=figure('Name',modeSmoothScale);
+            pathStr=varargin{1};
+            intfig=varargin{2}(1);
         case 'data'
             
             [analysisCoord1,analysisCoord2{1},h{1}]=PlotAreaError(varargin{:});
+            
+            h=figure;
+            pathStr='./fig';
+            intfig=[];
+        case 'post'
+            analysisCoord1=varargin{1};
+            analysisCoord2=varargin{2};
+            
+            h=figure;
+            pathStr='./fig';
+            intfig=[];
     end
     
-    h=figure;
+    
     ax(1)=subplot(3,1,1);
     hold on
+    ylabel('Unscaled Modes')
     ax(2)=subplot(3,1,2);
     hold on
+    ylabel('Normalised Modes')
     ax(3)=subplot(3,1,3);
     hold on
+    ylabel('Profile')
+    xlabel('Point index')
+    parsplie.splineCase='inversedesign2';
     for ii=1:numel(analysisCoord2)
-        PlotProfileDifference(analysisCoord1,analysisCoord2{ii},ax)
+        [c1,~]=ResampleSpline(analysisCoord1,parsplie);
+        [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+        PlotProfileDifference(c1,c2,ax)
     end
-    
+    axes(ax(3))
+    plot(c1(:,1))
+    plot(c1(:,2))
+    legend('x','y')
+    hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',modeSmoothScale,'.fig'])
 end
 
 function []=PlotProfileDifference(coord1,coord2,ax)
@@ -37,15 +63,16 @@ function []=PlotProfileDifference(coord1,coord2,ax)
     
     if numel(coord1)==numel(coord2)
         axes(ax(1))
-        deltaCoord=sqrt(sum((coord2-coord1).^2,2));
+        n=size(coord1,1);
+        tanVec=coord1(mod((0:n-1)+1,n)+1,:)-coord1(mod((0:n-1)-1,n)+1,:);
+        normVec=([0 1;-1 0]*tanVec')';
+        deltaCoord=sum((coord2-coord1).*normVec,2)./sqrt(sum(normVec.^2,2));
+        %deltaCoord=sqrt(sum((coord2-coord1).^2,2));
+        [maxVal,iMax]=max(abs(deltaCoord));
         plot(deltaCoord)
         axes(ax(2))
-        deltaCoord=sqrt(((coord2-coord1).^2));
-        plot(deltaCoord(:,1))
-        plot(deltaCoord(:,2))
-        axes(ax(3))
-        plot(coord1(:,1))
-        plot(coord1(:,2))
+        plot(sign(iMax)*deltaCoord/maxVal)
+        
     end
     
     
