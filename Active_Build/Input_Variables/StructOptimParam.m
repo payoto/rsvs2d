@@ -1363,6 +1363,7 @@ function paroptim=invdeslocal_test3(gridCase,refmethod,cornAct,ratioPos)
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
     paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptimoptimCG.nLineSearch=8;
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 
@@ -1523,6 +1524,14 @@ end
 function [paroptim]=Debug170320()
     
     paroptim=invdeslocal_test2('uu','contcurve',0,1);
+end
+
+function [paroptim]=Debug170322()
+    paroptim=invdeslocal_test3('uu','contcurve',0,1);
+    
+    paroptim.general.maxIter=6;
+    paroptim.refine.refineIter=6;
+    
 end
 %% refinement
 

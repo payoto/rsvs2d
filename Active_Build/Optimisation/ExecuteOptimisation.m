@@ -113,7 +113,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         
         %debugScript2
         
-        %save('DvpAnisRefineMat.mat')
+        save([outinfo(refStage).rootDir,filesep,'DvpAnisRefineMat.mat'])
         if refStage<(refineSteps+1)
             %save('DvpAnisRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
@@ -1755,7 +1755,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
     diary(diaryFile);
-    warning ('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
+    warning('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
     
     % Refine Grid
     varNames={'refineOptim'};
@@ -1810,7 +1810,9 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     %outinfoOld.rootDir='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\HPC\Debug_17-02-11\Dir_2017-02-11T150949_volsweeplocal_1_000000e-01_cv_'
     [profloops]=ExtractVolInfo(outinfoOld.rootDir);
     
-    [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter);
+    actFill=logical([baseGrid.cell(:).isactive]);
+    [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,...
+        firstValidIter,defaultFillRefMat,iterstruct,actFill);
     
     
     % Generate new snake restarts.
@@ -1885,7 +1887,7 @@ function [profloops]=ExtractVolInfo(optimRootDir)
     [iterationPath,iterName]=FindDir(optimRootDir,'iteration',true);
     iterNum=regexp(iterName,'iteration_','split');
     
-    profloops=repmat(struct('iter',[],'prof',[],'refinevolfrac',[]),[1 0]);
+    profloops=repmat(struct('iter',[],'prof',[],'refinevolfrac',[],'isfilled',false),[1 0]);
     
     for ii=1:length(iterationPath)
         
@@ -1928,25 +1930,37 @@ function [profloops]=FindProfileLoops(rootDir,iterNum)
     %profNum=profNum(:,2);
     kk=1;
     for ii=1:length(profilePath)
-        
         [restartPath,restartName]=FindDir(profilePath{ii},'restart',false);
         load(restartPath{1},'snakSave')
         
         profloops(kk).iter=iterNum;
         profloops(kk).prof=str2num(profNum{ii}{2});
-        profloops(kk).refinevolfrac=snakSave(end).volumefraction.refinedInfo; %#ok<COLND>
+        
+        if isfield(snakSave(end),'volumefraction') %#ok<COLND>
+            profloops(kk).refinevolfrac=snakSave(end).volumefraction.refinedInfo; %#ok<COLND>
+            profloops(kk).isfilled=true;
+        else
+            profloops(kk).refinevolfrac=[];
+            profloops(kk).isfilled=false;
+        end
         kk=kk+1;
     end
-    
-    
-    
+    isFilledSub=find(~[profloops(:).isfilled]);
+    iterInd=[profloops(:).iter];
+    profInd=[profloops(:).prof];
+    for ii=isFilledSub
+        refProf=find(iterInd==iterInd(ii) & profInd==1);
+        profloops(ii).refinevolfrac=profloops(refProf(1)).refinevolfrac;
+    end
 end
 
-function [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,profloops,firstValidIter)
+function [profloops,transformstruct]=ExtractVolumeFraction(gridmatch,...
+        profloops,firstValidIter,defaultFillRefMat,iterstruct,actFill)
     
     [transformstruct,~]=BuildMatrix(gridmatch);
     
-    [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter);
+    [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter,...
+        defaultFillRefMat,iterstruct,actFill);
 end
 
 function [transformstruct,coeffMat]=BuildMatrix(gridmatch)
@@ -1982,7 +1996,8 @@ function [newFrac]=BuildNewRestartFrac(iterstruct,profloops,baseGrid)
     
 end
 
-function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
+function [profloops]=ConvertProfToFill(profloops,transformstruct,...
+        firstValidIter,defaultFillRefMat,iterstruct,actFill)
     
     iterProf=[profloops(:).iter];
     
@@ -1992,6 +2007,14 @@ function [profloops]=ConvertProfToFill(profloops,transformstruct,firstValidIter)
             profloops(ii).refinevolfrac.fractionvol(volSubs)')./ transformstruct.volumeNew;
     end
     
+    isFilledSub=find(~[profloops(:).isfilled]);
+    
+    for ii=isFilledSub
+        
+        profloops(ii).newFracs(actFill)=profloops(ii).newFracs(actFill)+(defaultFillRefMat*...
+            (iterstruct(profloops(ii).iter).population(profloops(ii).prof).fill...
+            -iterstruct(profloops(ii).iter).population(1).fill)');
+    end
     
 end
 
