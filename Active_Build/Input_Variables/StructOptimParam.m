@@ -1533,6 +1533,14 @@ function [paroptim]=Debug170322()
     paroptim.refine.refineIter=6;
     
 end
+
+function [paroptim]=Debug170323()
+    paroptim=invdeslocal_test3('uu','contcurve',0,1);
+    
+    paroptim.general.maxIter=1;
+    paroptim.refine.refineIter=1;
+    
+end
 %% refinement
 
 function paroptim=test_refine1()

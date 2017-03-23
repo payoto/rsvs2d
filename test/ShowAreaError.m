@@ -3,9 +3,15 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
     switch entryPoint
         
         case 'folder'
-            for ii=1:size(varargin{3},1)
-                [paramoptim,loop1,loop2]=FindDataFromFolder(varargin{1},...
-                    varargin{2},varargin{3}(ii,:));
+            rootStr=varargin{1};
+            iterNum=varargin{2};
+            profNum=varargin{3};
+            
+            in1=[iterNum 1];
+            in2=[ones([1,profNum])*iterNum;2:(profNum+1)]';
+            for ii=1:size(in2,1)
+                [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
+                    in1,in2(ii,:));
                 [analysisCoord1,analysisCoord2{ii},h]=PlotAreaError(loop1,loop2,paramoptim);
                 if ~isfig
                     
@@ -14,7 +20,12 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                     end
                 end
             end
-            [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},paramoptim.parametrisation);
+            try
+                [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},paramoptim.parametrisation);
+            catch
+                modeSmoothScale='undef';
+            end
+            
             h=figure('Name',modeSmoothScale);
             pathStr=varargin{1};
             intfig=varargin{2}(1);
@@ -47,8 +58,10 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
     xlabel('Point index')
     parsplie.splineCase='inversedesign2';
     for ii=1:numel(analysisCoord2)
-        [c1,~]=ResampleSpline(analysisCoord1,parsplie);
-        [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+        %[c1,~]=ResampleSpline(analysisCoord1,parsplie);
+        %[c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+        c1=analysisCoord1;
+        c2=analysisCoord2{ii};
         PlotProfileDifference(c1,c2,ax)
     end
     axes(ax(3))
@@ -93,11 +106,11 @@ function [analysisCoord1,analysisCoord2,h]=PlotAreaError(loop1,loop2,paramoptim)
     plotPoints(analysisCoord1)
     plotPoints(analysisCoord2)
     
-    try 
-    errM=(a2(:,1)-a1(:,1))/max(abs(a2(:,1)-a1(:,1)));
-    for ii=1:numel(errM);
-        text(a1(ii,3),a1(ii,4),num2str(errM(ii),'%.3e'));
-    end
+    try
+        errM=(a2(:,1)-a1(:,1))/max(abs(a2(:,1)-a1(:,1)));
+        for ii=1:numel(errM);
+            text(a1(ii,3),a1(ii,4),num2str(errM(ii),'%.3e'));
+        end
     catch
     end
     
@@ -129,14 +142,14 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     nameCell={subDir(:).name};
     isprofileDirCell=strfind(nameCell,strDir);
     if ~isempty(subDir)
-    for ii=1:length(subDir)
-        subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
-            ~xor(subDir(ii).isdir,isTargDir);
-    end
-    
-    returnSub=find([subDir(:).isProfile]);
+        for ii=1:length(subDir)
+            subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
+                ~xor(subDir(ii).isdir,isTargDir);
+        end
+        
+        returnSub=find([subDir(:).isProfile]);
     else
-       returnSub=[]; 
+        returnSub=[];
     end
     
     if isempty(returnSub)
