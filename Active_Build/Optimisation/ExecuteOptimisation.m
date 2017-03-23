@@ -263,6 +263,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                     repeatflag=false;
                 otherwise
                     warning([fieldsIn{ii},' is an unhandled restart input'])
+                    repeatflag=false;
             end
         end
     end
