@@ -248,6 +248,7 @@ function [domainBounds]=MakeCartesianGridBoundsInactTE(cellLevels)
     domainBounds=[-axRatio,axRatio];
     domainBounds(1,:)=domainBounds(1,:)+cellLength+1/2;
 end
+
 function [xMin,xMax,t,L,A]=ClosedLoopProperties(points)
     
     [A]=abs(CalculatePolyArea(points));

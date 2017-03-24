@@ -1749,7 +1749,6 @@ function [param]=TestInit()
     param.general.passDomBounds(1,:)=param.general.passDomBounds(1,:)*sizeRatio;
 end
 
-
 function [param]=SnakesStructTopo(varargin)
     
     if isempty(varargin)
@@ -1972,4 +1971,90 @@ function [param]=val_WeirdShapeOut()
     
     param.general.typDat='low5shape';
 
+end
+
+
+%% Input Files for Alex Taylor
+
+function [param]=DefaultOptim_AlexT()
+   
+    [param]=DefaultCase();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='optimInit';
+    
+    
+    param.snakes.refine.refineGrid=[4 4];
+    param.snakes.refine.typeRefine='all';
+    
+    % Output parameters
+    param.results.archiveName='Optimisation';
+    param.results.resultRoot=[cd,'\..\results\'];
+    param.results.noteFiles={'CurrentBuild'};
+    param.results.tags={'snakes','optimisation'};
+    param.snakes.step.snakData='light'; % 'all'
+    param.snakes.step.snakesConsole=false;
+    
+ 
+    % For gradient restart=true for global restart=false
+    param.general.restart=true; 
+   
+    % Snake options to use if its taking too long or not converging enough
+    param.snakes.step.snakesSteps=100;
+    param.snakes.step.convLevel=10^-6;
+    % Snake options to use if there is large instability
+    param.snakes.step.maxStep=0.3;
+    param.snakes.step.maxDt=0.5;
+    
+    % Grid Size at initialisation
+    param.snakes.refine.axisRatio=1; % grid axis ratio
+    param.optiminit.cellLevels=[5,3];
+    % Makes grid cartesian
+    param.general.passDomBounds=MakeCartesianGridBounds(param.optiminit.cellLevels);
+    
+    % controls the surface mesh smoothness and density
+    param.general.subdivType='chaikin';
+    param.general.typeLoop='subdivspline';
+    param.general.refineSteps=2;
+    % we'd have to set it up if you wanted to use resampling to improve
+    % your surface meshes.
+    param.snakes.refine.resampleSnak=false; 
+    param.snakes.step.mergeTopo=true; % Can the snake change topology?
+    param.general.buildInternal=true; % build internal loops
+    
+    % Options specific to aero problems
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+    param.optiminit.corneractive=true;
+    param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
+    param.optiminit.defaultCorner=1e-6;
+    
+    % Avoid changing these
+    param.snakes.step.arrivalTolerance=1e-1;
+    param.snakes.step.snaxInitPos=1e-5;
+    param.snakes.force.lengthEpsilon=1e-6;
+    param.snakes.force.distEpsilon=5e-7;
+    param.snakes.force.dirEpsilon=1e-7;
+    param.snakes.force.typeSmear='d';
+    
+    param.snakes.step.fillLooseStep=0;
+    param.snakes.step.fillLooseCut=1e-1;
+    param.snakes.step.fillErrStep=0;
+    param.snakes.step.fillErrCut=1000;
+    param.snakes.step.vertLooseStep=100;
+end
+
+function [param]=MBBbeam1_parametrisation()
+    
+    [param]=DefaultOptim_AlexT();
+    
+     param.optiminit.cellLevels=[5,3];
+     param.general.passDomBounds=[0 9;0 3];
+     param.snakes.refine.axisRatio=1;
+     param.snakes.step.snakesSteps=50;
+     param.general.restart=false; 
+    
 end

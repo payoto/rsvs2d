@@ -1334,7 +1334,6 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     end
 end
 
-
 function paroptim=invdeslocal_test3(gridCase,refmethod,cornAct,ratioPos)
     
     paroptim=refsweeplocal(gridCase,'4412',60,8);
@@ -1363,7 +1362,7 @@ function paroptim=invdeslocal_test3(gridCase,refmethod,cornAct,ratioPos)
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
     paroptim.optim.CG.sensAnalyticalType='raw';
-    paroptimoptimCG.nLineSearch=8;
+    paroptim.optim.CG.nLineSearch=8;
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 
@@ -4422,3 +4421,33 @@ function [paroptim]=FullSupersonicOptimSym_bp2_1()
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     
 end
+
+
+%% Input Files for Alex Taylor
+
+function [paroptim]=AlexT_test()
+    [paroptim]=DefaultOptim();
+    
+    [paroptim]=MBBbeam1_constraint(paroptim);
+    paroptim=ModifySnakesParam(paroptim,'MBBbeam1_parametrisation'); % Get snake parameters
+    [paroptim]=OptimDE(paroptim);
+    paroptim.general.objectiveName='FreeFemPPTest';
+    
+    paroptim.general.nPop=15; % Number of members in a population
+    paroptim.general.startPop='rand';
+    paroptim.general.maxIter=30;
+    paroptim.general.worker=2; 
+end
+
+function [paroptim]=MBBbeam1_constraint(paroptim)
+    
+    paroptim.constraint.desVarConstr={' '};
+    paroptim.constraint.desVarVal={[]};
+    paroptim.constraint.initConstr={'LocalVolFrac_image'};
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\MBBbeam1.png','min'}};
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    
+end
+
+
