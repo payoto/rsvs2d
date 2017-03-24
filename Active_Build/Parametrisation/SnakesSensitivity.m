@@ -1064,7 +1064,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
     dCurr=[snaxel(:).d];
     
     [snaxOrd]=SplitSnaxLoops(snaxel); % Isolates individual loops
-    maxDistRatio=1/1000;
+    maxDistRatio=1/1000*min(1-abs(dCurr*2-1));
     [dChange,sensSnaxRatio]=FindModalDistanceChange(sensSnax,maxDistRatio);
     
     

@@ -1645,6 +1645,8 @@ function [objValue,additional]=LengthArea(paramoptim,member,loop)
     additional.tc=additional.t/additional.c;
 end
 
+% Aerodynamics
+
 function [objValue,additional]=CutCellFlow(paramoptim,member,loop)
     boundaryLoc=member.location;
     
@@ -1706,6 +1708,59 @@ function [objValue,additional]=Rosenbrock(paramoptim,member,loop)
     additional.y=objValue;
 end
 
+% Structures
+
+function [objValue,additional]=FreeFemPP(paramoptim,member,loop)
+    
+    varExtract={'typeLoop'};
+    [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    [isInternal]=mod(FindInternalLoop(loop),2);
+    coords{numel(loop),11}=[];
+    for ii=1:numel(loop)
+        coords{ii,1}=loop(ii).(typeLoop)(:,1);
+        coords{ii,2}=loop(ii).(typeLoop)(:,2);
+        coords{ii,3}=loop(ii).isccw;
+        coords{ii,4}=isInternal(ii);
+    end
+    
+    [objValue,outstruct]=CallFreeFemPP(coords,paramoptim);
+    
+    
+    [~,areaAdd]=LengthArea(paramoptim,member,loop);
+    
+    
+    additional=outstruct;
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
+end
+
+function [objValue,additional]=FreeFemPPTest(paramoptim,member,loop)
+    
+    varExtract={'typeLoop'};
+    [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    [isInternal]=mod(FindInternalLoop(loop),2);
+    coords{numel(loop),11}=[];
+    for ii=1:numel(loop)
+        coords{ii,1}=loop(ii).(typeLoop)(:,1);
+        coords{ii,2}=loop(ii).(typeLoop)(:,2);
+        coords{ii,3}=loop(ii).isccw;
+        coords{ii,4}=isInternal(ii);
+    end
+    
+    objValue=1;
+    
+    [~,areaAdd]=LengthArea(paramoptim,member,loop);
+    
+    
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
+end
 %% Refined Optimisation
 
 

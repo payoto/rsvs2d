@@ -361,7 +361,11 @@ function [returnEntries]=GenerateIterIndexEntry(FID,nIter,population)
         str=[str,' , ', num2str(population(ii).constraint)];
         
         for jj=1:nAdditional
-            str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %30.24e ')];
+            try 
+                str=[str,' , ', num2str(population(ii).additional.(fieldsAdd{jj}),' %30.24e ')];
+            catch
+                str=[str,' , ',''];
+            end
         end
         str=[str,' , ', population(ii).exception];
         str=[str,' , ', num2str(population(ii).fill,' %30.24e ')];
