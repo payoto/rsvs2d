@@ -1527,6 +1527,16 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
                 [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]...
                 ,'Airfoil','');
             
+        case 'FreeFemPPTest'
+            addstruct=struct('A',...
+                [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]...
+                ,'Airfoil','');
+            
+        case 'FreeFemPP'
+            addstruct=struct('A',...
+                [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]...
+                ,'Airfoil','');
+            
             
         otherwise
             addstruct=struct('y',[]);
