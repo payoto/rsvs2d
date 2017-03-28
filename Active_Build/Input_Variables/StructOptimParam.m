@@ -84,6 +84,7 @@ function [paroptimrefine]=DefaultOptimRefine()
     paroptimrefine.refinePattern='preset'; % 'edgecross' 'curvature'
     paroptimrefine.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' ,
     %'desvargradadvanced' , 'contcurve', 'contlengthnorm' 'contcurvescale'
+    paroptimrefine.cellRank='value'; % how cells are selected
     paroptimrefine.refineOptimRatio=1; % ratio of optimisation
     paroptimrefine.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
     paroptimrefine.slopeConv=0.2; % ratio of converged slope to maximum slope.
@@ -1363,9 +1364,42 @@ function paroptim=invdeslocal_test3(gridCase,refmethod,cornAct,ratioPos)
     paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
     paroptim.optim.CG.sensAnalyticalType='raw';
     paroptim.optim.CG.nLineSearch=8;
+    paroptim.refine.cellRank='value';
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 
+function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
+    
+    paroptim=refsweeplocal(gridCase,'4412',60,5);
+    
+    %paroptim.general.maxIter=6;
+    paroptim.refine.refineOptimType=refmethod;
+    paroptim.optim.CG.gradScaleType=''; % 'volume'
+    paroptim.parametrisation.general.typeLoop='subdivision';
+    
+    paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
+    paroptim.parametrisation.snakes.refine.pinnedVertex='LETE';
+    if cornAct
+        paroptim.parametrisation.snakes.refine.pinnedVertex='';
+    end
+    ratio=PickRatioForRefineMethod(refmethod);
+    paroptim.refine.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
+    paroptim.spline.resampleSnak=false;
+    paroptim.parametrisation.general.passDomBounds(2,:)=...
+        paroptim.parametrisation.general.passDomBounds(2,:)/2;
+    if cornAct
+        paroptim.parametrisation.general.passDomBounds(1,:)=...
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
+    end
+    
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.optim.CG.nLineSearch=8;
+    paroptim.refine.cellRank='rank';
+    %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+end
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
    paroptim.general.maxIter=0;
@@ -1455,6 +1489,8 @@ function [refineOptimRatio]=PickRatioForRefineMethod(refmethod)
         case 'desvargrad'
             refineOptimRatio=0.3;
         case 'contcurvescale'
+            refineOptimRatio=0.3;
+        case 'contcurvevol'
             refineOptimRatio=0.3;
         case 'contour'
             refineOptimRatio=0.3;

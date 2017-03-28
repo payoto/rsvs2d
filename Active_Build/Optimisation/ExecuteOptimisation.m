@@ -10,7 +10,7 @@
 %         parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%{
+
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -20,8 +20,7 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-%}
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -1816,11 +1815,13 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     
     [outinfo]=OptimisationOutput('init',paramoptim);
+    
     diaryFile=[outinfo.rootDir,'\Latest_Diary.log'];
     diaryFile=MakePathCompliant(diaryFile);
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
     diary(diaryFile);
+    
     warning('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
     
     % Refine Grid
@@ -2250,9 +2251,10 @@ end
 function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
     % function
     
-    varNames={'refineOptimType','refineOptimRatio','refineOptimPopRatio','symDesVarList','direction'};
+    varNames={'refineOptimType','refineOptimRatio','refineOptimPopRatio',...
+        'symDesVarList','direction','rankType'};
     [refineOptimType,refineOptimRatio,refineOptimPopRatio,symDesVarList,...
-        direction]=ExtractVariables(varNames,paramoptim);
+        direction,rankType]=ExtractVariables(varNames,paramoptim);
     
     % for all gradient based and non gradient use the entire last
     % population has a guide. ie evaluate the condition for each member.
@@ -2276,8 +2278,9 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             edgeCellSub=FindObjNum([],[oldGrid.base.edge(:).cellindex],cellInd);
             
             for ii=indexPop;
-                isRefine=isRefine | reshape(REFINE_desvargrad(lastpopulation(ii),...
+                cellRank=reshape(REFINE_desvargrad(lastpopulation(ii),...
                     oldGrid.base,actInd,cellInd,edgeCellSub,refineOptimRatio),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
         case 'desvargradadvanced'
             % refines cells based on the gradient between design variables
@@ -2289,9 +2292,10 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
                 {oldGrid.connec.cell(:).new},...
                 {oldGrid.connec.cell(:).old},'UniformOutput',false));
             for ii=indexPop;
-                isRefine=isRefine | reshape(REFINE_desvargradadvanced(lastpopulation(ii),...
+                cellRank=reshape(REFINE_desvargradadvanced(lastpopulation(ii),...
                     oldGrid.base,actInd,cellInd,edgeCellSub,refineOptimRatio,...
                     oldIndsNewOrd),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
         case 'contlength'
             % refines cells based on the L/sqrt(A)
@@ -2307,9 +2311,10 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
             newIndsCell=[oldGrid.connec.cell(:).new];
             for ii=indexPop;
-                isRefine=isRefine | reshape(REFINE_contlength(lastpopulation(ii),...
+                cellRank=reshape(REFINE_contlength(lastpopulation(ii),...
                     oldGrid,actInd,cellInd,refineOptimRatio,...
                     oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
             
         case 'contlengthnorm'
@@ -2327,9 +2332,28 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
             newIndsCell=[oldGrid.connec.cell(:).new];
             for ii=indexPop;
-                isRefine=isRefine | reshape(REFINE_contlengthnorm(lastpopulation(ii),...
+                cellRank=reshape(REFINE_contlengthnorm(lastpopulation(ii),...
                     oldGrid,actInd,cellInd,refineOptimRatio,...
                     oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
+            end
+        case 'contcurvevol'
+            % refines cells based on the sqrt(curvature)*A
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            
+            oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            
+            cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
+            newIndsCell=[oldGrid.connec.cell(:).new];
+            for ii=indexPop;
+                cellRank=reshape(REFINE_contcurvevol(lastpopulation(ii),...
+                    oldGrid,actInd,cellInd,refineOptimRatio,...
+                    oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
         case 'contcurve'
             % refines cells based on the sqrt(curvature)*A
@@ -2344,9 +2368,10 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
             newIndsCell=[oldGrid.connec.cell(:).new];
             for ii=indexPop;
-                isRefine=isRefine | reshape(REFINE_contcurve(lastpopulation(ii),...
+                cellRank=reshape(REFINE_contcurve(lastpopulation(ii),...
                     oldGrid,actInd,cellInd,refineOptimRatio,...
                     oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
         case 'contcurvescale'
             % refines cells based on the sqrt(curvature)*A
@@ -2361,9 +2386,10 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
             newIndsCell=[oldGrid.connec.cell(:).new];
             for ii=indexPop;
-                isRefine=isRefine | reshape(REFINE_contcurvescale(lastpopulation(ii),...
+                cellRank=reshape(REFINE_contcurvescale(lastpopulation(ii),...
                     oldGrid,actInd,cellInd,refineOptimRatio,...
                     oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
             
         otherwise
@@ -2403,6 +2429,23 @@ function [indexPop]=SelectRefinementForPop(population,ratio,optimDir)
     indexPop=indexPop(1:max(round(numel(objPop)*ratio),1));
 end
 
+function [isRefine]=RefineSortMethod(cellRank,refineOptimRatio,rankType)
+    
+    switch rankType
+        case 'value'
+            cellRank=cellRank/max(cellRank);
+            isRefine=cellRank>=(1-refineOptimRatio);
+        case 'rank'
+            numRefine=ceil(sum(cellRank~=0)*refineOptimRatio);
+            [~,cellOrd]=sort(cellRank);
+            isRefine=false(size(cellRank));
+            isRefine((cellOrd((numel(cellRank)-(numRefine)):end)))=true;
+        otherwise
+            error('Unknown ranking type')
+    end
+    
+end
+
 function [isSnax]=REFINE_contour(population)
     % refines all cells with snaxels
     
@@ -2414,7 +2457,7 @@ function [isSnax]=REFINE_contour(population)
     
 end
 
-function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
+function [cellRank,isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
         edgeCellSub,refineOptimRatio)
     % refines cells based on the gradient between design variables
     % this system is edge based It evaluates the gradients between every
@@ -2478,7 +2521,7 @@ function [isRefine]=REFINE_desvargrad(population,gridBase,actInd,cellInd,...
 end
 
 
-function [isRefine]=REFINE_desvargradadvanced(population,gridBase,actInd,cellInd,...
+function [cellRank,isRefine]=REFINE_desvargradadvanced(population,gridBase,actInd,cellInd,...
         edgeCellSub,refineOptimRatio,oldIndsNewOrd)
     % refines cells based on the gradient between design variables
     % this system is edge based It evaluates the gradients between every
@@ -2535,7 +2578,7 @@ function [cellGrad]=IdentifiedCrossedEdge(connec,snaxel,cellInd,fillExt,oldIndsN
     
 end
 
-function [isRefine]=REFINE_contlength(population,grid,actInd,cellInd,...
+function [cellRank,isRefine]=REFINE_contlength(population,grid,actInd,cellInd,...
         refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
     % refines cells based on the gradient between design variables
     % this system is edge based It evaluates the gradients between every
@@ -2568,7 +2611,7 @@ function [isRefine]=REFINE_contlength(population,grid,actInd,cellInd,...
 end
 
 
-function [isRefine]=REFINE_contlengthnorm(population,grid,actInd,cellInd,...
+function [cellRank,isRefine]=REFINE_contlengthnorm(population,grid,actInd,cellInd,...
         refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
     % refines cells based on the gradient between design variables
     % this system is edge based It evaluates the gradients between every
@@ -2600,7 +2643,7 @@ function [isRefine]=REFINE_contlengthnorm(population,grid,actInd,cellInd,...
     
 end
 
-function [isRefine]=REFINE_contcurve(population,grid,actInd,cellInd,...
+function [cellRank,isRefine]=REFINE_contcurve(population,grid,actInd,cellInd,...
         refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
     % refines cells based on the gradient between design variables
     % this system is edge based It evaluates the gradients between every
@@ -2626,6 +2669,41 @@ function [isRefine]=REFINE_contcurve(population,grid,actInd,cellInd,...
     % This was shown to leave no effect of cell size on the refinement
     % criterion "TestCurvChangeArea"
     cellRank=([cellCentredCoarse(:).curvSnax]).*([cellCentredCoarse(:).volume]);
+    
+    cellRank(~isfinite(cellRank))=0;
+    cellRank(~isAct)=0;
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    isRefine(~isAct)=false;
+    
+end
+
+function [cellRank,isRefine]=REFINE_contcurvevol(population,grid,actInd,cellInd,...
+        refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave','restartsnak')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        grid.base.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+    isAct=false([1,numel(grid.base.cell)]);
+    isAct(actInd)=true;
+    
+    [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
+        grid.cellrefined,cellCentredCoarse,oldIndsNewOrd,newIndsCell);
+    
+    % This was shown to leave no effect of cell size on the refinement
+    % criterion "TestCurvChangeArea"
+    cellRank=sqrt(([cellCentredCoarse(:).curvSnax])).*([cellCentredCoarse(:).volume]);
     
     cellRank(~isfinite(cellRank))=0;
     cellRank(~isAct)=0;

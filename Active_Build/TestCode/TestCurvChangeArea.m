@@ -13,7 +13,18 @@ for jj=1:numel(ratioA)
     end
     aTotCurv(jj)=sum(sqrt(sum((curv.^2),2)));
 end
-
-
-
-plot(ratioA,sqrt(aTotCurv).*ratioA)
+figure('position',[100 100 1000 700])
+subplot(1,2,1)
+hold on
+plot(ratioA,sqrt(aTotCurv))
+plot(ratioA,sqrt(aTotCurv).*sqrt(ratioA))
+plot(ratioA,sqrt(aTotCurv).*(ratioA))
+legend('curv','curv*sqrt(A)','curv*A')
+title('sqrt(Curv)')
+subplot(1,2,2)
+hold on
+plot(ratioA,(aTotCurv))
+plot(ratioA,(aTotCurv).*sqrt(ratioA))
+plot(ratioA,(aTotCurv).*(ratioA))
+legend('curv','curv*sqrt(A)','curv*A')
+title('Curv')
