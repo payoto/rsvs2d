@@ -1581,8 +1581,8 @@ end
 function [paroptim]=Debug170328()
     paroptim=invdeslocal_test4('uo','desvargradadvanced',1,1);
     
-    paroptim.general.maxIter=1;
-    paroptim.refine.refineIter=1;
+    paroptim.general.maxIter=2;
+    paroptim.refine.refineIter=2;
     
 end
 

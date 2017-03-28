@@ -173,7 +173,8 @@ function [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(sn
     [snaxel,snakposition,~,~,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
-    
+    sensSnax(:,find(any(sensSnax~=0)))=sensSnax(:,find(any(sensSnax~=0)))./...
+        repmat(sqrt(sum(sensSnax(:,find(any(sensSnax~=0))).^2)),[size(sensSnax,1),1]);
     
 end
 
@@ -1037,6 +1038,7 @@ function [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefract
         [snaxmode(ii).vecmode]=BuildVectors(rootloop,snaxmode(ii).loopsnaxel);
         snaxmode(ii).deltaFrac=(sum(snaxmode(ii).A)-startVol)/snaxmode(ii).cellVol;
     end
+    snaxmode([snaxmode(:).deltaFrac]==0)=[];
 end
 
 function [vectormode]=BuildVectors(looproot,loopsnaxel)

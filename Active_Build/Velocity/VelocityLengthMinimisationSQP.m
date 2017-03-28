@@ -1285,7 +1285,7 @@ function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,HL,Ja_x,lagMulti,alg
             %HL=HL;
     end
             
-            
+    %HL=Hf;    
     
     actCol=find(sum(abs(Ja_x),2)~=0);
     
