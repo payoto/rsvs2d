@@ -168,8 +168,8 @@ function [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(sn
     [volumefraction,coeffstructure,~]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo);
     forceparam.isLast=true;
-    forceparam.lengthEpsilon=0;
-    forceparam.distEpsilon=0;
+%     forceparam.lengthEpsilon=0;
+%     forceparam.distEpsilon=0;
     [snaxel,snakposition,~,~,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
