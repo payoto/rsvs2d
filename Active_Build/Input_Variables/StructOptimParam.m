@@ -84,7 +84,7 @@ function [paroptimrefine]=DefaultOptimRefine()
     paroptimrefine.refinePattern='preset'; % 'edgecross' 'curvature'
     paroptimrefine.refineOptimType='all'; % 'contour', 'desvargrad' , 'contlength' ,
     %'desvargradadvanced' , 'contcurve', 'contlengthnorm' 'contcurvescale'
-    paroptimrefine.cellRank='value'; % how cells are selected
+    paroptimrefine.rankType='value'; % how cells are selected
     paroptimrefine.refineOptimRatio=1; % ratio of optimisation
     paroptimrefine.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
     paroptimrefine.slopeConv=0.2; % ratio of converged slope to maximum slope.
@@ -1397,9 +1397,10 @@ function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
     paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
     paroptim.optim.CG.sensAnalyticalType='raw';
     paroptim.optim.CG.nLineSearch=8;
-    paroptim.refine.cellRank='rank';
+    paroptim.refine.rankType='rank';
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
+
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
    paroptim.general.maxIter=0;
@@ -1576,6 +1577,15 @@ function [paroptim]=Debug170323()
     paroptim.refine.refineIter=1;
     
 end
+
+function [paroptim]=Debug170328()
+    paroptim=invdeslocal_test4('uo','desvargradadvanced',1,1);
+    
+    paroptim.general.maxIter=1;
+    paroptim.refine.refineIter=1;
+    
+end
+
 %% refinement
 
 function paroptim=test_refine1()

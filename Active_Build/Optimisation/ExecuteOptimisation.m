@@ -11,6 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -20,7 +21,9 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+%}
+
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -574,11 +577,11 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     
     rootPop=population(1);
     
-    parfor ii=1:nPop-1
+    for ii=1:nPop-1
         %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        try
+        %try
             % Normal Execution
             switch sensCalc
                 case'snake'
@@ -592,12 +595,12 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
                         nIter,ii+1,paramoptim,rootPop);
             end
             
-        catch MEexception
-            % Error Capture
-            population(ii+1).constraint=false;
-            population(ii+1).exception=['error: ',MEexception.identifier];
-            captureErrors{ii+1}=MEexception.getReport;
-        end
+%         catch MEexception
+%             Error Capture
+%             population(ii+1).constraint=false;
+%             population(ii+1).exception=['error: ',MEexception.identifier];
+%             captureErrors{ii+1}=MEexception.getReport;
+%         end
     end
     
 end
