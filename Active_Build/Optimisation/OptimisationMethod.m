@@ -191,6 +191,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
         newPop=[newRoot;vertcat(newGradPop{:})];
         deltas=[deltaRoot,deltaGrad{:}];
+        validVol
         paramoptim.optim.CG.validVol=validVol;
         paramoptim.optim.CG.diffStepSize=diffStepSize;
         paramoptim.optim.CG.lineSearch=false;
@@ -316,6 +317,52 @@ function [gradientopt]=GetIterationInformation(population,constr)
 end
 
 function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
+    
+    normVec=@(v) sqrt(sum(v.^2,2));
+    
+    nCurr=length(gradstruct_curr);
+    desModes_curr=vertcat(gradstruct_curr(:).design);
+    nM1=length(gradstruct_m1);
+    desModes_m1=vertcat(gradstruct_m1(:).design);
+    
+    allModes=[desModes_curr;desModes_m1];
+    modeCoeff=zeros([(nCurr+nM1),1]);
+    for ii=1:length(allModes(:,1))
+        modeCoeff(ii)=sign(allModes(ii,find(allModes(ii,:)~=0,1,'first')));
+    end
+    modeMultiplier=modeCoeff*ones(size(allModes(1,:)));
+    allModes=allModes./modeMultiplier;
+%     modeCoeffNorm=normVec(allModes);
+%     modeMultiplier=modeCoeffNorm*ones(size(allModes(1,:)));
+%     allModes=allModes./modeMultiplier;
+%     modeCoeff=modeCoeff.*modeCoeffNorm;
+    modeSimilarity=FindIdenticalVectorOrd(allModes);
+    
+    nModes=length(modeSimilarity);
+    
+    modestruct=struct('mode',zeros(size(gradstruct_curr(1).design)),...
+        'curr',struct('ind',[],'coeff',[]),'m1',struct('ind',[],'coeff',[]));
+    
+    modestruct=repmat(modestruct,[1,nModes]);
+    
+    for ii=1:nModes
+        modestruct(ii).mode=allModes(modeSimilarity{ii}(1),:);
+        for jj=1:length(modeSimilarity{ii})
+            if modeSimilarity{ii}(jj)<=nCurr
+                modestruct(ii).curr.ind=[modestruct(ii).curr.ind,modeSimilarity{ii}(jj)];
+                modestruct(ii).curr.coeff(end+1)=modeCoeff(modeSimilarity{ii}(jj));
+            elseif modeSimilarity{ii}(jj)<=(nCurr+nM1)
+                modestruct(ii).m1.ind=[modestruct(ii).m1.ind,modeSimilarity{ii}(jj)-nCurr];
+                modestruct(ii).m1.coeff(end+1)=modeCoeff(modeSimilarity{ii}(jj));
+            else
+                error('Invalid Index was produced by the mode identification')
+            end
+        end
+    end
+end
+
+
+function [modestruct]=ExtractModes_OLD(gradstruct_curr,gradstruct_m1)
     
     normVec=@(v) sqrt(sum(v.^2,2));
     
@@ -772,19 +819,22 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
     %}
     
     
-    if stepLength==0
-        warning('Step Length is stagnant this iteration')
-        %validVol=max(validVol*stepLengths(end-2),minVol);
-        
-    end
+    
     if (stepLength==0) || (validVol*stepLength<10*max(abs(diffStepSize)))
         
         diffStepSize=sign(diffStepSize).*max(abs(diffStepSize)/(10),minDiffStep);
         
     end
-    volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
-    validVol=validVol*volMulti;
-    validVol=max(validVol,minVol);
+    if stepLength==0
+        warning('Step Length is stagnant this iteration')
+        %validVol=max(validVol*stepLengths(end-2),minVol);
+        validVol=validVol/4;
+    else
+        volMulti=1+round((bestPoint)/numel(unitSteps)*2-1)/2;
+        validVol=validVol*volMulti;
+        validVol=max(validVol,minVol);
+    end
+    
     stepVector=vec*stepLength;
     
 end

@@ -57,7 +57,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
-    paroptimgeneral.direction='max';
+    paroptimgeneral.direction='min';
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675]; %#ok<*NBRAK>
     paroptimgeneral.useSnake=true;
@@ -1583,6 +1583,14 @@ function [paroptim]=Debug170328()
     
     paroptim.general.maxIter=2;
     paroptim.refine.refineIter=2;
+    
+end
+
+function [paroptim]=Debug170329()
+    paroptim=invdeslocal_test4('uo','contcurve',1,1);
+    
+    paroptim.general.maxIter=3;
+    paroptim.refine.refineIter=3;
     
 end
 
