@@ -581,7 +581,7 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
         %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        %try
+        try
             % Normal Execution
             switch sensCalc
                 case'snake'
@@ -595,12 +595,12 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
                         nIter,ii+1,paramoptim,rootPop);
             end
             
-%         catch MEexception
-%             Error Capture
-%             population(ii+1).constraint=false;
-%             population(ii+1).exception=['error: ',MEexception.identifier];
-%             captureErrors{ii+1}=MEexception.getReport;
-%         end
+        catch MEexception
+            Error Capture
+            population(ii+1).constraint=false;
+            population(ii+1).exception=['error: ',MEexception.identifier];
+            captureErrors{ii+1}=MEexception.getReport;
+        end
     end
     
 end
