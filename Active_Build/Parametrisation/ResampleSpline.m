@@ -133,7 +133,7 @@ end
 function splitPoints=SplitAtTrailingEdge(points,TEisLeft)
     TEisLeft=(TEisLeft-0.5)*2;
     [~,testGlobalMin]=min(TEisLeft*points(:,1));
-    splitPoints=points([testGlobalMin:end,1:testGlobalMin-1],:);
+    splitPoints=points;%([testGlobalMin:end,1:testGlobalMin-1],:);
     
 end
 
@@ -486,16 +486,16 @@ function [parspline]=CaseSpline_inversedesign2()
     [parspline]=CaseSpline_default();
     
     parspline.TEisLeft=0;
-    
+    parspline.eps=0;
     parspline.parameter='l'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.typCurve='open';
+    parspline.typCurve='closed';
     
     parspline.distribution='calc';
-    parspline.domain='scaleX'; % 'normalizeX' 'normalizeL'
+    parspline.domain='normalizeL'; % 'normalizeX' 'normalizeL'
     parspline.scale=1;
     
     parspline.samplingParam='param';
-    parspline.samplingN=2000;
+    parspline.samplingN=10000;
     parspline.samplingDistrib='2cosine';
     parspline.typeInterp='linear';
     %parspline.samplingScope='local';

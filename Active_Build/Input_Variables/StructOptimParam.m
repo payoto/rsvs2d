@@ -1591,7 +1591,7 @@ function [paroptim]=Debug170329()
     
     paroptim.general.maxIter=3;
     paroptim.refine.refineIter=3;
-    
+    paroptim.optim.CG.gradScaleType='volume'; % 'volume'
 end
 
 %% refinement
@@ -2765,7 +2765,7 @@ function paroptim=bulkNacaInvDes()
     end
     initInterp=initInterp([1:2,50,59]);
     %initInterp={'0012','4412','1108'};
-    %initInterp={'4412'};
+    initInterp={'4412'};
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=1;
