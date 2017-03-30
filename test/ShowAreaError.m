@@ -6,9 +6,14 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
             rootStr=varargin{1};
             iterNum=varargin{2};
             profNum=varargin{3};
-            
+            if numel(varargin)<4
+                startProf=2;
+            else
+                startProf=varargin{4};
+                
+            end
             in1=[iterNum 1];
-            in2=[ones([1,profNum])*iterNum;2:(profNum+1)]';
+            in2=[ones([1,profNum])*iterNum;startProf:(profNum+startProf-1)]';
             for ii=1:size(in2,1)
                 [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
                     in1,in2(ii,:));
@@ -58,34 +63,38 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
     xlabel('Point index')
     parsplie.splineCase='inversedesign2';
     for ii=1:numel(analysisCoord2)
-        %[c1,~]=ResampleSpline(analysisCoord1,parsplie);
-        %[c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+%         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
+%         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
         c1=analysisCoord1;
         c2=analysisCoord2{ii};
-        PlotProfileDifference(c1,c2,ax)
+        posL=PlotProfileDifference(c1,c2,ax);
     end
     axes(ax(3))
-    plot(c1(:,1))
-    plot(c1(:,2))
+    plot(posL,c1(:,1))
+    plot(posL,c1(:,2))
     legend('x','y')
     hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',modeSmoothScale,'.fig'])
 end
 
-function []=PlotProfileDifference(coord1,coord2,ax)
+function [posL]=PlotProfileDifference(coord1,coord2,ax)
     
     
     if numel(coord1)==numel(coord2)
         axes(ax(1))
         n=size(coord1,1);
         tanVec=coord1(mod((0:n-1)+1,n)+1,:)-coord1(mod((0:n-1)-1,n)+1,:);
+        posL=sqrt(sum((tanVec).^2,2));
+        posL=cumsum([0;posL(1:end-1)]);
         normVec=([0 1;-1 0]*tanVec')';
         deltaCoord=sum((coord2-coord1).*normVec,2)./sqrt(sum(normVec.^2,2));
         %deltaCoord=sqrt(sum((coord2-coord1).^2,2));
         [maxVal,iMax]=max(abs(deltaCoord));
-        plot(deltaCoord)
+        plot(posL,deltaCoord)
         axes(ax(2))
-        plot(sign(iMax)*deltaCoord/maxVal)
+        plot(posL,sign(iMax)*deltaCoord/maxVal)
         
+    else
+        warning('Different numbers')
     end
     
     

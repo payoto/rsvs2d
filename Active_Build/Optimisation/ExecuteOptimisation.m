@@ -2716,7 +2716,7 @@ function [cellRank,isRefine]=REFINE_contcurvevol(population,grid,actInd,cellInd,
     
 end
 
-function [isRefine]=REFINE_contcurvescale(population,grid,actInd,cellInd,...
+function [cellRank,isRefine]=REFINE_contcurvescale(population,grid,actInd,cellInd,...
         refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
     % refines cells based on the gradient between design variables
     % this system is edge based It evaluates the gradients between every
