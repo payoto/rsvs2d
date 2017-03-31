@@ -152,6 +152,7 @@ function paramoptiminit=default_optimInit()
     paramoptiminit.corneractive=false;
     paramoptiminit.modeSmoothType='peaksmooth';
     paramoptiminit.modeSmoothScale='lengthvol'; % 'lengthvol' 'lengthvolnormfill' 'lengthvolnormvol' 'none'
+    paramoptiminit.modeScale='length';% 'length' 'volume' 'none'
     paramoptiminit.modeSmoothNum=6;
 end
 

@@ -209,7 +209,7 @@ function [paroptim]=OptimCG(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.general.stepAlgo='conjgrad';
-    paroptim.general.varOverflow='spill';
+    paroptim.general.varOverflow='vertexflow';
     paroptim.general.iterGap=2;
 end
 
@@ -217,7 +217,7 @@ function [paroptim]=OptimBFGS(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.optim.CG.stepAlgo='BFGS';
-    paroptim.general.varOverflow='spill';
+    paroptim.general.varOverflow='vertexflow';
     paroptim.general.iterGap=2;
 end
 
@@ -535,7 +535,6 @@ function [paroptim]=Component_DE()
     [paroptim]=OptimDE_horiz(paroptim);
     
     paroptim.general.startPop='initaeroshell';
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.symType='none'; % 'horz'
@@ -1057,6 +1056,7 @@ function paroptim=refsweeplocal(gridCase,airfoil,nIter,lvl)
     end
     
     paroptim.parametrisation.general.typeLoop='subdivision';
+    paroptim.parametrisation.optiminit.modeScale='volume';
     paroptim.refine.refineOptimType='desvargrad';
     paroptim.refine.refineOptimRatio=0.1;
     
@@ -1591,7 +1591,7 @@ function [paroptim]=Debug170329()
     
     paroptim.general.maxIter=3;
     paroptim.refine.refineIter=3;
-    paroptim.optim.CG.gradScaleType='volume'; % 'volume'
+    paroptim.optim.CG.gradScaleType='none'; % 'volume'
 end
 
 %% refinement
