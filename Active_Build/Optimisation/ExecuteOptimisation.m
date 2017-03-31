@@ -577,7 +577,7 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     
     rootPop=population(1);
     
-    for ii=1:nPop-1
+    parfor ii=1:nPop-1
         %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
