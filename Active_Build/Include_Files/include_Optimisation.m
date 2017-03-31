@@ -739,17 +739,21 @@ function [fillflow]=VertexOverFlowDefine(paramoptim,gridBase,gridRefined,gridCon
     
     % Fill dist provides an indication of the fill distance rather than the
     % actual
-    fillDist=unique(snaxFlow(:,1));
-    for ii=1:numel(fillDist)
-        fillDist(ii,2)=prod(snaxFlow(find(snaxFlow(:,1)==fillDist(ii,1)),2));
+    if ~isempty(snaxFlow)
+        fillDist=unique(snaxFlow(:,1));
+        for ii=1:numel(fillDist)
+            fillDist(ii,2)=prod(snaxFlow(find(snaxFlow(:,1)==fillDist(ii,1)),2));
+        end
+        fillDist=fillDist(find(fillDist(:,2)<spillCutOff),:);
+        
+        % need to transform fill dist into a relationship between cells (ie
+        % filling cells and emptying ones)
+        
+        vertflowinfo=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid);
+        fillflow=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec);
+    else
+        fillflow=struct([]);
     end
-    fillDist=fillDist(find(fillDist(:,2)<spillCutOff),:);
-    
-    % need to transform fill dist into a relationship between cells (ie
-    % filling cells and emptying ones)
-    
-    vertflowinfo=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid);
-    fillflow=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridBase,gridConnec);
 end
 
 function [vertflowinfo]=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentredGrid)
