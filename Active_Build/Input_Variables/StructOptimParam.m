@@ -1594,6 +1594,15 @@ function [paroptim]=Debug170329()
     paroptim.optim.CG.gradScaleType='none'; % 'volume'
 end
 
+
+function [paroptim]=Debug170403()
+    paroptim=invdeslocal_test4('uo','contcurve',0,1);
+    
+    
+    paroptim.optim.CG.gradScaleType='none'; % 'volume'
+    paroptim.parametrisation.optiminit.modeScale='volume';
+end
+
 function [paroptim]=Run170331()
     paroptim=invdeslocal_test4('uo','contcurve',1,1);
     
