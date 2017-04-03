@@ -51,7 +51,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     end
     
     if isempty(returnSub)
-        disp('FindDir Could not find requested item')
+        %disp('FindDir Could not find requested item')
     end
     for ii=1:length(returnSub)
         returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
