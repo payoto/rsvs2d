@@ -1602,6 +1602,34 @@ function [paroptim]=Debug170403()
     paroptim.optim.CG.gradScaleType='none'; % 'volume'
     paroptim.parametrisation.optiminit.modeScale='volume';
 end
+function [paroptim]=Debug170404()
+    paroptim=invdeslocal_test4('uo','contcurvescale',1,1);
+    
+    
+%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+%     paroptim.parametrisation.optiminit.modeScale='volume';
+end
+function [paroptim]=Debug170404_2()
+    paroptim=invdeslocal_test4('uu','contcurvevol',0,1);
+    
+    
+%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+%     paroptim.parametrisation.optiminit.modeScale='volume';
+end
+function [paroptim]=Debug170404_3()
+    paroptim=invdeslocal_test4('uo','contcurve',0,1);
+    
+    
+%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+%     paroptim.parametrisation.optiminit.modeScale='volume';
+end
+function [paroptim]=Debug170405()
+    paroptim=invdeslocal_test4('uo','contcurve',0,1);
+    
+    
+%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+%     paroptim.parametrisation.optiminit.modeScale='volume';
+end
 
 function [paroptim]=Run170331()
     paroptim=invdeslocal_test4('uo','contcurve',1,1);

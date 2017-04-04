@@ -146,8 +146,9 @@ function [tecsnaxel,tecsnakposition]=LooptoTecSnax(loopsens)
         for jj=1:numel(loopsens(ii).snaxel.index)
             
             tecsnaxel(kk).index=loopsens(ii).snaxel.index(jj);
-            nextSub=[kk+1:min([kk+1,nLoop]),mod(kk,nLoop)+1:1];
-            tecsnaxel(kk).snaxnext=loopsens(ii).snaxel.index(nextSub);
+%             nextSub=[kk+1:min([kk+1,nLoop]),mod(kk,nLoop)+1:1];
+            tecsnaxel(kk).snaxnext=loopsens(ii).snaxel.snaxnext(jj);
+            %tecsnaxel(kk).snaxnext=loopsens(ii).snaxel.index(nextSub);
             
             tecsnakposition(kk).index=loopsens(ii).snaxel.index(jj);
             tecsnakposition(kk).coord=loopsens(ii).snaxel.coordnoscale(jj,:);
@@ -235,6 +236,11 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
         startPoints=loop(ii).(typeBound).coord;
         loop(ii).isccw=CCWLoop(startPoints);
         [newPoints,projPoints]=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
+        if isempty(newPoints)
+            disp('Loop is a single point')
+            newPoints=startPoints;
+            projPoints=startPoints;
+        end
         loop(ii).subdivision=newPoints;
         loop(ii).subdivspline=projPoints;
         if resampleSnak

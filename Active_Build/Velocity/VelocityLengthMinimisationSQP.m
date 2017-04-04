@@ -1280,18 +1280,23 @@ function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,HL,Ja_x,lagMulti,alg
     nCond=length(Ja_x(:,1));
     switch algo
         case 'HF'
-            HL=Hf+Ha;
+            HL=Hf+Ha; % this causes conditioning issues..
         case 'HFHA'
             %HL=HL;
     end
-            
-    %HL=Hf;    
+%     if rcond(HL)<1e-12        
+%         HL=Hf;    
+%     end
     
     actCol=find(sum(abs(Ja_x),2)~=0);
     
     [Ja_xSmall,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol);
     
     matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
+%     if rcond(matToInv)<1e-15      
+%         HL=Hf;
+%         matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
+%     end
     if rcond(matToInv)<1e-15
         actCol=find(abs(lagMulti)>1e-15);
         [Ja_xSmall,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol);

@@ -102,6 +102,9 @@ function [isCCW]=CCWLoop(coord)
     kk=0;
     while isempty(isCCW) && kk<4
         [leftMostCorner]=LeftMostCorner(coord);
+        if ~isfinite(leftMostCorner)
+            error('Left most corner is nan or inf')
+        end
         switch leftMostCorner
             case 1
                 precVert=mCoord;

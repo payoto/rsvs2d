@@ -61,7 +61,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
     end
     
     % Introduce debug lines of code
-    %debugScrip
+    % debugScrip
     
     % Specify starting population
     for refStage=1:refineSteps+1
@@ -430,7 +430,6 @@ function [population,captureErrors]=ParallelObjectiveCalc...
                 population(ii).additional.(fieldsAdd{jj})=additional.(fieldsAdd{jj});
             end
         catch MEexception
-            % Error Capture
             population(ii).constraint=false;
             population(ii).exception=[population(ii).exception,'error: ',MEexception.identifier];
             captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
@@ -577,11 +576,11 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     
     rootPop=population(1);
     
-    parfor ii=1:nPop-1
+    for ii=1:nPop-1
         %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-        try
+%         try
             % Normal Execution
             switch sensCalc
                 case'snake'
@@ -595,12 +594,12 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
                         nIter,ii+1,paramoptim,rootPop);
             end
             
-        catch MEexception
-            Error Capture
-            population(ii+1).constraint=false;
-            population(ii+1).exception=['error: ',MEexception.identifier];
-            captureErrors{ii+1}=MEexception.getReport;
-        end
+%         catch MEexception
+%             
+%             population(ii+1).constraint=false;
+%             population(ii+1).exception=['error: ',MEexception.identifier];
+%             captureErrors{ii+1}=MEexception.getReport;
+%         end
     end
     
 end
@@ -610,6 +609,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
         population,baseGrid,gridrefined,restartsnake,connectstructinfo,outinfo,nIter)
     
     captureErrors{1}='';
+
     try
         % Compute root member profile
         currentMember=population(1).fill;
@@ -721,15 +721,19 @@ function population=EnforceConstraintViolation(population,defaultVal)
     % full violation numbers in between will be used as a ratio of the
     % default value that must be added.
     
-    isConstraint=1-[population(:).constraint];
+    
     for ii=1:length(population)
-        if ~isempty(population(ii).objective)
+        isConstraint=1-[population(ii).constraint];
+        if isempty(isConstraint)
+            isConstraint=1;
+        end
+        if ~isempty(population(ii).objective) 
             
             [population(ii).objective]=population(ii).objective+...
-                isConstraint(ii)*(defaultVal);
+                isConstraint*(defaultVal);
             
         else
-            [population(ii).objective]=isConstraint(ii)*(defaultVal);
+            [population(ii).objective]=isConstraint*(defaultVal);
         end
         
     end

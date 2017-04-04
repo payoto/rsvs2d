@@ -1067,6 +1067,14 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
     
     [snaxOrd]=SplitSnaxLoops(snaxel); % Isolates individual loops
     maxDistRatio=1/1000*min(1-abs(dCurr*2-1));
+    for ii=1:size(sensSnax,2)
+        maxDistRatio(ii)=1/1000*min(abs(dCurr'*2-1-sign(sensSnax(:,ii))));
+        if maxDistRatio(ii)==0
+            sensSnax(:,ii)=-sensSnax(:,ii);
+            maxDistRatio(ii)=1/1000*min(abs(dCurr'*2-1-sign(sensSnax(:,ii))));
+        end
+    end
+    maxDistRatio=max(maxDistRatio,1e-10);
     [dChange,sensSnaxRatio]=FindModalDistanceChange(sensSnax,maxDistRatio);
     
     
@@ -1225,7 +1233,7 @@ function [dChange,sensSnaxRatio]=FindModalDistanceChange(sensSnax,maxDistRatio)
     sensSnaxRatio=zeros([1,nMode]);
     dChange{nMode}=[];
     for ii=1:nMode
-        sensSnaxRatio(ii)=1/max(abs(sensSnax(:,ii)))*maxDistRatio;
+        sensSnaxRatio(ii)=1/max(abs(sensSnax(:,ii)))*maxDistRatio(ii);
         dChange{ii}=sensSnax(:,ii)*sensSnaxRatio(ii);
     end
 end
@@ -1422,7 +1430,11 @@ function [cellsOrdRaw]=OrderRawCells(cellsRaw,activeCellInd)
     
     
     cellsOrdRaw=zeros([1,numel(cellsRaw)]);
-    [l2Ind,l1Ind]=find((ones([2,1])*cellsRaw(1,:))==(cellsRaw(2,:)'*ones([1,2])));
+    [l2Ind,l1Ind]=find((ones([2,1])*cellsRaw(1,:))==(cellsRaw(2,:)'*ones([1,2]))...
+        & (ones([2,1])*cellsRaw(1,:))~=(ones([2,1])*cellsRaw(end,:)));
+    if isempty(l2Ind)
+        [l2Ind,l1Ind]=find((ones([2,1])*cellsRaw(1,:))==(cellsRaw(2,:)'*ones([1,2])));
+    end
     nRows=size(cellsRaw,1);
     cellsOrdRaw(1)=cellsRaw(1,l1Ind(1));
     cellsOrdRaw(2)=cellsRaw(2,l2Ind(1));
@@ -1680,13 +1692,13 @@ function [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,...
     switch sensAnalyticalType
         case 'smooth'
             for ii=1:nLoop
-                [snaxmove(ii)]=CalculateMoveData(snaxmove(ii),snakposition,sensSnax,...
+                [snaxmove(ii)]=CalculateMoveData(snaxmove(ii),snaxel,snakposition,sensSnax,...
                     loopsnaxel(ii).snaxel);
             end
         case 'raw'
             for ii=1:nLoop
                 
-                [snaxmove(ii)]=CalculateMoveDataPure(snaxmove(ii),snakposition,sensSnax,...
+                [snaxmove(ii)]=CalculateMoveDataPure(snaxmove(ii),snaxel,snakposition,sensSnax,...
                     loopsnaxel(ii).snaxel);
             end
     end
@@ -1722,7 +1734,7 @@ function [snaxmove]=BuildSnaxMoveTemplate(nSnax,nEdge,nVertex)
         'support',struct('nSnax',[],'maxL',[]));
     snaxmove=repmat(snaxmove,[1,nLoop]);
     
-    snaxTemp=struct('index',[],'rN',[],'rT',[],'d',[],'sens',[],'posL',[]);
+    snaxTemp=struct('index',[],'snaxnext',[],'rN',[],'rT',[],'d',[],'sens',[],'posL',[]);
     edgeTemp=struct('index',0,'posL',[],'coord',[],'normal',[]);
     vertTemp=edgeTemp;
     
@@ -1736,7 +1748,7 @@ function [snaxmove]=BuildSnaxMoveTemplate(nSnax,nEdge,nVertex)
     
 end
 
-function [snaxmove]=CalculateMoveData(snaxmove,snakposition,sensSnax,loopsnaxel)
+function [snaxmove]=CalculateMoveData(snaxmove,snaxel,snakposition,sensSnax,loopsnaxel)
     
     fullSnax=[snakposition(:).index];
     
@@ -1751,6 +1763,7 @@ function [snaxmove]=CalculateMoveData(snaxmove,snakposition,sensSnax,loopsnaxel)
         kks=[kk:min([kk+1,snaxmove.support.nSnax]),...
             mod(kk,snaxmove.support.nSnax)+1:1];
         snaxmove.snax(kk).index=snakposition(ii).index;
+        snaxmove.snax(kk).snaxnext=snaxel(ii).snaxnext;
         snaxmove.snax(kk).d=sqrt(sum(snakposition(ii).vectornotnorm.^2));
         snaxmove.snax(kk).sens=sensSnax(ii,:);
         snaxmove.snax(kk).posL=loopsnaxel.lpos(kk);
@@ -1778,7 +1791,7 @@ function [snaxmove]=CalculateMoveData(snaxmove,snakposition,sensSnax,loopsnaxel)
     
 end
 
-function [snaxmove]=CalculateMoveDataPure(snaxmove,snakposition,sensSnax,loopsnaxel)
+function [snaxmove]=CalculateMoveDataPure(snaxmove,snaxel,snakposition,sensSnax,loopsnaxel)
     
     fullSnax=[snakposition(:).index];
     
@@ -1793,6 +1806,7 @@ function [snaxmove]=CalculateMoveDataPure(snaxmove,snakposition,sensSnax,loopsna
         kks=[kk:min([kk+1,snaxmove.support.nSnax]),...
             mod(kk,snaxmove.support.nSnax)+1:1];
         snaxmove.snax(kk).index=snakposition(ii).index;
+        snaxmove.snax(kk).snaxnext=snaxel(ii).snaxnext;
         snaxmove.snax(kk).d=sqrt(sum(snakposition(ii).vectornotnorm.^2));
         snaxmove.snax(kk).sens=sensSnax(ii,:);
         snaxmove.snax(kk).posL=loopsnaxel.lpos(kk);
@@ -1861,6 +1875,7 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
         nEdge=numel(snaxmove(ii).edge);
         nVert=numel(snaxmove(ii).vertex);
         snaxList=[snaxmove(ii).snax(:).index];
+        snaxNextList=[snaxmove(ii).snax(:).snaxnext];
         vertPosL=repmat(reshape([snaxmove(ii).vertex(:).posL],...
             [1 1 nVert]),[nSnax,nFill,1]);
         edgePosL=repmat(reshape([snaxmove(ii).edge(:).posL],...
@@ -1886,22 +1901,38 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
             
             vertCoord=reshape(vertcat(snaxmove(ii).vertex(closeVert(:,jj)).coord),[nVert,2,1]);
             edgeCoord=reshape(vertcat(snaxmove(ii).edge(closeEdge(:,jj)).coord),[nVert,2,1]);
+            
+            
+            edgeCoordScale=1./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
+            probCoordScale=~isfinite(edgeCoordScale); % These are here to avoid movements going to Nan
+            edgeCoordScale(probCoordScale)=1;
+            
             newCoordTemp=(vertCoord.*(distEdge(:,jj)*ones([1 2]))...
-                +edgeCoord.*(distVert(:,jj)*ones([1 2])))...
-                ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
+                +edgeCoord.*(distVert(:,jj)*ones([1 2]))).*edgeCoordScale;
+            
+%              newCoordTemp=(vertCoord.*(distEdge(:,jj)*ones([1 2]))...
+%                 +edgeCoord.*(distVert(:,jj)*ones([1 2])))...
+%                  ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
             newLCoord=newCoordTemp;
             
             vertNormal=reshape(vertcat(snaxmove(ii).vertex(closeVert(:,jj)).normal),[nVert,2,1]);
             edgeNormal=reshape(vertcat(snaxmove(ii).edge(closeEdge(:,jj)).normal),[nVert,2,1]);
-            newNormalTemp=(vertNormal.*(distEdge(:,jj)*ones([1 2]))...
-                +edgeNormal.*(distVert(:,jj)*ones([1 2])))...
-                ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
-            newNormal=newNormalTemp./(sqrt(sum(newNormalTemp.^2,2))*ones([1 2]));
             
+            edgeCoordScale(probCoordScale)=1;
+            newNormalTemp=(vertNormal.*(distEdge(:,jj)*ones([1 2]))...
+                +edgeNormal.*(distVert(:,jj)*ones([1 2]))).*edgeCoordScale;
+            
+%              newNormalTemp=(vertNormal.*(distEdge(:,jj)*ones([1 2]))...
+%                 +edgeNormal.*(distVert(:,jj)*ones([1 2])))...
+%                 ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
+            
+            newNormal=newNormalTemp./(sqrt(sum(newNormalTemp.^2,2))*ones([1 2]));
+            newNormal(isnan(newNormal))=0;
             newCoord=(coeffNormpos(:,jj)*ones([1 2])).*...
                 newNormal+newLCoord;
             
             newloop(jj,ii).snaxel.index=snaxList(newOrder(:,jj));
+            newloop(jj,ii).snaxel.snaxnext=snaxNextList(newOrder(:,jj));
             newloop(jj,ii).snaxel.coord=newCoord(newOrder(:,jj),:);
             newloop(jj,ii).snaxel.coordnoscale=newCoord(newOrder(:,jj),:);
             newloop(jj,ii).snaxel.vector=newNormal(newOrder(:,jj),:);
