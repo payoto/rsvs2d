@@ -295,8 +295,13 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
         %         errorDist=[xPts',errPts'];
     else
         
-        [errorMeasure]=(abs(CalculatePolyArea(profileCoord))-targArea)/targArea;
-        areaDistrib=[(min(profileCoord(:,1))+min(profileCoord(:,1)))/2,errorMeasure];
+        [errorMeasure2]=(abs(CalculatePolyArea(profileCoord))-targArea);
+        errorMeasure.sum=errorMeasure2/targArea;
+        errorMeasure.mean=errorMeasure.sum;
+        errorMeasure.std=errorMeasure.sum;
+        errorMeasure.max=errorMeasure.sum;
+        errorMeasure.min=errorMeasure.sum;
+        areaDistrib=[(min(profileCoord(:,1))+min(profileCoord(:,1)))/2,errorMeasure.sum];
     end
     
     %error('Compare Profile through area integration has not been coded yet')
