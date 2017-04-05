@@ -61,7 +61,7 @@ function [varargout]=ExtractVariables(varNames,param)
     
     varInStruct=param.structdat.vardat.names;
     varPosInStruct=param.structdat.vardat.varmatch;
-    varargout{length(varNames)}=[];
+    varargout=cell([1 max(length(varNames),1)]);
     
     for ii=1:length(varNames)
         %         if strcmp(varNames{ii},'cellLevels')

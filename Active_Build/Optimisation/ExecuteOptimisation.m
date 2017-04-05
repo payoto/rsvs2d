@@ -576,11 +576,12 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     
     rootPop=population(1);
     
-    for ii=1:nPop-1
+    parfor ii=1:nPop-1
         %for ii=1:nPop-1
         currentMember=population(ii+1).fill;
-        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
-%         try
+        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
+            restartsnake,connectstructinfo,currentMember);
+         try
             % Normal Execution
             switch sensCalc
                 case'snake'
@@ -594,12 +595,12 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
                         nIter,ii+1,paramoptim,rootPop);
             end
             
-%         catch MEexception
-%             
-%             population(ii+1).constraint=false;
-%             population(ii+1).exception=['error: ',MEexception.identifier];
-%             captureErrors{ii+1}=MEexception.getReport;
-%         end
+        catch MEexception
+            
+            population(ii+1).constraint=false;
+            population(ii+1).exception=['error: ',MEexception.identifier];
+            captureErrors{ii+1}=MEexception.getReport;
+        end
     end
     
 end
@@ -1844,7 +1845,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     [gridrefined,connectstructinfo,oldGrid,refCellLevels]=AnisotropicRefinement...
         (oldGrid.base,oldGrid,paramoptim,iterstruct,refStep);
-    
+    refinementStruct.connecdesvar=connectstructinfo;
     %     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
     %         =GridInitAndRefine(refparamsnake,oldGrid.base);
     
