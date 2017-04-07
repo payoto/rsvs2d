@@ -218,6 +218,7 @@ function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
 %         %reRunVel=3;
 %     end
 end
+
 function [isFreezeRnd2]=VelocityThawing(isFreeze,DxisFreeze)
     % function handles the thawing of vertices 
     

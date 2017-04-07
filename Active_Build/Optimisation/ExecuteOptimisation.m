@@ -72,7 +72,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             procStr=['ITERATION ',int2str(nIter)];
             [tStart]=PrintStart(procStr,1);
             % Compute Shape using snakes
-            [iterstruct(nIter).population,restartsnake]=PerformIteration(paramoptim,outinfo(refStage),nIter,iterstruct(nIter).population,gridrefined,restartsnake,...
+            [iterstruct(nIter).population,restartsnake]=...
+                PerformIteration(paramoptim,outinfo(refStage),nIter,...
+                iterstruct(nIter).population,gridrefined,restartsnake,...
                 baseGrid,connectstructinfo);
             OptimisationOutput('optstruct',paramoptim,outinfo(refStage),iterstruct);
             % Evaluate Objective Function
@@ -107,6 +109,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             if exist('flagOut','var') && ~flagOut
                 disp('Output Skipped')
             else
+                [paramoptim]=FindKnownOptim(paramoptim,iterstruct,baseGrid,gridrefined,...
+                    restartsnake,connectstructinfo,outinfo(end));
                 OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
             end
         catch ME;
@@ -581,7 +585,7 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
         currentMember=population(ii+1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
             restartsnake,connectstructinfo,currentMember);
-         try
+        try
             % Normal Execution
             switch sensCalc
                 case'snake'
@@ -610,7 +614,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
         population,baseGrid,gridrefined,restartsnake,connectstructinfo,outinfo,nIter)
     
     captureErrors{1}='';
-
+    
     try
         % Compute root member profile
         currentMember=population(1).fill;
@@ -698,6 +702,32 @@ function [population,supportstruct,restartsnake]=NormalExecutionIteration(popula
     supportstruct.loop=loop;
 end
 
+
+function [population,supportstruct,restartsnake]=PostExecutionIteration(population,newRefGrid,...
+        newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
+        ,outinfo,nIter,ii,paramoptim)
+    
+    varExtract={'restart','boundstr'};
+    [isRestart,boundstr]=ExtractVariables(varExtract,paramsnake);
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
+    
+    if ~isRestart
+        [newRefGrid]=EdgePropertiesReshape(newRefGrid);
+        [newGrid]=EdgePropertiesReshape(newGrid);
+        [newrestartsnake]=GenerateEdgeLoop(newRefGrid,boundstr,true);
+    end
+    
+    [snaxel,snakposition,snakSave,loop,restartsnake,outTemp]=...
+        ExecuteSnakes_Optim('post',newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,nIter,ii,nPop);
+    population.location=outTemp.dirprofile;
+    population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
+    population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
+    
+    supportstruct.loop=loop;
+end
+
 function [population,supportstruct,restartsnake]=SensitivityExecutionIteration(population,newRefGrid,...
         supportstructsens,newGrid,connectstructinfo,paramsnake,paramspline...
         ,outinfo,nIter,ii,paramoptim,rootmember)
@@ -728,7 +758,7 @@ function population=EnforceConstraintViolation(population,defaultVal)
         if isempty(isConstraint)
             isConstraint=1;
         end
-        if ~isempty(population(ii).objective) 
+        if ~isempty(population(ii).objective)
             
             [population(ii).objective]=population(ii).objective+...
                 isConstraint*(defaultVal);
@@ -1686,7 +1716,7 @@ function [objValue,additional]=InverseDesign(paramoptim,member,loop)
     
     [obj,h]=InverseDesign_Error(paramoptim,loop);
     hgsave(h,[member.location,filesep,'prof.fig']);
-    
+    close(h)
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
     objValue=obj.sum;
     
@@ -1704,6 +1734,7 @@ function [objValue,additional]=InverseDesignBulk(paramoptim,member,loop)
     
     [obj,h]=InverseDesign_Error(paramoptim,loop);
     hgsave(h,[member.location,filesep,'prof.fig']);
+    close(h)
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
     objValue=obj.max;
     
@@ -1778,6 +1809,102 @@ function [objValue,additional]=FreeFemPPTest(paramoptim,member,loop)
     additional.c=areaAdd.c;
     additional.tc=areaAdd.tc;
 end
+
+%% Find known Optim
+
+function [paramoptim]=FindKnownOptim(paramoptim,iterstruct,baseGrid,gridrefined,...
+        restartsnake,connectstructinfo,outinfo)
+    
+    varExtract={'objectiveName'};
+    [objectiveName]=ExtractVariables(varExtract,paramoptim);
+    try
+        switch objectiveName
+            case 'InverseDesign'
+                [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
+                    restartsnake,connectstructinfo,outinfo);
+            case 'CutCellFlow'
+                [paramoptim]=FindKnownOptimCutCell(paramoptim,outinfo,iterstruct);
+        end
+        
+    catch ME
+        disp(ME.getReport)
+        paramoptim=SetVariables({'knownOptim'},{knownOptim},paramoptim);
+    end
+    
+    
+end
+
+
+function [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
+        restartsnake,connectstructinfo,outinfo)
+    
+    varExtract={'aeroClass','aeroName','objectiveName'};
+    [aeroClass,aeroName,objectiveName]=ExtractVariables(varExtract,paramoptim);
+    
+    switch aeroClass
+        case 'lib'
+            [rootFill]=OuterLimitInverse(baseGrid,paramoptim,aeroName);
+        case 'NACA'
+            [rootFill]=NacaOuterLimit4d(baseGrid,paramoptim,aeroName);
+    end
+    [iterstruct]=InitialiseIterationStruct(paramoptim);
+    population=iterstruct(1).population(1);
+    population.fill=rootFill{2};
+    
+    currentMember=population.fill;
+    [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
+        restartsnake,connectstructinfo,currentMember);
+    
+    paramsnake=SetVariables({'restart','snakData'},{false,'all'},paramoptim.parametrisation);
+    paramspline=paramoptim.spline;
+    
+    % Normal Execution
+    [population,supportstruct]=PostExecutionIteration(population,newRefGrid,newrestartsnake,...
+        newGrid,connectstructinfo,paramsnake,paramspline,outinfo,0,1,paramoptim);
+    [population.objective,population.additional]=...
+        EvaluateObjective(objectiveName,paramoptim,population,...
+        supportstruct.loop);
+    knownOptim=population.objective;
+    paramoptim=SetVariables({'knownOptim'},{knownOptim},paramoptim);
+end
+
+function [paramoptim]=FindKnownOptimCutCell(paramoptim,outinfo,iterstruct)
+    
+    varExtract={'direction'};
+    [direction]=ExtractVariables(varExtract,paramoptim);
+    [dat]=GenerateOptimalSolDat(direction,iterstruct);
+    
+    [knownOptim]=SupersonicOptimLinRes(paramoptim,outinfo(end).rootDir,...
+                dat.xMin,dat.xMax,dat.A,dat.nPoints);
+            
+    paramoptim=SetVariables({'knownOptim'},{knownOptim},paramoptim);
+end
+
+function [dat]=GenerateOptimalSolDat(optimDirection,optimstruct)
+    
+    [~,posOpt]=eval([optimDirection,'([optimstruct(end).population(:).objective])']);
+    optimsolution=optimstruct(end).population(posOpt);
+    
+    profileDir=optimsolution.location;
+    
+    c=dir(profileDir);
+    isFileName=false;
+    ii=0;
+    while(~isFileName)
+        ii=ii+1;
+        isFileName=~isempty(regexp(c(ii).name,'restart', 'once'));
+    end
+    outload=load([profileDir,filesep,c(ii).name]);
+    
+    dat.A=optimstruct(end).population(posOpt).additional.A;
+    coord=vertcat(outload.loop(:).subdivision);
+    dat.xMin=min(coord(:,1));
+    dat.xMax=max(coord(:,1));
+    dat.t=max(coord(:,2))-min(coord(:,2));
+    dat.nPoints=length(coord(:,1));
+    
+end
+
 %% Refined Optimisation
 
 
