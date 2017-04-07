@@ -1121,9 +1121,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
         snaxmode(jj).sensSnaxRatio=sensSnaxRatio(jj);
     end
     
-    
-    
-    
+
     if isPlot
         for jj=1:numel(dChange)
             coordFull{jj}=vertcat(snakposition2(jj,:).coord);
@@ -1231,7 +1229,7 @@ function [dChange,sensSnaxRatio]=FindModalDistanceChange(sensSnax,maxDistRatio)
     
     nMode=size(sensSnax,2);
     sensSnaxRatio=zeros([1,nMode]);
-    dChange{nMode}=[];
+    dChange=cell([nMode,1]);
     for ii=1:nMode
         sensSnaxRatio(ii)=1/max(abs(sensSnax(:,ii)))*maxDistRatio(ii);
         dChange{ii}=sensSnax(:,ii)*sensSnaxRatio(ii);

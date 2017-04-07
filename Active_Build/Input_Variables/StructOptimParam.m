@@ -384,6 +384,35 @@ function paroptim=Test_Desktop(paroptim)
     
 end
 
+% Parametrisation Refinement And smoothing
+
+function [paroptim]=SmoothModes(paroptim)
+    
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='length';
+    
+end
+
+function [paroptim]=AdaptiveRefinement(paroptim)
+    
+    paroptim.refine.refineOptim=[];
+    paroptim.refine.refineSteps=8;
+    paroptim.refine.refineIter=100;
+    paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
+    paroptim.refine.refineOptimType='contcurvevol';
+    paroptim.refine.rankType='rank';
+    paroptim.refine.slopeConv=0.2;
+    
+ % 'contlength' 'desvargradadvanced' 'contcurve'  'contlengthnorm' 
+ % 'desvargrad' 'contcurvescale' 'contcurvevol' 'contour'
+
+end
+
 %% Standard Blocks (No Iter, pop, worker included)
 
 function [paroptim]=CG_Aero()
@@ -554,7 +583,7 @@ function [paroptim]=Inverse_CG()
     paroptim.optim.CG.sensCalc='snake';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
-    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvol';
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3];
     paroptim.optim.CG.validVol=0.2;
     

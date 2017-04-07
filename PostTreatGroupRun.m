@@ -6,12 +6,14 @@ function [resstruct]=PostTreatGroupRun(entryPoint,varargin)
             resstruct=CollectGroupRunInformation(varargin{:});
         case 'plot'
             resstruct=varargin{1};
-            if numel(varargin)>1
-                plotStart=varargin{2};
+            compareopts=varargin{2};
+            if numel(varargin)>2
+                plotStart=varargin{3};
             end
+            PlotGroupedInformation(resstruct,compareopts,plotStart)
     end
     
-    PlotGroupedInformation(resstruct,plotStart)
+    
 end
 
 function [resstruct]=CollectGroupRunInformation(rootDir,compareopts)
@@ -24,7 +26,7 @@ function [resstruct]=CollectGroupRunInformation(rootDir,compareopts)
     save([rootDir,filesep,'AllRefineResults.mat'],'resstruct')
 end
 
-function []=PlotGroupedInformation(resstruct,plotStart)
+function []=PlotGroupedInformation(resstruct,compareopts,plotStart)
     
     
     
@@ -40,7 +42,8 @@ function []=PlotGroupedInformation(resstruct,plotStart)
     snakeOpts=[resstruct(:).paramsnake];
     [optimOpts,optimList]=IdentifyUniqueOptions(optimOpts);
     [snakeOpts,snakeList]=IdentifyUniqueOptions(snakeOpts);
-    
+    [allOpts,allOptsList]=ConcatenateStructures(optimOpts,optimList,...
+        snakeOpts,snakeList);
     resDir=resstruct(1).path;
     n=regexp(resDir,filesep);
     resDir=[resDir(1:n(end-1)),'results'];
@@ -49,15 +52,20 @@ function []=PlotGroupedInformation(resstruct,plotStart)
     
     plotType='ref';
     if plotStart<3
-        ExploreParamEffect_SingleStatic(optimList,optimOpts,resstruct,plotType,[resDir,filesep,'static'])
+        ExploreParamEffect_SingleStatic(allOptsList,allOpts,resstruct,plotType,...
+            [resDir,filesep,'static'])
     end
     mkdir([resDir,filesep,'moving'])
     if plotStart<4
-        ExploreParamEffect_SingleMoving(optimList,optimOpts,resstruct,plotType,[resDir,filesep,'moving'])
+        ExploreParamEffect_SingleMoving(allOptsList,allOpts,resstruct,plotType,...
+            [resDir,filesep,'moving'])
     end
-    
+    mkdir([resDir,filesep,'carpet'])
     if plotStart<5
-        
+        for ii=1:numel(compareopts.paramPair)
+            ExtractCarpetParamPair(compareopts.paramPair{ii},allOptsList,allOpts,...
+                resstruct,[resDir,filesep,'carpet'])
+        end
     end
 end
 
@@ -159,7 +167,7 @@ function []=ExploreParamEffect_SingleStatic(optimList,optimOpts,resstruct,plotTy
             figobj.leg.Location='northeastoutside';
             if ischar(optimOpts(kk).(fields{ii}))
                 figName=[fields{ii},'_',optimOpts(kk).(fields{ii})];
-            elseif isnumeric(optimOpts(kk).(fields{ii}))
+            elseif isnumeric(optimOpts(kk).(fields{ii})) || islogical(optimOpts(kk).(fields{ii}))
                 figName=[fields{ii},'_',num2str(optimOpts(kk).(fields{ii}))];
             end
             figName=[figName,'_',plotType];
@@ -213,7 +221,7 @@ function []=ExploreParamEffect_SingleMoving(optimList,optimOpts,resstruct,plotTy
                     figobj.l(1,1).DisplayName=regexprep(resstruct(kk).name,'_',' ');
                     if ischar(optimOpts(kk).(fields{ii}))
                         figobj.l(1,1).DisplayName=optimOpts(kk).(fields{ii});
-                    elseif isnumeric(optimOpts(kk).(fields{ii}))
+                    elseif isnumeric(optimOpts(kk).(fields{ii})) || islogical(optimOpts(kk).(fields{ii}))
                         figobj.l(1,1).DisplayName=num2str(optimOpts(kk).(fields{ii}));
                     end
                     legEntry(ll)=figobj.l(1,1);
@@ -224,12 +232,18 @@ function []=ExploreParamEffect_SingleMoving(optimList,optimOpts,resstruct,plotTy
                 if ll-1>4
                     figobj.leg.Location='northeastoutside';
                 end
-                plotName='Constant Param: ';
+                nTitCell=1;
+                plotName=cell(0);
+                plotName{nTitCell}='Constant : ';
                 for mm=1:numel(actfields)
                     if ischar(optimOpts(kk).(actfields{mm}))
-                        plotName=[plotName,optimOpts(kk).(actfields{mm}),', '];
-                    elseif isnumeric(optimOpts(kk).(actfields{mm}))
-                        plotName=[plotName,num2str(optimOpts(kk).(actfields{mm})),', '];
+                        plotName{nTitCell}=[plotName{nTitCell},optimOpts(kk).(actfields{mm}),' (',actfields{mm},')',', '];
+                    elseif isnumeric(optimOpts(kk).(actfields{mm})) || islogical(optimOpts(kk).(actfields{mm}))
+                        plotName{nTitCell}=[plotName{nTitCell},num2str(optimOpts(kk).(actfields{mm})),' (',actfields{mm},')',', '];
+                    end
+                    if numel(plotName{nTitCell})>30
+                        nTitCell=nTitCell+1;
+                        plotName{nTitCell}='';
                     end
                 end
                 title(plotName)
@@ -245,11 +259,128 @@ function []=ExploreParamEffect_SingleMoving(optimList,optimOpts,resstruct,plotTy
     
 end
 
-function []=PlotCarpetParamPair()
+function []=ExtractCarpetParamPair(paramPair,optimList,optimOpts,resstruct,resDir)
+    
+    
+    isField=cellfun(@isempty,regexp(fieldnames(optimOpts),'num'));
+    fields=fieldnames(optimOpts);
+    fields=fields(isField);
+    MFigMax=3;
+    NFigMax=3;
+    fullList=zeros([numel(optimOpts),numel(optimList)]);
+    for ii=1:numel(optimList)
+        fullList(:,ii)=[optimOpts(:).([fields{ii},'num'])]';
+    end
+    for ii=1:numel(paramPair)
+        pairInOpts(ii)=find(cellfun(@isempty,regexprep(fields,paramPair{ii},'')));
+    end
+    
+    trimList=fullList;trimList(:,pairInOpts)=[];
+    shortOptList=RemoveIdenticalVectors(trimList);
+    actfields=fields;
+    actfields(pairInOpts)=[];
+    for ii=1:size(shortOptList,1)
+        actRefines=find(all(trimList==ones([size(trimList,1),1])*shortOptList(ii,:),2))';
+        allMembers=fullList(actRefines,pairInOpts);
+        maxRef=0;
+        kk=1;
+        for jj=actRefines
+            actMember=[[resstruct(jj).refine(:).stage];[resstruct(jj).refine(:).objend]];
+            maxRef=max(maxRef,max(actMember(1,:)));
+            actMember=actMember(:);
+            allMembers(kk,(numel(pairInOpts)+1):(numel(pairInOpts)+numel(actMember)))...
+                =actMember;
+            kk=kk+1;
+        end
+        figobj=struct('h',[]);
+        figobj.h=figure;
+        figobj.axh=axes;
+        colorOrder=get(gca,'colororder');
+        hold on
+        for jj=0:maxRef
+            figobj.color=colorOrder(mod(jj-1,size(colorOrder,1))+1,:);
+            figobj=PlotCarpetPlot(allMembers(:,[1:numel(pairInOpts),...
+                numel(pairInOpts)+(jj+1)*2]),optimList(pairInOpts),figobj);
+            figobj.l3.DisplayName=['Ref ',int2str(jj)];
+            lEntry(jj+1)=figobj.l3;
+        end
+        figobj.leg=legend(lEntry(1:maxRef+1));
+        figobj.leg.Location='northeastoutside';
+        
+        
+        kk=actRefines(1);
+        nTitCell=1;
+        plotName=cell(0);
+        plotName{nTitCell}='Constant : ';
+        for mm=1:numel(actfields)
+            if ischar(optimOpts(kk).(actfields{mm}))
+                plotName{nTitCell}=[plotName{nTitCell},optimOpts(kk).(actfields{mm}),' (',actfields{mm},')',', '];
+            elseif isnumeric(optimOpts(kk).(actfields{mm})) || islogical(optimOpts(kk).(actfields{mm}))
+                plotName{nTitCell}=[plotName{nTitCell},num2str(optimOpts(kk).(actfields{mm})),' (',actfields{mm},')',', '];
+            end
+            if numel(plotName{nTitCell})>30
+                nTitCell=nTitCell+1;
+                plotName{nTitCell}='';
+            end
+        end
+        title(plotName)
+        
+        figobj.h.Name=[paramPair{1},'-',paramPair{2},'_',int2str(ii)];
+        hgsave(figobj.h,[resDir,filesep,'CarpetPlot_',figobj.h.Name,'.fig']);
+    end
     
     
     
 end
+
+
+function [figobj]=PlotCarpetPlot(data,labels,figobj)
+    
+    
+    isLoadColor=false;
+    if ~exist('figobj','var')
+        figobj.h=figure('Name',resstruct.name);
+        figobj.axh=axes;
+        isLoad=false;
+    else
+        figure(figobj.h)
+        axes(figobj.axh)
+        isLoadColor=isfield(figobj,'color');
+        isLoad=true;
+    end
+    
+    x=1:max(max(data(:,1)),numel(labels{1}));
+    y=1:max(max(data(:,2)),numel(labels{2}));
+    
+    [X,Y]=meshgrid(x,y);
+    
+    Z=ones(size(X))*00;
+    
+    for ii=1:size(data,1)
+        Z(data(ii,2),data(ii,1))=data(ii,3);
+    end
+    
+    figobj.mesh=mesh(X,Y,Z);
+    figobj.l3=plot3(data(:,1),data(:,2),data(:,3));
+    figobj.l3.LineStyle='none';
+    figobj.l3.Marker='*';
+    if isLoadColor
+        figobj.mesh.CData=repmat(reshape(figobj.color,[1 1 3]),size(figobj.mesh.CData));
+        figobj.l3.Color=figobj.color;
+    end
+    figobj.axh.ZScale='log';
+    figobj.axh.XTick=1:numel(labels{1});
+    figobj.axh.YTick=1:numel(labels{2});
+    figobj.axh.XTickLabel=labels{1};
+    figobj.axh.XTickLabelRotation=45;
+    figobj.axh.YTickLabelRotation=45;
+    figobj.axh.YTickLabel=labels{2};
+    hidden off
+    
+    
+end
+
+
 %% Load Data
 
 function [refinestruct]=TreatPathsIntoStruct(pltPaths,compareopts)
@@ -320,10 +451,9 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     if numel(compareopts.optim)==0
         refinestruct.paramoptim=struct([]);
     end
-    refinestruct.paramsnake=struct([]);
     for ii=1:numel(compareopts.snake)
         refinestruct.paramsnake.(compareopts.snake{ii})=ExtractVariables(...
-            compareopts.snake(ii),instruct.paramoptim);
+            compareopts.snake(ii),instruct.paramoptim.parametrisation);
     end
     if numel(compareopts.snake)==0
         refinestruct.paramsnake=struct([]);
@@ -376,7 +506,7 @@ function [refinestruct,patternList]=IdentifyUniqueOptions(refinestruct,jobfields
                 test=false;
                 if ischar(refinestruct(jj).(jobfields{ii}))
                     test=strcmp(patternList{ii}{kk},refinestruct(jj).(jobfields{ii}));
-                elseif isnumeric(refinestruct(jj).(jobfields{ii}))
+                elseif isnumeric(refinestruct(jj).(jobfields{ii})) || islogical(refinestruct(jj).(jobfields{ii}))
                     test=(patternList{ii}{kk}==refinestruct(jj).(jobfields{ii}));
                 end
                 if test
@@ -393,6 +523,25 @@ function [refinestruct,patternList]=IdentifyUniqueOptions(refinestruct,jobfields
     end
     
     
+    
+    
+end
+
+function [allOpts,allOptsList]=ConcatenateStructures(optimOpts,optimList,snakeOpts,snakeList)
+    
+    if ~isempty(optimOpts) && ~isempty(snakeOpts)
+        allOpts=catstruct(optimOpts,snakeOpts);
+        allOptsList=[optimList,snakeList];
+    elseif ~isempty(optimOpts)
+        allOpts=optimOpts;
+        allOptsList=optimList;
+    elseif ~isempty(snakeOpts)
+        allOpts=snakeOpts;
+        allOptsList=snakeList;
+    else
+        allOpts=struct([]);
+        allOptsList=cell(0);
+    end
     
     
 end

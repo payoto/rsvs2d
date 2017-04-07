@@ -25,7 +25,10 @@ function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
             [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
                 =ExecuteSnakes_Optim_sens(gridrefined,looprestart,baseGrid,connectstructinfo...
                 ,param,paramspline,outinfo,nIter,nProf,nPop);
-            
+        case 'post'
+            [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
+                =ExecuteSnakes_Optim_post(gridrefined,looprestart,baseGrid,connectstructinfo...
+                ,param,paramspline,outinfo,nIter,nProf,nPop);
     end
     
     
@@ -130,6 +133,54 @@ function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]..
     [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
     fprintf([textOut1,'\n   Sensitivity Profile post-treated\n',textOut2])
 end
+
+
+function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
+        =ExecuteSnakes_Optim_post(gridrefined,looprestart,baseGrid,connectstructinfo...
+        ,param,paramspline,outinfo,nIter,nProf,nPop)
+    % Executes the snakes edge detection process
+    %
+    
+    procStr='SNAKE PROCESS';
+    
+    [textOut1,tStart]=evalc('PrintStart(procStr,2);');
+    
+    varExtract={'refineSteps','snakData'};
+    [refineSteps,snakData]=ExtractVariables(varExtract,param);
+    
+    callerString='Snakes(gridrefined,looprestart,baseGrid,connectstructinfo,param);';
+    [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
+    
+    if length(loopsnaxel)==length(looprestart)
+        for ii=1:length(loopsnaxel)
+            looprestart(ii).snaxel=loopsnaxel(ii).snaxel;
+        end
+    else
+        looprestart=loopsnaxel;
+    end
+    
+    
+    looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
+    
+    tecStruct.snakposition=snakposition;
+    tecStruct.baseGrid=baseGrid;
+    tecStruct.nPop=nPop;
+    tecStruct.fineGrid=gridrefined;
+    tecStruct.volumefraction=snakSave(end).volumefraction;
+    tecStruct.snaxel=restartsnake.snaxel;
+    
+    if strcmp('all',snakData)
+        [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,baseGrid,...
+            snakSave,param,outinfo,nIter,nProf,looprestart,restartsnake,tecStruct);
+    else
+        
+        outinfo=OptimisationOutput('profile',param,outinfo,looprestart,...
+            restartsnake,snakSave,tecStruct);
+    end
+    [textOut2,~]=evalc('PrintEnd(procStr,2,tStart)');
+    disp([textOut1,textOut,textOut2])
+end
+
 
 function [tecsnaxel,tecsnakposition]=LooptoTecSnax(loopsens)
     tot=0;
@@ -276,7 +327,7 @@ function [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,bas
     snakSave(end).volumefraction.currentfraction=[volfra(:).volumefraction];
     snakSave(end).volumefraction.totVolume=[volfra(:).totalvolume];
     
-    outinfo=OptimisationOutput('profile',param,outinfo,nIter,nProf,looprestart,...
+    outinfo=OptimisationOutput('profilepost',param,outinfo,looprestart,...
         restartsnake,snakSave,tecStruct);
     
     

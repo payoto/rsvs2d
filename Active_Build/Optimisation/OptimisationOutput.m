@@ -20,6 +20,9 @@ function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
         case 'profile'
             out=varargin{1};
             out.dirprofile=OptimisationOutput_profile(paramoptim,varargin{:});
+        case 'profilepost'
+            out=varargin{1};
+            out.dirprofile=OptimisationOutput_profilepost(paramoptim,varargin{:});
         case 'iteration'
             out=OptimisationOutput_iteration(paramoptim,varargin{:});
         case 'optstruct'
@@ -142,6 +145,51 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     fclose(fidBoundary);
 end
 
+function [writeDirectory]=OptimisationOutput_profilepost(paramoptim,out,loop,...
+        restartsnak,snakSave,tecStruct)
+    
+    varExtract={'resampleSnak','buildInternal','typeLoop'};
+    [resampleSnak,buildInternal,typeLoop]=ExtractVariables(varExtract,paramoptim);
+    
+    
+    marker=out.marker;
+    t=out.tOutput;
+    rootDir=out.rootDir;
+    %     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
+    %     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
+    markerShort=['InterpOptim'];
+    
+    
+    writeDirectory=[rootDir,filesep,'InterpOptim'];
+    writeDirectory=MakePathCompliant(writeDirectory);
+    mkdir(writeDirectory);
+    
+    savStruct.restartsnak=restartsnak;
+    savStruct.snakSave=snakSave;
+    savStruct.loop=loop;
+    
+    
+    % Output boundary data file
+    [fidBoundary]=OpenBoundaryFile(writeDirectory,markerShort);
+    
+    if resampleSnak && ~strcmp(typeLoop,'subdivspline')
+        typeLoop='subdivspline';
+        warning(['Variable typeLoop was overwritten from value ''',typeLoop,''' to ''subdivspline'''])
+    end
+    
+    
+    
+    TecplotPortion_Profile(0,1,1,writeDirectory,tecStruct.baseGrid,...
+        tecStruct.volumefraction,tecStruct.snaxel,tecStruct.snakposition);
+    
+    
+    GenerateProfileBinary(writeDirectory,markerShort,savStruct)
+    WriteFullInfoProfile(writeDirectory,1,marker,t,0)
+    
+    BoundaryOutput(loop,fidBoundary,typeLoop,buildInternal);
+    fclose(fidBoundary);
+end
+
 function [out]=OptimisationOutput_iteration(paramoptim,nIter,out,population,errorReports)
     
     t=out.tOutput;
@@ -231,13 +279,11 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         dat=GenerateOptimalSolDir(writeDirectory,markerSmall,direction,optimstruct);
         
         % Tecplot flow files
-        if strcmp(objectiveName,'CutCellFlow')
-            [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
-                dat.xMin,dat.xMax,dat.A,dat.nPoints);
-        end
-        if strcmp(objectiveName,'InverseDesignBulk')
-            %[h]=
-        end
+%         if strcmp(objectiveName,'CutCellFlow')
+%             [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...
+%                 dat.xMin,dat.xMax,dat.A,dat.nPoints);
+%         end
+        
     end
     if numel(optimstruct)>=4
         [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
@@ -1637,6 +1683,9 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     legend(l)
     
 end
+
+%% Default Inverse design
+
 
 %% Binaries
 

@@ -3,7 +3,7 @@ MoveToDir('source',1)
 InitialiseSnakeFlow;
 
 
- [T,postDir]=IdentifyPostTreatTargets({'/panfs/panasas01/aero/ap1949/SnakVolParam/results/Optimisation/Archive_2016_11'},3,[]);
+ [T,postDir]=IdentifyPostTreatTargets({'/panfs/panasas01/aero/ap1949/SnakVolParam/results/Optimisation'},4,[]);
 
 for ii=1:numel(T)
 	
