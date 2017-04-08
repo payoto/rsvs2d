@@ -54,7 +54,7 @@ function [T,errDir]=PostTreatFiles(postDir)
         fprintf('%s\n',postDir{ii})
     end
     fprintf('\n')
-    parfor ii=1:numel(postDir)
+    for ii=1:numel(postDir)
         
         try
             [optimstruct]=ExtractOptimStruct(postDir{ii});

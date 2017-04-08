@@ -4,16 +4,17 @@ function [resstruct]=PostTreatGroupRun(entryPoint,varargin)
     switch entryPoint
         case 'data'
             resstruct=CollectGroupRunInformation(varargin{:});
+            compareopts=varargin{2};
         case 'plot'
             resstruct=varargin{1};
             compareopts=varargin{2};
             if numel(varargin)>2
                 plotStart=varargin{3};
             end
-            PlotGroupedInformation(resstruct,compareopts,plotStart)
     end
     
     
+    PlotGroupedInformation(resstruct,compareopts,plotStart)
 end
 
 function [resstruct]=CollectGroupRunInformation(rootDir,compareopts)
