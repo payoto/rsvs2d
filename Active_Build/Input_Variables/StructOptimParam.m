@@ -958,6 +958,8 @@ end
 
 % Busemann sweep
 function [paroptim]=areabusesweep(e)
+    % Need to add support of the axis ratio as a design variable in there
+    % as well.
     
     [paroptim]=MultiTopo_DEhoriz();
     [paroptim]=SumVolumeConstraint(paroptim);
@@ -1258,11 +1260,13 @@ function paroptim=volsweeplocal(e,gridCase)
     lvl=5;
     nIter=30;
     paroptim=AreaM2sweep_Nc();
+    [paroptim]=SmoothModes(paroptim);
+    [paroptim]=AdaptiveRefinement(paroptim);
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.optim.CG.minDiffStep=1e-6;
+    paroptim.optim.CG.minDiffStep=1e-5;
     paroptim.general.maxIter=nIter;
     paroptim.general.worker=8;
     paroptim.general.refineOptim=0;
@@ -1295,8 +1299,7 @@ function paroptim=volsweeplocal(e,gridCase)
     
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
-    paroptim.general.refineOptimType='desvargrad';
-    paroptim.general.refineOptimRatio=0.1;
+    
     
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
@@ -1314,6 +1317,8 @@ function [paroptim]=volsweeplocal_test(refmethod)
     paroptim.general.refineOptimRatio=ratio(1);
     paroptim.general.refineOptim(end,end)=50;
 end
+
+% Local refinements
 
 function [paroptim]=NACA0012local(gridCase,refmethod)
     
