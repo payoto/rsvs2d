@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%{
+
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -21,9 +21,9 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-%}
 
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -1955,7 +1955,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     diaryFile=MakePathCompliant(diaryFile);
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
-    diary(diaryFile);
+%     diary(diaryFile);
     
     warning('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
     
