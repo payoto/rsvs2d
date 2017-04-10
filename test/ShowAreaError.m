@@ -79,24 +79,25 @@ end
 function [posL]=PlotProfileDifference(coord1,coord2,ax)
     
     
-    if numel(coord1)==numel(coord2)
-        axes(ax(1))
-        n=size(coord1,1);
-        tanVec=coord1(mod((0:n-1)+1,n)+1,:)-coord1(mod((0:n-1)-1,n)+1,:);
-        posL=sqrt(sum((tanVec).^2,2));
-        posL=cumsum([0;posL(1:end-1)]);
-        normVec=([0 1;-1 0]*tanVec')';
-        deltaCoord=sum((coord2-coord1).*normVec,2)./sqrt(sum(normVec.^2,2));
-        %deltaCoord=sqrt(sum((coord2-coord1).^2,2));
-        [maxVal,iMax]=max(abs(deltaCoord));
-        plot(posL,deltaCoord)
-        axes(ax(2))
-        plot(posL,sign(iMax)*deltaCoord/maxVal)
+    if numel(coord1)~=numel(coord2)
         
-    else
+        coord1=coord1(1:min(size(coord1,1),size(coord2,1)),:);
+        coord2=coord2(1:min(size(coord1,1),size(coord2,1)),:);
+        
         warning('Different numbers')
     end
-    
+    axes(ax(1))
+    n=size(coord1,1);
+    tanVec=coord1(mod((0:n-1)+1,n)+1,:)-coord1(mod((0:n-1)-1,n)+1,:);
+    posL=sqrt(sum((tanVec).^2,2));
+    posL=cumsum([0;posL(1:end-1)]);
+    normVec=([0 1;-1 0]*tanVec')';
+    deltaCoord=sum((coord2-coord1).*normVec,2)./sqrt(sum(normVec.^2,2));
+    %deltaCoord=sqrt(sum((coord2-coord1).^2,2));
+    [maxVal,iMax]=max(abs(deltaCoord));
+    plot(posL,deltaCoord)
+    axes(ax(2))
+    plot(posL,sign(iMax)*deltaCoord/maxVal)
     
 end
 

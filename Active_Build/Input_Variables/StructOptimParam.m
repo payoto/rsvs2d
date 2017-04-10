@@ -1258,16 +1258,18 @@ end
 
 function paroptim=volsweeplocal(e,gridCase)
     
-    lvl=5;
-    nIter=30;
     paroptim=AreaM2sweep_Nc();
     [paroptim]=SmoothModes(paroptim);
     [paroptim]=AdaptiveRefinement(paroptim);
+    
+    lvl=7;
+    nIter=paroptim.refine.refineIter;
+    
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.optim.CG.minDiffStep=1e-5;
+    paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.general.maxIter=nIter;
     paroptim.general.worker=8;
     paroptim.general.refineOptim=0;
