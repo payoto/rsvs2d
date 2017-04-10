@@ -405,6 +405,7 @@ function [paroptim]=AdaptiveRefinement(paroptim)
     paroptim.refine.refineIter=100;
     paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
     paroptim.refine.refineOptimType='contcurvevol';
+    paroptim.refine.refineOptimRatio=0.3; 
     paroptim.refine.rankType='rank';
     paroptim.refine.slopeConv=0.2;
     

@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -21,9 +21,9 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
+%}
 
-
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -109,7 +109,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugA
             if exist('flagOut','var') && ~flagOut
                 disp('Output Skipped')
             else
-                [paramoptim]=FindKnownOptim(paramoptim,iterstruct,baseGrid,gridrefined,...
+                [paramoptim]=FindKnownOptim(paramoptim,iterstruct(1:nIter),baseGrid,gridrefined,...
                     restartsnake,connectstructinfo,outinfo(end));
                 OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
             end
@@ -1018,8 +1018,13 @@ function [symList]=RobustSymmetryAssignement(baseGrid,dim)
     subFill2=FindObjNum([],sub2,subFillPos);
     
     symList=[subFill1,subFill2];
-    
-    symList=RemoveIdenticalVectors(symList(find(all(symList~=0,2)),:))';
+    symList=symList(find(all(symList~=0,2)),:);
+    if isempty(symList)
+        warning('Symmetry list is empty (because the grid is not symmetric)')
+        symList=zeros([2,0]);
+    else
+        symList=RemoveIdenticalVectors(symList)';
+    end
 end
 
 function notDesInd=BuildExclusionList(symDesVarList)
@@ -1815,9 +1820,9 @@ end
 function [paramoptim]=FindKnownOptim(paramoptim,iterstruct,baseGrid,gridrefined,...
         restartsnake,connectstructinfo,outinfo)
     
-    varExtract={'objectiveName'};
-    [objectiveName]=ExtractVariables(varExtract,paramoptim);
-    try
+    varExtract={'objectiveName','knownOptim'};
+    [objectiveName,knownOptim]=ExtractVariables(varExtract,paramoptim);
+     try
         switch objectiveName
             case 'InverseDesign'
                 [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
@@ -1955,7 +1960,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     diaryFile=MakePathCompliant(diaryFile);
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
-%     diary(diaryFile);
+    diary(diaryFile);
     
     warning('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
     
@@ -2574,7 +2579,7 @@ function [isRefine]=RefineSortMethod(cellRank,refineOptimRatio,rankType)
             numRefine=ceil(sum(cellRank~=0)*refineOptimRatio);
             [~,cellOrd]=sort(cellRank);
             isRefine=false(size(cellRank));
-            isRefine((cellOrd((numel(cellRank)-(numRefine)):end)))=true;
+            isRefine((cellOrd((numel(cellRank)+1-(numRefine)):end)))=true;
         otherwise
             error('Unknown ranking type')
     end
