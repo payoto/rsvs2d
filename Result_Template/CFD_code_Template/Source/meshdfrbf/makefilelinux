@@ -1,0 +1,55 @@
+# MAKEFILE
+#
+
+
+# LKedward 2016
+
+# --------- Directories ---------
+OBJDIR = obj/
+MODDIR = mod/
+BINDIR = bin/
+DIRNAME = $(shell basename $(CURDIR))
+# --------- Objects ---------
+EXEC =	$(addprefix $(BINDIR), meshdef meshprep)
+#rbfmeshdefanim
+
+OBJS=	$(addprefix $(OBJDIR), \
+				MATRIX.o\
+				FILEIO.o\
+				UTILS.o\
+				MULTISCALERBF.o\
+				)
+
+.SECONDARY: $(OBJS)
+# (Stops objects being treated as intermediate files and being removed post-build)
+
+# --------- Compiler (gcc-4.7) ---------
+FC = gfortran
+FFLAGS = -g -C -std=f2003 -J$(MODDIR)
+debug : FFLAGS += -Wall -fbounds-check
+all : FFLAGS += -O3
+#$(addprefix $(BINDIR), rbfmeshdefanim) : FFLAGS += 
+# -fopenmp
+LFLAGS = -lblas -llapack
+
+
+
+# --------- Targets ---------
+all: $(EXEC)
+
+debug: $(EXEC)
+
+
+$(BINDIR)%: $(OBJS) $(addprefix $(OBJDIR), %.o)
+	$(FC) $^ $(FFLAGS) $(LFLAGS) -o $@ 
+
+$(OBJDIR)%.o: %.f03
+	$(FC) $(FFLAGS) -c $< -o $@
+    
+tar: clean
+	cd ..&& tar -czf $(DIRNAME).tar.gz $(DIRNAME)/
+
+clean:
+	rm $(OBJDIR)*.o
+	rm $(MODDIR)*.mod
+	rm $(EXEC)
