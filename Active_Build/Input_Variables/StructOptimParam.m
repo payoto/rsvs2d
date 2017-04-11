@@ -132,6 +132,10 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.maxRestart=5;
     paroptimobjflow.nMach=2;
     paroptimobjflow.isSymFlow=false;
+    paroptimobjflow.meshDefSens=false;
+    paroptimobjflow.meshDefNorm=false;
+    paroptimobjflow.rootMesh={'none',''};
+    paroptimobjflow.parentMesh='';
     
 end
 
