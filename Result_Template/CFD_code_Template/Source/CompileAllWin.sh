@@ -11,7 +11,7 @@ gfortran -O3 -o showmesh.exe showmesh2_AP.f90
 gcc -O3 -o meshsym.exe meshsym_1.c
 
 chmod 755 CompileMeshDef.sh
-./CompileMeshDef.sh
+./CompileMeshDefWin.sh
 
 
 for foo in `find .. -maxdepth 1 -mindepth 1 -type d -not -name Source`

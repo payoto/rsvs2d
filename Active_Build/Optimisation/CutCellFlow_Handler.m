@@ -3,10 +3,19 @@
 function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
-    varExtract={'CFDfolder','stoponerror','targConv','restartIter','lengthConvTest',...
-        'maxRestart','nMach','isSymFlow','startIterFlow'};
-    [CFDfolder,stoponerror,targConv,restartIter,lengthConvTest,maxRestart,nMach,isSymFlow,startIterFlow]...
-        =ExtractVariables(varExtract,paramoptim);
+    
+
+    [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc);
+    GenerateMesh(paramoptim,targFolder);
+    [obj]=SolveFlow(paramoptim,targFolder);
+end
+
+
+%% Main Handler blocks
+
+function [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc)
+    varExtract={'CFDfolder','nMach'};
+    [CFDfolder,nMach]=ExtractVariables(varExtract,paramoptim);
     
     compType=computer;
     boundaryLoc=MakePathCompliant(boundaryLoc);
@@ -28,25 +37,51 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     RestartModifiedSettings(targFolder,'mach',1,nMach);
     CopyBoundaryFile(boundaryLoc,targFolder);
     
-    %% Get an initial solution running
-    compType=computer;
-    if isSymFlow
-        batchFlow='RunFlowSym';
+end
+
+
+function []=GenerateMesh(paramoptim,targFolder)
+    varExtract={'isSymFlow'};
+    [isSymFlow]=ExtractVariables(varExtract,paramoptim);
+    
+    % Either Generate or Load Mesh
+    isLoad
+    if isLoad
+        meshGenCommand=['cp "',rootMesh,'" "',targFolder,filesep,'griduns"'];
     else
-        batchFlow='RunFlow';
+        meshGenCommand=['"',targFolder,filesep,'RunCartCell.sh"'];
     end
-    RestartModifiedSettings(targFolder,'iter',7,...
-                    [2, startIterFlow, targConv]);
-    if strcmp(compType(1:2),'PC')
-        flowCommand=['"',targFolder,filesep,batchFlow,'.bat"'];
-        [status,stdout]=system(flowCommand);
-    else
-        flowCommand=['''',targFolder,filesep,batchFlow,'.sh'''];
-        [status,stdout]=system(flowCommand);
+    [status,stdout]=system(meshGenCommand);
+    
+    % Mesh Deformation
+    if isDeformation
+        meshDeformCommand=['"',targFolder,filesep,'gridtoxyz.sh"'];
+        [status,stdout]=system(meshDeformCommand);
+    end
+    % Check for errors in deformation and revert to remeshing 
+    
+    
+    % Mesh Symmetry
+    if isSymFlow
+        meshSymCommand=['"',targFolder,filesep,'CartCellSym.sh"'];
+        [status,stdout]=system(meshSymCommand);
     end
     
-    endstr=stdout(end-200:end);
-    errFlag=CutCellErrorHandling(endstr,false);
+    
+end
+
+
+function [obj]=SolveFlow(paramoptim,targFolder)
+    
+    varExtract={'stoponerror','targConv','restartIter','lengthConvTest',...
+        'maxRestart','startIterFlow'};
+    [stoponerror,targConv,restartIter,lengthConvTest,maxRestart,startIterFlow]...
+        =ExtractVariables(varExtract,paramoptim);
+    
+    RestartModifiedSettings(targFolder,'iter',7,...
+                    [2, startIterFlow, targConv]);
+    compType=computer;
+    errFlag=true;%CutCellErrorHandling(endstr,false);
     kk=0;
     iterN=0;
     while sum(errFlag) && kk<10
@@ -93,8 +128,12 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
         end
         errFlag=CutCellErrorHandling(endstr,stoponerror);
     end
+    
     [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
+    
 end
+
+%% Flow solver operations
 
 function [obj]=ExtractFinalData(targFolder,iter,isErr)
     
@@ -125,10 +164,10 @@ end
 function endstr=RunFlowSolverOnly(compType,targFolder)
     
     if strcmp(compType(1:2),'PC')
-        flowCommand=['"',targFolder,filesep,'RunOnlyFlow.bat"'];
+        flowCommand=['"',targFolder,filesep,'RunEulerFlow.sh"'];
         [status,stdout]=system(flowCommand);
     else
-        flowCommand=['''',targFolder,filesep,'RunOnlyFlow.sh'''];
+        flowCommand=['''',targFolder,filesep,'RunEulerFlow.sh'''];
         [status,stdout]=system(flowCommand);
     end
     

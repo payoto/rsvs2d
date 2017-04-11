@@ -295,7 +295,7 @@ function [optionalin]=LoadRestart(restartPath)
     end
 end
 
-%%  Optimisation Operation Blocks
+%%  Optimisation Initialisation Blocks
 
 function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=InitialiseOptimisation(caseStr)
@@ -385,6 +385,24 @@ function []=StartParallelPool(nWorker,nTry)
     end
     
 end
+
+
+function [paramoptim]=InitialiseObjective(paramoptim)
+    varExtract={'objectiveName'};
+    [objectiveName]=ExtractVariables(varExtract,paramoptim);
+    
+    switch objectiveName
+        case 'CutCellFlow'
+            
+        otherwise
+            disp('Objective requires no initilisation')
+            
+    end
+    
+    
+end
+
+%% Iteration and convergence
 
 function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
@@ -497,7 +515,6 @@ function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startI
     end
     
 end
-%% Normal Iteration
 
 function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
@@ -533,7 +550,6 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     end
     
 end
-
 
 function [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,population,baseGrid)
     
