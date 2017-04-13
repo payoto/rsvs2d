@@ -1,0 +1,48 @@
+#  Meshdef Source Files
+
+Currently supports two mesh types:
+ - SU2 meshes
+ - xyz general point cloud definitions
+
+Consists of two programs:
+ - meshprep.f03       : preprocessor program
+ - meshdef.f03        : mesh deformer program
+
+And four modules:
+ - FILEIO.f03         : File read/write parsers
+ - MATRIX.f03         : Various matrix functions & LAPACK wrappers
+ - MULTISCALERBF.f03  : RBF & Multiscale RBF implementation
+ - UTILS.f03          : Misc. utility functions (config. parsing)
+ 
+Directories:
+ - obj      : contains object files
+ - mod      : contains .mod files
+ - examples : contains run examples 
+ 
+ - makefile : also included for building source - may need to update location for binaries (~/bin?).
+
+------------------------------------------------------------------------------------------------------
+#   meshprep Usage Notes
+meshprep reads parameters from a configuration file.
+Parameters can also be specified via command line: r0=4 becomes 'meshprep --r0 4' (command line args. override config file values)
+meshprep first looks for configuration file named 'meshdef.conf'
+if 'meshdef.conf' doesn't exist:
+	then it looks in the first command line argument for an alternate filename
+if 'meshdef.conf' does not exist and first command line argument is not a valid file:
+	then it assumes all parameters will be passed as command line arguments
+
+See the examples for config parameters.
+
+meshprep outputs a binary preprocessor file which contains the volume mesh, the surface points and any preprocessed
+data required for mesh deformation. Hence the original volume and surface mesh files are not subsequently required by meshdef.
+
+------------------------------------------------------------------------------------------------------
+#  meshdef Usage Notes 
+meshdef takes up to three command line arguments:
+ (1) [preprocFile]          - REQUIRED: preprocessor file output by meshprep
+ (2) [displacementFile]     - OPTIONAL: .xyz 3d point cloud file containing surface node displacements
+										If absent: outputs the undeformed mesh that is saved in the preprocessor file
+ (3) [outputFile]           - OPTIONAL: output filename for displaced volume points
+										If absent: outputs 3d point cloud data to stdout
+
+ 

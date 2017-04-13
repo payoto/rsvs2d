@@ -142,6 +142,8 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
     WriteFullInfoProfile(writeDirectory,nProf,marker,t,nIter)
     
     BoundaryOutput(loop,fidBoundary,typeLoop,buildInternal);
+    % DVP boundary.dat
+    % or surface.xyz & displacements.xyz
     fclose(fidBoundary);
 end
 

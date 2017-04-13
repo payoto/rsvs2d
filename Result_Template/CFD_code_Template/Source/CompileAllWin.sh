@@ -17,8 +17,10 @@ chmod 755 CompileMeshDef.sh
 for foo in `find .. -maxdepth 1 -mindepth 1 -type d -not -name Source`
 do
 	cp -p *.exe $foo
+	cp -p *.dll $foo
 	cp -p gridtoxyz.sh $foo
 	cp -p cmdfiles/*.sh $foo
+	cp -p cmdfiles/*.bat $foo
 	cp -p cmdfiles/bashtimeout $foo
 done
 

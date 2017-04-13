@@ -75,7 +75,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             [iterstruct(nIter).population,restartsnake]=...
                 PerformIteration(paramoptim,outinfo(refStage),nIter,...
                 iterstruct(nIter).population,gridrefined,restartsnake,...
-                baseGrid,connectstructinfo);
+                baseGrid,connectstructinfo,iterstruct(1:nIter-1));
             OptimisationOutput('optstruct',paramoptim,outinfo(refStage),iterstruct);
             % Evaluate Objective Function
             [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
@@ -386,7 +386,6 @@ function []=StartParallelPool(nWorker,nTry)
     
 end
 
-
 function [paramoptim]=InitialiseObjective(paramoptim)
     varExtract={'objectiveName'};
     [objectiveName]=ExtractVariables(varExtract,paramoptim);
@@ -405,16 +404,18 @@ end
 %% Iteration and convergence
 
 function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,population,...
-        gridrefined,restartsnake,baseGrid,connectstructinfo)
+        gridrefined,restartsnake,baseGrid,connectstructinfo,iterstruct)
     
     
     varExtract={'nPop','objectiveName','defaultVal','lineSearch','useSnake'};
     [nPop,objectiveName,defaultVal,lineSearch,useSnake]=ExtractVariables(varExtract,paramoptim);
     
+    isSensiv=~((~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch);
+    
     if ~useSnake
         [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,population,baseGrid);
         
-    elseif (~CheckSnakeSensitivityAlgorithm(paramoptim)) || lineSearch
+    elseif ~isSensiv
         [population,supportstruct,captureErrors]=IterateNoSensitivity(paramoptim,outinfo,nIter,population,...
             gridrefined,restartsnake,baseGrid,connectstructinfo);
         
@@ -425,6 +426,11 @@ function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,pop
     end
     nPop=numel(population);
     [paramoptim]=SetVariables({'nPop'},{nPop},paramoptim);
+    
+    save('TestParamMeshMot.mat')
+    
+    [supportstruct,captureErrors]=ParamMeshMotion(paramoptim,population,...
+        supportstruct,isSensiv,captureErrors,iterstruct);
     
     [population,captureErrors]=ParallelObjectiveCalc...
         (objectiveName,paramoptim,population,supportstruct,captureErrors);
@@ -446,14 +452,14 @@ function [population,captureErrors]=ParallelObjectiveCalc...
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
-                supportstruct(ii).loop);
+                supportstruct(ii));
             fieldsAdd=fieldnames(additional);
             for jj=1:numel(fieldsAdd)
                 population(ii).additional.(fieldsAdd{jj})=additional.(fieldsAdd{jj});
             end
         catch MEexception
             population(ii).constraint=false;
-            population(ii).exception=[population(ii).exception,'error: ',MEexception.identifier];
+            population(ii).exception=[population(ii).exception,'error: ',MEexception.identifier ,' - '];
             captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
         end
     end
@@ -548,7 +554,7 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
             captureErrors{ii}=MEexception.getReport;
         end
     end
-    
+    [supportstruct(:).parentMesh]=deal('');
 end
 
 function [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,population,baseGrid)
@@ -559,11 +565,182 @@ function [population,supportstruct,captureErrors]=IterateNoSnake(paramoptim,popu
     [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     [captureErrors{1:nPop}]=deal('');
-    supportstruct=repmat(struct('loop',[]),[1,nPop]);
+    supportstruct=repmat(struct('loop',[],'parentMesh',''),[1,nPop]);
     
     
 end
 
+%% Support for  mesh motion
+
+function [supportstruct,captureErrors]=ParamMeshMotion(paramoptim,population,...
+        supportstruct,isSensiv,captureErrors,iterstruct)
+    % DVP Find folders and paths required for mesh motion
+    % Also need separate function to Output the surface and displacements
+    % single load operation needed to get the root loop that generated the
+    % mesh
+    
+    
+    varExtract={'meshDefSens','meshDefNorm','objectiveName','useSnake','rootMesh'};
+    [meshDefSens,meshDefNorm,objectiveName,useSnake,rootMesh]=...
+        ExtractVariables(varExtract,paramoptim);
+    
+    if (isSensiv && meshDefSens) || (~isSensiv && meshDefNorm) && useSnake
+        % Execute the method for selection
+        [supportstruct]=SelectPrevMesh(paramoptim,supportstruct,population,iterstruct);
+        % Generate the profiles
+        [captureErrors,supportstruct]=GenerateSurfaceMotionFiles...
+            (paramoptim,population,supportstruct,captureErrors);
+        
+    end
+    
+end
+
+function [supportstruct]=SelectPrevMesh(paramoptim,supportstruct,population,iterstruct)
+    
+    varExtract={'optimMethod','rootMesh','lineSearch','direction'};
+    [optimMethod,rootMesh,lineSearch,direction]=ExtractVariables(varExtract,paramoptim);
+    
+    switch rootMesh{1}
+        case 'path'
+            [supportstruct(:).parentMesh]=deal(rootMesh{2});
+            
+        case 'previter'
+            [prevMesh]=FindPrevIterMesh(optimMethod,direction,lineSearch,iterstruct);
+            [supportstruct(:).parentMesh]=deal(prevMesh);
+        case 'none'
+            [supportstruct(:).parentMesh]=deal('');
+        otherwise
+            error('Invalid mesh motion specified')
+    end
+    
+end
+
+function [captureErrors,supportstruct]=GenerateSurfaceMotionFiles...
+        (paramoptim,population,supportstruct,captureErrors)
+    % DVP Generates the displacements and the surface.xyz and
+    % displacements.xyz files for the files concerned.
+    %
+    
+    varExtract={'typeLoop'};
+    [typeLoop]=...
+        ExtractVariables(varExtract,paramoptim.parametrisation);
+    
+    for ii=1:numel(supportstruct)
+        try
+            if ~isempty(supportstruct(ii).parentMesh)
+                if ii==1 || ~strcmp(supportstruct(ii).parentMesh,...
+                        supportstruct(max(ii-1,1)).parentMesh)
+                    [rootProfile]=FindDir(supportstruct(ii).parentMesh,'restart',false);
+                    indat=load(rootProfile{1},'loop');
+                end
+                looproot=indat.loop;
+                loop=supportstruct(ii).loop;
+                if numel(loop)~=numel(looproot)
+                    fprintf('Profile %i : Different Topologies, re-meshing required\n',ii);
+                    supportstruct(ii).parentMesh='';
+                else
+                    [catloop]=MatchLoops(looproot,loop,typeLoop);
+                    fidSurf=fopen([population(ii).location,filesep,'surface.xyz'],'w');
+                    fidDisp=fopen([population(ii).location,filesep,'displacements.xyz'],'w');
+                    
+                    DisplacementsOutput(catloop,fidSurf,fidDisp,typeLoop,false);
+                    fclose(fidSurf);
+                    fclose(fidDisp);
+                end
+                
+            end
+        catch MEexception
+            %population(ii).constraint=false;
+            population(ii).exception=[population(ii).exception,'Warning: ',MEexception.identifier ,' - '];
+            captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
+        end
+    end
+end
+
+function [catloop]=MatchLoops(loop1,loop2,typeLoop)
+    % loop1 is the reference loop
+    % loop2 is the one that must be transformed in displacements
+    
+    [nel1]=(cellfun(@numel,{loop1(:).(typeLoop)}));
+    nel1(2,:)=[loop1(:).isccw];
+    %nel1(3,:)=[loop1(:).isinternal];
+    [nel2]=(cellfun(@numel,{loop2(:).(typeLoop)}));
+    nel2(2,:)=[loop2(:).isccw];
+    %nel2(3,:)=[loop2(:).isinternal];
+    
+    for ii=1:2
+        [~,orderL1]=sort(nel1(ii,:));
+        nel1=nel1(:,orderL1);
+        [~,orderL2]=sort(nel2(ii,:));
+        nel2=nel2(:,orderL2);
+        loop1=loop1(orderL1);
+        loop2=loop2(orderL2);
+    end
+    
+    catloop=repmat(struct(typeLoop,[],'isccw',false),[numel(loop1),3]);
+    if size(nel1,2)==size(nel2,2)
+        for ii=1:numel(loop1)
+            catloop(ii,1).(typeLoop)=loop1(ii).(typeLoop);
+            catloop(ii,2).(typeLoop)=loop2(ii).(typeLoop);
+            catloop(ii,1).isccw=loop1(ii).isccw;
+            catloop(ii,2).isccw=loop2(ii).isccw;
+        end
+        for ii=1:size(nel1,2)
+            if all(nel1(1,:)==nel2(1,:)) ...
+                    && ~xor(catloop(ii,1).isccw,catloop(ii,2).isccw)
+                % if they are all the same assume the loops combien
+                % directly
+                
+                catloop(ii,3).(typeLoop)=catloop(ii,2).(typeLoop)-catloop(ii,1).(typeLoop);
+                catloop(ii,3).isccw=catloop(ii,1).isccw;
+            elseif all(nel1(1,:)==nel2(1,:)) ...
+                    && xor(catloop(ii,1).isccw,catloop(ii,2).isccw)
+                % if they are all the same assume the loops combine
+                % directly
+                
+                catloop(ii,3).(typeLoop)=flip(catloop(ii,2).(typeLoop))-catloop(ii,1).(typeLoop);
+                catloop(ii,3).isccw=catloop(ii,1).isccw;
+                warning('support for misalligned loops not included yet')
+            else
+                % The loops do not all match
+                error('Non matching loops provided, robust process must be coded')
+            end
+        end
+        
+    else
+        disp('Different topologies, differences cannot be assigned')
+    end
+    
+    
+end
+
+function [prevMesh]=FindPrevIterMesh(objectiveName,direction,lineSearch,iterstruct)
+    if numel(iterstruct)>0
+        isGradient=CheckIfGradient(objectiveName);
+        if isGradient
+            if lineSearch
+                prevMesh=iterstruct(end).population(1).location;
+            else
+                obj=[iterstruct(end).population(:).objective];
+                isObjEmpty=find(~cellfun(@isempty,{iterstruct(end).population(:).objective}));
+                switch direction
+                    case 'min'
+                        [~,minIterPos]=min(obj);
+                    case 'max'
+                        [~,minIterPos]=max(obj);
+                        
+                end
+                prevMesh=iterstruct(end).population(isObjEmpty(minIterPos)).location;
+            end
+        else
+            error('Global optimisation cannot be selected for previous iteration')
+        end
+            
+    else
+        prevMesh='';
+        
+    end
+end
 %% Gradient Iteration
 function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
@@ -586,7 +763,8 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     [captureErrors{2:nPop}]=deal('');
     
     supportstruct=[supportstruct,repmat(struct('loop',[]),[1,nPop-1])];
-    supportstructsens=repmat(struct('loop',[],'loopsens',[],'volumefraction',[]),[1,nPop-1]);
+    
+    supportstructsens=repmat(struct('loop',[],'rootMesh','','loopsens',[],'volumefraction',[]),[1,nPop-1]);
     
     if strcmp('analytical',sensCalc)
         [supportstructsens]=ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
@@ -603,6 +781,14 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
             restartsnake,connectstructinfo,currentMember);
         try
             % Normal Execution
+            % DVP check for output type and if sens need to make sure the
+            % comparison profile is passed for reference.
+            % Potentially develop a code that if two profiles have
+            % different number of points it resamples using an intersection
+            % if there are no intersections it resamples both profiles
+            % starting from the closest points.
+            % The main question is do I go and collect the data from the
+            % grid source or pass it around.
             switch sensCalc
                 case'snake'
                     [population(ii+1),supportstruct(ii+1)]=NormalExecutionIteration(...
@@ -618,10 +804,11 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
         catch MEexception
             
             population(ii+1).constraint=false;
-            population(ii+1).exception=['error: ',MEexception.identifier];
+            population(ii+1).exception=['error: ',MEexception.identifier, ' - '];
             captureErrors{ii+1}=MEexception.getReport;
         end
     end
+    [supportstruct(:).parentMesh]=deal('');
     
 end
 
@@ -1606,8 +1793,6 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
     
 end
 
-
-
 %% Print to screen functions
 
 function [tStart]=PrintStart(procStr,lvl)
@@ -1686,11 +1871,14 @@ end
 
 %% Objective Function
 
-function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,member,loop)
+function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,member,supportstruct)
     
     procStr=['Calculate Objective - ',objectiveName];
     [tStart]=PrintStart(procStr,2);
-    
+    % DVP : replace loop by full support struct add the mesh motion to
+    % paramoptim
+    loop=supportstruct.loop;
+    paramoptim=SetVariables({'parentMesh'},{supportstruct.parentMesh},paramoptim);
     objValue=[];
     [objValue,additional]=eval([objectiveName,'(paramoptim,member,loop);']);
     
@@ -1838,7 +2026,7 @@ function [paramoptim]=FindKnownOptim(paramoptim,iterstruct,baseGrid,gridrefined,
     
     varExtract={'objectiveName','knownOptim'};
     [objectiveName,knownOptim]=ExtractVariables(varExtract,paramoptim);
-     try
+    try
         switch objectiveName
             case 'InverseDesign'
                 [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
@@ -1896,8 +2084,8 @@ function [paramoptim]=FindKnownOptimCutCell(paramoptim,outinfo,iterstruct)
     [dat]=GenerateOptimalSolDat(direction,iterstruct);
     
     [knownOptim]=SupersonicOptimLinRes(paramoptim,outinfo(end).rootDir,...
-                dat.xMin,dat.xMax,dat.A,dat.nPoints);
-            
+        dat.xMin,dat.xMax,dat.A,dat.nPoints);
+    
     paramoptim=SetVariables({'knownOptim'},{knownOptim},paramoptim);
 end
 

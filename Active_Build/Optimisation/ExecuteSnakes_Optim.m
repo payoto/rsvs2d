@@ -296,6 +296,7 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
         loop(ii).subdivspline=projPoints;
         if resampleSnak
             resampPoints=ResampleSpline(projPoints,paramspline);
+            % DVP Check for resampling if using mesh motion.
             loop(ii).subdivspline=resampPoints;
         end
         %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
