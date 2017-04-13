@@ -616,7 +616,7 @@ function [paroptim]=Inverse_Bulk()
     paroptim.general.symType='none'; % 'horz'
     
 end
-%% Callable functions
+%% TEST functions
 
 function [paroptim]=TestOptim()
     
@@ -786,6 +786,43 @@ function [paroptim]=Test_Init()
     paroptim.general.worker=12;
 end
 
+function [paroptim]=TestCutCellLaptop()
+    paroptim=volsweeplocal(0.12,'uv');
+    
+    paroptim.general.worker=2;
+    
+    paroptim.obj.flow.isSymFlow=false;
+    paroptim.obj.flow.meshDefSens=true;
+    paroptim.obj.flow.meshDefNorm=false;
+    paroptim.obj.flow.rootMesh={'path','D:\alexa\Documents\TRAVAIL\Matlab\SnakVolParam\results\Optimisation\Archive_2017_04\Day_2017-04-12\Dir_2017-04-12T105008_TestCutCellLaptop\iteration_1\profile_1'};
+    paroptim.obj.flow.parentMesh='';
+end
+
+
+function [paroptim]=TestCutCellLaptop2()
+    paroptim=volsweeplocal(0.12,'uv');
+    
+    paroptim.general.worker=2;
+    
+    paroptim.obj.flow.isSymFlow=false;
+    paroptim.obj.flow.meshDefSens=true;
+    paroptim.obj.flow.meshDefNorm=false;
+    paroptim.obj.flow.rootMesh={'previter','D:\alexa\Documents\TRAVAIL\Matlab\SnakVolParam\results\Optimisation\Archive_2017_04\Day_2017-04-12\Dir_2017-04-12T105008_TestCutCellLaptop\iteration_1\profile_1'};
+    paroptim.obj.flow.parentMesh='';
+end
+
+
+function [paroptim]=TestMeshMotion()
+    paroptim=volsweeplocal(0.12,'uv');
+    
+    paroptim.general.worker=12;
+    
+    paroptim.obj.flow.isSymFlow=false;
+    paroptim.obj.flow.meshDefSens=true;
+    paroptim.obj.flow.meshDefNorm=false;
+    paroptim.obj.flow.rootMesh={'previter','D:\alexa\Documents\TRAVAIL\Matlab\SnakVolParam\results\Optimisation\Archive_2017_04\Day_2017-04-12\Dir_2017-04-12T105008_TestCutCellLaptop\iteration_1\profile_1'};
+    paroptim.obj.flow.parentMesh='';
+end
 %% Test cases for length Area
 
 function [paroptim]=Test_smoothCG_Area()
@@ -2692,7 +2729,6 @@ end
 
 
 %% Inverse Design Cases
-
 
 function paroptim=test_invdes()
     [paroptim]=Inverse_CG();

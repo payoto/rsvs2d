@@ -456,6 +456,79 @@ function [isInternal]=FindInternalLoop(loop)
     end
     
 end
+
+%% Displacements Output
+
+function []=DisplacementsOutput(catloop,FIDsurf,FIDdisp,typeLoop,buildInternal)
+    
+    if nargin<5
+        buildInternal=false;
+        if nargin<4
+            typeLoop='subdivision';
+        end
+    end
+    if numel(catloop)==0
+        error('Invalid loop input, check ''fill''')
+    end
+    % trim loops and extract data
+    if ~buildInternal
+        [isInternal]=FindInternalLoop(catloop(:,1));
+        catloop=catloop(find(~isInternal),:);
+    end
+    if numel(catloop)==0
+        error('Loop is Empty after internal Trimming, check ''fill''')
+    end
+    [trimpoints,trimdisp]=TrimDisplacementPoints(catloop,typeLoop);
+    % format numeric data to printable strings
+    cellPoints=DispToString(trimpoints);
+    cellDisplacement=DispToString(trimdisp);
+    
+    % print string data to file
+    WriteToFile(cellPoints,FIDsurf)
+    WriteToFile(cellDisplacement,FIDdisp)
+    
+end
+
+function [trimpoints,trimdisp]=TrimDisplacementPoints(catloop,typeLoop)
+    % Removes double points and sums them 
+    points=vertcat(catloop(:,1).(typeLoop));
+    displacements=vertcat(catloop(:,3).(typeLoop));
+    
+    cellSimilar=FindIdenticalVector(points);
+    trimdisp=zeros([numel(cellSimilar),size(displacements,2)]);
+    trimpoints=zeros([numel(cellSimilar),size(displacements,2)]);
+    for ii=1:numel(cellSimilar)
+        trimdisp(ii,:)=sum(displacements(cellSimilar{ii},:),1);
+        trimpoints(ii,:)=points(cellSimilar{ii},:);
+    end
+    
+    if size(trimdisp,2)<3
+        trimdisp(:,3)=0;
+        trimpoints(:,3)=0;
+    end
+end
+
+function cellLoops=DispToString(array)
+    % Transforms the data organised in loopout into a cell array of strings
+    % ready to be written to a file
+    
+    
+    kk=1;
+    cellLoops{kk}=int2str(size(array,1));
+    kk=kk+1;
+    % Write an array of numbers in the correct format
+    for jj=1:size(array,1)
+        cellLoops{kk}='';
+        for ll=1:length(array(jj,:))
+            cellLoops{kk}=[cellLoops{kk},...
+                num2str(array(jj,ll),24),'  '];
+        end
+        kk=kk+1;
+    end
+    
+    
+    
+end
 %% Video Output functions
 
 function []=MakeVideo(movStruct,fps,quality,fileName)

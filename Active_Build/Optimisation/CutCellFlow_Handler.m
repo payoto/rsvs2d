@@ -4,7 +4,7 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     
-
+    
     [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc);
     GenerateMesh(paramoptim,targFolder);
     [obj]=SolveFlow(paramoptim,targFolder);
@@ -41,29 +41,38 @@ end
 
 
 function []=GenerateMesh(paramoptim,targFolder)
-    varExtract={'isSymFlow'};
-    [isSymFlow]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'isSymFlow','parentMesh'};
+    [isSymFlow,parentMesh]=ExtractVariables(varExtract,paramoptim);
+    compType=computer;
+    if strcmp(compType(1:2),'PC')
+        extStr='bat';
+    else
+        extStr='sh';
+    end
     
     % Either Generate or Load Mesh
-    isLoad
+    parentMesh=[parentMesh,filesep,'CFD',filesep,'griduns'];
+    isLoad=numel(dir(parentMesh))>0;
     if isLoad
-        meshGenCommand=['cp "',rootMesh,'" "',targFolder,filesep,'griduns"'];
+        meshGenCommand=['copy "',parentMesh,'" "',targFolder,filesep,'griduns"'];
+        isDeformation=true;
     else
-        meshGenCommand=['"',targFolder,filesep,'RunCartCell.sh"'];
+        meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
+        isDeformation=false; % probably the right choice
     end
     [status,stdout]=system(meshGenCommand);
     
     % Mesh Deformation
     if isDeformation
-        meshDeformCommand=['"',targFolder,filesep,'gridtoxyz.sh"'];
+        meshDeformCommand=['"',targFolder,filesep,'gridtoxyz.',extStr,'"'];
         [status,stdout]=system(meshDeformCommand);
     end
-    % Check for errors in deformation and revert to remeshing 
+    % Check for errors in deformation and revert to remeshing
     
     
     % Mesh Symmetry
     if isSymFlow
-        meshSymCommand=['"',targFolder,filesep,'CartCellSym.sh"'];
+        meshSymCommand=['"',targFolder,filesep,'CartCellSym.',extStr,'"'];
         [status,stdout]=system(meshSymCommand);
     end
     
@@ -79,7 +88,7 @@ function [obj]=SolveFlow(paramoptim,targFolder)
         =ExtractVariables(varExtract,paramoptim);
     
     RestartModifiedSettings(targFolder,'iter',7,...
-                    [2, startIterFlow, targConv]);
+        [2, startIterFlow, targConv]);
     compType=computer;
     errFlag=true;%CutCellErrorHandling(endstr,false);
     kk=0;
@@ -164,13 +173,13 @@ end
 function endstr=RunFlowSolverOnly(compType,targFolder)
     
     if strcmp(compType(1:2),'PC')
-        flowCommand=['"',targFolder,filesep,'RunEulerFlow.sh"'];
-        [status,stdout]=system(flowCommand);
+        extStr='bat';
     else
-        flowCommand=['''',targFolder,filesep,'RunEulerFlow.sh'''];
-        [status,stdout]=system(flowCommand);
+        extStr='sh';
     end
     
+    flowCommand=['"',targFolder,filesep,'RunEulerFlow.',extStr,'"'];
+    [status,stdout]=system(flowCommand);
     endstr=stdout(end-200:end);
     
 end
@@ -192,7 +201,14 @@ function []=CopyBoundaryFile(boundaryLoc,targFolder)
     origFile=[boundaryLoc,filesep,c(kk-1).name];
     targFile=[targFolder,filesep,'boundary.dat'];
     copyfile(origFile,targFile);
-    
+    dispPath=FindDir(boundaryLoc,'displacements',false);
+    if numel(dispPath)>0
+        targDisp=[targFolder,filesep,'displacements.xyz'];
+        copyfile(dispPath{1},targDisp);
+        dispPath=FindDir(boundaryLoc,'surface',false);
+        targDisp=[targFolder,filesep,'surface.xyz'];
+        copyfile(dispPath{1},targDisp);
+    end
 end
 
 %% Error handling
@@ -339,7 +355,7 @@ end
 
 function strOut=ReplaceMachNum(strIn,nMach)
     
-   cflStr=regexp(strIn,'\d*\s*\d*\.\d*\s*\d*\.\d*','match','once');
+    cflStr=regexp(strIn,'\d*\s*\d*\.\d*\s*\d*\.\d*','match','once');
     strOut=regexprep(strIn,cflStr,'%i %.2f %.2f');
     
     strOut=sprintf([strOut,'\n'],nMach(1),nMach(2),nMach(3));

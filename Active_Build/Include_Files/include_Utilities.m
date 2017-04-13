@@ -9,7 +9,7 @@ function [] = include_Utilities()
 end
 
 
-%%
+%% Parameter Structures Operations
 
 function [trimmedarr]=TrimZeros(arr)
     trimmedarr=arr(arr~=0);
@@ -130,15 +130,20 @@ function [param]=SetVariables(varNames,varValues,param)
     
 end
 
-function [lengthParam,edgeLength]=LengthProfile(points)
+function structdat=GetStructureData(paroptim)
     
-    points=points([1,1:end],:);
-    pointsVec=points(1:end-1,:)-points(2:end,:);
-    edgeLength=sqrt(sum(pointsVec.^2,2));
-    lengthParam=cumsum(edgeLength);
+    [structdat]=ExploreStructureTree(paroptim);
+    structdat.vardat.names='#';
     
+    for ii=1:length(structdat.vars)
+        jj=length(structdat.vardat.names)+1;
+        structdat.vardat.names=[structdat.vardat.names,structdat.vars(ii).name,'#'];
+        structdat.vardat.varmatch(jj)=ii;
+    end
     
 end
+
+%% Vector Operations
 
 function [points]=RemoveIdenticalVectors(points)
     
@@ -187,16 +192,80 @@ function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
     
 end
 
-function structdat=GetStructureData(paroptim)
+function cellSimilar=FindIdenticalVector(blockSegments)
+    % this function takes in a group of Segments and returns the indices of
+    % those identical grouped within a cell array. blockSegments should be a
+    % vertical array of horizontal vectors to be compared.
     
-    [structdat]=ExploreStructureTree(paroptim);
-    structdat.vardat.names='#';
+    [m,n]=size(blockSegments);
+    blockSegments=sort(blockSegments,2);
+    preSortIndex=1:m; % save the index before shuffling
+    % Shuffles edges such that similar edges are side by side
     
-    for ii=1:length(structdat.vars)
-        jj=length(structdat.vardat.names)+1;
-        structdat.vardat.names=[structdat.vardat.names,structdat.vars(ii).name,'#'];
-        structdat.vardat.varmatch(jj)=ii;
+    for ii=1:n
+        [blockSegments,sortIndex]=SortVecColumn(blockSegments,ii);
+        preSortIndex=preSortIndex(sortIndex);
     end
+    %compares neighbouring segments
+    blockSegTrunc1=blockSegments(1:end-1,:);
+    blockSegTrunc2=blockSegments(2:end,:);
+    isPrecedent=[0;(sum(blockSegTrunc1==blockSegTrunc2,2)==n)];
+    % creates a cell array wih as many elements as there are different edges
+    cellSimilar{-sum((isPrecedent-1))}=[];
+    kk=0;
+    for ii=1:m
+        if ~isPrecedent(ii)
+            kk=kk+1;
+            jj=0;
+        end
+        jj=jj+1;
+        % assigns the presorted index to the similarity array
+        cellSimilar{kk}(jj)=preSortIndex(ii);
+    end
+    
+end
+
+function cellSimilar=FindIdenticalVectorOrd(blockSegments)
+    % this function takes in a group of Segments and returns the indices of
+    % those identical grouped within a cell array. blockSegments should be a
+    % vertical array of horizontal vectors to be compared.
+    
+    [m,n]=size(blockSegments);
+    preSortIndex=1:m; % save the index before shuffling
+    % Shuffles edges such that similar edges are side by side
+    
+    for ii=1:n
+        [blockSegments,sortIndex]=SortVecColumn(blockSegments,ii);
+        preSortIndex=preSortIndex(sortIndex);
+    end
+    %compares neighbouring segments
+    blockSegTrunc1=blockSegments(1:end-1,:);
+    blockSegTrunc2=blockSegments(2:end,:);
+    isPrecedent=[0;(sum(blockSegTrunc1==blockSegTrunc2,2)==n)];
+    % creates a cell array wih as many elements as there are different edges
+    cellSimilar{-sum((isPrecedent-1))}=[];
+    kk=0;
+    for ii=1:m
+        if ~isPrecedent(ii)
+            kk=kk+1;
+            jj=0;
+        end
+        jj=jj+1;
+        % assigns the presorted index to the similarity array
+        cellSimilar{kk}(jj)=preSortIndex(ii);
+    end
+    
+end
+
+%% Various
+
+function [lengthParam,edgeLength]=LengthProfile(points)
+    
+    points=points([1,1:end],:);
+    pointsVec=points(1:end-1,:)-points(2:end,:);
+    edgeLength=sqrt(sum(pointsVec.^2,2));
+    lengthParam=cumsum(edgeLength);
+    
     
 end
 

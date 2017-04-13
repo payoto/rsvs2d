@@ -14,6 +14,7 @@ make
 
 cp -rp bin/meshdef.exe ../meshdef.exe
 cp -rp bin/meshprep.exe ../meshprep.exe
+cp -rp x64/*.dll ../
 chmod 755 gridtoxyz.sh
 cp -rp gridtoxyz.sh ../gridtoxyz.sh
 
