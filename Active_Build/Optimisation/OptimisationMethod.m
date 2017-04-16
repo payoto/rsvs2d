@@ -154,6 +154,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         nPop,validVol,varActive,desvarconnec,isRestart,borderActivation,...
         lineSearchType,minDiffStep,stepAlgo,minVol,gradScale]...
         =ExtractVariables(varExtract,paramoptim);
+    
+    
     supportOptim=paramoptim.optim.supportOptim;
     iterOrig=iterCurr;
     % Extract previous iteration information
@@ -206,6 +208,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         [gradF_curr,gradF_m1,gradAdd_curr,gradAdd_m1]...
             =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim);
         
+        gradScale=gradScale/sum(abs(diffStepSize)); % Scale the gradients by the size of the steps taken.
         [gradDes_curr,gradDes_m1]=GradFtoGradDes(gradF_curr,gradF_m1,modestruct,gradScale);
         [gradDes_curr]=ConstraintScaleGradient(gradDes_curr,gradAdd_curr,constrCurr,direction,validVol);
         [gradDes_m1]=ConstraintScaleGradient(gradDes_m1,gradAdd_m1,constrm1,direction,validVol);

@@ -134,6 +134,7 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.isSymFlow=false;
     paroptimobjflow.meshDefSens=false;
     paroptimobjflow.meshDefNorm=false;
+    paroptimobjflow.flowRestart=false;
     paroptimobjflow.rootMesh={'none',''};
     paroptimobjflow.parentMesh='';
     
@@ -392,10 +393,10 @@ end
 
 function [paroptim]=SmoothModes(paroptim)
     
-    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
     paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
     paroptim.parametrisation.optiminit.modeScale='length';
@@ -1187,7 +1188,7 @@ function paroptim=NACA0012Sweep(gridCase,lvl,optimiser)
     
 end
 
-function paroptim=NACA0012Sweeplocal(gridCase,lvl,optimiser)
+function paroptim=NACA0012Sweeplocalfullopt(gridCase,lvl,optimiser)
     
     paroptim=bp3_NACA0012_sweep();
     
@@ -1235,6 +1236,70 @@ function paroptim=NACA0012Sweeplocal(gridCase,lvl,optimiser)
     
 end
 
+function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
+    
+    [paroptim]=CG_NACA0012();
+    paroptim=ModifySnakesParam(paroptim,'optimNACA0012');
+    
+    [paroptim]=SmoothModes(paroptim);
+    [paroptim]=AdaptiveRefinement(paroptim);
+    
+    paroptim.general.nPop=12;
+    paroptim.general.worker=8;
+    
+    nIter=100;
+    lvl=8;
+    paroptim.general.maxIter=nIter;
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
+    paroptim.general.refineOptim=[];
+    paroptim.general.knownOptim=0;
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2]
+    paroptim.optim.CG.minDiffStep=1e-7;
+    paroptim.optim.CG.validVol=0.2;
+    paroptim.general.worker=8;
+    
+    
+    switch gridCase(1)
+        case 'c'
+            paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
+        case 'u'
+            paroptim.parametrisation.snakes.refine.gridDistrib='none';
+    end
+    
+    switch gridCase(2)
+        case 'v'
+            [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl);
+        case 'u'
+            [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
+        case 'a'
+            [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
+         case 'o'
+             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
+        otherwise
+            error('Unknown gridcase')
+    end
+    
+    paroptim.optim.CG.stepAlgo=optimiser;
+    % only horizontal refinement
+    
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+end
+
+function [paroptim]=N12_LRef_MMesh(gridCase,optimiser)
+    paroptim=NACA0012Sweeplocal(gridCase,optimiser);
+    
+    paroptim.obj.flow.isSymFlow=false;
+    paroptim.obj.flow.meshDefSens=true;
+    paroptim.obj.flow.flowRestart=true;
+    paroptim.obj.flow.meshDefNorm=false;
+    paroptim.obj.flow.rootMesh={'previter',''};
+    paroptim.obj.flow.parentMesh='';
+end
 
 % Supersonic refine
 function paroptim=volsweeprefine(e,gridCase,lvl)
@@ -1299,7 +1364,13 @@ end
 
 function paroptim=volsweeplocal(e,gridCase)
     
-    paroptim=AreaM2sweep_Nc();
+    [paroptim]=CG_Aero();
+    [paroptim]=ValVolumeConstraint(paroptim);
+    paroptim.general.startPop='halfuniformsharp';
+    paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
+    paroptim.parametrisation.snakes.refine.LEShrink=true;
+    
+    
     [paroptim]=SmoothModes(paroptim);
     [paroptim]=AdaptiveRefinement(paroptim);
     
@@ -1316,7 +1387,6 @@ function paroptim=volsweeplocal(e,gridCase)
     paroptim.general.refineOptim=0;
     paroptim.general.knownOptim=0.1;
     
-    paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
     
     switch gridCase(1)
         case 'c'
