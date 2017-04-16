@@ -578,7 +578,7 @@ function [param]=optimSupersonic()
     param.general.subdivType='chaikin';
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
     param.general.refineSteps=3;
     param.optiminit.corneractive=false;
@@ -665,7 +665,7 @@ function [param]=SupersonicComponent()
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.typeCorner='global';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
     param.snakes.refine.axisRatio=1;
     
@@ -707,7 +707,7 @@ function [param]=TestInitOptim()
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.typeCorner='global';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
     param.snakes.refine.axisRatio=1;
     
@@ -777,7 +777,7 @@ function [param]=optimInverseDesign()
     param.general.typeLoop='subdivspline';
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=true;
     param.general.refineSteps=4;
     param.optiminit.corneractive=false;
@@ -830,45 +830,24 @@ end
 
 function [param]=optimNACA0012()
    
-    [param]=DefaultCase();
-    
-    param=OptimConvergence(param);
-    param=AvoidLocalOptim(param);
+   [param]=optimInverseDesign();
+   
     
     param.general.typDat='optimInit';
     param.general.restart=true;
     
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=[4 1];
     param.snakes.refine.typeRefine='all';
-    param.snakes.refine.resampleSnak=true;
     
     
     param.snakes.step.mergeTopo=false;
     param.snakes.step.snakesSteps=200;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
-    
-    param.results.archiveName='Optimisation';
-    param.results.resultRoot=[cd,'\..\results\'];
-    param.results.noteFiles={'CurrentBuild'};
-    param.results.tags={'snakes','optimisation'};
-    
-    param.snakes.step.maxStep=0.3;
-    param.snakes.step.maxDt=0.5;
-    param.snakes.step.snakesConsole=false;
-    param.snakes.step.fillLooseStep=0;
-    param.snakes.step.fillLooseCut=1e-1;
-    param.snakes.step.vertLooseStep=100;
-    param.snakes.step.snakData='light';
-    param.snakes.step.snakesSteps=200;
-    param.snakes.step.mergeTopo=false;
-    param.snakes.step.snaxInitPos=5e-4;
-    param.snakes.step.convLevel=10^-10;
-    param.snakes.force.lengthEpsilon=1e-3;
     
     param.snakes.refine.axisRatio=1;
     param.snakes.refine.gridDistrib='cosX01';
-     param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
+    param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
     param.optiminit.defaultCorner=1e-6;
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
@@ -1293,7 +1272,7 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.step.convLevel=10^-8;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=ManualRefine()
@@ -1321,7 +1300,7 @@ function [param]=ManualRefine()
     param.snakes.step.convLevel=10^-8;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=testRefinement()
@@ -1359,7 +1338,7 @@ function [param]=SnakNaca0012()
     param.snakes.step.convLevel=10^-8;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=SnakesFoilVVSmall_ref()
@@ -1378,7 +1357,7 @@ function [param]=SnakesFoilVVSmall_ref()
     param.snakes.step.convLevel=10^-8;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=Supersonic()
@@ -1397,7 +1376,7 @@ function [param]=Supersonic()
      param.snakes.refine.axisRatio=0.25;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=Klunker()
@@ -1415,7 +1394,7 @@ function [param]=Klunker()
      param.snakes.refine.axisRatio=2.2;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     
     param.optiminit.cellLevels=[13,2];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1439,7 +1418,7 @@ function [param]=Klunker2()
      param.snakes.refine.axisRatio=1.0;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     
     param.optiminit.cellLevels=[8,4];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1636,7 +1615,7 @@ function [param]=HalfWedge()
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
     
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=BuzmanBiplane()
@@ -1644,7 +1623,7 @@ function [param]=BuzmanBiplane()
     [param]=HalfWedge();
     
     param.general.typDat='buzmanbiplane';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=0.135;
     param.optiminit.cellLevels=[4,9];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1658,7 +1637,7 @@ function [param]=BuzmanBiplane2()
     [param]=HalfWedge();
     
     param.general.typDat='buzmanbiplane2';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=0.05;
     param.optiminit.cellLevels=[4,14];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1672,7 +1651,7 @@ function [param]=BuzmanBiplane3()
     [param]=HalfWedge();
     
     param.general.typDat='buzmanbiplane3';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=0.2;
     param.optiminit.cellLevels=[6,9];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1690,7 +1669,7 @@ function [param]=BuzmanBiplane4()
     [param]=HalfWedge();
     
     param.general.typDat='buzmanbiplane4';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=0.23;
     param.optiminit.cellLevels=[6,9];
     sizeRatio=param.optiminit.cellLevels(1,:)+2;
@@ -1739,7 +1718,7 @@ function [param]=TestInit()
     
     param.snakes.step.snakesSteps=150;
     param.general.typDat='testinit';
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
     param.snakes.refine.axisRatio=1;
     param.snakes.step.fillLooseStep=0;
     param.snakes.step.fillLooseCut=1e-3;
@@ -1892,7 +1871,7 @@ function [param]=val_SnakesFoilVVSmall()
     param.snakes.step.convLevel=10^-8;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.edgeFinish='sharpen';
+    param.snakes.refine.edgeFinish='none';
 end
 
 function [param]=val_SnakesFoilVVSmall4()

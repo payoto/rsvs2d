@@ -1546,7 +1546,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
         [modeSmoothScale,modeScale]=ExtractVariables({'modeSmoothScale','modeScale'},param);
     catch
         warning('Old param fed given to sensitivity calculation defaulting to scaled mode.')
-        modeSmoothScale='lengthvolnormvol';
+        modeSmoothScale='lengthvolnormfill';
         modeScale='length';
     end
     

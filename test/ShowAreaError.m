@@ -31,7 +31,37 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 modeSmoothScale='undef';
             end
             
-            h=figure('Name',modeSmoothScale);
+            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            pathStr=varargin{1};
+            intfig=varargin{2}(1);
+        case 'foldermode'
+            rootStr=varargin{1};
+            iterNum=varargin{2};
+            profNum=varargin{3};
+            if numel(varargin)<4
+                startProf=2;
+            else
+                startProf=varargin{4};
+                
+            end
+            in1=[iterNum 1];
+            in2=[ones([1,profNum])*iterNum;startProf:(profNum+startProf-1)]';
+            for ii=1:size(in2,1)
+                [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
+                    in1,in2(ii,:));
+                typeLoop=ExtractVariables({'typeLoop'},paramoptim.parametrisation);
+                analysisCoord1=loop1.(typeLoop);
+                analysisCoord2{ii}=loop2.(typeLoop);
+                    
+                
+            end
+            try
+                [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},paramoptim.parametrisation);
+            catch
+                modeSmoothScale='undef';
+            end
+            
+            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
             pathStr=varargin{1};
             intfig=varargin{2}(1);
         case 'data'
@@ -48,6 +78,32 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
             h=figure;
             pathStr='./fig';
             intfig=[];
+        case 'CFD'
+            rootStr=varargin{1};
+            iterNum=varargin{2};
+            profNum=varargin{3};
+            if numel(varargin)<4
+                startProf=2;
+            else
+                startProf=varargin{4};
+                
+            end
+            in1=[iterNum 1];
+            in2=[ones([1,profNum])*iterNum;startProf:(profNum+startProf-1)]';
+            for ii=1:size(in2,1)
+                [paramoptim,analysisCoord1,analysisCoord2{ii}]=FindCFDFromFolder(rootStr,...
+                    in1,in2(ii,:));
+                
+            end
+            try
+                [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},paramoptim.parametrisation);
+            catch
+                modeSmoothScale='undef';
+            end
+            
+            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            pathStr=varargin{1};
+            intfig=varargin{2}(1);
     end
     
     
@@ -63,8 +119,8 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
     xlabel('Point index')
     parsplie.splineCase='inversedesign2';
     for ii=1:numel(analysisCoord2)
-%         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
-%         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+        %         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
+        %         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
         c1=analysisCoord1;
         c2=analysisCoord2{ii};
         posL=PlotProfileDifference(c1,c2,ax);
@@ -73,7 +129,7 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
     plot(posL,c1(:,1))
     plot(posL,c1(:,2))
     legend('x','y')
-    hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',modeSmoothScale,'.fig'])
+    hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',[entryPoint,'_',modeSmoothScale],'.fig'])
 end
 
 function [posL]=PlotProfileDifference(coord1,coord2,ax)
@@ -144,6 +200,24 @@ function [paramoptim,loop1,loop2]=FindDataFromFolder(pathStr,prof1,prof2)
     
 end
 
+function [paramoptim,analysisCoord1,analysisCoord2]=FindCFDFromFolder(...
+        pathStr,prof1,prof2)
+    paramoptim=[];
+    [paramPath,~]=FindDir(pathStr,'FinalParam',0);
+    [p1Path,~]=FindDir(pathStr,['iteration_',int2str(prof1(1))],1);
+    [p2Path,~]=FindDir(pathStr,['iteration_',int2str(prof2(1))],1);
+    [p1Path,~]=FindDir(p1Path{1},['profile_',int2str(prof1(2))],1);
+    [p2Path,~]=FindDir(p2Path{1},['profile_',int2str(prof2(2))],1);
+    [p1Path,~]=FindDir([p1Path{1},filesep,'CFD'],'surf_vertices',0);
+    [p2Path,~]=FindDir([p2Path{1},filesep,'CFD'],'surf_vertices',0);
+    
+    load(paramPath{1})
+    load(p1Path{1},'loop')
+    [analysisCoord1]=LoadCFDSurf(p1Path{1});
+    [analysisCoord2]=LoadCFDSurf(p2Path{1});
+    
+end
+
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
     returnName={};
@@ -173,4 +247,16 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     
     
     
+end
+
+function [coord]=LoadCFDSurf(cfdpath)
+    
+    fid=fopen(cfdpath,'r');
+    ii=1;
+    while ~feof(fid)
+        coord(ii,1:2)=str2num(fgetl(fid));
+        ii=ii+1;
+    end
+    
+    fclose(fid);
 end

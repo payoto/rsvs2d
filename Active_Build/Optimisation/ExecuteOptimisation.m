@@ -427,9 +427,9 @@ function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,pop
     nPop=numel(population);
     [paramoptim]=SetVariables({'nPop'},{nPop},paramoptim);
     
-    save('TestParamMeshMot.mat')
+    %save('TestParamMeshMot.mat')
     
-    [supportstruct,captureErrors]=ParamMeshMotion(paramoptim,population,...
+    [supportstruct,captureErrors,population]=ParamMeshMotion(paramoptim,population,...
         supportstruct,isSensiv,captureErrors,iterstruct);
     
     [population,captureErrors]=ParallelObjectiveCalc...
@@ -572,7 +572,7 @@ end
 
 %% Support for  mesh motion
 
-function [supportstruct,captureErrors]=ParamMeshMotion(paramoptim,population,...
+function [supportstruct,captureErrors,population]=ParamMeshMotion(paramoptim,population,...
         supportstruct,isSensiv,captureErrors,iterstruct)
     % DVP Find folders and paths required for mesh motion
     % Also need separate function to Output the surface and displacements
@@ -588,7 +588,7 @@ function [supportstruct,captureErrors]=ParamMeshMotion(paramoptim,population,...
         % Execute the method for selection
         [supportstruct]=SelectPrevMesh(paramoptim,supportstruct,population,iterstruct);
         % Generate the profiles
-        [captureErrors,supportstruct]=GenerateSurfaceMotionFiles...
+        [captureErrors,supportstruct,population]=GenerateSurfaceMotionFiles...
             (paramoptim,population,supportstruct,captureErrors);
         
     end
@@ -615,7 +615,7 @@ function [supportstruct]=SelectPrevMesh(paramoptim,supportstruct,population,iter
     
 end
 
-function [captureErrors,supportstruct]=GenerateSurfaceMotionFiles...
+function [captureErrors,supportstruct,population]=GenerateSurfaceMotionFiles...
         (paramoptim,population,supportstruct,captureErrors)
     % DVP Generates the displacements and the surface.xyz and
     % displacements.xyz files for the files concerned.
@@ -653,6 +653,7 @@ function [captureErrors,supportstruct]=GenerateSurfaceMotionFiles...
             %population(ii).constraint=false;
             population(ii).exception=[population(ii).exception,'Warning: ',MEexception.identifier ,' - '];
             captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
+            supportstruct(ii).parentMesh='';
         end
     end
 end

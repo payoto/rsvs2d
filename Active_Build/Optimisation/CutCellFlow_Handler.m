@@ -54,7 +54,7 @@ function []=GenerateMesh(paramoptim,targFolder)
     parentMesh=[parentMesh,filesep,'CFD',filesep,'griduns'];
     isLoad=numel(dir(parentMesh))>0;
     if isLoad
-        meshGenCommand=['copy "',parentMesh,'" "',targFolder,filesep,'griduns"'];
+        meshGenCommand=['cp "',parentMesh,'" "',targFolder,filesep,'griduns"'];
         isDeformation=true;
     else
         meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
@@ -62,6 +62,11 @@ function []=GenerateMesh(paramoptim,targFolder)
     end
     [status,stdout]=system(meshGenCommand);
     
+    % Mesh Symmetry
+    if isSymFlow
+        meshSymCommand=['"',targFolder,filesep,'CartCellSym.',extStr,'"'];
+        [status,stdout]=system(meshSymCommand);
+    end
     % Mesh Deformation
     if isDeformation
         meshDeformCommand=['"',targFolder,filesep,'gridtoxyz.',extStr,'"'];
@@ -70,11 +75,6 @@ function []=GenerateMesh(paramoptim,targFolder)
     % Check for errors in deformation and revert to remeshing
     
     
-    % Mesh Symmetry
-    if isSymFlow
-        meshSymCommand=['"',targFolder,filesep,'CartCellSym.',extStr,'"'];
-        [status,stdout]=system(meshSymCommand);
-    end
     
     
 end
@@ -83,9 +83,22 @@ end
 function [obj]=SolveFlow(paramoptim,targFolder)
     
     varExtract={'stoponerror','targConv','restartIter','lengthConvTest',...
-        'maxRestart','startIterFlow'};
-    [stoponerror,targConv,restartIter,lengthConvTest,maxRestart,startIterFlow]...
+        'maxRestart','startIterFlow','flowRestart','parentMesh'};
+    [stoponerror,targConv,restartIter,lengthConvTest,maxRestart,...
+        startIterFlow,flowRestart,parentMesh]...
         =ExtractVariables(varExtract,paramoptim);
+    
+    
+    if flowRestart && (numel(parentMesh)>0)
+        flowPath=FindDir([parentMesh,filesep,'CFD'],'flow.dump',false);
+        if numel(flowPath)>0
+            flowCopy=['cp "',flowPath{1},'" "',targFolder,filesep,'flow.dump"'];
+            [status,stdout]=system(flowCopy);
+            RestartModifiedSettings(targFolder,'restart',12,1);
+        else
+            flowRestart=false;
+        end
+    end
     
     RestartModifiedSettings(targFolder,'iter',7,...
         [2, startIterFlow, targConv]);
@@ -94,10 +107,14 @@ function [obj]=SolveFlow(paramoptim,targFolder)
     kk=0;
     iterN=0;
     while sum(errFlag) && kk<10
-        RestartModifiedSettings(targFolder,'cfl',8)
         endstr=RunFlowSolverOnly(compType,targFolder);
         errFlag=CutCellErrorHandling(endstr,false);
+        RestartModifiedSettings(targFolder,'cfl',8)
         kk=kk+1;
+        if kk==1 && flowRestart && sum(errFlag)
+            RestartModifiedSettings(targFolder,'restart',12,0);
+            warning('Flow restart failed with the following message: %s',endstr)
+        end
     end
     
     if kk<10
