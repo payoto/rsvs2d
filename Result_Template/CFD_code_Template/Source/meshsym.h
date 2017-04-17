@@ -50,6 +50,8 @@ int SortOrder(const void * elem1, const void * elem2) ;
 void BuildCellMatchList();
 void BuildVertMatchList();
 void WriteOutGrid();
+void WriteOutSymPlane();
+void FreeAllMeshSym();
 
 int imin(int a, int b);
 int imax(int a, int b);

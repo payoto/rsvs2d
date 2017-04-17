@@ -12,7 +12,7 @@ int cutDir,cutSide;
 double cutLoc,cutEps;
 int *edgeArray=NULL,*vertInd=NULL,*keepVertPos=NULL,*keepCellPos=NULL,*keepEdgePos=NULL;
 int *cellMatchList=NULL,*vertMatchList=NULL,*keepCellLog=NULL,*vertDelLog=NULL;
-double *cellVol=NULL,*vertCoord=NULL;;
+double *cellVol=NULL,*vertCoord=NULL;
 
 #endif
 
@@ -32,9 +32,26 @@ int main(){
 	BuildCellMatchList();
 	BuildVertMatchList();
 	WriteOutGrid();
+	WriteOutSymPlane();
 	free(posVertNeg);
 	free(posEdgeDel);
+	FreeAllMeshSym();
 	return(0);
+}
+
+void FreeAllMeshSym(){
+free(edgeArray);
+free(vertInd);
+free(keepVertPos);
+free(keepCellPos);
+free(keepEdgePos);
+free(cellMatchList);
+free(vertMatchList);
+free(keepCellLog);
+free(vertDelLog);
+free(cellVol);
+free(vertCoord);
+
 }
 
 void DataIn(){
@@ -233,7 +250,7 @@ void BuildCellMatchList2(){
 
 void BuildVertMatchList(){
 	int ii;
-	vertMatchList=(int*)calloc(nVert,sizeof(int));
+	vertMatchList=(int*)calloc(nVert+1,sizeof(int));
 	for (ii=0;ii<nVertKeep;ii++){
 		vertMatchList[vertInd[keepVertPos[ii]]]=ii+1;
 		}
@@ -273,6 +290,53 @@ void WriteOutGrid(){
 		exit(-1);
 	}
 	fclose(cellgridFID);
+}
+
+
+void WriteOutSymPlane(){
+	int ii,jj,kk;
+	FILE *cellgridFID;
+	int cellPosMin,cellPosMax,nVertWritten,currVert;
+	int *vertWrittenLog;
+
+
+	vertWrittenLog=(int*)calloc(nVertKeep,sizeof(int));
+	nVertWritten=0;
+	
+	cellPosMin=min_array(keepCellPos, nCellKeep);
+
+	cellgridFID=fopen("symplane.xyz","w");
+
+	if((cellgridFID!=NULL)){
+	
+		
+		for (ii=0;ii<nEdgeKeep;ii++){
+			
+			if ((cellMatchList[-cellPosMin+edgeArray[keepEdgePos[ii]*4+2]]==-3)
+				| (cellMatchList[-cellPosMin+edgeArray[keepEdgePos[ii]*4+3]]==-3) ){
+
+				for (jj=0;jj<2;jj++){
+					currVert=vertMatchList[edgeArray[keepEdgePos[ii]*4+jj]]-1;
+					if (vertWrittenLog[currVert]==0){
+						fprintf(cellgridFID," %30.20E",vertCoord[keepVertPos[currVert]*2]);
+						fprintf(cellgridFID," %30.20E",vertCoord[keepVertPos[currVert]*2+1]);
+						fprintf(cellgridFID," %30.20E\n",0);
+						vertWrittenLog[currVert]=1;
+						nVertWritten++;
+					}
+				}
+			}
+			
+			
+		}
+		printf("Symmetry File written: %i vertices\n",nVertWritten);
+		
+	} else {
+		perror("Output file failed to open!");
+		exit(-1);
+	}
+	fclose(cellgridFID);
+	free(vertWrittenLog);
 }
 
 void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList){

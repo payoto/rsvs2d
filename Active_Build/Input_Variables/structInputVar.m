@@ -852,6 +852,7 @@ function [param]=optimNACA0012()
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
+    param.general.typeLoop = 'subdivision'; 
     param.general.subdivType='chaikinNaca0012';
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
