@@ -1293,7 +1293,7 @@ end
 function [paroptim]=N12_LRef_MMesh(gridCase,optimiser)
     paroptim=NACA0012Sweeplocal(gridCase,optimiser);
     
-    paroptim.obj.flow.isSymFlow=false;
+    paroptim.obj.flow.isSymFlow=true;
     paroptim.obj.flow.meshDefSens=true;
     paroptim.obj.flow.flowRestart=true;
     paroptim.obj.flow.meshDefNorm=false;
