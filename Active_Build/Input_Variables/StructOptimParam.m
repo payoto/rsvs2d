@@ -61,7 +61,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.defaultVal=-1e3;
     paroptimgeneral.knownOptim=[0.146088675]; %#ok<*NBRAK>
     paroptimgeneral.useSnake=true;
-    
+    paroptimgeneral.nonFillVar={}; % 'axisratio' 'alpha' 'mach'
     paroptimgeneral.symType='none'; % 'horz'
     paroptimgeneral.nDesVar=[0];
     paroptimgeneral.symDesVarList=[];

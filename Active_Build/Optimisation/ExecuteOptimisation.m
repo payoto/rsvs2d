@@ -219,6 +219,11 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                 case 'optimstruct'
                     startIter=length(optionalin.(fieldsIn{ii}));
                     maxIter=startIter+maxIter;
+                    if ~isfield(isfield(optionalin.(fieldsIn{ii})(1).population,'nonfillvar'))
+                        for kk=1:numel(optionalin.(fieldsIn{ii}))
+                            [optionalin.(fieldsIn{ii}).population(:).nonfillvar]=deal([]);
+                        end
+                    end
                     iterstruct=[optionalin.(fieldsIn{ii}),iterstruct]; %#ok<AGROW>
                     isOptimStruct=true;
                     repeatflag=false;
@@ -1752,10 +1757,11 @@ function [iterstruct]=InitialiseIterationStruct(paramoptim)
 end
 
 function [popstruct]=GeneratePopulationStruct(paroptim)
-    varExtract={'nPop','nDesVar','objectiveName'};
-    [nPop,nDesVar,objectiveName]=ExtractVariables(varExtract,paroptim);
+    varExtract={'nPop','nDesVar','objectiveName','nonFillVar'};
+    [nPop,nDesVar,objectiveName,nonFillVar]=ExtractVariables(varExtract,paroptim);
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
+    [valFill2{1:nPop}]=deal(zeros([1,numel(nonFillVar)]));
     switch objectiveName
         case 'CutCellFlow'
             addstruct=struct('iter',[],'res',[],'cl',[],'cm',[],'cd',[],...
@@ -1789,7 +1795,7 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             
     end
     optimdatstruct=struct('var',[],'value',[]);
-    popstruct=struct('fill',valFill,'location','','objective',[],'constraint'...
+    popstruct=struct('fill',valFill,'nonfillvar',valFill,'location','','objective',[],'constraint'...
         ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','');
     
 end
