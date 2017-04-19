@@ -280,6 +280,17 @@ function []=ExtractCarpetParamPair(paramPair,optimList,optimOpts,resstruct,resDi
     shortOptList=RemoveIdenticalVectors(trimList);
     actfields=fields;
     actfields(pairInOpts)=[];
+    for ii=1:numel(optimList)
+        if isnumeric(optimList{ii}{1})
+            actOpts=vertcat(optimList{ii}{:});
+        elseif ischar(optimList{ii}{1})
+            
+            actOpts=char(optimList{ii}{:});
+        else
+            actOpts=[1:numel(optimList{ii})]';
+        end
+        [~,newOrd{ii}]=sort(actOpts(:,1));
+    end
     for ii=1:size(shortOptList,1)
         actRefines=find(all(trimList==ones([size(trimList,1),1])*shortOptList(ii,:),2))';
         allMembers=fullList(actRefines,pairInOpts);
@@ -301,7 +312,7 @@ function []=ExtractCarpetParamPair(paramPair,optimList,optimOpts,resstruct,resDi
         for jj=0:maxRef
             figobj.color=colorOrder(mod(jj-1,size(colorOrder,1))+1,:);
             figobj=PlotCarpetPlot(allMembers(:,[1:numel(pairInOpts),...
-                numel(pairInOpts)+(jj+1)*2]),optimList(pairInOpts),figobj);
+                numel(pairInOpts)+(jj+1)*2]),optimList(pairInOpts),newOrd(pairInOpts),figobj);
             figobj.l3.DisplayName=['Ref ',int2str(jj)];
             lEntry(jj+1)=figobj.l3;
         end
@@ -335,7 +346,7 @@ function []=ExtractCarpetParamPair(paramPair,optimList,optimOpts,resstruct,resDi
 end
 
 
-function [figobj]=PlotCarpetPlot(data,labels,figobj)
+function [figobj]=PlotCarpetPlot(data,labels,order,figobj)
     
     
     isLoadColor=false;
@@ -360,9 +371,9 @@ function [figobj]=PlotCarpetPlot(data,labels,figobj)
     for ii=1:size(data,1)
         Z(data(ii,2),data(ii,1))=data(ii,3);
     end
-    
+    Z=Z(order{2},order{1});
     figobj.mesh=mesh(X,Y,Z);
-    figobj.l3=plot3(data(:,1),data(:,2),data(:,3));
+    figobj.l3=plot3(FindObjNum([],data(:,1),order{1}),FindObjNum([],data(:,2),order{2}),data(:,3));
     figobj.l3.LineStyle='none';
     figobj.l3.Marker='*';
     if isLoadColor
@@ -372,10 +383,10 @@ function [figobj]=PlotCarpetPlot(data,labels,figobj)
     figobj.axh.ZScale='log';
     figobj.axh.XTick=1:numel(labels{1});
     figobj.axh.YTick=1:numel(labels{2});
-    figobj.axh.XTickLabel=labels{1};
+    figobj.axh.XTickLabel=labels{1}(order{1});
     figobj.axh.XTickLabelRotation=45;
     figobj.axh.YTickLabelRotation=45;
-    figobj.axh.YTickLabel=labels{2};
+    figobj.axh.YTickLabel=labels{2}(order{2});
     hidden off
     
     
@@ -434,7 +445,10 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     dirPath=optimPath(1:dirPath(end));
     [paramPath]=FindFinalParamFiles({dirPath});
     
-    refinestruct.stage=str2double(regexprep(optimCell{end-1},['Dir.*',optimCell{end-2},'_'],''));
+%     refinestruct.stage=str2double(regexprep(optimCell{end-1},['Dir.*',optimCell{end-2},'_'],''));
+%     refinestruct.stage=str2double(regexp(optimCell{end-1},['_[0-9]+',filesep],'match'));
+    stageRef=regexp(optimCell{end-1},'_','split');
+    refinestruct.stage=str2double(stageRef{end});
     refinestruct.time=datenum(regexprep(regexprep(optimCell{end-1},'Dir_',''),...
         [optimCell{end-2},'_.*'],''),'yyyy-mm-ddTHHMMSS');
     refinestruct.pattern=optimCell{end-2};
@@ -448,6 +462,9 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     for ii=1:numel(compareopts.optim)
         refinestruct.paramoptim.(compareopts.optim{ii})=ExtractVariables(...
             compareopts.optim(ii),instruct.paramoptim);
+        if iscell(refinestruct.paramoptim.(compareopts.optim{ii}))
+           refinestruct.paramoptim.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}){1}; 
+        end
     end
     if numel(compareopts.optim)==0
         refinestruct.paramoptim=struct([]);
@@ -455,6 +472,10 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     for ii=1:numel(compareopts.snake)
         refinestruct.paramsnake.(compareopts.snake{ii})=ExtractVariables(...
             compareopts.snake(ii),instruct.paramoptim.parametrisation);
+        
+        if iscell(refinestruct.paramoptim.(compareopts.snake{ii}))
+           refinestruct.paramoptim.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii}){1}; 
+        end
     end
     if numel(compareopts.snake)==0
         refinestruct.paramsnake=struct([]);
