@@ -284,8 +284,14 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param,paramspline)
     sharpen=[LEShrink,TEShrink];
     
     for ii=1:length(loop)
+        %startPoints=loop(ii).(typeBound).coord;
+        isccw=CCWLoop(loop(ii).(typeBound).coord);
+        if ~isccw
+           loop(ii).(typeBound).coord=flip(loop(ii).(typeBound).coord);
+           isccw=CCWLoop(loop(ii).(typeBound).coord);
+        end
+        loop(ii).isccw=isccw;
         startPoints=loop(ii).(typeBound).coord;
-        loop(ii).isccw=CCWLoop(startPoints);
         [newPoints,projPoints]=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
         if isempty(newPoints)
             disp('Loop is a single point')

@@ -109,7 +109,9 @@ function [obj]=SolveFlow(paramoptim,targFolder)
     while sum(errFlag) && kk<10
         endstr=RunFlowSolverOnly(compType,targFolder);
         errFlag=CutCellErrorHandling(endstr,false);
-        RestartModifiedSettings(targFolder,'cfl',8)
+        if kk>=1
+            RestartModifiedSettings(targFolder,'cfl',8)
+        end
         kk=kk+1;
         if kk==1 && flowRestart && sum(errFlag)
             RestartModifiedSettings(targFolder,'restart',12,0);
@@ -263,14 +265,16 @@ function [isfinished,restartNormal,restartCFL,theoretConvIter]=...
     isfinished=(finConv<targConv) || (finConv==0);
     theoretConvIter=0;
     restartNormal=false;
-    restartCFL=false;
+    restartCFL=0;
     if ~isfinished
         [resArray]=ExtractConvergenceRate(targFolder,numAverage);
         [isConverging,theoretConvIter]=TestConvergenceRate(resArray,targConv);
-        if isConverging
+        if isConverging==2
+            restartCFL=-1;
+        elseif isConverging
             restartNormal=true;
         else
-            restartCFL=true;
+            restartCFL=1;
         end
     end
     
@@ -315,12 +319,17 @@ function [isConverging,theoretConvIter]=TestConvergenceRate(resArray,targConv)
     matLin=[resArray(:,1),ones(size(resArray(:,1)))];
     coeffLin=(matLin'*matLin)\matLin'*resArray(:,2);
     linRMS=sqrt(mean((matLin*coeffLin).^2));
+    corrCoefConvRate=corrcoef(resArray(:,1:2));
+    corrCoefConvRate=corrCoefConvRate(1,2);
     theoretConvIter=round((targConv-coeffLin(2))/coeffLin(1)-lastIter);
     
-    if theoretConvIter<0
+    if theoretConvIter<0 || abs(corrCoefConvRate)<0.3
         isConverging=false;
     end
     
+    if abs(corrCoefConvRate)>0.9 && theoretConvIter>2000
+        isConverging=2;
+    end
     
 end
 
@@ -343,7 +352,12 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
     cflLine=fgetl(fidSetR);
     switch typeChange
         case 'cfl'
-            cfloutstr=ReplaceCFLNum(cflLine);
+            if nargin>3
+                dirCFL=varargin{1};
+            else
+                dirCFL=1;
+            end
+            cfloutstr=ReplaceCFLNum(cflLine,dirCFL);
         case 'iter'
             cfloutstr=ReplaceIter(cflLine,varargin{1});
         case 'restart'
@@ -360,12 +374,16 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
     fclose('all');
 end
 
-function strOut=ReplaceCFLNum(strIn)
+function strOut=ReplaceCFLNum(strIn,dirCFL)
     
     cflStr=regexp(strIn,'\d*\.\d*','match','once');
     strOut=regexprep(strIn,cflStr,'%f');
     cflNum=str2double(cflStr);
-    cflNum=cflNum/2;
+    if dirCFL>0
+        cflNum=cflNum/1.2;
+    else
+        cflNum=cflNum*1.2;
+    end
     strOut=sprintf([strOut,'\n'],cflNum);
     
 end

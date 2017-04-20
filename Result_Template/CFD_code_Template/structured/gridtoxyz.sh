@@ -20,6 +20,22 @@ endl=$(($numedge+1+$numpoints))
 echo $numpoints > volume.xyz
 awk -v awk_strt=$startl -v awk_end=$endl 'NR >= awk_strt {print $2,$3} ; NR == awk_end {exit}' $in | sed 's/\r$//' | sed 's/$/ 0.0/' >> volume.xyz 
 
+touch symplane.xyz
+numSym=$(wc -l symplane.xyz | awk '{print $1}')
+echo Symmetry plane is $numSym Points
+numDisp=$(head -n 1 displacements.xyz | sed 's/\r$//' | sed 's/$\r//') 
+numTot=$(($numSym+$numDisp))
+
+echo $numTot > displacements2.xyz
+echo $numTot > surface2.xyz
+awk -v awk_strt=2 'NR >= awk_strt {print $1,$2,$3} ' displacements.xyz | sed 's/\r$//' >> displacements2.xyz 
+awk -v awk_strt=2 'NR >= awk_strt {print $1,$2,$3} ' surface.xyz | sed 's/\r$//' >> surface2.xyz 
+awk '{print $1,$2,$3} ' symplane.xyz | sed 's/\r$//' >> surface2.xyz 
+awk '{print 0.0,0.0,0.0} ' symplane.xyz | sed 's/\r$//' >> displacements2.xyz 
+cp -p displacements.xyz displacements_orig.xyz
+cp -p surface.xyz surface_orig.xyz
+cp -p displacements2.xyz displacements.xyz
+cp -p surface2.xyz surface.xyz
 
 # -------------------------------------#
 # Section 2 Call Mesh deformation code #
@@ -37,6 +53,9 @@ awk -v awk_end=$(($numpoints+1)) 'NR >= 2 {print NR-1,$1,$2} ; NR == awk_end {ex
 awk -v awk_end=$endl 'NR > awk_end ' $in  >> ${in}2
 
 mv $in ${in}_old
+mv ${in}2 ${in}
+
+./meshvol.exe
 mv ${in}2 ${in}
 
 rm volume2.xyz

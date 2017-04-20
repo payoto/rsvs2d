@@ -18,4 +18,5 @@ cp -rp x64/*.dll ../
 chmod 755 gridtoxyz.sh
 cp -rp gridtoxyz.sh ../gridtoxyz.sh
 
+mv makefile makefilewin
 cd ..
