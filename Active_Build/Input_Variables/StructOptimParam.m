@@ -811,6 +811,9 @@ function [paroptim]=TestCutCellLaptop2()
     paroptim.obj.flow.rootMesh={'previter','D:\alexa\Documents\TRAVAIL\Matlab\SnakVolParam\results\Optimisation\Archive_2017_04\Day_2017-04-12\Dir_2017-04-12T105008_TestCutCellLaptop\iteration_1\profile_1'};
     paroptim.obj.flow.parentMesh='';
 end
+function [paroptim]=TestCutCellLaptop3()
+    paroptim=N12_LRef_MMesh('uo','BFGS');
+end
 
 
 function [paroptim]=TestMeshMotion()

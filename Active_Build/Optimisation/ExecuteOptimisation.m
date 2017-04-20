@@ -219,9 +219,9 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                 case 'optimstruct'
                     startIter=length(optionalin.(fieldsIn{ii}));
                     maxIter=startIter+maxIter;
-                    if ~isfield(isfield(optionalin.(fieldsIn{ii})(1).population,'nonfillvar'))
+                    if ~isfield(optionalin.(fieldsIn{ii})(1).population,'nonfillvar')
                         for kk=1:numel(optionalin.(fieldsIn{ii}))
-                            [optionalin.(fieldsIn{ii}).population(:).nonfillvar]=deal([]);
+                            [optionalin.(fieldsIn{ii})(kk).population(:).nonfillvar]=deal([]);
                         end
                     end
                     iterstruct=[optionalin.(fieldsIn{ii}),iterstruct]; %#ok<AGROW>

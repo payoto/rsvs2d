@@ -55,6 +55,9 @@ awk -v awk_end=$endl 'NR > awk_end ' $in  >> ${in}2
 mv $in ${in}_old
 mv ${in}2 ${in}
 
+./meshvol.exe
+mv ${in}2 ${in}
+
 rm volume2.xyz
 rm volume.xyz
 rm volume.xyz.meshdef
