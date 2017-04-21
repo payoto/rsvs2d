@@ -56,7 +56,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         [iterstruct,paramoptim,firstValidIter]=GenerateRestartPop(paramoptim,...
             iterstruct,startIter,restartSource{2},baseGrid);
         
-        paramoptim.general.restartSource=restartSource;
+        paramoptim=SetVariables({'restartSource'},{restartSource},paramoptim);
         startIter=startIter+1;
     end
     
@@ -319,6 +319,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     
     
+    
     % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
@@ -355,8 +356,9 @@ end
 
 function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [paramoptim.general.desvarconnec]=...
+    [desvarconnec]=...
         ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    paramoptim=SetVariables({'desvarconnec'},{desvarconnec},paramoptim);
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
     
@@ -1081,7 +1083,7 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     [cellLevels,corneractive]=ExtractVariables(varExtract,paramoptim.parametrisation);
     if useSnake
         nDesVar=sum([baseGrid.cell(:).isactive]);
-        paramoptim.general.nDesVar=nDesVar;
+        paramoptim=SetVariables({'nDesVar'},{nDesVar},paramoptim);
         paramoptim=SetVariables({'gradScale'},{BuildCellRatios(baseGrid,gradScaleType)}...
             ,paramoptim);
     else
@@ -1098,11 +1100,10 @@ function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     paramoptim=SetVariables({'maxDiffStep','validVol','diffStepSize'},...
         {maxDiffStep,validVol,diffStepSize},paramoptim);
     
-    paramoptim.general.symDesVarList...
-        =BuildSymmetryLists(symType,cellLevels,corneractive,baseGrid);
-    paramoptim.general.notDesInd...
-        =BuildExclusionList(paramoptim.general.symDesVarList);
-    
+    symDesVarList=BuildSymmetryLists(symType,cellLevels,corneractive,baseGrid);
+    notDesInd=BuildExclusionList(symDesVarList);
+    paramoptim=SetVariables({'notDesInd','symDesVarList'},...
+        {notDesInd,symDesVarList},paramoptim);
     [paramoptim]=CheckiterGap(paramoptim);
     
     
@@ -1146,12 +1147,11 @@ function [paramoptim]=CheckiterGap(paramoptim)
     
     switch optimMethod
         case 'conjgradls'
-            paramoptim.general.iterGap=2;
+            paramoptim=SetVariables({'iterGap'},{2},paramoptim);
         case 'conjgrad'
-            paramoptim.general.iterGap=2;
+            paramoptim=SetVariables({'iterGap'},{2},paramoptim);
         otherwise
-            
-            paramoptim.general.iterGap=1;
+            paramoptim=SetVariables({'iterGap'},{1},paramoptim);
     end
 end
 
@@ -2140,7 +2140,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
         InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
     
-    paramoptim.general.isRestart=true;
+    paramoptim=SetVariables({'isRestart'},{true},paramoptim);
     % This line causes problems and exceeding boundmax
     %paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
     [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
@@ -2206,9 +2206,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Update some parameters
     
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [paramoptim.general.desvarconnec]=...
-        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
-    
+    [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    paramoptim=SetVariables({'desvarconnec'},{desvarconnec},paramoptim);
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     
     %iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
@@ -3471,8 +3470,9 @@ function [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr)
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [paramoptim.general.desvarconnec]=...
-        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    paramoptim=SetVariables({'desvarconnec'},{desvarconnec},paramoptim);
+    
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
     

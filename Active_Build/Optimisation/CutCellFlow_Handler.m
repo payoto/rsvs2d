@@ -268,9 +268,10 @@ function [isfinished,restartNormal,restartCFL,theoretConvIter]=...
     restartCFL=0;
     if ~isfinished
         [resArray]=ExtractConvergenceRate(targFolder,numAverage);
-        [isConverging,theoretConvIter]=TestConvergenceRate(resArray,targConv);
+        [isConverging,theoretConvIter,corrCoefConvRate]=TestConvergenceRate(resArray,targConv);
         if isConverging==2
-            restartCFL=-1;
+            log10(1-abs(corrCoefConvRate));
+            restartCFL=log10(1-abs(corrCoefConvRate));
         elseif isConverging
             restartNormal=true;
         else
@@ -307,7 +308,7 @@ function [streamArray]=ExtractConvergenceRate(targFolder,numAverage)
     
 end
 
-function [isConverging,theoretConvIter]=TestConvergenceRate(resArray,targConv)
+function [isConverging,theoretConvIter,corrCoefConvRate]=TestConvergenceRate(resArray,targConv)
     isConverging=true;
     meanRes=mean(resArray(:,2));
     stdRes=std(resArray(:,2));
@@ -382,8 +383,9 @@ function strOut=ReplaceCFLNum(strIn,dirCFL)
     if dirCFL>0
         cflNum=cflNum/1.2;
     else
-        cflNum=cflNum*1.2;
+        cflNum=cflNum*(1+(0.2*round(abs(dirCFL))));
     end
+    cflNum=max(min(cflNum,1.5),0.1);
     strOut=sprintf([strOut,'\n'],cflNum);
     
 end

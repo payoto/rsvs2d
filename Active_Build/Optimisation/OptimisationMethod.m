@@ -184,7 +184,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
             [newRoot,deltaRoot]=GenerateNewRootFill(rootPop,stepVector,paramoptim,baseGrid,precRoot);
         else
             [newRoot,deltaRoot]=FindOptimalRestartPop(iterCurr,direction);
-            paramoptim.general.isRestart=false;
+            paramoptim=SetVariables({'isRestart'},{false},paramoptim);
         end
         
         % Need to build function for activation and deactivation of variables
@@ -194,9 +194,9 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         newPop=[newRoot;vertcat(newGradPop{:})];
         deltas=[deltaRoot,deltaGrad{:}];
         validVol
-        paramoptim.optim.CG.validVol=validVol;
-        paramoptim.optim.CG.diffStepSize=diffStepSize;
-        paramoptim.optim.CG.lineSearch=false;
+        
+        paramoptim=SetVariables({'validVol','diffStepSize','lineSearch'},...
+            {validVol,diffStepSize,false},paramoptim);
     else % Direction Search
         
         % Get component change
@@ -227,12 +227,12 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCu
         % Population trimming for invalid values
         
         % Declare linesearch
-        paramoptim.optim.CG.lineSearch=true;
+        paramoptim=SetVariables({'lineSearch'},{true},paramoptim);
     end
     
     % Securing the end
     [nPop,~]=size(newPop);
-    paramoptim.general.nPop=nPop;
+    paramoptim=SetVariables({'nPop'},{nPop},paramoptim);
     paramoptim.optim.supportOptim=supportOptim;
 end
 
@@ -335,10 +335,10 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
     end
     modeMultiplier=modeCoeff*ones(size(allModes(1,:)));
     allModes=allModes./modeMultiplier;
-%     modeCoeffNorm=normVec(allModes);
-%     modeMultiplier=modeCoeffNorm*ones(size(allModes(1,:)));
-%     allModes=allModes./modeMultiplier;
-%     modeCoeff=modeCoeff.*modeCoeffNorm;
+    %     modeCoeffNorm=normVec(allModes);
+    %     modeMultiplier=modeCoeffNorm*ones(size(allModes(1,:)));
+    %     allModes=allModes./modeMultiplier;
+    %     modeCoeff=modeCoeff.*modeCoeffNorm;
     modeSimilarity=FindIdenticalVectorOrd(allModes);
     
     nModes=length(modeSimilarity);
@@ -363,7 +363,6 @@ function [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1)
         end
     end
 end
-
 
 function [modestruct]=ExtractModes_OLD(gradstruct_curr,gradstruct_m1)
     
@@ -989,7 +988,7 @@ function [newPop,iterCurr,paramoptim]=ConjugateGradient(paramoptim,iterCurr,iter
     newPop=[newRootFill;newDiffFill];
     
     [nPop,nFill]=size(newPop);
-    paramoptim.general.nPop=nPop;
+    %paramoptim.general.nPop=nPop;
     paramoptim.optim.CG.lineSearch=~lineSearch;
 end
 
@@ -1057,7 +1056,7 @@ function [newPop,iterCurr,paramoptim]=ConjugateGradientLS(paramoptim,iterCurr,it
         end
     end
     [nPop,nFill]=size(newPop);
-    paramoptim.general.nPop=nPop;
+    %paramoptim.general.nPop=nPop;
     paramoptim.optim.CG.lineSearch=~lineSearch;
 end
 
