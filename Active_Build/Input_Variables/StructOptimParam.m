@@ -28,13 +28,14 @@ end
 function [paroptim]=DefaultOptim()
     
     paroptim.general=DefaultOptimGeneral();
+    paroptim.desvar=DefaultDesVar();
     paroptim.refine=DefaultOptimRefine();
-    [paroptim.optim.DE]=DefaultOptimDE();
-    [paroptim.optim.CG]=DefaultOptimCG();
-    [paroptim.spline]=DefaultOptimSpline();
+    paroptim.optim.DE=DefaultOptimDE();
+    paroptim.optim.CG=DefaultOptimCG();
+    paroptim.spline=DefaultOptimSpline();
     paroptim.obj.flow=DefaultCutCell_Flow();
-    [paroptim.obj.invdes]=DefaultInversedesign();
-    [paroptim.constraint]=DefaultConstraint();
+    paroptim.obj.invdes=DefaultInversedesign();
+    paroptim.constraint=DefaultConstraint();
     
     paroptim.optim.supportOptim=[];
     paroptim.structdat=GetStructureData(paroptim);
@@ -50,7 +51,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.optimCase='optimDefault';
     paroptimgeneral.paramCase='optimDefault';
     paroptimgeneral.optimMethod='DE';
-    paroptimgeneral.desVarRange=[0,1];
+    
     paroptimgeneral.nPop=6;
     paroptimgeneral.startPop='rand';
     paroptimgeneral.specificFillName='24DVaverage';
@@ -58,23 +59,30 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
     paroptimgeneral.direction='min';
-    paroptimgeneral.defaultVal=-1e3;
+    paroptimgeneral.defaultVal=1e3;
     paroptimgeneral.knownOptim=[0.146088675]; %#ok<*NBRAK>
     paroptimgeneral.useSnake=true;
-    paroptimgeneral.nonFillVar={}; % 'axisratio' 'alpha' 'mach'
-    paroptimgeneral.symType='none'; % 'horz'
-    paroptimgeneral.nDesVar=[0];
-    paroptimgeneral.symDesVarList=[];
-    paroptimgeneral.notDesInd=[];
+    
+    
     paroptimgeneral.iterGap=1;
-    paroptimgeneral.desvarconnec=[]; % Structure assigned later
     
     
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
-    paroptimgeneral.varOverflow='vertexflow'; % ''vertexflow'' 'truncate' 'spill'
     paroptimgeneral.spillCutOff=2e-2;
     paroptimgeneral.initInterp={};
+end
+
+function [paroptimdesvar]=DefaultDesVar()
+    paroptimdesvar.desVarRange=[0,1];
+    paroptimdesvar.nonFillVar={}; % 'axisratio' 'alpha' 'mach'
+    paroptimdesvar.desVarRangeNoFill={}; % [0.1,3] [-10,10] [0 0.5]
+    paroptimdesvar.varOverflow='vertexflow'; % ''vertexflow'' 'truncate' 'spill'
+    paroptimdesvar.nDesVar=[0];
+    paroptimdesvar.symDesVarList=[];
+    paroptimdesvar.desvarconnec=[]; % Structure assigned later
+    paroptimdesvar.notDesInd=[];
+    paroptimdesvar.symType='none'; % 'horz'
 end
 
 function [paroptimrefine]=DefaultOptimRefine()
@@ -214,7 +222,7 @@ function [paroptim]=OptimCG(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.general.stepAlgo='conjgrad';
-    paroptim.general.varOverflow='vertexflow';
+    paroptim.desvar.varOverflow='vertexflow';
     paroptim.general.iterGap=2;
 end
 
@@ -222,7 +230,7 @@ function [paroptim]=OptimBFGS(paroptim)
     
     paroptim.general.optimMethod='conjgrad';
     paroptim.optim.CG.stepAlgo='BFGS';
-    paroptim.general.varOverflow='vertexflow';
+    paroptim.desvar.varOverflow='vertexflow';
     paroptim.general.iterGap=2;
 end
 
@@ -437,7 +445,7 @@ function [paroptim]=CG_Aero()
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvol';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.optim.CG.diffStepSize=[1e-4,-1e-4];
     paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.optim.CG.validVol=0.2;
@@ -454,7 +462,7 @@ function [paroptim]=CG_Area()
     [paroptim]=OptimCG(paroptim);
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
 end
 
@@ -473,7 +481,7 @@ function [paroptim]=DE_Aero()
     paroptim.general.startPop='rand';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
 end
 
@@ -510,7 +518,7 @@ function [paroptim]=CG_NACA0012()
     
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.general.knownOptim=0;
     
 end
@@ -526,7 +534,7 @@ function [paroptim]=MultiTopo_DEhoriz()
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.general.startPop='initbusemann';
     
     
@@ -543,7 +551,7 @@ function [paroptim]=MultiTopo_CGhoriz()
     
     paroptim.optim.CG.varActive='border'; % 'wideborder'
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
 end
 
@@ -557,7 +565,7 @@ function [paroptim]=Component_CG()
     paroptim.general.startPop='innerbound';
     paroptim.optim.CG.varActive='wideborder'; % 'wideborder'
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
 end
 
@@ -572,8 +580,8 @@ function [paroptim]=Component_DE()
     paroptim.general.startPop='initaeroshell';
     paroptim.general.optimMethod='DE';
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.symType='none'; % 'horz'
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.symType='none'; % 'horz'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     
 end
 
@@ -597,7 +605,7 @@ function [paroptim]=Inverse_CG()
     paroptim.spline.resampleSnak=true;
     
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     paroptim.general.knownOptim=0;
 end
 
@@ -614,7 +622,7 @@ function [paroptim]=Inverse_Bulk()
     paroptim.spline.resampleSnak=true;
     
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
 end
 %% TEST functions
@@ -631,7 +639,7 @@ function [paroptim]=TestOptim()
     paroptim.general.optimMethod='conjgrad';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
 end
 
@@ -648,7 +656,7 @@ function [paroptim]=Test_CG_desktop()
     paroptim=Test_Desktop(paroptim);
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.general.nPop=9;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     paroptim.general.maxIter=20;
@@ -690,7 +698,7 @@ function [paroptim]=TestParOptimSym_desktop()
     paroptim=Test_Desktop(paroptim);
     
     paroptim.parametrisation.general.subdivType='chaikin';
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
 end
 
 function [paroptim]=Test_MultiTopo_M2_CG()
@@ -740,7 +748,7 @@ function [paroptim]=TestParOptimAero_desktop()
     paroptim=CutCellObjective(paroptim);
     
     paroptim.general.optimMethod='DEtan';
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
 end
 
@@ -777,10 +785,10 @@ function [paroptim]=Test_Init()
     paroptim=LengthAreaObjective(paroptim);
     [paroptim]=OptimDE_horiz(paroptim);
     
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     paroptim.general.startPop='initaeroshell';
     
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     paroptim.general.nPop=100;
     paroptim.general.maxIter=2;
@@ -841,7 +849,7 @@ function [paroptim]=Test_smoothCG_Area()
     [paroptim]=OptimCG(paroptim);
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     
     paroptim.optim.CG.varActive='all';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
@@ -866,7 +874,7 @@ function [paroptim]=Test_polypeakCG_outmissile_Area()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth' 'polysmooth';
@@ -894,7 +902,7 @@ function [paroptim]=Test_peakCG_outmissile_Area()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
@@ -922,7 +930,7 @@ function [paroptim]=Test_polyCG_outmissile_Area()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='polysmooth'; % 'peaksmooth' 'polysmooth';
@@ -951,7 +959,7 @@ function [paroptim]=SmoothCG_outmis_Aero()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -981,12 +989,12 @@ function [paroptim]=Test_Rosenbrock()
     paroptim.general.startPop='Rosen';
     paroptim.general.direction='min';
     paroptim.general.optimMethod='conjgrad';
-    paroptim.general.symType='none';
+    paroptim.desvar.symType='none';
     paroptim.general.objectiveName='Rosenbrock';
     paroptim.general.useSnake=false;
-    paroptim.general.nDesVar=4*2;
-    paroptim.general.varOverflow='truncate';
-    paroptim.general.desVarRange=[-2.048, 2.048];
+    paroptim.desvar.nDesVar=4*2;
+    paroptim.desvar.varOverflow='truncate';
+    paroptim.desvar.desVarRange=[-2.048, 2.048];
     paroptim.general.nPop=25;
     paroptim.general.maxIter=100;
     paroptim.general.worker=4;
@@ -1010,10 +1018,10 @@ function [paroptim]=areabusesweep(e)
     [paroptim]=MultiTopo_DEhoriz();
     [paroptim]=SumVolumeConstraint(paroptim);
     paroptim=Test_Desktop(paroptim);
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=200;
     paroptim.general.worker=8;
@@ -3077,7 +3085,7 @@ function [paroptim]=FullSupersonicOptimSym_Desktop()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=0.4;
     
 end
@@ -3165,7 +3173,7 @@ function [paroptim]=FullSupersonicOptimSym_bp3_025()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
 end
@@ -3178,7 +3186,7 @@ function [paroptim]=FullSupersonicOptimSym_bp3_05()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     
 end
@@ -3191,7 +3199,7 @@ function [paroptim]=FullSupersonicOptimSym_bp3_1()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=2;
     
 end
@@ -3242,10 +3250,10 @@ function [paroptim]=bp3_MultiTopo_M2_DE_Spill()
     
     [paroptim]=MultiTopo_DEhoriz();
     paroptim=Test_Desktop(paroptim);
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=100;
     
@@ -3326,7 +3334,7 @@ function [paroptim]=Desk_CG_missile_out()
     
     paroptim.optim.CG.varActive='border'; % 'wideborder'
     
-    paroptim.general.varOverflow='spill';
+    paroptim.desvar.varOverflow='spill';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=50;
     paroptim.general.worker=4;
@@ -3341,7 +3349,7 @@ function [paroptim]=Desk_CG_inline_out()
     
     paroptim.optim.CG.varActive='border'; % 'wideborder'
     
-    paroptim.general.varOverflow='spill';
+    paroptim.desvar.varOverflow='spill';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=50;
     paroptim.general.worker=4;
@@ -3354,10 +3362,10 @@ function [paroptim]=bp3_MT_pop_100()
     
     [paroptim]=MultiTopo_DEhoriz();
     paroptim=Test_Desktop(paroptim);
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     
-    paroptim.general.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=200;
     
@@ -3482,7 +3490,7 @@ function [paroptim]=desk_outmis_pk()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -3512,7 +3520,7 @@ function [paroptim]=desk_outmis_po()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -3542,7 +3550,7 @@ function [paroptim]=desk_outmis_popk()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -3572,7 +3580,7 @@ function [paroptim]=desk_outmis_()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='border';
     
@@ -3658,7 +3666,7 @@ function [paroptim]=BP3_SmoothCG_outmis_Aero()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -3873,7 +3881,7 @@ function [paroptim]=bp3_outmis_po()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -3905,7 +3913,7 @@ function [paroptim]=bp3_outmis_popk()
     paroptim.general.startPop='outerbound';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.axisRatio=1;
-    paroptim.general.symType='none'; % 'horz'
+    paroptim.desvar.symType='none'; % 'horz'
     
     paroptim.optim.CG.varActive='snaksensiv';
     
@@ -4635,7 +4643,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_025()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=0.25;
     
 end
@@ -4650,7 +4658,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_05()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
     
 end
@@ -4665,7 +4673,7 @@ function [paroptim]=FullSupersonicOptimSym_bp2_1()
     paroptim.general.optimMethod='DEtan';
     paroptim.general.knownOptim=8.82356428E-03;
     
-    paroptim.general.symType='horz'; % 'horz'
+    paroptim.desvar.symType='horz'; % 'horz'
     paroptim.parametrisation.snakes.refine.axisRatio=1;
     
 end
