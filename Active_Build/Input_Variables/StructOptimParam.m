@@ -75,7 +75,8 @@ end
 
 function [paroptimdesvar]=DefaultDesVar()
     paroptimdesvar.desVarRange=[0,1];
-    paroptimdesvar.nonFillVar={}; % 'axisratio' 'alpha' 'mach'
+    paroptimdesvar.nonFillVar={}; % {'axisratio'} 'alpha' 'mach'
+    paroptimdesvar.numNonFillVar=[];
     paroptimdesvar.desVarRangeNoFill={}; % [0.1,3] [-10,10] [0 0.5]
     paroptimdesvar.varOverflow='vertexflow'; % ''vertexflow'' 'truncate' 'spill'
     paroptimdesvar.nDesVar=[0];

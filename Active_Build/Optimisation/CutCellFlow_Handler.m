@@ -136,8 +136,8 @@ function [obj]=SolveFlow(paramoptim,targFolder)
                     [2, min([restartIter,theoretConvIter]), targConv]);
             end
             
-            if restartCFL
-                RestartModifiedSettings(targFolder,'cfl',8);
+            if restartCFL~=0
+                RestartModifiedSettings(targFolder,'cfl',8,restartCFL);
             end
             
             endstr=RunFlowSolverOnly(compType,targFolder);
