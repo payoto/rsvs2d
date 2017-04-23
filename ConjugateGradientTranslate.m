@@ -799,6 +799,44 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     
 end
 
-function []=RescaleDesVarNoFill()
+function [population]=RescaleDesVarNoFill(scaleDir,paramoptim,population)
+    
+    varExtract={'desVarRange','desVarRangeNoFill','nonFillVar','numNonFillVar'};
+    
+    [desVarRange,desVarRangeNoFill,nonFillVar,numNonFillVar]=ExtractVariables(varExtract,paramoptim);
+    
+    
+    switch scaleDir
+        case 'tofill'
+            % scale from the fill range to the actual range
+            for ii=1:numel(population)
+                kk=0;
+                for jj=1:numel(nonFillVar)
+                    desCurr=population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj));
+                    population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj))=...
+                        ((desCurr-min(desVarRangeNoFill{jj}))/...
+                        (max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj})))...
+                        *(max(desVarRange)-min(desVarRange))+min(desVarRange);
+                    kk=kk+numNonFillVar(jj);
+                end
+                
+            end
+        case 'tovar'
+            % scale from the fill range to the actual range
+            for ii=1:numel(population)
+                kk=0;
+                for jj=1:numel(nonFillVar)
+                    desCurr=population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj));
+                    population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj))=...
+                        ((desCurr-min(desVarRange))/...
+                        (max(desVarRange)-min(desVarRange)))...
+                        *(max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj}))...
+                        +min(desVarRangeNoFill{jj});
+                    kk=kk+numNonFillVar(jj);
+                end
+                
+            end
+            
+    end
     
 end
