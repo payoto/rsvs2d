@@ -22,8 +22,8 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradientTranslate(paramopt
     [gradstruct_curr]=GetIterationInformation(iterCurr,constrCurr);
     [gradstruct_m1]=GetIterationInformation(iterm1,constrm1);
     
-    rootPop=[iterCurr(1).fill,iterCurr(1).nonDesVarFill];
-    prevStep=[iterCurr(1).fill,iterCurr(1).nonDesVarFill]-[intrm1(1).fill,intrm1(1).nonDesVarFill];
+    rootPop=[iterCurr(1).fill,iterCurr(1).nonfillvar];
+    prevStep=[iterCurr(1).fill,iterCurr(1).nonfillvar]-[iterm1(1).fill,iterm1(1).nonfillvar];
     obj_curr=iterCurr(1).objective;
     obj_m1=iterm1(1).objective;
     lll=0;
@@ -45,7 +45,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradientTranslate(paramopt
         
         % Need to build function for activation and deactivation of variables
         [inactiveVar]=SelectInactiveVariables(newRoot,varActive,desvarconnec,borderActivation);
-        [desVarList]=ExtractActiveVariable(length([iterCurr(1).fill,iterCurr(1).nonDesVarFill]),notDesInd,inactiveVar);
+        [desVarList]=ExtractActiveVariable(length([iterCurr(1).fill,iterCurr(1).nonfillvar]),notDesInd,inactiveVar);
         [newGradPop,deltaGrad]=GenerateNewGradientPop(newRoot,desVarRange,diffStepSize,desVarList);
         newPop=[newRoot;vertcat(newGradPop{:})];
         deltas=[deltaRoot,deltaGrad{:}];
@@ -59,7 +59,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradientTranslate(paramopt
         % The assumption is the the modes have been selected sensibly and
         % will be close to orthogonal
         [modestruct]=ExtractModes(gradstruct_curr,gradstruct_m1);
-        [modestruct]=RemoveFailedModes(modestruct,gradstruct_curr,[iterCurr(1).fill,iterCurr(1).nonDesVarFill]...
+        [modestruct]=RemoveFailedModes(modestruct,gradstruct_curr,[iterCurr(1).fill,iterCurr(1).nonfillvar]...
             ,desVarRange,direction);
         [gradF_curr,gradF_m1,gradAdd_curr,gradAdd_m1]...
             =BuildGradientVectors(gradstruct_curr,gradstruct_m1,modestruct,supportOptim);
@@ -73,7 +73,7 @@ function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradientTranslate(paramopt
         [stepVector,supportOptim]=NewStepDirection(stepAlgo,gradDes_curr,...
             gradDes_m1,prevStep,direction,supportOptim,obj_curr,obj_m1);
         % Generate Linesearch Distances
-        rootPop=[iterCurr(1).fill,iterCurr(1).nonDesVarFill];
+        rootPop=[iterCurr(1).fill,iterCurr(1).nonfillvar];
         [unitSteps]=UnitStepLength(nLineSearch,lineSearchType);
         
         [stepLengths]=StepLengthsForLS(rootPop,stepVector,unitSteps,validVol,desVarRange);
@@ -114,7 +114,7 @@ end
 function [constrRoot]=ConstraintDistanceExtraction(paramoptim,population,baseGrid)
     
     constrRoot=repmat(struct('desvarconstr',...
-        ones([1,numel([population(1).fill,population(1).nonDesVarFill])])),[1,numel(population)]);
+        ones([1,numel([population(1).fill,population(1).nonfillvar])])),[1,numel(population)]);
     [~,constrDistance]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     if ~isempty(constrDistance{1})
@@ -141,9 +141,9 @@ function [gradientopt]=GetIterationInformation(population,constr)
     
     nPop=length(population);
     nGrad=nPop-1;
-    nFill=length([population(1).fill,population(1).nonDesVarFill]);
+    nFill=length([population(1).fill,population(1).nonfillvar]);
     
-    rootPop=[population(1).fill,population(1).nonDesVarFill];
+    rootPop=[population(1).fill,population(1).nonfillvar];
     rootObj=population(1).objective;
     rootAdd=catstruct(population(1).additional,constr(1));
     rootAdd.desvar=rootPop;
@@ -159,7 +159,7 @@ function [gradientopt]=GetIterationInformation(population,constr)
         gradientopt(ii).design(population(ii+1).optimdat.var)...
             =population(ii+1).optimdat.value;
         gradientopt(ii).objective=population(ii+1).objective-rootObj;
-        gradientopt(ii).fill=[population(ii+1).fill,population(ii+1).nonDesVarFill]-rootPop;
+        gradientopt(ii).fill=[population(ii+1).fill,population(ii+1).nonfillvar]-rootPop;
         for jj=1:numel(fieldsAdd)
             gradientopt(ii).additional.(fieldsAdd{jj})=...
                 population(ii+1).additional.(fieldsAdd{jj})-rootAdd.(fieldsAdd{jj});
@@ -168,7 +168,7 @@ function [gradientopt]=GetIterationInformation(population,constr)
             gradientopt(ii).additional.(fieldsConstr{jj})=...
                 constr(ii+1).(fieldsConstr{jj})-rootAdd.(fieldsConstr{jj});
         end
-        gradientopt(ii).additional.desvar=[population(ii+1).fill,population(ii+1).nonDesVarFill]-rootPop;
+        gradientopt(ii).additional.desvar=[population(ii+1).fill,population(ii+1).nonfillvar]-rootPop;
     end
     
     
@@ -491,7 +491,7 @@ function [stepVector,supportOptim]=NewStepDirectionBFGS(gradDes_curr,gradDes_m1,
         Bkinv=supportOptim.curr.Bkinv;
         iter=supportOptim.curr.iter;
         prevDir=supportOptim.curr.prevDir;
-        %prevDir=ones(size([iterCurr(1).fill,iterCurr(1).nonDesVarFill]));
+        %prevDir=ones(size([iterCurr(1).fill,iterCurr(1).nonfillvar]));
         %prevDir(iterCurr(1).optimdat.var)=iterCurr(1).optimdat.value;
     end
     
@@ -637,7 +637,7 @@ function [stepVector,validVol,diffStepSize]=FindOptimalStepVector(...
     
     f=[iterstruct(:).objective];
     g=[iterstruct(:).constraint];
-    vec=zeros(size([iterCurr(1).fill,iterCurr(1).nonDesVarFill]));
+    vec=zeros(size([iterstruct(1).fill,iterstruct(1).nonfillvar]));
     vec(iterstruct(1).optimdat.var)=iterstruct(1).optimdat.value;
     
     invalidPoints=g<0.9;
@@ -709,7 +709,7 @@ function [newRoot,deltaRoot]=FindOptimalRestartPop(iterstruct,direction)
     end
     
     
-    newRoot=[iterstruct(indexLoc).fill,iterstruct(indexLoc).nonDesVarFill];
+    newRoot=[iterstruct(indexLoc).fill,iterstruct(indexLoc).nonfillvar];
     deltaRoot={[1;0]};
     
 end
@@ -795,48 +795,6 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
             actVar=find(partialSteps(ii,:)~=0);
             deltas{jj}{ii}=[desVarList(actVar);partialSteps(ii,actVar)];
         end
-    end
-    
-end
-
-function [population]=RescaleDesVarNoFill(scaleDir,paramoptim,population)
-    
-    varExtract={'desVarRange','desVarRangeNoFill','nonFillVar','numNonFillVar'};
-    
-    [desVarRange,desVarRangeNoFill,nonFillVar,numNonFillVar]=ExtractVariables(varExtract,paramoptim);
-    
-    
-    switch scaleDir
-        case 'tofill'
-            % scale from the fill range to the actual range
-            for ii=1:numel(population)
-                kk=0;
-                for jj=1:numel(nonFillVar)
-                    desCurr=population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj));
-                    population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj))=...
-                        ((desCurr-min(desVarRangeNoFill{jj}))/...
-                        (max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj})))...
-                        *(max(desVarRange)-min(desVarRange))+min(desVarRange);
-                    kk=kk+numNonFillVar(jj);
-                end
-                
-            end
-        case 'tovar'
-            % scale from the fill range to the actual range
-            for ii=1:numel(population)
-                kk=0;
-                for jj=1:numel(nonFillVar)
-                    desCurr=population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj));
-                    population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj))=...
-                        ((desCurr-min(desVarRange))/...
-                        (max(desVarRange)-min(desVarRange)))...
-                        *(max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj}))...
-                        +min(desVarRangeNoFill{jj});
-                    kk=kk+numNonFillVar(jj);
-                end
-                
-            end
-            
     end
     
 end

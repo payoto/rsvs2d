@@ -78,6 +78,7 @@ function [paroptimdesvar]=DefaultDesVar()
     paroptimdesvar.nonFillVar={}; % {'axisratio'} 'alpha' 'mach'
     paroptimdesvar.numNonFillVar=[];
     paroptimdesvar.desVarRangeNoFill={}; % [0.1,3] [-10,10] [0 0.5]
+    paroptimdesvar.startPopNonFill={};
     paroptimdesvar.varOverflow='vertexflow'; % ''vertexflow'' 'truncate' 'spill'
     paroptimdesvar.nDesVar=[0];
     paroptimdesvar.symDesVarList=[];
@@ -140,6 +141,7 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.startIterFlow=4000;
     paroptimobjflow.maxRestart=5;
     paroptimobjflow.nMach=2;
+    paroptimobjflow.nAlpha=0;
     paroptimobjflow.isSymFlow=false;
     paroptimobjflow.meshDefSens=false;
     paroptimobjflow.meshDefNorm=false;
@@ -808,7 +810,6 @@ function [paroptim]=TestCutCellLaptop()
     paroptim.obj.flow.parentMesh='';
 end
 
-
 function [paroptim]=TestCutCellLaptop2()
     paroptim=volsweeplocal(0.12,'uv');
     
@@ -820,10 +821,10 @@ function [paroptim]=TestCutCellLaptop2()
     paroptim.obj.flow.rootMesh={'previter','D:\alexa\Documents\TRAVAIL\Matlab\SnakVolParam\results\Optimisation\Archive_2017_04\Day_2017-04-12\Dir_2017-04-12T105008_TestCutCellLaptop\iteration_1\profile_1'};
     paroptim.obj.flow.parentMesh='';
 end
+
 function [paroptim]=TestCutCellLaptop3()
     paroptim=N12_LRef_MMesh('uo','BFGS');
 end
-
 
 function [paroptim]=TestMeshMotion()
     paroptim=volsweeplocal(0.12,'uv');
@@ -836,6 +837,20 @@ function [paroptim]=TestMeshMotion()
     paroptim.obj.flow.rootMesh={'previter','D:\alexa\Documents\TRAVAIL\Matlab\SnakVolParam\results\Optimisation\Archive_2017_04\Day_2017-04-12\Dir_2017-04-12T105008_TestCutCellLaptop\iteration_1\profile_1'};
     paroptim.obj.flow.parentMesh='';
 end
+
+
+function [paroptim]=TestNonFill()
+    [paroptim]=invdeslocal_test4('uu','contcurve',1,1);
+    paroptim.general.maxIter=6;
+    paroptim.general.worker=4;
+    
+    paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+    paroptim.desvar.numNonFillVar=[1 ];
+    paroptim.desvar.desVarRangeNoFill={[0.1,2]}; % [0.1,3] [-10,10] [0 0.5]
+    paroptim.desvar.startPopNonFill={'rand'};
+    
+end
+
 %% Test cases for length Area
 
 function [paroptim]=Test_smoothCG_Area()
@@ -1031,6 +1046,17 @@ function [paroptim]=areabusesweep(e)
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
+    
+    paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+    paroptim.desvar.numNonFillVar=[1 ];
+    paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
+    paroptim.desvar.startPopNonFill={'rand'};
+end
+
+function [paroptim]=areabuseTest()
+   [paroptim]=areabusesweep(0.05);
+    paroptim.general.nPop=25;
+    paroptim.general.maxIter=10;
 end
 
 % Inverse Design refinement
@@ -1563,7 +1589,7 @@ end
 
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
-   paroptim.general.maxIter=0;
+   paroptim.general.maxIter=4;
     paroptim.general.worker=12;
 end
 
