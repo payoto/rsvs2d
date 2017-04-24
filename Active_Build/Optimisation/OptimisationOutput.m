@@ -399,7 +399,7 @@ function [returnEntries]=GenerateIterIndexEntry(FID,nIter,population)
     for ii=1:nAdditional
         entryCell{1}=[entryCell{1},' , ',fieldsAdd{ii}];
     end
-    entryCell{1}=[entryCell{1},', exception , fill '];
+    entryCell{1}=[entryCell{1},', exception , fill , nonfillvar'];
     
     for ii=1:length(population)
         
@@ -417,6 +417,7 @@ function [returnEntries]=GenerateIterIndexEntry(FID,nIter,population)
         end
         str=[str,' , ', population(ii).exception];
         str=[str,' , ', num2str(population(ii).fill,' %30.24e ')];
+        str=[str,' , ', num2str(population(ii).nonfillvar,' %30.24e ')];
         entryCell{ii+1}=str;
     end
     

@@ -462,8 +462,8 @@ end
 function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraarguments)
     % Function which handles steps overflowing the fill constraint
     
-    varExtract={'desVarRange','varOverflow'};
-    [desVarRange,varOverflow]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'desVarRange','varOverflow','nDesVar'};
+    [desVarRange,varOverflow,nDesVar]=ExtractVariables(varExtract,paramoptim);
     optionOut=[];
     switch varOverflow
         case 'truncate'
@@ -475,7 +475,7 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
         case 'spill'
             newFill=zeros(size(newRootFill));
             for ii=1:size(newRootFill,1)
-                [newFill(ii,:)]=SpillOverflow(paramoptim,newRootFill(ii,:));
+                [newFill(ii,1:nDesVar)]=SpillOverflow(paramoptim,newRootFill(ii,1:nDesVar));
             end
             newRootFill=newFill;
             minD=min(desVarRange);
@@ -486,7 +486,7 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
             
             if nargin>2
                 try
-                    [newRootFill,optionOut]=RunVertexOverflow(paramoptim,newRootFill,extraarguments);
+                    [newRootFill(:,1:nDesVar),optionOut]=RunVertexOverflow(paramoptim,newRootFill(:,1:nDesVar),extraarguments);
                     disp('Vertex Flow succesful')
                 catch ME
                     disp(ME.getReport)
@@ -496,9 +496,9 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
             
             newFill=zeros(size(newRootFill));
             for ii=1:size(newRootFill,1)
-                [newFill(ii,:)]=SpillOverflow(paramoptim,newRootFill(ii,:));
+                [newFill(ii,1:nDesVar)]=SpillOverflow(paramoptim,newRootFill(ii,1:nDesVar));
             end
-            newRootFill=newFill;
+            newRootFill(:,1:nDesVar)=newFill(:,1:nDesVar);
             minD=min(desVarRange);
             maxD=max(desVarRange);
             newRootFill(newRootFill<minD)=minD;

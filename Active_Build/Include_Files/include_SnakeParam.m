@@ -508,7 +508,7 @@ function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
                 {connecstruct.cell(:).newCellInd},...
                 {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
     newIndsCell=[connecstruct.cell(:).newCellInd];
-    
+    newEdgeInd=[refinedGrid.edge(:).index];
     [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
     
     % this line matches each Fine cell to its coarse cell in the
@@ -523,6 +523,7 @@ function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
     for ii=1:numel(cellCentredCoarse)
         cellCentredCoarse(ii).lSnax=0;
         cellCentredCoarse(ii).curvSnax=0;
+        cellCentredCoarse(ii).curvNoEdge=0;
         cellCentredCoarse(ii).lSnaxNorm=0;
         coord=vertcat(cellCentredCoarse(ii).vertex(:).coord);
         
@@ -530,18 +531,28 @@ function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
         if ~isempty(cellCentredCoarse(ii).snaxel)
             [cellCentredCoarse(ii).snaxel]...
                 =CompressSnaxelChain(cellCentredCoarse(ii).snaxel);
+            % mark snaxel which are not on the border of the cell (ie who's edge has only one cell)
+            for jj=1:numel(cellCentredCoarse(ii).snaxel)
+                snaxCellNew=refinedGrid.edge((FindObjNum([],cellCentredCoarse(ii).snaxel(jj).edge,newEdgeInd))).cellindex;
+                snaxCellOld=unique(oldIndsNewOrd(FindObjNum([],snaxCellNew,newIndsCell)));
+                cellCentredCoarse(ii).snaxel(jj).isborder=numel(snaxCellOld)>1;
+            end
         end
+        
+        
+
     end
     for ii=1:numel(cellCentredCoarse)
         if ~isempty(cellCentredCoarse(ii).snaxel)
-            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,cellCentredCoarse(ii).lSnaxNorm]...
+            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,...
+                cellCentredCoarse(ii).lSnaxNorm,cellCentredCoarse(ii).curvNoEdge]...
                 =ExploreSnaxelChain(cellCentredCoarse(ii).snaxel,cellCentredCoarse(ii).cellLength);
         end
     end
     
 end
 
-function [lSnax,curvSnax,lSnaxNorm]=ExploreSnaxelChain(snaxelpart,cellLength)
+function [lSnax,curvSnax,lSnaxNorm,curvSnaxNoBord]=ExploreSnaxelChain(snaxelpart,cellLength)
     
     [snaxInd]=[snaxelpart(:).index];
     [snaxPrec]=[snaxelpart(:).snaxprec];
@@ -550,6 +561,7 @@ function [lSnax,curvSnax,lSnaxNorm]=ExploreSnaxelChain(snaxelpart,cellLength)
     isVisited=false(size(snaxInd));
     lSnax=0;
     curvSnax=sum(sqrt(sum(vertcat(snaxelpart(:).curv).^2,2)));
+    curvSnaxNoBord=sum(sqrt(sum(vertcat(snaxelpart(~logical([snaxelpart(:).isborder])).curv).^2,2)));
 %     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
 %     plotPoints(vertcat(snaxelpart(:).coord));
     while ~all(isVisited)

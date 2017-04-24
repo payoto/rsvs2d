@@ -848,7 +848,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
             keepPop(ii)=any(population(ii).optimdat.var>nDesVar);
         end
         keepPop=find(keepPop);
-        
+        keepPop(keepPop==1)=[];
         nPop=numel(newfillstruct)+1+numel(keepPop);
         [paramoptim]=SetVariables({'nPop'},{nPop},paramoptim);
         [newpopulation]=GeneratePopulationStruct(paramoptim);
@@ -2158,7 +2158,7 @@ function [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,..
         newGrid,connectstructinfo,paramsnake,paramspline,outinfo,0,1,paramoptim);
     [population.objective,population.additional]=...
         EvaluateObjective(objectiveName,paramoptim,population,...
-        supportstruct.loop);
+        supportstruct);
     knownOptim=population.objective;
     paramoptim=SetVariables({'knownOptim'},{knownOptim},paramoptim);
 end
@@ -2344,7 +2344,7 @@ function [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,co
     
     
     varNames={'optimMethod','stepAlgo','numNonFillVar'};
-    [optimMethod,stepAlgo]=ExtractVariables(varNames,paramoptim);
+    [optimMethod,stepAlgo,numNonFillVar]=ExtractVariables(varNames,paramoptim);
     
     switch optimMethod
         case 'conjgrad'
@@ -2356,13 +2356,13 @@ function [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,co
                         supportOptim.curr.prevStep(1:end-(sum(numNonFillVar))),profloops,transformstruct,...
                         connectstructinfo,iterstruct,oldBaseGrid,newBaseGrid);
                     supportOptim.curr.prevStep=[newPrevStep,...
-                        supportOptim.curr.prevStep(end-(sum(numNonFillVar)+1):end)];
+                        supportOptim.curr.prevStep(end-(sum(numNonFillVar)-1):end)];
                 case 'BFGS'
                     [newPrevStep]=UpdateStepDir(...
                         supportOptim.curr.prevDir(1:end-(sum(numNonFillVar))),profloops,transformstruct,...
                         connectstructinfo,iterstruct,oldBaseGrid,newBaseGrid);
                     supportOptim.curr.prevDir=[newPrevStep,...
-                        supportOptim.curr.prevDir(end-(sum(numNonFillVar)+1):end)];
+                        supportOptim.curr.prevDir(end-(sum(numNonFillVar)-1):end)];
                     supportOptim.curr.Bk=eye(numel(supportOptim.curr.prevDir));
                     supportOptim.curr.Bkinv=eye(numel(supportOptim.curr.prevDir));
                     supportOptim.curr.iter=1;
@@ -2639,15 +2639,18 @@ function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIte
     iterstruct(1).population(1).optimdat.value=0;
     iterstruct(1).population(1).optimdat.var=1;
     for ii=(firstValidIter+2):2:length(iterstruct)
-        iterstruct(ii).population(1).optimdat.value=iterstruct(ii).population(1).fill...
-            -iterstruct(ii-1).population(1).fill;
+        iterstruct(ii).population(1).optimdat.value=[iterstruct(ii).population(1).fill...
+            -iterstruct(ii-1).population(1).fill,iterstruct(ii).population(1).nonfillvar...
+            -iterstruct(ii-1).population(1).nonfillvar];
         
-        iterstruct(ii).population(1).optimdat.var=1:numel(iterstruct(ii-1).population(1).fill);
+        iterstruct(ii).population(1).optimdat.var=1:(numel(iterstruct(ii-1).population(1).fill)+...
+            numel(iterstruct(ii-1).population(1).nonfillvar));
     end
     for ii=firstValidIter:length(iterstruct)
         for jj=2:length(iterstruct(ii).population)
             iterstruct(ii).population(jj).optimdat.value=...
-                iterstruct(ii).population(jj).fill-iterstruct(ii).population(1).fill;
+                [iterstruct(ii).population(jj).fill-iterstruct(ii).population(1).fill,...
+                iterstruct(ii).population(jj).nonfillvar-iterstruct(ii).population(1).nonfillvar];
             iterstruct(ii).population(jj).optimdat.var=find(...
                 iterstruct(ii).population(jj).optimdat.value~=0);
             iterstruct(ii).population(jj).optimdat.value=...
@@ -2784,6 +2787,24 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
             newIndsCell=[oldGrid.connec.cell(:).new];
             for ii=indexPop;
                 cellRank=reshape(REFINE_contcurvevol(lastpopulation(ii),...
+                    oldGrid,actInd,cellInd,refineOptimRatio,...
+                    oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
+            end
+        case 'contcurvenoedge'
+            % refines cells based on the sqrt(curvature)*A
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            
+            oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            
+            cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
+            newIndsCell=[oldGrid.connec.cell(:).new];
+            for ii=indexPop;
+                cellRank=reshape(REFINE_contcurvevolnoedge(lastpopulation(ii),...
                     oldGrid,actInd,cellInd,refineOptimRatio,...
                     oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
                 isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
@@ -3146,6 +3167,43 @@ function [cellRank,isRefine]=REFINE_contcurvevol(population,grid,actInd,cellInd,
     
 end
 
+
+function [cellRank,isRefine]=REFINE_contcurvevolnoedge(population,grid,actInd,cellInd,...
+        refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave','restartsnak')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        grid.base.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+    isAct=false([1,numel(grid.base.cell)]);
+    isAct(actInd)=true;
+    
+    [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
+        grid.cellrefined,cellCentredCoarse,oldIndsNewOrd,newIndsCell);
+    
+    % This was shown to leave no effect of cell size on the refinement
+    % criterion "TestCurvChangeArea"
+    cellRank=sqrt(([cellCentredCoarse(:).curvNoEdge])).*([cellCentredCoarse(:).volume]);
+    
+    cellRank(~isfinite(cellRank))=0;
+    cellRank(~isAct)=0;
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    isRefine(~isAct)=false;
+    
+end
+
+
 function [cellRank,isRefine]=REFINE_contcurvescale(population,grid,actInd,cellInd,...
         refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
     % refines cells based on the gradient between design variables
@@ -3189,6 +3247,54 @@ function [cellCentredCoarse]=CoarseCellCentred(snaxel,refinedGrid,...
     
     
     [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
+    newEdgeInd=[refinedGrid.edge(:).index];
+    % this line matches each Fine cell to its coarse cell in the
+    % cellCentredGrid
+    newToOldCell=FindObjNum([],oldIndsNewOrd(FindObjNum([],[cellCentredFine(:).index],...
+        newIndsCell)),[cellCentredCoarse(:).index]);
+    cellCentredCoarse(1).snaxel=struct([]);
+    for ii=1:numel(newToOldCell)
+        cellCentredCoarse(newToOldCell(ii)).snaxel=[cellCentredCoarse(newToOldCell(ii)).snaxel, ...
+            cellCentredFine(ii).snaxel];
+    end
+    for ii=1:numel(cellCentredCoarse)
+        cellCentredCoarse(ii).lSnax=0;
+        cellCentredCoarse(ii).curvSnax=0;
+        cellCentredCoarse(ii).curvNoEdge=0;
+        cellCentredCoarse(ii).lSnaxNorm=0;
+        coord=vertcat(cellCentredCoarse(ii).vertex(:).coord);
+        
+        cellCentredCoarse(ii).cellLength=max(coord)-min(coord);
+        if ~isempty(cellCentredCoarse(ii).snaxel)
+            [cellCentredCoarse(ii).snaxel]...
+                =CompressSnaxelChain(cellCentredCoarse(ii).snaxel);
+            % mark snaxel which are not on the border of the cell (ie who's edge has only one cell)
+            for jj=1:numel(cellCentredCoarse(ii).snaxel)
+                snaxCellNew=refinedGrid.edge((FindObjNum([],cellCentredCoarse(ii).snaxel(jj).edge,newEdgeInd))).cellindex;
+                snaxCellOld=unique(oldIndsNewOrd(FindObjNum([],snaxCellNew,newIndsCell)));
+                cellCentredCoarse(ii).snaxel(jj).isborder=numel(snaxCellOld)>1;
+            end
+        end
+    end
+    for ii=1:numel(cellCentredCoarse)
+        if ~isempty(cellCentredCoarse(ii).snaxel)
+            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,...
+                cellCentredCoarse(ii).lSnaxNorm,cellCentredCoarse(ii).curvNoEdge]...
+                =ExploreSnaxelChain(cellCentredCoarse(ii).snaxel,cellCentredCoarse(ii).cellLength);
+        end
+    end
+    
+end
+
+function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
+        cellCentredFine,cellCentredCoarse,connecstruct)
+    
+    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {connecstruct.cell(:).newCellInd},...
+                {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
+    newIndsCell=[connecstruct.cell(:).newCellInd];
+    newEdgeInd=[refinedGrid.edge(:).index];
+    [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
     
     % this line matches each Fine cell to its coarse cell in the
     % cellCentredGrid
@@ -3202,6 +3308,7 @@ function [cellCentredCoarse]=CoarseCellCentred(snaxel,refinedGrid,...
     for ii=1:numel(cellCentredCoarse)
         cellCentredCoarse(ii).lSnax=0;
         cellCentredCoarse(ii).curvSnax=0;
+        cellCentredCoarse(ii).curvNoEdge=0;
         cellCentredCoarse(ii).lSnaxNorm=0;
         coord=vertcat(cellCentredCoarse(ii).vertex(:).coord);
         
@@ -3209,11 +3316,21 @@ function [cellCentredCoarse]=CoarseCellCentred(snaxel,refinedGrid,...
         if ~isempty(cellCentredCoarse(ii).snaxel)
             [cellCentredCoarse(ii).snaxel]...
                 =CompressSnaxelChain(cellCentredCoarse(ii).snaxel);
+            % mark snaxel which are not on the border of the cell (ie who's edge has only one cell)
+            for jj=1:numel(cellCentredCoarse(ii).snaxel)
+                snaxCellNew=refinedGrid.edge((FindObjNum([],cellCentredCoarse(ii).snaxel(jj).edge,newEdgeInd))).cellindex;
+                snaxCellOld=unique(oldIndsNewOrd(FindObjNum([],snaxCellNew,newIndsCell)));
+                cellCentredCoarse(ii).snaxel(jj).isborder=numel(snaxCellOld)>1;
+            end
         end
+        
+        
+
     end
     for ii=1:numel(cellCentredCoarse)
         if ~isempty(cellCentredCoarse(ii).snaxel)
-            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,cellCentredCoarse(ii).lSnaxNorm]...
+            [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,...
+                cellCentredCoarse(ii).lSnaxNorm,cellCentredCoarse(ii).curvNoEdge]...
                 =ExploreSnaxelChain(cellCentredCoarse(ii).snaxel,cellCentredCoarse(ii).cellLength);
         end
     end
