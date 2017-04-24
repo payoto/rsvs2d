@@ -181,11 +181,12 @@ function param=AvoidLocalOptim(param)
 %     param.snakes.force.typeSmear='lengthD';
     
     param.snakes.step.arrivalTolerance=1e-1;
-    param.snakes.step.snaxInitPos=5e-7;
+    param.snakes.step.snaxInitPos=1e-5;
     param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.distEpsilon=5e-7;
-    param.snakes.force.dirEpsilon=1e-6;
+    param.snakes.force.dirEpsilon=1e-7;
     param.snakes.force.typeSmear='d';
+    
 end
 
 function param=SmoothFEDynamic(param)
@@ -621,16 +622,11 @@ function [param]=optimSupersonicMultiTopo()
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;
-    param.snakes.refine.axisRatio=0.17;
     
     param.snakes.step.mergeTopo=true;
     param.snakes.step.snakesSteps=150;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
-    param.snakes.step.maxStep=0.2;
-    param.snakes.step.maxDt=0.5;
-    param.snakes.step.fillLooseStep=0;
-    param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.stepType='indiv';
      
     param.results.archiveName='Optimisation';
@@ -641,6 +637,14 @@ function [param]=optimSupersonicMultiTopo()
     param.optiminit.corneractive=true;
     param.optiminit.cellLevels=[6,10];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+    
+end
+
+function param=optimSupersonicMultiTopo2()
+    [param]=optimSupersonicMultiTopo();
+    
+    param.optiminit.cellLevels=[3,16];
+    
     
 end
 

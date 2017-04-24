@@ -840,15 +840,15 @@ end
 
 
 function [paroptim]=TestNonFill()
-    [paroptim]=invdeslocal_test4('uu','contcurve',1,1);
+    [paroptim]=invdeslocal_test4('uu','contcurve',0,1);
     paroptim.general.maxIter=6;
     paroptim.general.worker=4;
     
     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
     paroptim.desvar.numNonFillVar=[1 ];
-    paroptim.desvar.desVarRangeNoFill={[0.1,2]}; % [0.1,3] [-10,10] [0 0.5]
-    paroptim.desvar.startPopNonFill={'rand'};
-    
+    paroptim.desvar.desVarRangeNoFill={[0.5,1.5]}; % [0.1,3] [-10,10] [0 0.5]
+    paroptim.desvar.startPopNonFill={'mid'};
+    paroptim.refine.refineOptimType='contcurvenoedge';
 end
 
 %% Test cases for length Area
@@ -1038,8 +1038,8 @@ function [paroptim]=areabusesweep(e)
     paroptim.general.optimMethod='DE';
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
-    paroptim.general.nPop=100;
-    paroptim.general.maxIter=200;
+    paroptim.general.nPop=75;
+    paroptim.general.maxIter=100;
     paroptim.general.worker=8;
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
@@ -1052,6 +1052,16 @@ function [paroptim]=areabusesweep(e)
     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
     paroptim.desvar.startPopNonFill={'rand'};
 end
+
+function [paroptim]=areabuserefine(e)
+    [paroptim]=areabusesweep(e);
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo2');
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10; 
+    [paroptim]=AdaptiveRefinement(paroptim);
+    paroptim.refine.refineOptimType='contcurvenoedge';
+    paroptim.refine.refineSteps=3;
+end
+
 
 function [paroptim]=areabuseTest()
    [paroptim]=areabusesweep(0.05);
