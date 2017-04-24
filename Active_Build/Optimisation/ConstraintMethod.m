@@ -178,7 +178,7 @@ function [population,constrDistance]=DesignVariableConsCaller(constrName,constrV
         case 'MinSumVolFrac'
             [population]=MinSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'MinValVolFrac'
-            [population]=ValSumVolumeFraction(constrVal,paroptim,population,varargin{1});
+            [population]=MinValSumVolume(constrVal,paroptim,population,varargin{1});
         case 'Naca0012'
             [constrVal]=NacaOuterLimit0012(varargin{1},paroptim);
             [population,constrDistance]=LocalVolumeFraction_min(constrVal,population);
@@ -467,16 +467,20 @@ end
 
 function [population]=ValSumVolumeFraction(constrVal,paroptim,population,baseGrid)
     
-    varExtract={'desVarRange'};
-    [desVarRange]=ExtractVariables(varExtract,paroptim);
-    varExtract={'axisRatio'};
-    [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
+    
     cellCentred=CellCentreGridInformation(baseGrid);
     isActive=logical([cellCentred(:).isactive]);
-    volVec=[cellCentred(isActive).volume]*axisRatio;
-    totvol=sum(volVec);
+    volVecRoot=[cellCentred(isActive).volume];
+    
     
     for ii=1:length(population)
+        [paroptim]=HandleNonFillVar(population(ii),paroptim);
+        varExtract={'desVarRange'};
+        [desVarRange]=ExtractVariables(varExtract,paroptim);
+        varExtract={'axisRatio'};
+        [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
+        volVec=volVecRoot*axisRatio;
+        totvol=sum(volVec);
         
         fillStart=population(ii).fill;
         
@@ -508,16 +512,21 @@ end
 
 function [population]=MinValSumVolume(constrVal,paroptim,population,baseGrid)
     
-    varExtract={'desVarRange'};
-    [desVarRange]=ExtractVariables(varExtract,paroptim);
-    varExtract={'axisRatio'};
-    [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
     cellCentred=CellCentreGridInformation(baseGrid);
     isActive=logical([cellCentred(:).isactive]);
-    volVec=[cellCentred(isActive).volume]*axisRatio;
-    totvol=sum(volVec);
+    volVecRoot=[cellCentred(isActive).volume];
+    
     
     for ii=1:length(population)
+        [paroptim]=HandleNonFillVar(population(ii),paroptim);
+        varExtract={'desVarRange'};
+        [desVarRange]=ExtractVariables(varExtract,paroptim);
+        varExtract={'axisRatio'};
+        [axisRatio]=ExtractVariables(varExtract,paroptim.parametrisation);
+        volVec=volVecRoot*axisRatio;
+        totvol=sum(volVec);
+        
+        
         
         fillStart=population(ii).fill;
         

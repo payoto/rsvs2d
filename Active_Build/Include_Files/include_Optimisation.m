@@ -66,10 +66,10 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
     
     naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
         m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
-%     ((x(x>=(p*c))-xMin)/c)
-%     
-%     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
-%         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
+    %     ((x(x>=(p*c))-xMin)/c)
+    %
+    %     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
+    %         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
     
     teps=5.48e-04/2/0.8;
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
@@ -185,13 +185,13 @@ end
 
 function [constrVal]=OuterLimitInverse(gridrefined,paramoptim,airfoilstr)
     
-
-   
+    
+    
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
         (tDistrib(1:end-1)+tDistrib(2:end))/2]);
-     teps=5.48e-04/2/0.8;
-     
-     
+    teps=5.48e-04/2/0.8;
+    
+    
     warning('Will only work with square or rectangular grids')
     varExtract={'axisRatio'};
     axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
@@ -201,10 +201,10 @@ function [constrVal]=OuterLimitInverse(gridrefined,paramoptim,airfoilstr)
     
     cellCentredGrid=CellCentreGridInformation(gridrefined);
     isActive=logical([cellCentredGrid(:).isactive]);
-%     actVerts=[cellCentredGrid(isActive).vertex];
-%     coord=vertcat(actVerts(:).coord);
-%     figure, hold on
-%     coord(:,2)=coord(:,2)*axisRatio;%;
+    %     actVerts=[cellCentredGrid(isActive).vertex];
+    %     coord=vertcat(actVerts(:).coord);
+    %     figure, hold on
+    %     coord(:,2)=coord(:,2)*axisRatio;%;
     
     xMax=airfoil.func.xMax; %max(xPos);
     xMin=airfoil.func.xMin; %min(xPos);
@@ -235,10 +235,10 @@ end
 function [constrVal]=MatchVoltoShape(gridrefined,paramoptim,shapePath)
     
     
-%     ((x(x>=(p*c))-xMin)/c)
-%     
-%     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
-%         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
+    %     ((x(x>=(p*c))-xMin)/c)
+    %
+    %     [m*x(x<(cp*c))/p^2.*(2*p-x(x<(p*c))) ;...
+    %         m*(1-x(x>=(p*c))/c)/(1-p)^2.*(1+x(x>=(p*c))-2*p)];
     
     integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
         (tDistrib(1:end-1)+tDistrib(2:end))/2]);
@@ -247,7 +247,7 @@ function [constrVal]=MatchVoltoShape(gridrefined,paramoptim,shapePath)
     varExtract={'axisRatio'};
     axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
     [uppersurf,lowersurf]=ReadShapeIn(shapePath);
-   
+    
     
     cellCentredGrid=CellCentreGridInformation(gridrefined);
     isActive=logical([cellCentredGrid(:).isactive]);
@@ -304,7 +304,7 @@ function [uppersurf,lowersurf]=ReadShapeIn(shapepath)
             error('Unknown type')
             
     end
-        
+    
 end
 
 function [ctc,pct,ttc,refFlag]=ReadNacaString(nacaStr)
@@ -485,7 +485,7 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
         case 'vertexflow'
             
             if nargin>2
-                try 
+                try
                     [newRootFill,optionOut]=RunVertexOverflow(paramoptim,newRootFill,extraarguments);
                     disp('Vertex Flow succesful')
                 catch ME
@@ -682,18 +682,18 @@ end
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
     returnName={};
-%     if iscell(rootDir)
-%         subDir=dir(rootDir{1});
-%         subDir(1:2)=[];
-%         for ii=2:numel(rootDir)
-%             partsubDir=dir(rootDir{ii});
-%             partsubDir(1:2)=[];
-%             subDir=[subDir,partsubDir];
-%         end
-%     else
-        subDir=dir(rootDir);
-        subDir(1:2)=[];
-%     end
+    %     if iscell(rootDir)
+    %         subDir=dir(rootDir{1});
+    %         subDir(1:2)=[];
+    %         for ii=2:numel(rootDir)
+    %             partsubDir=dir(rootDir{ii});
+    %             partsubDir(1:2)=[];
+    %             subDir=[subDir,partsubDir];
+    %         end
+    %     else
+    subDir=dir(rootDir);
+    subDir(1:2)=[];
+    %     end
     nameCell={subDir(:).name};
     isprofileDirCell=strfind(nameCell,strDir);
     for ii=1:length(subDir)
@@ -798,7 +798,7 @@ function [vertflowinfo]=BuildVertexOverflowStruct(fillDist,gridRefined,cellCentr
             currSub=FindObjNum([],currcells(jj),cellInd);
             if currSub~=0
                 vertflowinfo(ii).cells(jj).issource=~(cellCentredGrid(currSub).fill==0 ...
-                || cellCentredGrid(currSub).fill==1);
+                    || cellCentredGrid(currSub).fill==1);
             end
         end
         
@@ -830,7 +830,7 @@ function [fillflow]=BuildFillFlow(vertflowinfo,cellCentredGrid,gridRefined,gridB
                     vertflowinfo(ii).cells(jj).edges]);
                 iskeep=~((tempEdge-tempEdge([2:end,1]))==0 | (tempEdge-tempEdge([end,1:end-1]))==0);
                 vertflowinfo(ii).cells(firstMatch).edges=tempEdge(iskeep);
-                    
+                
             end
         end
         vertflowinfo(ii).cells(rmRow)=[];
@@ -907,7 +907,7 @@ end
 
 function [cellRatio]=CalculateFloodRatio(cellSource,cellDest,cellflowinfo)
     % calculates the bleed ratio between the source and destination cell
-    % based on wether it is a corner bleed and 
+    % based on wether it is a corner bleed and
     cellRatio=1/4*cellSource.volume/cellDest.volume;
     
 end
@@ -938,7 +938,7 @@ function [snaxCorn,snaxBord]=ExtractVerticesForFlow(gridBase,gridRefined,...
     %
     
     oldCellDat=[gridConnec.edge(:).newcell];
-   [oldIndsNewOrd]=[0,ReverseStructInfo(gridConnec.cell,'oldCellInd','newCellInd')];
+    [oldIndsNewOrd]=[0,ReverseStructInfo(gridConnec.cell,'oldCellInd','newCellInd')];
     oldCellDat=oldIndsNewOrd(FindObjNum([],oldCellDat,[0,gridConnec.cell(:).newCellInd]));
     borderedges=[gridConnec.edge(oldCellDat(1:2:end)~=oldCellDat(2:2:end)).newedge];
     borderVertex=unique([gridRefined.edge(FindObjNum([],borderedges,...
@@ -1040,4 +1040,113 @@ function [res]=TestDeviationPopStruct(population,cellTest,dirOut)
         end
         fclose(fileOut);
     end
+end
+
+function [paramoptim,paramsnake]=HandleNonFillVar(member,paramoptim,paramsnake)
+    
+    varExtract={'nonFillVar','numNonFillVar'};
+    
+    [nonFillVar,numNonFillVar]=ExtractVariables(varExtract,paramoptim);
+    
+    if nargin<3
+        paramsnake=paramoptim.parametrisation;
+    end
+    
+    for ii=1:numel(nonFillVar)
+        vS=1+sum(numNonFillVar(1:ii-1));
+        vE=sum(numNonFillVar(1:ii));
+        switch nonFillVar{ii}
+            case 'axisratio'
+                paramoptim.parametrisation=SetVariables({'axisRatio'},...
+                    {member.nonfillvar(vS:vE)},paramoptim.parametrisation);
+                
+                paramsnake=SetVariables({'axisRatio'},...
+                    {member.nonfillvar(vS:vE)},paramsnake);
+            case 'alpha'
+                paramoptim=SetVariables({'nAlpha'},...
+                    {member.nonfillvar(vS:vE)},paramoptim);
+            case 'mach'
+                paramoptim=SetVariables({'nMach'},...
+                    {member.nonfillvar(vS:vE)},paramoptim);
+                
+            otherwise
+                warning('Unknown Design Variable specified')
+        end
+        
+        
+    end
+    
+    
+end
+
+function [population]=RescaleDesVarNoFill(scaleDir,paramoptim,population)
+    
+    varExtract={'desVarRange','desVarRangeNoFill','nonFillVar','numNonFillVar','nDesVar'};
+    
+    [desVarRange,desVarRangeNoFill,nonFillVar,numNonFillVar,nDesVar]=ExtractVariables(varExtract,paramoptim);
+    
+    
+    switch scaleDir
+        case 'tofill'
+            % scale from the fill range to the actual range
+            for ii=1:numel(population)
+                kk=0;
+                for jj=1:numel(nonFillVar)
+                    desCurr=population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj));
+                    population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj))=...
+                        ((desCurr-min(desVarRangeNoFill{jj}))/...
+                        (max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj})))...
+                        *(max(desVarRange)-min(desVarRange))+min(desVarRange);
+                    
+                    
+                    isAct=(population(ii).optimdat.var>nDesVar+kk) & ...
+                        (population(ii).optimdat.var<nDesVar+kk+numNonFillVar(jj));
+                    kk=kk+numNonFillVar(jj);
+                end
+                if isstruct(population(ii).optimdat)
+                    kk=0;
+                    for jj=1:numel(nonFillVar)
+                        isAct=(population(ii).optimdat.var>nDesVar+kk) & ...
+                            (population(ii).optimdat.var<=nDesVar+kk+numNonFillVar(jj));
+                        datCurr=population(ii).optimdat.value(isAct);
+                        population(ii).optimdat.value(isAct)=...
+                            ((datCurr)/...
+                            (max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj})))...
+                            *(max(desVarRange)-min(desVarRange));
+                        
+                        kk=kk+numNonFillVar(jj);
+                    end
+                end
+            end
+        case 'tovar'
+            % scale from the fill range to the actual range
+            for ii=1:numel(population)
+                kk=0;
+                for jj=1:numel(nonFillVar)
+                    desCurr=population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj));
+                    population(ii).nonfillvar(kk+1:kk+numNonFillVar(jj))=...
+                        ((desCurr-min(desVarRange))/...
+                        (max(desVarRange)-min(desVarRange)))...
+                        *(max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj}))...
+                        +min(desVarRangeNoFill{jj});
+                    kk=kk+numNonFillVar(jj);
+                end
+                if isstruct(population(ii).optimdat)
+                    kk=0;
+                    for jj=1:numel(nonFillVar)
+                        isAct=(population(ii).optimdat.var>nDesVar+kk) & ...
+                            (population(ii).optimdat.var<=nDesVar+kk+numNonFillVar(jj));
+                        datCurr=population(ii).optimdat.value(isAct);
+                        population(ii).optimdat.value(isAct)=...
+                            ((datCurr)/(max(desVarRange)-min(desVarRange)))...
+                            *(max(desVarRangeNoFill{jj})-min(desVarRangeNoFill{jj}));
+                        
+                        kk=kk+numNonFillVar(jj);
+                    end
+                end
+                
+            end
+            
+    end
+    
 end

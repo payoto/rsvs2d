@@ -14,8 +14,8 @@ end
 %% Main Handler blocks
 
 function [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc)
-    varExtract={'CFDfolder','nMach'};
-    [CFDfolder,nMach]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'CFDfolder','nMach','nAlpha'};
+    [CFDfolder,nMach,nAlpha]=ExtractVariables(varExtract,paramoptim);
     
     compType=computer;
     boundaryLoc=MakePathCompliant(boundaryLoc);
@@ -31,10 +31,16 @@ function [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc)
         flowCommand=['cp -rp ''',CFDfolder,''' ''',targFolder,''''];
         [status,stdout]=system(flowCommand);
     end
+    % Set flow values
     if numel(nMach)<3
         nMach=[1 nMach(1) 0.25];
     end
     RestartModifiedSettings(targFolder,'mach',1,nMach);
+    if numel(nAlpha)<3
+        nAlpha=[1 nAlpha(1) 0.25];
+    end
+    RestartModifiedSettings(targFolder,'alpha',2,nAlpha);
+    
     CopyBoundaryFile(boundaryLoc,targFolder);
     
 end
@@ -365,6 +371,8 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
             cfloutstr=ReplaceRestart(cflLine,varargin{1});
         case 'mach'
             cfloutstr=ReplaceMachNum(cflLine,varargin{1});
+        case 'alpha'
+            cfloutstr=ReplaceAlphaNum(cflLine,varargin{1});
     end
     
     fprintf(fidSetW,cfloutstr);
@@ -391,6 +399,15 @@ function strOut=ReplaceCFLNum(strIn,dirCFL)
 end
 
 function strOut=ReplaceMachNum(strIn,nMach)
+    
+    cflStr=regexp(strIn,'\d*\s*\d*\.\d*\s*\d*\.\d*','match','once');
+    strOut=regexprep(strIn,cflStr,'%i %.2f %.2f');
+    
+    strOut=sprintf([strOut,'\n'],nMach(1),nMach(2),nMach(3));
+    
+end
+
+function strOut=ReplaceAlphaNum(strIn,nMach)
     
     cflStr=regexp(strIn,'\d*\s*\d*\.\d*\s*\d*\.\d*','match','once');
     strOut=regexprep(strIn,cflStr,'%i %.2f %.2f');

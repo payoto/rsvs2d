@@ -93,8 +93,8 @@ function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]..
     
     [textOut1,tStart]=evalc('PrintStart(procStr,2);');
     
-    varExtract={'refineSteps','snakData'};
-    [refineSteps,snakData]=ExtractVariables(varExtract,param);
+    varExtract={'refineSteps','snakData','axisRatio'};
+    [refineSteps,snakData,axisRatio]=ExtractVariables(varExtract,param);
     
     looprestart=supportstructsens.loopsens;
     restartsnake=supportstructsens;
@@ -103,8 +103,9 @@ function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]..
     % [textOut,snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=evalc(callerString);
     
     
-    
+    [looprestart]=FinishLoops(looprestart,param);
     looprestart=SubdivisionSurface_Snakes(looprestart,refineSteps,param,paramspline);
+    
     
     [tecsnaxel,tecsnakposition]=LooptoTecSnax(looprestart);
     
@@ -134,6 +135,14 @@ function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]..
     fprintf([textOut1,'\n   Sensitivity Profile post-treated\n',textOut2])
 end
 
+% function [looprestart]=ApplyAxisRatioToSens(looprestart,axisRatio)
+%     
+%      for ii=1:numel(loop)
+%          
+%          
+%          
+%      end
+% end
 
 function [snaxel,snakposition,snakSave,looprestart,restartsnake,outinfo]...
         =ExecuteSnakes_Optim_post(gridrefined,looprestart,baseGrid,connectstructinfo...

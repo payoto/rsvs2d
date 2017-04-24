@@ -775,6 +775,8 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     supportstructsens=repmat(struct('loop',[],'rootMesh','','loopsens',[],'volumefraction',[]),[1,nPop-1]);
     
     if strcmp('analytical',sensCalc)
+        
+        [paramoptim,paramsnake]=HandleNonFillVar(population(1),paramoptim,paramsnake);
         [supportstructsens]=ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
             population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstructsens);
         
@@ -825,8 +827,8 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
         population,baseGrid,gridrefined,restartsnake,connectstructinfo,outinfo,nIter)
     
     captureErrors{1}='';
-    
-    try
+    nDesVar=ExtractVariables({'nDesVar'},paramoptim);
+     try
         % Compute root member profile
         currentMember=population(1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
@@ -836,24 +838,42 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
             ,outinfo,nIter,1,paramoptim);
         
         % Compute sensitivity
+        
+        [paramoptim,paramsnake]=HandleNonFillVar(population(1),paramoptim,paramsnake);
         newfillstruct=SnakesSensitivity('fill',newRefGrid,restartsnake,...
             newGrid,paramsnake,paramoptim,currentMember);
         
-        nPop=numel(newfillstruct)+1;
+        keepPop=false(numel(population));
+        for ii=1:numel(population)
+            keepPop(ii)=any(population(ii).optimdat.var>nDesVar);
+        end
+        keepPop=find(keepPop);
+        
+        nPop=numel(newfillstruct)+1+numel(keepPop);
         [paramoptim]=SetVariables({'nPop'},{nPop},paramoptim);
         [newpopulation]=GeneratePopulationStruct(paramoptim);
         newpopulation(1)=population(1);
-        for ii=2:nPop
+        for ii=2:numel(newfillstruct)+1
             newpopulation(ii).fill=newfillstruct(ii-1).fill;
+            newpopulation(ii).nonfillvar=newpopulation(1).nonfillvar;
             newpopulation(ii).optimdat.var=newfillstruct(ii-1).optimdat.var;
             newpopulation(ii).optimdat.value=newfillstruct(ii-1).optimdat.val;
         end
+        nPrc=numel(newfillstruct)+1;
+        for ii=1:numel(keepPop)
+            newpopulation(nPrc+ii).fill=newpopulation(1).fill;
+            newpopulation(nPrc+ii).nonfillvar=population(keepPop(ii)).nonfillvar;
+            newpopulation(nPrc+ii).optimdat.var=population(keepPop(ii)).optimdat.var;
+            newpopulation(nPrc+ii).optimdat.value=population(keepPop(ii)).optimdat.value;
+        end
+        
         varExtract={'restart'};
         [paramsnake]=SetVariables(varExtract,{true},paramsnake);
     catch MEexception
         population(1).constraint=false;
         population(1).exception=['error: ',MEexception.identifier];
         captureErrors{1}=MEexception.getReport;
+        disp(captureErrors{1})
         newpopulation=population;
         supportstruct.loop=[];
         disp(MEexception.getReport)
@@ -892,6 +912,8 @@ function [population,supportstruct,restartsnake]=NormalExecutionIteration(popula
         newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
         ,outinfo,nIter,ii,paramoptim)
     
+    [paramoptim,paramsnake]=HandleNonFillVar(population,paramoptim,paramsnake);
+    
     varExtract={'restart','boundstr'};
     [isRestart,boundstr]=ExtractVariables(varExtract,paramsnake);
     varExtract={'nPop'};
@@ -917,6 +939,8 @@ end
 function [population,supportstruct,restartsnake]=PostExecutionIteration(population,newRefGrid,...
         newrestartsnake,newGrid,connectstructinfo,paramsnake,paramspline...
         ,outinfo,nIter,ii,paramoptim)
+    
+    [paramoptim,paramsnake]=HandleNonFillVar(population,paramoptim,paramsnake);
     
     varExtract={'restart','boundstr'};
     [isRestart,boundstr]=ExtractVariables(varExtract,paramsnake);
@@ -945,6 +969,13 @@ function [population,supportstruct,restartsnake]=SensitivityExecutionIteration(p
     
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'axisRatio'};
+    [axisRatio]=ExtractVariables(varExtract,paramsnake);
+    [paramoptim,paramsnake]=HandleNonFillVar(population,paramoptim,paramsnake);
+    varExtract={'axisRatio'};
+    [axisRatioNew]=ExtractVariables(varExtract,paramsnake);
+    axisRatioNew=axisRatioNew/axisRatio;
+    [paramsnake]=SetVariables(varExtract,{axisRatioNew},paramsnake);
     
     
     [~,~,~,loop,restartsnake,outTemp]=...
@@ -987,35 +1018,43 @@ function [iterstruct,paramoptim]...
     procStr=['Generate New Population'];
     [tStart]=PrintStart(procStr,2);
     
-    varExtract={'nPop','iterGap','optimMethod'};
-    [nPop,iterGap,optimMethod]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'nPop','iterGap','optimMethod','nDesVar'};
+    [nPop,iterGap,optimMethod,nDesVar]=ExtractVariables(varExtract,paramoptim);
     
     [isGradient]=CheckIfGradient(optimMethod);
-    
+    iterCurr=RescaleDesVarNoFill('tofill',paramoptim,iterstruct(nIter).population);
+    iterM1=RescaleDesVarNoFill('tofill',paramoptim,iterstruct(max([nIter-iterGap,...
+        iterStart])).population);
     [newPop,iterstruct(nIter).population,paramoptim,deltas]=OptimisationMethod(paramoptim,...
-        iterstruct(nIter).population,...
-        iterstruct(max([nIter-iterGap,iterStart])).population,baseGrid);
+        iterCurr,iterM1,baseGrid);
+    [iterstruct(nIter).population]=RescaleDesVarNoFill('tovar',...
+        paramoptim,iterstruct(nIter).population);
+    
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
     [iterstruct(nIter+1).population]=GeneratePopulationStruct(paramoptim);
     
-    
+    nFill=nDesVar;
     if ~isGradient
         for ii=1:nPop
-            iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+            iterstruct(nIter+1).population(ii).fill=newPop(ii,1:nFill);
+            iterstruct(nIter+1).population(ii).nonfillvar=newPop(ii,nFill+1:end);
         end
     else
         for ii=1:nPop
-            iterstruct(nIter+1).population(ii).fill=newPop(ii,:);
+            iterstruct(nIter+1).population(ii).fill=newPop(ii,1:nFill);
+            iterstruct(nIter+1).population(ii).nonfillvar=newPop(ii,nFill+1:end);
             iterstruct(nIter+1).population(ii).optimdat.var=deltas{ii}(1,:);
             iterstruct(nIter+1).population(ii).optimdat.value=deltas{ii}(2,:);
             
         end
     end
-    
+    [iterstruct(nIter+1).population]=RescaleDesVarNoFill('tovar',...
+        paramoptim,iterstruct(nIter+1).population);
     iterstruct(nIter+1).population=ApplySymmetry(paramoptim,iterstruct(nIter+1).population);
     [~]=PrintEnd(procStr,2,tStart);
 end
+
 
 
 %% Parametrisation Interface
@@ -1076,18 +1115,18 @@ end
 function [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid)
     
     varExtract={'symType','useSnake','startVol','validVol','diffStepSize',...
-        'maxDiffStep','minDiffStep','gradScaleType','nDesVar'};
+        'maxDiffStep','minDiffStep','gradScaleType','nDesVar','numNonFillVar'};
     [symType,useSnake,startVol,validVol,diffStepSize,maxDiffStep,minDiffStep...
-        ,gradScaleType,nDesVar]=ExtractVariables(varExtract,paramoptim);
+        ,gradScaleType,nDesVar,numNonFillVar]=ExtractVariables(varExtract,paramoptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paramoptim.parametrisation);
     if useSnake
         nDesVar=sum([baseGrid.cell(:).isactive]);
         paramoptim=SetVariables({'nDesVar'},{nDesVar},paramoptim);
-        paramoptim=SetVariables({'gradScale'},{BuildCellRatios(baseGrid,gradScaleType)}...
-            ,paramoptim);
+        paramoptim=SetVariables({'gradScale'},{[BuildCellRatios(baseGrid,gradScaleType),...
+            ones([1,sum(numNonFillVar)])]},paramoptim);
     else
-        paramoptim=SetVariables({'gradScale'},{ones(1,nDesVar)}...
+        paramoptim=SetVariables({'gradScale'},{ones(1,nDesVar+sum(numNonFillVar))}...
             ,paramoptim);
     end
     if ~isempty(startVol) && startVol~=0
@@ -1315,9 +1354,9 @@ end
 function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
     
     varExtract={'nDesVar','nPop','startPop','desVarConstr','desVarVal',...
-        'optimMethod','desvarconnec','specificFillName','initInterp'};
+        'optimMethod','desvarconnec','specificFillName','initInterp','numNonFillVar'};
     [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,...
-        specificFillName,initInterp]=ExtractVariables(varExtract,paroptim);
+        specificFillName,initInterp,numNonFillVar]=ExtractVariables(varExtract,paroptim);
     varExtract={'cellLevels','corneractive'};
     [cellLevels,corneractive]=ExtractVariables(varExtract,paroptim.parametrisation);
     
@@ -1441,6 +1480,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
     end
     
     
+    [nonFillPop]=InitialiseNonFillPop(paroptim,size(origPop,1));
+    origPop=[origPop,nonFillPop];
     [isGradient]=CheckIfGradient(optimMethod);
     if isGradient
         [origPop,nPop,deltas]=InitialiseGradientBased(origPop(1,:),paroptim);
@@ -1448,7 +1489,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         [iterstruct]=InitialiseIterationStruct(paroptim);
         
         for ii=1:nPop
-            iterstruct(1).population(ii).fill=origPop(ii,:);
+            iterstruct(1).population(ii).fill=origPop(ii,1:nDesVar);
+            iterstruct(1).population(ii).nonfillvar=origPop(ii,nDesVar+1:end);
             iterstruct(1).population(ii).optimdat.var=deltas{ii}(1,:);
             iterstruct(1).population(ii).optimdat.value=deltas{ii}(2,:);
         end
@@ -1458,11 +1500,47 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         [iterstruct]=InitialiseIterationStruct(paroptim);
         [origPop]=OverflowHandling(paroptim,origPop);
         for ii=1:nPop
-            iterstruct(1).population(ii).fill=origPop(ii,:);
+            iterstruct(1).population(ii).fill=origPop(ii,1:nDesVar);
+            iterstruct(1).population(ii).nonfillvar=origPop(ii,nDesVar+1:end);
         end
         if strcmp('NACAmulti',startPop) || strcmp('AEROmulti',startPop)
             for ii=1:nPop
                 iterstruct(1).population(ii).additional.Airfoil=initInterp{ii};
+            end
+        end
+    end
+    
+    iterstruct(1).population=RescaleDesVarNoFill('tovar',paroptim,iterstruct(1).population);
+end
+
+function [nonfillPop]=InitialiseNonFillPop(paramoptim,nPop)
+    varExtract={'desVarRange','desVarRangeNoFill','nonFillVar','numNonFillVar','startPopNonFill'};
+    
+    [desVarRange,desVarRangeNoFill,nonFillVar,numNonFillVar,startPopNonFill]=...
+        ExtractVariables(varExtract,paramoptim);
+    nonfillPop=zeros([nPop,sum(numNonFillVar)]);
+    
+    for jj=1:numel(nonFillVar)
+        nS=1+sum(numNonFillVar(1:(jj-1)));
+        nE=sum(numNonFillVar(1:jj));
+        
+        if isnumeric(startPopNonFill{jj})
+            nonfillPop(:,nS:nE)=repmat(startPopNonFill{jj},[nPop,1]);
+        else
+            switch startPopNonFill{jj}
+                case 'rand'
+                    nonfillPop(:,nS:nE)=rand([nPop,numNonFillVar(jj)]);
+                case 'mid'
+                    nonfillPop(:,nS:nE)=ones([nPop,numNonFillVar(jj)])*0.5;
+                case 'low'
+                    nonfillPop(:,nS:nE)=zeros([nPop,numNonFillVar(jj)]);
+                case 'high'
+                    nonfillPop(:,nS:nE)=ones([nPop,numNonFillVar(jj)]);
+                    
+                otherwise
+
+                    error('Unknown starting non fill population')
+
             end
         end
     end
@@ -1471,11 +1549,12 @@ end
 function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
     
     
-    varExtract={'notDesInd','varActive','diffStepSize','desVarRange','desvarconnec','borderActivation'};
-    [notDesInd,varActive,diffStepSize,desVarRange,desvarconnec,borderActivation]...
+    varExtract={'notDesInd','varActive','diffStepSize','desVarRange',...
+        'desvarconnec','borderActivation','nDesVar'};
+    [notDesInd,varActive,diffStepSize,desVarRange,desvarconnec,borderActivation,nDesVar]...
         =ExtractVariables(varExtract,paroptim);
     
-    [inactiveVar]=SelectInactiveVariables(rootPop,varActive,desvarconnec,borderActivation);
+    [inactiveVar]=SelectInactiveVariables(rootPop(1:nDesVar),varActive,desvarconnec,borderActivation);
     [desVarList]=ExtractActiveVariable(length(rootPop),notDesInd,inactiveVar);
     nPop=length(desVarList)*length(diffStepSize)+1;
     
@@ -1757,11 +1836,11 @@ function [iterstruct]=InitialiseIterationStruct(paramoptim)
 end
 
 function [popstruct]=GeneratePopulationStruct(paroptim)
-    varExtract={'nPop','nDesVar','objectiveName','nonFillVar'};
-    [nPop,nDesVar,objectiveName,nonFillVar]=ExtractVariables(varExtract,paroptim);
+    varExtract={'nPop','nDesVar','objectiveName','numNonFillVar'};
+    [nPop,nDesVar,objectiveName,numNonFillVar]=ExtractVariables(varExtract,paroptim);
     
     [valFill{1:nPop}]=deal(zeros([1,nDesVar]));
-    [valFill2{1:nPop}]=deal(zeros([1,numel(nonFillVar)]));
+    [valFill2{1:nPop}]=deal(zeros([1,sum(numNonFillVar)]));
     switch objectiveName
         case 'CutCellFlow'
             addstruct=struct('iter',[],'res',[],'cl',[],'cm',[],'cd',[],...
@@ -1795,7 +1874,7 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             
     end
     optimdatstruct=struct('var',[],'value',[]);
-    popstruct=struct('fill',valFill,'nonfillvar',valFill,'location','','objective',[],'constraint'...
+    popstruct=struct('fill',valFill,'nonfillvar',valFill2,'location','','objective',[],'constraint'...
         ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','');
     
 end
@@ -2264,7 +2343,7 @@ function [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,co
         iterstruct,oldBaseGrid,newBaseGrid)
     
     
-    varNames={'optimMethod','stepAlgo'};
+    varNames={'optimMethod','stepAlgo','numNonFillVar'};
     [optimMethod,stepAlgo]=ExtractVariables(varNames,paramoptim);
     
     switch optimMethod
@@ -2273,13 +2352,17 @@ function [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,co
             switch stepAlgo
                 
                 case 'conjgrad'
-                    [supportOptim.curr.prevStep]=UpdateStepDir(...
-                        supportOptim.curr.prevStep,profloops,transformstruct,...
+                    [newPrevStep]=UpdateStepDir(...
+                        supportOptim.curr.prevStep(1:end-(sum(numNonFillVar))),profloops,transformstruct,...
                         connectstructinfo,iterstruct,oldBaseGrid,newBaseGrid);
+                    supportOptim.curr.prevStep=[newPrevStep,...
+                        supportOptim.curr.prevStep(end-(sum(numNonFillVar)+1):end)];
                 case 'BFGS'
-                    [supportOptim.curr.prevDir]=UpdateStepDir(...
-                        supportOptim.curr.prevDir,profloops,transformstruct,...
+                    [newPrevStep]=UpdateStepDir(...
+                        supportOptim.curr.prevDir(1:end-(sum(numNonFillVar))),profloops,transformstruct,...
                         connectstructinfo,iterstruct,oldBaseGrid,newBaseGrid);
+                    supportOptim.curr.prevDir=[newPrevStep,...
+                        supportOptim.curr.prevDir(end-(sum(numNonFillVar)+1):end)];
                     supportOptim.curr.Bk=eye(numel(supportOptim.curr.prevDir));
                     supportOptim.curr.Bkinv=eye(numel(supportOptim.curr.prevDir));
                     supportOptim.curr.iter=1;
