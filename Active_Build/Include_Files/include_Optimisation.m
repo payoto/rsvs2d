@@ -477,7 +477,7 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
             for ii=1:size(newRootFill,1)
                 [newFill(ii,1:nDesVar)]=SpillOverflow(paramoptim,newRootFill(ii,1:nDesVar));
             end
-            newRootFill=newFill;
+            newRootFill(:,1:nDesVar)=newFill(:,1:nDesVar);
             minD=min(desVarRange);
             maxD=max(desVarRange);
             newRootFill(newRootFill<minD)=minD;

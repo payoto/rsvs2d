@@ -1056,7 +1056,8 @@ end
 function [paroptim]=areabuserefine(e)
     [paroptim]=areabusesweep(e);
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo2');
-    paroptim.parametrisation.snakes.refine.axisRatio =e*10; 
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10/4; 
+    paroptim.desvar.desVarRangeNoFill={[0.25,1.5]*e*10/4};
     [paroptim]=AdaptiveRefinement(paroptim);
     paroptim.refine.refineOptimType='contcurvenoedge';
     paroptim.refine.refineSteps=3;
