@@ -644,6 +644,7 @@ function param=optimSupersonicMultiTopo2()
     [param]=optimSupersonicMultiTopo();
     
     param.optiminit.cellLevels=[3,16];
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
     
 end
