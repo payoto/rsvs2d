@@ -148,7 +148,7 @@ end
 
 %% Conjugate gradient
 
-function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradientTranslate(paramoptim,iterCurr,iterm1,baseGrid)
+function [newPop,iterOrig,paramoptim,deltas]=ConjugateGradientTranslate(paramoptim,iterCurr,iterm1,baseGrid)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...
