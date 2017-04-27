@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -21,9 +21,35 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
+%}
 
 
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+        connectstructinfo,unstrRef,restartsnake]=...
+        HandleRefinement(paramoptim,iterstruct,outinfo,oldBase,gridrefined,...
+        connectstructinfo,refStep,nIter,firstValidIter)
+    % This must only recieve a portion of iterstruct
+    
+    oldGrid.base=oldBase;
+    oldGrid.refined=gridrefined;
+    oldGrid.connec=connectstructinfo;
+    oldGrid.cellrefined=CellCentreGridInformation(gridrefined);
+    
+    % grid refinement
+    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
+        connectstructinfo,unstrRef,restartsnake]=...
+        InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
+    
+    paramoptim=SetVariables({'isRestart'},{true},paramoptim);
+    % This line causes problems and exceeding boundmax
+    %paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
+    [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
+    
+end
+
+%
+
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -508,17 +534,16 @@ function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startI
     isConv=false;
     if CheckIfGradient(optimMethod) && ((nIter-startIter)>=(mmaSpan*iterGap))
         
-        %objDat=zeros([1,nIter-startIter+1]);
-        kk=1;
-        for ii=flip(nIter:-iterGap:startIter)
-            objDat(kk)=min([iterstruct(ii).population(:).objective]);kk=kk+1;
+        objDat=zeros([1,nIter-startIter+1]);
+        for ii=startIter:nIter
+            objDat(ii-startIter+1)=min([iterstruct(ii).population(:).objective]);
         end
         if knownOptim~=0
-            mma=MovingAverage(objDat,mmaSpan);
+            mma=MovingAverage(objDat(1:iterGap:end),mmaSpan);
             mmaSlope=abs(mma(2:end)-mma(1:end-1));
             isConv=(max(mmaSlope(end-(mmaSpan-1):end))/max(mmaSlope))<slopeConv;
         else
-            mma=MovingAverage(log10(objDat),mmaSpan);
+            mma=MovingAverage(log10(objDat(1:iterGap:end)),mmaSpan);
             mmaSlope=abs(mma(2:end)-mma(1:end-1));
             isConv=(max(mmaSlope(end-(mmaSpan-1):end))/max(mmaSlope))<slopeConv;
         end
@@ -2204,30 +2229,6 @@ end
 %% Refined Optimisation
 
 
-function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
-        connectstructinfo,unstrRef,restartsnake]=...
-        HandleRefinement(paramoptim,iterstruct,outinfo,oldBase,gridrefined,...
-        connectstructinfo,refStep,nIter,firstValidIter)
-    % This must only recieve a portion of iterstruct
-    
-    oldGrid.base=oldBase;
-    oldGrid.refined=gridrefined;
-    oldGrid.connec=connectstructinfo;
-    oldGrid.cellrefined=CellCentreGridInformation(gridrefined);
-    
-    % grid refinement
-    [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
-        connectstructinfo,unstrRef,restartsnake]=...
-        InitialiseRefinement(paramoptim,iterstruct,outinfo,oldGrid,refStep,firstValidIter);
-    
-    paramoptim=SetVariables({'isRestart'},{true},paramoptim);
-    % This line causes problems and exceeding boundmax
-    %paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
-    [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
-    
-end
-
-%
 
 function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         connectstructinfo,unstrRef,restartsnake]=...
@@ -3280,7 +3281,7 @@ function [cellCentredCoarse]=CoarseCellCentred(snaxel,refinedGrid,...
     for ii=1:numel(cellCentredCoarse)
         if ~isempty(cellCentredCoarse(ii).snaxel)
             [cellCentredCoarse(ii).lSnax,cellCentredCoarse(ii).curvSnax,...
-                cellCentredCoarse(ii).lSnaxNorm,cellCentredCoarse(ii).curvNoEdge]...
+                cellCentredCoarse(ii).lSnaxNorm]...
                 =ExploreSnaxelChain(cellCentredCoarse(ii).snaxel,cellCentredCoarse(ii).cellLength);
         end
     end
