@@ -1047,22 +1047,43 @@ function [paroptim]=areabusesweep(e)
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
     
-    paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
-    paroptim.desvar.numNonFillVar=[1 ];
-    paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
-    paroptim.desvar.startPopNonFill={'rand'};
+%     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+%     paroptim.desvar.numNonFillVar=[1 ];
+%     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
+%     paroptim.desvar.startPopNonFill={'rand'};
+    [paroptim]=AdaptSizeforBusemann(paroptim,e);
 end
 
 function [paroptim]=areabuserefine(e)
     [paroptim]=areabusesweep(e);
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo2');
     paroptim.parametrisation.snakes.refine.axisRatio =e*10/4; 
-    paroptim.desvar.desVarRangeNoFill={[0.25,1.5]*e*10/4};
+    %paroptim.desvar.desVarRangeNoFill={[0.25,1.5]*e*10/4};
     [paroptim]=AdaptiveRefinement(paroptim);
     paroptim.refine.refineOptimType='contcurvenoedge';
     paroptim.refine.refineSteps=3;
+    [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    paroptim.general.nPop=50;
+    paroptim.general.maxIter=75;
+    
+    paroptim.refine.refineIter=75;
 end
 
+function [paroptim]=AdaptSizeforBusemann(paroptim,e)
+    include_Optimisation
+    [loop]=ConstantArea_Busemann(0,1,e,2);
+    paroptim.constraint.desVarVal={e};
+    ymax=nan;
+    ymin=nan;
+    for ii=1:numel(loop)
+        ymax=max([loop(ii).subdivision(:,2);ymax]);
+        ymin=min([loop(ii).subdivision(:,2);ymin]);
+    end
+    paroptim.parametrisation.snakes.refine.axisRatio =1; 
+    nBound=(ymax-ymin)/(paroptim.parametrisation.optiminit.cellLevels(2)-4)...
+        *paroptim.parametrisation.optiminit.cellLevels(2)/2;
+     paroptim.parametrisation.general.passDomBounds(2,:)=[-1 1]*nBound;
+end
 
 function [paroptim]=areabuseTest()
    [paroptim]=areabusesweep(0.05);

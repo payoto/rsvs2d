@@ -18,8 +18,8 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
             [valVars{ii}]=ExtractVariables(outVars(ii),paramoptim2);
         end
         paramoptim=SetVariables(outVars,valVars,paramoptim);
-    catch ME
-        throw(ME)
+    catch MEId
+        throw(MEId)
         [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
     end
     % Reconstruct iterstruct
