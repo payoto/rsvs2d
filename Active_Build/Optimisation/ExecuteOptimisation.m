@@ -170,7 +170,11 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
             [origPop,~,paroptim,deltas]...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
                 iterstruct(max([startIter-iterGap,1])).population,baseGrid);
-            firstValidIter=1;
+            firstValidIter=startIter;
+            nLoc=(regexprep(iterstruct(firstValidIter).population(1).location,'iteration_.*$',''));
+            while firstValidIter>1 && strcmp(nLoc,regexprep(iterstruct(firstValidIter-1).population(1).location,'iteration_.*$',''))
+                firstValidIter=firstValidIter-1;
+            end
         else
             
             paroptim.optim.CG.lineSearch=true;
@@ -238,7 +242,11 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                         connectstructinfo.cell=cell2struct(struct2cell...
                             (connectstructinfo.cell),newFields(1:numel(fieldsConnec)),1);
                     end
+                    [startVol,validVol]=ExtractVariables({'startVol','validVol'},paramoptim);
+                    paramoptim=SetVariables({'startVol'},{validVol},paramoptim);
                     [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim);
+                    paramoptim=SetVariables({'startVol'},{startVol},paramoptim);
+                    
                     isGrid=true;
                     
                     if exist('isOptimStruct','var');
@@ -509,10 +517,17 @@ function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startI
     if CheckIfGradient(optimMethod) && ((nIter-startIter)>=(mmaSpan*iterGap))
         
         %objDat=zeros([1,nIter-startIter+1]);
+        
+        refMin=[];
+        for ii=flip(1:startIter)
+            refMin=min([iterstruct(ii).population(:).objective,refMin]);
+        end
+        
         kk=1;
         for ii=flip(nIter:-iterGap:startIter)
             objDat(kk)=min([iterstruct(ii).population(:).objective]);kk=kk+1;
         end
+        objDat=min(objDat,refMin);
         if knownOptim~=0
             mma=MovingAverage(objDat,mmaSpan);
             mmaSlope=abs(mma(2:end)-mma(1:end-1));
@@ -1627,7 +1642,7 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 for kk=1:length(volFrac)
                     volFrac(kk)=mean(volLine(kk:kk+1));
                 end
-                volFrac=[1e-3;volFrac;1e-3];
+                volFrac=[1e-4;volFrac;1e-4];
                 volFrac(volFrac>1)=1;
                 pop(:,jj)=volFrac;
                 
