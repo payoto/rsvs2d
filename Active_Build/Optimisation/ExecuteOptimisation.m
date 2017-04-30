@@ -1629,7 +1629,7 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 ll=ll+1;
                 totFrac=currPeak*cellLevels(1)/2;
                 volLine=currPeak*ones([cellLevels(1)-2+1,1]);
-                
+                volLine([1,end])=0;
                 for kk=2:length(volLine)-1
                     if kk<=posPeak+1
                         volLine(kk)=currPeak*(kk-1)/posPeak;
@@ -1642,7 +1642,7 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 for kk=1:length(volFrac)
                     volFrac(kk)=mean(volLine(kk:kk+1));
                 end
-                volFrac=[1e-4;volFrac;1e-4];
+                volFrac=[1e-3;volFrac;1e-3];
                 volFrac(volFrac>1)=1;
                 pop(:,jj)=volFrac;
                 

@@ -1079,10 +1079,13 @@ function [paroptim]=AdaptSizeforBusemann(paroptim,e)
         ymax=max([loop(ii).subdivision(:,2);ymax]);
         ymin=min([loop(ii).subdivision(:,2);ymin]);
     end
-    paroptim.parametrisation.snakes.refine.axisRatio =1; 
     nBound=(ymax-ymin)/(paroptim.parametrisation.optiminit.cellLevels(2)-4)...
         *paroptim.parametrisation.optiminit.cellLevels(2)/2;
-     paroptim.parametrisation.general.passDomBounds(2,:)=[-1 1]*nBound;
+     nBoundAct=paroptim.parametrisation.general.passDomBounds(2,2)...
+         -paroptim.parametrisation.general.passDomBounds(2,1);
+
+     
+    paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct; 
 end
 
 function [paroptim]=areabuseTest()
