@@ -1,4 +1,4 @@
-function [errorMeasure,areaDistrib,a]=CompareProfilesArea(profileCoord,targCoord)
+function [errorMeasure,areaDistrib,a,areaPts]=CompareProfilesArea(profileCoord,targCoord)
     
     [x0,y0,iout,jout] = intersections(profileCoord([1:end,1],1),profileCoord([1:end,1],2),...
         targCoord([1:end,1],1),targCoord([1:end,1],2));
@@ -23,6 +23,7 @@ function [errorMeasure,areaDistrib,a]=CompareProfilesArea(profileCoord,targCoord
         areaPosx=zeros(size(x0))';
         areaPosXmin=zeros(size(x0))';
         areaPosXmax=zeros(size(x0))';
+        areaPts=cell([1,nX0]);
         for ii=1:nX0
             % Need to make sure both profiles go in the same direction
             iip1=mod(ii,nX0)+1;
@@ -55,6 +56,7 @@ function [errorMeasure,areaDistrib,a]=CompareProfilesArea(profileCoord,targCoord
             areaPosy(ii)=(min(actPts(:,2))+max(actPts(:,2)))/2;
             areaPosXmin(ii)=min(actPts(:,1));
             areaPosXmax(ii)=max(actPts(:,1));
+            areaPts{ii}=actPts;
         end
         a=[areaErr*10000;areaLength;areaPosx;areaPosy]';
         
