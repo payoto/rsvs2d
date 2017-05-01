@@ -10,7 +10,7 @@
 %         parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%{
 
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
@@ -22,8 +22,8 @@ function [] = ExecuteOptimisation()
     
 end
 
-
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+%}
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -1629,7 +1629,9 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 ll=ll+1;
                 totFrac=currPeak*cellLevels(1)/2;
                 volLine=currPeak*ones([cellLevels(1)-2+1,1]);
-                volLine([1,end])=0;
+                if numel(volLine)>2
+                    volLine([1,end])=0;
+                end
                 for kk=2:length(volLine)-1
                     if kk<=posPeak+1
                         volLine(kk)=currPeak*(kk-1)/posPeak;
