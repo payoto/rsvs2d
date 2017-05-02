@@ -1419,8 +1419,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
                 TEind=cellLevels(1)+(cellLevels(1))*[0:(cellLevels(2)-1)];
                 origPop=ones([nPop nDesVar])*0.5;
                 
-                origPop(:,LEind)=origPop(:,LEind)/4;
-                origPop(:,TEind)=origPop(:,TEind)/4;
+                origPop(:,LEind)=origPop(:,LEind)/5;
+                origPop(:,TEind)=origPop(:,TEind)/5;
             end
             
             

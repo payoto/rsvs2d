@@ -52,7 +52,37 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 typeLoop='subdivision'; %ExtractVariables({'typeLoop'},paramoptim.parametrisation);
                 analysisCoord1=loop1.(typeLoop);
                 analysisCoord2{ii}=loop2.(typeLoop);
-                    
+                
+                
+            end
+            try
+                [modeSmoothScale]=ExtractVariables({'modeSmoothScale'},paramoptim.parametrisation);
+            catch
+                modeSmoothScale='undef';
+            end
+            
+            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            pathStr=varargin{1};
+            intfig=varargin{2}(1);
+        case 'foldermode2'
+            rootStr=varargin{1};
+            iterNum=varargin{2};
+            profNum=varargin{3};
+            if numel(varargin)<4
+                startProf=2;
+            else
+                startProf=varargin{4};
+                
+            end
+            in1=[iterNum 1];
+            in2=[ones([1,profNum])*iterNum;startProf:(profNum+startProf-1)]';
+            for ii=1:size(in2,1)
+                [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
+                    in1,in2(ii,:));
+                typeLoop='subdivision'; %ExtractVariables({'typeLoop'},paramoptim.parametrisation);
+                analysisCoord1=loop1.snaxel.coord;
+                analysisCoord2{ii}=loop2.snaxel.coord;
+                
                 
             end
             try
