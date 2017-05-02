@@ -1603,6 +1603,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             error('Invalid value for modeSmoothScale: %s ',modeSmoothScale)
     end
     
+    
     rootMove=zeros(size(cellordstruct));
     for ii=1:numel(cellordstruct)
         rootMove(ii)=cellordstruct(ii).coeffMode(1,2);

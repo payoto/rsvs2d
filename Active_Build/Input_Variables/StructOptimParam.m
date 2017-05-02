@@ -851,6 +851,80 @@ function [paroptim]=TestNonFill()
     paroptim.refine.refineOptimType='contcurvenoedge';
 end
 
+
+function [paroptim]=BF_sens_oscill()
+    [paroptim]=invdeslocal_test4('uv','contcurve',0,1);
+    
+    paroptim.parametrisation.optiminit.cellLevels=[30,2];
+    paroptim.parametrisation.general.passDomBounds=MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical' 'snake'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='none';% 'lengthvolnormfill'
+    paroptim.parametrisation.optiminit.modeSmoothType='none'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='none';  %'length'
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.initparam.snakes.step.snakesSteps=20;
+    paroptim.initparam.optiminit.defaultCorner=1e-4;
+    paroptim.optim.CG.diffStepSize=[1e-3];
+    paroptim.refine.refineSteps=0;
+    paroptim.general.maxIter=1;
+    paroptim.general.worker=4;
+    paroptim.general.startPop = ['halfuniformsharp']; 
+end
+
+function [paroptim]=BF_snak_oscill()
+    [paroptim]=BF_sens_oscill();
+    
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='snake'; % 'analytical' 'snake'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='none';% 'lengthvolnormfill'
+    paroptim.parametrisation.optiminit.modeSmoothType='none'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='none';  %'length'
+    
+    
+    
+end
+
+function [paroptim]=BF_sens_smooth1()
+    [paroptim]=BF_sens_oscill();
+    
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical' 'snake'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='none';% 'lengthvolnormfill'
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='none';  %'length'
+    
+   
+end
+
+function [paroptim]=BF_sens_smooth2()
+    [paroptim]=BF_sens_oscill();
+    
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical' 'snake'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';% 'lengthvolnormfill'
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='length';  %'length'
+    
+    
+    
+end
+
+
 %% Test cases for length Area
 
 function [paroptim]=Test_smoothCG_Area()
