@@ -295,7 +295,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
         %         errorDist=[xPts',errPts'];
     else
         
-        [errorMeasure2]=(abs(CalculatePolyArea(profileCoord))-targArea);
+        [errorMeasure2]=abs(abs(CalculatePolyArea(profileCoord))-targArea);
         errorMeasure.sum=errorMeasure2/targArea;
         errorMeasure.mean=errorMeasure.sum;
         errorMeasure.std=errorMeasure.sum;
