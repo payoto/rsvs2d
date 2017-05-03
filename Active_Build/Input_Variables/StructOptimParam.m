@@ -893,7 +893,7 @@ function [paroptim]=BF_snak_oscill()
     
 end
 
-function [paroptim]=BF_sens_smooth1()
+function [paroptim]=BF_sens_smooth1(e)
     [paroptim]=BF_sens_oscill();
     
     
@@ -902,7 +902,7 @@ function [paroptim]=BF_sens_smooth1()
     paroptim.optim.CG.sensAnalyticalType='raw';
     paroptim.parametrisation.optiminit.modeSmoothScale='none';% 'lengthvolnormfill'
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
-    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeSmoothNum=e;
     paroptim.parametrisation.optiminit.modeScale='none';  %'length'
     
    

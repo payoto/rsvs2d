@@ -1608,12 +1608,12 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
     for ii=1:numel(cellordstruct)
         rootMove(ii)=cellordstruct(ii).coeffMode(1,2);
     end
-    cellOrdSub=(FindObjNum([],cellInd,[cellordstruct(:).index]));
+    cellOrdSub=(FindObjNum([],[cellordstruct(:).index],cellInd));
     cellOrdSub=cellOrdSub(cellOrdSub~=0);
     switch modeScale
         case 'length'
             scaleRat=((cellVol(cellOrdSub).*rootMove./cellLength(cellOrdSub)));
-            scaleRat=max(scaleRat(isfinite(scaleRat)));
+            scaleRat=max(scaleRat(isfinite(scaleRat) & cellAct(cellOrdSub)));
             for ii=1:numel(cellordstruct)
                 cellordstruct(ii).coeffMode(:,2)=cellordstruct(ii).coeffMode(:,2)/...
                     (cellVol(cellordstruct(ii).index==cellInd)*rootMove(ii)/...
