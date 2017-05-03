@@ -22,8 +22,18 @@ end
 
 function [pltPaths]=FindPLTFiles(childFolder)
     kk=1;
+    pltPaths=cell(0);
     for ii=1:length(childFolder)
-        intermPath=FindDir(childFolder{ii},'Tec360plt_',false);
+        [intermPath,intermName]=FindDir(childFolder{ii},'Tec360plt_',false);
+        isRem=false(size(intermName));
+        for jj=1:numel(intermName)
+            tempName=regexprep(intermName{jj},'\..*','');
+            tempName=regexprep(tempName,'_pre$','');
+            tempIsRem=~cellfun(@isempty,regexp(intermName,tempName));
+            isRem([1:jj-1,jj+1:end])=isRem([1:jj-1,jj+1:end]) | tempIsRem([1:jj-1,jj+1:end]);
+            isRem(jj)=isRem(jj) || any( tempIsRem([1:jj-1,jj+1:end]));
+        end
+        intermPath=intermPath(~isRem);
         if ~isempty(intermPath)
             pltPaths(kk:kk+numel(intermPath)-1)=intermPath;
             kk=kk+numel(intermPath);

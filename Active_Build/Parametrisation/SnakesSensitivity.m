@@ -1621,11 +1621,17 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             end
             
         case 'volume'
-            scaleRat=((cellVol(cellOrdSub).*rootMove));
+            for ii=1:numel(cellordstruct)
+                
+                actSub=FindObjNum([],cellordstruct(ii).coeffMode(:,1),cellInd);
+                rootMove(ii)=dot(cellVol(actSub),cellordstruct(ii).coeffMode(:,2));
+                
+            end
+            scaleRat=((rootMove));
             scaleRat=max(scaleRat(isfinite(scaleRat)));
             for ii=1:numel(cellordstruct)
                 cellordstruct(ii).coeffMode(:,2)=cellordstruct(ii).coeffMode(:,2)/...
-                    (cellVol(cellordstruct(ii).index==cellInd)*rootMove(ii))*scaleRat;
+                    (rootMove(ii))*scaleRat;
             end
         case 'none'
             
@@ -1662,7 +1668,7 @@ function [coeffMode,actVol,actLength]=ScaleModeSnake_lengthvol(coeffMode,cellInd
     actCoeff=coeffMode(:,2);
     n=numel(actSub);
     for ii=2:n
-        actCoeff(ii)=(actLength(ii)./(actLength(max((ii)-2,1))+...
+        actCoeff(ii)=(2*actLength(ii)./(actLength(max((ii)-2,1))+...
             sqrt(actCoeff((max((ii)-2,1)))*actVol(max((ii)-2,1))*diffStepSize)))...
             .*(actVol(max((ii)-2,1))./(actVol(ii))).*actCellAct(ii).*...
             actCoeff((max((ii)-2,1)))/coeffMode(max((ii)-2,1),2)*actCoeff(ii);
