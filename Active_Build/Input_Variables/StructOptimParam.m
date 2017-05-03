@@ -925,6 +925,13 @@ function [paroptim]=BF_sens_smooth2()
 end
 
 
+function [paroptim]=TestVolScale()
+    [paroptim]=invdeslocal_test4('uo','contcurve',1,1);
+    paroptim.general.maxIter=6;
+    paroptim.general.worker=4;
+    
+end
+
 %% Test cases for length Area
 
 function [paroptim]=Test_smoothCG_Area()
@@ -1791,7 +1798,9 @@ function [refineOptimRatio]=PickRatioForRefineMethod(refmethod)
         case 'contour'
             refineOptimRatio=0.3;
         otherwise
-            error('unknown refinement method %s',refmethod)
+            
+            refineOptimRatio=0.3;
+            warning('unknown refinement method %s',refmethod)
     end
     refineOptimRatio(2:4)=[0.1 0.5 0.7];
 end
