@@ -77,31 +77,50 @@ function [out]=...
             % Eventually get gradient
             [out]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
                 cellCentredGrid,insideContourInfo,forceparam,varargin{1},...
-                oldGrid,rootFill,paramsnake,paramoptim);
+                oldGrid,rootFill,paramsnake,paramoptim,cellCentredCoarse);
     end
 end
 
 
 function [supportstruct]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
-        cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill,paramsnake,paramoptim)
+        cellCentredGrid,insideContourInfo,forceparam,newFill,oldGrid,rootFill,...
+        paramsnake,paramoptim,cellCentredCoarse)
     
     varExtract={'sensAnalyticalType'};
     [sensAnalyticalType]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'modeSmoothType'};
+    [modeSmoothType]=ExtractVariables(varExtract,paramsnake);
     
     fprintf('\n    Build Profile information from sensitivity ')
     callerStr=['GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,',...
         'cellCentredGrid,insideContourInfo,forceparam)'];
-    [~,snaxel,snakposition,sensSnax,volumefraction]=evalc(callerStr);
+    [~,snaxel,snakposition,sensSnax,volumefraction,sensSnaxRaw]=evalc(callerStr);
     %[snaxmode]=ExecuteSensitivity('analytical',snaxel,snakposition,sensSnax,volumefraction,false);
     fprintf('.')
     [snaxmode]=BuildAnalyticalMode(snaxel,snakposition,sensSnax,volumefraction,false);
     fprintf('.')
     [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,oldGrid);
     fprintf('.')
+    modeSmoothType='optimlinprog';
+    if strcmp(modeSmoothType,'optimlinprog')
+        warning('Option optimlinprog is very unsafe and experimental')
+        [modeOptimSmooth,sensSnax]=MinOscillMode(sensSnax);
+        [modeOptimSmooth]=ScaleModesRelative(modeOptimSmooth,cellCentredCoarse,paramoptim);
+        
+    end
+    
     [snaxmove]=BuildMovementStructures(snaxel,snakposition,snaxmode,sensSnax,...
         volumefraction,sensAnalyticalType);
     fprintf('.')
     deltaFill=vertcat(newFill(:).fill)-ones([numel(newFill),1])*rootFill;
+    
+    if strcmp(modeSmoothType,'optimlinprog')
+        deltaFill=[modeOptimSmooth;-modeOptimSmooth]*1e-5;
+        for ii=1:numel(newFill);
+            newFill(ii).fill=rootFill+deltaFill(ii,:);
+        end
+    end
+    
     [newloop]=MoveToFill(snaxmove,deltaFill);
     fprintf('.')
     
@@ -113,9 +132,13 @@ function [supportstruct]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGri
         for jj=1:numel(activeSub)
             supportstruct(ii).volumefraction(activeSub(jj)).targetfill=newFill(ii).fill(jj);
         end
+        supportstruct(ii).fill=newFill(ii).fill;
+        supportstruct(ii).optimdat.var=find(newFill(ii).fill~=0);
+        supportstruct(ii).optimdat.value=newFill(ii).fill(newFill(ii).fill~=0);
     end
     fprintf(' done!\n')
 end
+
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         RestartSnakeProcess(restartsnake)
@@ -160,7 +183,7 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     
 end
 
-function [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
+function [snaxel,snakposition,sensSnax,volumefraction,sensSnaxRaw]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
@@ -173,11 +196,80 @@ function [snaxel,snakposition,sensSnax,volumefraction]=GetSnaxelSensitivities(sn
     [snaxel,snakposition,~,~,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
+    sensSnaxRaw=sensSnax;
     sensSnax(:,find(any(sensSnax~=0)))=sensSnax(:,find(any(sensSnax~=0)))./...
         repmat(sqrt(sum(sensSnax(:,find(any(sensSnax~=0))).^2)),[size(sensSnax,1),1]);
     
 end
 
+function [modeOptimSmooth,sensSnax]=MinOscillMode(sensSnax)
+    findNonDes=find(~all(sensSnax==0));
+    %sensSnax(:,findNonDes)=[];
+    coeffs=sqrt(sum(sensSnax).^2);
+%     sensSnax(:,find(any(sensSnax~=0)))=sensSnax(:,find(any(sensSnax~=0)))./...
+%         repmat(sqrt(sum(sensSnax(:,find(any(sensSnax~=0))).^2)),[size(sensSnax,1),1]);
+    
+    
+    padOnes=ones([1 size(sensSnax,2)-1]);
+    modeOptimSmooth=zeros([numel(findNonDes) size(sensSnax,2)]);
+    f=coeffs;
+    f(f==0)=1;
+    for ii=1:numel(findNonDes)
+        jj=findNonDes(ii);
+        [modeOptimSmooth(ii,[1:jj-1,jj+1:end]) fval(jj)] = linprog(f([1:jj-1,jj+1:end]),...
+            -sensSnax(:,[1:jj-1,jj+1:end]),sensSnax(:,jj),[],[],...
+            0*padOnes,1*coeffs([1:jj-1,jj+1:end]));
+        modeOptimSmooth(ii,jj)=1;
+    end
+    
+    modeOptimSmooth=modeOptimSmooth.*repmat(coeffs(coeffs~=0)',[1 size(modeOptimSmooth,2)]);
+    coeffs2=sqrt(sum(modeOptimSmooth.^2,2));
+    modeOptimSmooth=modeOptimSmooth./repmat(coeffs2,[1,size(modeOptimSmooth,2)]);
+    % sensSnax(:,findNonDes)=sensSnax(:,findNonDes).*(repmat(coeffs2',[ size(sensSnax,1) 1]));
+    %      modeOptimSmooth(~isfinite(modeOptimSmooth))=0;
+end
+
+function [modeOptim]=ScaleModesRelative(modeOptim,cellCentredCoarse,paramoptim)
+    [modeScale]=ExtractVariables({'modeScale'},paramoptim.parametrisation);
+    
+    [cellVol]=[cellCentredCoarse(:).volume];
+    [cellLength]=[cellCentredCoarse(:).lSnax];
+    [cellAct]=logical([cellCentredCoarse(:).isactive]);
+
+    rootMove=zeros([1,size(modeOptim,1)]);
+    
+    switch modeScale
+        case 'length'
+            for ii=1:size(modeOptim,1)
+                jj=find(modeOptim(ii,:)~=0);
+                rootMove(ii)=modeOptim(ii,jj(ii));
+            end
+            cellOrdSub=find(cellAct);%(FindObjNum([],[cellordstruct(:).index],cellInd));
+            cellOrdSub=cellOrdSub(any(modeOptim~=0));
+            scaleRat=((cellVol(cellOrdSub).*rootMove./cellLength(cellOrdSub)));
+            scaleRat=max(scaleRat(isfinite(scaleRat) & cellAct(cellOrdSub)));
+            for ii=1:size(modeOptim,1)
+                modeOptim(ii,:)=modeOptim(ii,:)/...
+                    (cellVol(cellOrdSub(ii))*rootMove(ii)/...
+                    cellLength(cellOrdSub(ii)))*scaleRat;
+            end
+            
+        case 'volume'
+            for ii=1:size(modeOptim,1)
+                rootMove(ii)=dot(cellVol(cellAct),modeOptim(ii,:));
+            end
+            
+            scaleRat=((rootMove));
+            scaleRat=max(scaleRat(isfinite(scaleRat)));
+            for ii=1:size(modeOptim,1)
+                modeOptim(ii,:)= modeOptim(ii,:)/(rootMove(ii))*scaleRat;
+            end
+        case 'none'
+            
+    end
+    
+    
+end
 
 %% Return Data
 
@@ -1121,7 +1213,7 @@ function [snaxmode]=ExtractSensitivity(snaxel,snakposition,sensSnax,volumefracti
         snaxmode(jj).sensSnaxRatio=sensSnaxRatio(jj);
     end
     
-
+    
     if isPlot
         for jj=1:numel(dChange)
             coordFull{jj}=vertcat(snakposition2(jj,:).coord);
@@ -1555,6 +1647,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
     [cellVol]=[cellCentredCoarse(:).volume];
     [cellLength]=[cellCentredCoarse(:).lSnax];
     [cellAct]=logical([cellCentredCoarse(:).isactive]);
+    cellNSnax=cellfun(@numel,{cellCentredCoarse(:).snaxel});
     
     switch modeSmoothScale
         case 'lengthvol'
@@ -1562,7 +1655,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             for ii=1:numel(cellordstruct)
                 [cellordstruct(ii).coeffMode]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,...
-                    cellAct,diffStepSize);
+                    cellAct,diffStepSize,cellNSnax);
             end
         case 'lengthvolnormfill'
             % Normalizes to the original fill mode value change
@@ -1570,7 +1663,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             for ii=1:numel(cellordstruct)
                 [coeffMode]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,...
-                    cellAct,diffStepSize);
+                    cellAct,diffStepSize,cellNSnax);
                 cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
                     normVec(coeffMode(:,2))*normVec( cellordstruct(ii).coeffMode(:,2));
             end
@@ -1581,7 +1674,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             for ii=1:numel(cellordstruct)
                 [coeffMode,actVol]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,...
-                    cellAct,diffStepSize);
+                    cellAct,diffStepSize,cellNSnax);
                 cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
                     normVec(coeffMode(:,2).*actVol')*normVec(...
                     cellordstruct(ii).coeffMode(:,2).*actVol');
@@ -1592,7 +1685,7 @@ function [cellordstruct]=ScaleModeSnakeProp(cellordstruct,cellCentredCoarse,para
             for ii=1:numel(cellordstruct)
                 [coeffMode,actVol]=ScaleModeSnake_lengthvol(...
                     cellordstruct(ii).coeffMode,cellInd,cellVol,cellLength,...
-                    cellAct,diffStepSize);
+                    cellAct,diffStepSize,cellNSnax);
                 cellordstruct(ii).coeffMode(:,2)=coeffMode(:,2)/...
                     normVec(coeffMode(:,2).*actVol')*normVec(...
                     cellordstruct(ii).coeffMode(:,2))*normVec(actVol');
@@ -1658,20 +1751,23 @@ end
 
 
 function [coeffMode,actVol,actLength]=ScaleModeSnake_lengthvol(coeffMode,cellInd,cellVol,...
-        cellLength,cellAct,diffStepSize)
+        cellLength,cellAct,diffStepSize,cellNSnax)
     
     
     actSub=FindObjNum([],coeffMode(:,1),cellInd);
     actVol=cellVol(actSub);
     actLength=cellLength(actSub);
     actCellAct=cellAct(actSub);
+    cellNSnaxAct=(cellNSnax(actSub)<=2)+1;
+    
     actCoeff=coeffMode(:,2);
     n=numel(actSub);
     for ii=2:n
-        actCoeff(ii)=(2*actLength(ii)./(actLength(max((ii)-2,1))+...
+        actCoeff(ii)=(actLength(ii)./(actLength(max((ii)-2,1))+...
             sqrt(actCoeff((max((ii)-2,1)))*actVol(max((ii)-2,1))*diffStepSize)))...
             .*(actVol(max((ii)-2,1))./(actVol(ii))).*actCellAct(ii).*...
-            actCoeff((max((ii)-2,1)))/coeffMode(max((ii)-2,1),2)*actCoeff(ii);
+            actCoeff((max((ii)-2,1)))/coeffMode(max((ii)-2,1),2)*actCoeff(ii)...
+            *cellNSnaxAct(max((ii)-2,1))/cellNSnaxAct(ii);
         actCoeff(isnan(actCoeff))=0;
     end
     
@@ -1915,9 +2011,9 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
             newCoordTemp=(vertCoord.*(distEdge(:,jj)*ones([1 2]))...
                 +edgeCoord.*(distVert(:,jj)*ones([1 2]))).*edgeCoordScale;
             
-%              newCoordTemp=(vertCoord.*(distEdge(:,jj)*ones([1 2]))...
-%                 +edgeCoord.*(distVert(:,jj)*ones([1 2])))...
-%                  ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
+            %              newCoordTemp=(vertCoord.*(distEdge(:,jj)*ones([1 2]))...
+            %                 +edgeCoord.*(distVert(:,jj)*ones([1 2])))...
+            %                  ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
             newLCoord=newCoordTemp;
             
             vertNormal=reshape(vertcat(snaxmove(ii).vertex(closeVert(:,jj)).normal),[nVert,2,1]);
@@ -1927,9 +2023,9 @@ function [newloop]=MoveToFill(snaxmove,deltaFill)
             newNormalTemp=(vertNormal.*(distEdge(:,jj)*ones([1 2]))...
                 +edgeNormal.*(distVert(:,jj)*ones([1 2]))).*edgeCoordScale;
             
-%              newNormalTemp=(vertNormal.*(distEdge(:,jj)*ones([1 2]))...
-%                 +edgeNormal.*(distVert(:,jj)*ones([1 2])))...
-%                 ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
+            %              newNormalTemp=(vertNormal.*(distEdge(:,jj)*ones([1 2]))...
+            %                 +edgeNormal.*(distVert(:,jj)*ones([1 2])))...
+            %                 ./((distVert(:,jj)+distEdge(:,jj))*ones([1 2]));
             
             newNormal=newNormalTemp./(sqrt(sum(newNormalTemp.^2,2))*ones([1 2]));
             newNormal(isnan(newNormal))=0;

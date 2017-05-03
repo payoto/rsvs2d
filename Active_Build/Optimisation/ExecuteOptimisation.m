@@ -793,7 +793,7 @@ function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivit
     if strcmp('analytical',sensCalc)
         
         [paramoptim,paramsnake]=HandleNonFillVar(population(1),paramoptim,paramsnake);
-        [supportstructsens]=ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
+        [supportstructsens,population]=ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
             population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstructsens);
         
     end
@@ -900,7 +900,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
 end
 
 
-function [supportstruct]=...
+function [supportstruct,population]=...
         ComputeRootSensitivityPopProfiles(paramsnake,paramoptim,...
         population,baseGrid,gridrefined,restartsnake,connectstructinfo,supportstruct)
     procStr=['Compute new profiles from sensitivity'];
@@ -918,6 +918,9 @@ function [supportstruct]=...
     
     [supportstruct(:).loopsens]=deal(newProfileLoops(:).loopsens);
     [supportstruct(:).volumefraction]=deal(newProfileLoops(:).volumefraction);
+    
+    [population(2:numel(newProfileLoops)+1).fill]=deal(newProfileLoops(:).fill);
+    [population(2:numel(newProfileLoops)+1).optimdat]=deal(newProfileLoops(:).optimdat);
     
     
     
