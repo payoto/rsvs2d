@@ -79,6 +79,76 @@ end
 %%
 for ii=1:nFig;
     h=findobj(ii);
-    print(h(1),['.\fig\',h(1).Name,'.eps'],'-depsc')
+    figure(ii)
+    h(1).PaperPositionMode='auto';
+    h(1).Position=[100 100 500 160]*1.5;
+end
+
+%%
+for ii=1:nFig;
+    h=findobj(ii,'type','axes');
+    if numel(h)>0
+        for jj=1:numel(h)
+            h(jj).Position=[0.1300 0.1100 0.7750 0.8150];
+            h(jj).OuterPosition=[0 0 1 1];
+        end
+    end
+end
+%%
+for ii=2;
+    h=findobj(ii);
+    h(1).Renderer='painters';
+    h(1).Color='none';
+    print(h(1),'-r300','-dpng',['.\fig\',h(1).Name,'.png'])
+    print(h(1),'-depsc',['.\fig\',h(1).Name,'.eps'])
+    h(1).Color=[0.93 0.93 0.93];
     hgsave(h(1),['.\fig\',h(1).Name,'.fig'])
 end
+
+
+%%
+for ii=1:3
+    
+    l=findobj(ii,'type','line');
+    yDat=vertcat(l(:).YData);
+    maxDat=max(-yDat,[],2);
+    maxDat=maxDat(maxDat>0);
+    sumdat(ii).dat=maxDat;
+    sumdat(ii).mean=mean(maxDat);
+    sumdat(ii).std=std(maxDat);
+    sumdat(ii).min=min(maxDat);
+    sumdat(ii).max=max(maxDat);
+    sumdat(ii).median=median(maxDat);
+    sumdat(ii).logmean=mean(log10(maxDat));
+    sumdat(ii).logstd=std(log10(maxDat));
+    
+end
+
+%% 
+
+for ii=2
+    h=findobj(ii);
+    h=findobj(ii,'type','axes');
+    for jj=1:numel(h)
+    boxY=h(jj).YLim;
+    plot(h(jj),[1 1]*xLe,boxY,'LineStyle','--','Color',[0.3 0.3 0.3]);
+    plot(h(jj),[1 1]*xTe,boxY,'LineStyle','--','Color',[0.3 0.3 0.3]);
+    end
+end
+
+%%
+for ii=5
+    h=findobj(ii);
+    h=findobj(ii,'type','axes');
+    boxY=h.YLim;
+    boxX=h.XLim;
+    t(1)=text(mean([xTe xLe]),min(boxY)/1.6,char(' Lower','Surface'));
+    t(2)=text(mean([min(boxX) xLe]),min(boxY)/1.6,char('Upper','Surface'));
+    %t(3)=text(mean([max(boxX) xTe]),min(boxY)/2.3,char(' Upper','Surface'));
+    t(3)=text( xTe,min(boxY)/1.6,char('Trailing','   Edge'));
+    t(4)=text( xLe,min(boxY)/1.6,char('Leading','  Edge'));
+end
+[t.HorizontalAlignment]=deal('center');
+[t.Interpreter]=deal('latex');
+[t.BackgroundColor]=deal([1 1 1]);
+[t.FontSize]=deal(12);

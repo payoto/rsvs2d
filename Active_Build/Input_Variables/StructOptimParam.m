@@ -1691,16 +1691,17 @@ function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
     if cornAct
         paroptim.parametrisation.general.passDomBounds(1,:)=...
-            paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.06+0.05;
     end
     
-    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
     paroptim.optim.CG.sensAnalyticalType='raw';
     paroptim.optim.CG.nLineSearch=8;
     paroptim.refine.rankType='rank';
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
 end
 
 function [paroptim]=TestNewOut()

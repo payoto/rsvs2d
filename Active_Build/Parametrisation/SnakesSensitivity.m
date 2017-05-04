@@ -101,7 +101,7 @@ function [supportstruct]=GenerateAnalyticalLoop(snaxel,refinedGriduns,refinedGri
     fprintf('.')
     [sensSnax]=ScaleTrimSensSnax(sensSnax,volumefraction,snaxmode,oldGrid);
     fprintf('.')
-    modeSmoothType='optimlinprog';
+    %modeSmoothType='optimlinprog';
     if strcmp(modeSmoothType,'optimlinprog')
         warning('Option optimlinprog is very unsafe and experimental')
         [modeOptimSmooth,sensSnax]=MinOscillMode(sensSnax);

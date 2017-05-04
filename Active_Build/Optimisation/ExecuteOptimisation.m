@@ -759,7 +759,7 @@ function [prevMesh]=FindPrevIterMesh(objectiveName,direction,lineSearch,iterstru
         else
             error('Global optimisation cannot be selected for previous iteration')
         end
-            
+        
     else
         prevMesh='';
         
@@ -844,7 +844,7 @@ function [newpopulation,supportstruct,restartsnake,paramsnake,paramoptim,capture
     
     captureErrors{1}='';
     nDesVar=ExtractVariables({'nDesVar'},paramoptim);
-     try
+    try
         % Compute root member profile
         currentMember=population(1).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,restartsnake,connectstructinfo,currentMember);
@@ -918,10 +918,12 @@ function [supportstruct,population]=...
     
     [supportstruct(:).loopsens]=deal(newProfileLoops(:).loopsens);
     [supportstruct(:).volumefraction]=deal(newProfileLoops(:).volumefraction);
-    
-    [population(2:numel(newProfileLoops)+1).fill]=deal(newProfileLoops(:).fill);
-    [population(2:numel(newProfileLoops)+1).optimdat]=deal(newProfileLoops(:).optimdat);
-    
+    varExtract={'modeSmoothType'};
+    [modeSmoothType]=ExtractVariables(varExtract,paramsnake);
+    if strcmp(modeSmoothType,'optimlinprog')
+        [population(2:numel(newProfileLoops)+1).fill]=deal(newProfileLoops(:).fill);
+        [population(2:numel(newProfileLoops)+1).optimdat]=deal(newProfileLoops(:).optimdat);
+    end
     
     
     [~]=PrintEnd(procStr,2,tStart);
@@ -1557,9 +1559,9 @@ function [nonfillPop]=InitialiseNonFillPop(paramoptim,nPop)
                     nonfillPop(:,nS:nE)=ones([nPop,numNonFillVar(jj)]);
                     
                 otherwise
-
+                    
                     error('Unknown starting non fill population')
-
+                    
             end
         end
     end
@@ -3311,8 +3313,8 @@ function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
         cellCentredFine,cellCentredCoarse,connecstruct)
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
-                {connecstruct.cell(:).newCellInd},...
-                {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
+        {connecstruct.cell(:).newCellInd},...
+        {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
     newIndsCell=[connecstruct.cell(:).newCellInd];
     newEdgeInd=[refinedGrid.edge(:).index];
     [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
@@ -3346,7 +3348,7 @@ function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
         end
         
         
-
+        
     end
     for ii=1:numel(cellCentredCoarse)
         if ~isempty(cellCentredCoarse(ii).snaxel)
