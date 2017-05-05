@@ -1241,6 +1241,37 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
+function [paroptim]=TInvDes(airfoil,gridCase)
+    %airfoil='4412';
+    paroptim=refsweep(gridCase,airfoil,0);
+    paroptim.optim.CG.nLineSearch=4;
+    paroptim.general.startPop='halfuniform';
+    paroptim.general.startPop='NACAmulti';
+    initInterp={airfoil};
+    paroptim.general.initInterp=initInterp;
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.cellLevels=[12,2];
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    paroptim.general.maxIter=1;
+    [paroptim]=SmoothModes(paroptim);
+    
+    paroptim.parametrisation.optiminit.modeScale='volume';
+    
+    paroptim.parametrisation.general.typeLoop='subdivision';
+    paroptim.spline.resampleSnak=false;
+    paroptim.refine.refineOptim=[2 2];
+    paroptim.refine.refineSteps=1;
+    paroptim.refine.refineIter=1;
+    paroptim.refine.refinePattern='preset'; % 'edgecross' 'curvature'
+    paroptim.refine.refineOptimType='all';
+    paroptim.refine.refineOptimRatio=0.3; 
+    paroptim.refine.rankType='rank';
+    paroptim.refine.slopeConv=0.2;
+    paroptim.optim.CG.validVol=0.2;
+    paroptim.optim.CG.openVol=0.2;
+end
+
 function paroptim=refsweeplocal(gridCase,airfoil,nIter,lvl)
     
     if nargin<=2;nIter=30;end
@@ -1637,7 +1668,7 @@ function [paroptim]=invdeslocal_test2(gridCase,refmethod,cornAct,ratioPos)
     end
 end
 
-function paroptim=invdeslocal_test3(gridCase,refmethod,cornAct,ratioPos)
+function paroptim=invdeslocal_test5(gridCase,refmethod,cornAct,ratioPos)
     
     paroptim=refsweeplocal(gridCase,'4412',60,8);
     
@@ -1672,7 +1703,7 @@ end
 
 function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
     
-    paroptim=refsweeplocal(gridCase,'4412',60,5);
+    paroptim=refsweeplocal(gridCase,'4412',100,8);
     
     %paroptim.general.maxIter=6;
     paroptim.refine.refineOptimType=refmethod;
@@ -1689,9 +1720,13 @@ function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
     paroptim.spline.resampleSnak=false;
     paroptim.parametrisation.general.passDomBounds(2,:)=...
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
-    if cornAct
+    if cornAct==1
         paroptim.parametrisation.general.passDomBounds(1,:)=...
             paroptim.parametrisation.general.passDomBounds(1,:)/1.06+0.05;
+    elseif cornAct==2
+        paroptim.parametrisation.general.passDomBounds(1,:)=...
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
+        paroptim.parametrisation.optiminit.cellLevels=[2,2];
     end
     
     paroptim.optim.CG.varActive='snaksensiv';
@@ -1702,6 +1737,12 @@ function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+end
+
+function paroptim=invdeslocal_test3(gridCase,refmethod,cornAct,ratioPos)
+    
+    paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos);
+    paroptim.refine.rankType='rankvalue';
 end
 
 function [paroptim]=TestNewOut()
@@ -1868,7 +1909,7 @@ function [paroptim]=Debug170320()
 end
 
 function [paroptim]=Debug170322()
-    paroptim=invdeslocal_test3('uu','contcurve',0,1);
+    paroptim=invdeslocal_test5('uu','contcurve',0,1);
     
     paroptim.general.maxIter=6;
     paroptim.refine.refineIter=6;
@@ -1876,7 +1917,7 @@ function [paroptim]=Debug170322()
 end
 
 function [paroptim]=Debug170323()
-    paroptim=invdeslocal_test3('uu','contcurve',0,1);
+    paroptim=invdeslocal_test5('uu','contcurve',0,1);
     
     paroptim.general.maxIter=1;
     paroptim.refine.refineIter=1;
