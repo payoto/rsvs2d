@@ -19,7 +19,7 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
         end
         paramoptim=SetVariables(outVars,valVars,paramoptim);
     catch MEId
-        throw(MEId)
+        disp(MEId.getReport)
         [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
     end
     % Reconstruct iterstruct

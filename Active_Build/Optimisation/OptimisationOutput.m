@@ -1585,7 +1585,11 @@ function [h]=PlotGradientsRefine(paramoptim,optimstruct)
     iterstart=(ii-1)*2+1;
     supportOptim.hist=supportOptim.hist(ii:end);
     paramoptim.optim.supportOptim=supportOptim;
-    [h,~]=PlotGradients(paramoptim,optimstruct(iterstart:end));
+    if (numel(optimstruct)-iterstart)>=4
+        [h,~]=PlotGradients(paramoptim,optimstruct(iterstart:end));
+    else
+        h=figure;
+    end
 end
 
 function [h,directionChange]=PlotGradients(paramoptim,optimstruct)

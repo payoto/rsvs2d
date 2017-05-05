@@ -981,7 +981,8 @@ function [population,supportstruct,restartsnake]=PostExecutionIteration(populati
     population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
     population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
     
-    supportstruct.loop=loop;
+    supportstruct.loop=loop; 
+    supportstruct.parentMesh='';
 end
 
 function [population,supportstruct,restartsnake]=SensitivityExecutionIteration(population,newRefGrid,...
@@ -2917,6 +2918,12 @@ function [isRefine]=RefineSortMethod(cellRank,refineOptimRatio,rankType)
             [~,cellOrd]=sort(cellRank);
             isRefine=false(size(cellRank));
             isRefine((cellOrd((numel(cellRank)+1-(numRefine)):end)))=true;
+        case 'rankvalue'
+            numRefine=ceil(sum(cellRank~=0)*refineOptimRatio);
+            [cellRank,cellOrd]=sort(cellRank);
+            isRefine=false(size(cellRank));
+            isRefine((cellOrd((numel(cellRank)+1-(numRefine)):end)))=true;
+            isRefine=isRefine | (cellRank>(cellRank(numel(cellRank)+1)*0.95));
         otherwise
             error('Unknown ranking type')
     end
