@@ -2,9 +2,9 @@ function [matCoeff,pp]=PiecePolyBasis()
     
     d=1;
     Dv=1.68;
-    steps=15;
-    plotSteps=20;
-    precision=8;
+    steps=30;
+    plotSteps=30;
+    precision=64;
     
     [matCoeff]=GenerateMatCoeff(d,Dv,steps,precision);
     

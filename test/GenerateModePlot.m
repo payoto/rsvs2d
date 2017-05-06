@@ -33,7 +33,7 @@ end
 %%
 figNames={'Snake2','Analytical','Difference Anal-Snak'}
 
-for ii=1:3;
+for ii=figList
     h=findobj(ii);
     figure(ii)
     h(1).PaperPositionMode='auto';
@@ -47,20 +47,19 @@ for ii=1:3;
 end
 
 
-for ii=1:3;
+for ii=figList
     h=findobj(ii);
     print(h(1),['.\fig\',h(1).Name,'.eps'],'-depsc')
 end
-for ii=1:3;
+for ii=figList
     h=findobj(ii);
     hgsave(h(1),['.\fig\',h(1).Name,'.fig'])
 end
 
 %%
 
-nFig=6
 
-for ii=1:nFig;
+for ii=figList;
     h=findobj(ii,'type','axes');
     if numel(h)>0
         for jj=1:numel(h)
@@ -77,15 +76,15 @@ for ii=1:nFig;
     end
 end
 %%
-for ii=1:nFig;
+for ii=figList;
     h=findobj(ii);
     figure(ii)
     h(1).PaperPositionMode='auto';
-    h(1).Position=[100 100 500 160]*1.5;
+    %h(1).Position=[100 100 500 160]*1.5;
 end
 
 %%
-for ii=1:nFig;
+for ii=figList;
     h=findobj(ii,'type','axes');
     if numel(h)>0
         for jj=1:numel(h)
@@ -95,7 +94,7 @@ for ii=1:nFig;
     end
 end
 %%
-for ii=2;
+for ii=figList;
     h=findobj(ii);
     h(1).Renderer='painters';
     h(1).Color='none';
@@ -105,9 +104,22 @@ for ii=2;
     hgsave(h(1),['.\fig\',h(1).Name,'.fig'])
 end
 
+%%
+
+for ii=figList;
+    h=findobj(ii,'type','axes');
+    if numel(h)>0
+        for jj=1:numel(h)
+            h(jj).Position=hRef(3).Position;
+            h(jj).OuterPosition=hRef(3).OuterPosition;
+        end
+    end
+    h=findobj(ii);
+    h(1).Position=hRef(1).Position;
+end
 
 %%
-for ii=1:3
+for ii=figList
     
     l=findobj(ii,'type','line');
     yDat=vertcat(l(:).YData);
@@ -126,7 +138,7 @@ end
 
 %% 
 
-for ii=2
+for ii=figList
     h=findobj(ii);
     h=findobj(ii,'type','axes');
     for jj=1:numel(h)
@@ -137,7 +149,7 @@ for ii=2
 end
 
 %%
-for ii=5
+for ii=figList
     h=findobj(ii);
     h=findobj(ii,'type','axes');
     boxY=h.YLim;

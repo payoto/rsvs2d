@@ -496,9 +496,9 @@ function [population]=ValSumVolumeFraction(constrVal,paroptim,population,baseGri
             if maxFill*ratio<=max(desVarRange)
                 population(ii).fill=fillStart*ratio;
             else
-                
+                [newFill]=SpillOverflow(paroptim,fillStart*ratio);
                 [population(ii).fill,population(ii).constraint]=...
-                    IterativeValFill(fillStart,desVarRange,constrVal,volVec,totvol);
+                    IterativeValFill(newFill,desVarRange,constrVal,volVec,totvol);
                 
             end
             
@@ -543,8 +543,9 @@ function [population]=MinValSumVolume(constrVal,paroptim,population,baseGrid)
                 population(ii).fill=fillStart*ratio;
             else
                 
+                [newFill]=SpillOverflow(paroptim,fillStart*ratio);
                 [population(ii).fill,population(ii).constraint]=...
-                    IterativeValFill(fillStart,desVarRange,constrVal,volVec,totvol);
+                    IterativeValFill(newFill,desVarRange,constrVal,volVec,totvol);
                 
             end
             

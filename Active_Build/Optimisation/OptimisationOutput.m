@@ -1147,7 +1147,7 @@ function [h]=OptimHistory_old(optimstruct,knownOptim,dirOptim)
     axis(box);
     
     xT=box(2)-(box(2)-box(1))*0.05;
-    yT=min(minRes)-(box(4)-box(3))*0.05;
+    yT=(min(minRes)+max(minRes))/2;%min(minRes)-(box(4)-box(3))*0.05;
     strT=['$\quad\quad$ $J^*(\mathbf{x})$ = ',sprintf('%10.3e',(min(minRes)))];
     strT={strT,['$J^*(\mathbf{x})-J^*_T$ = ',sprintf('%10.3e',min(minRes)-knownOptim)]};
     
