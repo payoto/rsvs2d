@@ -364,11 +364,13 @@ end
 
 function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
-    [desvarconnec]=...
-        ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
+    [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
     paramoptim=SetVariables({'desvarconnec'},{desvarconnec},paramoptim);
     [paramoptim]=OptimisationParametersModif(paramoptim,baseGrid);
     [iterstruct,paramoptim]=InitialisePopulation(paramoptim,baseGrid);
+    
+    knownOptim=ExtractVariables({'knownOptim'},paramoptim);
+    paramoptim=SetVariables({'knownOptimStart'},{knownOptim},paramoptim);
     
 end
 
@@ -509,8 +511,8 @@ end
 
 function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startIter)
     comEps=@(f1,f2,eps) all(abs(f1-f2)<eps);
-    varExtract={'optimMethod','iterGap','knownOptim','slopeConv'};
-    [optimMethod,iterGap,knownOptim,slopeConv]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'optimMethod','iterGap','knownOptimStart','slopeConv'};
+    [optimMethod,iterGap,knownOptimStart,slopeConv]=ExtractVariables(varExtract,paramoptim);
     mmaSpan=3;
     
     isConv=false;
@@ -528,7 +530,7 @@ function [isConv]=ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startI
             objDat(kk)=min([iterstruct(ii).population(:).objective]);kk=kk+1;
         end
         objDat=min(objDat,refMin);
-        if knownOptim~=0
+        if knownOptimStart~=0
             mma=MovingAverage(objDat,mmaSpan);
             mmaSlope=abs(mma(2:end)-mma(1:end-1));
             isConv=(max(mmaSlope(end-(mmaSpan-1):end))/max(mmaSlope))<slopeConv;
@@ -2923,7 +2925,7 @@ function [isRefine]=RefineSortMethod(cellRank,refineOptimRatio,rankType)
             [cellRank,cellOrd]=sort(cellRank);
             isRefine=false(size(cellRank));
             isRefine((cellOrd((numel(cellRank)+1-(numRefine)):end)))=true;
-            isRefine=isRefine | (cellRank>(cellRank(numel(cellRank)+1)*0.95));
+            isRefine=isRefine | (cellRank>(cellRank((numel(cellRank)+1-(numRefine)))*0.95));
         otherwise
             error('Unknown ranking type')
     end

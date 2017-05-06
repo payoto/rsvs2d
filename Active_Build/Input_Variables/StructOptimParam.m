@@ -61,6 +61,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.direction='min';
     paroptimgeneral.defaultVal=1e3;
     paroptimgeneral.knownOptim=[0.146088675]; %#ok<*NBRAK>
+    
+    paroptimgeneral.knownOptimStart=[0.146088675]; %#ok<*NBRAK>
     paroptimgeneral.useSnake=true;
     
     
@@ -1175,6 +1177,14 @@ function [paroptim]=areabuseTest()
     paroptim.general.maxIter=10;
 end
 
+function [paroptim]=TestNewConstr()
+    [paroptim]=areabusesweep(0.12);
+    paroptim.general.nPop=40;
+    paroptim=LengthAreaObjective(paroptim);
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
+end
+
 % Inverse Design refinement
 function paroptim=TestLocalRefine()
     paroptim=refsweep('cu','0012',0);
@@ -1722,10 +1732,10 @@ function paroptim=invdeslocal_test4(gridCase,refmethod,cornAct,ratioPos)
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
     if cornAct==1
         paroptim.parametrisation.general.passDomBounds(1,:)=...
-            paroptim.parametrisation.general.passDomBounds(1,:)/1.06+0.05;
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.052+0.05;
     elseif cornAct==2
         paroptim.parametrisation.general.passDomBounds(1,:)=...
-            paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.05;
+            [-0.9,1.9];
         paroptim.parametrisation.optiminit.cellLevels=[2,2];
     end
     
