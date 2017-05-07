@@ -2926,6 +2926,11 @@ function [isRefine]=RefineSortMethod(cellRank,refineOptimRatio,rankType)
             isRefine=false(size(cellRank));
             isRefine((cellOrd((numel(cellRank)+1-(numRefine)):end)))=true;
             isRefine=isRefine | (cellRank>(cellRank((numel(cellRank)+1-(numRefine)))*0.95));
+        case 'number'
+            numRefine=min([numel(cellRank),refineOptimRatio]);
+            [~,cellOrd]=sort(cellRank);
+            isRefine=false(size(cellRank));
+            isRefine((cellOrd((numel(cellRank)+1-(numRefine)):end)))=true;
         otherwise
             error('Unknown ranking type')
     end

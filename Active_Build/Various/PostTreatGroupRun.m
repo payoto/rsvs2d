@@ -1,5 +1,6 @@
 function [resstruct]=PostTreatGroupRun(entryPoint,varargin)
-    % This function post treats an entire group of runs.
+    % This function post treats an entire group of runs. Especially
+    % refienement runs
     plotStart=1;
     switch entryPoint
         case 'data'
