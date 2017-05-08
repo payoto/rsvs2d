@@ -7,10 +7,11 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
     include_Optimisation
     
     % Reconstruct outinfo
-    outinfo.rootDir=pathStr;
-    [outinfo.tOutput,outinfo.marker]=FindTime(pathStr);
+%     outinfo.rootDir=pathStr;
+%     [outinfo.tOutput,outinfo.marker]=FindTime(pathStr);
+    [outinfo]=ReconstructOutinfo(iterstruct);
     % iterstruct paramoptim
-    [paramoptim2]=ReconstructParameter(pathStr,outinfo.marker);
+    [paramoptim2]=ReconstructParameter(pathStr,outinfo(1).marker);
     try 
         paramoptim=StructOptimParam(ExtractVariables({'optimCase'},paramoptim2));
         outVars={paramoptim.structdat(:).vars.name};
@@ -20,7 +21,7 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
         paramoptim=SetVariables(outVars,valVars,paramoptim);
     catch MEId
         disp(MEId.getReport)
-        [paramoptim]=ReconstructParameter(pathStr,outinfo.marker);
+        [paramoptim]=ReconstructParameter(pathStr,outinfo(1).marker);
     end
     % Reconstruct iterstruct
     if nargin<3
@@ -29,6 +30,71 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
     
     
     OptimisationOutput('final',paramoptim,outinfo,iterstruct);
+end
+
+
+function [outinfo]=ReconstructOutinfo(optimstruct)
+    
+    allRootDir=repmat(struct('rootDir',''),[1 numel(optimstruct)]);
+    rmR=[];
+    for ii=1:numel(optimstruct)
+        try
+            allRootDir(ii).rootDir=regexprep(optimstruct(ii).population(1).location,'iteration.*$','');
+        catch
+            
+        
+        rmR=[ii];
+        end
+    end
+    allRootDir(rmR)=[];
+    [allRootDir,uniqueRootDir]=IdentifyUniqueOptions(allRootDir);
+    outinfo=repmat(struct('rootDir','','tOutput',[],'marker',''),[1 numel(uniqueRootDir{1})]);
+    [outinfo(:).rootDir]=deal(uniqueRootDir{1}{:});
+    for ii=1:numel(outinfo)
+        [outinfo(ii).tOutput,outinfo(ii).marker]=FindTime2(outinfo(ii).rootDir);
+    end
+end
+
+function [refinestruct,patternList]=IdentifyUniqueOptions(refinestruct,jobfields)
+    
+    if nargin<2
+        jobfields=fieldnames(refinestruct);
+    end
+    
+    %
+    
+    n=numel(refinestruct);
+    
+    patternList=cell(0);
+    for ii=1:numel(jobfields);
+        patternList{ii}={};
+        
+        for jj=1:n
+            optfound=false;
+            
+            for kk=1:numel(patternList{ii})
+                test=false;
+                if ischar(refinestruct(jj).(jobfields{ii}))
+                    test=strcmp(patternList{ii}{kk},refinestruct(jj).(jobfields{ii}));
+                elseif isnumeric(refinestruct(jj).(jobfields{ii})) || islogical(refinestruct(jj).(jobfields{ii}))
+                    test=(patternList{ii}{kk}==refinestruct(jj).(jobfields{ii}));
+                end
+                if test
+                    refinestruct(jj).([jobfields{ii},'num'])=kk;
+                    optfound=true;
+                    break
+                end
+            end
+            if ~optfound
+                patternList{ii}{end+1}=refinestruct(jj).(jobfields{ii});
+                refinestruct(jj).([jobfields{ii},'num'])=numel(patternList{ii});
+            end
+        end
+    end
+    
+    
+    
+    
 end
 
 function [t,marker]=FindTime(pathStr)
@@ -42,6 +108,18 @@ function [t,marker]=FindTime(pathStr)
     returnName=regexprep(returnName{1},'Comments_','');
     marker=regexprep(returnName,'.txt','');
     
+end
+
+
+function [t,marker]=FindTime2(pathStr)
+    
+    splitPath=regexp(pathStr,'[\\,/]','split');
+    
+    dirLoc=flip(find(~cellfun(@isempty,regexp(splitPath,'Dir'))));
+    dirName=splitPath{dirLoc};
+    splitDir=regexp(dirName,'_');
+    t=datenum(dirName(splitDir(1)+1:splitDir(2)-1),'yyyy-dd-mmTHHMMSS');
+    marker=dirName(splitDir(2)+1:end);
 end
 
 function [paramoptim]=ReconstructParameter(pathStr,marker)

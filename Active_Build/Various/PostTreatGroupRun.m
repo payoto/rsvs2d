@@ -14,8 +14,11 @@ function [resstruct]=PostTreatGroupRun(entryPoint,varargin)
             end
     end
     
-    
-    PlotGroupedInformation(resstruct,compareopts,plotStart)
+%     try 
+        PlotGroupedInformation(resstruct,compareopts,plotStart)
+%     catch ME
+%         disp(ME.getReport)
+%     end
 end
 
 function [resstruct]=CollectGroupRunInformation(rootDir,compareopts)
@@ -36,7 +39,7 @@ function []=PlotGroupedInformation(resstruct,compareopts,plotStart)
         for ii=1:numel(resstruct)
             figobj=PlotIndividualRefinement(resstruct(ii),'full');
             hgsave(figobj.h,[resstruct(ii).path,filesep,'FigRefOpt_',...
-                resstruct(ii).name,'.fig']);
+                resstruct(ii).name{1},'.fig']);
             close(figobj.h)
         end
     end
@@ -77,7 +80,7 @@ function [figobj]=PlotIndividualRefinement(resstruct,typePlot,figobj)
     
     isLoadColor=false;
     if ~exist('figobj','var')
-        figobj.h=figure('Name',resstruct.name);
+        figobj.h=figure('Name',resstruct.name{1});
         figobj.axh=axes;
         isLoad=false;
     else
@@ -161,7 +164,7 @@ function []=ExploreParamEffect_SingleStatic(optimList,optimOpts,resstruct,plotTy
             for kk=find(currList==jj)
                 figobj.color=colorOrder(mod(ll-1,size(colorOrder,1))+1,:);
                 figobj=PlotIndividualRefinement(resstruct(kk),plotType,figobj);
-                figobj.l(1,1).DisplayName=regexprep(resstruct(kk).name,'_',' ');
+                figobj.l(1,1).DisplayName=regexprep(resstruct(kk).name{1},'_',' ');
                 legEntry(ll)=figobj.l(1,1);
                 ll=ll+1;
             end
@@ -202,6 +205,7 @@ function []=ExploreParamEffect_SingleMoving(optimList,optimOpts,resstruct,plotTy
         
         nFig=ceil(sqrt(size(tightList,1)));
         mFig=ceil(size(tightList,1)/nFig);
+        numFig=1;
         if nFig>NFigMax && mFig>MFigMax
             nFig=NFigMax;
             mFig=MFigMax;
@@ -220,7 +224,7 @@ function []=ExploreParamEffect_SingleMoving(optimList,optimOpts,resstruct,plotTy
                 for kk=find(all(currList==ones([size(currList,1),1])*tightList(jj,:),2))'
                     figobj.color=colorOrder(mod(ll-1,size(colorOrder,1))+1,:);
                     figobj=PlotIndividualRefinement(resstruct(kk),plotType,figobj);
-                    figobj.l(1,1).DisplayName=regexprep(resstruct(kk).name,'_',' ');
+                    figobj.l(1,1).DisplayName=regexprep(resstruct(kk).name{1},'_',' ');
                     if ischar(optimOpts(kk).(fields{ii}))
                         figobj.l(1,1).DisplayName=optimOpts(kk).(fields{ii});
                     elseif isnumeric(optimOpts(kk).(fields{ii})) || islogical(optimOpts(kk).(fields{ii}))
@@ -352,7 +356,7 @@ function [figobj]=PlotCarpetPlot(data,labels,order,figobj)
     
     isLoadColor=false;
     if ~exist('figobj','var')
-        figobj.h=figure('Name',resstruct.name);
+        figobj.h=figure('Name',resstruct.name{1});
         figobj.axh=axes;
         isLoad=false;
     else
@@ -397,6 +401,53 @@ end
 %% Load Data
 
 function [refinestruct]=TreatPathsIntoStruct(pltPaths,compareopts)
+    
+    disp('This code needs to be modified for function maximisation')
+    
+    for ii=1:numel(pltPaths)
+        resstruct(ii)=TreatPathData(pltPaths{ii},compareopts);
+        
+    end
+    resstruct=resstruct(~cellfun(@isempty,{resstruct(:).obj}));
+    compList=[{'pattern'},compareopts.optim,compareopts.snake];
+    kk=1;
+    for ii=1:numel(compList)
+        if iscell(compList{kk})
+            kk=kk+numel(compList{ii})-1;
+            compList=[compList(1:ii-1),compList{ii},compList(ii+1:end)];
+        end
+        kk=kk+1;
+    end
+    [resstruct,patternList]=IdentifyUniqueOptions(resstruct,compList);
+    %patternList=patternList{1};
+    pattNumRes=zeros([numel(compList),numel(resstruct)]);
+    for ii=1:numel(compList)
+        
+        pattNumRes(ii,:)=[resstruct(:).([compList{ii},'num'])];
+        
+    end
+    pattNumRes=pattNumRes';
+    pattNumRes2=pattNumRes*(cumsum(max(pattNumRes))');
+    
+    [pattNumRes2,posPatNumRes2,allPatNumRes]=unique(pattNumRes2);
+    
+    for ii=numel(pattNumRes2):-1:1
+        for jj=1:size(pattNumRes,2)
+            refinestruct(ii).name{jj}=patternList{jj}{pattNumRes(posPatNumRes2(ii),jj)};
+        end
+        refinestruct(ii).refine=resstruct(pattNumRes2(allPatNumRes)==pattNumRes2(ii));
+        [~,sortStruct]=sort([refinestruct(ii).refine(:).stage]);
+        refinestruct(ii).refine=refinestruct(ii).refine(sortStruct);
+        [refinestruct(ii).refine]=TrimRefineStruct(refinestruct(ii).refine);
+        refinestruct(ii).paramoptim=refinestruct(ii).refine(1).paramoptim;
+        refinestruct(ii).paramsnake=refinestruct(ii).refine(1).paramsnake;
+        dirPath=regexp(refinestruct(ii).refine(1).path,filesep);
+        refinestruct(ii).path=refinestruct(ii).refine(1).path(1:dirPath(end-1));
+    end
+    
+end
+
+function [refinestruct]=TreatPathsIntoStructOld(pltPaths,compareopts)
     
     disp('This code needs to be modified for function maximisation')
     
@@ -463,8 +514,11 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     for ii=1:numel(compareopts.optim)
         refinestruct.paramoptim.(compareopts.optim{ii})=ExtractVariables(...
             compareopts.optim(ii),instruct.paramoptim);
+        refinestruct.(compareopts.optim{ii})=ExtractVariables(...
+            compareopts.optim(ii),instruct.paramoptim);
         if iscell(refinestruct.paramoptim.(compareopts.optim{ii}))
-           refinestruct.paramoptim.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}){1}; 
+           refinestruct.paramoptim.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}){1};
+           refinestruct.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}); 
         end
     end
     if numel(compareopts.optim)==0
@@ -473,9 +527,12 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     for ii=1:numel(compareopts.snake)
         refinestruct.paramsnake.(compareopts.snake{ii})=ExtractVariables(...
             compareopts.snake(ii),instruct.paramoptim.parametrisation);
+        refinestruct.(compareopts.snake{ii})=ExtractVariables(...
+            compareopts.snake(ii),instruct.paramoptim.parametrisation);
         
-        if iscell(refinestruct.paramoptim.(compareopts.snake{ii}))
-           refinestruct.paramoptim.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii}){1}; 
+        if iscell(refinestruct.paramsnake.(compareopts.snake{ii}))
+           refinestruct.paramoptim.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii}){1};
+           refinestruct.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii});
         end
     end
     if numel(compareopts.snake)==0
@@ -627,7 +684,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
         %disp('FindDir Could not find requested item')
     end
     for ii=1:length(returnSub)
-        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name{1}];
         returnName{ii}=subDir(returnSub(ii)).name;
         
     end
