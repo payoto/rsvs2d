@@ -80,7 +80,7 @@ for ii=figList;
     h=findobj(ii);
     figure(ii)
     h(1).PaperPositionMode='auto';
-    %h(1).Position=[100 100 500 160]*1.5;
+    h(1).Position=[100 100 450 325];
 end
 
 %%
