@@ -684,7 +684,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
         %disp('FindDir Could not find requested item')
     end
     for ii=1:length(returnSub)
-        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name{1}];
+        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
         returnName{ii}=subDir(returnSub(ii)).name;
         
     end

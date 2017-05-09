@@ -98,6 +98,7 @@ function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,t
             case 'area'
                 x=[linspace(1,0,sum(upperLower>0)),...
                     linspace(0,1,sum(upperLower<0))];
+                x=(0.5-cos(x*pi)/2);
               targPrep=[x',upperLower];
                 
         end
@@ -285,6 +286,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
         areaDistrib(:,eqInd+1)=[];
         areaDistrib(2,:)=cumsum(areaDistrib(2,:));
         areaDistrib(:,find(areaDistrib(2,:)<1e-18))=[];
+        %areaDistrib(:,find(areaDistrib(1,1:end-1)<1e-15))=[];
         areaDistrib=areaDistrib';
         %         distribError=areaErr./areaLength;
         %         xPts=[[profileCoord(1,1),reshape(x0,[1,numel(x0)])];

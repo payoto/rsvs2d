@@ -74,13 +74,19 @@ for ii=figList;
             h(jj).Interpreter='latex';
         end
     end
+    h=findobj(ii,'type','text');
+    if numel(h)>0
+        for jj=1:numel(h)
+            h(jj).Interpreter='latex';
+        end
+    end
 end
 %%
 for ii=figList;
     h=findobj(ii);
     figure(ii)
     h(1).PaperPositionMode='auto';
-    h(1).Position=[100 100 450 325];
+%     h(1).Position=[100 100 450 325];
 end
 
 %%
