@@ -767,42 +767,6 @@ function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
         
     end
     
-%     kk=1;
-%     needRerun(kk)=1;
-%     for ii=2:nIter
-%         
-%         precIterPos=optimstruct(ii-1).population(minPos(ii-1)).location;
-%         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-%         if ~strcmp(precIterPos,minIterPos)
-%             kk=kk+1;
-%             needRerun(kk)=ii;
-%             
-%         end
-%         
-%     end
-%     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
-%     parfor jj=1:kk
-%         
-%         ii=needRerun(jj);
-%         
-%         minIterPos=optimstruct(ii).population(minPos(ii)).location;
-%         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-%             
-%             
-%             RunCFDPostProcessing(minIterPos);
-%             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-%                 CutCellFlow_Handler(paramoptim,minIterPos)
-%                 RunCFDPostProcessing(minIterPos);
-%                 if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-%                     PrepareCFDPostProcessing(minIterPos,CFDfolder);
-%                     CutCellFlow_Handler(paramoptim,minIterPos)
-%                     RunCFDPostProcessing(minIterPos);
-%                 end
-%             end
-%         end
-%         
-%    end
-    
     minIterRootDirNum=zeros([1,nIter]);
     
     for ii=1:nIter

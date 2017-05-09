@@ -33,6 +33,14 @@ function [pltPaths]=FindPLTFiles(childFolder)
             isRem([1:jj-1,jj+1:end])=isRem([1:jj-1,jj+1:end]) | tempIsRem([1:jj-1,jj+1:end]);
             isRem(jj)=isRem(jj) || any( tempIsRem([1:jj-1,jj+1:end]));
         end
+        for jj=find(isRem)
+            tempName=(regexprep(intermPath{jj},'\..*',''));
+            if isempty(regexp(tempName,'_pre$','once'))
+                c=dir([tempName,'.plt']);
+                c(2)=dir([tempName,'_pre.plt']);
+                isRem(jj)= ~(isempty(c(2).datenum) || (c(2).datenum<c(1).datenum));
+            end
+        end
         intermPath=intermPath(~isRem);
         if ~isempty(intermPath)
             pltPaths(kk:kk+numel(intermPath)-1)=intermPath;

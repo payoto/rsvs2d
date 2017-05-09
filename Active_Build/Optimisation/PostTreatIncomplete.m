@@ -51,8 +51,10 @@ function [outinfo]=ReconstructOutinfo(optimstruct)
     outinfo=repmat(struct('rootDir','','tOutput',[],'marker',''),[1 numel(uniqueRootDir{1})]);
     [outinfo(:).rootDir]=deal(uniqueRootDir{1}{:});
     for ii=1:numel(outinfo)
-        [outinfo(ii).tOutput,outinfo(ii).marker]=FindTime2(outinfo(ii).rootDir);
+        [outinfo(ii).rootDir,outinfo(ii).tOutput,outinfo(ii).marker]=FindTime2(outinfo(ii).rootDir);
     end
+    [~,sortOrd]=sort([outinfo(:).tOutput]);
+    outinfo=outinfo(sortOrd);
 end
 
 function [refinestruct,patternList]=IdentifyUniqueOptions(refinestruct,jobfields)
@@ -111,9 +113,10 @@ function [t,marker]=FindTime(pathStr)
 end
 
 
-function [t,marker]=FindTime2(pathStr)
+function [pathStr,t,marker]=FindTime2(pathStr)
     
     splitPath=regexp(pathStr,'[\\,/]','split');
+    pathStr=regexprep(pathStr,'[\\,/]$','');
     
     dirLoc=flip(find(~cellfun(@isempty,regexp(splitPath,'Dir'))));
     dirName=splitPath{dirLoc};

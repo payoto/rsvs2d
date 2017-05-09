@@ -1777,10 +1777,10 @@ function paroptim=invdeslocal_test6(gridCase,refmethod,cornAct,ratioPos)
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
     if cornAct==1
         paroptim.parametrisation.general.passDomBounds(1,:)=...
-            paroptim.parametrisation.general.passDomBounds(1,:)/1.052+0.05;
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.06+0.05;
     elseif cornAct==2
         paroptim.parametrisation.general.passDomBounds(1,:)=...
-            [-0.9,1.9];
+            [-0.5 1.5; -1 1];
         paroptim.parametrisation.optiminit.cellLevels=[2,2];
     end
     
