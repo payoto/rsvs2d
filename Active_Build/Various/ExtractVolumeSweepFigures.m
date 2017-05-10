@@ -9,24 +9,24 @@ function [resstruct]=ExtractVolumeSweepFigures(pathStr)
     [resstruct]=TreatPathsIntoStruct(optimPaths,compareOpts);
     
     
-
+    
     
     plotstruct=ReturnLineProfile(resstruct);
     [~,sOrd]=sort([plotstruct(:).A]);
     plotstruct=plotstruct(sOrd);
     
-    h(1)=PlotProfiles(plotstruct);
-    [h(2)]=PlotLine(plotstruct);
+    [h(1)]=PlotLine(plotstruct);
+    h(2)=PlotProfiles(plotstruct);
     h(3)=PlotProfilesScaled(plotstruct);
     SaveFigs(h,pathStr)
 end
 
 function [plotstruct]=ReturnLineProfile(resstruct)
-   for ii=1:numel(resstruct)
-       flag=true;
-       plotstruct(ii).A=resstruct(ii).paramoptim.desVarVal;
-       plotstruct(ii).axisRatio=resstruct(ii).paramsnake.axisRatio;
-       while flag
+    for ii=1:numel(resstruct)
+        flag=true;
+        plotstruct(ii).A=resstruct(ii).paramoptim.desVarVal;
+        plotstruct(ii).axisRatio=resstruct(ii).paramsnake.axisRatio;
+        while flag && numel(resstruct(ii).refine)>0
             [plotstruct(ii).obj,loc]=min([resstruct(ii).refine(:).objend]);
             loopPath=FindDir(resstruct(ii).refine(loc).optimSolPath,'restart',0);
             if numel(loopPath)>0
@@ -39,9 +39,9 @@ function [plotstruct]=ReturnLineProfile(resstruct)
                 resstruct(ii).refine(loc)=[];
                 flag=true;
             end
-       end
-       
-   end
+        end
+        
+    end
     
     
 end
@@ -55,7 +55,7 @@ function [dy]=AdaptSizeforBusemann(e)
         ymax=max([loop(ii).subdivision(:,2);ymax]);
         ymin=min([loop(ii).subdivision(:,2);ymin]);
     end
-   dy=(ymax-ymin)/2;
+    dy=(ymax-ymin)/2;
 end
 
 function h=PlotProfiles(plotstruct)
@@ -135,7 +135,7 @@ function [h]=PlotLine(plotstruct)
 end
 
 function SaveFigs(h,rootDir)
-   
+    
     
     for ii=1:numel(h)
         
@@ -196,9 +196,9 @@ end
 
 function [refine]=TrimRefineStruct(refine)
     
-%     for ii=2:numel(refine)
-%         refine(ii).iterstart=refine(ii-1).iterend;
-%     end
+    %     for ii=2:numel(refine)
+    %         refine(ii).iterstart=refine(ii-1).iterend;
+    %     end
     for ii=1:numel(refine)
         refine(ii).stage(isnan(refine(ii).stage))=0;
         refine(ii).obj=refine(ii).obj(refine(ii).iterstart:refine(ii).iterend);
@@ -221,8 +221,8 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     
     rootPath=regexp(optimPath,filesep);
     
-%     refinestruct.stage=str2double(regexprep(optimCell{end-1},['Dir.*',optimCell{end-2},'_'],''));
-%     refinestruct.stage=str2double(regexp(optimCell{end-1},['_[0-9]+',filesep],'match'));
+    %     refinestruct.stage=str2double(regexprep(optimCell{end-1},['Dir.*',optimCell{end-2},'_'],''));
+    %     refinestruct.stage=str2double(regexp(optimCell{end-1},['_[0-9]+',filesep],'match'));
     stageRef=regexp(optimCell{end-1},'_','split');
     refinestruct.stage=str2double(stageRef{end});
     refinestruct.time=datenum(regexprep(regexprep(optimCell{end-1},'Dir_',''),...
@@ -247,8 +247,8 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
         refinestruct.(compareopts.optim{ii})=ExtractVariables(...
             compareopts.optim(ii),instruct.paramoptim);
         if iscell(refinestruct.paramoptim.(compareopts.optim{ii}))
-           refinestruct.paramoptim.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}){1};
-           refinestruct.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}); 
+            refinestruct.paramoptim.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}){1};
+            refinestruct.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii});
         end
     end
     if numel(compareopts.optim)==0
@@ -261,8 +261,8 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
             compareopts.snake(ii),instruct.paramoptim.parametrisation);
         
         if iscell(refinestruct.paramsnake.(compareopts.snake{ii}))
-           refinestruct.paramoptim.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii}){1};
-           refinestruct.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii});
+            refinestruct.paramoptim.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii}){1};
+            refinestruct.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii});
         end
     end
     if numel(compareopts.snake)==0
@@ -270,7 +270,7 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     end
     
     refinestruct.objstart=refinestruct.obj(refinestruct.iterstart);
-    refinestruct.objend=refinestruct.obj(refinestruct.iterend);
+    refinestruct.objend=refinestruct.obj(refinestruct.iterend-1);
     refinestruct.path=dirPath;
     refinestruct.dir=optimCell{end-1};
 end
@@ -400,29 +400,32 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
     returnName={};
     subDir=dir(rootDir);
-    subDir(1:2)=[];
-    nameCell={subDir(:).name};
-    isprofileDirCell=strfind(nameCell,strDir);
-    if ~isempty(subDir)
-        for ii=1:length(subDir)
-            subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
-                ~xor(subDir(ii).isdir,isTargDir);
+    if numel(subDir)>0
+        subDir(1:2)=[];
+        nameCell={subDir(:).name};
+        isprofileDirCell=strfind(nameCell,strDir);
+        if ~isempty(subDir)
+            for ii=1:length(subDir)
+                subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
+                    ~xor(subDir(ii).isdir,isTargDir);
+            end
+            
+            returnSub=find([subDir(:).isProfile]);
+        else
+            returnSub=[];
         end
         
-        returnSub=find([subDir(:).isProfile]);
+        if isempty(returnSub)
+            %disp('FindDir Could not find requested item')
+        end
+        for ii=1:length(returnSub)
+            returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+            returnName{ii}=subDir(returnSub(ii)).name;
+            
+        end
     else
-        returnSub=[];
+        warning('Invalid Directory')
     end
-    
-    if isempty(returnSub)
-        %disp('FindDir Could not find requested item')
-    end
-    for ii=1:length(returnSub)
-        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
-        returnName{ii}=subDir(returnSub(ii)).name;
-        
-    end
-    
     
     
 end
