@@ -16,7 +16,7 @@ function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     varExtract={'typeLoop'};
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
-    
+    profileComp='distancenorm';
     [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,typeLoop);
     
     switch aeroClass
@@ -45,6 +45,20 @@ function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim
         case 'area'
             
             [errorMeasure,modifiedDistance]=CompareProfilesArea(analysisCoord,targCoord);
+            plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+            h=figure;
+            subplot(2,1,1)
+            plotPoints(analysisCoord)
+            hold on
+            plotPoints(targCoord)
+            legend('snake points','Target points')
+            ax=subplot(2,1,2);
+            plotPoints(modifiedDistance)
+            ax.YScale='log';
+        case 'distancenorm'
+            analysisCoord=RemoveIdenticalConsecutivePoints(analysisCoord);
+            targCoord=RemoveIdenticalConsecutivePoints(targCoord);
+            [errorMeasure,modifiedDistance]=CompareProfilesDistance2(analysisCoord,targCoord);
             plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
             h=figure;
             subplot(2,1,1)
@@ -100,7 +114,11 @@ function [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,t
                     linspace(0,1,sum(upperLower<0))];
                 x=(0.5-cos(x*pi)/2);
               targPrep=[x',upperLower];
-                
+            case 'distancenorm'
+                x=[linspace(1,0,sum(upperLower>0)),...
+                    linspace(0,1,sum(upperLower<0))];
+                x=(0.5-cos(x*pi)/2);
+              targPrep=[x',upperLower];
         end
         
         
@@ -309,6 +327,56 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
     %error('Compare Profile through area integration has not been coded yet')
 end
 
+
+function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCoord)
+    
+    
+    normVec=@(v) v./repmat(sqrt(sum(v.^2,2)),[1,size(v,2)]);
+    pDistDir=@(m,p,v) sign((m-repmat(p,[size(m,1),1]))*v').*sqrt(sum((m-repmat(p,[size(m,1),1])).^2,2));
+    
+    
+ 
+    maxDist=[min([profileCoord;targCoord]);max([profileCoord;targCoord])];
+    nP1=size(profileCoord,1);
+    edgeNormal=([0 1;-1 0]*normVec(profileCoord([2:end,1],:)-profileCoord)')';
+    [~,vDist]=knnsearch(targCoord,profileCoord);
+    for ii=1:nP1
+        
+        vertNormal=sum(edgeNormal(mod((ii-1:ii)-1,nP1)+1,:));
+        
+        scales=(maxDist-profileCoord([ii,ii],:))./repmat(vertNormal,[2,1]);
+        scales=scales(:);
+        scales=[min(scales(scales>0)),max(scales(scales<0))];
+        
+        testCoord=repmat(profileCoord(ii,:),[2,1])+(scales'*vertNormal);
+        
+        [x0,y0,iout,jout] = intersections(testCoord(:,1),testCoord(:,2),...
+                targCoord([1:end,1],1),targCoord([1:end,1],2));
+        rmv=isnan(iout) | isnan(jout);
+        
+        x0(rmv)=[];
+        y0(rmv)=[];
+        
+        
+        if numel(x0)>0
+            vertDists=pDistDir([x0,y0],profileCoord(ii,:),vertNormal);
+            
+            vDist(ii)=min([vDist(ii);abs(vertDists)]);
+        
+        end
+    end
+    
+    
+    errorMeasure.sum=sum(vDist);
+    errorMeasure.mean=mean(vDist);
+    errorMeasure.std=std(vDist);
+    errorMeasure.max=max(vDist);
+    errorMeasure.min=min(vDist);
+    areaDistrib=[profileCoord(:,1),vDist];
+   
+    
+    %error('Compare Profile through area integration has not been coded yet')
+end
 
 
 

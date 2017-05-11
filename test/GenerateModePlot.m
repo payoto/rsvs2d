@@ -170,3 +170,51 @@ end
 [t.Interpreter]=deal('latex');
 [t.BackgroundColor]=deal([1 1 1]);
 [t.FontSize]=deal(12);
+
+
+%%
+
+
+for ii=figList
+    
+     h=findobj(ii,'type','axes');
+    if numel(h)>0
+        for jj=1:numel(h)
+           boxAxX=h(jj).XLim;
+            boxAxY=h(jj).YLim;
+            h(jj).NextPlot='add';
+            for kk=[-19:2:19]
+                l=plot(h(jj),[kk kk],[-1 2],'Color',[0.3 0.3 0.3],'Linestyle','--');
+                
+            end
+            l.DisplayName='VOS Cell boundaries';
+            
+            c(ii).l=findobj(h(jj),'type','line');
+            c(ii).l=c(ii).l(~cellfun(@isempty,{c(ii).l(:).DisplayName}));
+            
+            h(jj).XLim=boxAxX;
+            h(jj).YLim=boxAxY;
+        end
+    end
+end
+%%
+
+for ii=[1:5]
+    h=findobj(ii,'type','axes');
+    h.XLim=[-12 12];
+end
+
+%%
+
+for ii=[2 6 7];
+    
+    h=findobj(ii,'type','axes');
+    if numel(h)>0
+        for jj=1:numel(h)
+            lh=legend(flip(c(ii).l));
+           lh.Interpreter='latex';
+        end
+    end
+    
+end
+
