@@ -184,12 +184,14 @@ end
 
 function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
     
-    [~,edgeLength]=LengthProfile(points);
-    indRmv=find(edgeLength<1e-10);
-    indRmv(1)=[]; % remove first point which has 0 distance.
+%     [~,edgeLength]=LengthProfile(points);
+%     indRmv=find(edgeLength<1e-10);
+%     indRmv(1)=[]; % remove first point which has 0 distance.
+%     trimmedPoints=points;
+%     trimmedPoints(indRmv,:)=[];
+    indRmv=find((sum((points-points([end,1:end-1],:)).^2,2))<(1e-10)^2);
     trimmedPoints=points;
     trimmedPoints(indRmv,:)=[];
-    
 end
 
 function cellSimilar=FindIdenticalVector(blockSegments)
