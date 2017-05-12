@@ -28,7 +28,7 @@ function [newPop,iterCurr,paramoptim,deltas]=OptimisationMethod(paramoptim,varar
             [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,varargin{1},varargin{2});
             
         case 'conjgrad'
-            [newPop,iterCurr,paramoptim,deltas]=ConjugateGradientTranslate(paramoptim,varargin{1},varargin{2},varargin{3});
+            [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,varargin{1},varargin{2},varargin{3});
             
         case 'DEStrip'
             
@@ -148,7 +148,7 @@ end
 
 %% Conjugate gradient
 
-function [newPop,iterOrig,paramoptim,deltas]=ConjugateGradientTranslate(paramoptim,iterCurr,iterm1,baseGrid)
+function [newPop,iterOrig,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1,baseGrid)
     
     varExtract={'diffStepSize','direction','notDesInd','desVarRange',...
         'lineSearch','nLineSearch','nPop','validVol','varActive','desvarconnec',...

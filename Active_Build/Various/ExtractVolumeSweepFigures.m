@@ -74,7 +74,7 @@ function h=PlotProfiles(plotstruct)
                 'Color',cOrd(mod(ii-1,size(cOrd,1))+1,:),...
                 'DisplayName',num2str(plotstruct(ii).A,'%.2f'));
             if numel(plotstruct(ii).points)==1
-                [~,posMaxT]=max(plotstruct(ii).points(:,2));
+                [~,posMaxT]=max(plotstruct(ii).points{jj}(:,2));
                 
                 
                 plot(plotstruct(ii).points{jj}(posMaxT,1),plotstruct(ii).points{jj}(posMaxT,2), ...
@@ -83,7 +83,7 @@ function h=PlotProfiles(plotstruct)
                     'DisplayName',num2str(plotstruct(ii).A,'%.2e'),...
                     'Marker','*');
                 
-                maxT(ii,:)=[plotstruct(ii).points(posMaxT,1),plotstruct(ii).points(posMaxT,2)];
+                maxT(ii,:)=[plotstruct(ii).points{jj}(posMaxT,1),plotstruct(ii).points{jj}(posMaxT,2)];
             end
         end
     end
@@ -91,6 +91,7 @@ function h=PlotProfiles(plotstruct)
     legend(l,'Location','EastOutside')
     
 end
+
 function h=PlotProfilesScaled(plotstruct)
     
     cOrd=get(gca,'ColorOrder');
@@ -107,7 +108,7 @@ function h=PlotProfilesScaled(plotstruct)
                 'Color',cOrd(mod(ii-1,size(cOrd,1))+1,:),...
                 'DisplayName',num2str(plotstruct(ii).A,'%.2f'));
             if numel(plotstruct(ii).points)==1
-                [~,posMaxT]=max(plotstruct(ii).points(:,2));
+                [~,posMaxT]=max(plotstruct(ii).points{jj}(:,2));
                 
                 
                 plot(plotstruct(ii).points{jj}(posMaxT,1),plotstruct(ii).points{jj}(posMaxT,2)/dy, ...
@@ -116,7 +117,7 @@ function h=PlotProfilesScaled(plotstruct)
                     'DisplayName',num2str(plotstruct(ii).A,'%.2e'),...
                     'Marker','*');
                 
-                maxT(ii,:)=[plotstruct(ii).points(posMaxT,1),plotstruct(ii).points(posMaxT,2)/dy];
+                maxT(ii,:)=[plotstruct(ii).points{jj}(posMaxT,1),plotstruct(ii).points{jj}(posMaxT,2)/dy];
             end
         end
     end
