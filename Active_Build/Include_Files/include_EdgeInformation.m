@@ -222,6 +222,28 @@ end
 
 %% Function cell centred grid extraction
 
+function [edge,edgeLength]=CalculateEdgeLengths(edge,vertex)
+    
+    vertList=[vertex(:).index];
+    [~,actVert]=unique(vertList);
+    vertex=vertex(actVert);
+    vertList=[vertex(:).index];
+    vertCoord=vertcat(vertex(:).coord);
+    
+    vertEdgeInd=[edge(:).vertexindex];
+    
+    vertEdgeSub=FindObjNum([],vertEdgeInd,vertList);
+    if any(vertEdgeSub==0)
+        errstruct.message='Vertex not found in list; incompatible edge and vertex lists';
+        errstruct.identifier='snakes:vertexnotfound';
+        error(errstruct)
+    end
+    edgeLength=sqrt(sum((vertCoord(vertEdgeSub(1:2:end),:)...
+        -vertCoord(vertEdgeSub(2:2:end),:)).^2,2));
+    
+    for ii=1:numel(edge);edge(ii).length=edgeLength(ii);end
+    
+end
 
 function normalVector=CalcNormVec2DClockWise(tanVector)
     % Calculates a vector normal to another in 2D by rotating it 90 degrees

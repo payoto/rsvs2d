@@ -107,6 +107,20 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         
         %x=linspace(posMin(1),posMax(1),200);
         x=min(max(linspace(posMin(1),posMax(1),200),xMin),xMax);
+        if min(x)==xMin
+            m2X=min(x(x~=xMin))-xMin;
+            if ~isempty(m2X)
+            xPosMin=(x==xMin);
+            x(xPosMin)=min((cumsum(xPosMin(xPosMin))-1)*m2X*3/sum(xPosMin)+xMin,xMax);
+            end
+        end
+        if max(x)==xMax
+            m2X=max(x(x~=xMax))-xMax;
+             if ~isempty(m2X)
+            xPosMin=(x==xMax);
+            x(xPosMin)=max((cumsum(xPosMin(xPosMin))-1)*m2X/sum(xPosMin)+xMax,xMin);
+             end
+        end
         tDistrib=naca4t(x,t,(xMax-xMin),xMin,a4_closed,teps);
         cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
         y=min(max(cDistrib+tDistrib,posMin(2)),posMax(2))-min(max(cDistrib-tDistrib,posMin(2)),posMax(2));

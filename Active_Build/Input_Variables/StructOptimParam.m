@@ -1779,7 +1779,7 @@ function paroptim=invdeslocal_test6(gridCase,refmethod,cornAct,ratioPos)
         paroptim.parametrisation.general.passDomBounds(1,:)=...
             paroptim.parametrisation.general.passDomBounds(1,:)/1.06+0.05;
     elseif cornAct==2
-        paroptim.parametrisation.general.passDomBounds(1,:)=...
+        paroptim.parametrisation.general.passDomBounds=...
             [-0.5 1.5; -1 1];
         paroptim.parametrisation.optiminit.cellLevels=[2,2];
     end
@@ -2045,6 +2045,11 @@ function [paroptim]=Run170331()
     
     paroptim.optim.CG.gradScaleType='volume'; % 'volume'
     paroptim.parametrisation.optiminit.modeScale='length';
+end
+
+function [paroptim]=DebugStab170515()
+    paroptim=invdeslocal_test6('uo','rank',2,1);
+    
 end
 %% refinement
 
