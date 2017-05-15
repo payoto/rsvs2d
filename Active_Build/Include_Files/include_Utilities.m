@@ -190,6 +190,9 @@ function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
 %     trimmedPoints=points;
 %     trimmedPoints(indRmv,:)=[];
     indRmv=find((sum((points-points([end,1:end-1],:)).^2,2))<(1e-10)^2);
+    if numel(indRmv)==size(points,1);
+        indRmv(indRmv==1)=[];
+    end
     trimmedPoints=points;
     trimmedPoints(indRmv,:)=[];
 end

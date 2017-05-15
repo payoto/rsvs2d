@@ -233,21 +233,21 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
     tStepStart=now;
     
     
-    edgeOrient=[refinedGrid.edge(:).orientation];
-    edgeIndList=[refinedGrid.edge(:).index];
-    if numel(refineGrid)==1
-        refGridRatio=1;
-    else
-        refGridRatio=refineGrid(1)/refineGrid(2);
-    end
-    edgeDat.orient=edgeOrient;
-    edgeDat.indList=edgeIndList;
-    edgeDat.ratio=refGridRatio;
+%     edgeOrient=[refinedGrid.edge(:).orientation];
+%     edgeIndList=[refinedGrid.edge(:).index];
+%     if numel(refineGrid)==1
+%         refGridRatio=1;
+%     else
+%         refGridRatio=refineGrid(1)/refineGrid(2);
+%     end
+%     edgeDat.orient=edgeOrient;
+%     edgeDat.indList=edgeIndList;
+%     edgeDat.ratio=refGridRatio;
     
     
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param,edgeDat);
+        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param,refineGrid);
     
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
@@ -319,16 +319,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     dtMinStart=dtMin;
     [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid);
     borderVertices.nonbreedpers=nonBreedVertPersist;
-    edgeOrient=[refinedGrid.edge(:).orientation];
-    edgeIndList=[refinedGrid.edge(:).index];
-    if numel(refineGrid)==1
-        refGridRatio=1;
-    else
-        refGridRatio=refineGrid(1)/refineGrid(2);
-    end
-    edgeDat.orient=edgeOrient;
-    edgeDat.indList=edgeIndList;
-    edgeDat.ratio=refGridRatio;
+    [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid);
     cntSave=1;
     nonBreedNextIter=[];
     for ii=1:snakesSteps
@@ -485,14 +476,14 @@ end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
         insideContourInfo]=InitialisationRestart(refinedGriduns,...
-        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param,edgeDat)
+        refinedGrid,looprestart,oldGrid,connectionInfo,mergeTopo,boundstr,param,refineGrid)
     
     varExtract={'restart'};
     [restart]=ExtractVariables(varExtract,param);
     if ~restart
         [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
             StartSnakeProcess(refinedGriduns,refinedGrid,looprestart,...
-            oldGrid,connectionInfo,mergeTopo,boundstr,edgeDat);
+            oldGrid,connectionInfo,mergeTopo,boundstr,refineGrid);
     else
         [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
             RestartSnakeProcess(looprestart);
@@ -503,7 +494,7 @@ end
 
 function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]=...
         StartSnakeProcess(refinedGriduns,refinedGrid,loop,...
-        oldGrid,connectionInfo,mergeTopo,boundstr,edgeDat)
+        oldGrid,connectionInfo,mergeTopo,boundstr,refineGrid)
     disp('    Generate Cell Centred Grid')
     [cellCentredGrid]=CellCentreGridInformation(refinedGrid);
     disp('    Establish Cell Volume Information')
@@ -527,6 +518,10 @@ function [cellCentredGrid,volfracconnec,borderVertices,snaxel,insideContourInfo]
     [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
+    
+    
+    [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid);
+    
     [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
 end
 
@@ -579,6 +574,37 @@ function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
     [snaxelRev]=ReverseSnakes(snaxel);
     [insideContourInfoRev]=ReverseInsideContourInfo(snaxel,...
         insideContourInfo,unstructured);
+    
+end
+
+function [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid)
+    
+    edgeOrient=[refinedGrid.edge(:).orientation];
+    edgeIndList=[refinedGrid.edge(:).index];
+    if numel(refineGrid)==1
+        refGridRatio=1;
+    else
+        refGridRatio=refineGrid(1)/refineGrid(2);
+    end
+    edgeDat.orient=edgeOrient;
+    edgeDat.indList=edgeIndList;
+    edgeDat.ratio=refGridRatio;
+    
+    refinedGrid.edge=CalculateEdgeLengths(refinedGrid.edge,refinedGrid.vertex);
+    cellEdgeLDat=zeros([numel(cellCentredGrid),4]); 
+    for ii=1:numel(cellCentredGrid)
+         [~,edgeLength]=CalculateEdgeLengths(cellCentredGrid(ii).edge,...
+             cellCentredGrid(ii).vertex);
+         
+         cellEdgeLDat(ii,1:4)=[ii,cellCentredGrid(ii).index,max(edgeLength),min(edgeLength)];
+    end
+    cellEdgeLDat(end+1,1:4)=[ii+1 0 0 inf];
+    cellEdgeSub=FindObjNum([],[refinedGrid.edge(:).cellindex],cellEdgeLDat(:,2)');
+%     edgeDat.indivRatio=(([refinedGrid.edge(:).length]...
+%         .*max(cellEdgeLDat(cellEdgeSub(1:2:end),3),cellEdgeLDat(cellEdgeSub(2:2:end),3))')...
+%         ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1;
+    edgeDat.indivRatio=max((([refinedGrid.edge(:).length])...
+        ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1,0.1);
     
 end
 
@@ -2287,6 +2313,22 @@ function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
 end
 
 function [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeDat)
+   % scales the maximum step depending on the assymetry of the grid
+   edgeOrient=edgeDat.orient;
+   edgeIndList=edgeDat.indList;
+   refGridRatio=edgeDat.ratio;
+   edgeDat.indivRatio;
+   edgeSnax=[snaxel(:).edge];
+   maxStepIndivGrid=ones(size(snaxel));
+   maxStepIndivGrid(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
+   
+   maxStepIndivDist=edgeDat.indivRatio(FindObjNum([],edgeSnax,edgeIndList));
+   maxStepIndivGrid=maxStepIndivGrid/max(maxStepIndivGrid);
+   maxStepIndiv=maxStepIndivGrid.*maxStepIndivDist;
+end
+
+
+function [maxStepIndiv]=DirectionScaledMaxStep_OLD(snaxel,edgeDat)
    % scales the maximum step depending on the assymetry of the grid
    edgeOrient=edgeDat.orient;
    edgeIndList=edgeDat.indList;
