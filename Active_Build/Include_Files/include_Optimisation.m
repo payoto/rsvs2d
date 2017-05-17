@@ -1226,6 +1226,34 @@ function [np]=GoldenSection_maxTanDel(lb,hb,tol,M)
     
 end
 
+
+function [np]=GoldenSection_func(lb,hb,tol,extraIn,func)
+    
+    gr=(sqrt(5)-1)/2;
+    
+    c=hb-gr * (hb-lb);
+    d=lb+gr * (hb-lb);
+    
+    while abs(c-d)>tol
+        
+        fc=-func(c,extraIn);
+        fd=-func(d,extraIn);
+        
+        if fc<fd
+            hb=d;
+            
+        else
+            lb=c;
+        end
+        
+        c=hb-gr * (hb-lb);
+        d=lb+gr * (hb-lb);
+    end
+    
+    np=(hb+lb)/2;
+    
+end
+
 function [np]=GoldenSection_FindB(lb,hb,tol,M,targ)
     
     gr=(sqrt(5)-1)/2;
