@@ -1491,10 +1491,10 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     paroptim.obj.flow.isSymFlow=true;
     paroptim.obj.flow.meshDefSens=true;
     paroptim.obj.flow.flowRestart=true;
-    paroptim.obj.flow.meshDefNorm=false;
+    paroptim.obj.flow.meshDefNorm=true;
     paroptim.obj.flow.rootMesh={'previter',''};
     paroptim.obj.flow.parentMesh='';
-    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine2'];
     
     
     paroptim.spline.splineCase='naca0012';
@@ -1502,7 +1502,7 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     paroptim.parametrisation.general.typeLoop = 'subdivspline'; 
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.resampleSnak=true;
-    paroptim.obj.flow.rootMesh{2}=[cd,filesep,'supportoptim',filesep,'naca0012_2'];
+    paroptim.obj.flow.rootMesh{2}=[cd,filesep,'supportoptim',filesep,'naca0012'];
     
     paroptim.refine.refineOptimRatio=0.3; 
     paroptim.refine.rankType=refmethod;
