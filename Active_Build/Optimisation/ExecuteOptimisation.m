@@ -10,8 +10,8 @@
 %         parametrisation
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%{
 
+%{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -21,9 +21,9 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-
 %}
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
