@@ -314,7 +314,7 @@ function []=BoundaryOutput(loop,FID,typeLoop,buildInternal)
     end
     % trim loops and extract data
     if ~buildInternal
-        [isInternal]=FindInternalLoop(loop);
+        [isInternal]=FindInternalLoop(loop,typeLoop);
         loop=loop(~isInternal);
     end
     if numel(loop)==0
@@ -330,7 +330,7 @@ function []=BoundaryOutput(loop,FID,typeLoop,buildInternal)
 end
 
 function [G]=BuildMatlabGeometryMatrix(loop,typeLoop)
-    [isInternal]=FindInternalLoop(loop);
+    [isInternal]=FindInternalLoop(loop,typeLoop);
     
     nPts=0;
     for ii=1:numel(loop)
@@ -361,7 +361,7 @@ end
 
 
 function []=OutputFreefempp(loop,typeLoop)
-    [isInternal]=FindInternalLoop(loop);
+    [isInternal]=FindInternalLoop(loop,typeLoop);
     
     
     
@@ -433,12 +433,12 @@ function cellLoops=DataToString(loopout)
     
 end
 
-function [isInternal]=FindInternalLoop(loop)
+function [isInternal]=FindInternalLoop(loop,typeLoop)
     % this function works by checkking all the inequalities around a
     % polygon
     isInternal=zeros(size(loop));
     for ii=1:length(loop)
-        polygonPoints=loop(ii).subdivision;
+        polygonPoints=loop(ii).(typeLoop);
 %         polyVec=polygonPoints([2:end,1],:)-polygonPoints;
 %         polyNorm=[polyVec(:,2),-polyVec(:,1)];
 %         
@@ -449,8 +449,8 @@ function [isInternal]=FindInternalLoop(loop)
 %             conditionNum=sum(polyNorm.*(comparePoint-polygonPoints),2);
 %             allPos=sum(conditionNum>=0)==numCond;
 %             allNeg=sum(conditionNum<=0)==numCond;
-              isIn=inpolygon(loop(jj).subdivision(1,1),loop(jj).subdivision(1,2),...
-                  loop(ii).subdivision(:,1),loop(ii).subdivision(:,2));
+              isIn=inpolygon(loop(jj).(typeLoop)(1,1),loop(jj).(typeLoop)(1,2),...
+                  loop(ii).(typeLoop)(:,1),loop(ii).(typeLoop)(:,2));
             isInternal(jj)=isInternal(jj) + (isIn);
         end
     end
@@ -472,7 +472,7 @@ function []=DisplacementsOutput(catloop,FIDsurf,FIDdisp,typeLoop,buildInternal)
     end
     % trim loops and extract data
     if ~buildInternal
-        [isInternal]=FindInternalLoop(catloop(:,1));
+        [isInternal]=FindInternalLoop(catloop(:,1),typeLoop);
         catloop=catloop(find(~isInternal),:);
     end
     if numel(catloop)==0

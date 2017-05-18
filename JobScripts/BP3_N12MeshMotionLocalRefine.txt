@@ -1,4 +1,4 @@
-uv BFGS
-uo BFGS
-uv conjgrad
-uo conjgrad
+number conjgrad
+number BFGS
+rank conjgrad
+rank BFGS

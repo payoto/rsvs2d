@@ -630,7 +630,7 @@ function [supportstruct]=SelectPrevMesh(paramoptim,supportstruct,population,iter
             [supportstruct(:).parentMesh]=deal(rootMesh{2});
             
         case 'previter'
-            [prevMesh]=FindPrevIterMesh(optimMethod,direction,lineSearch,iterstruct);
+            [prevMesh]=FindPrevIterMesh(optimMethod,direction,lineSearch,iterstruct,rootMesh);
             [supportstruct(:).parentMesh]=deal(prevMesh);
         case 'none'
             [supportstruct(:).parentMesh]=deal('');
@@ -740,7 +740,7 @@ function [catloop]=MatchLoops(loop1,loop2,typeLoop)
     
 end
 
-function [prevMesh]=FindPrevIterMesh(objectiveName,direction,lineSearch,iterstruct)
+function [prevMesh]=FindPrevIterMesh(objectiveName,direction,lineSearch,iterstruct,rootMesh)
     if numel(iterstruct)>0
         isGradient=CheckIfGradient(objectiveName);
         if isGradient
@@ -763,7 +763,7 @@ function [prevMesh]=FindPrevIterMesh(objectiveName,direction,lineSearch,iterstru
         end
         
     else
-        prevMesh='';
+        prevMesh=rootMesh{2};
         
     end
 end
