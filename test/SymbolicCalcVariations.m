@@ -4,9 +4,11 @@
 
 syms a c1 c2 m l x 
 syms f1 f2 f3 y
-f1=1-(m*a-c1)^2-m^2*c2^2;
-f2=1-(m*a+c1)^2-m^2*c2^2;
-f3=2*a*c2+1/(2*m^2)*((m*a-c1)*sqrt(1-(c1-a*m)^2)-asin(c1-m*a)+(m*a+c1)*sqrt(1-(c1+a*m)^2)+asin(c1+m*a))-l;
+f1=-sqrt(1-(m*a-c1)^2)/m+c2;
+f2=-sqrt(1-(m*a+c1)^2)/m+c2;
+% f1=1-(m*a-c1)^2-m^2*c2^2;
+% f2=1-(m*a+c1)^2-m^2*c2^2;
+f3=2*a*c2-1/(2*m^2)*((m*a-c1)*sqrt(1-(c1-a*m)^2)-asin(c1-m*a)+(m*a+c1)*sqrt(1-(c1+a*m)^2)+asin(c1+m*a))-l;
 y=sqrt(1-(m*x-c1)^2)/m+c2;
 solSys=solve([f1 f2 f3],'returnconditions',true);
 assume(l,'real');
@@ -58,7 +60,7 @@ constr2=@(a,c2)  2.*a.*c2 + (a.^2 + c2.^2).*(asin(a.*(1./(a.^2 + c2.^2)).^(1./2)
 
 
 xa=linspace(0.01,1,101);
-yc2=linspace(-20,1,101);
+yc2=linspace(-20,5,101);
 
 [Xa,Yc2]=meshgrid(xa,yc2);
 

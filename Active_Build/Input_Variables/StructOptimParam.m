@@ -1485,8 +1485,8 @@ function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
     
 end
 
-function [paroptim]=N12_LRef_MMesh(gridCase,optimiser)
-    paroptim=NACA0012Sweeplocal(gridCase,optimiser);
+function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
+    paroptim=NACA0012Sweeplocal('uv',optimiser);
     
     paroptim.obj.flow.isSymFlow=true;
     paroptim.obj.flow.meshDefSens=true;
@@ -1494,6 +1494,23 @@ function [paroptim]=N12_LRef_MMesh(gridCase,optimiser)
     paroptim.obj.flow.meshDefNorm=false;
     paroptim.obj.flow.rootMesh={'previter',''};
     paroptim.obj.flow.parentMesh='';
+    paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
+    
+    
+    paroptim.spline.splineCase='naca0012';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.general.typeLoop = 'subdivspline'; 
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.resampleSnak=true;
+    paroptim.obj.flow.rootMesh{2}=[cd,filesep,'supportoptim',filesep,'naca0012_2'];
+    
+    paroptim.refine.refineOptimRatio=0.3; 
+    paroptim.refine.rankType=refmethod;
+    
+    [ratio]=PickRatioForRefineNumber(refmethod);
+    paroptim.refine.refineOptimRatio=ratio(2);
+    
+    paroptim.general.worker=12;
 end
 
 % Supersonic refine
@@ -1899,11 +1916,11 @@ function [refineOptimRatio]=PickRatioForRefineNumber(refmethod)
         case 'value'
             refineOptimRatio=0.5;
         case 'rank'
-            refineOptimRatio=0.3;
+            refineOptimRatio=[0.3 0.3 0.1 0.8];
         case 'rankvalue'
             refineOptimRatio=0.25;
         case 'number'
-            refineOptimRatio=10;
+            refineOptimRatio=[10, 8 6,4];
         otherwise
             warning('Unspecified ranking type')
             refineOptimRatio=0.3;

@@ -14,13 +14,16 @@ function [resampPoints,splineblock]=ResampleSpline(points,paramspline)
     
     [parspline]=BuildSpecifiedCase(paramspline);
     points=RemoveIdenticalConsecutivePoints(points);
-    points=SplitAtTrailingEdge(points,parspline.TEisLeft);
+    points=SplitAtTrailingEdge(points,parspline.TEisLeft,parspline.samplingDistrib);
     
     [normPoints,parList,domSize]=GenerateParameterList(parspline,points);
     [nPoints,nDim]=size(normPoints);
     [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList);
     [resampPoints,splineblock]=ResampleSplinePatches(splineblock,parspline,nPoints);
     
+    if ExtractVariables({'splitProf'},parspline)
+        resampPoints=VertSplitPointsSym(resampPoints);
+    end
     
 end
 
@@ -50,7 +53,7 @@ function [points]=CheckClosedCurve(points,typCurve)
     
     switch typCurve
         case 'closed'
-            if sum(points(1,:)~=points(end,:))
+            if any(points(1,:)~=points(end,:))
                 points(end+1,:)=points(1,:);
             end
         case 'open'
@@ -91,9 +94,9 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
             ratio=1/lengthParam(end);
             
             [~,minXi]=min(points(:,1));
-            vecTrans=points(minXi,:);
+            vecTrans=[points(minXi,1),0];
             
-            normPoints=ratio*(points.*(ones(size(points(:,1)))*vecTrans));
+            normPoints=ratio*(points-(ones(size(points(:,1)))*vecTrans));
         case 'scaleX'
             ratio=1/normScale;
             
@@ -101,6 +104,8 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
             vecTrans=[points(minXi,1),0];
             
             normPoints=ratio*(points-(ones(size(points(:,1)))*vecTrans));
+        
+            
         otherwise
             normPoints=points;
     end
@@ -130,10 +135,40 @@ function parList=ExtractParameterList(parType,points)
     
 end
 
-function splitPoints=SplitAtTrailingEdge(points,TEisLeft)
-    TEisLeft=(TEisLeft-0.5)*2;
-    [~,testGlobalMin]=min(TEisLeft*points(:,1));
-    splitPoints=points;%([testGlobalMin:end,1:testGlobalMin-1],:);
+function splitPoints=SplitAtTrailingEdge(points,TEisLeft,distribution)
+    splitPoints=points;
+    if strcmp(distribution,'cosine') || strcmp(distribution,'2cosine') || strcmp(distribution,'split')
+        TEisLeft=(TEisLeft-0.5)*2;
+        [~,testGlobalMin]=min(TEisLeft*points(:,1));
+        splitPoints=points([testGlobalMin:end,1:testGlobalMin-1],:);
+    end
+    
+end
+
+function newPoints=VertSplitPointsSym(newPoints)
+    
+    [xMax,ii]=max(newPoints(:,1));
+    [xMin,jj]=min(newPoints(:,1));
+    nP=size(newPoints,1);
+    sChange=-sign(newPoints(mod(ii-1+1,nP)+1,2)-newPoints(mod(ii-1-1,nP)+1,2));
+    eps=pi*1e-7/3;
+    inds{1}=(min(ii,jj)+1):(max(ii,jj)-1);
+    inds{2}=[1:(min(ii,jj)-1),(max(ii,jj)+1):size(newPoints,1)];
+    
+    indUpper=inds{1+xor(ii<jj,sChange<0)};
+    indLower=inds{1+(~xor(ii<jj,sChange<0))};
+    
+    newPoints(indUpper,2)=newPoints(indUpper,2)+eps;
+    newPoints(indLower,2)=newPoints(indLower,2)-eps;
+    
+    addPts=ones(2,1)*newPoints(ii,:)+[0 sChange*eps; 0 -eps*sChange];
+    newPoints=[newPoints(1:ii-1,:);addPts;newPoints(ii+1:end,:)];
+    
+    [xMin,jj]=min(newPoints(:,1));
+    
+    addPts=ones(2,1)*newPoints(jj,:)+[0 -sChange*eps; 0 eps*sChange];
+    newPoints=[newPoints(1:jj-1,:);addPts;newPoints(jj+1:end,:)];
+    newPoints(:,1)=newPoints(:,1)-xMin+eps;
     
 end
 
@@ -362,7 +397,7 @@ function [parspline]=BuildSpecifiedCase(paramspline)
     % specified by paramspline
     
     [parspline]=CaseParamSpline(paramspline.splineCase);
-    paramspline.structdat=GetStructureData(paramspline);
+    parspline.structdat=GetStructureData(parspline);
     
     fieldsInput=fieldnames(paramspline);
     
@@ -405,7 +440,7 @@ function [parspline]=CaseSpline_default()
     parspline.LocMinDeriv='smooth';
     parspline.LocMaxDeriv='smooth';
     parspline.typeInterp='cubic';
-    
+    parspline.splitProf=false;
     
 end
 
@@ -501,7 +536,6 @@ function [parspline]=CaseSpline_inversedesign2()
     %parspline.samplingScope='local';
 end
 
-
 function [parspline]=CaseSpline_inversedesign3()
     
     [parspline]=CaseSpline_default();
@@ -521,4 +555,26 @@ function [parspline]=CaseSpline_inversedesign3()
     
     parspline.typeInterp='linear';
     %parspline.samplingScope='local';
+end
+
+function [parspline]=CaseSpline_naca0012()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='l'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.typCurve='closed';
+    
+    parspline.distribution='calc';
+    parspline.domain='normalizeX'; % 'normalizeX' 'normalizeL'
+    parspline.scale=1;
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=701;
+    parspline.samplingDistrib='2cosine';
+    parspline.splitProf=true;
+    parspline.typeInterp='linear';
+    %parspline.samplingScope='local';
+    
 end
