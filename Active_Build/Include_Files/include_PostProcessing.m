@@ -359,7 +359,6 @@ function [G]=BuildMatlabGeometryMatrix(loop,typeLoop)
     
 end
 
-
 function []=OutputFreefempp(loop,typeLoop)
     [isInternal]=FindInternalLoop(loop,typeLoop);
     
