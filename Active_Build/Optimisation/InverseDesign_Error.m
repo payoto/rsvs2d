@@ -327,7 +327,6 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
     %error('Compare Profile through area integration has not been coded yet')
 end
 
-
 function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCoord)
     
     
