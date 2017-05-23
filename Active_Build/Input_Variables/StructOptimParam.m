@@ -1810,6 +1810,54 @@ function paroptim=invdeslocal_test6(gridCase,refmethod,cornAct,ratioPos)
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
 end
+
+function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
+    
+    % refcrit = 'curvelength' 'contcurvevol'
+    gridCase='uo';
+    ratioPos=1;
+    lvl=4+lvlExtra;
+    paroptim=refsweeplocal(gridCase,aeroName,100,lvl);
+    
+    paroptim.general.objectiveName='InverseDesignTopo';
+    %paroptim.general.maxIter=6;
+    paroptim.refine.refineOptimType=refcrit;
+    paroptim.optim.CG.gradScaleType=''; % 'volume'
+    paroptim.parametrisation.general.typeLoop='subdivision';
+    
+    paroptim.parametrisation.optiminit.corneractive=logical(cornAct);
+    paroptim.parametrisation.snakes.refine.pinnedVertex='LETE';
+    if cornAct
+        paroptim.parametrisation.snakes.refine.pinnedVertex='';
+    end
+    refmethod='number';
+    %ratio=PickRatioForRefineMethod(refmethod);
+    [ratio]=PickRatioForRefineNumber(refmethod);
+    paroptim.refine.refineOptimRatio=ratio(min(ratioPos,numel(ratio)));
+    paroptim.spline.resampleSnak=false;
+    paroptim.parametrisation.general.passDomBounds(2,:)=...
+        paroptim.parametrisation.general.passDomBounds(2,:)/2;
+    if cornAct==1
+        paroptim.parametrisation.general.passDomBounds(1,:)=...
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.08;
+        paroptim.parametrisation.general.passDomBounds(2,:)=...
+            paroptim.parametrisation.general.passDomBounds(2,:)*2;
+    elseif cornAct==2
+        paroptim.parametrisation.general.passDomBounds=...
+            [-0.5 1.5; -1 1];
+        paroptim.parametrisation.optiminit.cellLevels=[2,2];
+    end
+    
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.optim.CG.nLineSearch=8;
+    paroptim.refine.rankType=refmethod;
+    %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+end
+
 function [paroptim]=TestNewOut()
    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
    paroptim.general.maxIter=4;

@@ -1879,6 +1879,10 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
                 [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
             
+        case 'InverseDesignTopo'
+            addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
+                [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]);
+            
         case 'InverseDesignBulk'
             addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
                 [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]...
@@ -2067,6 +2071,22 @@ function [objValue,additional]=InverseDesignBulk(paramoptim,member,loop)
     additional.tc=areaAdd.tc;
 end
 
+function [objValue,additional]=InverseDesignTopo(paramoptim,member,loop)
+    
+    [obj,h]=InverseDesign_ErrorTopo(paramoptim,loop);
+    hgsave(h,[member.location,filesep,'prof.fig']);
+    close(h)
+    [~,areaAdd]=LengthArea(paramoptim,member,loop);
+    objValue=obj.sum;
+    
+    additional=obj;
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
+end
+
 % Analytical test
 
 function [objValue,additional]=Rosenbrock(paramoptim,member,loop)
@@ -2143,6 +2163,9 @@ function [paramoptim]=FindKnownOptim(paramoptim,iterstruct,baseGrid,gridrefined,
             case 'InverseDesign'
                 [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
                     restartsnake,connectstructinfo,outinfo);
+            case 'InverseDesignTopo'
+                [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
+                    restartsnake,connectstructinfo,outinfo);
             case 'CutCellFlow'
                 [paramoptim]=FindKnownOptimCutCell(paramoptim,outinfo,iterstruct);
         end
@@ -2166,7 +2189,12 @@ function [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,..
         case 'lib'
             [rootFill]=OuterLimitInverse(baseGrid,paramoptim,aeroName);
         case 'NACA'
-            [rootFill]=NacaOuterLimit4d(baseGrid,paramoptim,aeroName);
+            if numel(aeroName)==4
+                [rootFill]=NacaOuterLimit4d(baseGrid,paramoptim,aeroName);
+            else
+                [rootFill]=NacaOuterLimit4d(baseGrid,paramoptim,'0012');
+                
+            end
     end
     [iterstruct]=InitialiseIterationStruct(paramoptim);
     population=iterstruct(1).population(1);
@@ -2817,6 +2845,24 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
                     oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
                 isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
             end
+        case 'curvelength'
+            % refines cells based on the sqrt(curvature)*A
+            % refines cells based on the gradient between design variables
+            actInd=find([oldGrid.base.cell(:).isactive]);
+            cellInd=[oldGrid.base.cell(:).index];
+            
+            oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {oldGrid.connec.cell(:).new},...
+                {oldGrid.connec.cell(:).old},'UniformOutput',false));
+            
+            cellCentredCoarse=CellCentreGridInformation(oldGrid.base);
+            newIndsCell=[oldGrid.connec.cell(:).new];
+            for ii=indexPop;
+                cellRank=reshape(REFINE_curvelength(lastpopulation(ii),...
+                    oldGrid,actInd,cellInd,refineOptimRatio,...
+                    oldIndsNewOrd,cellCentredCoarse,newIndsCell),size(isRefine));
+                isRefine=isRefine | RefineSortMethod(cellRank,refineOptimRatio,rankType);
+            end
         case 'contcurvenoedge'
             % refines cells based on the sqrt(curvature)*A
             % refines cells based on the gradient between design variables
@@ -3195,6 +3241,42 @@ function [cellRank,isRefine]=REFINE_contcurvevol(population,grid,actInd,cellInd,
     % This was shown to leave no effect of cell size on the refinement
     % criterion "TestCurvChangeArea"
     cellRank=sqrt(([cellCentredCoarse(:).curvSnax])).*([cellCentredCoarse(:).volume]);
+    
+    cellRank(~isfinite(cellRank))=0;
+    cellRank(~isAct)=0;
+    cellRank=cellRank/max(cellRank);
+    isRefine=cellRank>=(1-refineOptimRatio);
+    isRefine(~isAct)=false;
+    
+end
+
+
+function [cellRank,isRefine]=REFINE_curvelength(population,grid,actInd,cellInd,...
+        refineOptimRatio,oldIndsNewOrd,cellCentredCoarse,newIndsCell)
+    % refines cells based on the gradient between design variables
+    % this system is edge based It evaluates the gradients between every
+    % edges
+    % Then rejects edges where any cell is inactive or/and without snaxel
+    
+    [restartPath,~]=FindDir(population.location,'restart',false);
+    
+    load(restartPath{1},'snakSave','restartsnak')
+    snakSave=snakSave;
+    isSnax=snakSave(end).volumefraction.isSnax;
+    
+    for ii=1:numel(actInd)
+        grid.base.cell(actInd(ii)).fill=population.fill(ii);
+    end
+    
+    isAct=false([1,numel(grid.base.cell)]);
+    isAct(actInd)=true;
+    
+    [cellCentredCoarse]=CoarseCellCentred(restartsnak.snaxel,grid.refined,...
+        grid.cellrefined,cellCentredCoarse,oldIndsNewOrd,newIndsCell);
+    
+    % This was shown to leave no effect of cell size on the refinement
+    % criterion "TestCurvChangeArea"
+    cellRank=sqrt(([cellCentredCoarse(:).curvSnax])).*([cellCentredCoarse(:).lSnax]);
     
     cellRank(~isfinite(cellRank))=0;
     cellRank(~isAct)=0;

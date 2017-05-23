@@ -110,16 +110,16 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         if min(x)==xMin
             m2X=min(x(x~=xMin))-xMin;
             if ~isempty(m2X)
-            xPosMin=(x==xMin);
-            x(xPosMin)=min((cumsum(xPosMin(xPosMin))-1)*m2X*3/sum(xPosMin)+xMin,xMax);
+                xPosMin=(x==xMin);
+                x(xPosMin)=min((cumsum(xPosMin(xPosMin))-1)*m2X*3/sum(xPosMin)+xMin,xMax);
             end
         end
         if max(x)==xMax
             m2X=max(x(x~=xMax))-xMax;
-             if ~isempty(m2X)
-            xPosMin=(x==xMax);
-            x(xPosMin)=max((cumsum(xPosMin(xPosMin))-1)*m2X/sum(xPosMin)+xMax,xMin);
-             end
+            if ~isempty(m2X)
+                xPosMin=(x==xMax);
+                x(xPosMin)=max((cumsum(xPosMin(xPosMin))-1)*m2X/sum(xPosMin)+xMax,xMin);
+            end
         end
         tDistrib=naca4t(x,t,(xMax-xMin),xMin,a4_closed,teps);
         cDistrib=naca4c(x,m,p,(xMax-xMin),xMin);
@@ -130,6 +130,74 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
         reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
     end
     constrVal={fillSub,reqFrac};
+end
+
+function [nacaLoops]=NacaMultiTopo(nPtsPloop,nacaStr)
+    
+    % xTop and xBot need to be normalised
+    a4_open=0.1015;
+    a4_closed=0.1036;
+    
+    naca45t=@(x,t,c,xMin,a4,teps)  5*t*c*(0.2969*sqrt((x-xMin)/c)-0.1260*((x-xMin)/c)...
+        -0.3516*((x-xMin)/c).^2+0.2843*((x-xMin)/c).^3-a4*((x-xMin)/c).^4)+((x-xMin)/c)*teps;
+    naca4c=@(x,m,p,c,xMin) [m/p^2*(2*p*((x((x-xMin)<(p*c))-xMin)/c)-((x((x-xMin)<(p*c))-xMin)/c).^2),...
+        m/(1-p)^2*((1-2*p)+2*p*((x((x-xMin)>=(p*c))-xMin)/c)-((x((x-xMin)>=(p*c))-xMin)/c).^2)];
+    teps=5.48e-04/2/0.8; % true @ corner=1e-5
+    
+    % Nine digit and more if for multi element airfoil
+    % uses separator ";" between foils
+    % uses _ separator between parameters
+    % first digit is the number of airfoils
+    % then each airfoil is placed as follows:
+    % [NACA number l (in 1/10ths of chord) alpha in degrees(LE) xLE (from prev TE)
+    % yLE (from prev TE)
+    
+    
+    nacaCell=regexp(nacaStr,';','split');
+    nacaCell=regexp(nacaCell,'_','split');
+    
+    nPtsPloop=nPtsPloop/str2double(nacaCell{1}{1});
+    
+    x=[linspace(0,1,round(nPtsPloop/2))];
+    x=(0.5-cos(x*pi)/2);
+    TEPos=[0 0];
+    for ii=1:str2double(nacaCell{1}{1})
+        refPos=TEPos+str2num([nacaCell{ii+1}{4},' ',nacaCell{ii+1}{5}]);
+        [nacaCoord(ii).coord,TEPos]=GenerateNACACoordOrient...
+            (x,nacaCell{ii+1}{1},nacaCell{ii+1}{2},nacaCell{ii+1}{3},...
+            refPos,naca45t,naca4c,a4_closed,teps);
+    end
+    
+    normL=sqrt(sum(TEPos.^2));
+    rot=-asin(TEPos(2)/normL);
+    for ii=1:str2double(nacaCell{1}{1})
+        
+        nacaCoord(ii).coord=nacaCoord(ii).coord/normL;
+        rotMat=[cos(rot),-sin(rot);sin(rot),cos(rot)];
+        nacaCoord(ii).coord=(rotMat*(nacaCoord(ii).coord)')';
+    end
+    
+    
+end
+
+function [coord,TEPos]=GenerateNACACoordOrient(x,naca4Num,l,rot,refPos,tFunc,cFunc,a4,teps)
+    
+    [ctc,pct,tmax,refFlag]=ReadNacaString(naca4Num);
+    
+    tDist=tFunc(x,tmax,1,0,a4,teps);
+    cDist=cFunc(x,ctc,pct,1,0)';
+    
+    unitCoord=RemoveIdenticalConsecutivePoints([[x',(tDist'+cDist)];flip([x',(-tDist'+cDist)])]);
+    
+    unitCoord=unitCoord*str2double(l)/10;
+    [~,iTE]=max(unitCoord(:,1));
+    rot=-str2double(rot)/180*pi;
+    rotMat=[cos(rot),-sin(rot);sin(rot),cos(rot)];
+    
+    rotCoord=(rotMat*(unitCoord)')';
+    
+    coord=rotCoord+repmat(refPos,[size(rotCoord,1),1]);
+    TEPos=coord(iTE,:);
 end
 
 function [airfoilDat,airfoil]=ReadAirfoilData(airfoilstr,airfoilDir)
