@@ -8,6 +8,7 @@
 %        for parametric snakes
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%{
 function [] = InverseDesign_ErrorTopo()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -17,13 +18,14 @@ function [] = InverseDesign_ErrorTopo()
     HeaderActivation(funcHandles,funcDir)
     
 end
-
-function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo2(paramoptim,loop)
+%}
+function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     varExtract={'typeLoop'};
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    profileComp='area';
     
     [analysisLoop,targPrep]=PrepareLoopCoord(loop,profileComp,typeLoop);
     
@@ -42,17 +44,21 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo2(paramo
             error('Distance error measurement is not supported with topology')
         case 'area'
             
-            [errorMeasure,modifiedDistance]=CompareProfilesAreaTopo(analysisLoop,targCoord);
+            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(analysisLoop,targCoord);
             plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
             h=figure;
             subplot(2,1,1)
-            plotPoints(analysisLoop)
+            PlotLoop(analysisLoop,'coord')
             hold on
-            plotPoints(targCoord)
+            PlotLoop(targCoord,'coord')
+            
+            patches=PlotLoop(indepLoop,'coord',1);
+            [patches.FaceAlpha]=deal(0.2);
+            [patches.LineStyle]=deal('none');
             legend('snake points','Target points')
             ax=subplot(2,1,2);
             plotPoints(modifiedDistance)
-            ax.YScale='log';
+            %ax.YScale='log';
         otherwise
             error('not coded yet')
     end
@@ -60,7 +66,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo2(paramo
     
 end
 
-function [errorMeasure,modifiedDistance]=CompareLoops(targLoop,testLoop)
+function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testLoop,targLoop)
     % test intersection and internal with inpolygon
     % targLoop ->
     % testLoop |
@@ -71,11 +77,18 @@ function [errorMeasure,modifiedDistance]=CompareLoops(targLoop,testLoop)
     % once tested establish the appropriate objective function
     objChoice=all(any(intersectTable~=0));
     
-    % 
+    %
     if objChoice % use iterative area condition
+        [indepLoop]=AreaErrorTopo(testLoop,targLoop);
         
+        targArea=0;
+        for ii=1:numel(targLoop)
+            targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
+        end
+        
+        [errorMeasure,modifiedDistance]=IndepProfileError(indepLoop,targArea);
     else % use nearest neighbour aproach with area matching
-        
+        indepLoop=[];
         [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop);
     end
     
@@ -146,63 +159,96 @@ function [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop)
     for ii=1:numel(targLoop)
         for jj=1:numel(testLoop)
             [intersectTable(jj,ii)]=TestInternalOrIntersect(...
-                targLoop(ii).coord,testLoop(ii).(typeLoop));
+                targLoop(ii).coord,testLoop(jj).(typeLoop));
         end
     end
 end
 %% Test Area error between topo profiles
 
-function [indepLoop]=AreaErrorTopo(testLoop,targLoop,intersectTable)
+function [indepLoop]=AreaErrorTopo(testLoop,targLoop)
+    % Takes in two sets of loops internally independant and calculates the
+    % profiles not filled by loops of both structures
+    % This function is recursive and a possible memory hog
+    
     % Remove Inner loops from intersect list, their area will simply be
     % substracted at the end.
+    [intersectTable]=BuildIntersectionTable(testLoop,targLoop,'coord');
     
-    [testGroups]=BuildGroupLists(intersectTable);
+    indepTarg=find(all(intersectTable~=-1,1));
+    indepTest=find(all(intersectTable~=-1,2));
+    indepLoop=repmat(struct('coord',[],'out',[]),[1 numel(indepTarg)+numel(indepTest)]);
+    [indepLoop(:).coord]=deal(testLoop(indepTest).coord,targLoop(indepTarg).coord);
     
+    for ii=1:numel(indepTest)
+        indepLoop(ii).out=(-any(intersectTable(indepTest(ii),:)==2)+0.5)*2;
+    end
+    for ii=(numel(indepTest)+1):(numel(indepTest)+numel(indepTarg))
+        indepLoop(ii).out=(-any(intersectTable(:,indepTarg(ii-numel(indepTest)))==1)+0.5)*2;
+    end
     
     % Build groups of tests and targs that intersect.
     
+    [testGroups]=BuildGroupLists(intersectTable);
     
     % Intersect each groups
     
+    for ii=1:size(testGroups,1)
+        targCurr=targLoop(testGroups{ii,1});
+        testCurr=testLoop(testGroups{ii,2});
+        
+        [newloop]=SeparateProfilesArea(testCurr(1).coord,targCurr(1).coord);
+        [testCurr]=AreaErrorTopo(newloop,testCurr(2:end));
+        [testCurr]=AreaErrorTopo(testCurr,targCurr(2:end));
+        
+        indepLoop=[indepLoop,testCurr];
+    end
     
 end
 
 function [testGroups]=BuildGroupLists(intersectTable)
     % Returns groups of mutually intersecting loops
+    % Each group is represented by two cells
+    % first cell gives the columns in a group
+    % second cell gives the rows in a group
     
     actCol=find(any(intersectTable==-1,1));
     actRow=find(any(intersectTable==-1,2))';
     
     kk=0;
     interCols=[];
-    while ~isempty(actCol) && ~isempty(actRow)
+    testGroups=cell([0 2]);
+    while ~isempty(actCol) || ~isempty(actRow)
         
-        if isempty(interCols) && (~isempty(actCol) && ~isempty(actRow))
+        if isempty(interCols) && (~isempty(actCol) || ~isempty(actRow))
             kk=kk+1;
             interCols=1;
-            testGroups{kk}={[],[]};
+            testGroups(kk,1:2)={[],[]};
         end
         
         
-        testGroups{kk}{1}=[testGroups{kk}{1},actCol(interCols)];
-        tempRows=find(intersectTable(:,actCol(interCols))==-1);
+        testGroups{kk,1}=[testGroups{kk,1},actCol(interCols)];
+        [tempRows,~]=find(intersectTable(:,actCol(interCols))==-1);
+        tempRows=unique(tempRows);
         actCol(interCols)=[];
         interRows=FindObjNum([],tempRows,actRow);
         %tempRows=tempRows(interRows~=0);
         interRows=interRows(interRows~=0);
         
-        testGroups{kk}{2}=[testGroups{kk}{2},actRow(interRows)];
-       
+        testGroups{kk,2}=[testGroups{kk,2},actRow(interRows)];
         
-        [tempCols,~]=find(intersectTable(actRow(interRows),:)==-1);
+        
+        [~,tempCols]=find(intersectTable(actRow(interRows),:)==-1);
+        tempCols=unique(tempCols);
         actRow(interRows)=[];
         interCols=FindObjNum([],tempCols,actCol);
         %tempCols=tempCols(interCols~=0);
         interCols=interCols(interCols~=0);
-        
-        
     end
     
+    %     for ii=1:size(testGroups,1)
+    %         testGroups{ii,1}=sort(testGroups{ii,1});
+    %         testGroups{ii,2}=sort(testGroups{ii,2});
+    %     end
 end
 %%
 
@@ -299,22 +345,28 @@ function [nacaCoord]=GenerateNacaCoordTOPO(x,uplow,nacaStr)
     
     
     if numel(nacaStr)==4
-        [ctc,pct,tmax,refFlag]=ReadNacaString(nacaStr);
-        
-        tDist=naca45t(x',tmax,1,0,a4_closed,teps)';
-        [x2,sortOrd]=sort(x);
-        [~,sortOrd2]=sort(sortOrd);
-        cDist=naca4c(x2',ctc,pct,1,0)';
-        cDist=cDist(sortOrd2);
-        if any(abs(uplow)~=1)
-            warning('Vector uplow indicating uppper or lower surface is not well formed')
-        end
-        y=cDist+uplow.*tDist;
-        if size(x,1)==1
-            nacaCoord=[x;y]';
-        else
-            nacaCoord=[x,y];
-        end
+%         [ctc,pct,tmax,refFlag]=ReadNacaString(nacaStr);
+%         
+%         tDist=naca45t(x',tmax,1,0,a4_closed,teps)';
+%         [x2,sortOrd]=sort(x);
+%         [~,sortOrd2]=sort(sortOrd);
+%         cDist=naca4c(x2',ctc,pct,1,0)';
+%         cDist=cDist(sortOrd2);
+%         if any(abs(uplow)~=1)
+%             warning('Vector uplow indicating uppper or lower surface is not well formed')
+%         end
+%         y=cDist+uplow.*tDist;
+%         if size(x,1)==1
+%             nacaCoord=[x;y]';
+%         else
+%             nacaCoord=[x,y];
+%         end
+        nPtsPloop=size(x,1)/1;
+        x=[linspace(0,1,round(nPtsPloop/2))];
+        x=(0.5-cos(x*pi)/2);
+        [nacaCoord(1).coord,TEPos]=GenerateNACACoordOrient...
+                (x,nacaStr,'10','0',...
+                [0 0],naca45t,naca4c,a4_closed,teps);
     elseif numel(nacaStr)==5
         [ctc,pct,tmax,refFlag]=ReadNacaString(nacaStr);
         error('Five digits not implemented - need for tabulated data')
@@ -325,7 +377,7 @@ function [nacaCoord]=GenerateNacaCoordTOPO(x,uplow,nacaStr)
         % first digit is the number of airfoils
         % then each airfoil is placed as follows:
         % [NACA number l (in 1/10ths of chord) alpha in degrees(LE) xLE (from prev TE)
-        % yLE (from prev TE) 
+        % yLE (from prev TE)
         
         
         nacaCell=regexp(nacaStr,';','split');
@@ -352,11 +404,11 @@ function [nacaCoord]=GenerateNacaCoordTOPO(x,uplow,nacaStr)
             nacaCoord(ii).coord=(rotMat*(nacaCoord(ii).coord)')';
         end
         
-        plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
-        figure, hold on
-        for ii=1:str2double(nacaCell{1}{1})
-            plotPoints(nacaCoord(ii).coord)
-        end
+%         plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+%         figure, hold on
+%         for ii=1:str2double(nacaCell{1}{1})
+%             plotPoints(nacaCoord(ii).coord)
+%         end
         
     else
         error('Unrecognised naca String length')
@@ -377,8 +429,8 @@ function [coord,TEPos]=GenerateNACACoordOrient(x,naca4Num,l,rot,refPos,tFunc,cFu
     unitCoord=unitCoord*str2double(l)/10;
     [~,iTE]=max(unitCoord(:,1));
     rot=-str2double(rot)/180*pi;
-     rotMat=[cos(rot),-sin(rot);sin(rot),cos(rot)];
-     
+    rotMat=[cos(rot),-sin(rot);sin(rot),cos(rot)];
+    
     rotCoord=(rotMat*(unitCoord)')';
     
     coord=rotCoord+repmat(refPos,[size(rotCoord,1),1]);
@@ -499,6 +551,165 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
     %error('Compare Profile through area integration has not been coded yet')
 end
 
+
+function [errorMeasure,areaDistrib]=IndepProfileError(loop,targArea)
+    if nargin<2
+       targArea=1; 
+    end
+    
+    nX0=numel(loop);
+    
+    areaErr=zeros(size(loop));
+    areaLength=zeros(size(loop));
+    areaPosx=zeros(size(loop));
+    areaPosXmin=zeros(size(loop));
+    areaPosXmax=zeros(size(loop));
+    for ii=1:nX0
+        
+        
+        actPts=loop(ii).coord;
+        areaErr(ii)=loop(ii).out*abs(CalculatePolyArea(actPts))/targArea;
+        areaLength(ii)=max(actPts(:,1))-min(actPts(:,1));
+        areaPosx(ii)=(min(actPts(:,1))+max(actPts(:,1)))/2;
+        areaPosXmin(ii)=min(actPts(:,1));
+        areaPosXmax(ii)=max(actPts(:,1));
+    end
+    
+    errorMeasure.sum=sum(areaErr);
+    errorMeasure.mean=mean(areaErr);
+    errorMeasure.std=std(areaErr);
+    errorMeasure.max=max(areaErr);
+    errorMeasure.min=min(areaErr);
+    
+    areaDistrib=[min(areaPosXmin),areaPosx,areaPosXmax;
+        0,areaErr./areaLength*2,-areaErr./areaLength*2];
+    [areaDistrib(1,:),iSortDistrib]=sort(areaDistrib(1,:));
+    eqInd=find(abs(areaDistrib(1,1:end-1)-areaDistrib(1,2:end))<1e-10);
+    areaDistrib(2,:)=(areaDistrib(2,iSortDistrib));
+    areaDistrib(2,eqInd)=areaDistrib(2,eqInd)+areaDistrib(2,eqInd+1);
+    areaDistrib(:,eqInd+1)=[];
+    areaDistrib(2,:)=cumsum(areaDistrib(2,:));
+    %areaDistrib(:,find(areaDistrib(2,:)<1e-18))=[];
+    %areaDistrib(:,find(areaDistrib(1,1:end-1)<1e-15))=[];
+    areaDistrib=areaDistrib';
+    %         distribError=areaErr./areaLength;
+    %         xPts=[[profileCoord(1,1),reshape(x0,[1,numel(x0)])];
+    %             [reshape(x0,[1,numel(x0)]),profileCoord(end,1)]];
+    %         xPts=xPts(:);
+    %         errPts=[distribError(end),distribError;distribError(end),distribError];
+    %         errPts=errPts(:);
+    %         errorDist=[xPts',errPts'];
+    
+end
+
+function [newloop]=SeparateProfilesArea(profileCoord,targCoord)
+    % compares two loops and returns the area not filled by both
+    if ~CCWLoop(profileCoord)
+        profileCoord=flip(profileCoord);
+    end
+    if ~CCWLoop(targCoord)
+        targCoord=flip(targCoord);
+    end
+    
+    [x0,y0,iout,jout] = intersections(profileCoord([1:end,1],1),profileCoord([1:end,1],2),...
+        targCoord([1:end,1],1),targCoord([1:end,1],2));
+    rmv=isnan(iout) | isnan(jout);
+    iout(rmv)=[];
+    x0(rmv)=[];
+    y0(rmv)=[];
+    jout(rmv)=[];
+    
+    [iout,sortIndex]=sort(iout);
+    x0=x0(sortIndex);
+    y0=y0(sortIndex);
+    jout=jout(sortIndex);
+    
+    nX0=numel(x0);
+    nP1=size(profileCoord,1);
+    nP2=size(targCoord,1);
+    
+    if nX0>0
+        newloop=repmat(struct('coord',zeros(0,2)),[1,nX0]);
+        nXplore=1:nX0;
+        pLoop=0;
+        while ~isempty(nXplore)
+            % Need to make sure both profiles go in the same direction
+            
+            % THis code is insufficient it does not check for that no other
+            % intersection lies on ind2 (cannot lie on ind1 as it is sorted)
+            kk=1;
+            iiStart=nXplore(kk);
+            condLoop=true;
+             pLoop=pLoop+1;
+            while condLoop
+                ii=nXplore(kk);
+                nXplore(kk)=[];
+                iip1=mod(ii,nX0)+1;
+                if floor(iout(ii))~=floor(iout(iip1))
+                    if ceil(iout(ii))>floor(iout(iip1))
+                        ind1=[ceil(iout(ii)):nP1,1:floor(iout(iip1))];
+                    else
+                        ind1=ceil(iout(ii)):floor(iout(iip1));
+                    end
+                else
+                    ind1=[];
+                end
+                iij=ii;
+                if floor(jout(ii))~=floor(jout(iip1))
+                    if ceil(jout(ii))>floor(jout(iip1))
+                        
+                        isInTheWay1=(0<jout & jout<jout(iip1));
+                        isInTheWay2=(jout>jout(ii) & jout<nP2);
+                        if any(isInTheWay1)
+                            subIsInTheWay=find(isInTheWay1);
+                            [~,posInWay]=max(jout(subIsInTheWay));
+                            iij=subIsInTheWay(posInWay);
+                            ind2=flip(ceil(jout(iij)):floor(jout(iip1)));
+                        elseif any(isInTheWay2)
+                            subIsInTheWay=find(isInTheWay2);
+                            [~,posInWay]=max(jout(subIsInTheWay));
+                            iij=subIsInTheWay(posInWay);
+                            ind2=flip([ceil(jout(iij)):nP2,1:floor(jout(iip1))]);
+                        else
+                            ind2=flip([ceil(jout(iij)):nP2,1:floor(jout(iip1))]); % iip1 does not change
+                        end
+                    else
+                        
+                        isInTheWay=jout>jout(ii) & jout<jout(iip1);
+                        if any(isInTheWay)
+                            subIsInTheWay=find(isInTheWay);
+                            [~,posInWay]=max(jout(subIsInTheWay));
+                            iij=subIsInTheWay(posInWay);
+                        end
+                        ind2=flip(ceil(jout(iij)):floor(jout(iip1)));
+                        
+                    end
+                else
+                    ind2=[];
+                end
+                
+                
+                
+                newloop(pLoop).coord=[newloop(pLoop).coord;
+                    [x0(ii),y0(ii)];
+                    profileCoord(ind1,:);
+                    [x0(iip1),y0(iip1)];
+                    targCoord(ind2,:)];
+                kk=find(nXplore==iij);
+                condLoop=iij~=iiStart && ~isempty(kk);
+            end
+           
+            
+        end
+        newloop=newloop(1:pLoop);
+    else
+        
+        error('No Intersection, should not happen')
+    end
+    
+    %error('Compare Profile through area integration has not been coded yet')
+end
+
 function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCoord)
     
     
@@ -506,7 +717,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCo
     pDistDir=@(m,p,v) sign((m-repmat(p,[size(m,1),1]))*v').*sqrt(sum((m-repmat(p,[size(m,1),1])).^2,2));
     
     
- 
+    
     maxDist=[min([profileCoord;targCoord]);max([profileCoord;targCoord])];
     nP1=size(profileCoord,1);
     edgeNormal=([0 1;-1 0]*normVec(profileCoord([2:end,1],:)-profileCoord)')';
@@ -522,7 +733,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCo
         testCoord=repmat(profileCoord(ii,:),[2,1])+(scales'*vertNormal);
         
         [x0,y0,iout,jout] = intersections(testCoord(:,1),testCoord(:,2),...
-                targCoord([1:end,1],1),targCoord([1:end,1],2));
+            targCoord([1:end,1],1),targCoord([1:end,1],2));
         rmv=isnan(iout) | isnan(jout);
         
         x0(rmv)=[];
@@ -533,7 +744,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCo
             vertDists=pDistDir([x0,y0],profileCoord(ii,:),vertNormal);
             
             vDist(ii)=min([vDist(ii);abs(vertDists)]);
-        
+            
         end
     end
     
@@ -544,7 +755,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCo
     errorMeasure.max=max(vDist);
     errorMeasure.min=min(vDist);
     areaDistrib=[profileCoord(:,1),vDist];
-   
+    
     
     %error('Compare Profile through area integration has not been coded yet')
 end
