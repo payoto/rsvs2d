@@ -1817,6 +1817,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     gridCase='uo';
     ratioPos=1;
     lvl=4+lvlExtra;
+    [aeroName]=MultiTopoAeroCases(aeroName);
     paroptim=refsweeplocal(gridCase,aeroName,100,lvl);
     
     paroptim.general.objectiveName='InverseDesignTopo';
@@ -1856,6 +1857,25 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+end
+
+function [nacaStr]=MultiTopoAeroCases(shortName)
+    
+    switch shortName
+        case 'm4412'
+            nacaStr='1;4412_10_0_0_0';
+        case 'm20012'
+            nacaStr='2;0016_5_0_0_0;0016_5_0_0.1_0';
+        case 'm24412'
+            nacaStr='2;4412_5_0_0_0;4412_5_0_0.05_0';
+        case 'm244'
+            nacaStr='2;4416_7_0_0_0;4418_3_10_-0.005_-0.02';
+        case 'm344'
+            nacaStr='3;4418_7_0_0_0;2212_4_15_-0.005_-0.02;2212_2_30_-0.02_-0.015';
+        otherwise
+            error('unknown case')
+    end
+    
 end
 
 function [paroptim]=TestNewOut()
