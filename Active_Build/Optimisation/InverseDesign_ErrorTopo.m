@@ -75,7 +75,7 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testL
     [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop);
     
     % once tested establish the appropriate objective function
-    objChoice=all(any(intersectTable~=0));
+    objChoice=all(any(intersectTable~=0,1));
     
     %
     if objChoice % use iterative area condition
@@ -88,7 +88,7 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testL
         
         [errorMeasure,modifiedDistance]=IndepProfileError(indepLoop,targArea);
     else % use nearest neighbour aproach with area matching
-        indepLoop=[];
+        indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
         [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop);
     end
     
@@ -131,6 +131,7 @@ function [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop
     errorMeasure.std=std(modifiedDistance)+errA;
     errorMeasure.max=max(modifiedDistance)+errA;
     errorMeasure.min=min(modifiedDistance)+errA;
+    modifiedDistance=[targCoord(:,1),modifiedDistance];
 end
 
 function [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop)
@@ -150,7 +151,7 @@ function [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop)
         targA(ii)=abs(CalculatePolyArea(targLoop(ii).coord));
     end
     
-    errA=2*sum(targA)+abs(sum(targA)-sum(testA));
+    errA=(2*sum(targA)+abs(sum(targA)-sum(testA)))/sum(targA);
 end
 
 function [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop)
