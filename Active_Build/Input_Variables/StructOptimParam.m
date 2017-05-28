@@ -1816,7 +1816,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     % refcrit = 'curvelength' 'contcurvevol'
     gridCase='uo';
     ratioPos=1;
-    lvl=4+lvlExtra;
+    lvl=8+lvlExtra;
     [aeroName]=MultiTopoAeroCases(aeroName);
     paroptim=refsweeplocal(gridCase,aeroName,100,lvl);
     
@@ -1841,8 +1841,8 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     if cornAct==1
         paroptim.parametrisation.general.passDomBounds(1,:)=...
             paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.08;
-        paroptim.parametrisation.general.passDomBounds(2,:)=...
-            paroptim.parametrisation.general.passDomBounds(2,:)*2;
+%         paroptim.parametrisation.general.passDomBounds(2,:)=...
+%             paroptim.parametrisation.general.passDomBounds(2,:)*1.2;
     elseif cornAct==2
         paroptim.parametrisation.general.passDomBounds=...
             [-0.5 1.5; -1 1];

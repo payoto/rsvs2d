@@ -327,7 +327,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             tecPlotFile,axisRatio,paroptim,allRootDir);
         
     end
-    if strcmp(objectiveName,'InverseDesign')
+    if strcmp(objectiveName,'InverseDesign') || strcmp(objectiveName,'InverseDesignTopo')
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
         tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
@@ -639,8 +639,8 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
         
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
-    parfor jj=1:kk
-        
+    %parfor jj=1:kk
+    for jj=1:kk
         ii=needRerun(jj);
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
@@ -1040,6 +1040,8 @@ function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,file
     end
     fclose('all');
 end
+
+
 
 %% Figures
 

@@ -23,7 +23,7 @@ function [] = ExecuteOptimisation()
 end
 %}
 
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -3700,7 +3700,7 @@ function [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,..
     
 end
 
-function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,...
+function [cellEdgeLog]=CrossedEdgeRefinementOrientation(connec,snaxel,...
         refineGrid,cellInd,oldIndsNewOrd)
     % Returns the orientation of the active edges of each cell
     
@@ -3717,10 +3717,15 @@ function [cellEdgeOrient]=CrossedEdgeRefinementOrientation(connec,snaxel,...
         ii=(jj);
         curSub=snaxCellSub((ii-1)*2+(1:2))+1;
         if curSub(1)~=curSub(2)
-            cellEdgeOrient(snaxOrient(ii),curSub)=true;
+            cellEdgeOrient(snaxOrient(ii),curSub)=cellEdgeOrient(snaxOrient(ii),curSub)+1;
         end
     end
     cellEdgeOrient(:,1)=[];
+    cellEdgeLog=cellEdgeOrient>0;
+    
+    for ii=1:size(cellEdgeOrient,2)
+        cellEdgeLog(:,ii)=cellEdgeLog(:,ii) | any(cellEdgeOrient(:,ii)>3);
+    end
 end
 %% Test Function
 
