@@ -31,7 +31,7 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 modeSmoothScale='undef';
             end
             
-            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            %             h=figure('Name',[entryPoint,'_',modeSmoothScale]);
             pathStr=varargin{1};
             intfig=varargin{2}(1);
         case 'foldermode'
@@ -50,8 +50,8 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
                     in1,in2(ii,:));
                 typeLoop='subdivision'; %ExtractVariables({'typeLoop'},paramoptim.parametrisation);
-                analysisCoord1=loop1.(typeLoop);
-                analysisCoord2{ii}=loop2.(typeLoop);
+                analysisCoord1={loop1(:).(typeLoop)};
+                analysisCoord2{ii}={loop2(:).(typeLoop)};
                 
                 
             end
@@ -61,7 +61,7 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 modeSmoothScale='undef';
             end
             
-            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            %             h=figure('Name',[entryPoint,'_',modeSmoothScale]);
             pathStr=varargin{1};
             intfig=varargin{2}(1);
         case 'foldermode2'
@@ -80,8 +80,8 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
                     in1,in2(ii,:));
                 typeLoop='subdivision'; %ExtractVariables({'typeLoop'},paramoptim.parametrisation);
-                analysisCoord1=loop1.snaxel.coord;
-                analysisCoord2{ii}=loop2.snaxel.coord;
+                analysisCoord1={loop1(:).snaxel.coord};
+                analysisCoord2{ii}={loop2(:).snaxel.coord};
                 
                 
             end
@@ -91,7 +91,7 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 modeSmoothScale='undef';
             end
             
-            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            %             h=figure('Name',[entryPoint,'_',modeSmoothScale]);
             pathStr=varargin{1};
             intfig=varargin{2}(1);
         case 'data'
@@ -131,35 +131,66 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
                 modeSmoothScale='undef';
             end
             
-            h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+            %             h=figure('Name',[entryPoint,'_',modeSmoothScale]);
             pathStr=varargin{1};
             intfig=varargin{2}(1);
     end
-    
-    
-    ax(1)=subplot(3,1,1);
-    hold on
-    ylabel('Unscaled Modes')
-    ax(2)=subplot(3,1,2);
-    hold on
-    ylabel('Normalised Modes')
-    ax(3)=subplot(3,1,3);
-    hold on
-    ylabel('Profile')
-    xlabel('Point index')
-    parsplie.splineCase='inversedesign2';
-    for ii=1:numel(analysisCoord2)
-        %         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
-        %         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
-        c1=analysisCoord1;
-        c2=analysisCoord2{ii};
-        posL=PlotProfileDifference(c1,c2,ax);
+    if iscell(analysisCoord1)
+        for jj=1:numel(analysisCoord1)
+            disp('here')
+            h=figure('Name',[entryPoint,'_',modeSmoothScale,'_',int2str(jj)]);
+            ax(1)=subplot(3,1,1);
+            hold on
+            ylabel('Unscaled Modes')
+            ax(2)=subplot(3,1,2);
+            hold on
+            ylabel('Normalised Modes')
+            ax(3)=subplot(3,1,3);
+            hold on
+            ylabel('Profile')
+            xlabel('Point index')
+            parsplie.splineCase='inversedesign2';
+            for ii=1:numel(analysisCoord2)
+                %         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
+                %         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+                c1=analysisCoord1{jj};
+                c2=analysisCoord2{ii}{jj};
+                posL=PlotProfileDifference(c1,c2,ax);
+            end
+            axes(ax(3))
+            plot(posL,c1(:,1))
+            plot(posL,c1(:,2))
+            legend('x','y')
+            hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',[entryPoint,'_',modeSmoothScale,'_',int2str(jj)],'.fig'])
+        end
+    else
+        
+        h=figure('Name',[entryPoint,'_',modeSmoothScale]);
+        ax(1)=subplot(3,1,1);
+        hold on
+        ylabel('Unscaled Modes')
+        ax(2)=subplot(3,1,2);
+        hold on
+        ylabel('Normalised Modes')
+        ax(3)=subplot(3,1,3);
+        hold on
+        ylabel('Profile')
+        xlabel('Point index')
+        parsplie.splineCase='inversedesign2';
+        for ii=1:numel(analysisCoord2)
+            %         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
+            %         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
+            c1=analysisCoord1;
+            c2=analysisCoord2{ii};
+            posL=PlotProfileDifference(c1,c2,ax);
+        end
+        axes(ax(3))
+        plot(posL,c1(:,1))
+        plot(posL,c1(:,2))
+        legend('x','y')
+        hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',[entryPoint,'_',modeSmoothScale],'.fig'])
+        
     end
-    axes(ax(3))
-    plot(posL,c1(:,1))
-    plot(posL,c1(:,2))
-    legend('x','y')
-    hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',[entryPoint,'_',modeSmoothScale],'.fig'])
 end
 
 function [posL]=PlotProfileDifference(coord1,coord2,ax)

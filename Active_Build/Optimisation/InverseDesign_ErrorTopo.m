@@ -86,7 +86,7 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testL
             targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
         end
         
-        [errorMeasure,modifiedDistance]=IndepProfileError(indepLoop,targArea);
+        [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea);
     else % use nearest neighbour aproach with area matching
         indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
         [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop);
@@ -553,7 +553,7 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
 end
 
 
-function [errorMeasure,areaDistrib]=IndepProfileError(loop,targArea)
+function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea)
     if nargin<2
        targArea=1; 
     end
@@ -569,7 +569,8 @@ function [errorMeasure,areaDistrib]=IndepProfileError(loop,targArea)
         
         
         actPts=loop(ii).coord;
-        areaErr(ii)=loop(ii).out*abs(CalculatePolyArea(actPts))/targArea;
+        loop(ii).normA=abs(CalculatePolyArea(actPts))/targArea;
+        areaErr(ii)=loop(ii).out*loop(ii).normA;
         areaLength(ii)=max(actPts(:,1))-min(actPts(:,1));
         areaPosx(ii)=(min(actPts(:,1))+max(actPts(:,1)))/2;
         areaPosXmin(ii)=min(actPts(:,1));
