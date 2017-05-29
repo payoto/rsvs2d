@@ -3276,7 +3276,7 @@ function [cellRank,isRefine]=REFINE_curvelength(population,grid,actInd,cellInd,.
     
     % This was shown to leave no effect of cell size on the refinement
     % criterion "TestCurvChangeArea"
-    cellRank=sqrt(([cellCentredCoarse(:).curvSnax])).*([cellCentredCoarse(:).lSnax]);
+    cellRank=sqrt(([cellCentredCoarse(:).curvSnax])).*([cellCentredCoarse(:).lSnax]).*([cellCentredCoarse(:).volume]);
     
     cellRank(~isfinite(cellRank))=0;
     cellRank(~isAct)=0;
