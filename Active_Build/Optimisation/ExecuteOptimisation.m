@@ -98,7 +98,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         iterstruct(end)=[];
         [~]=PrintEnd(procStr2,0,tStartOpt);
         pause(0.01)
-        diary off
+        
         if isempty(nIter)
             nIter=numel(iterstruct);
             startIter=1;
@@ -136,6 +136,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             end
             iterstruct=iterstruct2;
         end
+        diary off
     end
     
 end

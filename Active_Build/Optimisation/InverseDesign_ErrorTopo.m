@@ -27,7 +27,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
     profileComp='area';
     
-    [analysisLoop,targPrep]=PrepareLoopCoord(loop,profileComp,typeLoop);
+    [analysisLoop,targPrep]=PrepareLoopCoord(loop,'area',typeLoop);
     
     switch aeroClass
         case 'NACA'
@@ -43,26 +43,28 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
         case 'distance'
             error('Distance error measurement is not supported with topology')
         case 'area'
-            
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(analysisLoop,targCoord);
-            plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
-            h=figure;
-            subplot(2,1,1)
-            PlotLoop(analysisLoop,'coord')
-            hold on
-            PlotLoop(targCoord,'coord')
-            
-            patches=PlotLoop(indepLoop,'coord',1);
-            [patches.FaceAlpha]=deal(0.2);
-            [patches.LineStyle]=deal('none');
-            legend('snake points','Target points')
-            ax=subplot(2,1,2);
-            plotPoints(modifiedDistance)
+        case 'areasquared'
+            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTopo(analysisLoop,targCoord);
+        case 'areadist'
+            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTopo(analysisLoop,targCoord);
             %ax.YScale='log';
         otherwise
             error('not coded yet')
     end
-    
+    plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+    h=figure;
+    subplot(2,1,1)
+    PlotLoop(analysisLoop,'coord')
+    hold on
+    PlotLoop(targCoord,'coord')
+
+    patches=PlotLoop(indepLoop,'coord',1);
+    [patches.FaceAlpha]=deal(0.2);
+    [patches.LineStyle]=deal('none');
+    legend('snake points','Target points')
+    ax=subplot(2,1,2);
+    plotPoints(modifiedDistance)
     
 end
 
@@ -89,7 +91,71 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testL
         [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea);
     else % use nearest neighbour aproach with area matching
         indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
-        [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop);
+    [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
+        [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,errA);
+    end
+    
+    
+end
+
+
+function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTopo(testLoop,targLoop)
+    % test intersection and internal with inpolygon
+    % targLoop ->
+    % testLoop |
+    typeLoop='coord';
+    
+    [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop);
+    
+    % once tested establish the appropriate objective function
+    objChoice=all(any(intersectTable~=0,1));
+    
+    %
+    if objChoice % use iterative area condition
+        [indepLoop]=AreaErrorTopo(testLoop,targLoop);
+        
+        targArea=0;
+        for ii=1:numel(targLoop)
+            targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
+        end
+        funArea=@(x) x.^2;
+        [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea,funArea);
+    else % use nearest neighbour aproach with area matching
+        indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
+        [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
+        [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,errA);
+    end
+    
+    
+end
+
+
+function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTopo(testLoop,targLoop)
+    % test intersection and internal with inpolygon
+    % targLoop ->
+    % testLoop |
+    typeLoop='coord';
+    
+    [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop);
+    
+    % once tested establish the appropriate objective function
+    objChoice=all(any(intersectTable~=0,1));
+    
+    targArea=0;
+    for ii=1:numel(targLoop)
+        targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
+    end
+    %
+    if objChoice % use iterative area condition
+        [indepLoop]=AreaErrorTopo(testLoop,targLoop);
+        
+        
+        
+        [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea);
+    else % use nearest neighbour aproach with area matching
+        indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
+        
+        [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,targArea);
     end
     
     
@@ -115,7 +181,7 @@ function [out]=TestInternalOrIntersect(coord1,coord2)
     end
 end
 
-function [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop)
+function [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,errA)
     % NearestNeighbourCondition
     targCoord=vertcat(targLoop(:).coord);
     testCoord=vertcat(testLoop(:).(typeLoop));
@@ -124,7 +190,6 @@ function [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop
     
     modifiedDistance=[dTarg.^2];
     
-    [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
     
     errorMeasure.sum=sum(modifiedDistance)+errA;
     errorMeasure.mean=mean(modifiedDistance)+errA;
@@ -553,9 +618,12 @@ function [errorMeasure,areaDistrib]=CompareProfilesArea(profileCoord,targCoord)
 end
 
 
-function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea)
-    if nargin<2
-       targArea=1; 
+function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea,funArea)
+    if nargin<3
+        funArea=@(x) x;
+        if nargin<2
+            targArea=1;
+        end
     end
     
     nX0=numel(loop);
@@ -569,7 +637,7 @@ function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea)
         
         
         actPts=loop(ii).coord;
-        loop(ii).normA=abs(CalculatePolyArea(actPts))/targArea;
+        loop(ii).normA=funArea(abs(CalculatePolyArea(actPts))/targArea);
         areaErr(ii)=loop(ii).out*loop(ii).normA;
         areaLength(ii)=max(actPts(:,1))-min(actPts(:,1));
         areaPosx(ii)=(min(actPts(:,1))+max(actPts(:,1)))/2;

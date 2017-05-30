@@ -129,7 +129,7 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
         end
     else
         warning('Population size is too small for DE - new Pop will be same as old')
-        newPop=[vertcat(iterCurr(:).fill),vertcat(iterCurr(:).nonvarfill)];
+        newPop=[vertcat(iterCurr(:).fill),vertcat(iterCurr(:).nonfillvar)];
     end
     
 end
