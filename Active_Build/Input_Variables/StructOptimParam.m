@@ -1816,7 +1816,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     % refcrit = 'curvelength' 'contcurvevol'
     gridCase='uo';
     ratioPos=1;
-    lvl=8+lvlExtra;
+    lvl=8;
     [aeroName]=MultiTopoAeroCases(aeroName);
     paroptim=refsweeplocal(gridCase,aeroName,100,lvl);
     
@@ -1857,6 +1857,18 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+    switch lvlExtra
+        case 0
+            paroptim.obj.invdes.profileComp='area';
+        case 1
+            paroptim.obj.invdes.profileComp='areasquared';
+        case 2
+            paroptim.obj.invdes.profileComp='areadist';
+        otherwise
+            error('invalid profileComp')
+    end
+            
+    %paroptim.obj.invdes.profileComp=''; %  'area' 'areasquared' 'areadist'
 end
 
 function [nacaStr]=MultiTopoAeroCases(shortName)
@@ -3290,6 +3302,8 @@ function paroptim=bulkNacaInvDes()
     [paroptim]=Inverse_Bulk();
     
     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk');
+    paroptim.parametrisation.optiminit.cellLevels=[18 4];
+    paroptim.parametrisation.snakes.refine.gridDistrib='none';
     paroptim.obj.invdes.aeroName='';
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='NACAmulti';

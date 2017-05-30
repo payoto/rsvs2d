@@ -344,7 +344,7 @@ function [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,bas
     snakSave(end).volumefraction.totVolume=[volfra(:).totalvolume];
     
     outinfo=OptimisationOutput('profilepost',param,outinfo,looprestart,...
-        restartsnake,snakSave,tecStruct);
+        restartsnake,snakSave,tecStruct,nIter,nProf);
     
     
     writeDirectory=outinfo.dirprofile;

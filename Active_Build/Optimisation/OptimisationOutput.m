@@ -148,7 +148,7 @@ function [writeDirectory]=OptimisationOutput_profile(paramoptim,out,nIter,nProf,
 end
 
 function [writeDirectory]=OptimisationOutput_profilepost(paramoptim,out,loop,...
-        restartsnak,snakSave,tecStruct)
+        restartsnak,snakSave,tecStruct,nIter,nProf)
     
     varExtract={'resampleSnak','buildInternal','typeLoop'};
     [resampleSnak,buildInternal,typeLoop]=ExtractVariables(varExtract,paramoptim);
@@ -157,12 +157,16 @@ function [writeDirectory]=OptimisationOutput_profilepost(paramoptim,out,loop,...
     marker=out.marker;
     t=out.tOutput;
     rootDir=out.rootDir;
-    %     iterStr=['\iteration_',int2str(nIter),'_',datestr(t,'yymmddTHHMM')];
-    %     profStr=['\profile_',int2str(nProf),'_',datestr(t,'yymmddTHHMMSS')];
-    markerShort=['InterpOptim'];
     
-    
-    writeDirectory=[rootDir,filesep,'InterpOptim'];
+    if ~(nIter==0 && nProf==1)
+        iterStr=['\iteration_',int2str(nIter)];
+        profStr=['\profile_',int2str(nProf)];
+        writeDirectory=[rootDir,iterStr,profStr];
+        markerShort=[int2str(nIter),'_',int2str(nProf)];
+    else
+        markerShort=['InterpOptim'];
+        writeDirectory=[rootDir,filesep,'InterpOptim'];
+    end
     writeDirectory=MakePathCompliant(writeDirectory);
     mkdir(writeDirectory);
     
@@ -640,10 +644,12 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
     %parfor jj=1:kk
-    for jj=1:kk
+    postList=1:nIter;
+    postLog=true(size(1:kk));
+    parfor jj=1:kk
         ii=needRerun(jj);
-        
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        try
         if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
             
             
@@ -658,12 +664,16 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
                 end
             end
         end
+        catch ME
+            disp(ME.getReport);
+            postLog(jj)=false;
+        end
         
     end
-    
+    postList(needRerun(~postLog))=[];
     minIterRootDirNum=zeros([1,nIter]);
     
-    for ii=1:nIter
+    for ii=postList
         
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         [~,filename]=FindDir( minIterPos,'tecsubfile',false);
