@@ -48,6 +48,8 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTopo(analysisLoop,targCoord);
         case 'areadist'
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTopo(analysisLoop,targCoord);
+        case 'areapdist'
+            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaPRawDistTopo(analysisLoop,targCoord);
             %ax.YScale='log';
         otherwise
             error('not coded yet')
@@ -152,6 +154,39 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTop
         
         
         [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea);
+    else % use nearest neighbour aproach with area matching
+        indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
+        
+        [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,targArea);
+    end
+    
+    
+end
+
+function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaPRawDistTopo(testLoop,targLoop)
+    % test intersection and internal with inpolygon
+    % targLoop ->
+    % testLoop |
+    typeLoop='coord';
+    
+    [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop);
+    
+    % once tested establish the appropriate objective function
+    objChoice=all(any(intersectTable~=0,1));
+    
+    targArea=0;
+    for ii=1:numel(targLoop)
+        targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
+    end
+    %
+    if objChoice % use iterative area condition
+        [indepLoop]=AreaErrorTopo(testLoop,targLoop);
+        
+        
+        
+        [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea);
+        [errorMeasure2,modifiedDistance2]=NotIntersectCondition(targLoop,testLoop,typeLoop,0);
+        errorMeasure=opstruct('+',errorMeasure,errorMeasure2);
     else % use nearest neighbour aproach with area matching
         indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
         
@@ -461,8 +496,29 @@ function [nacaCoord]=GenerateNacaCoordTOPO(x,uplow,nacaStr)
                 refPos,naca45t,naca4c,a4_closed,teps);
         end
         
-        normL=sqrt(sum(TEPos.^2));
-        rot=-asin(TEPos(2)/normL);
+        if numel(nacaCell{1})==1
+            condNorm='lr';
+        else
+            condNorm=nacaCell{1}{2};
+        end
+        
+        
+        switch condNorm
+            case 'lr' % rotate and length normalisation
+                normL=sqrt(sum(TEPos.^2));
+                rot=-asin(TEPos(2)/normL);
+            case 'l'
+                normL=sqrt(sum(TEPos.^2));
+                rot=0;
+            case 'r'
+                normL=1;
+                rot=-asin(TEPos(2)/normL);
+            case 'x'
+                normL=abs(TEPos(1));
+                rot=0;
+        end
+        
+        
         for ii=1:str2double(nacaCell{1}{1})
             
             nacaCoord(ii).coord=nacaCoord(ii).coord/normL;
