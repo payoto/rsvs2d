@@ -1838,15 +1838,19 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     paroptim.spline.resampleSnak=false;
     paroptim.parametrisation.general.passDomBounds(2,:)=...
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
-    if cornAct==1
-        paroptim.parametrisation.general.passDomBounds(1,:)=...
+    
+    
+    switch cornAct
+        case 1
+            paroptim.parametrisation.general.passDomBounds(1,:)=...
             paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.08;
-%         paroptim.parametrisation.general.passDomBounds(2,:)=...
-%             paroptim.parametrisation.general.passDomBounds(2,:)*1.2;
-    elseif cornAct==2
-        paroptim.parametrisation.general.passDomBounds=...
+        case 2
+            paroptim.parametrisation.general.passDomBounds=...
             [-0.5 1.5; -1 1];
         paroptim.parametrisation.optiminit.cellLevels=[2,2];
+        case 3
+            paroptim.parametrisation.general.passDomBounds(1,:)=...
+            paroptim.parametrisation.general.passDomBounds(1,:)/1.2+0.1;
     end
     
     paroptim.optim.CG.varActive='snaksensiv';
@@ -1864,6 +1868,8 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
             paroptim.obj.invdes.profileComp='areasquared';
         case 2
             paroptim.obj.invdes.profileComp='areadist';
+        case 3
+            paroptim.obj.invdes.profileComp='areapdist';
         otherwise
             error('invalid profileComp')
     end
@@ -1881,7 +1887,11 @@ function [nacaStr]=MultiTopoAeroCases(shortName)
         case 'm24412'
             nacaStr='2;4412_5_0_0_0;4412_5_0_0.05_0';
         case 'm244'
-            nacaStr='2;4416_7_0_0_0;4418_3_10_-0.005_-0.02';
+            nacaStr='2;4416_7_0_0_0;4418_3_10_-0.005_-0.03';
+        case 'm244f'
+            nacaStr='2;4416_7_0_0_0;4418_3_10_-0.005_-0.03';
+        case 'm244x'
+            nacaStr='2_x;4416_7_0_0_0;4418_3_10_-0.005_-0.03';
         case 'm344'
             nacaStr='3;4418_7_0_0_0;2212_4_15_-0.005_-0.02;2212_2_30_-0.02_-0.015';
         otherwise

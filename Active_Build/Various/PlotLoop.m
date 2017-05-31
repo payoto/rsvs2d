@@ -22,7 +22,10 @@ function [varargout]=PlotLoop(loop,typeLoop,isfill)
         end
     end
     set(gca,'ColorOrderIndex',index+1);
-    if nargout>0
+    if nargout>0 
+        if isempty(ii)
+            l=[];
+        end
         varargout{1}=l;
     end
 end
