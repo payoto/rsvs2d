@@ -102,9 +102,10 @@ end
 %%
 for ii=figList;
     h=findobj(ii);
-    h(1).Renderer='painters';
+    h(1).Renderer='opengl';
     h(1).Color='none';
     print(h(1),'-r300','-dpng',['.\fig\',h(1).Name,'.png'])
+    h(1).Renderer='painters';
     print(h(1),'-depsc',['.\fig\',h(1).Name,'.eps'])
     h(1).Color=[0.93 0.93 0.93];
     hgsave(h(1),['.\fig\',h(1).Name,'.fig'])

@@ -795,3 +795,139 @@ function []=GenerateProfileBinary(resultDirectory,marker,restartstruct)
     save(fileName,'-struct','restartstruct');
     
 end
+
+%% Tecplot
+
+
+function [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID,time)
+    
+    
+    [numNode,nDim]=size(coordDat);
+    [numElm,nConn]=size(connDat);
+    % Zone Header
+    if ~exist('time','var')
+        cellHeader=FELINESEGHeader(numNode,numElm,strandID);
+    else
+        cellHeader=FELINESEGHeader(numNode,numElm,strandID,time);
+    end
+    % Coordinates
+    for ii=numNode:-1:1
+        cellNodeCoord{ii}='';
+        for jj=1:nDim
+            cellNodeCoord{ii}=[cellNodeCoord{ii},...
+                num2str(coordDat(ii,jj),24),'  '];
+        end
+        for jj=1:nDim+1
+            cellNodeCoord{ii}=[cellNodeCoord{ii},...
+                num2str(vectorDat(ii,jj),24),'  '];
+        end
+    end
+    % Connectivity
+    for ii=numElm:-1:1
+        cellConnCoord{ii}='';
+        for jj=1:nConn
+            cellConnCoord{ii}=[cellConnCoord{ii},...
+                int2str(FindObjNum([],connDat(ii,jj),vertIndex)),'  '];
+        end
+        
+    end
+    
+    cellMesh=[cellHeader,cellNodeCoord,cellConnCoord];
+    
+end
+
+%% Tecplot Headers for various zone types
+
+function cellHeader=FELINESEGHeader(numNodes,numElm,strandID,time)
+    
+%     if ~exist('numNodes','var');numNodes=1;end
+%     if ~exist('numElm','var');numElm=1;end
+    
+    
+    nodesStr=['NODES=',int2str(numNodes),' '];
+    elmStr=['ELEMENTS=',int2str(numElm)];
+    idStr=['STRANDID=',int2str(strandID)];
+    
+    kk=1;
+    
+    cellHeader{kk}=['VARIABLES = "X" ,"Y" ,"U" ,"V", "MAG"']; kk=kk+1;
+    cellHeader{kk}=['ZONE']; kk=kk+1;
+    cellHeader{kk}=['VARLOCATION=([1-5]=NODAL)']; kk=kk+1;
+    cellHeader{kk}=nodesStr; kk=kk+1;
+    cellHeader{kk}=elmStr; kk=kk+1;
+    if exist('time','var');
+        cellHeader{kk}=idStr; kk=kk+1;
+        timeStr=['SOLUTIONTIME=',num2str(time,'%.24f'),' '];
+        cellHeader{kk}=timeStr; kk=kk+1;
+    end
+    cellHeader{kk}='DATAPACKING=POINT'; kk=kk+1;
+    cellHeader{kk}='ZONETYPE=FELINESEG'; kk=kk+1;
+    
+    
+    
+end
+
+function cellHeader=CellCentredDataHeader(numNodes,numElm,nFaces,vararg)
+    % vararg is a structure that can be used to specify arguments:
+    % Possible vararg fields
+    % strandID, time, connecShareZone, varsharezone
+    
+    varFields=fieldnames(vararg);
+    for ii=1:length(varFields)
+        eval([varFields{ii},'=vararg.(varFields{ii});'])
+    end
+    
+    
+    nodesStr=['NODES=',int2str(numNodes),' '];
+    elmStr=['ELEMENTS=',int2str(numElm)];
+    faceStr=['FACES=',int2str(nFaces)];
+
+    kk=1;
+    
+    cellHeader{kk}=['VARIABLES = "X" ,"Y" ,"TARGFILL" ,"VOLFRAC", "DIFF"']; kk=kk+1;
+    cellHeader{kk}=['ZONE']; kk=kk+1;
+    cellHeader{kk}=['VARLOCATION=([1-2]=NODAL ,[3-5]=CELLCENTERED)']; kk=kk+1;
+    cellHeader{kk}=nodesStr; kk=kk+1;
+    cellHeader{kk}=elmStr; kk=kk+1;
+    cellHeader{kk}=faceStr; kk=kk+1;
+    cellHeader{kk}=['NUMCONNECTEDBOUNDARYFACES=0']; kk=kk+1;
+    cellHeader{kk}=['TOTALNUMBOUNDARYCONNECTIONS=0']; kk=kk+1;
+    if ~isempty(time);
+        idStr=['STRANDID=',int2str(strandID)];
+        cellHeader{kk}=idStr; kk=kk+1;
+        timeStr=['SOLUTIONTIME=',num2str(time,'%.24f'),' '];
+        cellHeader{kk}=timeStr; kk=kk+1;
+    end
+    if ~isempty(connecShareZone);
+        connecZoneStr=['CONNECTIVITYSHAREZONE=',int2str(connecShareZone),' '];
+        cellHeader{kk}=connecZoneStr; kk=kk+1;
+    end
+    if ~isempty(varsharezone);
+        cellHeader{kk}=VariableShareZoneString(varsharezone); kk=kk+1;
+    end
+    cellHeader{kk}='DATAPACKING=BLOCK'; kk=kk+1;
+    cellHeader{kk}='ZONETYPE=FEPOLYGON'; kk=kk+1;
+    
+end
+
+function [str]=VariableShareZoneString(varsharezone)
+    % Creates teh string for Variable sharing depending on the structure
+    % varsharezone with fields .vars and .zone
+    
+    str='VARSHARELIST=(';
+    for ii=1:length(varsharezone)
+        str=[str,'['];
+        for jj=1:length(varsharezone(ii).vars)
+            str=[str,int2str(varsharezone(ii).vars(jj))];
+            if jj~=length(varsharezone(ii).vars)
+                str=[str,','];
+            end
+        end
+        str=[str,']=',int2str(varsharezone(ii).zone)];
+        if ii~=length(varsharezone)
+            str=[str,','];
+        end
+    end
+    str=[str,')'];
+end
+

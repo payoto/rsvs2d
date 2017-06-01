@@ -1281,7 +1281,18 @@ function [paroptim]=TInvDes(airfoil,gridCase)
     paroptim.optim.CG.validVol=0.2;
     paroptim.optim.CG.openVol=0.2;
 end
-
+function [paroptim]=Tinvdes2()
+    
+    [paroptim]=TInvDes('2412','uv');
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='none';
+    paroptim.parametrisation.optiminit.modeSmoothType='none'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='none';
+    paroptim.optim.CG.diffStepSize=[1e-1];
+end
 function paroptim=refsweeplocal(gridCase,airfoil,nIter,lvl)
     
     if nargin<=2;nIter=30;end
