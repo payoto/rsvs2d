@@ -25,7 +25,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     varExtract={'typeLoop'};
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
-    profileComp='area';
+    %profileComp='area';
     
     [analysisLoop,targPrep]=PrepareLoopCoord(loop,'area',typeLoop);
     
@@ -100,7 +100,6 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testL
     
 end
 
-
 function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTopo(testLoop,targLoop)
     % test intersection and internal with inpolygon
     % targLoop ->
@@ -120,7 +119,8 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTop
         for ii=1:numel(targLoop)
             targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
         end
-        funArea=@(x) x.^2;
+        funArea{1}=@(x) x.^2;
+        funArea{2}=@(x) sqrt(x);
         [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea,funArea);
     else % use nearest neighbour aproach with area matching
         indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
@@ -130,7 +130,6 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTop
     
     
 end
-
 
 function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTopo(testLoop,targLoop)
     % test intersection and internal with inpolygon
@@ -676,7 +675,8 @@ end
 
 function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea,funArea)
     if nargin<3
-        funArea=@(x) x;
+        funArea{1}=@(x) x;
+        funArea{2}=@(x) x;
         if nargin<2
             targArea=1;
         end
@@ -693,7 +693,7 @@ function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea,funArea
         
         
         actPts=loop(ii).coord;
-        loop(ii).normA=funArea(abs(CalculatePolyArea(actPts))/targArea);
+        loop(ii).normA=funArea{1}(abs(CalculatePolyArea(actPts))/targArea);
         areaErr(ii)=loop(ii).out*loop(ii).normA;
         areaLength(ii)=max(actPts(:,1))-min(actPts(:,1));
         areaPosx(ii)=(min(actPts(:,1))+max(actPts(:,1)))/2;
@@ -701,11 +701,11 @@ function [errorMeasure,areaDistrib,loop]=IndepProfileError(loop,targArea,funArea
         areaPosXmax(ii)=max(actPts(:,1));
     end
     
-    errorMeasure.sum=sum(areaErr);
-    errorMeasure.mean=mean(areaErr);
-    errorMeasure.std=std(areaErr);
-    errorMeasure.max=max(areaErr);
-    errorMeasure.min=min(areaErr);
+    errorMeasure.sum=funArea{2}(sum(areaErr));
+    errorMeasure.mean=funArea{2}(mean(areaErr));
+    errorMeasure.std=funArea{2}(std(areaErr));
+    errorMeasure.max=funArea{2}(max(areaErr));
+    errorMeasure.min=funArea{2}(min(areaErr));
     
     areaDistrib=[min(areaPosXmin),areaPosx,areaPosXmax;
         0,areaErr./areaLength*2,-areaErr./areaLength*2];

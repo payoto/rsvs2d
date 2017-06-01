@@ -1838,7 +1838,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     paroptim.spline.resampleSnak=false;
     paroptim.parametrisation.general.passDomBounds(2,:)=...
         paroptim.parametrisation.general.passDomBounds(2,:)/2;
-    
+    paroptim.refine.slopeConv=0.1;
     
     switch cornAct
         case 1

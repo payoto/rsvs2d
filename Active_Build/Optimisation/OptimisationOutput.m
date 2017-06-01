@@ -1719,23 +1719,32 @@ function [dat]=GenerateOptimalSolDir(resultDirectory,markerSmall,optimDirection,
     c=dir(resultDirectory);
     isFileName=false;
     ii=0;
-    while(~isFileName)
+    while(~isFileName) && ii<numel(c)
         ii=ii+1;
         isFileName=~isempty(regexp(c(ii).name,'restart', 'once'));
     end
-    load([resultDirectory,filesep,c(ii).name])
-    h=CheckOptimProfile('loop',loop);
-    hgsave(h,MakePathCompliant([resultDirectory,'\OptProf_',markerSmall,'.fig']));
-    fileName=[resultDirectory,'\OptProf_',markerSmall,'.mat'];
-    fileName=MakePathCompliant(fileName);
-    save(fileName,'optimsolution');
-    
-    dat.A=optimstruct(end).population(posOpt).additional.A;
-    coord=vertcat(loop(:).subdivision);
-    dat.xMin=min(coord(:,1));
-    dat.xMax=max(coord(:,1));
-    dat.t=max(coord(:,2))-min(coord(:,2));
-    dat.nPoints=length(coord(:,1));
+    if isFileName
+        load([resultDirectory,filesep,c(ii).name])
+        h=CheckOptimProfile('loop',loop);
+        hgsave(h,MakePathCompliant([resultDirectory,'\OptProf_',markerSmall,'.fig']));
+        fileName=[resultDirectory,'\OptProf_',markerSmall,'.mat'];
+        fileName=MakePathCompliant(fileName);
+        save(fileName,'optimsolution');
+        
+        dat.A=optimstruct(end).population(posOpt).additional.A;
+        coord=vertcat(loop(:).subdivision);
+        dat.xMin=min(coord(:,1));
+        dat.xMax=max(coord(:,1));
+        dat.t=max(coord(:,2))-min(coord(:,2));
+        dat.nPoints=length(coord(:,1));
+    else
+        dat.A=0;
+        coord=[0,0];
+        dat.xMin=min(coord(:,1));
+        dat.xMax=max(coord(:,1));
+        dat.t=max(coord(:,2))-min(coord(:,2));
+        dat.nPoints=length(coord(:,1));
+    end
     
 end
 
