@@ -114,7 +114,8 @@ function [tecsnaxel,tecsnakposition,snakSave,looprestart,restartsnake,outinfo]..
     tecStruct.nPop=nPop;
     tecStruct.fineGrid=gridrefined;
     tecStruct.volumefraction.targetfill=...
-        [supportstructsens.volumefraction(:).targetfill];
+        [baseGrid.cell(:).fill];
+        %[supportstructsens.volumefraction(:).targetfill];
     tecStruct.volumefraction.currentfraction=...
         [supportstructsens.volumefraction(:).volumefraction];
     tecStruct.volumefraction.totVolume=...
