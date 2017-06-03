@@ -102,7 +102,7 @@ end
 %%
 for ii=figList;
     h=findobj(ii);
-    h(1).Renderer='opengl';
+        h(1).Renderer='opengl';
     h(1).Color='none';
     hCol=h(3).Color;
     h(3).Color='none';
