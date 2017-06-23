@@ -293,6 +293,12 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     end
     if numel(optimstruct)>=4
         [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
+        if ~isGradient
+            [teststruct]=RebuildFromIter(optimstruct);
+            GenerateTestResultBinary(writeDirectory,marker,teststruct,paroptim);
+            [h2]=OptimHistory(isGradient,teststruct,knownOptim,defaultVal,direction);
+            h=[h,h2];
+        end
         
         if isAnalytical
             [h2]=PlotAnalyticalPath(paroptim,optimstruct,objectiveName);
@@ -300,7 +306,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         end
         %print(h,'-depsc','-r600',[writeDirectory,'\profiles_',marker,'.eps']);
         if ~isGradient
-            figList={'\Optimisation_','\DesVarHist_'};
+            figList={'\Optimisation_','\DesVarHist_','\OptimisationTest_','\DesVarHistTest_'};
         else
             figList={'\Optimisation_','\GradHistory_'};
             [h2]=PlotGradientsRefine(paroptim,optimstruct);
@@ -936,7 +942,6 @@ function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
     fclose('all');
 end
 
-
 function [destPath]=EditPLTHeader(cfdPath,filename,dat,expr,val,nOccur)
     
     % dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'}
@@ -1011,8 +1016,6 @@ function [destPath]=EditVariablePLT_FELINESEG(varList,ratio,cfdPath,filename)
     fclose('all');
 end
 
-
-
 function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,filename,nZone)
     
     cfdPath=MakePathCompliant(cfdPath);
@@ -1050,8 +1053,6 @@ function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,file
     end
     fclose('all');
 end
-
-
 
 %% Figures
 
@@ -1667,8 +1668,46 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     
 end
 
-%% Default Inverse design
+%% Rebuild Test population 
 
+function [teststruct]=RebuildFromIter(iterstruct)
+    
+    teststruct=iterstruct;
+    kk=0;
+    numel(iterstruct)
+    for ii=1:numel(iterstruct)
+        curiterpath='';
+        nPop=numel(iterstruct(ii).population);
+        jj=1;
+        while isempty(curiterpath) && jj<=nPop
+            curiterpath=iterstruct(ii).population(jj).location;
+            jj=jj+1;
+        end
+        
+        if ~isempty(curiterpath)
+            curiterpath=regexp(curiterpath,'^.*iteration_[0-9]*','match');
+            if isdir(curiterpath{1})
+            [iterbin,~]=FindDir(curiterpath{1},'population_iteration',0);
+            if ~isempty(iterbin)
+                itertest=load(iterbin{1});
+                teststruct(ii).population=itertest.population;
+            else
+                kk=kk+1;
+            end
+            else
+                kk=kk+1;
+            end
+            
+        else
+            kk=kk+1;
+        end
+    end 
+    
+    if kk>0
+        warning([int2str(kk),' test populations not found, live population will be displayed in their place'])
+    end
+    
+end
 
 %% Binaries
 
@@ -1696,6 +1735,14 @@ function []=GenerateIterResultBinary(resultDirectory,marker,optimstruct,paramopt
     fileName=[resultDirectory,'\FinalParam_',marker,'.mat'];
     fileName=MakePathCompliant(fileName);
     save(fileName,'paramoptim');
+    
+end
+
+function []=GenerateTestResultBinary(resultDirectory,marker,optimstruct,paramoptim)
+    
+    fileName=[resultDirectory,'\OptimTestRes_',marker,'.mat'];
+    fileName=MakePathCompliant(fileName);
+    save(fileName,'optimstruct');
     
 end
 
