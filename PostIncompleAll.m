@@ -12,10 +12,10 @@ for ii=1:1
         jj=jj+1;
     end
     optimstruct=optimstruct(1:end-jj-1);
-    try
+%     try
         PostTreatIncomplete(pathStr,[],optimstruct);
-    catch MEid
-        T{ii}=MEid;
-        
-    end
+%     catch MEid
+%         T{ii}=MEid;
+%         
+%     end
 end

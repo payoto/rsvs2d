@@ -294,7 +294,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     if numel(optimstruct)>=4
         [h]=OptimHistory(isGradient,optimstruct,knownOptim,defaultVal,direction);
         if ~isGradient
-            [teststruct]=RebuildFromIter(optimstruct);
+            [teststruct]=RebuildFromIter(optimstruct,out);
             GenerateTestResultBinary(writeDirectory,marker,teststruct,paroptim);
             [h2]=OptimHistory(isGradient,teststruct,knownOptim,defaultVal,direction);
             h=[h,h2];
@@ -1670,38 +1670,58 @@ end
 
 %% Rebuild Test population 
 
-function [teststruct]=RebuildFromIter(iterstruct)
+function [teststruct]=RebuildFromIter(iterstruct,out)
     
     teststruct=iterstruct;
     kk=0;
     numel(iterstruct)
-    for ii=1:numel(iterstruct)
-        curiterpath='';
-        nPop=numel(iterstruct(ii).population);
-        jj=1;
-        while isempty(curiterpath) && jj<=nPop
-            curiterpath=iterstruct(ii).population(jj).location;
-            jj=jj+1;
-        end
-        
-        if ~isempty(curiterpath)
-            curiterpath=regexp(curiterpath,'^.*iteration_[0-9]*','match');
-            if isdir(curiterpath{1})
-            [iterbin,~]=FindDir(curiterpath{1},'population_iteration',0);
-            if ~isempty(iterbin)
-                itertest=load(iterbin{1});
-                teststruct(ii).population=itertest.population;
+    
+    for ii=1:numel(out)
+        [iterDir,iterName]=FindDir(out(ii).rootDir,'iteration_',1);
+        for jj=1:numel(iterDir)
+            if isdir(iterDir{jj})
+                [iterbin,iterBinName]=FindDir(iterDir{jj},'population_iteration',0);
+                if ~isempty(iterbin)
+                    itertest=load(iterbin{1});
+                    ll=(regexp(iterBinName{1},'[0-9]*','match'));
+                    ll=str2double(ll{1});
+                    teststruct(ll).population=itertest.population;
+                else
+                    kk=kk+1;
+                end
             else
                 kk=kk+1;
             end
-            else
-                kk=kk+1;
-            end
-            
-        else
-            kk=kk+1;
         end
-    end 
+    end
+    
+%     for ii=1:numel(iterstruct)
+%         curiterpath='';
+%         nPop=numel(iterstruct(ii).population);
+%         jj=1;
+%         while isempty(curiterpath) && jj<=nPop
+%             curiterpath=iterstruct(ii).population(jj).location;
+%             jj=jj+1;
+%         end
+%         
+%         if ~isempty(curiterpath)
+%             curiterpath=regexp(curiterpath,'^.*iteration_[0-9]*','match');
+%             if isdir(curiterpath{1})
+%             [iterbin,~]=FindDir(curiterpath{1},'population_iteration',0);
+%             if ~isempty(iterbin)
+%                 itertest=load(iterbin{1});
+%                 teststruct(ii).population=itertest.population;
+%             else
+%                 kk=kk+1;
+%             end
+%             else
+%                 kk=kk+1;
+%             end
+%             
+%         else
+%             kk=kk+1;
+%         end
+%     end 
     
     if kk>0
         warning([int2str(kk),' test populations not found, live population will be displayed in their place'])
