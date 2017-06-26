@@ -14,11 +14,16 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
     [paramoptim2]=ReconstructParameter(pathStr,outinfo(1).marker);
     try 
         paramoptim=StructOptimParam(ExtractVariables({'optimCase'},paramoptim2));
-        outVars={paramoptim.structdat(:).vars.name};
+        outVars={paramoptim2.structdat(:).vars.name};
         for ii=numel(outVars):-1:1
             [valVars{ii}]=ExtractVariables(outVars(ii),paramoptim2);
         end
-        paramoptim=SetVariables(outVars,valVars,paramoptim);
+        for ii=1:numel(outVars)
+            try
+            paramoptim=SetVariables(outVars(ii),valVars(ii),paramoptim);
+            catch
+            end
+        end
     catch MEId
         disp(MEId.getReport)
         [paramoptim]=ReconstructParameter(pathStr,outinfo(1).marker);
@@ -39,11 +44,15 @@ function [outinfo]=ReconstructOutinfo(optimstruct)
     rmR=[];
     for ii=1:numel(optimstruct)
         try
-            allRootDir(ii).rootDir=regexprep(optimstruct(ii).population(1).location,'iteration.*$','');
+            kk=1;
+            while isempty(optimstruct(ii).population(kk).location)
+                kk=kk+1;
+            end
+            allRootDir(ii).rootDir=regexprep(optimstruct(ii).population(kk).location,'iteration.*$','');
         catch
             
         
-        rmR=[ii];
+            rmR=[ii];
         end
     end
     allRootDir(rmR)=[];
@@ -133,15 +142,16 @@ function [paramoptim]=ReconstructParameter(pathStr,marker)
             error('Failure to load')
         end
     catch
-        fileName=['param_',marker];
-        matName=matlab.lang.makeValidName(fileName);
-        copyfile([pathStr,filesep,fileName,'.dat'],['.',filesep,matName,'.m']);
+        
+        [rootParam,nameParam]=FindDir(pathStr,'param',0);
+        isOptParam=cellfun(@isempty,regexp(nameParam,'_parametrisation'));
+        matName=matlab.lang.makeValidName(regexprep(nameParam{isOptParam},'.dat',''));
+        copyfile(rootParam{isOptParam},['.',filesep,matName,'.m']);
         eval(matName)
         paramoptim=param;
         paramoptim.structdat=GetStructureData(paramoptim);
-        fileName=['param_',marker,'_parametrisation'];
-        matName=matlab.lang.makeValidName(fileName);
-        copyfile([pathStr,filesep,fileName,'.dat'],['.',filesep,matName,'.m']);
+        
+        copyfile(rootParam{~isOptParam},['.',filesep,matName,'.m']);
         eval(matName)
         paramoptim.parametrisation=param;
         paramoptim.parametrisation.structdat=...

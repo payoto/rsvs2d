@@ -93,7 +93,7 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaTopo(testL
         [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea);
     else % use nearest neighbour aproach with area matching
         indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
-    [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
+     [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
         [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,errA);
     end
     
