@@ -28,7 +28,16 @@ function [restartPath]=IdentifyRestart(restartDir,distinct,preStr,postStr)
         
         restartPath=[restartDir,filesep,restartNamesFull{kk}];
         
+    elseif ischar(distinct)
         
+        kk=find(~cellfun(@isempty,regexp(restartNames,distinct)));
+        
+        
+        if isempty(kk)
+            error('Restart not found')
+        end
+        
+        restartPath=[restartDir,filesep,restartNamesFull{kk(1)}];
     else
         error('Not supported')
     end
