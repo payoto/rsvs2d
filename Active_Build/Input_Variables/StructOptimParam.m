@@ -1121,7 +1121,7 @@ function [paroptim]=areabusesweep(e)
     paroptim.general.optimMethod='DE';
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
-    paroptim.general.nPop=75;
+    paroptim.general.nPop=100;
     paroptim.general.maxIter=150;
     paroptim.general.worker=8;
     
@@ -1186,7 +1186,7 @@ function [paroptim]=areabuseCGre(e)
     %paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
-    paroptim.parametrisation.general.restart=false;
+    paroptim.parametrisation.general.restart=true;
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
     paroptim.optim.CG.nLineSearch=8;

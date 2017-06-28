@@ -1,4 +1,4 @@
-for ii=1
+for ii=1:5
 
     fid=fopen('PostDir2.txt','r');
     for jj=1:ii
