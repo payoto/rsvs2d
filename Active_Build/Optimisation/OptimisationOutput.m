@@ -333,8 +333,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
         tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
         tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
-        ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
-            tecPlotFile,axisRatio,paroptim,allRootDir);
+%         ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
+%             tecPlotFile,axisRatio,paroptim,allRootDir);
         
     end
     if strcmp(objectiveName,'InverseDesign') || strcmp(objectiveName,'InverseDesignTopo')
@@ -1677,21 +1677,25 @@ function [teststruct]=RebuildFromIter(iterstruct,out)
     numel(iterstruct)
     
     for ii=1:numel(out)
-        [iterDir,iterName]=FindDir(out(ii).rootDir,'iteration_',1);
-        for jj=1:numel(iterDir)
-            if isdir(iterDir{jj})
-                [iterbin,iterBinName]=FindDir(iterDir{jj},'population_iteration',0);
-                if ~isempty(iterbin)
-                    itertest=load(iterbin{1});
-                    ll=(regexp(iterBinName{1},'[0-9]*','match'));
-                    ll=str2double(ll{1});
-                    teststruct(ll).population=itertest.population;
+        if isdir(out(ii).rootDir)
+            [iterDir,iterName]=FindDir(out(ii).rootDir,'iteration_',1);
+            for jj=1:numel(iterDir)
+                if isdir(iterDir{jj})
+                    [iterbin,iterBinName]=FindDir(iterDir{jj},'population_iteration',0);
+                    if ~isempty(iterbin)
+                        itertest=load(iterbin{1});
+                        ll=(regexp(iterBinName{1},'[0-9]*','match'));
+                        ll=str2double(ll{1});
+                        teststruct(ll).population=itertest.population;
+                    else
+                        kk=kk+1;
+                    end
                 else
                     kk=kk+1;
                 end
-            else
-                kk=kk+1;
             end
+        else
+            warning('Non Existing Root Dir')
         end
     end
     

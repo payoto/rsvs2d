@@ -559,10 +559,12 @@ end
 
 function [fill,isConstr]=IterativeValFill(fill,desVarRange,constrVal,volVec,totvol)
     isConstr=true;
-    ratio=2;
+    
     kk=0;
     n=length(fill);
     maxFill=max(desVarRange);
+    fillBound=(fill>=maxFill);
+    ratio=(constrVal-sum(volVec(fillBound)))/sum(volVec(~fillBound).*fill(~fillBound));
     while ratio>1 && kk<=n+1;
         fillBound=(fill>=maxFill);
         ratio=(constrVal-sum(volVec(fillBound)))/sum(volVec(~fillBound).*fill(~fillBound));

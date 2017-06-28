@@ -1116,13 +1116,13 @@ function [paroptim]=areabusesweep(e)
     
     [paroptim]=MultiTopo_DEhoriz();
     [paroptim]=SumVolumeConstraint(paroptim);
-    paroptim=Test_Desktop(paroptim);
+    
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=75;
-    paroptim.general.maxIter=200;
+    paroptim.general.maxIter=150;
     paroptim.general.worker=8;
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
@@ -1135,6 +1135,21 @@ function [paroptim]=areabusesweep(e)
 %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
 %     paroptim.desvar.startPopNonFill={'rand'};
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    
+    
+end
+
+function [paroptim]=areabuseaxrat(e)
+    % Need to add support of the axis ratio as a design variable in there
+    % as well.
+    [paroptim]=areabusesweep(e);
+    
+    
+    paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+    paroptim.desvar.numNonFillVar=[1];
+    paroptim.desvar.startPopNonFill={'rand'};
+    paroptim.desvar.desVarRangeNoFill={[0.3,1]*paroptim.parametrisation.snakes.refine.axisRatio}; % [0.1,3] [-10,10] [0 0.5]
+    
 end
 
 function [paroptim]=areabuserefine(e)
@@ -1150,6 +1165,38 @@ function [paroptim]=areabuserefine(e)
     paroptim.general.maxIter=75;
     
     paroptim.refine.refineIter=75;
+end
+
+function [paroptim]=areabuseCGre(e)
+    % Need to add support of the axis ratio as a design variable in there
+    % as well.
+    
+    [paroptim]=CG_Aero();
+    [paroptim]=SmoothModes(paroptim);
+    
+    [paroptim]=SumVolumeConstraint(paroptim);
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.optimMethod='DE';
+    
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=40;
+    paroptim.general.worker=8;
+    paroptim.obj.flow.CFDfolder ='.\Result_Template\CFD_code_Template\supersonic_ogivefine';
+    %paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
+    paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
+    paroptim.parametrisation.general.restart=false;
+    paroptim.constraint.desVarVal={e};
+    paroptim.constraint.desVarConstr={'MinValVolFrac'};
+    paroptim.optim.CG.nLineSearch=8;
+%     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+%     paroptim.desvar.numNonFillVar=[1 ];
+%     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
+%     paroptim.desvar.startPopNonFill={'rand'};
+    [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    
+    
 end
 
 function [paroptim]=AdaptSizeforBusemann(paroptim,e)

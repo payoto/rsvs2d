@@ -1654,8 +1654,9 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 for kk=1:length(volFrac)
                     volFrac(kk)=mean(volLine(kk:kk+1));
                 end
-                volFrac=[1e-3;volFrac;1e-3];
-                volFrac(volFrac>1)=1;
+                deltaLE=5e-4+rand*1e-3;
+                volFrac=[deltaLE;volFrac;deltaLE];
+                volFrac(volFrac>1.5)=1.5;
                 pop(:,jj)=volFrac;
                 
             end
