@@ -183,7 +183,7 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
             paroptim.general.isRestart=true;
             [origPop,~,paroptim,deltas]...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
-                iterstruct(max([startIter-iterGap,startIter])).population);
+                iterstruct(max([startIter-iterGap,startIter])).population,baseGrid);
         end
         
         
@@ -388,6 +388,7 @@ function []=StartParallelPool(nWorker,nTry)
         clusterObj=parcluster(poolName);
         clusterObj.NumWorkers=nWorker;
         saveProfile(clusterObj);
+        
         try
             parpool(poolName)
         catch ME
