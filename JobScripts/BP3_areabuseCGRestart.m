@@ -6,6 +6,7 @@ function BP3_areabuseCGRestart(ii)
     
     
     restartDir='/panfs/panasas01/aero/ap1949/SnakVolParam/restarts/buse1705';
+    restartDir='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\restarts\buse1705';
     distinct=ii;
     preStr='^OptimRes.*_areabusesweep_';
     postStr='_.mat';

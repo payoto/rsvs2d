@@ -1176,7 +1176,7 @@ function [paroptim]=areabuseCGre(e)
     
     [paroptim]=SumVolumeConstraint(paroptim);
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
-    paroptim.general.optimMethod='DE';
+%     paroptim.general.optimMethod='DE';
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=12;
@@ -1186,10 +1186,19 @@ function [paroptim]=areabuseCGre(e)
     %paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
-    paroptim.parametrisation.general.restart=true;
+    paroptim.parametrisation.general.restart=false;
+    paroptim.parametrisation.optiminit.corneractive=true;
+    paroptim.parametrisation.optiminit.cellLevels=[6,10];
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
     paroptim.optim.CG.nLineSearch=8;
+    paroptim.optim.CG.validVol=0.05;
+    paroptim.optim.CG.openVol=0.05;
+    paroptim.optim.CG.diffStepSize = [1 -1]*1e-5; 
+    paroptim.optim.CG.minDiffStep = [1e-6]; 
+    paroptim.optim.CG.maxDiffStep = [1e-5]; 
 %     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
 %     paroptim.desvar.numNonFillVar=[1 ];
 %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
