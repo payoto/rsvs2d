@@ -333,8 +333,8 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
         tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
         tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
-%         ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
-%             tecPlotFile,axisRatio,paroptim,allRootDir);
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
+            tecPlotFile,axisRatio,paroptim,allRootDir);
         
     end
     if strcmp(objectiveName,'InverseDesign') || strcmp(objectiveName,'InverseDesignTopo')
@@ -1658,7 +1658,7 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
         ii=ii+1;
     catch
     end
-    l(ii)=plot(step,changePos);
+    l(ii)=plot(step,changePos(end-numel(step)+1:end));
     l(ii).DisplayName='Length of movement';
     ii=ii+1;
     l(ii)=plot(step,directionChange.gradNorm);
