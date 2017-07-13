@@ -11,6 +11,14 @@
 
 
 function []=InitialiseSnakeFlow()
+    comStr=computer;
+    if strcmp(comStr(1:2),'PC')
+        
+    else
+        clear all
+        setenv('TMP','/local/') 
+    end
+    
     singleFolder={''};
     rootTreeFolders={'Active_Build',['MEX_Function_Directory',filesep,'MEX_Executables']...
         ,'Automated_Function_Directory','JobScripts'};
