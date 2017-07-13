@@ -328,8 +328,6 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     include_GridCheck
     
     
-    
-    
     % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
