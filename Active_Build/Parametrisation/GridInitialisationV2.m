@@ -38,9 +38,9 @@ function [unstructured,loop,unstructReshape]=...
     global nPadding
     nPadding=passPadding;
     
-%     typDat='foillo';
-%     loadLogical=false;
-%     isCheckRes=true;
+    %     typDat='foillo';
+    %     loadLogical=false;
+    %     isCheckRes=true;
     
     % Execution of subroutines
     if ~loadLogical
@@ -60,7 +60,7 @@ function [unstructured,loop,unstructReshape]=...
             [loop]=OrderSurfaceVertex(unstructured,isEdge,cond);
         end
     end
-
+    
     if isCheckRes
         %CheckResults(unstructured,loop)
     end
@@ -73,36 +73,63 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
     switch gridDistrib
         
         case 'none'
-        
-        case 'cosX1'        
-        xMax=1; %max(coord(:,1));
-        xMin=-1; %min(coord(:,1));
-        [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
-        case 'cosX01'        
-        xMax=1; %max(coord(:,1));
-        xMin=0; %min(coord(:,1));
-        [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
-        case 'cosXsquared01'        
-        xMax=1; %max(coord(:,1));
-        xMin=0; %min(coord(:,1));
-        [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
-        case 'cosXYsquared01'        
-        xMax=1; %max(coord(:,1));
-        xMin=0; %min(coord(:,1));
-        [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
-        [unstructured]=CosGridDistribY(unstructured);
-        case 'cosXsquared'        
-        xMax=max(unstructured.vertex.coord(:,1));
-        xMin=min(unstructured.vertex.coord(:,1));
-        [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
+            
+        case 'cosX1'
+            xMax=1; %max(coord(:,1));
+            xMin=-1; %min(coord(:,1));
+            [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
+        case 'cosX01'
+            xMax=1; %max(coord(:,1));
+            xMin=0; %min(coord(:,1));
+            [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
+        case 'cosXsquared01'
+            xMax=1; %max(coord(:,1));
+            xMin=0; %min(coord(:,1));
+            [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
+        case 'cosXYsquared01'
+            xMax=1; %max(coord(:,1));
+            xMin=0; %min(coord(:,1));
+            [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
+            [unstructured]=CosGridDistribY(unstructured);
+        case 'cosXsquared'
+            xMax=max(unstructured.vertex.coord(:,1));
+            xMin=min(unstructured.vertex.coord(:,1));
+            [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin);
         case 'cosX'
-        xMax=max(unstructured.vertex.coord(:,1));
-        xMin=min(unstructured.vertex.coord(:,1));
-        [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
-        
+            xMax=max(unstructured.vertex.coord(:,1));
+            xMin=min(unstructured.vertex.coord(:,1));
+            [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
+        case 'thinLETE'
+            maxExcess=0.1;
+            xMax=1;
+            xMin=0;
+            [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess);
         otherwise
             warning('Unrecognised grid distribution Type')
     end
+    
+end
+
+function [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess)
+    
+    coord=unstructured.vertex.coord;
+    x=coord(:,1);
+    
+    posiExcess=max(x-xMax);
+    negiExcess=max(-x+xMin);
+    
+    %     Dx=xMax-x;
+    %     Dx=min(abs(Dx(Dx>1e-10)));
+    %     xNorm=(coord(:,1)-xMin)/(xMax-xMin);
+    newX=x;
+    
+    %     DminNx=newX(xNorm<1 & xNorm>0)-1;
+    %     DminNx=min(abs(DminNx(DminNx~=0)));
+    newX((x>xMax))=(x(x>xMax)-xMax)*maxExcess/posiExcess+xMax;
+    newX((x<xMin))=(x(x<xMin)-xMin)*maxExcess/negiExcess+xMin;
+    
+    coord(:,1)=newX;
+    unstructured.vertex.coord=coord;
     
 end
 
@@ -110,20 +137,20 @@ function [unstructured]=CosGridDistribX(unstructured,xMax,xMin)
     
     coord=unstructured.vertex.coord;
     x=coord(:,1);
-
+    
     Dx=xMax-x;
-
+    
     Dx=min(abs(Dx(Dx>1e-10)));
-
+    
     xNorm=(coord(:,1)-xMin)/(xMax-xMin);
     newX=(1-cos(xNorm*pi))/2*(xMax-xMin)+xMin;
     DminNx=newX(xNorm<1 & xNorm>0)-1;
     DminNx=min(abs(DminNx(DminNx~=0)));
-
+    
     newX((x>xMax))=(x(x>xMax)-xMax)/Dx*DminNx+xMax;
-
+    
     newX((x<xMin))=(x(x<xMin)-xMin)/Dx*DminNx+xMin;
-
+    
     coord(:,1)=newX;
     unstructured.vertex.coord=coord;
     
@@ -133,22 +160,22 @@ function [unstructured]=Cos2GridDistribX(unstructured,xMax,xMin)
     
     coord=unstructured.vertex.coord;
     x=coord(:,1);
-
+    
     Dx=xMax-x;
-
+    
     Dx=min(abs(Dx(Dx>1e-10)));
-
+    
     xNorm=(coord(:,1)-xMin)/(xMax-xMin);
     newX=((1-cos(xNorm*pi))/2).^1.4*(xMax-xMin)+xMin;
     DminNx=[newX(xNorm<1 & xNorm>0)-1];
     DminNxBack=min(abs(DminNx(DminNx~=0)));
     DminNx=[newX(xNorm<1 & xNorm>0)];
     DminNxFront=min(abs(DminNx(DminNx~=0)));
-
+    
     newX((x>xMax))=(x(x>xMax)-xMax)/Dx*DminNxBack+xMax;
-
+    
     newX((x<xMin))=(x(x<xMin)-xMin)/Dx*DminNxFront+xMin;
-
+    
     coord(:,1)=newX;
     unstructured.vertex.coord=coord;
     
@@ -162,20 +189,20 @@ function [unstructured]=CosGridDistribY(unstructured)
     y1=unique(y);
     [~,I]=min(y1);y1(I)=[];yMin=min(y1);[~,I]=max(y1);y1(I)=[];yMax=max(y1);
     Dy=yMax-y;
-
+    
     Dy=min(abs(Dy(Dy>1e-10)));
-
+    
     yNorm=(y-yMin)/(yMax-yMin);
     newY=distrib(yNorm-0.5)*(yMax-yMin);
     DminNx=[newY(yNorm<1 & yNorm>0)-yMax];
     DminNxBack=min(abs(DminNx(DminNx~=0)));
     DminNx=[newY(yNorm<1 & yNorm>0)-yMin];
     DminNxFront=min(abs(DminNx(DminNx~=0)));
-
+    
     newY((y>yMax))=(y(y>yMax)-yMax)/Dy*DminNxBack+yMax;
-
+    
     newY((y<yMin))=(y(y<yMin)-yMin)/Dy*DminNxFront+yMin;
-
+    
     coord(:,2)=newY;
     unstructured.vertex.coord=coord;
     
@@ -244,7 +271,7 @@ function [fill]=InputData(typDat)
         case 'doubleBody'
             imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
             fill=ImageProcess(imPath,'k',nPadding);
-        
+            
         otherwise
             imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
             fill=ImageProcess(imPath,'w',nPadding);
@@ -279,7 +306,7 @@ function []=WriteCellGridDat(arraySize,cellRef)
 end
 
 function [unstructured]=Initialisation_Square(param)
-    % 
+    %
     
     global nGridSteps domainBounds
     varExtract={'typDat'};
@@ -348,10 +375,10 @@ function [parametrisation,cellRef]=OptimInit(param,isRand)
     parametrisation.isactive(2:nGridSteps(1)-1,2:nGridSteps(2)-1)=true;
     if islogical(corneractive) || (~ischar(corneractive) && (corneractive==0 || corneractive==1))
         
-
+        
         parametrisation.fill([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=defaultCorner;
         parametrisation.isactive([2,nGridSteps(1)-1],[2,nGridSteps(2)-1])=corneractive;
-
+        
         parametrisation.fill=parametrisation.fill;
     else
         LEcol=2;
@@ -405,9 +432,9 @@ function [preProcImage]=PreProcImage(imPath)
     numBit=str2num(regexprep(imClass,'uint',''));
     preProcImage=mean(preProcImage,3);
     
-%     lvlMax=max(preProcImage(:));
-%     lvlMin=min(preProcImage(:));
-
+    %     lvlMax=max(preProcImage(:));
+    %     lvlMin=min(preProcImage(:));
+    
     lvlMax=2^numBit-1;
     lvlMin=0;
     

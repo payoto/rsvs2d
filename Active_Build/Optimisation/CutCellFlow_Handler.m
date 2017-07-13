@@ -69,7 +69,7 @@ function []=GenerateMesh(paramoptim,targFolder)
     [status,stdout]=system(meshGenCommand);
     [fidMesh,fidErrMes]=fopen([targFolder,filesep,'griduns'],'r');
     if fidMesh<0
-        errstruct.identifier='CartCell:InvalidMesh:NoMeshFile';
+        errstruct.identifier='Optimiser:CartCell:InvalidMesh:NoMeshFile';
         errstruct.message=['Mesh file failed to open',fidErrMes];
         error(errstruct)
     end
@@ -77,7 +77,7 @@ function []=GenerateMesh(paramoptim,targFolder)
     str=fgetl(fidMesh);
     meshSize=str2num(str);
     if meshSize(1)<100
-        errstruct.identifier='CartCell:InvalidMesh:NoCell';
+        errstruct.identifier='Optimiser:CartCell:InvalidMesh:NoCell';
         errstruct.message='Mesh not generated properly the final number of cells was less than 100';
         error(errstruct)
     end
