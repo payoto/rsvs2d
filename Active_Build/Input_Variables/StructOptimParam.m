@@ -1144,7 +1144,7 @@ function [paroptim]=areabuseaxrat(e)
     % as well.
     [paroptim]=areabusesweep(e);
     
-    
+    paroptim.parametrisation.snakes.refine.gridDistrib='thinLETE';
     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
     paroptim.desvar.numNonFillVar=[1];
     paroptim.desvar.startPopNonFill={'rand'};

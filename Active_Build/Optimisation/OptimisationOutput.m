@@ -500,37 +500,42 @@ end
 function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     returnPath={};
     returnName={};
-%     if iscell(rootDir)
-%         subDir=dir(rootDir{1});
-%         subDir(1:2)=[];
-%         for ii=2:numel(rootDir)
-%             partsubDir=dir(rootDir{ii});
-%             partsubDir(1:2)=[];
-%             subDir=[subDir,partsubDir];
-%         end
-%     else
-        subDir=dir(rootDir);
+    %     if iscell(rootDir)
+    %         subDir=dir(rootDir{1});
+    %         subDir(1:2)=[];
+    %         for ii=2:numel(rootDir)
+    %             partsubDir=dir(rootDir{ii});
+    %             partsubDir(1:2)=[];
+    %             subDir=[subDir,partsubDir];
+    %         end
+    %     else
+    subDir=dir(rootDir);
+    if isempty(subDir)
+        errStruct.message=sprintf('rootDir is an empty directory structure\n %s',rootDir);
+        errStruct.identifier='Optimiser:Output:findDirFail';
+        error(errStruct)
+    else
         subDir(1:2)=[];
-%     end
-    nameCell={subDir(:).name};
-    isprofileDirCell=strfind(nameCell,strDir);
-    for ii=1:length(subDir)
-        subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
-            ~xor(subDir(ii).isdir,isTargDir);
-    end
-    
-    returnSub=find([subDir(:).isProfile]);
-    
-    
-    if isempty(returnSub)
-        disp('FindDir Could not find requested item')
-    end
-    for ii=1:length(returnSub)
-        returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
-        returnName{ii}=subDir(returnSub(ii)).name;
+        %     end
+        nameCell={subDir(:).name};
+        isprofileDirCell=strfind(nameCell,strDir);
+        for ii=1:length(subDir)
+            subDir(ii).isProfile=(~isempty(isprofileDirCell{ii})) && ...
+                ~xor(subDir(ii).isdir,isTargDir);
+        end
         
+        returnSub=find([subDir(:).isProfile]);
+        
+        
+        if isempty(returnSub)
+            disp('FindDir Could not find requested item')
+        end
+        for ii=1:length(returnSub)
+            returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
+            returnName{ii}=subDir(returnSub(ii)).name;
+            
+        end
     end
-    
     
     
 end
@@ -572,31 +577,40 @@ function [FID]=OpenOptimumSnakLayFile(writeDirectory,marker)
 end
 
 function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
-    
-    [~,iterFolders]=FindDir( rootFolder,'iteration',true);
-    isIter0=regexp(iterFolders,'_0');
-    
-    for ii=1:length(isIter0)
-        isIter0Log(ii)=~isempty(isIter0{ii});
+    try
+        [~,iterFolders]=FindDir( rootFolder,'iteration',true);
+    catch
+        warning('%s does not exist anymore',rootFolder)
+        rootDirName='';
+        iterFolders={};
     end
-    iter0Path=[rootFolder,filesep,iterFolders{isIter0Log}];
-    [initTecFolderFile]=FindDir( iter0Path,'profile',true);
-    [initTecFile,initTecFileName]=FindDir(initTecFolderFile{1},'tecsubfile',false);
-    jj=1;
-    while ~isempty(regexp(initTecFileName{jj},'copy', 'once'))
-        jj=jj+1;
-    end
-    [destPath]=EditVariablePLT_FEPOLYGON(1:2,[1,ratio],[1e-6*pi/3.14,1e-6*pi/3.14],...
-        regexprep(initTecFile{jj},initTecFileName{jj},''),initTecFileName{jj},2);
     
-    compType=computer;
-    if strcmp(compType(1:2),'PC')
-        system(['type "',destPath,'" >> "',tecPlotFile{2},'"']);
-    else
-        system(['cat ''',destPath,''' >> ''',tecPlotFile{2},'''']);
+    
+    if ~isempty(iterFolders)
+        isIter0=regexp(iterFolders,'_0');
+
+        for ii=1:length(isIter0)
+            isIter0Log(ii)=~isempty(isIter0{ii});
+        end
+        iter0Path=[rootFolder,filesep,iterFolders{isIter0Log}];
+        [initTecFolderFile]=FindDir( iter0Path,'profile',true);
+        [initTecFile,initTecFileName]=FindDir(initTecFolderFile{1},'tecsubfile',false);
+        jj=1;
+        while ~isempty(regexp(initTecFileName{jj},'copy', 'once'))
+            jj=jj+1;
+        end
+        [destPath]=EditVariablePLT_FEPOLYGON(1:2,[1,ratio],[1e-6*pi/3.14,1e-6*pi/3.14],...
+            regexprep(initTecFile{jj},initTecFileName{jj},''),initTecFileName{jj},2);
+
+        compType=computer;
+        if strcmp(compType(1:2),'PC')
+            system(['type "',destPath,'" >> "',tecPlotFile{2},'"']);
+        else
+            system(['cat ''',destPath,''' >> ''',tecPlotFile{2},'''']);
+        end
+        listFileSep=regexp(rootFolder,filesep);
+        rootDirName=rootFolder(listFileSep(end)+1:end);
     end
-    listFileSep=regexp(rootFolder,filesep);
-    rootDirName=rootFolder(listFileSep(end)+1:end);
 end
 
 function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
@@ -613,7 +627,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     for ii=1:numel(allRootDir)
         rootDirName{ii}=InitOptimalFlowOutput(allRootDir{ii},ratio,tecPlotFile);
     end
-    
+    rootDirName=rootDirName(~cellfun(@isempty,rootDirName));
     compType=computer;
     for ii=1:nIter
         itL=[optimstruct(ii).population(:).objective];
@@ -650,33 +664,34 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     end
     disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
     %parfor jj=1:kk
-    postList=1:nIter;
+    postList=needRerun;
     postLog=true(size(1:kk));
     parfor jj=1:kk
         ii=needRerun(jj);
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
         try
-        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-            
-            
-            RunCFDPostProcessing(minIterPos);
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                CutCellFlow_Handler(paramoptim,minIterPos)
                 RunCFDPostProcessing(minIterPos);
                 if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                    PrepareCFDPostProcessing(minIterPos,CFDfolder);
                     CutCellFlow_Handler(paramoptim,minIterPos)
                     RunCFDPostProcessing(minIterPos);
+                    if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                        PrepareCFDPostProcessing(minIterPos,CFDfolder);
+                        CutCellFlow_Handler(paramoptim,minIterPos)
+                        RunCFDPostProcessing(minIterPos);
+                        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                            error(sprintf('Could Not gernerate flow plot for %s',minIterPos))
+                        end
+                    end
                 end
             end
-        end
         catch ME
             disp(ME.getReport);
             postLog(jj)=false;
         end
         
     end
-    postList(needRerun(~postLog))=[];
+    postList((~postLog))=[];
     minIterRootDirNum=zeros([1,nIter]);
     
     for ii=postList
@@ -726,7 +741,8 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     % nOccur=[2 2 1 1]
     % [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur)
     
-    for ii=1:nIter
+    for ii=postList
+        
         if strcmp(compType(1:2),'PC')
             [~,~]=system(['type "',flowPlt{ii},'" >> "',tecPlotFile{1},'"']);
             [~,~]=system(['type "',snakPlt{ii},'" >> "',tecPlotFile{2},'"']);
@@ -761,6 +777,7 @@ function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
     for ii=1:numel(allRootDir)
         rootDirName{ii}=InitOptimalFlowOutput(allRootDir{ii},ratio,tecPlotFile);
     end
+    rootDirName=rootDirName(~cellfun(@isempty,rootDirName));
     
     compType=computer;
     for ii=1:nIter
