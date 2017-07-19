@@ -456,6 +456,39 @@ function [isInternal]=FindInternalLoop(loop,typeLoop)
     
 end
 
+function [loop]=BoundaryInput(fileName)
+    
+    fid=fopen(fileName,'r');
+    
+    if ~feof(fid)
+        numLoops=str2double(fgetl(fid));
+        numPoints=str2num(fgetl(fid));
+        
+        loop=repmat(struct('coord',[],'isccw',true,'isinternal',false),[1,numLoops]);
+        
+        for ii=1:numLoops
+            numPts(ii)=str2double(fgetl(fid));
+            loop(ii).coord=zeros(numPts(ii),2);
+            for jj=1:numPts(ii)
+                loop(ii).coord(jj,:)=str2num(fgetl(fid));
+            end
+            
+        end
+        
+        if sum(numPts)~=numPoints(1)
+            error('Reading loop in did not pass point sum check')
+        end
+        
+        if ~feof(fid)
+            error('Reading loop in did not reach end of file')
+        end
+    else
+        error(['File failed to open: ',fileName])
+    end
+    
+    
+end
+
 %% Displacements Output
 
 function []=DisplacementsOutput(catloop,FIDsurf,FIDdisp,typeLoop,buildInternal)
