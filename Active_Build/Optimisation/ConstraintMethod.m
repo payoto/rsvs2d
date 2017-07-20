@@ -58,7 +58,10 @@ function [population,argout]=InitVariableConsCaller(constrName,constrVal,paropti
     argout{1}=[];
     switch constrName
         case 'LocalVolFrac_image'
-            [paramoptim]=LocalConstraintExtraction(paroptim,constrVal);
+            [paramoptim]=LocalConstraintExtraction_Image(paroptim,constrVal);
+            argout{1}=paramoptim;
+        case 'LocalVolFrac_loop'
+            [paramoptim]=LocalConstraintExtraction_Profile(paroptim,constrVal);
             argout{1}=paramoptim;
         case 'Naca0012'
             
@@ -72,13 +75,33 @@ function [population,argout]=InitVariableConsCaller(constrName,constrVal,paropti
     
 end
 
-function [paramoptim]=LocalConstraintExtraction(paramoptim,constrVal)
+function [paramoptim]=LocalConstraintExtraction_Image(paramoptim,constrVal)
     
     varExtract={'cellLevels','desVarConstr','desVarVal'};
     [cellLevels]=ExtractVariables(varExtract(1),paramoptim.parametrisation);
     [desVarConstr,desVarVal]=ExtractVariables(varExtract(2:3),paramoptim);
     
     [desVal,cellLevels]=ImageProcess(constrVal{1},cellLevels);
+    desVarConstr{end+1}=['LocalVolFrac_',constrVal{2}];
+    desVarVal{end+1}=desVal;
+    
+    varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
+    [paramoptim.parametrisation]=SetVariables(varExtract(1:2),{cellLevels,...
+        MakeCartesianGridBounds(cellLevels)},paramoptim.parametrisation);
+    [paramoptim.initparam]=SetVariables(varExtract(1:2),{cellLevels,...
+        MakeCartesianGridBounds(cellLevels)},paramoptim.initparam);
+    [paramoptim]=SetVariables(varExtract(3:4),{desVarConstr,desVarVal},paramoptim);
+end
+
+function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal)
+    
+    varExtract={'cellLevels','desVarConstr','desVarVal'};
+    [cellLevels]=ExtractVariables(varExtract(1),paramoptim.parametrisation);
+    [desVarConstr,desVarVal]=ExtractVariables(varExtract(2:3),paramoptim);
+    
+    
+    
+    
     desVarConstr{end+1}=['LocalVolFrac_',constrVal{2}];
     desVarVal{end+1}=desVal;
     

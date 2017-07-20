@@ -1,33 +1,51 @@
-function [fill]=LoopToFill(loop,gridReshape)
+function [fill,constrVal]=LoopToFill(loop,gridReshape)
     
-    cellCentredGrid=CellCentreGridInformation(gridrefined);
+    cellCentredGrid=CellCentreGridInformation(gridReshape);
+    [cellCentredGrid]=CellPolygon(cellCentredGrid);
+    
+    fillAll=zeros(size(cellCentredGrid));
     
     for ii=1:numel(loop)
+        for jj=1:numel(cellCentredGrid)
+            [internLoop]=ANDProfileOP(loop(ii).coord,cellCentredGrid(jj).ordered.coord);
+            for kk=1:numel(internLoop)
+                fillAll(jj)=fillAll(jj)+abs(CalculatePolyArea(internLoop(kk).coord));
+            end
+        end
+    end
+    fillAll=fillAll./[cellCentredGrid(:).volume];
+    fill=fillAll(logical([cellCentredGrid(:).isactive]));
+    
+    constrVal={find(fill),fill(fill~=0)};
+end
+
+function [cellGrid]=CellPolygon(cellGrid)
+    
+    for ii=1:numel(cellGrid)
         
-        
-        
+        cellVertInd=vertcat(cellGrid(ii).edge(:).vertexindex);
+        cellVertIndOrd=zeros(size(cellVertInd));
+        cellEdgeOrd=zeros([size(cellVertInd,1),1]);
+        kk=1;
+        ll=1;
+        for jj=1:size(cellVertInd,1)
+            cellVertIndOrd(jj,ll:(3-2*ll):(3-ll))=cellVertInd(kk,:);
+            cellEdgeOrd(jj)=cellGrid(ii).edge(kk).index;
+            kkm1=kk;
+            [kk,ll]=find(cellVertInd(kk,3-ll)==cellVertInd([1:kk-1,kk+1:end],:));
+            kk=kk+(kk>=kkm1);
+        end
+        cellGrid(ii).ordered.edge=cellEdgeOrd;
+        cellGrid(ii).ordered.vertex=cellVertIndOrd(:,1);
+        cellGrid(ii).ordered.coord=...
+            vertcat(cellGrid(ii).vertex(FindObjNum([],cellGrid(ii).ordered.vertex,...
+            [cellGrid(ii).vertex(:).index])).coord);
     end
     
-    
 end
-    
-
-function [fill]=PolygonToFill(coord,gridReshape)
-    
-    
-    
-    
-end
-
-function [cellCentredGrid]=CellPolygon(cellCentredGrid)
-    
-    
-    
-end
-
 
 function [newloop]=ANDProfileOP(profileCoord,targCoord)
-    % compares two loops and returns the area not filled by both
+    % compares two loops and returns the area filled by both
     if ~CCWLoop(profileCoord)
         profileCoord=flip(profileCoord);
     end
@@ -51,7 +69,7 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
     nX0=numel(x0);
     nP1=size(profileCoord,1);
     nP2=size(targCoord,1);
-    interCoord=[x0',y0'];
+    interCoord=[x0,y0];
     if nX0>0
         newloop=repmat(struct('coord',zeros(0,2)),[1,nX0]);
         nXplore=1:nX0;
@@ -70,42 +88,58 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
                 nXplore(kk)=[];
                 
                 iip1=mod(ii,nX0)+1;
-                if ceil(iip1)~=ceil(ii)
-                    branchFollowProf=inpolygon(profileCoord(ceil(ii),1),profileCoord(ceil(ii),2),...
+                if ceil(iout(iip1))~=ceil(iout(ii))
+                    actTInd=ceil(mod(iout(ii),nP1));
+                    branchFollowProf=inpolygon(profileCoord(actTInd,1),profileCoord(actTInd,2),...
                         targCoord(:,1),targCoord(:,2));
                 else
-                    branchFollowProf=~inpolygon(targCoord(ceil(ii),1),targCoord(ceil(ii),2),...
+                    actTInd=ceil(mod(jout(ii),nP2));
+                    branchFollowProf=~inpolygon(targCoord(actTInd,1),targCoord(actTInd,2),...
                         profileCoord(:,1),profileCoord(:,2));
                 end
                 
                 if branchFollowProf
-                    [ind1,iip1,branchCoord]=FollowBranchLoop(ii,iout,profileCoord,interCoord);
+                    [ind1,iip1,branchCoord]=FollowBranchLoop(ii,iout,profileCoord,interCoord,nP1);
                 else 
-                    [ind1,iip1,branchCoord]=FollowBranchLoop(ii,jout,targCoord,interCoord);
+                    [ind1,iip1,branchCoord]=FollowBranchLoop(ii,jout,targCoord,interCoord,nP2);
                 end
                 newloop(pLoop).coord=[newloop(pLoop).coord;
                     branchCoord];
                 kk=find(nXplore==iip1);
-                condLoop=iij~=iiStart && ~isempty(kk);
+                condLoop=iip1~=iiStart && ~isempty(kk);
             end
            
         end
         newloop=newloop(1:pLoop);
     else
+        inTarg=inpolygon(profileCoord(1,1),profileCoord(1,2),...
+            targCoord(:,1),targCoord(:,2));
         
-        error('No Intersection, should not happen')
+        inProf=~inpolygon(targCoord(1,1),targCoord(1,2),...
+            profileCoord(:,1),profileCoord(:,2));
+        
+        if ~inProf && ~inTarg
+            newloop=[];
+        elseif inProf && ~inTarg
+            newloop.coord=targCoord;
+        elseif ~inProf && inTarg
+            newloop.coord=profCoord;
+            
+        else
+            error('Intersections not detected but both profiles in the other')
+        end
+        
     end
     
-    %error('Compare Profile through area integration has not been coded yet')
 end
 
-function [ind1,iip1,branchCoord]=FollowBranchLoop(ii,iout,coord,interCoord)
+function [ind1,iip1,branchCoord]=FollowBranchLoop(ii,iout,coord,interCoord,nP1)
     % Identifies the next intersection and returns the indices and
     % coordinates that correspond to the branch.
        
     
     [~,iip1]=min(mod(iout([1:ii-1,ii+1:end])-iout(ii),max(iout)));
-    iip1=iip1+iip1>=ii;
+    iip1=iip1+(iip1>=ii);
     
     
     if floor(iout(ii))~=floor(iout(iip1))
