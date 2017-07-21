@@ -58,11 +58,15 @@ function [population,argout]=InitVariableConsCaller(constrName,constrVal,paropti
     argout{1}=[];
     switch constrName
         case 'LocalVolFrac_image'
-            [paramoptim]=LocalConstraintExtraction_Image(paroptim,constrVal);
+            if isempty(varargin)
+                [paramoptim]=LocalConstraintExtraction_Image(paroptim,constrVal);
+            end
             argout{1}=paramoptim;
         case 'LocalVolFrac_loop'
-            [paramoptim]=LocalConstraintExtraction_Profile(paroptim,constrVal);
-            argout{1}=paramoptim;
+            if ~isempty(varargin)
+                [paramoptim]=LocalConstraintExtraction_Profile(paroptim,constrVal,varargin{1});
+                argout{1}=paramoptim;
+            end
         case 'Naca0012'
             
         case ' '
@@ -93,14 +97,24 @@ function [paramoptim]=LocalConstraintExtraction_Image(paramoptim,constrVal)
     [paramoptim]=SetVariables(varExtract(3:4),{desVarConstr,desVarVal},paramoptim);
 end
 
-function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal)
+function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gridReshape)
     
     varExtract={'cellLevels','desVarConstr','desVarVal'};
     [cellLevels]=ExtractVariables(varExtract(1),paramoptim.parametrisation);
     [desVarConstr,desVarVal]=ExtractVariables(varExtract(2:3),paramoptim);
     
+    switch constrVal{1}(end-2:end)
+        case 'dat'
+            [loop]=BoundaryInput(constrVal{1});
+        case 'mat'
+            instruct=load(constrVal{1});
+            loop=instruct.loop;
+        otherwise
+            error('Unrecognised constraint format ')
+            
+    end
     
-    
+    [fill,desVal]=LoopToFill(loop,gridReshape);
     
     desVarConstr{end+1}=['LocalVolFrac_',constrVal{2}];
     desVarVal{end+1}=desVal;

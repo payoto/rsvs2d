@@ -485,7 +485,7 @@ function [loop]=BoundaryInput(fileName)
     else
         error(['File failed to open: ',fileName])
     end
-    
+    fclose(fid)
     
 end
 
