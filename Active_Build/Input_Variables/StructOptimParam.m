@@ -840,7 +840,6 @@ function [paroptim]=TestMeshMotion()
     paroptim.obj.flow.parentMesh='';
 end
 
-
 function [paroptim]=TestNonFill()
     [paroptim]=invdeslocal_test4('uu','contcurve',0,1);
     paroptim.general.maxIter=6;
@@ -852,7 +851,6 @@ function [paroptim]=TestNonFill()
     paroptim.desvar.startPopNonFill={'mid'};
     paroptim.refine.refineOptimType='contcurvenoedge';
 end
-
 
 function [paroptim]=BF_sens_oscill()
     [paroptim]=invdeslocal_test4('uv','contcurve',0,1);
@@ -926,12 +924,23 @@ function [paroptim]=BF_sens_smooth2()
     
 end
 
-
 function [paroptim]=TestVolScale()
     [paroptim]=invdeslocal_test4('uo','contcurve',1,1);
     paroptim.general.maxIter=6;
     paroptim.general.worker=4;
     
+end
+
+function [paroptim]=TestProfConstr()
+    
+    paroptim=invdeslocal_test6('uo','number',1,1);
+    
+    paroptim.constraint.desVarConstr={' '};
+    paroptim.constraint.desVarVal={[]};
+    paroptim.constraint.initConstr={'LocalVolFrac_loop'};
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\LinRes_wedge.dat','min'}};
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
 end
 
 %% Test cases for length Area

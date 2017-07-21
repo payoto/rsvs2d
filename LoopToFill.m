@@ -3,7 +3,7 @@ function [fill,constrVal]=LoopToFill(loop,gridReshape)
     cellCentredGrid=CellCentreGridInformation(gridReshape);
     [cellCentredGrid]=CellPolygon(cellCentredGrid);
     
-    fillAll=zeros(size(cellCentredGrid));
+    fillAll=zeros([1,numel(cellCentredGrid)]);
     
     for ii=1:numel(loop)
         for jj=1:numel(cellCentredGrid)
@@ -54,14 +54,19 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
     end
     
     [x0,y0,iout,jout] = intersections(profileCoord([1:end,1],1),profileCoord([1:end,1],2),...
-        targCoord([1:end,1],1),targCoord([1:end,1],2));
+         targCoord([1:end,1],1),targCoord([1:end,1],2));
+%     [x0,y0,iout,jout] = intersections(profileCoord([1:end],1),profileCoord([1:end],2),...
+%         targCoord([1:end],1),targCoord([1:end],2));
     rmv=isnan(iout) | isnan(jout);
     iout(rmv)=[];
     x0(rmv)=[];
     y0(rmv)=[];
     jout(rmv)=[];
     
-    [iout,sortIndex]=sort(iout);
+    iout=mod(iout-1,4)+1;
+    jout=mod(jout-1,4)+1;
+    
+    [iout,sortIndex]=unique(iout);
     x0=x0(sortIndex);
     y0=y0(sortIndex);
     jout=jout(sortIndex);
@@ -88,14 +93,15 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
                 nXplore(kk)=[];
                 
                 iip1=mod(ii,nX0)+1;
-                if ceil(iout(iip1))~=ceil(iout(ii))
+                if mod(ceil(iout(iip1)),nP1)~=mod(ceil(iout(ii)),nP1)
                     actTInd=ceil(mod(iout(ii),nP1));
-                    branchFollowProf=inpolygon(profileCoord(actTInd,1),profileCoord(actTInd,2),...
+                    [branchFollowProf,on]=inpolygon(profileCoord(actTInd,1),profileCoord(actTInd,2),...
                         targCoord(:,1),targCoord(:,2));
                 else
                     actTInd=ceil(mod(jout(ii),nP2));
-                    branchFollowProf=~inpolygon(targCoord(actTInd,1),targCoord(actTInd,2),...
+                    [branchFollowProf,on]=inpolygon(targCoord(actTInd,1),targCoord(actTInd,2),...
                         profileCoord(:,1),profileCoord(:,2));
+                    branchFollowProf=~branchFollowProf;
                 end
                 
                 if branchFollowProf
@@ -115,7 +121,7 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
         inTarg=inpolygon(profileCoord(1,1),profileCoord(1,2),...
             targCoord(:,1),targCoord(:,2));
         
-        inProf=~inpolygon(targCoord(1,1),targCoord(1,2),...
+        inProf=inpolygon(targCoord(1,1),targCoord(1,2),...
             profileCoord(:,1),profileCoord(:,2));
         
         if ~inProf && ~inTarg
@@ -151,7 +157,7 @@ function [ind1,iip1,branchCoord]=FollowBranchLoop(ii,iout,coord,interCoord,nP1)
     else
         ind1=[];
     end
-    
+    ind1=mod(ind1-1,nP1)+1;
     branchCoord=[interCoord(ii,:);coord(ind1,:);interCoord(iip1,:)];
     
 end
