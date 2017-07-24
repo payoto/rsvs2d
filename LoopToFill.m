@@ -16,7 +16,7 @@ function [fill,constrVal]=LoopToFill(loop,gridReshape)
     fillAll=fillAll./[cellCentredGrid(:).volume];
     fill=fillAll(logical([cellCentredGrid(:).isactive]));
     
-    constrVal={find(fill),fill(fill~=0)};
+    constrVal={find(fill~=0),fill(fill~=0)};
 end
 
 function [cellGrid]=CellPolygon(cellGrid)
@@ -62,9 +62,10 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
     x0(rmv)=[];
     y0(rmv)=[];
     jout(rmv)=[];
-    
-    iout=mod(iout-1,4)+1;
-    jout=mod(jout-1,4)+1;
+    nP1=size(profileCoord,1);
+    nP2=size(targCoord,1);
+    iout=mod(iout-1,nP1)+1;
+    jout=mod(jout-1,nP2)+1;
     
     [iout,sortIndex]=unique(iout);
     x0=x0(sortIndex);
@@ -72,8 +73,7 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
     jout=jout(sortIndex);
     
     nX0=numel(x0);
-    nP1=size(profileCoord,1);
-    nP2=size(targCoord,1);
+    
     interCoord=[x0,y0];
     if nX0>0
         newloop=repmat(struct('coord',zeros(0,2)),[1,nX0]);
