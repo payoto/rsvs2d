@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%{
+
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -21,9 +21,9 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-%}
 
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -137,9 +137,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             end
             iterstruct=iterstruct2;
         end
-        diary off
+        
     end
-    
+    diary off
 end
 
 %% Handle Restarting of previous runs
@@ -2202,6 +2202,8 @@ function [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,..
     [iterstruct]=InitialiseIterationStruct(paramoptim);
     population=iterstruct(1).population(1);
     population.fill=rootFill{2};
+    [~,paramoptim]=ConstraintMethod('init',paramoptim,iterstruct,baseGrid);
+    [population]=ConstraintMethod('DesVar',paramoptim,population,baseGrid);
     
     currentMember=population.fill;
     [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
@@ -2307,6 +2309,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     diaryFile=MakePathCompliant(diaryFile);
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
+    diary off
     diary(diaryFile);
     
     warning('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');

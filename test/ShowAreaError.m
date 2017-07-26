@@ -1,4 +1,7 @@
 function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin)
+    % Valid entry points Are:
+    % - folder: reads 
+    
     modeSmoothScale='';
     switch entryPoint
         

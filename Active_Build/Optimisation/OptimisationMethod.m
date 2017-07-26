@@ -320,6 +320,10 @@ function [gradientopt]=GetIterationInformation(population,constr)
         gradientopt(ii).additional.desvar=[population(ii+1).fill,population(ii+1).nonfillvar]-rootPop;
     end
     
+    % Remove modes which don't have any fill change
+    % This can happen because of the approximate refinement of designs when
+    % the snake is calculated through sensitivity.
+    gradientopt=gradientopt(any(vertcat(gradientopt(:).design),2));
     
     
 end
