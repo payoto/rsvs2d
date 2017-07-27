@@ -86,8 +86,10 @@ function [paramoptim]=LocalConstraintExtraction_Image(paramoptim,constrVal)
     [desVarConstr,desVarVal]=ExtractVariables(varExtract(2:3),paramoptim);
     
     [desVal,cellLevels]=ImageProcess(constrVal{1},cellLevels);
-    desVarConstr{end+1}=['LocalVolFrac_',constrVal{2}];
-    desVarVal{end+1}=desVal;
+    
+    desVal{end+1}=constrVal{1};
+    [desVarConstr,desVarVal]=OverWriteExistingConstraint(desVal,...
+        constrVal,desVarVal,desVarConstr);
     
     varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
     [paramoptim.parametrisation]=SetVariables(varExtract(1:2),{cellLevels,...
@@ -116,8 +118,9 @@ function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gri
     
     [fill,desVal]=LoopToFill(loop,gridReshape);
     
-    desVarConstr{end+1}=['LocalVolFrac_',constrVal{2}];
-    desVarVal{end+1}=desVal;
+    desVal{end+1}=constrVal{1};
+    [desVarConstr,desVarVal]=OverWriteExistingConstraint(desVal,...
+        constrVal,desVarVal,desVarConstr);
     
     varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
     [paramoptim.parametrisation]=SetVariables(varExtract(1:2),{cellLevels,...
@@ -125,6 +128,33 @@ function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gri
     [paramoptim.initparam]=SetVariables(varExtract(1:2),{cellLevels,...
         MakeCartesianGridBounds(cellLevels)},paramoptim.initparam);
     [paramoptim]=SetVariables(varExtract(3:4),{desVarConstr,desVarVal},paramoptim);
+end
+
+function [desVarConstr,desVarVal]=OverWriteExistingConstraint(desVal,...
+        constrVal,desVarVal,desVarConstr)
+    
+    
+    flagNoMatch=true;
+    kk=1;
+    constrName=['LocalVolFrac_',constrVal{2}];
+    nDesVal=numel(desVal);
+    while kk<=numel(desVarVal) && flagNoMatch
+        if numel(desVarVal{kk})>=nDesVal && iscell(desVarVal{kk}) && strcmp(constrName,desVarConstr{kk})
+            if ischar(desVarVal{kk}{nDesVal})
+                if strcmp(desVarVal{kk}{nDesVal},constrVal{1});
+                    desVarConstr{kk}=constrName;
+                    desVarVal{kk}=desVal;
+                    flagNoMatch=false;
+                end
+            end
+        end
+        kk=kk+1;
+    end
+    if flagNoMatch
+        desVarConstr{end+1}=constrName;
+        desVarVal{end+1}=desVal;
+    end
+    
 end
 
 function [constrVal,cellLevels]=ImageProcess(imPath,cellLevels)
