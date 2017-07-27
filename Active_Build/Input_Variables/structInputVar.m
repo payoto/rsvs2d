@@ -479,6 +479,28 @@ function [param]=Missile2In()
     
 end
 
+function [param]=ellipsetest(ratioY)
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.refineSteps=1;
+    param.general.subdivType='chaikin';
+    param.general.typDat='ellipsetest_f';
+    param.snakes.step.snakesSteps=1000;
+    param.snakes.refine.refineGrid=[20 1];
+    param.snakes.refine.typeRefine='all';
+    yAx=0.7500*ratioY;
+    param.general.passDomBounds=[-1,1;-yAx,yAx];
+    param.snakes.step.mergeTopo=true;
+     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+    param.plotting.checkSensitivities=false;
+    
+end
 %% Optimisation Cases
 
 function [param]=optimDefault()

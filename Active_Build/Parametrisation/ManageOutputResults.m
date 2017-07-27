@@ -15,12 +15,12 @@
 function [rootDirectory]=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
     
     % Unpack necessary variables
-    varExtract={'makeMov','typDat','resultRoot','archiveName'};
-    [makeMov,typDat,resultRoot,archiveName]=ExtractVariables(varExtract,param);
+    varExtract={'makeMov','typDat','resultRoot','archiveName','case'};
+    [makeMov,typDat,resultRoot,archiveName,caseStr]=ExtractVariables(varExtract,param);
     
     
     % Create Marker
-    [marker,t]=GenerateResultMarker(typDat);
+    [marker,t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
     % Create Directory
     [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
     rootDirectory=writeDirectory;

@@ -274,7 +274,12 @@ function [fill]=InputData(typDat)
             
         otherwise
             imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
-            fill=ImageProcess(imPath,'w',nPadding);
+            if strcmp(typDat(end-1:end),'_f')
+                
+                fill=ImageProcess(imPath,'wf',nPadding);
+            else
+                fill=ImageProcess(imPath,'wc',nPadding);
+            end
     end
     
 end
@@ -413,7 +418,16 @@ function finishedImage=ImageProcess(imPath,imType,nPad,n)
     global nGridSteps % number of steps in design domain
     if ~exist('n','var'); n=0; end % n is used to pad with ones instead of zeros
     
-    preProcImage=PreProcImage(imPath);
+    if numel(imType)==1
+        preProcImage=PreProcImage(imPath);
+    elseif strcmp(imType(2),'c')
+        
+        preProcImage=PreProcImage(imPath);
+    elseif strcmp(imType(2),'f')
+        
+        [preProcImage]=ProcImageFine(imPath);
+    end
+    
     preProcImage=ProcessType(imType,preProcImage);
     procImage=GradProcessor(preProcImage);
     finishedImage=ResizeImage(procImage);
@@ -446,10 +460,34 @@ function [preProcImage]=PreProcImage(imPath)
     
 end
 
+function [preProcImage]=ProcImageFine(imPath)
+    % Load Image and reduce it to an averaged double array from 0 to 1
+    imPath=MakePathCompliant(imPath);
+    preProcImage=imread(imPath);
+    imClass=class(preProcImage);
+    numBit=str2num(regexprep(imClass,'uint',''));
+    
+    preProcImage=double(preProcImage);
+
+    lvlMax=2^numBit;
+    lvlMin=0;
+    
+    if lvlMin~=(lvlMax-1)
+
+        for ii=1:size(preProcImage,3)
+            preProcImage(:,:,ii)=preProcImage(:,:,ii)*lvlMax^(ii-1);
+        end
+        preProcImage=sum(preProcImage,3)/lvlMax^size(preProcImage,3);
+    else
+        preProcImage=zeros(size(preProcImage));
+    end
+    
+end
+
 function [imageDat]=ProcessType(imType,imageDat)
     % Processes the background of the image (either white or black)
     
-    switch imType
+    switch imType(1)
         case 'k'
             imBackground=0;
         case 'w'

@@ -3742,8 +3742,19 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     [grid,loop,restartsnake,snakSave,newFill]=RestartSnakeFill(debugArgIn{:});
     popuDebug=iterstruct(1).population(1);
     
-    popuDebug.fill=newFill;
-    
+    if iscell(newFill)
+        popuDebug=repmat(popuDebug,[1,numel(newFill)]);
+        for ii=1:numel(newFill)
+            popuDebug(ii).fill=newFill{ii};
+        end
+    elseif size(newFill,1)>1
+        popuDebug=repmat(popuDebug,[1,size(newFill,1)]);
+        for ii=1:numel(newFill)
+            popuDebug(ii).fill=newFill(ii,:);
+        end
+    else
+        popuDebug.fill=newFill;
+    end
     paramoptim.parametrisation.snakes.step.snakesSteps=200;
     paramoptim.parametrisation.snakes.step.snakData='all';
     paramoptim.parametrisation.snakes.step.snakesConsole=true;
@@ -3763,17 +3774,28 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     baseGrid=grid.base;
     gridrefined=grid.refined;
     
-    [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
-        restartsnake,connectstructinfo,newFill);
+    if numel(popuDebug)>1
+        supportstruct=cell([1 numel(popuDebug)]);
+        parfor ii=1:numel(popuDebug)
+            [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
+                restartsnake,connectstructinfo,newFill{ii});
+            [popuDebug(ii),supportstruct{ii}]=NormalExecutionIteration(...
+                popuDebug(ii),newRefGrid,newrestartsnake,newGrid,...
+                connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2},debugArgIn{3}+ii-1,paramoptim);
+        end
+    else
+        
+        [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
+            restartsnake,connectstructinfo,newFill);
+        [popuDebug,supportstruct]=NormalExecutionIteration(...
+            popuDebug,newRefGrid,newrestartsnake,newGrid,...
+            connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2},debugArgIn{3},paramoptim);
+    end
     
-    [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
-        restartsnake,connectstructinfo,outinfo);
-    
-    [popuDebug,supportstruct]=NormalExecutionIteration(...
-        popuDebug,newRefGrid,newrestartsnake,newGrid,...
-        connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2},debugArgIn{3},paramoptim);
     
     
+%     [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
+%         restartsnake,connectstructinfo,outinfo);
 end
 
 function [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr)
