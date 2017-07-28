@@ -79,13 +79,19 @@ hold on
 s(2)=surf(Xa,Yc2,real(constrval2)*0);
 s(2).FaceColor=[1 0 0 ];
 s(2).LineStyle='none';
+%%
 
+assume(l,'clear')
+assume(c1,'clear')
+assume(c2,'clear')
+assume(m,'clear')
+assume(a,'clear')
 %% 
 integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
         (tDistrib(1:end-1)+tDistrib(2:end))/2]);
 a=1;
 c1=0;
-c2=-1+linspace(-2+1e-6,2-1e-6,20)*1i;
+c2=[-1 -1+1e-6];
 l=2.*c2 + (2*asin((1./(c2.^2 + 1)).^(1/2)) + 2*(1./(c2.^2 + 1)).^(1/2).*(1 - 1./(c2.^2 + 1)).^(1/2))/(2*(1./(c2.^2 + 1)).^(1/2));
 
 m=(1./(a.^2 + c2.^2)).^(1/2);
@@ -116,13 +122,7 @@ for ii=1:numel(c2)
 end
 plot(ax(3),real(c2),real(lReal));
 plot(ax(4),imag(c2),imag(lReal));
-%%
 
-assume(l,'clear')
-assume(c1,'clear')
-assume(c2,'clear')
-assume(m,'clear')
-assume(a,'clear')
 
 
 
