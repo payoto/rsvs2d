@@ -14,14 +14,14 @@
 % %#codegen
 
 %% Main execution functions
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGrid,looprestart,...
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,optargout]=Snakes(refinedGrid,looprestart,...
         oldGrid,connectionInfo,param)
     % JUST DECLARING VARIABLES FOR LATER
     
     % plotInterval,numSteps,makeMov,boundstr
     global arrivalTolerance unstructglobal maxStep maxDt
     
-    
+    optargout=cell(0);
     varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole','case','buildInternal'};
     [arrivalTolerance,maxStep,maxDt,snakesConsole,caseStr,buildInternal]=ExtractVariables(varExtract,param);
     
@@ -32,7 +32,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
     unstructglobal=refinedGriduns;
     %profile on
     if ~buildInternal
-        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout2]=...
             RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,oldGridUns,connectionInfo,param);
     else
@@ -40,13 +40,15 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=Snakes(refinedGr
             RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,oldGridUns,connectionInfo,param);
     end
-    
+    optargout=[optargout,{varargout2}];
     if snakesConsole
-        figure('Name',['VolError',caseStr]),semilogy(1:length(snakSave),[snakSave(:).currentConvVolume])
+        optargout{end+1}=figure('Name',['VolError',caseStr]);semilogy(1:length(snakSave),[snakSave(:).currentConvVolume]);
         title('Volume error')
         ylabel('Root Mean squared error on volume convergence')
         xlabel('number of iterations')
     end
+    
+   
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
@@ -75,7 +77,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
                 [looprestart]=GenerateSnakStartLoop(refinedGrid,boundstr);
             end
             
-            [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart]=...
+            [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart,varargout]=...
                 RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
                 oldGrid,oldGridUns,connectionInfo,param);
             
@@ -213,14 +215,14 @@ function [snakSave1]=ConcatenateSnakSave(snakSave1,snakSave2,isInv,snakData)
     end
 end
 
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
         RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param)
     % Main execution container for Snakes
     
     % Unpacking NECESSARY variables
     global maxStep maxDt snaxInitPos
-    
+    varargout=cell(0);
     varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos','checkSensitivities','refineGrid'};
     [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos,checkSensitivities,refineGrid]=ExtractVariables(varExtract,param);
     
@@ -282,7 +284,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
         borderVertices,refinedGriduns,param,edgeDat);
     
     if checkSensitivities
-        GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
+        varargout{1}=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,volfracconnec,...
             cellCentredGrid,insideContourInfo,forceparam);
     end
     if snakesConsole
@@ -553,7 +555,7 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
 end
 
 
-function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
+function [h]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
@@ -565,7 +567,7 @@ function []=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
     [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
-    testSensitivity(snaxel,snakposition,sensSnax)
+    h=testSensitivity(snaxel,snakposition,sensSnax);
 end
 
 function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
@@ -578,7 +580,7 @@ function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
 end
 
 function [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid)
-    
+    minEdgeScale=1;
     edgeOrient=[refinedGrid.edge(:).orientation];
     edgeIndList=[refinedGrid.edge(:).index];
     if numel(refineGrid)==1
@@ -604,7 +606,7 @@ function [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid)
 %         .*max(cellEdgeLDat(cellEdgeSub(1:2:end),3),cellEdgeLDat(cellEdgeSub(2:2:end),3))')...
 %         ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1;
     edgeDat.indivRatio=max((([refinedGrid.edge(:).length])...
-        ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1,0.1);
+        ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1,minEdgeScale);
     
 end
 
@@ -3182,7 +3184,7 @@ function []=PlotVolFrac(figh,axh,coord,frac)
 end
 
 %% Check sensitivity
-function []=testSensitivity(snaxel,snakposition,sensSnax)
+function [h]=testSensitivity(snaxel,snakposition,sensSnax)
     
     global unstructglobal
     sensSnax(:,find(sum(abs(sensSnax))==0))=[];
@@ -3205,6 +3207,8 @@ function []=testSensitivity(snaxel,snakposition,sensSnax)
         ones([length(snaxel), 1])*2],2);
     [testPos1]=CreateComparisonMatrix(coord1);
     l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
+    h=figure;
+    hold on
     for ii=1:length(sensSnax(1,:)),
         snaxCopy=snaxel;
         e1=(1)./sensSnax(:,ii);
@@ -3227,15 +3231,18 @@ function []=testSensitivity(snaxel,snakposition,sensSnax)
         [testPos2]=CreateComparisonMatrix(coord2);
         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
         %newOrd=snaxOrd;
-        figure
-        plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'+-',coord2(newOrd,1),coord2(newOrd,2),'o-')
-        hold on
-        for jj=1:length(newOrd)
-            plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+        if ii==1;
+        plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'+-')
         end
-        title(['mode ',int2str(ii)])
+        l2(ii)=plot(coord2(newOrd,1),coord2(newOrd,2),'o-');
+        hold on
+%         for jj=1:length(newOrd)
+%             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+%         end
+        l2(ii).DisplayName=['mode ',int2str(ii)];
         
     end
+    
     
     
 end

@@ -488,7 +488,7 @@ function [param]=ellipsetest(ratioY)
     param.general.refineSteps=1;
     param.general.subdivType='chaikin';
     param.general.typDat='ellipsetest_f';
-    param.snakes.step.snakesSteps=1000;
+    param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=[20 1];
     param.snakes.refine.typeRefine='all';
     yAx=0.7500*ratioY;
@@ -498,8 +498,8 @@ function [param]=ellipsetest(ratioY)
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
-    param.plotting.checkSensitivities=false;
-    
+    param.plotting.checkSensitivities=true;
+    param.snakes.step.vertLooseStep=200;
 end
 %% Optimisation Cases
 
