@@ -62,9 +62,9 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     
     % current Linear
     [areaTargVec,areaConstrMat]=AreaConstraintMatrixAssignement(snaxel,coeffstructure,volumefraction);
-%     [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex);
-%     [implicitMatTens,forceVec]=BuildImplicitMatrix(derivtenscalc);
-%     [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
+    %     [derivtenscalc]=CalculateTensileVelocity2(snaxel,snakposition,snakPosIndex);
+    %     [implicitMatTens,forceVec]=BuildImplicitMatrix(derivtenscalc);
+    %     [forcingVec,conditionMat]=BuildSolutionLaplacianMatrix(implicitMatTens,forceVec,areaTargVec,areaConstrMat);
     
     % Current SQP
     smearLengthEps=forceparam.lengthEpsilon;
@@ -72,6 +72,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     dirEpsilon=forceparam.dirEpsilon;
     typeSmear=forceparam.typeSmear;
     lagMultiPast=forceparam.lagMulti;
+    algo=forceparam.vel.algo;
     switch typeSmear
         case 'length'
             [derivtenscalc2]=ExtractDataForDerivatives_LengthSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
@@ -92,7 +93,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     
     warning('OFF','MATLAB:nearlySingularMatrix')
     [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
-            RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction);
+        RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction,algo);
     warning('ON','MATLAB:nearlySingularMatrix')
     
     Deltax(finIsFreeze)=DeltaxisFreeze(finIsFreeze);
@@ -128,8 +129,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         [sensSnax]=CalculateSensitivity(Hf,HA,HL,areaConstrMat,lagMulti,algo);
         
     end
-%     velcalcinfostruct.forcingVec=forcingVec;
-%     velcalcinfostruct.conditionMat=conditionMat;
+    %     velcalcinfostruct.forcingVec=forcingVec;
+    %     velcalcinfostruct.conditionMat=conditionMat;
     velcalcinfostruct=[];
     %[tensVelVec]=GeometryForcingVelCalc(forcingVec,conditionMat,tensCoeff);
     
@@ -140,12 +141,13 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
 end
 
 function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
-        RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction)
+        RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction,algo)
     
-%     reRunVel=1;
-%     while reRunVel>0 && reRunVel<3
-        
-        if true %reRunVel>=2
+    %     reRunVel=1;
+    %     while reRunVel>0 && reRunVel<3
+    
+    switch algo
+        case 'HF'
             % THis section needs a clean up
             [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
             [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
@@ -176,7 +178,7 @@ function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
             end
             HL=Hf;
             algo='HF';
-        else
+        case 'HFHA'
             
             [~,lagMulti2]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
             [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMulti2,numel(volumefraction));
@@ -213,14 +215,18 @@ function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
             end
             HL=Hf+HA;
             algo='HFHA';
-        end
-%         reRunVel=(reRunVel+1)*any(~isfinite(Deltax));
-%         %reRunVel=3;
-%     end
+        otherwise
+            errstrct.message=sprintf('"%s" is an unrecognised snake velocity algorithm. \n Wrong value at: param.snakes.force.vel.algo',algo);
+            errstrct.identifier='Snakes:Velocity:UnknownVelAlgo';
+            error(errstrct)
+    end
+    %         reRunVel=(reRunVel+1)*any(~isfinite(Deltax));
+    %         %reRunVel=3;
+    %     end
 end
 
 function [isFreezeRnd2]=VelocityThawing(isFreeze,DxisFreeze)
-    % function handles the thawing of vertices 
+    % function handles the thawing of vertices
     
     isThaw=(isFreeze>1 & isFreeze<2 & DxisFreeze>=0) ...
         | (isFreeze>2 & isFreeze<3 & DxisFreeze<=0);
@@ -723,11 +729,11 @@ function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposi
             derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i);
         derivtenscalc(ii).p_m=(derivtenscalc(ii).g1_m+...
             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m);
-%         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
-%             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        %         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
+        %             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*...
             min(normVec(derivtenscalc(ii).Dg_i),normVec(derivtenscalc(ii).Dg_m))^2+...
-        sum((derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+            sum((derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         %         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+...
         %             sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*...
         %             derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+...
@@ -806,7 +812,7 @@ function [derivtenscalc]=ExtractDataForDerivatives_directionSmear...
             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m);
         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*...
             min(normVec(derivtenscalc(ii).Dg_i),normVec(derivtenscalc(ii).Dg_m))^2+...
-        sum((derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+            sum((derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
         
     end
     
@@ -900,11 +906,11 @@ function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,volumefraction,lagMult
         Hessian(ii,neighSub)=Hessian(ii,neighSub)+derivtenscalc(ii).d2fiddim;
         Hessian(neighSub,ii)=Hessian(neighSub,ii)+derivtenscalc(ii).d2fiddim;
         Hessian(neighSub,neighSub)=Hessian(neighSub,neighSub)+derivtenscalc(ii).d2fiddm2;
-%         
-%         Hessian(ii,ii,ii)=derivtenscalc(ii).d2fiddi2;
-%         Hessian(ii,neighSub,ii)=derivtenscalc(ii).d2fiddim;
-%         Hessian(neighSub,ii,ii)=derivtenscalc(ii).d2fiddim;
-%         Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
+        %
+        %         Hessian(ii,ii,ii)=derivtenscalc(ii).d2fiddi2;
+        %         Hessian(ii,neighSub,ii)=derivtenscalc(ii).d2fiddim;
+        %         Hessian(neighSub,ii,ii)=derivtenscalc(ii).d2fiddim;
+        %         Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
         
         HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
             -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)))...
@@ -914,10 +920,10 @@ function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,volumefraction,lagMult
             HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
         HessianConst(neighSub,ii)=HessianConst(neighSub,ii)+...
             HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
-%          HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=...
-%             HessConstr;
-%         HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=...
-%             HessConstr;
+        %          HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=...
+        %             HessConstr;
+        %         HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=...
+        %             HessConstr;
     end
     HA=HessianConst; % sum(HessConstr.*repmat(reshape(lagMulti,[1,1,numel(lagMulti)]),[n,n]),3);
     Df=sum(Jacobian,2);
@@ -1285,19 +1291,19 @@ function [sensSnax,sensLagMulti]=CalculateSensitivity(Hf,Ha,HL,Ja_x,lagMulti,alg
         case 'HFHA'
             %HL=HL;
     end
-%     if rcond(HL)<1e-12        
-%         HL=Hf;    
-%     end
+    %     if rcond(HL)<1e-12
+    %         HL=Hf;
+    %     end
     
     actCol=find(sum(abs(Ja_x),2)~=0);
     
     [Ja_xSmall,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol);
     
     matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
-%     if rcond(matToInv)<1e-15      
-%         HL=Hf;
-%         matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
-%     end
+    %     if rcond(matToInv)<1e-15
+    %         HL=Hf;
+    %         matToInv=[HL,Ja_xSmall';Ja_xSmall,zeros(nCondAct)];
+    %     end
     if rcond(matToInv)<1e-15
         actCol=find(abs(lagMulti)>1e-15);
         [Ja_xSmall,Ja_p,nCondAct]=TrimInactiveConditions(Ja_x,lagMulti,actCol);
