@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -22,8 +22,8 @@ function [] = ExecuteOptimisation()
     
 end
 
-
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugArgIn)
+%}
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
     
@@ -81,7 +81,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,debugA
             % Evaluate Objective Function
             [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
             % create new population
-            
+            DiskSpaceManagement(paramoptim,iterstruct)
             [~]=PrintEnd(procStr,1,tStart);
             % Convergence tests
             if ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startIter) ...
@@ -1383,8 +1383,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         'optimMethod','desvarconnec','specificFillName','initInterp','numNonFillVar'};
     [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,...
         specificFillName,initInterp,numNonFillVar]=ExtractVariables(varExtract,paroptim);
-    varExtract={'cellLevels','corneractive'};
-    [cellLevels,corneractive]=ExtractVariables(varExtract,paroptim.parametrisation);
+    varExtract={'cellLevels','corneractive','defaultCorner'};
+    [cellLevels,corneractive,defaultCorner]=ExtractVariables(varExtract,paroptim.parametrisation);
     
     switch startPop
         case 'rand'
@@ -1431,6 +1431,11 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
                 
                 origPop(:,LEind)=origPop(:,LEind)/5;
                 origPop(:,TEind)=origPop(:,TEind)/5;
+                
+%                 origPop(:,LEind+1)=origPop(:,LEind+1)/2;
+%                 origPop(:,TEind-1)=origPop(:,TEind-1)/2;
+%                 origPop(:,LEind)=defaultCorner;
+%                 origPop(:,TEind)=defaultCorner;
             end
             
             

@@ -423,13 +423,13 @@ function [paroptim]=AdaptiveRefinement(paroptim)
     paroptim.refine.refineIter=100;
     paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
     paroptim.refine.refineOptimType='contcurvevol';
-    paroptim.refine.refineOptimRatio=0.3; 
+    paroptim.refine.refineOptimRatio=0.3;
     paroptim.refine.rankType='rank';
     paroptim.refine.slopeConv=0.2;
     
- % 'contlength' 'desvargradadvanced' 'contcurve'  'contlengthnorm' 
- % 'desvargrad' 'contcurvescale' 'contcurvevol' 'contour'
-
+    % 'contlength' 'desvargradadvanced' 'contcurve'  'contlengthnorm'
+    % 'desvargrad' 'contcurvescale' 'contcurvevol' 'contour'
+    
 end
 
 %% Standard Blocks (No Iter, pop, worker included)
@@ -874,7 +874,7 @@ function [paroptim]=BF_sens_oscill()
     paroptim.refine.refineSteps=0;
     paroptim.general.maxIter=1;
     paroptim.general.worker=4;
-    paroptim.general.startPop = ['halfuniformsharp']; 
+    paroptim.general.startPop = ['halfuniformsharp'];
 end
 
 function [paroptim]=BF_snak_oscill()
@@ -905,7 +905,7 @@ function [paroptim]=BF_sens_smooth1(e)
     paroptim.parametrisation.optiminit.modeSmoothNum=e;
     paroptim.parametrisation.optiminit.modeScale='none';  %'length'
     
-   
+    
 end
 
 function [paroptim]=BF_sens_smooth2()
@@ -943,6 +943,19 @@ function [paroptim]=TestProfConstr()
     paroptim.constraint.resVal={};
 end
 
+
+function [paroptim]=TestMode_snak(sensType,algo)
+    switch sensType
+        case 'sens'
+            [paroptim]=BF_sens_oscill();
+        case 'snak'
+            [paroptim]=BF_snak_oscill;
+    end
+    paroptim.parametrisation.snakes.refine.refineGrid=[10 1];
+    paroptim.optim.CG.diffStepSize=[1e-5];
+    paroptim.parametrisation.optiminit.corneractive=true;
+    paroptim.parametrisation.snakes.force.vel.algo=algo;
+end
 %% Test cases for length Area
 
 function [paroptim]=Test_smoothCG_Area()
@@ -1135,14 +1148,14 @@ function [paroptim]=areabusesweep(e)
     paroptim.general.worker=8;
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
-    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
     
-%     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
-%     paroptim.desvar.numNonFillVar=[1 ];
-%     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
-%     paroptim.desvar.startPopNonFill={'rand'};
+    %     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+    %     paroptim.desvar.numNonFillVar=[1 ];
+    %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
+    %     paroptim.desvar.startPopNonFill={'rand'};
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     
     
@@ -1164,7 +1177,7 @@ end
 function [paroptim]=areabuserefine(e)
     [paroptim]=areabusesweep(e);
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo2');
-    paroptim.parametrisation.snakes.refine.axisRatio =e*10/4; 
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10/4;
     %paroptim.desvar.desVarRangeNoFill={[0.25,1.5]*e*10/4};
     [paroptim]=AdaptiveRefinement(paroptim);
     paroptim.refine.refineOptimType='contcurvenoedge';
@@ -1185,7 +1198,7 @@ function [paroptim]=areabuseCGre(e)
     
     [paroptim]=SumVolumeConstraint(paroptim);
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
-%     paroptim.general.optimMethod='DE';
+    %     paroptim.general.optimMethod='DE';
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=12;
@@ -1194,7 +1207,7 @@ function [paroptim]=areabuseCGre(e)
     paroptim.obj.flow.CFDfolder ='.\Result_Template\CFD_code_Template\supersonic_ogivefine';
     %paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     paroptim=ModifySnakesParam(paroptim,['optimInverseDesign']);
-    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1); 
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
     paroptim.parametrisation.general.restart=false;
     paroptim.parametrisation.optiminit.corneractive=true;
     paroptim.parametrisation.optiminit.cellLevels=[6,10];
@@ -1205,13 +1218,13 @@ function [paroptim]=areabuseCGre(e)
     paroptim.optim.CG.nLineSearch=8;
     paroptim.optim.CG.validVol=0.05;
     paroptim.optim.CG.openVol=0.05;
-    paroptim.optim.CG.diffStepSize = [1 -1]*1e-5; 
-    paroptim.optim.CG.minDiffStep = [1e-6]; 
-    paroptim.optim.CG.maxDiffStep = [1e-5]; 
-%     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
-%     paroptim.desvar.numNonFillVar=[1 ];
-%     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
-%     paroptim.desvar.startPopNonFill={'rand'};
+    paroptim.optim.CG.diffStepSize = [1 -1]*1e-5;
+    paroptim.optim.CG.minDiffStep = [1e-6];
+    paroptim.optim.CG.maxDiffStep = [1e-5];
+    %     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+    %     paroptim.desvar.numNonFillVar=[1 ];
+    %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
+    %     paroptim.desvar.startPopNonFill={'rand'};
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     
     
@@ -1229,15 +1242,15 @@ function [paroptim]=AdaptSizeforBusemann(paroptim,e)
     end
     nBound=(ymax-ymin)/(paroptim.parametrisation.optiminit.cellLevels(2)-4)...
         *paroptim.parametrisation.optiminit.cellLevels(2)/2;
-     nBoundAct=paroptim.parametrisation.general.passDomBounds(2,2)...
-         -paroptim.parametrisation.general.passDomBounds(2,1);
-
-     
-    paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct; 
+    nBoundAct=paroptim.parametrisation.general.passDomBounds(2,2)...
+        -paroptim.parametrisation.general.passDomBounds(2,1);
+    
+    
+    paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct;
 end
 
 function [paroptim]=areabuseTest()
-   [paroptim]=areabusesweep(0.05);
+    [paroptim]=areabusesweep(0.05);
     paroptim.general.nPop=25;
     paroptim.general.maxIter=10;
 end
@@ -1264,7 +1277,7 @@ function paroptim=RestartLocalRefine()
     paroptim.general.refineOptimRatio=0.1;
     
     paroptim.general.maxIter=2;
-    paroptim.general.worker=12; 
+    paroptim.general.worker=12;
     paroptim.general.refineOptim(:,end)=4;
 end
 
@@ -1277,7 +1290,7 @@ function paroptim=refsweep(gridCase,airfoil,lvl)
     paroptim.general.startPop='halfuniformthin';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=nIter;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2]
     paroptim.optim.CG.minDiffStep=1e-7;
     paroptim.optim.CG.validVol=0.2;
@@ -1340,7 +1353,7 @@ function [paroptim]=TInvDes(airfoil,gridCase)
     paroptim.refine.refineIter=1;
     paroptim.refine.refinePattern='preset'; % 'edgecross' 'curvature'
     paroptim.refine.refineOptimType='all';
-    paroptim.refine.refineOptimRatio=0.3; 
+    paroptim.refine.refineOptimRatio=0.3;
     paroptim.refine.rankType='rank';
     paroptim.refine.slopeConv=0.2;
     paroptim.optim.CG.validVol=0.2;
@@ -1370,7 +1383,7 @@ function paroptim=refsweeplocal(gridCase,airfoil,nIter,lvl)
     paroptim.general.startPop='halfuniformsharp';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=nIter;
-    paroptim.general.worker=8; 
+    paroptim.general.worker=8;
     paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2]
     paroptim.optim.CG.minDiffStep=1e-5;
     paroptim.optim.CG.validVol=0.2;
@@ -1387,15 +1400,15 @@ function paroptim=refsweeplocal(gridCase,airfoil,nIter,lvl)
             paroptim.parametrisation.snakes.refine.gridDistrib='none';
     end
     
-     switch gridCase(2)
+    switch gridCase(2)
         case 'v'
             [paroptim]=gridrefcase_vertical(paroptim,nIter,lvl);
         case 'u'
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
-         case 'o'
-             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
+        case 'o'
+            [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
@@ -1447,7 +1460,7 @@ function paroptim=NACA0012Sweep(gridCase,lvl,optimiser)
     paroptim.parametrisation.optiminit.cellLevels=[(6*2^lvl+2),2];
     paroptim.parametrisation.snakes.refine.refineGrid=[8 1];
     paroptim.general.refineOptim=[2 1 100; 2 1 100];
-        
+    
     
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
     
@@ -1490,8 +1503,8 @@ function paroptim=NACA0012Sweeplocalfullopt(gridCase,lvl,optimiser)
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
-         case 'o'
-             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
+        case 'o'
+            [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
@@ -1544,8 +1557,8 @@ function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
-         case 'o'
-             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
+        case 'o'
+            [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
@@ -1575,12 +1588,12 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     
     paroptim.spline.splineCase='naca0012';
     paroptim.spline.resampleSnak=true;
-    paroptim.parametrisation.general.typeLoop = 'subdivspline'; 
+    paroptim.parametrisation.general.typeLoop = 'subdivspline';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.resampleSnak=true;
     paroptim.obj.flow.rootMesh{2}=[cd,filesep,'supportoptim',filesep,'naca0012'];
     
-    paroptim.refine.refineOptimRatio=0.3; 
+    paroptim.refine.refineOptimRatio=0.3;
     paroptim.refine.rankType=refmethod;
     
     [ratio]=PickRatioForRefineNumber(refmethod);
@@ -1625,8 +1638,8 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
                 [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
             case 'a'
                 [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
-         case 'o'
-             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
+            case 'o'
+                [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
             otherwise
                 error('Unknown gridcase')
         end
@@ -1640,7 +1653,7 @@ function paroptim=volsweeprefine(e,gridCase,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio = min(2*e*1.5,1);
     paroptim.parametrisation.snakes.refine.LEShrink=true;
     paroptim.parametrisation.optiminit.defaultCorner=1e-6;
-        
+    
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
     
     paroptim.parametrisation.general.passDomBounds=...
@@ -1690,13 +1703,13 @@ function paroptim=volsweeplocal(e,gridCase)
             [paroptim]=gridrefcase_uniform(paroptim,nIter,lvl);
         case 'a'
             [paroptim]=gridrefcase_alternate(paroptim,nIter,lvl);
-         case 'o'
-             [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
+        case 'o'
+            [paroptim]=gridrefcase_auto(paroptim,nIter,lvl);
         otherwise
             error('Unknown gridcase')
     end
     
-    paroptim.parametrisation.snakes.refine.axisRatio = min(4*e*1.5,1); 
+    paroptim.parametrisation.snakes.refine.axisRatio = min(4*e*1.5,1);
     paroptim.parametrisation.general.typeLoop='subdivision';
     
     paroptim.parametrisation.general.passDomBounds=...
@@ -1919,14 +1932,14 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     switch cornAct
         case 1
             paroptim.parametrisation.general.passDomBounds(1,:)=...
-            paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.08;
+                paroptim.parametrisation.general.passDomBounds(1,:)/1.1+0.08;
         case 2
             paroptim.parametrisation.general.passDomBounds=...
-            [-0.5 1.5; -1 1];
-        paroptim.parametrisation.optiminit.cellLevels=[2,2];
+                [-0.5 1.5; -1 1];
+            paroptim.parametrisation.optiminit.cellLevels=[2,2];
         case 3
             paroptim.parametrisation.general.passDomBounds(1,:)=...
-            paroptim.parametrisation.general.passDomBounds(1,:)/1.2+0.1;
+                paroptim.parametrisation.general.passDomBounds(1,:)/1.2+0.1;
     end
     
     paroptim.optim.CG.varActive='snaksensiv';
@@ -1949,7 +1962,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
         otherwise
             error('invalid profileComp')
     end
-            
+    
     %paroptim.obj.invdes.profileComp=''; %  'area' 'areasquared' 'areadist'
 end
 
@@ -1977,14 +1990,14 @@ function [nacaStr]=MultiTopoAeroCases(shortName)
 end
 
 function [paroptim]=TestNewOut()
-   [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
-   paroptim.general.maxIter=4;
+    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
+    paroptim.general.maxIter=4;
     paroptim.general.worker=12;
 end
 
 function [paroptim]=RefLocOut(e)
-   [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
-   %paroptim.general.maxIter=2;
+    [paroptim]=invdeslocal_test2('uu','contcurve',1,1);
+    %paroptim.general.maxIter=2;
     
     paroptim.parametrisation.general.passDomBounds(1,:)=...
         (paroptim.parametrisation.general.passDomBounds(1,:)-0.05)*1.1;
@@ -2097,7 +2110,7 @@ function paroptim=TestCrashLocRefineSym()
     paroptim=volsweeplocal(0.10,'cv');
     paroptim.general.refineOptimType='contlength';
     paroptim.general.maxIter=0;
-    paroptim.general.worker=4; 
+    paroptim.general.worker=4;
     paroptim.general.refineOptim(:,end)=4;
     
 end
@@ -2130,8 +2143,8 @@ function [paroptim]=Debug170309()
     % debug for the corner problems try to find  better sets of parameters
     % to avoid the minimum getting stuck on corners.
     
-   paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
-   paroptim.parametrisation.snakes.step.arrivalTolerance=1e-1;
+    paroptim=invdeslocal_test2('uu','contcurvescale',0,1);
+    paroptim.parametrisation.snakes.step.arrivalTolerance=1e-1;
     paroptim.parametrisation.snakes.step.snaxInitPos=1e-5;
     paroptim.parametrisation.snakes.force.lengthEpsilon=1e-6;
     paroptim.parametrisation.snakes.force.distEpsilon=5e-7;
@@ -2197,29 +2210,29 @@ function [paroptim]=Debug170404()
     paroptim=invdeslocal_test4('uo','contcurvescale',1,1);
     
     
-%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
-%     paroptim.parametrisation.optiminit.modeScale='volume';
+    %     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+    %     paroptim.parametrisation.optiminit.modeScale='volume';
 end
 function [paroptim]=Debug170404_2()
     paroptim=invdeslocal_test4('uu','contcurvevol',0,1);
     
     
-%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
-%     paroptim.parametrisation.optiminit.modeScale='volume';
+    %     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+    %     paroptim.parametrisation.optiminit.modeScale='volume';
 end
 function [paroptim]=Debug170404_3()
     paroptim=invdeslocal_test4('uo','contcurve',0,1);
     
     
-%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
-%     paroptim.parametrisation.optiminit.modeScale='volume';
+    %     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+    %     paroptim.parametrisation.optiminit.modeScale='volume';
 end
 function [paroptim]=Debug170405()
     paroptim=invdeslocal_test4('uo','contcurve',0,1);
     
     
-%     paroptim.optim.CG.gradScaleType='none'; % 'volume'
-%     paroptim.parametrisation.optiminit.modeScale='volume';
+    %     paroptim.optim.CG.gradScaleType='none'; % 'volume'
+    %     paroptim.parametrisation.optiminit.modeScale='volume';
 end
 
 function [paroptim]=Run170331()
@@ -2917,9 +2930,9 @@ function paroptim=BuseDerivCoarse(e)
     paroptim=AreaM2sweep_Lc();
     paroptim.general.startPop='specificfill';
     paroptim.general.specificFillName='testgrad_busemann';
-%     paroptim.general.startPop='loadshape';
-%     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
-%     paroptim.optim.CG.gradScaleType='none';
+    %     paroptim.general.startPop='loadshape';
+    %     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
+    %     paroptim.optim.CG.gradScaleType='none';
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogivecoarse'];
     paroptim.optim.CG.diffStepSize=[e,-e]; %[0,2]
     paroptim.optim.CG.minDiffStep=e;
@@ -3022,7 +3035,7 @@ function paroptim=VolSweep(e)
     %paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
     paroptim.optim.CG.diffStepSize=[1e-6,-1e-6]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.parametrisation.snakes.refine.axisRatio = min(10*e*1.5,1); 
+    paroptim.parametrisation.snakes.refine.axisRatio = min(10*e*1.5,1);
     paroptim.optim.CG.minDiffStep=1e-6;
     paroptim.general.maxIter=100;
     paroptim.general.refineOptim=0;
@@ -3284,7 +3297,7 @@ function paroptim=desk_4412cos()
     %paroptim.optim.CG.varActive='all';
     paroptim.parametrisation.snakes.refine.axisRatio=2;
     
-end 
+end
 
 function paroptim=desk_2212cos()
     
@@ -3293,7 +3306,7 @@ function paroptim=desk_2212cos()
     %paroptim.optim.CG.varActive='all';
     paroptim.parametrisation.snakes.refine.axisRatio=2;
     
-end 
+end
 
 function paroptim=bp3_0012cos()
     [paroptim]=Inverse_CG();
@@ -3319,7 +3332,7 @@ function paroptim=bp3_4412cos()
     paroptim.obj.invdes.aeroName='4412';
     %paroptim.optim.CG.varActive='all';
     
-end 
+end
 
 function paroptim=bp3_2212cos()
     
@@ -3327,7 +3340,7 @@ function paroptim=bp3_2212cos()
     paroptim.obj.invdes.aeroName='2212';
     %paroptim.optim.CG.varActive='all';
     
-end 
+end
 
 function paroptim=bp32_0012cos()
     [paroptim]=Inverse_CG();
@@ -3355,7 +3368,7 @@ function paroptim=bp32_4412cos()
     paroptim.obj.invdes.aeroName='4412';
     %paroptim.optim.CG.varActive='all';
     
-end 
+end
 
 function paroptim=bp32_2212cos()
     
@@ -3363,7 +3376,7 @@ function paroptim=bp32_2212cos()
     paroptim.obj.invdes.aeroName='2212';
     %paroptim.optim.CG.varActive='all';
     
-end 
+end
 
 function paroptim=bp3_invdes()
     [paroptim]=Inverse_CG();
@@ -3376,10 +3389,10 @@ function paroptim=bp3_invdes()
 end
 
 function paroptim=bp3_invdes_L()
-     paroptim=bp3_invdes();
-     
+    paroptim=bp3_invdes();
+    
     paroptim.general.startPop='halfuniform';
-     paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_L');
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_L');
 end
 
 % Bulk inverse design
@@ -4119,7 +4132,7 @@ function [paroptim]=BP3_SmoothCG_outmis_Aero()
     paroptim.general.worker=12;
 end
 
-    % axRatio 1.25
+% axRatio 1.25
 function [paroptim]=bp3_Aero_CG_10_smooth_peak()
     [paroptim]=CG_Aero();
     
@@ -4183,7 +4196,7 @@ function [paroptim]=bp3_Aero_CG_10_smooth_none()
 end
 
 
-    % axRatio1
+% axRatio1
 function [paroptim]=bp3_Aero_CG_8_smooth_peak()
     [paroptim]=CG_Aero();
     
@@ -4193,7 +4206,7 @@ function [paroptim]=bp3_Aero_CG_8_smooth_peak()
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
-   
+    
     paroptim.optim.CG.validVol=0.3;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=80;
@@ -4215,7 +4228,7 @@ function [paroptim]=bp3_Aero_CG_8_smooth_polypeak()
     paroptim.optim.CG.varActive='snaksensiv';
     paroptim.parametrisation.optiminit.modeSmoothType='polypeaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=4;
-  
+    
 end
 
 function [paroptim]=bp3_Aero_CG_8_smooth_none()
@@ -4227,7 +4240,7 @@ function [paroptim]=bp3_Aero_CG_8_smooth_none()
     
 end
 
-    % axRatio 1.25L
+% axRatio 1.25L
 function [paroptim]=bp3_Aero_CG_10L_pk()
     [paroptim]=CG_Aero();
     paroptim=ModifySnakesParam(paroptim,'optimSupersonic_Long');
@@ -4383,14 +4396,14 @@ function [paroptim]=bp3_Aero_CG_12L_pk()
     paroptim.obj.flow.lengthConvTest=100;
     paroptim.obj.flow.restartIter=2000;
     paroptim.obj.flow.maxRestart=10;
-     
+    
     
     
     
     
     paroptim.spline.splineCase='aerosnake';
     paroptim.spline.domain='normalizeX';
-
+    
     
     paroptim.general.nPop=12;
     paroptim.general.maxIter=60;
@@ -5131,7 +5144,7 @@ function [paroptim]=AlexT_test()
     paroptim.general.nPop=15; % Number of members in a population
     paroptim.general.startPop='rand';
     paroptim.general.maxIter=30;
-    paroptim.general.worker=2; 
+    paroptim.general.worker=2;
 end
 
 function [paroptim]=MBBbeam1_constraint(paroptim)

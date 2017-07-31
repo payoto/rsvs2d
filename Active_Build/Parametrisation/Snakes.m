@@ -14,7 +14,8 @@
 % %#codegen
 
 %% Main execution functions
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,optargout]=Snakes(refinedGrid,looprestart,...
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
+        Snakes(refinedGrid,looprestart,...
         oldGrid,connectionInfo,param)
     % JUST DECLARING VARIABLES FOR LATER
     
@@ -36,7 +37,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,optargout]=Snakes
             RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,oldGridUns,connectionInfo,param);
     else
-        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout2]=...
             RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,oldGridUns,connectionInfo,param);
     end
@@ -47,7 +48,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,optargout]=Snakes
         ylabel('Root Mean squared error on volume convergence')
         xlabel('number of iterations')
     end
-    
+    varargout{1}=optargout;
    
 end
 
@@ -222,7 +223,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
     
     % Unpacking NECESSARY variables
     global maxStep maxDt snaxInitPos
-    varargout=cell(0);
+    varargout{1}=cell(0);
     varExtract={'mergeTopo','boundstr','snakesConsole','dtRatio','snaxInitPos','checkSensitivities','refineGrid'};
     [mergeTopo,boundstr,snakesConsole,dtRatio,snaxInitPos,checkSensitivities,refineGrid]=ExtractVariables(varExtract,param);
     

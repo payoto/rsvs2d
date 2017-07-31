@@ -27,7 +27,7 @@ end
 function paramgeneral=default_general()
     
     paramgeneral.passDomBounds=[-1,1;-1,1];
-    paramgeneral.passGridSteps=3; 
+    paramgeneral.passGridSteps=3;
     paramgeneral.refineSteps=1;
     paramgeneral.passPadding=1;
     paramgeneral.typDat='vvlofoil';
@@ -134,6 +134,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.vel.ChangeStep=[0];
     paramsnakesforce.vel.ChangeConv=[10];
     paramsnakesforce.vel.ChangeTrigger='none';
+    paramsnakesforce.vel.algo='HF';
 end
 
 function paramsnakes=default_snakes()
@@ -160,7 +161,7 @@ end
 
 function param=OptimConvergence(param)
     
-
+    
     param.results.noteFiles={'CurrentBuild','OptimSQP'};
     param.results.tags={'snakes','Opimisation','SQP','Profile Length'};
     
@@ -168,17 +169,17 @@ end
 
 function param=AvoidLocalOptim(param)
     
-% 
-%     param.snakes.force.lengthEpsilon=1e-5;
-%     param.snakes.force.typeSmear='length';
+    %
+    %     param.snakes.force.lengthEpsilon=1e-5;
+    %     param.snakes.force.typeSmear='length';
     param.snakes.step.arrivalTolerance=1e-1;
     % convergence seems linked to the ratio of snaxInitPos to lengthEpsilon
     
-%     param.snakes.step.snaxInitPos=5e-4;
-%     param.snakes.force.lengthEpsilon=1e-3;
-%     param.snakes.force.distEpsilon=2e-5;
-%     param.snakes.force.dirEpsilon=1e-5;
-%     param.snakes.force.typeSmear='lengthD';
+    %     param.snakes.step.snaxInitPos=5e-4;
+    %     param.snakes.force.lengthEpsilon=1e-3;
+    %     param.snakes.force.distEpsilon=2e-5;
+    %     param.snakes.force.dirEpsilon=1e-5;
+    %     param.snakes.force.typeSmear='lengthD';
     
     param.snakes.step.arrivalTolerance=1e-1;
     param.snakes.step.snaxInitPos=1e-5;
@@ -191,7 +192,7 @@ end
 
 function param=SmoothFEDynamic(param)
     
-
+    
     param.results.noteFiles={'CurrentBuild','FESmoothing'};
     param.results.tags={'snakes','Dynamic','Curvature'};
     
@@ -204,7 +205,7 @@ function param=DualOptimSmoothing(param)
     param.snakes.force.vel.Type={'default','velAreaOnly'};
     param.snakes.force.vel.ChangeStep=[0, 100];
     param.snakes.force.vel.ChangeConv=[10,1e-6];
-    param.snakes.force.vel.ChangeTrigger='both'; 
+    param.snakes.force.vel.ChangeTrigger='both';
     
     
 end
@@ -212,7 +213,7 @@ end
 function param=LinOptimSmoothing(param)
     param.snakes.force.vel.ChangeStep=[0];
     param.snakes.force.vel.ChangeConv=[10];
-    param.snakes.force.vel.ChangeTrigger='none'; 
+    param.snakes.force.vel.ChangeTrigger='none';
     param.snakes.force.velType='velMinLin';
     param.snakes.force.vel.Type={'velMinLin'};
     
@@ -229,8 +230,8 @@ function [param]=DefaultCase()
     param.plotting=default_plotting();
     param.snakes=default_snakes();
     param.optiminit=default_optimInit();
-   
-
+    
+    
 end
 
 %%  tests cases
@@ -275,7 +276,7 @@ function [param]=Snakestestsmooth2()
     param=OptimConvergence(param);
     
     param.general.typDat='testsmooth2';
-
+    
     param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
@@ -290,7 +291,7 @@ function [param]=Snakestestsmooth3()
     param=OptimConvergence(param);
     
     param.general.typDat='testsmooth3';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
@@ -304,7 +305,7 @@ function [param]=Snakestestsmooth3_1()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     param.general.typDat='testsmooth3_1';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
@@ -320,7 +321,7 @@ function [param]=Snakestestsmooth3_2()
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     param.general.typDat='testsmooth3_2';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
@@ -336,7 +337,7 @@ function [param]=Snakestestsmooth4()
     param=OptimConvergence(param);
     
     param.general.typDat='testsmooth4';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
@@ -350,7 +351,7 @@ function [param]=SnakestestInternal()
     param=OptimConvergence(param);
     
     param.general.typDat='internaltest';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
@@ -365,7 +366,7 @@ function [param]=SnakestestAltern()
     param=OptimConvergence(param);
     
     param.general.typDat='testaltern';
-
+    
     param.snakes.step.snakesSteps=20;
     param.snakes.refine.refineGrid=2;
     param.snakes.refine.typeRefine='all';
@@ -380,7 +381,7 @@ function [param]=Snakestestsmooth4_ref()
     param=OptimConvergence(param);
     
     param.general.typDat='testsmooth4';
-
+    
     param.snakes.step.snakesSteps=50;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
@@ -402,7 +403,7 @@ function [param]=ModeAnalysis()
     param.general.passDomBounds=[-1,1;-0.4444,0.4444];
     param.general.refineSteps=4;
     param.snakes.step.mergeTopo=true;
-     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.axisRatio=1;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
@@ -425,7 +426,7 @@ function [param]=ModeAnalysis2body()
     param.general.passDomBounds=[-1,1;-0.4444,0.4444];
     param.general.refineSteps=4;
     param.snakes.step.mergeTopo=true;
-     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.axisRatio=1;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
@@ -448,7 +449,7 @@ function [param]=FlatPlate()
     param.general.passDomBounds=[-1,1;-0.1818,0.1818];
     param.general.refineSteps=2;
     param.snakes.step.mergeTopo=true;
-     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.axisRatio=1;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
@@ -471,7 +472,7 @@ function [param]=Missile2In()
     param.general.passDomBounds=[-1,1;-2/3,2/3];
     param.general.refineSteps=2;
     param.snakes.step.mergeTopo=true;
-     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.axisRatio=1;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
@@ -494,7 +495,7 @@ function [param]=ellipsetest(ratioY)
     yAx=0.7500*ratioY;
     param.general.passDomBounds=[-1,1;-yAx,yAx];
     param.snakes.step.mergeTopo=true;
-     param.snakes.refine.axisRatio=1;
+    param.snakes.refine.axisRatio=1;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
@@ -565,7 +566,7 @@ function [param]=optimTest()
 end
 
 function [param]=optimSupersonic()
-   
+    
     [param]=DefaultCase();
     
     param=OptimConvergence(param);
@@ -617,7 +618,7 @@ function [param]=optimSupersonicCos()
 end
 
 function [param]=optimSupersonic_Long()
-   
+    
     [param]=optimSupersonic();
     
     param.snakes.refine.axisRatio=2.8333;
@@ -650,7 +651,7 @@ function [param]=optimSupersonicMultiTopo()
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
     param.snakes.step.stepType='indiv';
-     
+    
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
     param.results.noteFiles={'CurrentBuild'};
@@ -705,7 +706,7 @@ function [param]=SupersonicComponent()
     param.snakes.step.fillLooseStep=0;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.stepType='indiv';
-     
+    
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
     param.results.noteFiles={'CurrentBuild'};
@@ -747,7 +748,7 @@ function [param]=TestInitOptim()
     param.snakes.step.fillLooseStep=0;
     param.snakes.step.fillLooseCut=1e-3;
     param.snakes.step.stepType='indiv';
-     
+    
     param.results.archiveName='Optimisation';
     param.results.resultRoot=[cd,'\..\results\'];
     param.results.noteFiles={'CurrentBuild'};
@@ -760,7 +761,7 @@ function [param]=TestInitOptim()
 end
 
 function [param]=optimInverseDesign()
-   
+    
     [param]=DefaultCase();
     
     param=OptimConvergence(param);
@@ -811,7 +812,7 @@ function [param]=optimInverseDesign()
     param.snakes.refine.pinnedVertex='LETE'; % 'LETE'
     param.optiminit.defaultCorner=1e-6;
     
-     param.snakes.step.arrivalTolerance=1e-1;
+    param.snakes.step.arrivalTolerance=1e-1;
     param.snakes.step.snaxInitPos=1e-5;
     param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.distEpsilon=5e-7;
@@ -820,7 +821,7 @@ function [param]=optimInverseDesign()
 end
 
 function [param]=optimInverseDesign_L()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1.5;
@@ -830,7 +831,7 @@ function [param]=optimInverseDesign_L()
 end
 
 function [param]=optimInverseDesign_Lcos()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1.5;
@@ -843,7 +844,7 @@ function [param]=optimInverseDesign_Lcos()
 end
 
 function [param]=optimInverseDesign_cosref()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -856,9 +857,9 @@ function [param]=optimInverseDesign_cosref()
 end
 
 function [param]=optimNACA0012()
-   
-   [param]=optimInverseDesign();
-   
+    
+    [param]=optimInverseDesign();
+    
     
     param.general.typDat='optimInit';
     param.general.restart=true;
@@ -879,7 +880,7 @@ function [param]=optimNACA0012()
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
     
-    param.general.typeLoop = 'subdivision'; 
+    param.general.typeLoop = 'subdivision';
     param.general.subdivType='chaikinNaca0012';
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
@@ -1037,7 +1038,7 @@ end
 % BP3 inverse design testing procedure
 
 function [param]=optimInverseDesign_cv0()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1049,7 +1050,7 @@ function [param]=optimInverseDesign_cv0()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_cu0()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1061,7 +1062,7 @@ function [param]=optimInverseDesign_cu0()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uv0()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1073,7 +1074,7 @@ function [param]=optimInverseDesign_uv0()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uu0()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1088,7 +1089,7 @@ end
 % Bp3 inverse design reference grids
 
 function [param]=optimInverseDesign_cv1()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=2;
@@ -1100,7 +1101,7 @@ function [param]=optimInverseDesign_cv1()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_cu1()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1112,7 +1113,7 @@ function [param]=optimInverseDesign_cu1()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uv1()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=2;
@@ -1124,7 +1125,7 @@ function [param]=optimInverseDesign_uv1()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uu1()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1136,7 +1137,7 @@ function [param]=optimInverseDesign_uu1()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_cv2()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=4;
@@ -1148,7 +1149,7 @@ function [param]=optimInverseDesign_cv2()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_cu2()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1160,7 +1161,7 @@ function [param]=optimInverseDesign_cu2()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uv2()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=4;
@@ -1172,7 +1173,7 @@ function [param]=optimInverseDesign_uv2()
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
 function [param]=optimInverseDesign_uu2()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1185,7 +1186,7 @@ function [param]=optimInverseDesign_uu2()
 end
 
 function [param]=optimInverseDesign_bulk()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=1;
@@ -1213,9 +1214,9 @@ function [param]=optimInverseDesign_bulk()
     param.general.refineSteps=0;
     param.snakes.refine.TEShrink=false;
     param.snakes.refine.LEShrink=false;
-    param.snakes.refine.pinnedVertex='LETE'; 
+    param.snakes.refine.pinnedVertex='LETE';
     
-
+    
     param.snakes.refine.refineGrid=[4 1];
     param.general.restart=false;
     param.snakes.refine.gridDistrib='cosXYsquared01';
@@ -1224,7 +1225,7 @@ function [param]=optimInverseDesign_bulk()
 end
 
 function [param]=optimInverseDesign_bulk2()
-   
+    
     [param]=optimInverseDesign();
     
     param.snakes.refine.axisRatio=4;
@@ -1401,7 +1402,7 @@ function [param]=Supersonic()
     param.general.passDomBounds=[-1,1;-0.4,0.4];
     param.general.refineSteps=4;
     param.snakes.step.mergeTopo=false;
-     param.snakes.refine.axisRatio=0.25;
+    param.snakes.refine.axisRatio=0.25;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='none';
@@ -1419,7 +1420,7 @@ function [param]=Klunker()
     param.snakes.refine.typeRefine='all';
     param.general.refineSteps=4;
     param.snakes.step.mergeTopo=false;
-     param.snakes.refine.axisRatio=2.2;
+    param.snakes.refine.axisRatio=2.2;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='none';
@@ -1443,7 +1444,7 @@ function [param]=Klunker2()
     param.snakes.refine.typeRefine='all';
     param.general.refineSteps=4;
     param.snakes.step.mergeTopo=false;
-     param.snakes.refine.axisRatio=1.0;
+    param.snakes.refine.axisRatio=1.0;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=true;
     param.snakes.refine.edgeFinish='none';
@@ -1538,22 +1539,22 @@ function [param]=WeirdShape()
     param.general.typDat='low5shape';
     param.snakes.refine.typeRefine='all';
     param.snakes.step.snakesSteps=100;
-   
+    
     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
     param.general.boundstr{2}='solidisIn1';
     param.general.boundstr{3}='1bound';
-
+    
 end
 
 function [param]=InitTest_in()
     
     % Load defaults
     [param]=InitTest_out();
-   
+    
     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
     param.general.boundstr{2}='solidisIn1';
     param.general.boundstr{3}='1bound';
-
+    
 end
 
 function [param]=InitTest_out()
@@ -1571,11 +1572,11 @@ function [param]=InitTest_out()
     param.general.typDat='inittest';
     param.snakes.refine.typeRefine='all';
     param.snakes.step.snakesSteps=100;
-   
-%     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
-%     param.general.boundstr{2}='solidisIn1';
-%     param.general.boundstr{3}='1bound';
-
+    
+    %     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
+    %     param.general.boundstr{2}='solidisIn1';
+    %     param.general.boundstr{3}='1bound';
+    
 end
 
 function [param]=WeirdShape2()
@@ -1594,9 +1595,9 @@ function [param]=WeirdShape2()
     param.general.typDat='low5shape2';
     param.snakes.refine.typeRefine='all';
     param.snakes.step.snakesSteps=500;
-   
     
-
+    
+    
 end
 
 function [param]=Square()
@@ -1770,7 +1771,7 @@ function [param]=SnakesStructTopo(varargin)
     
     %param.general.typDat='structtopo4';
     param.general.typDat=['structtopo',e];
-
+    
     param.snakes.step.snakesSteps=60;
     param.snakes.refine.refineGrid=2;
     param.snakes.refine.typeRefine='all';
@@ -1797,7 +1798,7 @@ function [param]=CurrentValidation(param)
     
     % Local optimum avoidance params
     param.snakes.step.mergeTopo=false;
-
+    
     param.snakes.step.arrivalTolerance=1e-1;
     param.snakes.step.snaxInitPos=1e-5;
     param.snakes.force.lengthEpsilon=1e-6;
@@ -1849,7 +1850,7 @@ function [param]=val_Snakestestsmooth2()
     
     [param]=CurrentValidation(param);
     param.general.typDat='testsmooth2';
-
+    
     param.snakes.step.snakesSteps=100;
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
@@ -1863,7 +1864,7 @@ function [param]=val_Snakestestsmooth3()
     
     [param]=CurrentValidation(param);
     param.general.typDat='testsmooth3';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
@@ -1876,7 +1877,7 @@ function [param]=val_Snakestestsmooth3_1()
     
     [param]=CurrentValidation(param);
     param.general.typDat='testsmooth3_1';
-
+    
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
     param.snakes.refine.typeRefine='all';
@@ -1963,11 +1964,11 @@ function [param]=val_WeirdShapeIn()
     [param]=CurrentValidation(param);
     param.general.typDat='low5shape';
     
-   
+    
     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
     param.general.boundstr{2}='solidisIn1';
     param.general.boundstr{3}='1bound';
-
+    
 end
 
 function [param]=val_WeirdShapeOut()
@@ -1975,17 +1976,17 @@ function [param]=val_WeirdShapeOut()
     
     [param]=CurrentValidation(param);
     param.general.typDat='low5shape';
-   
+    
     
     param.general.typDat='low5shape';
-
+    
 end
 
 
 %% Input Files for Alex Taylor
 
 function [param]=DefaultOptim_AlexT()
-   
+    
     [param]=DefaultCase();
     
     param=OptimConvergence(param);
@@ -2005,10 +2006,10 @@ function [param]=DefaultOptim_AlexT()
     param.snakes.step.snakData='light'; % 'all'
     param.snakes.step.snakesConsole=false;
     
- 
+    
     % For gradient restart=true for global restart=false
-    param.general.restart=true; 
-   
+    param.general.restart=true;
+    
     % Snake options to use if its taking too long or not converging enough
     param.snakes.step.snakesSteps=100;
     param.snakes.step.convLevel=10^-6;
@@ -2028,7 +2029,7 @@ function [param]=DefaultOptim_AlexT()
     param.general.refineSteps=2;
     % we'd have to set it up if you wanted to use resampling to improve
     % your surface meshes.
-    param.snakes.refine.resampleSnak=false; 
+    param.snakes.refine.resampleSnak=false;
     param.snakes.step.mergeTopo=true; % Can the snake change topology?
     param.general.buildInternal=true; % build internal loops
     
@@ -2059,10 +2060,10 @@ function [param]=MBBbeam1_parametrisation()
     
     [param]=DefaultOptim_AlexT();
     
-     param.optiminit.cellLevels=[5,3];
-     param.general.passDomBounds=[0 9;0 3];
-     param.snakes.refine.axisRatio=1;
-     param.snakes.step.snakesSteps=50;
-     param.general.restart=false; 
+    param.optiminit.cellLevels=[5,3];
+    param.general.passDomBounds=[0 9;0 3];
+    param.snakes.refine.axisRatio=1;
+    param.snakes.step.snakesSteps=50;
+    param.general.restart=false;
     
 end
