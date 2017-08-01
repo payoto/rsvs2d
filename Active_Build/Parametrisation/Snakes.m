@@ -640,6 +640,9 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     isCellSnax=[volumefraction(:).isSnax];
     diffVolFrac=[volumefraction(isCellSnax).targetfill]-[volumefraction(isCellSnax).volumefraction];
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
+    % This should be changed to a positional accuracy of the following
+    % type:
+    % 
     conditionVolume=currentConvVolume<convLevel;
     
     convergenceCondition= conditionVolume && conditionVelocity;
