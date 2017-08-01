@@ -1,6 +1,6 @@
-function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin)
+function [analysisCoord1,analysisCoord2,modeCoord]=ShowAreaError(entryPoint,isfig,varargin)
     % Valid entry points Are:
-    % - folder: reads 
+    % - folder: reads
     
     modeSmoothScale='';
     switch entryPoint
@@ -153,12 +153,16 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
             ylabel('Profile')
             xlabel('Point index')
             parsplie.splineCase='inversedesign2';
+            
+            modeCoord=cell(2,numel(analysisCoord2));
             for ii=1:numel(analysisCoord2)
                 %         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
                 %         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
                 c1=analysisCoord1{jj};
                 c2=analysisCoord2{ii}{jj};
-                posL=PlotProfileDifference(c1,c2,ax);
+                [posL,modeCoord{1,ii},modeCoord{2,ii}]=PlotProfileDifference(c1,c2,ax);
+                modeCoord{1,ii}=[posL,modeCoord{1,ii}];
+            modeCoord{2,ii}=[posL,modeCoord{2,ii}];
             end
             axes(ax(3))
             plot(posL,c1(:,1))
@@ -180,12 +184,15 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
         ylabel('Profile')
         xlabel('Point index')
         parsplie.splineCase='inversedesign2';
+        modeCoord=cell(2,numel(analysisCoord2));
         for ii=1:numel(analysisCoord2)
             %         [c1,~]=ResampleSpline(analysisCoord1,parsplie);
             %         [c2,~]=ResampleSpline(analysisCoord2{ii},parsplie);
             c1=analysisCoord1;
             c2=analysisCoord2{ii};
-            posL=PlotProfileDifference(c1,c2,ax);
+            [posL,modeCoord{1,ii},modeCoord{2,ii}]=PlotProfileDifference(c1,c2,ax);
+            modeCoord{1,ii}=[posL,modeCoord{1,ii}];
+            modeCoord{2,ii}=[posL,modeCoord{2,ii}];
         end
         axes(ax(3))
         plot(posL,c1(:,1))
@@ -196,7 +203,7 @@ function [analysisCoord1,analysisCoord2]=ShowAreaError(entryPoint,isfig,varargin
     end
 end
 
-function [posL]=PlotProfileDifference(coord1,coord2,ax)
+function [posL,deltaCoord,normDeltaCoord]=PlotProfileDifference(coord1,coord2,ax)
     
     
     if numel(coord1)~=numel(coord2)
@@ -217,7 +224,8 @@ function [posL]=PlotProfileDifference(coord1,coord2,ax)
     [maxVal,iMax]=max(abs(deltaCoord));
     plot(posL,deltaCoord)
     axes(ax(2))
-    plot(posL,sign(iMax)*deltaCoord/maxVal)
+    normDeltaCoord=sign(iMax)*deltaCoord/maxVal;
+    plot(posL,normDeltaCoord)
     
 end
 

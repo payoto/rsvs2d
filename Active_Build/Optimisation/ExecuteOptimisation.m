@@ -1911,7 +1911,7 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             addstruct=struct('y',[]);
             
     end
-    optimdatstruct=struct('var',[],'value',[]);
+    optimdatstruct=struct('var',[],'value',[],'mutVecPopInd',[],'mutVecFillInd',[]);
     popstruct=struct('fill',valFill,'nonfillvar',valFill2,'location','','objective',[],'constraint'...
         ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','');
     
