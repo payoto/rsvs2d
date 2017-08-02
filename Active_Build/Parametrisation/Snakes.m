@@ -448,7 +448,7 @@ end
 function [nonBreedVert]=SetNonBreedVertices(borderVertices,iterNum,param)
     varExtract={'vertLooseStep','pinnedVertex'};
     [vertLooseStep,pinnedVertex]=ExtractVariables(varExtract,param);
-    nonBreedVert=[];
+    nonBreedVert=zeros(1,0);
     
     if iterNum<=vertLooseStep
         nonBreedVert=[nonBreedVert,borderVertices.weak,borderVertices.loop];
@@ -1275,7 +1275,7 @@ function [snaxel,insideContourInfo,newNonBreedVert]=...
 end
 
 function [snaxel,newInsideEdges,delIndex,newNonBreedVert]=RepopIterativeBreedingProcess...
-        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,nonBreedVert,...
+        (snaxel,finishedSnakes,edgeVertIndex,edgeIndex,edgeSnaxel,unstructglobal,~,...
         edgeDat,mergeTopo)
     % Iterative Breeding process for the breeding of edges
     
@@ -1285,7 +1285,7 @@ function [snaxel,newInsideEdges,delIndex,newNonBreedVert]=RepopIterativeBreeding
     rePopInd=[];
     [edgeLength]=CalculateEgeLengths(unstructglobal);
     warning('OFF','MATLAB:catenate:DimensionMismatch')
-    newNonBreedVert=[];
+    newNonBreedVert=zeros(1,0);
     while ~isempty(finishedSnakes)
         kk=kk+1;
         breedSub=finishedSnakes(1);

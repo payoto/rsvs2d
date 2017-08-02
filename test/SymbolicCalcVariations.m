@@ -124,7 +124,41 @@ plot(ax(3),real(c2),real(lReal));
 plot(ax(4),imag(c2),imag(lReal));
 
 
+%% Comparison of dy/dyc to a parabola
+% This shows that as yc tends to infinity (ie that the profile tends to a
+% straight line the profile tends to a parabola)
 
+dydyc=@(yc,x,a) (sqrt(4*a^2/yc^2-4*x.^2/yc^2+1)-1)./(sqrt(4*a^2/yc^2-4*x.^2/yc^2+1)*2);
+ypar=@(x,a) -(x+a).*(x-a);
+a=1;
+x=linspace(-a,a,501);
+
+
+h=figure;
+h.Name='Limit of d(y)/d(yc) as yc tends to infinity';
+listYc=[1e7 1e6 1e5 1e4 1e3 1e2 1e1];
+subplot(1,2,1), hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,dydyc(ii,x,a)/max(abs(dydyc(ii,x,a))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+lineD(kk)=plot(x,(ypar(x,a)),'k--','DisplayName','parabola');
+legend(lineD)
+
+clear lineD
+subplot(1,2,2), hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,(log10(abs(ypar(x,a)-dydyc(ii,x,a)/max(abs(dydyc(ii,x,a)))))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+ii=10^(3.8);
+lineD(kk)=plot(x,(log10(abs(ypar(x,a)-dydyc(ii,x,a)/max(abs(dydyc(ii,x,a)))))),'k');
+lineD(kk).DisplayName=num2str(ii,'%.1e');
+legend(lineD)
 
 
 

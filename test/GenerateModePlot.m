@@ -106,12 +106,13 @@ for ii=figList;
     h(1).Color='none';
     hCol=h(3).Color;
     h(3).Color='none';
-    print(h(1),'-r300','-dpng',['.\fig\',h(1).Name,'.png'])
+    figName=matlab.lang.makeValidName([h(1).Name,int2str(ii)]);
+    print(h(1),'-r300','-dpng',['.\fig\',figName,'.png'])
     h(1).Renderer='painters';
-    print(h(1),'-depsc',['.\fig\',h(1).Name,'.eps'])
+    print(h(1),'-depsc',['.\fig\',figName,'.eps'])
     h(1).Color=[0.93 0.93 0.93];
     h(3).Color=hCol;
-    hgsave(h(1),['.\fig\',h(1).Name,'.fig'])
+    hgsave(h(1),['.\fig\',figName,'.fig'])
 end
 
 %%

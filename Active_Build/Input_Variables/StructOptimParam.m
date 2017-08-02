@@ -951,8 +951,9 @@ function [paroptim]=TestMode_snak(sensType,algo)
         case 'snak'
             [paroptim]=BF_snak_oscill;
     end
+    paroptim.parametrisation.snakes.step.snakesSteps=100;
     paroptim.parametrisation.snakes.refine.refineGrid=[10 1];
-    paroptim.optim.CG.diffStepSize=[1e-5];
+    paroptim.optim.CG.diffStepSize=[1e-2];
     paroptim.parametrisation.optiminit.corneractive=true;
     paroptim.parametrisation.snakes.force.vel.algo=algo;
 end

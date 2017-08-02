@@ -14,6 +14,12 @@ pathStr{kk}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume 
 pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_07\Day_2017-07-31\Dir_2017-07-31T152004_TestMode_snak_sens_HF_';
 pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_07\Day_2017-07-31\Dir_2017-07-31T155616_TestMode_snak_snak_HFHA_';
 pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_07\Day_2017-07-31\Dir_2017-07-31T161204_TestMode_snak_sens_HFHA_';
+pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_08\Day_2017-08-01\Dir_2017-08-01T172417_TestMode_snak_sens_HF_';
+pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_08\Day_2017-08-01\Dir_2017-08-01T174502_TestMode_snak_snak_HF_';
+pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_08\Day_2017-08-02\Dir_2017-08-02T085803_TestMode_snak_sens_HFHA_';
+pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_08\Day_2017-08-02\Dir_2017-08-02T090818_TestMode_snak_snak_HFHA_';
+pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_08\Day_2017-08-02\Dir_2017-08-02T093846_TestMode_snak_sens_HF_';
+pathStr{end+1}='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Archive_2017_08\Day_2017-08-02\Dir_2017-08-02T094956_TestMode_snak_snak_HF_';
 
 %%
 

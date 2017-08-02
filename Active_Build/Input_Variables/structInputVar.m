@@ -134,7 +134,7 @@ function paramsnakesforce=default_snakes_force()
     paramsnakesforce.vel.ChangeStep=[0];
     paramsnakesforce.vel.ChangeConv=[10];
     paramsnakesforce.vel.ChangeTrigger='none';
-    paramsnakesforce.vel.algo='HF';
+    paramsnakesforce.vel.algo='switchclose'; % 'HF' 'HA' 'switchclose'
 end
 
 function paramsnakes=default_snakes()
@@ -500,7 +500,7 @@ function [param]=ellipsetest(ratioY)
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
     param.plotting.checkSensitivities=true;
-    param.snakes.step.vertLooseStep=200;
+    param.snakes.step.vertLooseStep=5;
 end
 %% Optimisation Cases
 
