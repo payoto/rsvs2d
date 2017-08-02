@@ -143,82 +143,100 @@ end
 function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
         RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction,algo)
     
-    %     reRunVel=1;
-    %     while reRunVel>0 && reRunVel<3
-    
-    switch algo
-        case 'HF'
-            % THis section needs a clean up
-            [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
-            [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
-            [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreezeRnd2);
-            finIsFreeze=isFreezeRnd2;
-            if any(isnan(DeltaxisFreeze))
-                DeltaxisFreeze(:)=0;
-            end
-            
-            if any(isnan(Deltax))
-                [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,(isFreeze==1));
-                finIsFreeze=(isFreeze==1);
+ 
+    flagRun=true;
+    while flagRun
+        switch algo
+            case 'HF'
+                flagRun=false;
+                % THis section needs a clean up
+                [DeltaxisFreeze,~]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,false(size(isFreeze)));
+                [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
+                [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,isFreezeRnd2);
+                finIsFreeze=isFreezeRnd2;
+                if any(isnan(DeltaxisFreeze))
+                    DeltaxisFreeze(:)=0;
+                end
+                
                 if any(isnan(Deltax))
-                    [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze));
-                    finIsFreeze=logical(isFreeze) ;
+                    [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,(isFreeze==1));
+                    finIsFreeze=(isFreeze==1);
                     if any(isnan(Deltax))
-                        if any(~isfinite(lagMulti))
-                            %frzCell=find(~isfinite(lagMulti));
-                            %snaxFreezeCell=logical(sum(areaConstrMat(frzCell,:)~=0));
-                            %if all(snaxFreezeCell | logical(isFreeze))
-                            snaxFreezeCell=~((sum(Hf~=0,1)>1) | (sum(Hf~=0,2)>1)');
+                        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze));
+                        finIsFreeze=logical(isFreeze) ;
+                        if any(isnan(Deltax))
+                            if any(~isfinite(lagMulti))
+                                %frzCell=find(~isfinite(lagMulti));
+                                %snaxFreezeCell=logical(sum(areaConstrMat(frzCell,:)~=0));
+                                %if all(snaxFreezeCell | logical(isFreeze))
+                                snaxFreezeCell=~((sum(Hf~=0,1)>1) | (sum(Hf~=0,2)>1)');
+                            end
+                            %end
+                            [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
+                            finIsFreeze=logical(isFreeze) | snaxFreezeCell;
                         end
-                        %end
-                        [Deltax,lagMulti,condMat]=SQPStepFreeze(Df,Hf,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
-                        finIsFreeze=logical(isFreeze) | snaxFreezeCell;
                     end
                 end
-            end
-            HL=Hf;
-            algo='HF';
-        case 'HFHA'
-            
-            [~,lagMulti2]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
-            [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMulti2,numel(volumefraction));
-            [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
-            [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
-            [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreezeRnd2);
-            finIsFreeze=isFreezeRnd2;
-            if any(isnan(DeltaxisFreeze))
-                DeltaxisFreeze(:)=0;
-            end
-            
-            if any(isnan(Deltax))
-                [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,(isFreeze==1));
-                finIsFreeze=(isFreeze==1);
+                HL=Hf;
+                algo='HF';
+            case 'HFHA'
+                flagRun=false;
+                [~,lagMulti2]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
+                [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMulti2,numel(volumefraction));
+                [DeltaxisFreeze,~]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,false(size(isFreeze)));
+                [isFreezeRnd2]=VelocityThawing(isFreeze,DeltaxisFreeze);
+                [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,isFreezeRnd2);
+                finIsFreeze=isFreezeRnd2;
+                if any(isnan(DeltaxisFreeze))
+                    DeltaxisFreeze(:)=0;
+                end
+                
                 if any(isnan(Deltax))
-                    [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze));
-                    finIsFreeze=logical(isFreeze) ;
+                    [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,(isFreeze==1));
+                    finIsFreeze=(isFreeze==1);
                     if any(isnan(Deltax))
-                        if any(~isfinite(lagMulti))
-                            %frzCell=find(~isfinite(lagMulti));
-                            %snaxFreezeCell=logical(sum(areaConstrMat(frzCell,:)~=0));
-                            %if all(snaxFreezeCell | logical(isFreeze))
-                            snaxFreezeCell=~((sum(Hf~=0,1)>1) | (sum(Hf~=0,2)>1)');
-                            snaxFreezeCell=snaxFreezeCell | (~((sum(HA~=0,1)>1) ...
-                                | (sum(HA~=0,2)>1)'));
-                            snaxFreezeCell=snaxFreezeCell ...
-                                | (~((sum((Hf+HA)~=0,1)>1) | (sum((Hf+HA)~=0,2)>1)'));
+                        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze));
+                        finIsFreeze=logical(isFreeze) ;
+                        if any(isnan(Deltax))
+                            if any(~isfinite(lagMulti))
+                                %frzCell=find(~isfinite(lagMulti));
+                                %snaxFreezeCell=logical(sum(areaConstrMat(frzCell,:)~=0));
+                                %if all(snaxFreezeCell | logical(isFreeze))
+                                snaxFreezeCell=~((sum(Hf~=0,1)>1) | (sum(Hf~=0,2)>1)');
+                                snaxFreezeCell=snaxFreezeCell | (~((sum(HA~=0,1)>1) ...
+                                    | (sum(HA~=0,2)>1)'));
+                                snaxFreezeCell=snaxFreezeCell ...
+                                    | (~((sum((Hf+HA)~=0,1)>1) | (sum((Hf+HA)~=0,2)>1)'));
+                            end
+                            %end
+                            [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
+                            finIsFreeze=logical(isFreeze) | snaxFreezeCell;
+                            if any(isnan(Deltax)) || any(~isfinite(lagMulti))
+                                flagRun=true;
+                                algo='HF';
+                            end
                         end
-                        %end
-                        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
-                        finIsFreeze=logical(isFreeze) | snaxFreezeCell;
                     end
                 end
-            end
-            HL=Hf+HA;
-            algo='HFHA';
-        otherwise
-            errstrct.message=sprintf('"%s" is an unrecognised snake velocity algorithm. \n Wrong value at: param.snakes.force.vel.algo',algo);
-            errstrct.identifier='Snakes:Velocity:UnknownVelAlgo';
-            error(errstrct)
+                flagRun=flagRun || all(finIsFreeze);
+                if flagRun
+                    algo='HF';
+                end
+                HL=Hf+HA;
+                algo='HFHA';
+            case 'switchclose'
+                % uses the full Lagrangian close to feasible and optimal
+                % solutions and only th eobjective further out.
+                if max(abs(areaTargVec))>1e-3
+                    algo='HF';
+                else
+                    algo='HFHA';
+                end
+            otherwise
+                errstrct.message=sprintf('"%s" is an unrecognised snake velocity algorithm. \n Wrong value at: param.snakes.force.vel.algo',algo);
+                errstrct.identifier='Snakes:Velocity:UnknownVelAlgo';
+                error(errstrct)
+        end
     end
     %         reRunVel=(reRunVel+1)*any(~isfinite(Deltax));
     %         %reRunVel=3;
