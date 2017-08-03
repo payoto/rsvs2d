@@ -137,6 +137,7 @@ x=linspace(-a,a,501);
 h=figure;
 h.Name='Limit of d(y)/d(yc) as yc tends to infinity';
 listYc=[1e7 1e6 1e5 1e4 1e3 1e2 1e1];
+listYc=[0.001 0.01 0.1 1 10 100 1000 10^3.7];
 subplot(1,2,1), hold on;
 kk=1;
 for ii=listYc
@@ -160,5 +161,45 @@ lineD(kk)=plot(x,(log10(abs(ypar(x,a)-dydyc(ii,x,a)/max(abs(dydyc(ii,x,a)))))),'
 lineD(kk).DisplayName=num2str(ii,'%.1e');
 legend(lineD)
 
+%% Calculating the differences in the coordinate reference frame of the profile locally
 
-
+yfunc=@(x,yc,a) -(yc-sqrt(yc^2-4*(x.^2-a^2)))/2;
+normVec=@(pts) ([0 -1;1 0]*pts')';
+ypar=@(x,a) -(x+a).*(x-a);
+a=1;
+listYc=[0  0.01 0.1 1 10 100 250];
+x=linspace(-a,a,2001)';
+h=figure;
+subplot(1,2,1),
+hold on
+kk=1;
+areaDistrib=cell(1,numel(listYc));
+for ii=listYc
+    [~,areaDistrib{kk}]=NormalDistance([x,yfunc(x,ii,a)],[x,yfunc(x,ii+1e-3,a)]);   
+    kk=kk+1;
+end
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(areaDistrib{kk}(:,1),areaDistrib{kk}(:,2)/max(abs(areaDistrib{kk}(:,2))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+lineD(kk)=plot(x,(ypar(x,a)),'k--','DisplayName','1-x^2');kk=kk+1;
+lineD(kk)=plot(x,yfunc(x,0,a),'k-.','DisplayName','y(x,0,1)');
+legend(lineD)
+clear lineD
+subplot(1,4,3), hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,(log10(abs(ypar(x,a)-areaDistrib{kk}(:,2)/max(abs(areaDistrib{kk}(:,2)))))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+clear lineD
+subplot(1,4,4), hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,(log10(abs(yfunc(x,0,a)-areaDistrib{kk}(:,2)/max(abs(areaDistrib{kk}(:,2)))))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
