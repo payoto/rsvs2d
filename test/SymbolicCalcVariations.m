@@ -164,27 +164,46 @@ legend(lineD)
 %% Calculating the differences in the coordinate reference frame of the profile locally
 
 yfunc=@(x,yc,a) -(yc-sqrt(yc^2-4*(x.^2-a^2)))/2;
-dydnyc=@(x,yc,a) -(yc-sqrt(yc^2-4*x.^2+4*a^2))./sqrt(6*yc^2+8*a^2-4*x.^2-2*yc*sqrt(yc^2-4*x.^2+4*a^2));
-dydyc=@(x,yc,a) -(sqrt(4*a^2./yc.^2-4*x.^2./yc.^2+1)-1)./(sqrt(4*a^2./yc.^2-4*x.^2./yc.^2+1)*2);
+dydyc=@(x,yc,a) -(yc~=0)*(sqrt(4*a^2-4*x.^2+yc.^2)-yc)./(sqrt(4*a^2-4*x.^2+yc.^2)*2+(yc==0))-0.5*(yc==0);
 dydx=@(x,yc,a) -2*x./(sqrt(yc.^2-4*(x.^2-a^2)));
-dydnyc2=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1);
 
-%%
+% none of these are right 
+dydnyc1=@(x,yc,a) -(yc-sqrt(yc^2-4*x.^2+4*a^2))./sqrt(6*yc^2+8*a^2-4*x.^2-2*yc*sqrt(yc^2-4*x.^2+4*a^2));
+dydnyc2=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1);
+dydnyc3=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1).^2;
+% norm of difference between 3D gradient vec and XY gradient (normalised) 
+dydnyc4=@(x,yc,a,dydyc,dydx) sqrt(sum(((cat(3,-dydx(x,yc,a),-dydyc(x,yc,a),ones(size(x)))...
+    ./repmat(sqrt(sum(cat(3,-dydx(x,yc,a),-dydyc(x,yc,a),ones(size(x))).^2,3)),[1 1 3]))-...
+    (cat(3,-dydx(x,yc,a),zeros(size(x)),ones(size(x)))...
+    ./repmat(sqrt(sum(cat(3,-dydx(x,yc,a),zeros(size(x)),ones(size(x))).^2,3)),[1 1 3]))).^2,3));
+
+dydnyc5=@(x,yc,a,dydyc,dydx) sqrt(sum((cat(3,-dydx(x,yc,a),-dydyc(x,yc,a),ones(size(x)))...
+    -cat(3,-dydx(x,yc,a),zeros(size(x)),ones(size(x)))...
+    ).^2,3));
+
+% Could be this
+dydnyc6=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydx(x,yc,a).^2+1);
+
 normVec=@(pts) ([0 -1;1 0]*pts')';
 ypar=@(x,a) -(x+a).*(x-a);
 a=1;
-listYc=[0  0.01 0.1 1 10 100 250];
-x=linspace(-a,a,2001)';
-h=figure;
-subplot(1,2,1),
-hold on
+%listYc=[0  0.01 0.1 1 10 100 250];
+listYc=[0 0.01 1 100 10000];
+x=(cos(linspace(-a,a,4001)/a*pi)*a)';
+
 kk=1;
 areaDistrib=cell(1,numel(listYc));
 for ii=listYc
     [~,areaDistrib{kk}]=NormalDistance([x,yfunc(x,ii,a)],[x,yfunc(x,ii+1e-5,a)]);   
     kk=kk+1;
 end
+
+%%
+h(1)=figure('Name','Finite Difference Normal response');
+subplot(1,2,1)
+hold on
 kk=1;
+
 for ii=listYc
     lineD(kk)=plot(areaDistrib{kk}(:,1),areaDistrib{kk}(:,2)/max(abs(areaDistrib{kk}(:,2))));
     lineD(kk).DisplayName=num2str(ii,'%.1e');
@@ -210,40 +229,41 @@ for ii=listYc
     kk=kk+1;
 end
 
-figure
+
+h(2)=figure('Name','Analytical Normal response');
 subplot(1,2,1), hold on;
 kk=1;
 for ii=listYc
-    lineD(kk)=plot(x,(log10(abs(dydnyc(x,ii,a)/dydnyc(0,ii,a)...
+    lineD(kk)=plot(x,dydnyc6(x,ii,a,dydyc,dydx)/dydnyc6(0,ii,a,dydyc,dydx));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+subplot(1,4,3), hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,(log10(abs(ypar(x,a)-dydnyc6(x,ii,a,dydyc,dydx)/dydnyc6(0,ii,a,dydyc,dydx)))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+clear lineD
+subplot(1,4,4), hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,(log10(abs(yfunc(x,0,a)-dydnyc6(x,ii,a,dydyc,dydx)/dydnyc6(0,ii,a,dydyc,dydx)))));
+    lineD(kk).DisplayName=num2str(ii,'%.1e');
+    kk=kk+1;
+end
+h(3)=figure('Name','Comparison Analytical to Finite');
+
+hold on;
+kk=1;
+for ii=listYc
+    lineD(kk)=plot(x,(log10(abs(dydnyc6(x,ii,a,dydyc,dydx)/dydnyc6(0,ii,a,dydyc,dydx)...
         -areaDistrib{kk}(:,2)/max(abs(areaDistrib{kk}(:,2)))))));
-    lineD(kk).DisplayName=num2str(ii,'%.1e');
-    kk=kk+1;
-end
-subplot(1,2,2), hold on;
-kk=1;
-for ii=listYc
-    lineD(kk)=plot(x,(log10(abs(dydnyc2(x,ii,a,dydyc,dydx)/dydnyc2(0,ii,a,dydyc,dydx)...
-        -areaDistrib{kk}(:,2)/max(abs(areaDistrib{kk}(:,2)))))));
-    lineD(kk).DisplayName=num2str(ii,'%.1e');
-    kk=kk+1;
-end
-figure
-subplot(1,2,1), hold on;
-kk=1;
-for ii=listYc
-    lineD(kk)=plot(x,dydnyc(x,ii,a)/dydnyc(0,ii,a));
-    lineD(kk).DisplayName=num2str(ii,'%.1e');
-    kk=kk+1;
-end
-subplot(1,2,2), hold on;
-kk=1;
-for ii=listYc
-    lineD(kk)=plot(x,dydnyc2(x,ii,a,dydyc,dydx));
     lineD(kk).DisplayName=num2str(ii,'%.1e');
     kk=kk+1;
 end
 %% 3D plots
-
 
 yfunc=@(x,yc,a) -(yc-sqrt(yc.^2-4*(x.^2-a^2)))/2;
 dydyc=@(x,yc,a) -(sqrt(4*a^2./yc.^2-4*x.^2./yc.^2+1)-1)./(sqrt(4*a^2./yc.^2-4*x.^2./yc.^2+1)*2);
@@ -290,6 +310,26 @@ for ii=1:3
     s3(ii)=surf(X(:,:),YC(:,:),unitNormal(:,:,ii)./repmat(max(abs(unitNormal(:,:,ii)),[],2),[1 size(unitNormal,2)]));
     ax(ii).YScale='log';
 end
+%%
+h(7)=figure;
+unitNormalXY=unitNormal;
+unitNormalXY(:,:,2)=0;
+unitNormalXY=unitNormalXY./repmat(sqrt(sum(unitNormalXY.^2,3)),[1 1 3]);
+crossNorm=(unitNormal-unitNormalXY);
+crossNorm2=sqrt(sum(crossNorm.^2,3));
+for ii=1:3
+    ax(ii)=subplot(1,3,ii);
+    s3(ii)=surf(X(:,:),YC(:,:),crossNorm(:,:,ii));
+    ax(ii).YScale='log';
+end
+h(8)=figure;
+for ii=1:3
+    ax(ii)=subplot(1,3,ii);
+    s3(ii)=surf(X(:,:),YC(:,:),crossNorm(:,:,ii)./repmat(max(abs(crossNorm(:,:,ii)),[],2),[1 size(crossNorm,2)]));
+    ax(ii).YScale='log';
+end
+h(9)=figure;
+surf(X(:,:),YC(:,:),crossNorm2./repmat(max(abs(crossNorm2),[],2),[1 size(crossNorm,2)]));
 %%
 h(5)=figure
 dfdycdx=@(x,yc,a) 2*x.*yc./(yc.^2-4*(x.^2-a^2)).^(3/2);
