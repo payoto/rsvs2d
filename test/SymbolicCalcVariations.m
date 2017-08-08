@@ -2,7 +2,7 @@
 
 %% Generate Solutions
 
-syms a c1 c2 m l x 
+syms a c1 c2 m l x
 syms f1 f2 f3 y
 f1=sqrt(1-(m*a-c1)^2)/m+c2;
 f2=sqrt(1-(m*a+c1)^2)/m+c2;
@@ -86,9 +86,9 @@ assume(c1,'clear')
 assume(c2,'clear')
 assume(m,'clear')
 assume(a,'clear')
-%% 
+%%
 integr=@(x,tDistrib) cumsum([0,(-x(1:end-1)+x(2:end)).*...
-        (tDistrib(1:end-1)+tDistrib(2:end))/2]);
+    (tDistrib(1:end-1)+tDistrib(2:end))/2]);
 a=1;
 c1=0;
 c2=[-1 -1+1e-6];
@@ -113,12 +113,12 @@ hold on
 ax(5)=subplot(1,4,4);
 hold on
 for ii=1:numel(c2)
-   y=c2(ii) + (1 - (c1 - m(ii)*x).^2).^(1/2)./m(ii); 
-   plot(ax(1),x,real(y))
-   plot(ax(2),x,imag(y))
-   plot(ax(5),x,abs(y))
-   integData=integr(x,y);
-   lReal(ii)=integData(end);
+    y=c2(ii) + (1 - (c1 - m(ii)*x).^2).^(1/2)./m(ii);
+    plot(ax(1),x,real(y))
+    plot(ax(2),x,imag(y))
+    plot(ax(5),x,abs(y))
+    integData=integr(x,y);
+    lReal(ii)=integData(end);
 end
 plot(ax(3),real(c2),real(lReal));
 plot(ax(4),imag(c2),imag(lReal));
@@ -167,11 +167,11 @@ yfunc=@(x,yc,a) -(yc-sqrt(yc^2-4*(x.^2-a^2)))/2;
 dydyc=@(x,yc,a) -(yc~=0)*(sqrt(4*a^2-4*x.^2+yc.^2)-yc)./(sqrt(4*a^2-4*x.^2+yc.^2)*2+(yc==0))-0.5*(yc==0);
 dydx=@(x,yc,a) -2*x./(sqrt(yc.^2-4*(x.^2-a^2)));
 
-% none of these are right 
+% none of these are right
 dydnyc1=@(x,yc,a) -(yc-sqrt(yc^2-4*x.^2+4*a^2))./sqrt(6*yc^2+8*a^2-4*x.^2-2*yc*sqrt(yc^2-4*x.^2+4*a^2));
 dydnyc2=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1);
 dydnyc3=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1).^2;
-% norm of difference between 3D gradient vec and XY gradient (normalised) 
+% norm of difference between 3D gradient vec and XY gradient (normalised)
 dydnyc4=@(x,yc,a,dydyc,dydx) sqrt(sum(((cat(3,-dydx(x,yc,a),-dydyc(x,yc,a),ones(size(x)))...
     ./repmat(sqrt(sum(cat(3,-dydx(x,yc,a),-dydyc(x,yc,a),ones(size(x))).^2,3)),[1 1 3]))-...
     (cat(3,-dydx(x,yc,a),zeros(size(x)),ones(size(x)))...
@@ -194,7 +194,7 @@ x=(cos(linspace(-a,a,4001)/a*pi)*a)';
 kk=1;
 areaDistrib=cell(1,numel(listYc));
 for ii=listYc
-    [~,areaDistrib{kk}]=NormalDistance([x,yfunc(x,ii,a)],[x,yfunc(x,ii+1e-5,a)]);   
+    [~,areaDistrib{kk}]=NormalDistance([x,yfunc(x,ii,a)],[x,yfunc(x,ii+1e-5,a)]);
     kk=kk+1;
 end
 
@@ -337,7 +337,108 @@ gradvec=dydyc(X,YC,a).^2+dydx(X,YC,a).^2; %dfdycdx(X,YC,a);
 gradvec=gradvec./repmat(max((abs(gradvec)),[],2),[1 size(X,2)]);
 surf(X,YC,gradvec);
 
+%% Test higher orders
+
+eq{1}=@(x,a,c0,c1) sqrt(a.^2-(c0.*a-x).^2)+c1;
+eq{2}=@(x,a,c0,c1,c2) a.^2./(2).*(acos(1./a.*(c0-x))...
+    -(1./a.*(c0-x)).*sqrt(1-(1./a.*(c0-x)).^2))+c1.*x+c2;
+eq{3}=@(x,a,c0,c1,c2,c3)  -a.^3./(6).*(sqrt(1-(1./a.*(c0-x)).^2).^3+sqrt(1-(1./a.*(c0-x)).^2)...
+    -acos(1./a.*(c0-x)).*(1./a.*(c0-x)))+1/2*c1.*x.^2+c2.*x+c3;
+eq{4}=@(x,a,c0,c1,c2,c3)  -1*-a.^3./(6).*(sqrt(1-(1./a.*(c0-x)).^2).^3+sqrt(1-(1./a.*(c0-x)).^2)...
+    -acos(1./a.*(c0-x)).*(1./a.*(c0-x)))+1/2*c1.*x.^2+c2.*x+c3;
+
+c1eq2=@(c0,a,ym,yp) (ym-(yp-pi*a.^2/2-ym./(c0+a))./(1-1./(c0+a)))./(c0-a);
+c2eq2=@(c0,a,ym,yp) (yp-pi*a.^2/2-ym./(c0+a))./(1-1./(c0+a));
+
+c0=[0 0 0];% defines from 0 to 1
+lm=[1 1 1]; % defines the width
+c1=[1 0 0];
+c2=[0 0 0];
+c3=[0 0 0];
 
 
 
+for ii=1:3
+    
+    x=linspace(-lm(ii)+c0(ii),lm(ii)+c0(ii),501);
+    
+    switch ii
+        case 1
+            subplot(1,3,ii),hold on
+            plot(x,eq{ii}(x,lm(ii),c0(ii),c1(ii)))
+        case 2
+            subplot(1,3,2),hold on
+            plot(x,eq{ii}(x,lm(ii),c0(ii),c1(ii),c2(ii)))
+        case 3
+            subplot(1,3,3),hold on
+            plot(x,eq{ii}(x,lm(ii),c0(ii),c1(ii),c2(ii),c3(ii)))
+    end
+end
 
+%% analysis of 2nd order
+% second order lacks sufficient degrees of freedom to satisfy area
+% constraints cannot have end conditions and constraint
+c1eq2=@(c0,a,ym,yp) (ym-(yp-pi*a.^2/2-ym.*(c0+a)./(c0-a))./(1-(c0+a)./(c0-a)))./(c0-a);
+c2eq2=@(c0,a,ym,yp) (yp-pi*a.^2/2-ym.*(c0+a)./(c0-a))./(1-(c0+a)./(c0-a));
+
+ym=0;
+yp=0;
+
+c0=0;
+a=[0.5 1 2];
+
+c1=c1eq2(c0,a,ym,yp);
+c2=c2eq2(c0,a,ym,yp);
+
+ hold on
+for ii=1:numel(a)
+    x=linspace(-a(ii)+c0,a(ii)+c0,501);
+    plot(x,eq{2}(x,a(ii),c0,c1(ii),c2(ii)))
+end
+
+%% analysis of 3rd order
+%
+
+c2eq3=@(c0,a,ym,yp,c2) (yp-ym+c2/2.*(-(c0+a).^2+(c0-a).^2)+a.^3*pi/6)./(2*a);
+c3eq3=@(c0,a,ym,yp,c2) ym-c2/2.*(c0-a).^2-(c0-a).*(yp-ym+c2/2.*(-(c0+a).^2+(c0-a).^2)+a.^3*pi/6)./(2*a);
+
+ym=0;
+yp=0;
+
+c0=0;
+c1=[0 -1 -2 -3];
+
+a=ones(size(c1));
+
+c2=c2eq3(c0,a,ym,yp,c1);
+c3=c3eq3(c0,a,ym,yp,c1);
+figure
+ hold on
+for ii=1:numel(c1)
+    x=linspace(-a(ii)+c0,a(ii)+c0,501);
+    l(ii)=plot(x,eq{3}(x,a(ii),c0,c1(ii),c2(ii),c3(ii)));
+    l(ii).DisplayName=['+ c1:',num2str(c1(ii),'%.1e')];
+end
+
+% analysis of 3rd order (bis)
+%
+
+c2eq3=@(c0,a,ym,yp,c2) (yp-ym+c2/2.*(-(c0+a).^2+(c0-a).^2)-a.^3*pi/6)./(2*a);
+c3eq3=@(c0,a,ym,yp,c2) ym-c2/2.*(c0-a).^2-(c0-a).*(yp-ym+c2/2.*(-(c0+a).^2+(c0-a).^2)-a.^3*pi/6)./(2*a);
+
+ym=0;
+yp=0;
+
+c0=0;
+
+c2=c2eq3(c0,a,ym,yp,c1);
+c3=c3eq3(c0,a,ym,yp,c1);
+
+ hold on
+for ii=1:numel(c1)
+    x=linspace(-a(ii)+c0,a(ii)+c0,501);
+    l(end+1)=plot(x,eq{4}(x,a(ii),c0,c1(ii),c2(ii),c3(ii)));
+    l(end).DisplayName=['- c1:',num2str(c1(ii),'%.1e')];
+end
+
+legend(l)
