@@ -502,6 +502,29 @@ function [param]=ellipsetest(ratioY)
     param.plotting.checkSensitivities=true;
     param.snakes.step.vertLooseStep=5;
 end
+
+function [param]=TomImage()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.refineSteps=1;
+    param.general.subdivType='chaikin';
+    param.general.typDat='TomImage';
+    param.snakes.step.snakesSteps=50;
+    param.snakes.refine.refineGrid=[4 4];
+    param.snakes.refine.typeRefine='all';
+    yAx=0.7500*1;
+    param.general.passDomBounds=[-1,1;-yAx,yAx];
+    param.snakes.step.mergeTopo=true;
+    param.snakes.refine.axisRatio=1;
+    param.snakes.refine.TEShrink=false;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+    param.plotting.checkSensitivities=true;
+    param.snakes.step.vertLooseStep=5;
+end
 %% Optimisation Cases
 
 function [param]=optimDefault()
