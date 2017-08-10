@@ -52,9 +52,9 @@ function [analysisCoord1,analysisCoord2,modeCoord]=ShowAreaError(entryPoint,isfi
             for ii=1:size(in2,1)
                 [paramoptim,loop1,loop2]=FindDataFromFolder(rootStr,...
                     in1,in2(ii,:));
-                typeLoop='coord'; %ExtractVariables({'typeLoop'},paramoptim.parametrisation);
-                analysisCoord1={loop1(:).snaxel.(typeLoop)};
-                analysisCoord2{ii}={loop2(:).snaxel.(typeLoop)};
+                typeLoop=ExtractVariables({'typeLoop'},paramoptim.parametrisation);
+                analysisCoord1={loop1(:).(typeLoop)};
+                analysisCoord2{ii}={loop2(:).(typeLoop)};
                 
                 
             end

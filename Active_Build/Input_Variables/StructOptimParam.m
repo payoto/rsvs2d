@@ -852,6 +852,7 @@ function [paroptim]=TestNonFill()
     paroptim.refine.refineOptimType='contcurvenoedge';
 end
 
+
 function [paroptim]=BF_sens_oscill()
     [paroptim]=invdeslocal_test4('uv','contcurve',0,1);
     
@@ -943,7 +944,6 @@ function [paroptim]=TestProfConstr()
     paroptim.constraint.resVal={};
 end
 
-
 function [paroptim]=TestMode_snak(sensType,algo)
     switch sensType
         case 'sens'
@@ -956,6 +956,11 @@ function [paroptim]=TestMode_snak(sensType,algo)
     paroptim.optim.CG.diffStepSize=[1e-2];
     paroptim.parametrisation.optiminit.corneractive=true;
     paroptim.parametrisation.snakes.force.vel.algo=algo;
+end
+
+function [paroptim]=TestlinProgSmooth()
+    [paroptim]=invdestopo('contcurvevol',1,'m4412',0);
+    paroptim.parametrisation.optiminit.modeSmoothType='optimlinprog';
 end
 %% Test cases for length Area
 
@@ -2106,6 +2111,7 @@ function [refineOptimRatio]=PickRatioForRefineNumber(refmethod)
             refineOptimRatio=0.3;
     end
 end
+
 % test Local refinement methods
 function paroptim=TestCrashLocRefineSym()
     paroptim=volsweeplocal(0.10,'cv');
@@ -2776,7 +2782,6 @@ function paroptim=AreaM2sweepBFGS_Vu()
 end
 
 % Test derivatives
-
 
 function paroptim=test_smoothmode1()
     
