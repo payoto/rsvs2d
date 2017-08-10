@@ -42,5 +42,6 @@ function [param]=smoothcoeffdata()
     param.polypeaksmooth(7).maxsmooth = [6];
     param.polypeaksmooth(8).maxsmooth = [7];
     param.polypeaksmooth(9).maxsmooth = [8];
-    
+    [param.optimlinprog.coeff]=(1);
+    [param.optimlinprog.maxsmooth]=(1);
 end
