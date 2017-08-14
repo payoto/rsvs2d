@@ -1,4 +1,5 @@
 function [varargout]=PlotCellGrid(varargin)
+% include_GridCheck
 global PlotCellGrid_Handle
 nOut=nargout(PlotCellGrid_Handle);
 nOutReq=nargout;

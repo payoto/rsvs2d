@@ -1,4 +1,5 @@
 function [varargout]=CalculateEdgeLengths(varargin)
+% include_EdgeInformation
 global CalculateEdgeLengths_Handle
 nOut=nargout(CalculateEdgeLengths_Handle);
 nOutReq=nargout;

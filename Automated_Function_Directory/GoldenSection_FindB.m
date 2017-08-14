@@ -1,4 +1,5 @@
 function [varargout]=GoldenSection_FindB(varargin)
+% include_Optimisation
 global GoldenSection_FindB_Handle
 nOut=nargout(GoldenSection_FindB_Handle);
 nOutReq=nargout;

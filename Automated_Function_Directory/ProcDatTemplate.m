@@ -1,4 +1,5 @@
 function [varargout]=ProcDatTemplate(varargin)
+% include_Validation
 global ProcDatTemplate_Handle
 nOut=nargout(ProcDatTemplate_Handle);
 nOutReq=nargout;

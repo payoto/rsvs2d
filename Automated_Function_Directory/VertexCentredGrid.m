@@ -1,4 +1,5 @@
 function [varargout]=VertexCentredGrid(varargin)
+% include_SnakeParam
 global VertexCentredGrid_Handle
 nOut=nargout(VertexCentredGrid_Handle);
 nOutReq=nargout;

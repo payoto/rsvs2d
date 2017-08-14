@@ -1,4 +1,5 @@
 function [varargout]=CellCentredGrid(varargin)
+% include_SnakeParam
 global CellCentredGrid_Handle
 nOut=nargout(CellCentredGrid_Handle);
 nOutReq=nargout;

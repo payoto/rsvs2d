@@ -1,4 +1,5 @@
 function [varargout]=LeftMostCorner(varargin)
+% include_SnakeParam
 global LeftMostCorner_Handle
 nOut=nargout(LeftMostCorner_Handle);
 nOutReq=nargout;

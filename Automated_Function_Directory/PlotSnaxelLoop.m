@@ -1,4 +1,5 @@
 function [varargout]=PlotSnaxelLoop(varargin)
+% include_CheckResultsLight
 global PlotSnaxelLoop_Handle
 nOut=nargout(PlotSnaxelLoop_Handle);
 nOutReq=nargout;

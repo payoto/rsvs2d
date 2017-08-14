@@ -1,4 +1,5 @@
 function [varargout]=PlotVolFrac(varargin)
+% include_CheckResultsLight
 global PlotVolFrac_Handle
 nOut=nargout(PlotVolFrac_Handle);
 nOutReq=nargout;

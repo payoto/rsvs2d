@@ -1,4 +1,5 @@
 function [varargout]=CheckGrid(varargin)
+% include_GridCheck
 global CheckGrid_Handle
 nOut=nargout(CheckGrid_Handle);
 nOutReq=nargout;

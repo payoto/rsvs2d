@@ -1,4 +1,5 @@
 function [varargout]=GenerateEdgeLoop(varargin)
+% include_EdgeInformation
 global GenerateEdgeLoop_Handle
 nOut=nargout(GenerateEdgeLoop_Handle);
 nOutReq=nargout;

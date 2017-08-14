@@ -1,4 +1,5 @@
 function [varargout]=ExtractSnaxelLoops(varargin)
+% include_SnakeParam
 global ExtractSnaxelLoops_Handle
 nOut=nargout(ExtractSnaxelLoops_Handle);
 nOutReq=nargout;

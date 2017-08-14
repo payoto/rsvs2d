@@ -1235,7 +1235,6 @@ end
 
 %% Flow
 
-
 function [loop]=ConstantArea_Busemann(xMin,xMax,A,M)
     
     h=2*A/2/(xMax-xMin);
@@ -1293,7 +1292,6 @@ function [np]=GoldenSection_maxTanDel(lb,hb,tol,M)
     np=(hb+lb)/2;
     
 end
-
 
 function [np]=GoldenSection_func(lb,hb,tol,extraIn,func)
     

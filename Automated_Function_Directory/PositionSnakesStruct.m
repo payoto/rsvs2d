@@ -1,4 +1,5 @@
 function [varargout]=PositionSnakesStruct(varargin)
+% include_SnakeParam
 global PositionSnakesStruct_Handle
 nOut=nargout(PositionSnakesStruct_Handle);
 nOutReq=nargout;

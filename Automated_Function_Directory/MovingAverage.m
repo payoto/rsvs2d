@@ -1,4 +1,5 @@
 function [varargout]=MovingAverage(varargin)
+% include_Utilities
 global MovingAverage_Handle
 nOut=nargout(MovingAverage_Handle);
 nOutReq=nargout;

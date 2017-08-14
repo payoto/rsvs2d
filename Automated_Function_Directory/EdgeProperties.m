@@ -1,4 +1,5 @@
 function [varargout]=EdgeProperties(varargin)
+% include_EdgeInformation
 global EdgeProperties_Handle
 nOut=nargout(EdgeProperties_Handle);
 nOutReq=nargout;

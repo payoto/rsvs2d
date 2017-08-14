@@ -1,4 +1,5 @@
 function [varargout]=PlotContVec(varargin)
+% include_CheckResultsLight
 global PlotContVec_Handle
 nOut=nargout(PlotContVec_Handle);
 nOutReq=nargout;

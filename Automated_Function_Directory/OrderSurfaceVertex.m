@@ -1,4 +1,5 @@
 function [varargout]=OrderSurfaceVertex(varargin)
+% include_EdgeInformation
 global OrderSurfaceVertex_Handle
 nOut=nargout(OrderSurfaceVertex_Handle);
 nOutReq=nargout;

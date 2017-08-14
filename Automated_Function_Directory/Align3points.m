@@ -1,4 +1,5 @@
 function [varargout]=Align3points(varargin)
+% include_SnakeParam
 global Align3points_Handle
 nOut=nargout(Align3points_Handle);
 nOutReq=nargout;
