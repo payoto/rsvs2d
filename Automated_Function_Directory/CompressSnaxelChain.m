@@ -1,4 +1,5 @@
 function [varargout]=CompressSnaxelChain(varargin)
+% include_SnakeParam
 global CompressSnaxelChain_Handle
 nOut=nargout(CompressSnaxelChain_Handle);
 nOutReq=nargout;

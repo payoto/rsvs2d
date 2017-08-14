@@ -1,4 +1,5 @@
 function [varargout]=PlotEdge(varargin)
+% include_CheckResultsLight
 global PlotEdge_Handle
 nOut=nargout(PlotEdge_Handle);
 nOutReq=nargout;

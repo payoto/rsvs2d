@@ -27,13 +27,14 @@ function [] = HeaderActivation(funcHandles,funcDir)
         mkdir(funcDir);
     end
     jj=0;
+    callerFunc=dbstack(1);
     for ii=1:length(funcHandlesNamesCell)
         funcName=funcHandlesNamesCell{ii}(2:end);
         funcHandleVarname=[funcHandlesNamesCell{ii}(2:end),'_Handle'];
         eval(['global ',funcHandleVarname])
         eval([funcHandleVarname,'=funcHandles{ii};']);
-        if ~isFindFuncFile(funcDir,[funcName,'.m'])
-            WriteContainerFunctionFile(funcName,funcDir);
+        if  ~isFindFuncFile(funcDir,[funcName,'.m'])
+            WriteContainerFunctionFile(funcName,funcDir,callerFunc(1).name);
         else
             jj=jj+1;
         end
@@ -55,7 +56,7 @@ function pathName=MakePathCompliant(pathName)
     end
 end
 
-function []=WriteContainerFunctionFile(funcName,funcDir)
+function []=WriteContainerFunctionFile(funcName,funcDir,callerName)
     fID=-1;
     t=now;
     Dt=0;
@@ -63,14 +64,14 @@ function []=WriteContainerFunctionFile(funcName,funcDir)
         fID=fopen(MakePathCompliant([funcDir,'\',funcName,'.m']),'w');
         Dt=now-t;
     end
-    
     funcText{1}=['function [varargout]=',funcName,'(varargin)'];
-    funcText{2}=['global ',funcName,'_Handle'];
-    funcText{3}=['nOut=nargout(',funcName,'_Handle',');'];
-    funcText{4}=['nOutReq=nargout;'];
-    funcText{5}=['nOut(nOut<0)=nOutReq;'];
-    funcText{6}=['[varargout{1:nOut}]=',funcName,'_Handle','(varargin{:});'];
-    funcText{7}=['end'];
+    funcText{end+1}=['%% ',callerName];
+    funcText{end+1}=['global ',funcName,'_Handle'];
+    funcText{end+1}=['nOut=nargout(',funcName,'_Handle',');'];
+    funcText{end+1}=['nOutReq=nargout;'];
+    funcText{end+1}=['nOut(nOut<0)=nOutReq;'];
+    funcText{end+1}=['[varargout{1:nOut}]=',funcName,'_Handle','(varargin{:});'];
+    funcText{end+1}=['end'];
     
     for ii=1:length(funcText)
         

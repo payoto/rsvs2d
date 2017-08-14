@@ -1,4 +1,5 @@
 function [varargout]=SharpenEdges(varargin)
+% include_SnakeParam
 global SharpenEdges_Handle
 nOut=nargout(SharpenEdges_Handle);
 nOutReq=nargout;

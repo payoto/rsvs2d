@@ -1,4 +1,5 @@
 function [varargout]=CopyDiary(varargin)
+% include_PostProcessing
 global CopyDiary_Handle
 nOut=nargout(CopyDiary_Handle);
 nOutReq=nargout;

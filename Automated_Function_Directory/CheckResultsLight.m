@@ -1,4 +1,5 @@
 function [varargout]=CheckResultsLight(varargin)
+% include_CheckResultsLight
 global CheckResultsLight_Handle
 nOut=nargout(CheckResultsLight_Handle);
 nOutReq=nargout;

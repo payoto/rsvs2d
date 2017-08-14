@@ -1,4 +1,5 @@
 function [varargout]=VariableShareZoneString(varargin)
+% include_PostProcessing
 global VariableShareZoneString_Handle
 nOut=nargout(VariableShareZoneString_Handle);
 nOutReq=nargout;

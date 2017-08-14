@@ -501,13 +501,20 @@ end
 
 %% Grid Operation
 % From ExecuteOptimisation
+
+
+
 function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
         cellCentredFine,cellCentredCoarse,connecstruct)
     
-    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
-                {connecstruct.cell(:).newCellInd},...
-                {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
-    newIndsCell=[connecstruct.cell(:).newCellInd];
+%     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+%                 {connecstruct.cell(:).newCellInd},...
+%                 {connecstruct.cell(:).oldCellInd},'UniformOutput',false));
+%     newIndsCell=[connecstruct.cell(:).newCellInd];   
+
+    [oldIndsNewOrd,newIndsCell]=OldIndexToNewOrder(connecstruct.cell,'CellInd');
+            
+    
     newEdgeInd=[refinedGrid.edge(:).index];
     [cellCentredFine]=IdentifyCellSnaxel(snaxel,refinedGrid,cellCentredFine);
     
@@ -688,6 +695,31 @@ function [snaxel]=CalculateSnaxelCurvature(snaxel,snakposition)
     
 end
 
+function [snaxel]=CalculateSnaxelTangent(snaxel,snakposition)
+    
+    if nargin==1
+        snakposition=snaxel;
+    end
+    tanFunc=@(pi,pip1,pim1,s1,s2)(pi*(s1^2-s2^2)+pip1*s2^2-pim1*s1^2)/(s1^2*s2+s2^2*s1);
+    
+    
+    snaxInd=[snakposition(:).index];
+    snaxPrecSub=FindObjNum([],[snaxel(:).snaxprec],snaxInd);
+    snaxNextSub=FindObjNum([],[snaxel(:).snaxnext],snaxInd);
+    % figure,hold on
+    for ii=1:numel(snaxel)
+        pi1=snakposition(ii).coord;
+        pip1=snakposition(snaxNextSub(ii)).coord;
+        pim1=snakposition(snaxPrecSub(ii)).coord;
+        snaxel(ii).tangent=tanFunc(pi1,pip1,pim1,norm(pi1-pip1),norm(pi1-pim1));
+        snaxel(ii).tangent=snaxel(ii).tangent/sqrt(sum(snaxel(ii).tangent.^2));
+%          quiver(pi1(1),pi1(2),snaxel(ii).tangent(1)/50,snaxel(ii).tangent(2)/50)
+%          plot(pi1(1),pi1(2),'r*')
+    end
+    
+    
+end
+
 function [snaxel]=CompressSnaxelChain(snaxel)
     
     snaxInd=[snaxel(:).index];
@@ -696,4 +728,32 @@ function [snaxel]=CompressSnaxelChain(snaxel)
     
     snaxel=snaxel(uniqSub);
     
+end
+
+function [oldIndsNewOrd,newInds]=OldIndexToNewOrder(connec,addstr,oldstrfull)
+    % connec=oldGrid.connec.cell
+    % ADDSTR is the suffix in the CONNEC structure to the old and new fields
+    % [oldIndsNewOrd,newInds]=OldIndexToNewOrder(CONNEC,ADDSTR)
+    % OLDSTRFULL allows to specify both the new and old fields in full
+    % [oldIndsNewOrd,newInds]=OldIndexToNewOrder(CONNEC,NEWSTR,OLDSTR)
+    
+    newstr=['new'];
+    oldstr=['old'];
+    switch nargin
+        case 2
+            newstr=[newstr,addstr];
+            oldstr=[oldstr,addstr];
+        case 3
+            newstr=addstr;
+            oldstr=oldstrfull;
+    end
+        
+    
+    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+                {connec(:).(newstr)},...
+                {connec(:).(oldstr)},'UniformOutput',false));
+            
+    if nargout>1
+        newInds=[connec(:).(newstr)];
+    end
 end

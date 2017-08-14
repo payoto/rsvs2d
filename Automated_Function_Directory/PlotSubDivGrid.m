@@ -1,4 +1,5 @@
 function [varargout]=PlotSubDivGrid(varargin)
+% include_GridCheck
 global PlotSubDivGrid_Handle
 nOut=nargout(PlotSubDivGrid_Handle);
 nOutReq=nargout;

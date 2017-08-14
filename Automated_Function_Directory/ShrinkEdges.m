@@ -1,4 +1,5 @@
 function [varargout]=ShrinkEdges(varargin)
+% include_SnakeParam
 global ShrinkEdges_Handle
 nOut=nargout(ShrinkEdges_Handle);
 nOutReq=nargout;

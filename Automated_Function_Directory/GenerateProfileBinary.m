@@ -1,4 +1,5 @@
 function [varargout]=GenerateProfileBinary(varargin)
+% include_PostProcessing
 global GenerateProfileBinary_Handle
 nOut=nargout(GenerateProfileBinary_Handle);
 nOutReq=nargout;

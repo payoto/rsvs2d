@@ -1,4 +1,5 @@
 function [varargout]=ExploreSnaxelChain(varargin)
+% include_SnakeParam
 global ExploreSnaxelChain_Handle
 nOut=nargout(ExploreSnaxelChain_Handle);
 nOutReq=nargout;

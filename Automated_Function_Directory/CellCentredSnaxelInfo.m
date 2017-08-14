@@ -1,4 +1,5 @@
 function [varargout]=CellCentredSnaxelInfo(varargin)
+% include_SnakeParam
 global CellCentredSnaxelInfo_Handle
 nOut=nargout(CellCentredSnaxelInfo_Handle);
 nOutReq=nargout;

@@ -1,4 +1,5 @@
 function [varargout]=CalcNormVec2DClockWise(varargin)
+% include_EdgeInformation
 global CalcNormVec2DClockWise_Handle
 nOut=nargout(CalcNormVec2DClockWise_Handle);
 nOutReq=nargout;

@@ -1,4 +1,5 @@
 function [varargout]=CalculateSnaxelCurvature(varargin)
+% include_SnakeParam
 global CalculateSnaxelCurvature_Handle
 nOut=nargout(CalculateSnaxelCurvature_Handle);
 nOutReq=nargout;
