@@ -1313,15 +1313,15 @@ function [param]=SnakesFoilVVSmall()
     param=AvoidLocalOptim(param);
     
     param.general.typDat='vvlofoil';
-    param.snakes.step.snakesSteps=150;
+    param.snakes.step.snakesSteps=200;
     
     
-    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.refineGrid=12;
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.4,0.4];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=true;
-    param.snakes.step.convLevel=10^-8;
+    param.snakes.step.convLevel=10^-11;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
@@ -1382,7 +1382,7 @@ function [param]=SnakNaca0012()
     param.general.typDat='naca0012cos';
     param.snakes.step.snakesSteps=150;
     param.snakes.refine.refineGrid=[4 4];
-    param.snakes.refine.gridDistrib='cosX01';
+    param.snakes.refine.gridDistrib='cosX';
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
     param.general.refineSteps=5;

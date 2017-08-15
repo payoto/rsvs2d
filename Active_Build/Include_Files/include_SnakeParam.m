@@ -479,8 +479,14 @@ end
 
 function [snakposition]=PositionSnakes(snaxel,unstructured)
     % Returns an array with Snaxel coordinates preceded by snaxel indices
-    vertIndex=unstructured.vertex.index;
-    vertCoord=unstructured.vertex.coord;
+    if numel(unstructured.vertex)==1
+        vertIndex=unstructured.vertex.index;
+        vertCoord=unstructured.vertex.coord;
+    else
+        vertIndex=[unstructured.vertex.index]';
+        vertCoord=vertcat(unstructured.vertex.coord);
+        
+    end
     fromVertex=[snaxel(:).fromvertex];
     toVertex=[snaxel(:).tovertex];
     
@@ -501,8 +507,6 @@ end
 
 %% Grid Operation
 % From ExecuteOptimisation
-
-
 
 function [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,refinedGrid,...
         cellCentredFine,cellCentredCoarse,connecstruct)
@@ -757,3 +761,43 @@ function [oldIndsNewOrd,newInds]=OldIndexToNewOrder(connec,addstr,oldstrfull)
         newInds=[connec(:).(newstr)];
     end
 end
+
+function [gridcoarsen,coarsenconnec]=CoarsenGrid(gridrefined,gridbase,gridconnec)
+   % removes all the edges internal to an original grid 
+   
+   if nargin==1
+       gridbase=gridrefined.base;
+       gridconnec=gridrefined.connec;
+       gridrefined=gridrefined.refined;
+   end
+   coarsenconnec=gridconnec;
+   try
+       [oldIndsNewOrd,newInds]=OldIndexToNewOrder(gridconnec.cell);
+       [coarsenconnec.cell.new]=deal(coarsenconnec.cell.old);
+       try
+           
+           [coarsenconnec.cell.newCellInd]=deal(coarsenconnec.cell.oldCellInd);
+       catch
+           
+       end
+   catch
+       [oldIndsNewOrd,newInds]=OldIndexToNewOrder(gridconnec.cell,'CellInd');
+       [coarsenconnec.cell.newCellInd]=deal(coarsenconnec.cell.oldCellInd);
+    end
+   
+   gridcoarsen=gridrefined;
+   gridcoarsen.cell=gridbase.cell;
+   oldIndsNewOrd=[0,oldIndsNewOrd];
+   sub=FindObjNum([],[gridcoarsen.edge.cellindex],[0,newInds]);
+   rmEdge=false(size(gridcoarsen.edge));
+   for ii=1:numel(gridcoarsen.edge)
+       gridcoarsen.edge(ii).cellindex=oldIndsNewOrd(sub((2*(ii-1))+1:2*(ii)));
+       rmEdge(ii)=gridcoarsen.edge(ii).cellindex(1)==gridcoarsen.edge(ii).cellindex(2);
+   end
+   
+   gridcoarsen.edge=gridcoarsen.edge(~rmEdge);
+   
+end
+
+
+

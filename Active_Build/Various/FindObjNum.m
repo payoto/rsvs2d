@@ -7,7 +7,7 @@ function sub=FindObjNum(object,index,objInd)
     end
     
 %     sub=FindObjNum_MexTest(index,objInd);
-     %sub2=FindObjNum_Matlab(index,objInd);
+     %sub=FindObjNum_Matlab(index,objInd);
      
      % Mex
 %     if isempty(objInd)
