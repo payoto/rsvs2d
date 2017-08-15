@@ -44,7 +44,7 @@ function [volumefraction]=ExtractVolumeFractions(cellCentredGrid,volfracconnec)
     for ii=1:length(volumefraction)
         
         
-        newSubs=FindObjNum(cellCentredGrid,...
+        newSubs=FindObjNum([],...
             volumefraction(ii).newCellInd,newEdgeIndices);
         volumefraction(ii).splitfraction=[cellCentredGrid(newSubs).filledvolume];
         volumefraction(ii).splitvolume=[cellCentredGrid(newSubs).volume];
@@ -209,6 +209,9 @@ function [areablock,derivblock]=ExtractBorderStructure(cellStruct,edgeSnak,nBord
                 % follow to next snaxel along edge
                 nextSnaxSub=FindObjNum([],cellStruct.snaxel(indNewInd).connectivity,snaxInd);
                 nextSnaxSub=nextSnaxSub(nextSnaxSub~=0);
+                if numel(nextSnaxSub)==2
+                    disp('Snax 2')
+                end
                 if isempty(nextSnaxSub) || numel(nextSnaxSub)>2
                     error('There was a problem trying to follow connections for area')
                 end
@@ -216,7 +219,7 @@ function [areablock,derivblock]=ExtractBorderStructure(cellStruct,edgeSnak,nBord
                 if any(sort(exploredSnax)~=unique(exploredSnax))
                     error('Error In volume fraction structure building')
                 end
-                if FindObjNum([],ii,exploredSnax)~=0
+                if any(FindObjNum([],ii,exploredSnax)~=0)
                     %disp('break is at 2nd Break')
                     break
                 end
