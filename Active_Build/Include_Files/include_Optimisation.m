@@ -1294,6 +1294,7 @@ function [np]=GoldenSection_maxTanDel(lb,hb,tol,M)
 end
 
 function [np]=GoldenSection_func(lb,hb,tol,extraIn,func)
+    % finds a maximum
     
     gr=(sqrt(5)-1)/2;
     

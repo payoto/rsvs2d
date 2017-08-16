@@ -209,9 +209,9 @@ function [areablock,derivblock]=ExtractBorderStructure(cellStruct,edgeSnak,nBord
                 % follow to next snaxel along edge
                 nextSnaxSub=FindObjNum([],cellStruct.snaxel(indNewInd).connectivity,snaxInd);
                 nextSnaxSub=nextSnaxSub(nextSnaxSub~=0);
-                if numel(nextSnaxSub)==2
-                    disp('Snax 2')
-                end
+%                 if numel(nextSnaxSub)==2
+%                     disp('Snax 2')
+%                 end
                 if isempty(nextSnaxSub) || numel(nextSnaxSub)>2
                     error('There was a problem trying to follow connections for area')
                 end

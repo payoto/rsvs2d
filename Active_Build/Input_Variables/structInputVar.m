@@ -1374,20 +1374,20 @@ function [param]=testRefinement()
     param.snakes.refine.edgeFinish='none';
 end
 
-function [param]=SnakNaca0012()
+function [param]=SnakNaca0012(mult)
     
     [param]=DefaultCase();
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
     param.general.typDat='naca0012cos';
-    param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=[4 4];
-    param.snakes.refine.gridDistrib='cosX';
+    param.snakes.step.snakesSteps=300;
+    param.snakes.refine.refineGrid=[4*mult 1];
+    param.snakes.refine.gridDistrib='cosX1';
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=false;
-    param.snakes.step.convLevel=10^-8;
+    param.snakes.step.convLevel=10^-12;
     param.snakes.refine.TEShrink=true;
     param.snakes.refine.LEShrink=false;
     param.snakes.refine.edgeFinish='none';
