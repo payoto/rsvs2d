@@ -1,56 +1,192 @@
-function []=NURBSEngine(res)
+function [nurbstruct]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
+    % This function Generates and plots NURBS and corresponding snakes;
     
-    [nurbstruct,fullsnax]=ComputeRSVSNURBS(res.restartsnak.snaxel,res.grid);
-    [loop]=OrderSurfaceSnaxel(fullsnax,fullsnax);
+    switch runType
+        case 'NURBSgen'
+            [nurbstruct,fullsnax]=ComputeRSVSNURBS(snaxel,snaxgrid,'area');
+            [nurbstruct(2,:),fullsnax]=ComputeRSVSNURBS(snaxel,snaxgrid,'grad');
+            [loop]=OrderSurfaceSnaxel(fullsnax,fullsnax);
+            loop=repmat(reshape(loop,[1,numel(loop)]),[2,1]);
+            figName='Area and Gradient NURBS';
+            cellStr={'area','grad'};
+        case 'snakedense'
+            [nurbstruct,fullsnax]=ComputeRSVSNURBS(snaxel{1},snaxgrid{1},'area');
+            [loop]=OrderSurfaceSnaxel(fullsnax,fullsnax);
+            loop=repmat(reshape(loop,[1,numel(loop)]),[numel(snaxel),1]);
+            for ii=2:numel(snaxel)
+                [nurbstruct(ii,:),fullsnax]=ComputeRSVSNURBS(snaxel{ii},snaxgrid{ii},'area');
+                [loop(ii,:)]=OrderSurfaceSnaxel(fullsnax,fullsnax);
+            end
+            figName='Snake Density effect on NURBS';
+            cellStr=varargin{1};
+    end
+    
     u=linspace(0,1,3001);
-    
-    for ii=1:numel(nurbstruct)
-        C=PlotNURBS(u,nurbstruct(ii).P,nurbstruct(ii).U,nurbstruct(ii).w,2);
-        loop(ii).nurbs.pts=C;
-        loop(ii).nurbs.ctrl=nurbstruct(ii).P;
+    for jj=1:size(nurbstruct,1)
+        for ii=1:size(nurbstruct,2)
+            C=PlotNURBS(u,nurbstruct(jj,ii).P,nurbstruct(jj,ii).U,nurbstruct(jj,ii).w,2);
+            loop(jj,ii).nurbs.pts=C;
+            loop(jj,ii).nurbs.ctrl=nurbstruct(jj,ii).P;
+        end
     end
     
-    figure,
-        subplot(2,1,1)
-        hold on
-        subplot(2,1,2)
-        hold on
+    h=figure('Name',figName,'Position',[200 200 1000 600]);
+    ax(1)=subplot(2,1,1);
+    hold on
+    ax(2)=subplot(2,1,2);
+    hold on
     plotPoints= @(points,format) plot(points([1:end],1),points([1:end],2),format);
-    for ii=1:numel(loop)
+    
+    c=get(gca,'colororder');
+    for ii=1:size(loop,2)
         subplot(2,1,1)
-        plotPoints(loop(ii).nurbs.ctrl,'s-')
-        plotPoints(loop(ii).nurbs.pts,'-')
-        plotPoints(loop(ii).snaxel.coord,'*')
-        subplot(2,1,2)
-        [~,ptsNorm]=NormalDistance(loop(ii).snaxel.coord,loop(ii).nurbs.pts);
-        plotPoints(ptsNorm,'*-')
+        kk=1;
+        ckk=0;
+        for jj=1:size(loop,1)
+            subplot(2,1,1)
+            ckk=1+ckk;
+            l(kk)=plotPoints(loop(jj,ii).snaxel.coord,'+');
+            l(kk).Color=c(mod(ckk-1,size(c,1))+1,:);
+            l(kk).DisplayName='snaxel';kk=1+kk;
+            ckk=1+ckk;
+            l(kk)=plotPoints(loop(jj,ii).nurbs.ctrl,'s--');
+            l(kk).Color=c(mod(ckk-1,size(c,1))+1,:);
+            l(kk).DisplayName=['NURBS control - ',cellStr{jj}];kk=1+kk;
+            l(kk)=plotPoints(loop(jj,ii).nurbs.pts,'-');
+            l(kk).Color=c(mod(ckk-1,size(c,1))+1,:);
+            l(kk).DisplayName=['NURBS - ',cellStr{jj}];kk=1+kk;
+            subplot(2,1,2)
+            [~,ptsNorm]=NormalDistance(loop(jj,ii).snaxel.coord,loop(jj,ii).nurbs.pts);
+            l(kk)=plotPoints(ptsNorm,'*-');
+            l(kk).Color=c(mod(ckk-1,size(c,1))+1,:);
+            l(kk).DisplayName=['Distance - ',cellStr{jj}];kk=1+kk;
+        end
     end
+    ax(3)=legend(l);
+    %ax=columnlegend(3,{l(:).DisplayName},'legend',legend_h,'object',object_h);
+    
+    ax(3).Orientation='horizontal';
+    ax(3).Location='SouthOutside';
+    ax(2).YScale='log';
+    ax(1).OuterPosition=[0 0.35 1 0.65];
+    ax(1).Position([1 3])=[ 0.05 0.90];
+    ax(2).OuterPosition=[0 0.05 1 0.28];
+    ax(2).Position([1 3])=[ 0.05 0.90];
+    ax(2).YLim=[1e-8 1e-2];
+    ax(2).YTick=10.^-[8:-2:1];
+    ax(2).YGrid='on';
+end
+
+function []=PlotNurbStructLoop(loop)
     
 end
 
-function [nurbstruct,fullsnax]=ComputeRSVSNURBS(snaxel,grid)
+function [nurbstruct,fullsnax]=ComputeRSVSNURBS(snaxel,grid,NURBScalc)
     % Translates a Snake into its NURBS representation
     % grid must contain fields, base, refined and connec
     nurbstruct=NURBSStructConstructor(2,0);
     
+    if ~isfield(grid.connec.cell,'newCellInd')
+        [grid.connec.cell.newCellInd]=deal(grid.connec.cell.new);
+        [grid.connec.cell.oldCellInd]=deal(grid.connec.cell.old);
+    end
     [cellCentredCoarse]=CellCentredSnaxelInfoFromGrid(snaxel,grid);
     
     [snaxExtend,fullsnax]=BuildCoarseSnake(cellCentredCoarse);
-    
-    [gridcoarsen,coarsenconnec]=CoarsenGrid(grid);
-    
-    snakposition=PositionSnakes(snaxExtend,gridcoarsen);
-    [snakposition]=SnaxelNormal2(snaxExtend,snakposition);
-    [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxExtend,...
-        snakposition,gridcoarsen,coarsenconnec,...
-        CellCentreGridInformation(gridcoarsen),false(size(gridcoarsen.edge)));
-    
     sub=FindObjNum([],[snaxExtend.snaxnext],[snaxExtend.index]);
-    for ii=1:numel(snaxExtend)
-        [nurbstructPart(ii)]=SnaxToNURBSPatch(snaxExtend([ii,sub(ii)]));
+    
+    
+    switch NURBScalc
+        case 'area'
+            [gridcoarsen,coarsenconnec]=CoarsenGrid(grid);
+            snakposition=PositionSnakes(snaxExtend,gridcoarsen);
+            [snakposition]=SnaxelNormal2(snaxExtend,snakposition);
+            [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxExtend,...
+                snakposition,gridcoarsen,coarsenconnec,...
+                CellCentreGridInformation(gridcoarsen),false(size(gridcoarsen.edge)));
+            deltaVolume=[cellCentredGrid.fill].*[volumefraction.totalvolume]-...
+                [volumefraction.totalfraction];
+            nurbstructPart=GenerateNURBSArea(snaxExtend,deltaVolume,gridcoarsen);
+        case 'grad'
+            for ii=1:numel(snaxExtend)
+                [nurbstructPart(ii)]=SnaxGradToNURBSPatch(snaxExtend([ii,sub(ii)]));
+            end
+            
+        case 'errmin'
+            % Build here a NURBS for error minimisation with the Snake
     end
     
-   [nurbstruct]=BuildNurbsLoops(nurbstructPart,sub,2);
+    [nurbstruct]=BuildNurbsLoops(nurbstructPart,sub,2);
+    
+end
+
+function [nurbpatch]=GenerateNURBSArea(snaxel,deltaVolume,refinedgrid)
+    
+    normMat=@(v) sqrt(sum((v(1,:)-v(2,:)).^2));
+    nurbpatch=repmat(struct('snaxel',[0 0],'snaxsub',[0 0],'coord',[0 0 0 0],'cell',0,...
+        'length',[0],'dvol',0,'P',zeros(3,2),'w',[0 0 0]'),size(snaxel));
+    
+    edgeInd=[refinedgrid.edge.index];
+    sub=FindObjNum([],[snaxel.snaxnext],[snaxel.index]);
+    
+    deltaVolume=[deltaVolume];
+    lengthScale=zeros(size(deltaVolume));
+    
+    for ii=1:numel(snaxel)
+        nurbpatch(ii).snaxel=[snaxel(ii).index,snaxel(ii).snaxnext];
+        nurbpatch(ii).snaxsub=[ii, sub(ii)];
+        nurbpatch(ii).length=(normMat(vertcat(snaxel([ii, sub(ii)]).coord)));
+        nurbpatch(ii).coord=[snaxel([ii, sub(ii)]).coord];
+        
+        intermCell=vertcat(refinedgrid.edge(FindObjNum([],...
+            [snaxel([ii,sub(ii)]).edge],edgeInd)).cellindex);
+        
+        cellLog=(intermCell(1,:)'*ones(1,2)==ones(2,1)*intermCell(2,:));
+        nurbpatch(ii).cell=intermCell(1,mod(find(cellLog)-1,2)+1);
+    end
+    kk=find(cellfun(@numel,{nurbpatch(:).cell})==1,1,'first');
+    for ii=1:numel(nurbpatch)
+        ind=mod(kk+ii-1,numel(nurbpatch))+1;
+        prevind=mod(kk+ii-2,numel(nurbpatch))+1;
+        if numel(nurbpatch(ind).cell)>1
+            nurbpatch(ind).cell=nurbpatch(ind).cell(nurbpatch(ind).cell~=nurbpatch(prevind).cell);
+        end
+        lengthScale(nurbpatch(ind).cell)=lengthScale(nurbpatch(ind).cell)+nurbpatch(ind).length;
+    end
+    
+    
+    for ii=1:numel(snaxel)
+        nurbpatch(ii).dvol=nurbpatch(ii).length*deltaVolume(nurbpatch(ii).cell)/lengthScale(nurbpatch(ii).cell);
+        nurbpatch(ii).dvol(isnan(nurbpatch(ii).dvol))=0;
+    end
+    
+    for ii=1:numel(nurbpatch)
+        [nurbpatch(ii)]=MatchNURBSpatchArea(nurbpatch(ii));
+    end
+    
+end
+
+function [nurbpatch]=MatchNURBSpatchArea(nurbpatch)
+    
+    compAreaGS=@(a,P) -abs(ComputeArcArea(P(1:2),P(3:4),a)-P(5));
+    
+    b=[-1 1];
+    bTest=[0 0];
+    for ii=1:2
+        bTest(ii)=ComputeArcArea(nurbpatch.coord(1:2),nurbpatch.coord(3:4),b(ii));
+        while sign(b(ii))*bTest(ii)<sign(b(ii))*nurbpatch.dvol
+            b(ii)=b(ii)*2;
+            bTest(ii)=ComputeArcArea(nurbpatch.coord(1:2),nurbpatch.coord(3:4),b(ii));
+        end
+    end
+    
+    [np]=GoldenSection_func(b(1),b(2),1e-12,[nurbpatch.coord,nurbpatch.dvol],...
+        compAreaGS);
+    
+    [vArc,P1,r,w,alpha,beta]=ComputeArcArea(nurbpatch.coord(1:2),nurbpatch.coord(3:4),np);
+    
+    nurbpatch.P=[nurbpatch.coord(1:2);P1;nurbpatch.coord(3:4)];
+    nurbpatch.w=[1;w;1];
     
 end
 
@@ -78,7 +214,7 @@ end
 
 function [nurbstruct]=BuildNurbsLoops(nurbstructPart,nextsub,deg)
     
-     % loop the nurbs patches together
+    % loop the nurbs patches together
     nLoops=1;
     indList=1:numel(nurbstructPart);
     while any(indList)
@@ -135,11 +271,11 @@ function [cellCentredCoarse]=CellCentredSnaxelInfoFromGrid(snaxel,grid)
     cellCentredBase=CellCentreGridInformation(grid.base);
     cellCentredRef=CellCentreGridInformation(grid.refined);
     
-     [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,grid.refined,...
+    [cellCentredCoarse]=CellCentredSnaxelInfo(snaxel,grid.refined,...
         cellCentredRef,cellCentredBase,grid.connec);
 end
 
-function [nurbstruct]=SnaxToNURBSPatch(snaxel)
+function [nurbstruct]=SnaxGradToNURBSPatch(snaxel)
     nurbstruct=NURBSStructConstructor(2,3);
     
     intersectFunc=@(c1,c2,v1,v2) ([v1',-v2']\(-c1'+c2'))';
@@ -158,7 +294,7 @@ function [nurbstruct]=SnaxToNURBSPatch(snaxel)
     curv=repmat(reshape(curv,[2,1]),[1,2]);
     
     nurbstruct.P(2,:)=sum(Pest./curv)./(sum(1./curv));
-%     nurbstruct.P(2,:)=(Pest1+Pest2)/2;
+    %     nurbstruct.P(2,:)=(Pest1+Pest2)/2;
     nurbstruct.P(1,:)=snaxel(1).coord;
     nurbstruct.P(3,:)=snaxel(2).coord;
     
@@ -419,23 +555,23 @@ end
 
 function [contourStruct]=ExtractContourSnaxel(snaxel)
     % Extracts the snaxel connected for each  contour edge
-%     snaxInd=[snaxel(:).index]';
-%     snaxConnects=vertcat(snaxel(:).connectivity);
-%     snaxContour1=[snaxInd,snaxConnects(:,1)];
-%     snaxContour2=[snaxInd,snaxConnects(:,2)];
-%     snaxContour=[snaxContour1;snaxContour2];
-%     cellSimilar=FindIdenticalVector(snaxContour);
-%     
-%     arraySimilar=vertcat(cellSimilar{:});
-%     snaxContour=snaxContour(arraySimilar(:,1),:);
-%     for ii=length(snaxContour(:,1)):-1:1
-%         contourStruct(ii).index1=snaxContour(ii,1);
-%         contourStruct(ii).index2=snaxContour(ii,2);
-%     end
-
+    %     snaxInd=[snaxel(:).index]';
+    %     snaxConnects=vertcat(snaxel(:).connectivity);
+    %     snaxContour1=[snaxInd,snaxConnects(:,1)];
+    %     snaxContour2=[snaxInd,snaxConnects(:,2)];
+    %     snaxContour=[snaxContour1;snaxContour2];
+    %     cellSimilar=FindIdenticalVector(snaxContour);
+    %
+    %     arraySimilar=vertcat(cellSimilar{:});
+    %     snaxContour=snaxContour(arraySimilar(:,1),:);
+    %     for ii=length(snaxContour(:,1)):-1:1
+    %         contourStruct(ii).index1=snaxContour(ii,1);
+    %         contourStruct(ii).index2=snaxContour(ii,2);
+    %     end
+    
     [contourStruct(1:numel(snaxel)).index1]=deal(snaxel(:).index);
     [contourStruct(1:numel(snaxel)).index2]=deal(snaxel(:).snaxnext);
-
+    
 end
 
 function [normalVector]=ContourEdgeNormal(snakposition,indices,snaxIndPos)

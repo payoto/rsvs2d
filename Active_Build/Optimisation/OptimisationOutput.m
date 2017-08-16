@@ -1215,13 +1215,13 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     
     switch dirOptim
         case 'min'
-            testOrder=max(minRes);
+            testOrder=max(meanRes);
             orderSol=ceil(-log10(abs(testOrder)));
             box(4)=ceil(testOrder*10^orderSol)*10^(-orderSol);
             testOrder=min([minRes;knownOptim(1)]);
             box(3)=floor(testOrder*10^orderSol)*10^(-orderSol);
         case 'max'
-            testOrder=min(minRes);
+            testOrder=min(meanRes);
             orderSol=ceil(-log10(abs(testOrder)));
             box(3)=floor(testOrder*10^orderSol)*10^(-orderSol);
             testOrder=max([minRes;knownOptim(1)]);
