@@ -54,9 +54,9 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(c
         restartstruct.snakrestart=restartsnake;
     end
     % Post processes
-    loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
-    CheckResults(unstructured,loop,typeBound,caseString)
-    
+     loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
+%     CheckResults(unstructured,loop,typeBound,caseString)
+    loop.subdivision=loop.snaxel.coord;
     tecoutstruct.baseGrid=unstructReshape;
     tecoutstruct.fineGrid=unstructuredrefined;
     tecoutstruct.snakSave=snakSave;
@@ -202,9 +202,9 @@ function [loop]=SubdivisionSurface_Snakes(loop,refineSteps,param)
     for ii=1:length(loop)
         startPoints=loop(ii).(typeBound).coord;
         loop(ii).isccw=CCWLoop(startPoints);
-        newPoints=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
+%         newPoints=SubDivision(startPoints,refineSteps,subdivType,sharpen,typeCorner);
         %newPoints=SubSurfBSpline(startPoints(1:end-2,:),refineSteps);
-        loop(ii).subdivision=newPoints;
+        loop(ii).subdivision=loop(ii).(typeBound).coord;
     end
 end
 
