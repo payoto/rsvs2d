@@ -462,6 +462,9 @@ end
 
 function [preProcImage]=ProcImageFine(imPath)
     % Load Image and reduce it to an averaged double array from 0 to 1
+    % R is Small
+    % Green is inter
+    % B is big
     imPath=MakePathCompliant(imPath);
     preProcImage=imread(imPath);
     imClass=class(preProcImage);
