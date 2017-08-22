@@ -12,19 +12,46 @@
 
 
 
-function [rootDirectory]=ManageOutputResults(param,loop,tecoutstruct,restartstruct)
+function [rootDirectory,varargout]=ManageOutputResults(entryPoint,param,loop,tecoutstruct,restartstruct)
     
+    if ~exist('entryPoint','var');
+        entryPoint='end';
+    end
+    varargout{1}=param;
+    
+    switch entryPoint
+        
+        case 'end'
+            [rootDirectory]=ManageResultsEnd(param,loop,tecoutstruct,restartstruct);
+        case 'start'
+            [rootDirectory,param]=ManageResultsStart(param);
+    end
+    varargout{1}=param;
+    
+    
+    
+end
+
+function [rootDirectory]=ManageResultsEnd(param,loop,tecoutstruct,restartstruct)
     % Unpack necessary variables
     varExtract={'makeMov','typDat','resultRoot','archiveName','case'};
     [makeMov,typDat,resultRoot,archiveName,caseStr]=ExtractVariables(varExtract,param);
-    
-    
-    % Create Marker
+    try 
+        marker=param.outstart.marker;
+        t=param.outstart.t;
+        rootDirectory=param.outstart.rootDirectory;
+        writeDirectory=rootDirectory;
+    catch
+        
     [marker,t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
-    % Create Directory
     [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
     rootDirectory=writeDirectory;
+    end
+    
+    % Create Marker
+    % Create Directory
     CopyDiary(writeDirectory,marker)
+    GenerateRestartBinary(writeDirectory,marker,restartstruct)
     
     % Output boundary data file
     [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
@@ -67,9 +94,18 @@ function [rootDirectory]=ManageOutputResults(param,loop,tecoutstruct,restartstru
     WriteToFile(indexEntry,fidIndexFile);
     fclose(fidIndexFile);
     % Generate Restart Binary
-    GenerateRestartBinary(writeDirectory,marker,restartstruct)
     
     
     fclose('all');
-    
 end
+
+function [rootDirectory,param]=ManageResultsStart(param)
+    
+    varExtract={'makeMov','typDat','resultRoot','archiveName','case'};
+    [makeMov,typDat,resultRoot,archiveName,caseStr]=ExtractVariables(varExtract,param);
+    [param.outstart.marker,param.outstart.t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
+    [rootDirectory]=GenerateResultDirectoryName(param.outstart.marker,resultRoot,archiveName,param.outstart.t);
+    param.outstart.rootDirectory=rootDirectory;
+end
+
+
