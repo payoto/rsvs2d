@@ -1,4 +1,4 @@
-function [nurbstruct]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
+function [nurbstruct,loop]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
     % This function Generates and plots NURBS and corresponding snakes;
     
     switch runType
@@ -21,7 +21,7 @@ function [nurbstruct]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
             cellStr=varargin{1};
     end
     
-    u=linspace(0,1,3001);
+    u=linspace(0,1,20001);
     for jj=1:size(nurbstruct,1)
         for ii=1:size(nurbstruct,2)
             C=PlotNURBS(u,nurbstruct(jj,ii).P,nurbstruct(jj,ii).U,nurbstruct(jj,ii).w,2);
@@ -57,6 +57,10 @@ function [nurbstruct]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
             l(kk).DisplayName=['NURBS - ',cellStr{jj}];kk=1+kk;
             subplot(2,1,2)
             [~,ptsNorm]=NormalDistance(loop(jj,ii).snaxel.coord,loop(jj,ii).nurbs.pts);
+            
+            [loop(jj,ii).norm]=ComputeErrorVals(ptsNorm(:,2));
+            loop(jj,ii).norm.ptsNorm=ptsNorm;
+            
             l(kk)=plotPoints(ptsNorm,'*-');
             l(kk).Color=c(mod(ckk-1,size(c,1))+1,:);
             l(kk).DisplayName=['Distance - ',cellStr{jj}];kk=1+kk;
@@ -75,6 +79,57 @@ function [nurbstruct]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
     ax(2).YLim=[1e-8 1e-2];
     ax(2).YTick=10.^-[8:-2:1];
     ax(2).YGrid='on';
+    
+   
+    PlotErrorConvergence(loop,cellfun(@str2num,cellStr))
+    
+end
+
+function []=PlotErrorConvergence(loop,vec)
+     h=figure('Name','Error Convergence','Position',[100 100  800 500]);
+     
+     errType={'','abs','log'};
+     errMeasure={'mean','std','min','max'};
+     
+     
+     for ii=1:numel(errType)
+         ax(ii)=subplot(1,numel(errType),ii);
+         ax(ii).YScale='log';
+         ax(ii).XScale='log';
+         hold on
+         for jj=1:size(loop,2)
+             for kk=1:numel(errMeasure)
+                tempVec=[loop(:,jj).norm];
+                tempVec=[tempVec.([errType{ii},errMeasure{kk}])];
+                l(kk)=plot(ax(ii),vec,tempVec,'+-');
+                l(kk).DisplayName=[errType{ii},errMeasure{kk}];
+             end
+         end
+         legend(l);
+     end
+     
+    
+end
+
+function [errstruct]=ComputeErrorVals(vec)
+    
+    errstruct.mean=mean(vec);
+    errstruct.std=std(vec);
+    errstruct.min=min(vec);
+    errstruct.max=max(vec);
+    vec=abs(vec);
+    errstruct.absmean=mean(vec);
+    errstruct.absstd=std(vec);
+    errstruct.absmin=min(vec);
+    errstruct.absmax=max(vec);
+    vec=log10(vec);
+    vec(~isfinite(vec))=-16;
+    errstruct.logmean=10^mean(vec);
+    errstruct.logstd=10^std(vec);
+    errstruct.logmin=10^min(vec);
+    errstruct.logmax=10^max(vec);
+    
+    
 end
 
 function []=PlotNurbStructLoop(loop)
