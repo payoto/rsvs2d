@@ -99,13 +99,13 @@ function [rootDirectory]=ManageResultsEnd(param,loop,tecoutstruct,restartstruct)
     fclose('all');
 end
 
-function [rootDirectory,param]=ManageResultsStart(param)
+function [rootDirectory,outstart]=ManageResultsStart(param)
     
     varExtract={'makeMov','typDat','resultRoot','archiveName','case'};
     [makeMov,typDat,resultRoot,archiveName,caseStr]=ExtractVariables(varExtract,param);
-    [param.outstart.marker,param.outstart.t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
-    [rootDirectory]=GenerateResultDirectoryName(param.outstart.marker,resultRoot,archiveName,param.outstart.t);
-    param.outstart.rootDirectory=rootDirectory;
+    [outstart.marker,outstart.t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
+    [rootDirectory]=GenerateResultDirectoryName(outstart.marker,resultRoot,archiveName,outstart.t);
+    outstart.rootDirectory=rootDirectory;
 end
 
 
