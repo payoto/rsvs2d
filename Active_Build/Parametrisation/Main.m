@@ -25,8 +25,8 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(c
     include_PostProcessing
     include_Mex_Wrapper
     
-    rootDirectory=ManageOutputResults('start',param);
-    diaryFile=MakePathCompliant([rootDirectory,'\Result_Template\Latest_Diary.log']);
+    [rootDirectory,outstart]=ManageOutputResults('start',structInputVar(caseString));
+    diaryFile=MakePathCompliant([rootDirectory,'\Latest_Diary.log']);
     fidDiary=fopen(diaryFile,'w');
     fclose(fidDiary);
     diary(diaryFile);
@@ -64,6 +64,7 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(c
     tecoutstruct.connectstructinfo=connectstructinfo;
     
     diary off
+    param.outstart=outstart;
     rootDirectory=ManageOutputResults('end',param,loop,tecoutstruct,restartstruct);
     %TecplotOutput(unstructReshape,unstructuredrefined,snakSave,connectstructinfo)
     %OutPutBinaryResults(snakSave,saveParam,typDat)
