@@ -423,12 +423,22 @@ function [paroptim]=AdaptiveRefinement(paroptim)
     paroptim.refine.refineIter=100;
     paroptim.refine.refinePattern='edgecross'; % 'edgecross' 'curvature'
     paroptim.refine.refineOptimType='contcurvevol';
-    paroptim.refine.refineOptimRatio=0.3;
-    paroptim.refine.rankType='rank';
+    paroptim.refine.refineOptimRatio=15;
+    paroptim.refine.rankType='number';
     paroptim.refine.slopeConv=0.2;
     
     % 'contlength' 'desvargradadvanced' 'contcurve'  'contlengthnorm'
     % 'desvargrad' 'contcurvescale' 'contcurvevol' 'contour'
+    
+end
+
+function [paroptim]=MeshMotionFull(paroptim)
+    
+    paroptim.obj.flow.meshDefSens=true;
+    paroptim.obj.flow.flowRestart=true;
+    paroptim.obj.flow.meshDefNorm=true;
+    paroptim.obj.flow.rootMesh={'previter',''};
+    paroptim.obj.flow.parentMesh='';
     
 end
 
@@ -1584,11 +1594,9 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     paroptim=NACA0012Sweeplocal('uv',optimiser);
     
     paroptim.obj.flow.isSymFlow=true;
-    paroptim.obj.flow.meshDefSens=true;
-    paroptim.obj.flow.flowRestart=true;
-    paroptim.obj.flow.meshDefNorm=true;
-    paroptim.obj.flow.rootMesh={'previter',''};
-    paroptim.obj.flow.parentMesh='';
+    
+    [paroptim]=MeshMotionFull(paroptim);
+    
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine2'];
     
     
@@ -1727,6 +1735,18 @@ function paroptim=volsweeplocal(e,gridCase)
     
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
+
+function paroptim=volsweepmmesh(e)
+    
+    paroptim=volsweeplocal(e,'uo');
+    [paroptim]=MeshMotionFull(paroptim);
+    paroptim.spline.splineCase='naca0012';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.general.typeLoop = 'subdivspline';
+    paroptim.parametrisation.general.subdivType='chaikin';
+    paroptim.parametrisation.snakes.refine.resampleSnak=true;
+    
 end
 
 function [paroptim]=volsweeplocal_test(refmethod)
