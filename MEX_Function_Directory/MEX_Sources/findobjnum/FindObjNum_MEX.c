@@ -8,14 +8,14 @@
 /*int dim() = 2; */
 #define MEX_COMPILE
 
-void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nFound);
+void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nMatch, int *nFound);
 void FindObjNum_Deprecated(int *lookup, int *listInd, int *dest, int nLook, int nList);
 
 void mexFunction(int nlhs, mxArray *plhs[], 
 	int nrhs, const mxArray *prhs[]){
 	
 	int *lookup, *listInd,*dest;
-	int nList, nLook,ii,nFound;
+	int nList, nLook,ii,nFound,nMatch;
 	double *outPtr;
 	double *inputArrayPtr;
 	/* Read Integers */
@@ -24,8 +24,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	
 	/*if(nList>0){*/
 		/* Allocation */
+	nMatch=(nLook+(nList+1))*2;
 	lookup=(int*)calloc(nLook,sizeof(int));
-	dest=(int*)calloc(nLook*(nList+1),sizeof(int));
+	dest=(int*)calloc(nMatch,sizeof(int));
 	listInd=(int*)calloc(nList+1,sizeof(int));
 	
 		/* Assignement */
@@ -40,7 +41,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			/*printf("%i ", cellrefineInd[ii]); */
 	}
 		/* ACTION */
-	FindObjNum(lookup, listInd, dest, nLook, nList,&nFound);
+	FindObjNum(lookup, listInd, dest, nLook, nList,&nMatch,&nFound);
 		/*dest=(int*)realloc(dest,nFound*sizeof(int));*/
 	
 		/* Output */
@@ -48,7 +49,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	outPtr=mxGetPr(plhs[0]);
 	for (ii=0;ii<nFound;ii++){outPtr[ii]=(double)(dest[ii]+1);}
 		
-		free(lookup);
+	free(lookup);
 	free(listInd);
 	free(dest);
 	/*} else {plhs[0]=(mxCreateDoubleMatrix(1,0,mxREAL));}*/
@@ -57,7 +58,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 }
 
 
-void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nFound){
+void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nMatch, int *nFound){
 	/* Look up is the Indices we need the position of */
 	/* listInd is the list of all indices in the right order */
 	/* dest is where the position will be stored (-1 means the index wasn't found) */
@@ -68,6 +69,10 @@ void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int 
 		dest[kk]=-1;
 		jj=0;
 		kkStart=kk;
+		if ((*nMatch - kk)<nList){
+			*nMatch=*nMatch+nList+nLook;
+			dest=realloc(dest,(*nMatch)*sizeof(int));
+		}
 		do{
 			
 			dest[kk]=(-(listInd[jj]!=lookup[ii])*(jj+1))+jj;
