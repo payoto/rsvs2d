@@ -102,8 +102,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
         Deltax(~isfinite(Deltax))=0;
         lagMulti(~isfinite(lagMulti))=0;
     end
-    
-    [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast);
+    nSnax=numel(snaxel);
+    [feasVal,optVal,posDefVal]=SQPOptim(Df,HL,areaConstrMat',areaTargVec,lagMultiPast,nSnax);
     
     forceparam.lagMulti=lagMulti;
     %forceparam.BFGS=HL;
@@ -970,7 +970,7 @@ function [Deltax]=SQPStep(Df,Hf,Dh,h_vec)
     
 end
 
-function [optVal,feasVal,posDefErr]=SQPOptim(Df,HL,Dh,h_vec,lagMulti)
+function [optVal,feasVal,posDefErr]=SQPOptim(Df,HL,Dh,h_vec,lagMulti,nSnax)
     rmvCol=find(sum(Dh~=0)==0);
     %     Dh(:,rmvCol)=[];
     %     h_vec(rmvCol)=[];
@@ -981,9 +981,14 @@ function [optVal,feasVal,posDefErr]=SQPOptim(Df,HL,Dh,h_vec,lagMulti)
     optVal=RMS(Df+Dh*lagMulti);
     Z=null(Dh');
     %HL=HA+Hf;
-    optTest=real(eig(Z'*HL*Z));
-    posDefErr=RMS([optTest(optTest<0);zeros(size(optTest(optTest>=0)))]);
-    fprintf(' feas:%.2e  opt:%.2e  posdef:%.2e - ',feasVal,optVal,posDefErr)
+    if nSnax<500
+        optTest=real(eig(Z'*HL*Z)); % too expensive for large numbers of snaxels
+        posDefErr=RMS([optTest(optTest<0);zeros(size(optTest(optTest>=0)))]);
+        fprintf(' feas:%.2e  opt:%.2e  posdef:%.2e - ',feasVal,optVal,posDefErr)
+    else
+        posDefErr=0;
+        fprintf(' feas:%.2e  opt:%.2e  posdef:NaN - ',feasVal,optVal)
+    end
 end
 
 function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
