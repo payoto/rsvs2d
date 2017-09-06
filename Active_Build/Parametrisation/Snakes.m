@@ -327,9 +327,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     nonBreedNextIter=[];
     for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
-        if ii==1
-            profile on
-        end
+        
         fprintf('     Step %i  -',ii);
         tStepStart=now;
         %snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]),ones([1,length(snaxel)]));
@@ -441,9 +439,6 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         
         if nSnax==frozen
             break
-        end
-        if ii==1
-            profile viewer
         end
     end
     
