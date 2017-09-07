@@ -21,8 +21,8 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-
 %}
+
 function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
     %close all
     clc
@@ -349,9 +349,11 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Start Parallel Pool
     StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
     if ExtractVariables({'useSnake'},paramoptim)
+        
         [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
             baseGrid,connectstructinfo,paramoptim.initparam,...
             paramoptim.spline,outinfo,0,0,0);
+        
     else
         restartsnake=struct([]);
     end
@@ -561,6 +563,7 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     
     [captureErrors{1:nPop}]=deal('');
     supportstruct=repmat(struct('loop',[]),[1,nPop]);
+    
     parfor ii=1:nPop
         %for ii=1:nPop
         %for ii=flip(1:nPop)

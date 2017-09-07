@@ -36,67 +36,112 @@ function [rootDirectory]=ManageResultsEnd(param,loop,tecoutstruct,restartstruct)
     % Unpack necessary variables
     varExtract={'makeMov','typDat','resultRoot','archiveName','case'};
     [makeMov,typDat,resultRoot,archiveName,caseStr]=ExtractVariables(varExtract,param);
-    try 
+    kk=0;
+    try
         marker=param.outstart.marker;
         t=param.outstart.t;
         rootDirectory=param.outstart.rootDirectory;
         writeDirectory=rootDirectory;
     catch
         
-    [marker,t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
-    [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
-    rootDirectory=writeDirectory;
+        [marker,t]=GenerateResultMarker(matlab.lang.makeValidName(caseStr));
+        [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,archiveName,t);
+        rootDirectory=writeDirectory;
+        try
+            CopyDiary(writeDirectory,marker)
+        catch ME
+            kk=kk+1;
+            T{kk}=ME;
+        end
     end
     
     % Create Marker
     % Create Directory
-    CopyDiary(writeDirectory,marker)
-    GenerateRestartBinary(writeDirectory,marker,restartstruct)
     
+    
+    try
+        GenerateRestartBinary(writeDirectory,marker,restartstruct)
+    catch ME
+        kk=kk+1;
+        T{kk}=ME;
+    end
     % Output boundary data file
-    [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
-    BoundaryOutput(loop,fidBoundary);
-    fclose(fidBoundary);
-    
+    try
+        [fidBoundary]=OpenBoundaryFile(writeDirectory,marker);
+        BoundaryOutput(loop,fidBoundary);
+        fclose(fidBoundary);
+    catch ME
+        kk=kk+1;
+        T{kk}=ME;
+    end
     % TecPlot Data
-    [fidTecPLT,pltFileName]=OpenTecPLTFile(writeDirectory,marker);
-    fidTecLAY=OpenTecLayFile(writeDirectory,marker);
-    PersnaliseLayFile(fidTecLAY,pltFileName)
-    
-    baseGrid=tecoutstruct.baseGrid;
-    fineGrid=tecoutstruct.fineGrid;
-    snakSave=tecoutstruct.snakSave;
-    connectstructinfo=tecoutstruct.connectstructinfo;
-    
-    TecplotOutput('snakes',fidTecPLT,baseGrid,fineGrid,snakSave,connectstructinfo)
-    
+    try
+        [fidTecPLT,pltFileName]=OpenTecPLTFile(writeDirectory,marker);
+        fidTecLAY=OpenTecLayFile(writeDirectory,marker);
+        PersnaliseLayFile(fidTecLAY,pltFileName)
+        
+        baseGrid=tecoutstruct.baseGrid;
+        fineGrid=tecoutstruct.fineGrid;
+        snakSave=tecoutstruct.snakSave;
+        connectstructinfo=tecoutstruct.connectstructinfo;
+        
+        TecplotOutput('snakes',fidTecPLT,baseGrid,fineGrid,snakSave,connectstructinfo)
+    catch ME
+        kk=kk+1;
+        T{kk}=ME;
+    end
     % Parameter Data
     [fidParam]=OpenParamFile(writeDirectory,marker);
     GenerateParameterFile(fidParam,param,t,marker);
     
     
     % Comments file
-    [fidComments]=OpenCommentsFile(writeDirectory,marker);
-    indexEntry=MakeCommentsFile(fidComments,param,t,writeDirectory);
-    fclose(fidComments);
-    % Video File
-    
-    if makeMov
-        fps=5;
-        quality=100;
-        movStruct=[snakSave(:).movFrame];
-        [fileName]=NameVideoFile(writeDirectory,marker);
-        MakeVideo(movStruct,fps,quality,fileName);
+    try
+        [fidComments]=OpenCommentsFile(writeDirectory,marker);
+        indexEntry=MakeCommentsFile(fidComments,param,t,writeDirectory);
+        fclose(fidComments);
+    catch ME
+        kk=kk+1;
+        T{kk}=ME;
     end
-    
-    % Index File Entry 
-    [fidIndexFile]=OpenIndexFile(resultRoot,archiveName);
-    WriteToFile(indexEntry,fidIndexFile);
-    fclose(fidIndexFile);
+    % Video File
+    try
+        if makeMov
+            fps=5;
+            quality=100;
+            movStruct=[snakSave(:).movFrame];
+            [fileName]=NameVideoFile(writeDirectory,marker);
+            MakeVideo(movStruct,fps,quality,fileName);
+        end
+    catch ME
+        kk=kk+1;
+        T{kk}=ME;
+    end
+    % Index File Entry
+    try
+        [fidIndexFile]=OpenIndexFile(resultRoot,archiveName);
+        WriteToFile(indexEntry,fidIndexFile);
+        fclose(fidIndexFile);
+    catch ME
+        kk=kk+1;
+        T{kk}=ME;
+    end
     % Generate Restart Binary
     
     
     fclose('all');
+    
+    if kk>0
+        for ii=1:kk
+            disp('')
+            disp('------------------------------')
+            disp('------------------------------')
+            disp(T{ii}.getReport)
+        end
+        warning('Snake Data Output was partially succesful')
+    end
+    
+    
 end
 
 function [rootDirectory,outstart]=ManageResultsStart(param)

@@ -192,10 +192,12 @@ function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
                 end
                 
                 if any(isnan(Deltax))
-                    [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,(isFreeze==1));
+                    [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,...
+                        areaConstrMat',areaTargVec,(isFreeze==1));
                     finIsFreeze=(isFreeze==1);
                     if any(isnan(Deltax))
-                        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze));
+                        [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,...
+                            areaConstrMat',areaTargVec,logical(isFreeze));
                         finIsFreeze=logical(isFreeze) ;
                         if any(isnan(Deltax))
                             if any(~isfinite(lagMulti))
@@ -209,7 +211,8 @@ function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
                                     | (~((sum((Hf+HA)~=0,1)>1) | (sum((Hf+HA)~=0,2)>1)'));
                             end
                             %end
-                            [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
+                            [Deltax,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,...
+                                areaConstrMat',areaTargVec,logical(isFreeze) | snaxFreezeCell);
                             finIsFreeze=logical(isFreeze) | snaxFreezeCell;
                             if any(isnan(Deltax)) || any(~isfinite(lagMulti))
                                 flagRun=true;
@@ -221,9 +224,10 @@ function [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
                 flagRun=flagRun || all(finIsFreeze);
                 if flagRun
                     algo='HF';
+                else
+                    HL=Hf+HA;
+                    algo='HFHA';
                 end
-                HL=Hf+HA;
-                algo='HFHA';
             case 'switchclose'
                 % uses the full Lagrangian close to feasible and optimal
                 % solutions and only th eobjective further out.
