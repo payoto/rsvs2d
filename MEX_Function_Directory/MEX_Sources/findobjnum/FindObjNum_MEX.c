@@ -8,7 +8,7 @@
 /*int dim() = 2; */
 #define MEX_COMPILE
 
-void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nMatch, int *nFound);
+void FindObjNum(int *lookup, int *listInd, int **dest, int nLook, int nList, int *nMatch, int *nFound);
 void FindObjNum_Deprecated(int *lookup, int *listInd, int *dest, int nLook, int nList);
 
 void mexFunction(int nlhs, mxArray *plhs[], 
@@ -41,7 +41,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			/*printf("%i ", cellrefineInd[ii]); */
 	}
 		/* ACTION */
-	FindObjNum(lookup, listInd, dest, nLook, nList,&nMatch,&nFound);
+	FindObjNum(lookup, listInd, &dest, nLook, nList,&nMatch,&nFound);
 		/*dest=(int*)realloc(dest,nFound*sizeof(int));*/
 	
 		/* Output */
@@ -58,7 +58,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 }
 
 
-void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int *nMatch, int *nFound){
+void FindObjNum(int *lookup, int *listInd, int **dest, int nLook, int nList, int *nMatch, int *nFound){
 	/* Look up is the Indices we need the position of */
 	/* listInd is the list of all indices in the right order */
 	/* dest is where the position will be stored (-1 means the index wasn't found) */
@@ -66,16 +66,19 @@ void FindObjNum(int *lookup, int *listInd, int *dest, int nLook, int nList, int 
 	int ii,jj,kk,kkStart;
 	kk=0;
 	for(ii=0;ii<nLook;ii++){
-		dest[kk]=-1;
+		(*dest)[kk]=-1;
 		jj=0;
 		kkStart=kk;
 		if ((*nMatch - kk)<nList){
 			*nMatch=*nMatch+nList+nLook;
-			dest=realloc(dest,(*nMatch)*sizeof(int));
+			*dest=realloc(*dest,(*nMatch)*sizeof(int));
+			if (*dest==NULL){
+				return(-1);
+			}
 		}
 		do{
 			
-			dest[kk]=(-(listInd[jj]!=lookup[ii])*(jj+1))+jj;
+			(*dest)[kk]=(-(listInd[jj]!=lookup[ii])*(jj+1))+jj;
 			/*dest[ii]=(-(memcmp((listInd+jj),(lookup+ii),sizeof(int))!=0)*(jj+1))+jj; */
 			kk=kk+(listInd[jj]==lookup[ii]);
 			jj++;
