@@ -1379,6 +1379,7 @@ function [param]=SnakNaca0012(mult)
     [param]=DefaultCase();
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
+    param.snakes.step.snakData='interm';
     param.general.typDat='naca0012cos_f';
     param.snakes.step.snakesSteps=max([200 mult*10]);
     param.snakes.refine.refineGrid=[mult 1];
