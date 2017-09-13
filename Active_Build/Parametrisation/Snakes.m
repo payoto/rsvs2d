@@ -49,86 +49,86 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
         xlabel('number of iterations')
     end
     varargout{1}=optargout;
-   
+    
 end
 
 function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
-            RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
-            oldGrid,oldGridUns,connectionInfo,param)
+        RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
+        oldGrid,oldGridUns,connectionInfo,param)
+    
+    
+    varExtract={'boundstr','snakData','internalConv'};
+    [boundstr,snakData,internalConv]=ExtractVariables(varExtract,param);
+    kk=0;
+    flagCont=true;
+    
+    while flagCont
         
-        
-        varExtract={'boundstr','snakData','internalConv'};
-        [boundstr,snakData,internalConv]=ExtractVariables(varExtract,param);
-        kk=0;
-        flagCont=true;
-        
-        while flagCont
+        if kk>0
             
-            if kk>0
-                
-                [oldGrid,refinedGrid]=ReFracGrids(oldGrid,refinedGrid,...
-                    connectionInfo,newFracs);
-                
-                % Second round
-                [refinedGrid]=EdgePropertiesReshape(refinedGrid);
-                [oldGrid]=EdgePropertiesReshape(oldGrid);
-                
-                refinedGriduns=ModifReshape(refinedGrid);
-                oldGridUns=ModifReshape(oldGrid);
-                [looprestart]=GenerateSnakStartLoop(refinedGrid,boundstr);
-            end
+            [oldGrid,refinedGrid]=ReFracGrids(oldGrid,refinedGrid,...
+                connectionInfo,newFracs);
             
-            [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart,varargout]=...
-                RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
-                oldGrid,oldGridUns,connectionInfo,param);
+            % Second round
+            [refinedGrid]=EdgePropertiesReshape(refinedGrid);
+            [oldGrid]=EdgePropertiesReshape(oldGrid);
             
-            switch snakData
-                case 'all'
-                    currFrac=[snakSavePart(end).volumefraction(:).volumefraction];
-                    currTarg=[snakSavePart(end).volumefraction(:).targetfill];
-                    isSnax=[snakSavePart(end).volumefraction(:).isSnax];
-                case 'light'
-                    currFrac=snakSavePart(end).volumefraction.currentfraction;
-                    currTarg=snakSavePart(end).volumefraction.targetfill;
-                    isSnax=[snakSavePart(end).volumefraction.isSnax];
-            end
-            
-            newFracs=currFrac-currTarg;
-            newFracs(isSnax & (currTarg~=0 | currTarg~=1))=0;
-            
-            flagCont=~all(newFracs==0);
-            param=SetVariables({'restart'},{false},param);
-            isInv=mod(kk,2)~=0;
-            if isInv
-                [snaxelPart]=ReverseSnakes(snaxelPart);
-            end
-            
-            if ~exist('snaxel','var')
-                snaxel=snaxelPart;
-                snakposition=snakpositionPart;
-                snakSave=snakSavePart;
-                loopsnaxel=loopsnaxelPart;
-                restartsnake=restartsnakePart;
-            else
-                
-                [snaxel]=ConcatenateSnaxel(snaxel,snaxelPart);
-                [snakposition]=ConcatenateSnakposition(snakposition,snakpositionPart);
-                
-                [snakSave]=ConcatenateSnakSave(snakSave,snakSavePart,isInv,snakData);
-                %snakSave=[snakSave,snakSavePart];
-                loopsnaxel=[loopsnaxel,loopsnaxelPart];
-                %restartsnake=restartsnakePart;
-                restartsnake.snaxel=snaxel;
-                if isInv
-                    
-                    restartsnake.insideContourInfo=xor(restartsnake.insideContourInfo,restartsnakePart.insideContourInfo);
-                    restartsnake.insideContourInfo(FindObjNum([],[snaxel(:).edge],[refinedGrid.edge(:).index]))=false;
-                else
-                    restartsnake.insideContourInfo=(restartsnake.insideContourInfo | restartsnakePart.insideContourInfo);
-                end
-            end
-            kk=kk+1;
+            refinedGriduns=ModifReshape(refinedGrid);
+            oldGridUns=ModifReshape(oldGrid);
+            [looprestart]=GenerateSnakStartLoop(refinedGrid,boundstr);
         end
+        
+        [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart,varargout]=...
+            RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
+            oldGrid,oldGridUns,connectionInfo,param);
+        
+        switch snakData
+            case 'all'
+                currFrac=[snakSavePart(end).volumefraction(:).volumefraction];
+                currTarg=[snakSavePart(end).volumefraction(:).targetfill];
+                isSnax=[snakSavePart(end).volumefraction(:).isSnax];
+            case 'light'
+                currFrac=snakSavePart(end).volumefraction.currentfraction;
+                currTarg=snakSavePart(end).volumefraction.targetfill;
+                isSnax=[snakSavePart(end).volumefraction.isSnax];
+        end
+        
+        newFracs=currFrac-currTarg;
+        newFracs(isSnax & (currTarg~=0 | currTarg~=1))=0;
+        
+        flagCont=~all(newFracs==0);
+        param=SetVariables({'restart'},{false},param);
+        isInv=mod(kk,2)~=0;
+        if isInv
+            [snaxelPart]=ReverseSnakes(snaxelPart);
+        end
+        
+        if ~exist('snaxel','var')
+            snaxel=snaxelPart;
+            snakposition=snakpositionPart;
+            snakSave=snakSavePart;
+            loopsnaxel=loopsnaxelPart;
+            restartsnake=restartsnakePart;
+        else
+            
+            [snaxel]=ConcatenateSnaxel(snaxel,snaxelPart);
+            [snakposition]=ConcatenateSnakposition(snakposition,snakpositionPart);
+            
+            [snakSave]=ConcatenateSnakSave(snakSave,snakSavePart,isInv,snakData);
+            %snakSave=[snakSave,snakSavePart];
+            loopsnaxel=[loopsnaxel,loopsnaxelPart];
+            %restartsnake=restartsnakePart;
+            restartsnake.snaxel=snaxel;
+            if isInv
+                
+                restartsnake.insideContourInfo=xor(restartsnake.insideContourInfo,restartsnakePart.insideContourInfo);
+                restartsnake.insideContourInfo(FindObjNum([],[snaxel(:).edge],[refinedGrid.edge(:).index]))=false;
+            else
+                restartsnake.insideContourInfo=(restartsnake.insideContourInfo | restartsnakePart.insideContourInfo);
+            end
+        end
+        kk=kk+1;
+    end
 end
 
 function [snakposition1]=ConcatenateSnakposition(snakposition1,snakposition2)
@@ -172,7 +172,7 @@ function [volfrac1]=ConcatenateVolumeFractionLight(volfrac1,volfrac2,isInv)
     isAct=find(~logical([volfrac1.isSnax]) & [volfrac2.isSnax]);
     volfrac1.refinedInfo.fractionvol=volfrac1.refinedInfo.fractionvol-(isInv*2-1)*volfrac2.refinedInfo.fractionvol;
     
-%     volfrac1.totalfraction=isInv*volfrac2.totalfraction-(isInv*2-1)*volfrac2.totalfraction;
+    %     volfrac1.totalfraction=isInv*volfrac2.totalfraction-(isInv*2-1)*volfrac2.totalfraction;
     volfrac1.currentfraction(isAct)=volfrac2.currentfraction(isAct)-(isInv*2-1)*volfrac2.currentfraction(isAct);
     volfrac1.isSnax(isAct)=true;
     
@@ -181,14 +181,14 @@ end
 
 %snakSave.volumefraction.refinedInfo.fractionvol=[volumefraction(:).splitfraction];
 function [snakSave1]=ConcatenateSnakSave(snakSave1,snakSave2,isInv,snakData)
-
+    
     l1=length(snakSave1);
     l2=length(snakSave2);
-
+    
     switch snakData
         case 'all'
             for ii=1:max(l1,l2)
-
+                
                 snakSave1(ii).snaxel=ConcatenateSnaxel(snakSave1(min(ii,l1)).snaxel,snakSave2(min(ii,l2)).snaxel);
                 snakSave1(ii).snakposition=ConcatenateSnakposition(snakSave1(min(ii,l1)).snakposition,snakSave2(min(ii,l2)).snakposition);
                 [snakSave1(ii).volumefraction]=ConcatenateVolumeFraction(snakSave1(min(ii,l1)).volumefraction,snakSave2(min(ii,l2)).volumefraction,isInv);
@@ -200,18 +200,18 @@ function [snakSave1]=ConcatenateSnakSave(snakSave1,snakSave2,isInv,snakData)
                 snakSave1(ii).insideContourInfo=(xor(snakSave1(min(ii,l1)).insideContourInfo,snakSave2(min(ii,l2)).insideContourInfo) & isInv) | ...
                     (~isInv & (snakSave1(min(ii,l1)).insideContourInfo | snakSave2(min(ii,l2)).insideContourInfo));
                 snakSave1(ii).cellCentredGrid=snakSave1(min(ii,l1)).cellCentredGrid;
-
+                
             end
         case 'light'
             for ii=1:max(l1,l2)
-
+                
                 [snakSave1(ii).volumefraction]=ConcatenateVolumeFractionLight(snakSave1(min(ii,l1)).volumefraction,snakSave2(min(ii,l2)).volumefraction,isInv);
                 snakSave1(ii).dt=min(snakSave1(min(ii,l1)).dt,snakSave2(min(ii,l2)).dt);
                 snakSave1(ii).currentConvVelocity=max(snakSave1(min(ii,l1)).currentConvVelocity,snakSave2(min(ii,l2)).currentConvVelocity);
                 snakSave1(ii).currentConvVolume=max(snakSave1(min(ii,l1)).currentConvVolume,snakSave2(min(ii,l2)).currentConvVolume);
                 snakSave1(ii).lSnak=(snakSave1(min(ii,l1)).lSnak+snakSave2(min(ii,l2)).lSnak);
-
-
+                
+                
             end
     end
 end
@@ -236,16 +236,16 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
     tStepStart=now;
     
     
-%     edgeOrient=[refinedGrid.edge(:).orientation];
-%     edgeIndList=[refinedGrid.edge(:).index];
-%     if numel(refineGrid)==1
-%         refGridRatio=1;
-%     else
-%         refGridRatio=refineGrid(1)/refineGrid(2);
-%     end
-%     edgeDat.orient=edgeOrient;
-%     edgeDat.indList=edgeIndList;
-%     edgeDat.ratio=refGridRatio;
+    %     edgeOrient=[refinedGrid.edge(:).orientation];
+    %     edgeIndList=[refinedGrid.edge(:).index];
+    %     if numel(refineGrid)==1
+    %         refGridRatio=1;
+    %     else
+    %         refGridRatio=refineGrid(1)/refineGrid(2);
+    %     end
+    %     edgeDat.orient=edgeOrient;
+    %     edgeDat.indList=edgeIndList;
+    %     edgeDat.ratio=refGridRatio;
     
     
     [cellCentredGrid,volfracconnec,borderVertices,snaxel,...
@@ -327,6 +327,9 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     nonBreedNextIter=[];
     for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
+%         memUsage=MonitorMemory(whos);
+%         fprintf('Memory Usage: %14.5f\n',memUsage)
+        
         
         fprintf('     Step %i  -',ii);
         tStepStart=now;
@@ -390,10 +393,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
         [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,insideContourInfo);
         
-%         [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
-%             volumefraction,cellCentredGridSnax,currentConvVelocity,...
-%             currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
-%         cntSave=cntSave+1;
+        %         [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
+        %             volumefraction,cellCentredGridSnax,currentConvVelocity,...
+        %             currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+        %         cntSave=cntSave+1;
         % Snaxel Repopulation In both directions
         
         [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
@@ -593,18 +596,18 @@ function [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid)
     edgeDat.ratio=refGridRatio;
     
     refinedGrid.edge=CalculateEdgeLengths(refinedGrid.edge,refinedGrid.vertex);
-    cellEdgeLDat=zeros([numel(cellCentredGrid),4]); 
+    cellEdgeLDat=zeros([numel(cellCentredGrid),4]);
     for ii=1:numel(cellCentredGrid)
-         [~,edgeLength]=CalculateEdgeLengths(cellCentredGrid(ii).edge,...
-             cellCentredGrid(ii).vertex);
-         
-         cellEdgeLDat(ii,1:4)=[ii,cellCentredGrid(ii).index,max(edgeLength),min(edgeLength)];
+        [~,edgeLength]=CalculateEdgeLengths(cellCentredGrid(ii).edge,...
+            cellCentredGrid(ii).vertex);
+        
+        cellEdgeLDat(ii,1:4)=[ii,cellCentredGrid(ii).index,max(edgeLength),min(edgeLength)];
     end
     cellEdgeLDat(end+1,1:4)=[ii+1 0 0 inf];
     cellEdgeSub=FindObjNum([],[refinedGrid.edge(:).cellindex],cellEdgeLDat(:,2)');
-%     edgeDat.indivRatio=(([refinedGrid.edge(:).length]...
-%         .*max(cellEdgeLDat(cellEdgeSub(1:2:end),3),cellEdgeLDat(cellEdgeSub(2:2:end),3))')...
-%         ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1;
+    %     edgeDat.indivRatio=(([refinedGrid.edge(:).length]...
+    %         .*max(cellEdgeLDat(cellEdgeSub(1:2:end),3),cellEdgeLDat(cellEdgeSub(2:2:end),3))')...
+    %         ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1;
     edgeDat.indivRatio=max((([refinedGrid.edge(:).length])...
         ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1,minEdgeScale);
     
@@ -641,7 +644,7 @@ function [convergenceCondition,currentConvVelocity,currentConvVolume]=...
     currentConvVolume=(sqrt(sum(diffVolFrac.^2))/length(diffVolFrac));
     % This should be changed to a positional accuracy of the following
     % type:
-    % 
+    %
     conditionVolume=currentConvVolume<convLevel;
     
     convergenceCondition= conditionVolume && conditionVelocity;
@@ -719,45 +722,45 @@ function [volfraconnec,cellCentredGrid]=ModifyFillInformation...
     if nStep<fillLooseStep
         warning(['Attempting to use deprecated option, Use fillErrStep and fillErrCut instead\n ',...
             'code needs to be uncommented if this option needs to be used'])
-%         modifFillPos=find(fill<fillLooseCut & fill~=0);
-%         for ii=modifFillPos
-%             fillDelta=(fillLooseCut-volfraconnec.cell(ii).targetfill)-...
-%                 nStep*(fillLooseCut-volfraconnec.cell(ii).targetfill)/fillLooseStep;
-%             volfraconnec.cell(ii).targetfill=fillDelta+volfraconnec.cell(ii).targetfill;
-%             
-%             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
-%             [cellCentredGrid(currSub).fill]=deal(fillDelta+volfraconnec.cell(ii).targetfill);
-%         end
-%         
-%         modifFillPos=find(fill<=0);
-%         for ii=modifFillPos
-%             fillDelta=-0.1;
-%             volfraconnec.cell(ii).targetfill=fillDelta;
-%             
-%             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
-%             [cellCentredGrid(currSub).fill]=deal(fillDelta);
-%         end
-%         
-%         modifFillPos=find(fill>=1);
-%         for ii=modifFillPos
-%             fillDelta=1.1;
-%             volfraconnec.cell(ii).targetfill=fillDelta;
-%             
-%             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
-%             [cellCentredGrid(currSub).fill]=deal(fillDelta);
-%         end
+        %         modifFillPos=find(fill<fillLooseCut & fill~=0);
+        %         for ii=modifFillPos
+        %             fillDelta=(fillLooseCut-volfraconnec.cell(ii).targetfill)-...
+        %                 nStep*(fillLooseCut-volfraconnec.cell(ii).targetfill)/fillLooseStep;
+        %             volfraconnec.cell(ii).targetfill=fillDelta+volfraconnec.cell(ii).targetfill;
+        %
+        %             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
+        %             [cellCentredGrid(currSub).fill]=deal(fillDelta+volfraconnec.cell(ii).targetfill);
+        %         end
+        %
+        %         modifFillPos=find(fill<=0);
+        %         for ii=modifFillPos
+        %             fillDelta=-0.1;
+        %             volfraconnec.cell(ii).targetfill=fillDelta;
+        %
+        %             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
+        %             [cellCentredGrid(currSub).fill]=deal(fillDelta);
+        %         end
+        %
+        %         modifFillPos=find(fill>=1);
+        %         for ii=modifFillPos
+        %             fillDelta=1.1;
+        %             volfraconnec.cell(ii).targetfill=fillDelta;
+        %
+        %             currSub=FindObjNum([],volfraconnec.cell(ii).newCellInd,newInd);
+        %             [cellCentredGrid(currSub).fill]=deal(fillDelta);
+        %         end
     end
 end
 
 
 function [volumefraction]=ModifyFillInformationError(volumefraction,param,nStep)
-   % visualisation of the conditions 
- conds=@(a,c) {a.*c+a,c.*(1-a)+a,-a.*c+a,a-c.*(1-a)};
-% [a,c]=meshgrid(linspace(0,1,100),1:100);
-% zVals=conds(a,c);
-% figure,hold on
-% surf(a,c,min(min(zVals{1},zVals{2}),1),'facecolor',[0 1 0])
-% surf(a,c,max(max(zVals{3},zVals{4}),0),'facecolor',[0 0 1])
+    % visualisation of the conditions
+    conds=@(a,c) {a.*c+a,c.*(1-a)+a,-a.*c+a,a-c.*(1-a)};
+    % [a,c]=meshgrid(linspace(0,1,100),1:100);
+    % zVals=conds(a,c);
+    % figure,hold on
+    % surf(a,c,min(min(zVals{1},zVals{2}),1),'facecolor',[0 1 0])
+    % surf(a,c,max(max(zVals{3},zVals{4}),0),'facecolor',[0 0 1])
     
     
     varExtract={'fillErrStep','fillErrCut'};
@@ -824,7 +827,7 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
     [snakData]=ExtractVariables(varExtract,param);
     [loopSnaxel]=OrderSurfaceSnaxel(snaxel);
     for ii=1:length(loopSnaxel)
-    [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=ClosedLoopProperties(loopSnaxel(ii).snaxel.coord);
+        [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=ClosedLoopProperties(loopSnaxel(ii).snaxel.coord);
     end
     
     % Length Snake
@@ -834,7 +837,10 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
             [snakSave]=WriteSnakSaveHeavy(snaxel,dt,snakposition,...
                 volumefraction,cellCentredGridSnax,currentConvVelocity,...
                 currentConvVolume,lSnak,movFrame,velcalcinfo,insideContourInfo);
-            
+        case 'interm'
+            [snakSave]=WriteSnakSaveInterm(snaxel,dt,snakposition,...
+                volumefraction,currentConvVelocity,...
+                currentConvVolume,lSnak,movFrame,velcalcinfo,insideContourInfo);
         case 'light'
             [snakSave]=WriteSnakSaveLight(dt,volumefraction,currentConvVelocity,...
                 currentConvVolume,lSnak);
@@ -853,6 +859,22 @@ function [snakSave]=WriteSnakSave(param,snaxel,dt,snakposition,...
         snakSave.snakposition=snakposition;
         snakSave.volumefraction=volumefraction;
         snakSave.cellCentredGrid=cellCentredGridSnax;
+        snakSave.currentConvVelocity=currentConvVelocity;
+        snakSave.currentConvVolume=currentConvVolume;
+        snakSave.movFrame=movFrame;
+        snakSave.velcalcinfo=velcalcinfo;
+        snakSave.insideContourInfo=insideContourInfo;
+        snakSave.lSnak=lSnak;
+    end
+    
+    function [snakSave]=WriteSnakSaveInterm(snaxel,dt,snakposition,...
+            volumefraction,currentConvVelocity,...
+            currentConvVolume,lSnak,movFrame,velcalcinfo,insideContourInfo)
+        
+        snakSave.snaxel=snaxel;
+        snakSave.dt=dt;
+        snakSave.snakposition=snakposition;
+        snakSave.volumefraction=volumefraction;
         snakSave.currentConvVelocity=currentConvVelocity;
         snakSave.currentConvVolume=currentConvVolume;
         snakSave.movFrame=movFrame;
@@ -1234,7 +1256,7 @@ function [snaxel]=SnaxelStructure(index,dist,velocity,vertexOrig,...
     snaxel.snaxprec=snaxPrec;
     snaxel.snaxnext=snaxNext;
     snaxel.isfreeze=0;
-    snaxel.orderedge=0; 
+    snaxel.orderedge=0;
 end
 
 %% Snaxel Repopulation
@@ -1306,11 +1328,11 @@ function [snaxel,newInsideEdges,delIndex,newNonBreedVert]=RepopIterativeBreeding
         previousV=snaxel(breedSub).v;
         previousACC=snaxel(breedSub).acc;
         stepL=snaxelRepop(1).d;
-%         for ii=1:length(snaxelRepop)
-%             snaxelRepop(ii).d=0;
-%             snaxelRepop(ii).v=0;%previousV;
-%             snaxelRepop(ii).acc=previousACC;
-%         end
+        %         for ii=1:length(snaxelRepop)
+        %             snaxelRepop(ii).d=0;
+        %             snaxelRepop(ii).v=0;%previousV;
+        %             snaxelRepop(ii).acc=previousACC;
+        %         end
         rePopInd=[rePopInd,[snaxelRepop(:).index]];
         [snaxel]=AddSnaxel(snaxel,snaxelRepop);
         % Remove breeding snaxels snaxels
@@ -1349,15 +1371,15 @@ function [snaxel]=NotTakePostRepopStep(snaxel,rePopInd,edgeDat,mergeTopo)
     snaxelRepopD=[snaxel(repopSub).d];
     [snaxel(repopSub).d]=deal(0);
     
-%     for ii=1:numel(repopSub)
-%         snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
-%     end
+    %     for ii=1:numel(repopSub)
+    %         snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
+    %     end
     
     maxDist=MaxTravelDistance(snaxel,mergeTopo);
     
-%     for ii=1:length(repopSub)
-%         snaxel(repopSub(ii)).d=max(min([maxDist(repopSub(ii)),snaxelRepopD(ii)]),0);
-%     end
+    %     for ii=1:length(repopSub)
+    %         snaxel(repopSub(ii)).d=max(min([maxDist(repopSub(ii)),snaxelRepopD(ii)]),0);
+    %     end
     for ii=1:length(snaxel)
         snaxel(ii).v=vSnax(ii);
     end
@@ -1381,9 +1403,9 @@ function [snaxel]=TakePostRepopStep(snaxel,rePopInd,edgeDat,mergeTopo)
     snaxelRepopD=[snaxel(repopSub).d];
     [snaxel(repopSub).d]=deal(0);
     
-%     for ii=1:numel(repopSub)
-%         snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
-%     end
+    %     for ii=1:numel(repopSub)
+    %         snaxel(repopSub(ii)).v=(stepL*maxStepIndiv(repopSub(ii)));
+    %     end
     
     maxDist=MaxTravelDistance(snaxel,mergeTopo);
     
@@ -1474,12 +1496,12 @@ function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTrave
         end
     end
     for jj=1:size(ratio,1)
-    for ii=1:size(ratio,1)
-        currTravel(ratio(ii,2))=sign(currTravel(ratio(ii,2)))*min(abs(currTravel(ratio(ii,2))),...
-            abs(currTravel(ratio(ii,3)))/ratio(ii,1));
-        currTravel(ratio(ii,3))=sign(currTravel(ratio(ii,3)))*min(abs(currTravel(ratio(ii,3))),...
-            abs(currTravel(ratio(ii,2)))*ratio(ii,1));
-    end
+        for ii=1:size(ratio,1)
+            currTravel(ratio(ii,2))=sign(currTravel(ratio(ii,2)))*min(abs(currTravel(ratio(ii,2))),...
+                abs(currTravel(ratio(ii,3)))/ratio(ii,1));
+            currTravel(ratio(ii,3))=sign(currTravel(ratio(ii,3)))*min(abs(currTravel(ratio(ii,3))),...
+                abs(currTravel(ratio(ii,2)))*ratio(ii,1));
+        end
     end
 end
 
@@ -1641,7 +1663,7 @@ end
 function [snaxel]=AddOrderEdgeField(snaxel)
     % Function to add orderedge to preexisting snaxel restarts.
     
-     
+    
     snaxEdge=[snaxel(:).edge];
     snaxD=[snaxel(:).d];
     snaxToV=[snaxel(:).tovertex];
@@ -1733,23 +1755,23 @@ end
 
 function [contourStruct]=ExtractContourSnaxel(snaxel)
     % Extracts the snaxel connected for each  contour edge
-%     snaxInd=[snaxel(:).index]';
-%     snaxConnects=vertcat(snaxel(:).connectivity);
-%     snaxContour1=[snaxInd,snaxConnects(:,1)];
-%     snaxContour2=[snaxInd,snaxConnects(:,2)];
-%     snaxContour=[snaxContour1;snaxContour2];
-%     cellSimilar=FindIdenticalVector(snaxContour);
-%     
-%     arraySimilar=vertcat(cellSimilar{:});
-%     snaxContour=snaxContour(arraySimilar(:,1),:);
-%     for ii=length(snaxContour(:,1)):-1:1
-%         contourStruct(ii).index1=snaxContour(ii,1);
-%         contourStruct(ii).index2=snaxContour(ii,2);
-%     end
-
+    %     snaxInd=[snaxel(:).index]';
+    %     snaxConnects=vertcat(snaxel(:).connectivity);
+    %     snaxContour1=[snaxInd,snaxConnects(:,1)];
+    %     snaxContour2=[snaxInd,snaxConnects(:,2)];
+    %     snaxContour=[snaxContour1;snaxContour2];
+    %     cellSimilar=FindIdenticalVector(snaxContour);
+    %
+    %     arraySimilar=vertcat(cellSimilar{:});
+    %     snaxContour=snaxContour(arraySimilar(:,1),:);
+    %     for ii=length(snaxContour(:,1)):-1:1
+    %         contourStruct(ii).index1=snaxContour(ii,1);
+    %         contourStruct(ii).index2=snaxContour(ii,2);
+    %     end
+    
     [contourStruct(1:numel(snaxel)).index1]=deal(snaxel(:).index);
     [contourStruct(1:numel(snaxel)).index2]=deal(snaxel(:).snaxnext);
-
+    
 end
 
 function [normalVector]=ContourEdgeNormal(snakposition,indices,snaxIndPos)
@@ -2148,18 +2170,18 @@ function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInside
 end
 
 function [snaxel]=InitisaliseSnaxelOrder(snaxel)
-   % Initialises the order of all snaxels 
-   % Only valid just after Initialisation
-   
-   snaxFrom=[snaxel(:).fromvertex];
-   snaxTo=[snaxel(:).tovertex];
-   snaxD=[snaxel(:).d];
-   
-   snaxOrd=1+xor(((snaxTo-snaxFrom)<0),logical(round(snaxD)));
-   for ii=1:numel(snaxel)
-       snaxel(ii).orderedge=snaxOrd(ii);
-   end
-   
+    % Initialises the order of all snaxels
+    % Only valid just after Initialisation
+    
+    snaxFrom=[snaxel(:).fromvertex];
+    snaxTo=[snaxel(:).tovertex];
+    snaxD=[snaxel(:).d];
+    
+    snaxOrd=1+xor(((snaxTo-snaxFrom)<0),logical(round(snaxD)));
+    for ii=1:numel(snaxel)
+        snaxel(ii).orderedge=snaxOrd(ii);
+    end
+    
 end
 %% Time Update
 
@@ -2173,7 +2195,7 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
     edgeSnax=[snaxel(:).edge];
     nSnax=length(edgeSnax);
     if ~mergeTopo
-        eps=0;%1e-6; 
+        eps=0;%1e-6;
     else
         eps=0;
     end
@@ -2190,33 +2212,33 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
         else
             maxDist(ii)=-dSnax(ii);
         end
-%         if numel(sameEdgeSnax)==1
-%             
-%             dSnaxOther=dSnax(sameEdgeSnax);
-%             vSnaxOther=vSnax(sameEdgeSnax);
-%             sameDir=fromvertSnax(ii)==fromvertSnax(sameEdgeSnax);
-%             if sameDir
-%                 %disp('Turning Snaxel for impact distance calculation')
-%                 dSnaxOther=1-dSnaxOther;
-%                 vSnaxOther=-vSnaxOther;
-%             end
-%             
-%             impactDist=(1-dSnax(ii)-dSnaxOther)/...
-%                 (vSnax(ii)+vSnaxOther)*vSnax(ii);
-%             
-%             if vSnax(ii)+vSnaxOther==0
-%                 impactDist=1;
-%             end
-%             
-%             if vSnax(ii)>=0 && impactDist>=0
-%                 maxDist(ii)=min([maxDist(ii),impactDist-eps]);
-%             elseif vSnax(ii)<0 && impactDist<=0
-%                 maxDist(ii)=max([maxDist(ii),impactDist+eps]);
-%             end
-%             
-%         else
+        %         if numel(sameEdgeSnax)==1
+        %
+        %             dSnaxOther=dSnax(sameEdgeSnax);
+        %             vSnaxOther=vSnax(sameEdgeSnax);
+        %             sameDir=fromvertSnax(ii)==fromvertSnax(sameEdgeSnax);
+        %             if sameDir
+        %                 %disp('Turning Snaxel for impact distance calculation')
+        %                 dSnaxOther=1-dSnaxOther;
+        %                 vSnaxOther=-vSnaxOther;
+        %             end
+        %
+        %             impactDist=(1-dSnax(ii)-dSnaxOther)/...
+        %                 (vSnax(ii)+vSnaxOther)*vSnax(ii);
+        %
+        %             if vSnax(ii)+vSnaxOther==0
+        %                 impactDist=1;
+        %             end
+        %
+        %             if vSnax(ii)>=0 && impactDist>=0
+        %                 maxDist(ii)=min([maxDist(ii),impactDist-eps]);
+        %             elseif vSnax(ii)<0 && impactDist<=0
+        %                 maxDist(ii)=max([maxDist(ii),impactDist+eps]);
+        %             end
+        %
+        %         else
         if numel(sameEdgeSnax)>0
-%             disp('More than 2 snaxels on the same edge')
+            %             disp('More than 2 snaxels on the same edge')
             
             impactDist=[];
             for jj=1:numel(sameEdgeSnax)
@@ -2227,7 +2249,7 @@ function maxDist=MaxTravelDistance(snaxel,mergeTopo)
             if any(abs(impactDist)<1e-16)
                 ordersAct=[orderSnax(ii),orderSnax(sameEdgeSnax)];
                 [~,orderSortI]=sort(ordersAct);
-
+                
                 orderImpact=sign(toVertSnax(ii)-fromvertSnax(ii))*sign(orderSortI(2:end)-orderSortI(1));
                 % + indicates in the way on positive travel
                 % - indicates in the way on negative travel
@@ -2318,30 +2340,30 @@ function [dt,dtSnax2,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
 end
 
 function [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeDat)
-   % scales the maximum step depending on the assymetry of the grid
-   edgeOrient=edgeDat.orient;
-   edgeIndList=edgeDat.indList;
-   refGridRatio=edgeDat.ratio;
-   edgeDat.indivRatio;
-   edgeSnax=[snaxel(:).edge];
-   maxStepIndivGrid=ones(size(snaxel));
-   maxStepIndivGrid(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
-   
-   maxStepIndivDist=edgeDat.indivRatio(FindObjNum([],edgeSnax,edgeIndList));
-   maxStepIndivGrid=maxStepIndivGrid/max(maxStepIndivGrid);
-   maxStepIndiv=maxStepIndivGrid.*maxStepIndivDist;
+    % scales the maximum step depending on the assymetry of the grid
+    edgeOrient=edgeDat.orient;
+    edgeIndList=edgeDat.indList;
+    refGridRatio=edgeDat.ratio;
+    edgeDat.indivRatio;
+    edgeSnax=[snaxel(:).edge];
+    maxStepIndivGrid=ones(size(snaxel));
+    maxStepIndivGrid(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
+    
+    maxStepIndivDist=edgeDat.indivRatio(FindObjNum([],edgeSnax,edgeIndList));
+    maxStepIndivGrid=maxStepIndivGrid/max(maxStepIndivGrid);
+    maxStepIndiv=maxStepIndivGrid.*maxStepIndivDist;
 end
 
 
 function [maxStepIndiv]=DirectionScaledMaxStep_OLD(snaxel,edgeDat)
-   % scales the maximum step depending on the assymetry of the grid
-   edgeOrient=edgeDat.orient;
-   edgeIndList=edgeDat.indList;
-   refGridRatio=edgeDat.ratio;
-   edgeSnax=[snaxel(:).edge];
-   maxStepIndiv=ones(size(snaxel));
-   maxStepIndiv(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
-   maxStepIndiv=maxStepIndiv/max(maxStepIndiv);
+    % scales the maximum step depending on the assymetry of the grid
+    edgeOrient=edgeDat.orient;
+    edgeIndList=edgeDat.indList;
+    refGridRatio=edgeDat.ratio;
+    edgeSnax=[snaxel(:).edge];
+    maxStepIndiv=ones(size(snaxel));
+    maxStepIndiv(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
+    maxStepIndiv=maxStepIndiv/max(maxStepIndiv);
 end
 
 function [dt]=TimeStep_Strict(dtStep,dtMax,maxDt,dtSnax,dtMin)
@@ -2643,15 +2665,15 @@ function [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo)
         % level: This means a 2 step process where velocities are based off
         % the actual freeze status after thawing test (ie is it still frozen)
         nonBreedFreeze=[];
-        else
+    else
         nonBreedFreeze=[];
     end
     if isfield(borderVertices,'nonbreedpers')
-%         if ~isempty(borderVertices.nonbreedpers)
-            [nonBreedFreeze2]=FreezeNonBreedContact(snaxel,borderVertices.nonbreedpers);
-%         else
-%             nonBreedFreeze2=[];
-%         end
+        %         if ~isempty(borderVertices.nonbreedpers)
+        [nonBreedFreeze2]=FreezeNonBreedContact(snaxel,borderVertices.nonbreedpers);
+        %         else
+        %             nonBreedFreeze2=[];
+        %         end
         % For this to work proper freeze handling is needed at Velocity
         % level: This means a 2 step process where velocities are based off
         % the actual freeze status after thawing test (ie is it still frozen)
@@ -2674,11 +2696,11 @@ function [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo)
         freezeSub=FindObjNum([],nonBreedFreeze,[snaxel(:).index]);
         for ii=1:length(nonBreedFreeze)
             snaxel(freezeSub(ii)).isfreeze=2 ...
-            -0.1+round(snaxel(freezeSub(ii)).d)*0.2; 
-        % this indicates if the snaxel is blocked at 0 or 1
-        % 0 -> No negative speeds -> 1.9 
-        % 1 -> No positive speeds -> 2.1
-        
+                -0.1+round(snaxel(freezeSub(ii)).d)*0.2;
+            % this indicates if the snaxel is blocked at 0 or 1
+            % 0 -> No negative speeds -> 1.9
+            % 1 -> No positive speeds -> 2.1
+            
         end
     end
 end
@@ -2739,9 +2761,9 @@ function [freezeIndex,pairs]=FreezeEdgeContact(snaxel,saveSingleVal)
                 pairs=[indexSnax(ii),indexSnax(sameEdgeSnax)];
                 break
             end
-%             if isFreeze(ii)
-%                 isImpact(ii)=false;
-%             end
+            %             if isFreeze(ii)
+            %                 isImpact(ii)=false;
+            %             end
             
         end
     end
@@ -3235,13 +3257,13 @@ function [h]=testSensitivity(snaxel,snakposition,sensSnax)
         [newOrd]=CompareTestpos(testPos1,testPos2,snaxOrd,dir);
         %newOrd=snaxOrd;
         if ii==1;
-        plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'+-')
+            plot(coord1(snaxOrd,1),coord1(snaxOrd,2),'+-')
         end
         l2(ii)=plot(coord2(newOrd,1),coord2(newOrd,2),'o-');
         hold on
-%         for jj=1:length(newOrd)
-%             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
-%         end
+        %         for jj=1:length(newOrd)
+        %             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+        %         end
         l2(ii).DisplayName=['mode ',int2str(ii)];
         
     end

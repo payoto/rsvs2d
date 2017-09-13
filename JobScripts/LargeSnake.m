@@ -4,7 +4,7 @@ addpath test
 ExecInclude
 
 
-numList=[150,200,300,400,500];
+numList=[10,50,2,4,8,16,32,64];
 
 for ii=1:numel(numList)
     [~,~,~,~,~,rootDir{ii}]=Main(sprintf('SnakNaca0012(%i)',numList(ii)));
