@@ -1394,6 +1394,26 @@ function [param]=SnakNaca0012(mult)
     param.snakes.refine.edgeFinish='none';
 end
 
+function [param]=SnakNaca0012s(mult)
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    param.snakes.step.snakData='interm';
+    param.general.typDat='naca0012cos_f';
+    param.snakes.step.snakesSteps=max([200 mult*10]);
+    param.snakes.refine.refineGrid=[mult mult];
+    param.snakes.refine.gridDistrib='cosX1';
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1.4,1.4;-0.4,0.4];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=false;
+    param.snakes.step.convLevel=10^-12;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+end
+
 function [param]=SnakesFoilVVSmall_ref()
     
     [param]=DefaultCase();

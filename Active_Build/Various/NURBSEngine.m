@@ -89,7 +89,7 @@ function []=PlotErrorConvergence(loop,vec)
      h=figure('Name','Error Convergence','Position',[100 100  800 500]);
      
      errType={'','abs','log'};
-     errMeasure={'mean','std','min','max'};
+     errMeasure={'mean','rms','std','min','max'};
      
      
      for ii=1:numel(errType)
@@ -113,18 +113,23 @@ end
 
 function [errstruct]=ComputeErrorVals(vec)
     
+    rms2=@(vec) sqrt(sum(vec.^2)/numel(vec));
+    
     errstruct.mean=mean(vec);
+    errstruct.rms=rms2(vec);
     errstruct.std=std(vec);
     errstruct.min=min(vec);
     errstruct.max=max(vec);
     vec=abs(vec);
     errstruct.absmean=mean(vec);
+    errstruct.absrms=rms2(vec);
     errstruct.absstd=std(vec);
     errstruct.absmin=min(vec);
     errstruct.absmax=max(vec);
     vec=log10(vec);
     vec(~isfinite(vec))=-16;
     errstruct.logmean=10^mean(vec);
+    errstruct.logrms=10^-rms2(vec);
     errstruct.logstd=10^std(vec);
     errstruct.logmin=10^min(vec);
     errstruct.logmax=10^max(vec);
