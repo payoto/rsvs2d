@@ -290,7 +290,7 @@ end
 function [domainBounds]=MakeBoundsOuterLayer(cellLevels,domainBounds,isact)
     
     domainBounds(1,:)= (domainBounds(1,:)-mean(domainBounds(1,:)))*...
-        (cellLevels(1)+1+(1-isact))/(cellLevels(1)-(1-isact))+mean(domainBounds(1,:));
+        (cellLevels(1)+2+2*(1-isact))/(cellLevels(1)-2*(1-isact))+mean(domainBounds(1,:));
     domainBounds(2,:)= (domainBounds(2,:)-mean(domainBounds(2,:)))*...
         (cellLevels(2)+1)/cellLevels(2)+mean(domainBounds(2,:));
 end
