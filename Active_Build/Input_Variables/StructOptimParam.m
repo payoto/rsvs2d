@@ -2032,6 +2032,28 @@ function [paroptim]=RefLocOut(e)
     paroptim.general.worker=8;
 end
 
+%% Local constraints
+
+function [paroptim]=LocConsTopo_prof(cNum)
+    
+    [paroptim]=Component_DE();
+    
+    paroptim.general.optimMethod='DE';
+    
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=150;
+    paroptim.general.worker=12;
+    
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
+    
+    paroptim.constraint.initConstr={'LocalVolFrac_loop'};
+    paroptim.constraint.initVal={{['1c2b_v',int2str(cNum),'prf'],'min'}};
+    
+end
+
+
+%% Building blocks
 % Grid Cases
 function [paroptim]=gridrefcase_auto(paroptim,nIter,lvl)
     paroptim.parametrisation.snakes.refine.axisRatio=1;

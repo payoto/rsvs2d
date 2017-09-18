@@ -111,6 +111,8 @@ function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gri
         case 'mat'
             instruct=load(constrVal{1});
             loop=instruct.loop;
+        case 'prf'
+            [loop]=LocalConstraintBuilder(constrVal{1}(1:end-3));
         otherwise
             error('Unrecognised constraint format ')
             

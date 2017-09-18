@@ -21,9 +21,9 @@ function [nurbstruct,loop]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
             cellStr=varargin{1};
     end
     
-    u=linspace(0,1,20001);
     for jj=1:size(nurbstruct,1)
         for ii=1:size(nurbstruct,2)
+            u=linspace(0,1,20*str2double(cellStr{jj})*24+1);
             C=PlotNURBS(u,nurbstruct(jj,ii).P,nurbstruct(jj,ii).U,nurbstruct(jj,ii).w,2);
             loop(jj,ii).nurbs.pts=C;
             loop(jj,ii).nurbs.ctrl=nurbstruct(jj,ii).P;
