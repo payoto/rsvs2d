@@ -70,6 +70,16 @@ function [structin]=PredefCases(charin)
             ii=3;
             structin(ii).name='brick';structin(ii).x=0.55;structin(ii).y=-0.06;structin(ii).xr1=1;
             structin(ii).yr1=1;structin(ii).xr2=0.2;structin(ii).yr2=0.05;structin(ii).rot=0;
+            
+        case '1c2b_v4'
+            ii=1;
+            structin(ii).name='circle';structin(ii).x=0.25;structin(ii).y=0;structin(ii).r=0.035;
+            ii=2;
+            structin(ii).name='brick';structin(ii).x=0.65;structin(ii).y=0.0;structin(ii).xr1=1;
+            structin(ii).yr1=1;structin(ii).xr2=0.2;structin(ii).yr2=0.05;structin(ii).rot=pi/4;
+            ii=3;
+            structin(ii).name='brick';structin(ii).x=0.4;structin(ii).y=-0.0;structin(ii).xr1=1;
+            structin(ii).yr1=1;structin(ii).xr2=0.2;structin(ii).yr2=0.05;structin(ii).rot=0;
     end
     
 end
