@@ -96,13 +96,30 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
                 if mod(ceil(iout(iip1)),nP1)~=mod(ceil(iout(ii)),nP1)
                     actTInd=ceil(mod(iout(ii),nP1));
                     actTInd(actTInd==0)=iout(ii);
-                    [branchFollowProf,on]=inpolygon(profileCoord(actTInd,1),profileCoord(actTInd,2),...
+                    [branchFollowProf,onPoly]=inpolygon(profileCoord(actTInd,1),profileCoord(actTInd,2),...
                         targCoord(:,1),targCoord(:,2));
+                    
+                    if onPoly
+                        testCoord=profileCoord(actTInd,:);
+                        nextInd=min(1,mod(iout(mod(ii,nX0)+1)-actTInd,nP1));
+                        testCoord=testCoord+nextInd*(profileCoord(mod(actTInd,nP1)+1,:)-testCoord)/2;
+                        [branchFollowProf,onPoly]=inpolygon(testCoord(1),testCoord(2),...
+                        targCoord(:,1),targCoord(:,2));
+                    end
+                    
                 else
                     actTInd=ceil(mod(jout(ii),nP2));
                     actTInd(actTInd==0)=jout(ii);
-                    [branchFollowProf,on]=inpolygon(targCoord(actTInd,1),targCoord(actTInd,2),...
+                    [branchFollowProf,onPoly]=inpolygon(targCoord(actTInd,1),targCoord(actTInd,2),...
                         profileCoord(:,1),profileCoord(:,2));
+                    if onPoly
+                        testCoord=targCoord(actTInd,:);
+                        nextInd=min(1,mod(jout(mod(ii,nX0)+1)-actTInd,nP2));
+                        testCoord=testCoord+nextInd*(targCoord(mod(actTInd,nP2)+1,:)-testCoord)/2;
+                        [branchFollowProf,onPoly]=inpolygon(testCoord(1),testCoord(2),...
+                        profileCoord(:,1),profileCoord(:,2));
+                    end
+                    
                     branchFollowProf=~branchFollowProf;
                 end
                 

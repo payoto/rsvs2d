@@ -101,9 +101,9 @@ end
 
 function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gridReshape)
     
-    varExtract={'cellLevels','desVarConstr','desVarVal'};
-    [cellLevels]=ExtractVariables(varExtract(1),paramoptim.parametrisation);
-    [desVarConstr,desVarVal]=ExtractVariables(varExtract(2:3),paramoptim);
+    varExtract={'cellLevels','axisRatio','desVarConstr','desVarVal'};
+    [cellLevels,axisRatio]=ExtractVariables(varExtract(1:2),paramoptim.parametrisation);
+    [desVarConstr,desVarVal]=ExtractVariables(varExtract(3:4),paramoptim);
     
     switch constrVal{1}(end-2:end)
         case 'dat'
@@ -117,7 +117,9 @@ function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gri
             error('Unrecognised constraint format ')
             
     end
-    
+    for ii=1:numel(loop)
+        loop(ii).coord(:,2)=loop(ii).coord(:,2)/axisRatio;
+    end
     [fill,desVal]=LoopToFill(loop,gridReshape);
     
     desVal{end+1}=constrVal{1};
