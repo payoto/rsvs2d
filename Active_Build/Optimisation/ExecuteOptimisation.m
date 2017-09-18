@@ -23,7 +23,8 @@ function [] = ExecuteOptimisation()
 end
 %}
 
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugArgIn)
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
+        debugArgIn)
     %close all
     clc
     
@@ -40,7 +41,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
         =InitialiseOptimisation(caseStr);
     
     varExtract={'maxIter','restartSource','refineSteps','refineIter'};
-    [maxIter,restartSource,refineSteps,refineIter]=ExtractVariables(varExtract,paramoptim);
+    [maxIter,restartSource,refineSteps,refineIter]=ExtractVariables(varExtract...
+        ,paramoptim);
     startIter=1;
     firstValidIter=1;
     % Restart
@@ -77,9 +79,11 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
                 PerformIteration(paramoptim,outinfo(refStage),nIter,...
                 iterstruct(nIter).population,gridrefined,restartsnake,...
                 baseGrid,connectstructinfo,iterstruct(1:nIter-1));
-            OptimisationOutput('optstruct',paramoptim,outinfo(refStage),iterstruct);
+            OptimisationOutput('optstruct',paramoptim,outinfo(refStage),...
+                iterstruct);
             % Evaluate Objective Function
-            [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
+            [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,...
+                nIter,firstValidIter,baseGrid);
             % create new population
             DiskSpaceManagement(paramoptim,iterstruct)
             [~]=PrintEnd(procStr,1,tStart);
@@ -89,7 +93,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
                 fprintf('\n Optimisation Stopped By Slope convergence condition \n');
                 break
             end
-            if ConvergenceTest_static(paramoptim,iterstruct,nIter,startIter) && (mod(nIter,2)==0)
+            if ConvergenceTest_static(paramoptim,iterstruct,nIter,startIter) ...
+                    && (mod(nIter,2)==0)
                 fprintf('\n Optimisation Stopped By convergence condition \n');
                 break
             end
@@ -110,8 +115,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             if exist('flagOut','var') && ~flagOut
                 disp('Output Skipped')
             else
-                [paramoptim]=FindKnownOptim(paramoptim,iterstruct(1:nIter),baseGrid,gridrefined,...
-                    restartsnake,connectstructinfo,outinfo(end));
+                [paramoptim]=FindKnownOptim(paramoptim,iterstruct(1:nIter),...
+                    baseGrid,gridrefined,restartsnake,connectstructinfo,...
+                    outinfo(end));
                 OptimisationOutput('final',paramoptim,outinfo,iterstruct(1:nIter));
             end
         catch ME;
@@ -125,8 +131,9 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,debugAr
             %save('DvpAnisRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
-                HandleRefinement(paramoptim,iterstruct(1:nIter),outinfo(refStage),baseGrid,gridrefined,...
-                connectstructinfo,refStage,nIter,startIter);
+                HandleRefinement(paramoptim,iterstruct(1:nIter),...
+                outinfo(refStage),baseGrid,gridrefined,connectstructinfo,...
+                refStage,nIter,startIter);
             
             if ~isempty(refineIter)
                 startIter=nIter+1;
@@ -173,8 +180,10 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
                 iterstruct(max([startIter-iterGap,1])).population,baseGrid);
             firstValidIter=startIter;
-            nLoc=(regexprep(iterstruct(firstValidIter).population(1).location,'iteration_.*$',''));
-            while firstValidIter>1 && strcmp(nLoc,regexprep(iterstruct(firstValidIter-1).population(1).location,'iteration_.*$',''))
+            nLoc=(regexprep(iterstruct(firstValidIter).population(1).location,...
+                'iteration_.*$',''));
+            while firstValidIter>1 && strcmp(nLoc,regexprep(iterstruct(...
+                    firstValidIter-1).population(1).location,'iteration_.*$',''))
                 firstValidIter=firstValidIter-1;
             end
         else
@@ -183,7 +192,8 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
             paroptim.general.isRestart=true;
             [origPop,~,paroptim,deltas]...
                 =OptimisationMethod(paroptim,iterstruct(startIter).population,...
-                iterstruct(max([startIter-iterGap,startIter])).population,baseGrid);
+                iterstruct(max([startIter-iterGap,startIter])).population,...
+                baseGrid);
         end
         
         
@@ -203,7 +213,8 @@ function [iterstruct,paroptim,firstValidIter]=GenerateRestartPop(paroptim,...
         if nPop==length(iterstruct(startIter).population)
             firstValidIter=1;
         end
-        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter,baseGrid);
+        [iterstruct]=GenerateNewPop(paroptim,iterstruct,startIter,startIter,...
+            baseGrid);
         
     end
     
@@ -225,9 +236,11 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                 case 'optimstruct'
                     startIter=length(optionalin.(fieldsIn{ii}));
                     maxIter=startIter+maxIter;
-                    if ~isfield(optionalin.(fieldsIn{ii})(1).population,'nonfillvar')
+                    if ~isfield(optionalin.(fieldsIn{ii})(1).population,...
+                            'nonfillvar')
                         for kk=1:numel(optionalin.(fieldsIn{ii}))
-                            [optionalin.(fieldsIn{ii})(kk).population(:).nonfillvar]=deal([]);
+                            [optionalin.(fieldsIn{ii})(kk).population(:)...
+                                .nonfillvar]=deal([]);
                         end
                     end
                     iterstruct=[optionalin.(fieldsIn{ii}),iterstruct]; %#ok<AGROW>
@@ -242,11 +255,14 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                     if ~strcmp(fieldsConnec{1},'old')
                         newFields={'old','new','targetfill'};
                         connectstructinfo.cell=cell2struct(struct2cell...
-                            (connectstructinfo.cell),newFields(1:numel(fieldsConnec)),1);
+                            (connectstructinfo.cell),newFields(...
+                            1:numel(fieldsConnec)),1);
                     end
-                    [startVol,validVol]=ExtractVariables({'startVol','validVol'},paramoptim);
+                    [startVol,validVol]=ExtractVariables({'startVol',...
+                        'validVol'},paramoptim);
                     paramoptim=SetVariables({'startVol'},{validVol},paramoptim);
-                    [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim);
+                    [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,...
+                        paramoptim);
                     paramoptim=SetVariables({'startVol'},{startVol},paramoptim);
                     
                     isGrid=true;
@@ -258,9 +274,12 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                         repeatflag=false;
                     end
                 case 'paramoptim'
-                    paramoptim=ImposePresets(paramoptim,optionalin.(fieldsIn{ii}));
-                    paramoptim.parametrisation=ImposePresets(paramoptim.parametrisation,optionalin.(fieldsIn{ii}).parametrisation);
-                    paramoptim.initparam=ImposePresets(paramoptim.initparam,optionalin.(fieldsIn{ii}).initparam);
+                    paramoptim=ImposePresets(paramoptim,...
+                        optionalin.(fieldsIn{ii}));
+                    paramoptim.parametrisation=ImposePresets(paramoptim...
+                        .parametrisation,optionalin.(fieldsIn{ii}).parametrisation);
+                    paramoptim.initparam=ImposePresets(paramoptim.initparam,...
+                        optionalin.(fieldsIn{ii}).initparam);
                     
                     if exist('isSupport','var');
                         repeatflag=isSupport;
@@ -1701,10 +1720,11 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
             % Find coefficients for active strips
             nAct=numel(stripAct);
             loStrip=[0,stripAct(1:end-1)];
-            hiStrip=[stripAct(2:end),nStrips];
+            hiStrip=[stripAct(2:end),nStrips+1];
             coeffStrip=(hiStrip-loStrip)-1;
             % Generate peaks
-            posPeak=randi(cellLevels(1)-1);
+            %posPeak=randi(cellLevels(1)-1);
+            posPeak = randi(cellLevels(1)-1,length(stripAct),1);
             hPeak=rand([length(stripAct),1]).*coeffStrip';
             ratio=minTargFill/(2*sum(hPeak));
             if ratio>1
@@ -1715,16 +1735,16 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
             for jj=stripAct
                 
                 currPeak=hPeak(ll);
-                ll=ll+1;
+                
                 totFrac=currPeak*cellLevels(1)/2;
                 volLine=zeros([cellLevels(1)-2+1,1]);
                 
                 for kk=2:length(volLine)-1
-                    if kk<=posPeak+1
-                        volLine(kk)=currPeak*(kk-1)/posPeak;
+                    if kk<=posPeak(ll)+1
+                        volLine(kk)=currPeak*(kk-1)/posPeak(ll);
                     else
-                        volLine(kk)=currPeak-currPeak*((kk-1)-posPeak)...
-                            /(length(volLine)-1-posPeak);
+                        volLine(kk)=currPeak-currPeak*((kk-1)-posPeak(ll))...
+                            /(length(volLine)-1-posPeak(ll));
                     end
                 end
                 volFrac=zeros([cellLevels(1)-2,1]);
@@ -1734,10 +1754,10 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
                 volFrac=[1e-3;volFrac;1e-3];
                 
                 pop(:,jj)=volFrac;
-                
+                ll=ll+1;
             end
         end
-        origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
+        origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar])*(rand+0.11)/1.1;
     end
 end
 
