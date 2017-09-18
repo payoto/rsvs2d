@@ -95,10 +95,12 @@ function [newloop]=ANDProfileOP(profileCoord,targCoord)
                 iip1=mod(ii,nX0)+1;
                 if mod(ceil(iout(iip1)),nP1)~=mod(ceil(iout(ii)),nP1)
                     actTInd=ceil(mod(iout(ii),nP1));
+                    actTInd(actTInd==0)=iout(ii);
                     [branchFollowProf,on]=inpolygon(profileCoord(actTInd,1),profileCoord(actTInd,2),...
                         targCoord(:,1),targCoord(:,2));
                 else
                     actTInd=ceil(mod(jout(ii),nP2));
+                    actTInd(actTInd==0)=jout(ii);
                     [branchFollowProf,on]=inpolygon(targCoord(actTInd,1),targCoord(actTInd,2),...
                         profileCoord(:,1),profileCoord(:,2));
                     branchFollowProf=~branchFollowProf;

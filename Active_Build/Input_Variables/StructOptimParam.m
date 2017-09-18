@@ -2050,12 +2050,24 @@ function [paroptim]=LocConsTopo_prof(cNum)
     paroptim.constraint.initConstr={'LocalVolFrac_loop'};
     paroptim.constraint.initVal={{['1c2b_v',int2str(cNum),'prf'],'min'}};
     passDomBounds=[0,1;-0.15,0.15];
+    passDomBounds=[0,1;-0.9,0.9];
+    paroptim.parametrisation.snakes.refine.axisRatio=1/6;
     cellLevels=[8,10]; 
     paroptim.parametrisation.optiminit.cellLevels = cellLevels;
     paroptim.parametrisation.general.passDomBounds=...
         MakeBoundsOuterLayer(cellLevels,passDomBounds,0);
 end
 
+function [paroptim]=TestLocalConstr()
+    
+    [paroptim]=LocConsTopo_prof(1);
+    paroptim=InvDesObjective(paroptim);
+    paroptim.general.objectiveName='InverseDesignTopo';
+    paroptim.obj.invdes.aeroName='4412';
+    paroptim.general.nPop=12;
+    paroptim.general.maxIter=150;
+    paroptim.general.worker=4;
+end
 
 %% Building blocks
 % Grid Cases
