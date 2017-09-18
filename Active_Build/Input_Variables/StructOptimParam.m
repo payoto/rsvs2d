@@ -2049,7 +2049,11 @@ function [paroptim]=LocConsTopo_prof(cNum)
     
     paroptim.constraint.initConstr={'LocalVolFrac_loop'};
     paroptim.constraint.initVal={{['1c2b_v',int2str(cNum),'prf'],'min'}};
-    
+    passDomBounds=[0,1;-0.15,0.15];
+    cellLevels=[8,10]; 
+    paroptim.parametrisation.optiminit.cellLevels = cellLevels;
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeBoundsOuterLayer(cellLevels,passDomBounds,0);
 end
 
 
