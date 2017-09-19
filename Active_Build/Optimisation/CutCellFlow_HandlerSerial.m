@@ -295,13 +295,20 @@ end
 
 %% Error handling
 
+
 function [errFlag]=CutCellErrorHandling(endstr,stoponerror)
     
     errorTerms={'exception','neg','griduns','error','IEEE_INVALID_FLAG','IEEE_UNDERFLOW_FLAG','lam'};
     [errFlag,errorstr]=CutCellErrorDetection(errorTerms,endstr);
     
-    if sum(errFlag) && stoponerror
-        error(errorstr)
+    if any(errFlag) && stoponerror
+        errStr.identifier='Optimiser:EulerFlowUns:';
+        errStr.message=errorstr;
+        
+        for ii=find(errFlag);
+            errStr.identifier=[errStr.identifier,errorTerms{ii},'_'];
+        end
+        error(errStr)
     end
     
 end

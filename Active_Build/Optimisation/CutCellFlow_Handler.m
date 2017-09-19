@@ -263,7 +263,7 @@ function [errFlag]=CutCellErrorHandling(endstr,stoponerror)
         errStr.message=errorstr;
         
         for ii=find(errFlag);
-            errStr.identifier=[errStr.identifier,'_',errorTerms{ii}];
+            errStr.identifier=[errStr.identifier,errorTerms{ii},'_'];
         end
         error(errStr)
     end
