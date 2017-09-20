@@ -1746,7 +1746,7 @@ function paroptim=volsweepmmesh(e)
     paroptim.parametrisation.general.typeLoop = 'subdivspline';
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.resampleSnak=true;
-    
+    paroptim.parametrisation.snakes.step.mergeTopo=false;
 end
 
 function [paroptim]=volsweeplocal_test(refmethod)
