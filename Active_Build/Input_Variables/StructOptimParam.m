@@ -578,10 +578,10 @@ function [paroptim]=Component_CG()
     paroptim=CutCellObjective(paroptim);
     [paroptim]=OptimCG(paroptim);
     paroptim.general.startPop='innerbound';
-    paroptim.optim.CG.varActive='wideborder'; % 'wideborder'
+    
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.desvar.symType='none'; % 'horz'
-    
+    [paroptim]=SmoothModes(paroptim);
 end
 
 function [paroptim]=Component_DE()
@@ -4904,7 +4904,7 @@ function [paroptim]=bp3_Aero_CG_smile_out()
     
     [paroptim]=Component_CG();
     paroptim.parametrisation.snakes.refine.axisRatio=0.5;
-    paroptim.general.startPop='innerbound';
+    paroptim.general.startPop='outerbound';
     paroptim.general.nPop=12;
     paroptim.general.maxIter=70;
     paroptim.general.worker=12;
@@ -4928,7 +4928,7 @@ function [paroptim]=bp3_Aero_DE_smile_horz()
     
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\smile_5b12.png','min'}};
     paroptim.general.nPop=100;
-    paroptim.general.maxIter=100;
+    paroptim.general.maxIter=150;
     paroptim.general.worker=12;
 end
 
@@ -4961,7 +4961,7 @@ function [paroptim]=bp3_Aero_DE_missile_horz()
     
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\missile_5b12.png','min'}};
     paroptim.general.nPop=100;
-    paroptim.general.maxIter=100;
+    paroptim.general.maxIter=150;
     paroptim.general.worker=12;
 end
 
