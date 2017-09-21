@@ -713,8 +713,8 @@ function [param]=SupersonicComponent()
     
     param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
-    param.snakes.refine.LEShrink=true;
-    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.TEShrink=false;
     param.snakes.refine.typeCorner='global';
     param.snakes.refine.edgeFinish='none';
     param.snakes.refine.resampleSnak=false;

@@ -12,8 +12,3 @@ try
 catch ME
     ME.getReport
 end
-try 
-    ExecuteOptimisation('bp3_Aero_DE_smile_weak');
-catch ME
-    ME.getReport
-end

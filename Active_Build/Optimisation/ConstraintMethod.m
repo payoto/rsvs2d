@@ -56,11 +56,11 @@ end
 
 function [population,argout]=InitVariableConsCaller(constrName,constrVal,paroptim,population,varargin)
     argout{1}=[];
+    paramoptim=paroptim;
     switch constrName
         case 'LocalVolFrac_image'
-            if isempty(varargin)
-                [paramoptim]=LocalConstraintExtraction_Image(paroptim,constrVal);
-            end
+            
+            [paramoptim]=LocalConstraintExtraction_Image(paroptim,constrVal);
             argout{1}=paramoptim;
         case 'LocalVolFrac_loop'
             if ~isempty(varargin)
@@ -92,8 +92,9 @@ function [paramoptim]=LocalConstraintExtraction_Image(paramoptim,constrVal)
         constrVal,desVarVal,desVarConstr);
     
     varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
+    passBounds=(MakeCartesianGridBounds(cellLevels)+[1 1; 0 0 ])/2;
     [paramoptim.parametrisation]=SetVariables(varExtract(1:2),{cellLevels,...
-        MakeCartesianGridBounds(cellLevels)},paramoptim.parametrisation);
+        passBounds},paramoptim.parametrisation);
     [paramoptim.initparam]=SetVariables(varExtract(1:2),{cellLevels,...
         MakeCartesianGridBounds(cellLevels)},paramoptim.initparam);
     [paramoptim]=SetVariables(varExtract(3:4),{desVarConstr,desVarVal},paramoptim);
