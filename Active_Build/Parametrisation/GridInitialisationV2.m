@@ -104,11 +104,14 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
             xMax=1;
             xMin=0;
             [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess);
+        
         otherwise
             warning('Unrecognised grid distribution Type')
     end
     
 end
+
+
 
 function [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess)
     

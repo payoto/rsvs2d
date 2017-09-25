@@ -1337,6 +1337,7 @@ void CopyEdgeStruct(int nCurrEdge,int domSize[dim()],int *posEdgeAddTemp,
 
 void CopyVertStruct(int nCurrEdge,int domSize[dim()],int *posVertAddTemp,
 	int *convVertList, int *ordPosVert){
+	/*To support quadrilateral grids this needs to be modified */
 	
 	int nCellTemplate,nEdgeTemplate,nVertTemplate;
 	int ii,jj,kk,ll;

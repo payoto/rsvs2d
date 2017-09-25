@@ -26,7 +26,7 @@ function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
     end
     
     [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
-    
+    [gridrefined,connectstructinfo]=MakeTriangularGrid(gridrefined);
     [gridrefined2]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined2,boundstr);
     
@@ -198,8 +198,8 @@ function [gridreshape,connecstructinfo]=...
     for ii=1:nIndices
         
         [newedges,newvertices]=SplitEdge(edgeIndices(ii),nRefine,gridreshape);
-        gridreshape.edge=[gridreshape.edge,newedges];
-        gridreshape.vertex=[gridreshape.vertex,newvertices];
+        gridreshape.edge=[gridreshape.edge;newedges'];
+        gridreshape.vertex=[gridreshape.vertex;newvertices'];
         connecstructinfo.edge(ii).old=edgeIndices(ii);
         connecstructinfo.edge(ii).new=[newedges(:).index];
         
@@ -227,6 +227,49 @@ function [gridreshape,connecstructinfo]=...
     if ~exist('connecstructinfo','var');connecstructinfo=[];end
 end
 
+function [template,ccwinfo]=TriangularTemplate()
+    
+    [template1,ccwinfo]=CreateCellRefinementTemplate(1);
+    [template2,ccwinfo]=CreateCellRefinementTemplate(2);
+    connec.cell.oldCellInd=[1];
+    connec.cell.newCellInd=[1 2 3 4];
+    [template]=CoarsenGrid(template2,template1,connec);
+    ii=numel(template.vertex)+1;
+    template.vertex(ii).index=ii;
+    template.vertex(ii).coord=[0.5 0.5];
+    nEdge=numel(template.edge);
+    
+%     for kk=1:numel(template.edge)
+%         template.edge(kk).index=kk;
+%     end
+    edgeInd=[template.edge.index];
+    ll=max(edgeInd);
+    for jj=1:nEdge
+        kk=FindObjNum([],ccwinfo.edge(jj),edgeInd);
+        cInd=template.edge(kk).cellindex;
+        template.edge(kk).cellindex(cInd~=0)=jj;
+        template.edge(end+1)=template.edge(1);
+        ll=ll+1;
+        template.edge(end).index=ll;
+        template.edge(end).vertexindex=[ccwinfo.vertex(jj),ii];
+        template.edge(end).cellindex=[jj,mod(jj-2,nEdge)+1];
+        template.cell(jj)=template.cell(1);
+        template.cell(jj).index=jj;
+    end
+    
+end
+
+function [gridreshape,connecstructinfo]=MakeTriangularGrid(gridreshape)
+    
+    [template,ccwinfo]=TriangularTemplate();
+    [template,ccwinfo]=CreateCellRefinementTemplate(2);
+    edgeIndices=[gridreshape.edge.index];
+    cellIndices=[gridreshape.cell.index];
+    [gridreshape,connecstructinfo]=...
+         SplitSpecifiedEdges(gridreshape,edgeIndices,2);
+    [gridreshape,connecstructinfo]=...
+        SplitSpecifiedCells(gridreshape,cellIndices,template,ccwinfo);
+end
 %% Grid Operations
 
 function [newedges,newvertices]=SplitEdge(edgeIndex,nRefine,gridreshape)
@@ -248,7 +291,7 @@ function [newedges,newvertices]=SplitEdge(edgeIndex,nRefine,gridreshape)
     
     for ii=nRefine:-1:1
         [newedges(ii)]=AddEdgeStructure(maxEdgeIndex+ii,baseedge.cellindex,...
-            vertexStream(ii:ii+1),baseedge.fill);
+            vertexStream(ii:ii+1),[]);
     end
     for ii=nRefine-1:-1:1
         coord=baseCoord(1,:)+(baseCoord(2,:)-baseCoord(1,:))*(ii/nRefine);
@@ -276,9 +319,9 @@ function [gridreshape,connectcellinfo]=...
     gridreshape.edge(edgeDelSub)=[];
     gridreshape.vertex(vertDelSub)=[];
     
-    gridreshape.cell=[gridreshape.cell,adaptedtemplate.cell];
-    gridreshape.vertex=[gridreshape.vertex,adaptedtemplate.vertex];
-    gridreshape.edge=[gridreshape.edge,adaptedtemplate.edge];
+    gridreshape.cell=[gridreshape.cell;adaptedtemplate.cell'];
+    gridreshape.vertex=[gridreshape.vertex;adaptedtemplate.vertex'];
+    gridreshape.edge=[gridreshape.edge;adaptedtemplate.edge'];
     
     connectcellinfo.old=cellInd;
     connectcellinfo.new=cellList;
@@ -523,13 +566,13 @@ function [edge]=AddEdgeStructure(index,cellIndex,vertexIndex,fill)
     edge.index=index;
     edge.cellindex=cellIndex;
     edge.vertexindex=vertexIndex;
-    edge.fill=fill;
-    edge.boundaryisHalf=false;
-    edge.boundaryis0=false;
-    edge.boundaryis1=false;
-    edge.solidisIn0=false;
-    edge.solidnotIn0=false;
-    edge.solidisIn1=false;
+    edge.orientation=fill;
+%     edge.boundaryisHalf=false;
+%     edge.boundaryis0=false;
+%     edge.boundaryis1=false;
+%     edge.solidisIn0=false;
+%     edge.solidnotIn0=false;
+%     edge.solidisIn1=false;
     
 end
 
@@ -537,8 +580,11 @@ function [cell]=AddCellStructure(index,fill)
     % creates the structure for a cell
     cell.index=index;
     cell.fill=fill;
-    cell.coord=[];
-    cell.vertexindex=[];
+%     cell.coord=[];
+%     cell.vertexindex=[];
+    cell.refineLvl=1;
+    cell.refineVec=1;
+    cell.isactive=1;
 end
 
 function [vertex]=AddVertexStructure(index,coord)
@@ -548,11 +594,6 @@ function [vertex]=AddVertexStructure(index,coord)
     
 end
 
-%% Various Utilities
-
-function []=template()
-    
-end
 
 %% Plot Functions
 function []=CheckResultsRefineGrid(gridreshape)

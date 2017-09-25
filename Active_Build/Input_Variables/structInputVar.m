@@ -525,6 +525,12 @@ function [param]=TomImage()
     param.plotting.checkSensitivities=true;
     param.snakes.step.vertLooseStep=5;
 end
+
+function [param]=TestRand(caseStr)
+    [param]=eval(caseStr);
+    param.snakes.refine.gridDistrib='randMod';
+    
+end
 %% Optimisation Cases
 
 function [param]=optimDefault()
@@ -1559,13 +1565,13 @@ function [param]=SnakesFoilVVSmall4()
     
     param.general.typDat='vvlofoil4';
     param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=[4 4];
+    param.snakes.refine.refineGrid=[2];
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.25,0.25];
     param.general.refineSteps=5;
     param.snakes.step.mergeTopo=true;
     param.plotting.debugPlot=[0];
-    
+    param.snakes.refine.gridDistrib='none';
 end
 
 function [param]=WeirdShape()

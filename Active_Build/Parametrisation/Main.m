@@ -57,7 +57,7 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(c
     % Post processes
      loop=SubdivisionSurface_Snakes(loop,refineSteps,param);
 %     CheckResults(unstructured,loop,typeBound,caseString)
-    loop.subdivision=loop.snaxel.coord;
+%     loop.subdivision=loop.snaxel.coord;
     tecoutstruct.baseGrid=unstructReshape;
     tecoutstruct.fineGrid=unstructuredrefined;
     tecoutstruct.snakSave=snakSave;
@@ -85,8 +85,8 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     
     [param]=structInputVar(caseString);
     param.general.restart=false;
-    varExtract={'useSnakes'};
-    [useSnakes]=ExtractVariables(varExtract,param);
+    varExtract={'useSnakes','gridDistrib'};
+    [useSnakes,gridDistrib]=ExtractVariables(varExtract,param);
     
     
     % Execution of subroutines
@@ -96,9 +96,16 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
         ExecuteGridRefinement(unstructReshape,param);
     snakSave=[];
+    if strcmp(gridDistrib,'randMod')
+        [unstructReshape,gridrefined,connectstructinfo]=TestNonRectangleGrid(gridrefined,...
+            connectstructinfo,unstructReshape);
+        [unstructured]=ModifReshape(unstructReshape);
+        [unstructuredrefined]=ModifReshape(gridrefined);
+    end
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,restartsnake,optargout]=ExecuteSnakes(gridrefined,looprefined,...
-            unstructReshape,connectstructinfo,param);
+        [snaxel,snakposition,snakSave,loop,restartsnake,optargout]=...
+            ExecuteSnakes(gridrefined,looprefined,unstructReshape,...
+            connectstructinfo,param);
     end
     
 end
@@ -155,11 +162,41 @@ function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
     t1=now;
     [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
         GridRefinement(unstructReshape,param);
-    
     t2=now;
     disp(['Time taken:',datestr(t2-t1,'HH:MM:SS:FFF')]);
     disp('GRID REFINEMENT end')
     
+    
+end
+
+function [gridbase,gridrefined,connectstructinfo]=TestNonRectangleGrid(gridrefined,connectstructinfo,gridbase)
+    
+    [gridbase,coarsenconnec]=CoarsenGrid(gridrefined,gridbase,connectstructinfo);
+    gridbase.vertex=gridbase.vertex(FindObjNum([],...
+        unique([gridbase.edge.vertexindex]),[gridbase.vertex.index]));
+    
+    [gridrefined]=RandGridDistrib(gridrefined);
+    [gridbase.vertex.coord]=deal(gridrefined.vertex(...
+        FindObjNum([],[gridbase.vertex.index],[gridrefined.vertex.index])...
+        ).coord);
+    
+end
+
+
+function [unstructured]=RandGridDistrib(unstructured)
+    
+    coord=vertcat(unstructured.vertex.coord);
+    
+    for ii=1:size(coord,2)
+        x=coord(:,ii);
+        x=unique(x);
+        Dx=x(2:end)-x(1:end-1);
+        Dx=min(Dx(Dx>1e-10));
+        coord(:,ii)=Dx*rand(size(coord(:,1)))/2+coord(:,ii);
+    end
+    for ii=1:size(coord,1)
+        unstructured.vertex(ii).coord=coord(ii,:);
+    end
     
 end
 
