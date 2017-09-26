@@ -18,15 +18,19 @@ function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
     % bridge function for the refinement function
     
     %unpacking input parameters
-    varExtract={'refineGrid','boundstr','typeRefine','execTest'};
-    [refineGrid,boundstr,typeRefine,execTest]=ExtractVariables(varExtract,param);
+    varExtract={'refineGrid','boundstr','typeRefine','execTest','cellRefineShape'};
+    [refineGrid,boundstr,typeRefine,execTest,cellRefineShape]=ExtractVariables(varExtract,param);
     nRefine=refineGrid;
     if execTest
         ExecuteTestCode();
     end
-    
-    [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
-    [gridrefined,connectstructinfo]=MakeTriangularGrid(gridrefined);
+    switch cellRefineShape
+        case 'square'
+            [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine);
+        case 'triangle'
+            [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine(unique([1,1:end-1])),typeRefine);
+            [gridrefined,connectstructinfo]=MakeTriangularGrid(gridrefined,connectstructinfo,nRefine(end));
+    end
     [gridrefined2]=EdgePropertiesReshape(gridrefined);
     [loop]=GenerateSnakStartLoop(gridrefined2,boundstr);
     
@@ -227,23 +231,26 @@ function [gridreshape,connecstructinfo]=...
     if ~exist('connecstructinfo','var');connecstructinfo=[];end
 end
 
-function [template,ccwinfo]=TriangularTemplate()
+function [template,ccwinfo]=TriangularTemplate(nRefine)
     
     [template1,ccwinfo]=CreateCellRefinementTemplate(1);
-    [template2,ccwinfo]=CreateCellRefinementTemplate(2);
+    [template2,ccwinfo]=CreateCellRefinementTemplate(nRefine);
     connec.cell.oldCellInd=[1];
-    connec.cell.newCellInd=[1 2 3 4];
+    connec.cell.newCellInd=[1:numel(template2.cell)];
     [template]=CoarsenGrid(template2,template1,connec);
-    ii=numel(template.vertex)+1;
-    template.vertex(ii).index=ii;
-    template.vertex(ii).coord=[0.5 0.5];
+    ii=max([template.vertex.index])+1;
+    iiVert=numel(template.vertex)+1;
+    template.vertex(iiVert).index=ii;
+    template.vertex(iiVert).coord=[0.5 0.5];
     nEdge=numel(template.edge);
     
-%     for kk=1:numel(template.edge)
-%         template.edge(kk).index=kk;
-%     end
     edgeInd=[template.edge.index];
-    ll=max(edgeInd);
+    for kk=1:numel(template.edge)
+        template.edge(kk).index=kk;
+    end
+    ccwinfo.edge=FindObjNum([],ccwinfo.edge,edgeInd);
+    ll=nEdge;
+    edgeInd=[template.edge.index];
     for jj=1:nEdge
         kk=FindObjNum([],ccwinfo.edge(jj),edgeInd);
         cInd=template.edge(kk).cellindex;
@@ -253,22 +260,31 @@ function [template,ccwinfo]=TriangularTemplate()
         template.edge(end).index=ll;
         template.edge(end).vertexindex=[ccwinfo.vertex(jj),ii];
         template.edge(end).cellindex=[jj,mod(jj-2,nEdge)+1];
+        template.edge(end).orientation=0.5;
         template.cell(jj)=template.cell(1);
         template.cell(jj).index=jj;
     end
     
 end
 
-function [gridreshape,connecstructinfo]=MakeTriangularGrid(gridreshape)
+function [gridreshape,origconnec]=MakeTriangularGrid(gridreshape,origconnec,nRefine)
     
-    [template,ccwinfo]=TriangularTemplate();
-    [template,ccwinfo]=CreateCellRefinementTemplate(2);
+    [template,ccwinfo]=TriangularTemplate(nRefine);
+    %[template,ccwinfo]=CreateCellRefinementTemplate(nRefine);
+    
     edgeIndices=[gridreshape.edge.index];
     cellIndices=[gridreshape.cell.index];
     [gridreshape,connecstructinfo]=...
-         SplitSpecifiedEdges(gridreshape,edgeIndices,2);
+         SplitSpecifiedEdges(gridreshape,edgeIndices,nRefine);
     [gridreshape,connecstructinfo]=...
         SplitSpecifiedCells(gridreshape,cellIndices,template,ccwinfo);
+    
+    newOld=[connecstructinfo.old];
+    for ii=1:numel(origconnec.cell)
+        origconnec.cell(ii).new=[connecstructinfo(FindObjNum([],...
+            origconnec.cell(ii).new,newOld)).new];
+    end
+    
 end
 %% Grid Operations
 
@@ -331,11 +347,11 @@ end
 function [adaptedtemplate]=AdaptTemplate(template,edgeList,vertList,cellList,gridreshape,cellInd)
     % Adapts the template to match the specific indices of the case being
     % considered
-    
-    cornInd(1)=vertList(1);
-    cornInd(2)=vertList(end);
-    cornSub=FindObjNum(gridreshape.vertex,cornInd);
+   
+    cornSub=FindObjNum([],vertList,[gridreshape.vertex.index]);
+    cornSub=cornSub(cornSub~=0);
     baseCoord=vertcat(gridreshape.vertex(cornSub).coord);
+    baseCoord=[min(baseCoord);max(baseCoord)];
     [adaptedtemplate.vertex]=AdaptTemplateVertex(template,vertList,baseCoord);
     
     cellSub=FindObjNum(gridreshape.cell,cellInd);
@@ -424,7 +440,7 @@ function [objList]=ExtractObjectList...
     nExist=length(ccwCellInfo);
     nNewInd=nInd-nExist;
     newIndList=minNewIndex:minNewIndex+nNewInd-1;
-    objList=zeros([1,nNewInd]);
+    objList=zeros([1,nInd]);
     objList(ccwTempInfo)=ccwCellInfo;
     objList(objList==0)=newIndList;
     
@@ -488,7 +504,7 @@ function [edgetemplate]=TemplateEdgeHorizontal(nRefine)
            vertEnd=(ii+1)+(jj-1)*(nRefine+1);
            vertexIndex=[vertStart,vertEnd];
            
-           edgetemplate(linInd)=AddEdgeStructure(indEdge,cellIndex,vertexIndex,[1,1]);
+           edgetemplate(linInd)=AddEdgeStructure(indEdge,cellIndex,vertexIndex,0);
         end
     end
 
@@ -519,7 +535,7 @@ function [edgetemplate]=TemplateEdgeVertical(nRefine)
            vertEnd=(jj)+(ii-1+1)*(nRefine+1);
            vertexIndex=[vertStart,vertEnd];
            
-           edgetemplate(linInd)=AddEdgeStructure(indEdge,cellIndex,vertexIndex,[1,1]);
+           edgetemplate(linInd)=AddEdgeStructure(indEdge,cellIndex,vertexIndex,1);
         end
     end
     
