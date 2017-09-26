@@ -2348,6 +2348,7 @@ function [maxStepIndiv]=DirectionScaledMaxStep(snaxel,edgeDat)
     edgeSnax=[snaxel(:).edge];
     maxStepIndivGrid=ones(size(snaxel));
     maxStepIndivGrid(logical(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=1/refGridRatio;
+    maxStepIndivGrid(0.5==(edgeOrient(FindObjNum([],edgeSnax,edgeIndList))))=(1/refGridRatio+1)/2;
     
     maxStepIndivDist=edgeDat.indivRatio(FindObjNum([],edgeSnax,edgeIndList));
     maxStepIndivGrid=maxStepIndivGrid/max(maxStepIndivGrid);

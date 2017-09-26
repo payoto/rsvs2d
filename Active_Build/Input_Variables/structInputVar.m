@@ -98,6 +98,7 @@ end
 function paramsnakesrefine=default_snakes_refine()
     
     paramsnakesrefine.refineGrid=4;
+    paramsnakesrefine.cellRefineShape='square';
     paramsnakesrefine.gridDistrib='none'; % 'cosX01'
     paramsnakesrefine.pinnedVertex='none'; % 'LETE'
     
@@ -528,8 +529,8 @@ end
 
 function [param]=TestRand(caseStr)
     [param]=eval(caseStr);
-    param.snakes.refine.gridDistrib='randMod';
-    
+    %param.snakes.refine.gridDistrib='randMod';
+    param.snakes.refine.cellRefineShape='triangle';
 end
 %% Optimisation Cases
 
@@ -1564,8 +1565,8 @@ function [param]=SnakesFoilVVSmall4()
     param=AvoidLocalOptim(param);
     
     param.general.typDat='vvlofoil4';
-    param.snakes.step.snakesSteps=150;
-    param.snakes.refine.refineGrid=[2];
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=[2 2 2];
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.25,0.25];
     param.general.refineSteps=5;
