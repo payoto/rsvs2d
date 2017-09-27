@@ -506,6 +506,39 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
 end
 
+
+function [population,captureErrors]=SerialisedParallelObjectiveCalc...
+        (objectiveName,paramoptim,population,supportstruct,captureErrors)
+    
+    nPop=numel(population);
+    nRunning=0;
+    objCalcFinished=false;
+    statusstruct=repmat(struct('state','ready','PID',[],'stage','init',...
+        'repeat',1,'dat',struct([])),[1 nPop]);
+    
+    while ~objCalcFinished
+        for ii=1:nWorker-nRunning %
+            
+            try
+                [population(ii).objective,additional,statusstruct(ii)]=...
+                    EvaluateObjectiveSerial(objectiveName,paramoptim,population(ii),...
+                    supportstruct(ii),statusstruct(ii));
+                if strcmp(statusstruct(ii).state,'finished')
+                    fieldsAdd=fieldnames(additional);
+                    for jj=1:numel(fieldsAdd)
+                        population(ii).additional.(fieldsAdd{jj})=additional.(fieldsAdd{jj});
+                    end
+                end
+            catch MEexception
+                population(ii).constraint=false;
+                statusstruct(ii).state='error';
+                population(ii).exception=[population(ii).exception,'error: ',MEexception.identifier ,' - '];
+                captureErrors{ii}=[captureErrors{ii},MEexception.getReport];
+            end
+        end
+    end
+end
+
 function [isConv]=ConvergenceTest_static(paramoptim,iterstruct,nIter,startIter)
     comEps=@(f1,f2,eps) all(abs(f1-f2)<eps);
     varExtract={'optimMethod','iterGap'};
@@ -1713,10 +1746,11 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
         while sum(sum(pop))==0
             % Generate Active strips
             nAct=randi(ceil(nStrips));
-            stripAct=randperm((nStrips),ceil(nAct/2));
-            stripAct=[stripAct,stripAct+1];
+            stripAct=randperm((nStrips)+1,ceil(nAct/2));
+            stripAct=[stripAct,stripAct+1]-1;
             stripAct(stripAct>nStrips)=nStrips;
-            stripAct=sort(RemoveIdenticalEntries(stripAct));
+            stripAct(stripAct<1)=1;
+            stripAct=unique(stripAct);
             % Find coefficients for active strips
             nAct=numel(stripAct);
             loStrip=[0,stripAct(1:end-1)];
@@ -1740,8 +1774,8 @@ function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
                 volLine=zeros([cellLevels(1)-2+1,1]);
                 
                 for kk=2:length(volLine)-1
-                    if kk<=posPeak(ll)+1
-                        volLine(kk)=currPeak*(kk-1)/posPeak(ll);
+                    if kk<=posPeak(ll)
+                        volLine(kk)=currPeak*(kk)/posPeak(ll);
                     else
                         volLine(kk)=currPeak-currPeak*((kk-1)-posPeak(ll))...
                             /(length(volLine)-1-posPeak(ll));

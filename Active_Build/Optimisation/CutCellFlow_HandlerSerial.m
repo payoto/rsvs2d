@@ -1,9 +1,19 @@
 
 
 
-function [obj]=CutCellFlow_HandlerSerial(paramoptim,boundaryLoc)
+function [obj,statusstruct]=CutCellFlow_HandlerSerial(paramoptim,boundaryLoc,statusstruct)
     
-    % copy standard executables and setting
+    % For each process receive a single command at a time.
+    % Each block of matlab code will do everything up to the execution of a
+    % command 
+    % then return a status structure:
+    %       status.state='ready' 'running' 'warning' 'error' 'finished'
+    %       status.PID=[] 
+    %       status.stage='init' 'mesh' 'motion' 'flow'
+    %       status.repeat=1;
+    %       status.dat=additional data that may be needed to pass on
+   
+    
    
     
     
