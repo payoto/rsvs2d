@@ -10,7 +10,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(caseString,restart)
+function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=...
+        Main(caseString,restart)
     % Main function for the execution of the Subdivision process
     
     
@@ -38,10 +39,12 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(c
     
     if ~restart
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-            ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]=StandardRun(caseString);
+            ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]=...
+            StandardRun(caseString);
     else
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
-            ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]=RestartRun(caseString);
+            ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]=...
+            RestartRun(caseString);
     end
     varExtract={'useSnakes','typeBound','refineSteps'};
     [useSnakes,typeBound,refineSteps]=ExtractVariables(varExtract,param);
@@ -70,7 +73,8 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=Main(c
     %OutPutBinaryResults(snakSave,saveParam,typDat)
     for ii=1:numel(optargout)
         if isa(optargout{ii},'matlab.graphics.Graphics')
-            hgsave(optargout{ii},sprintf('%s%sfig%i_%s.fig',rootDirectory,filesep,ii,optargout{ii}(1).Name))
+            hgsave(optargout{ii},sprintf('%s%sfig%i_%s.fig',rootDirectory,...
+                filesep,ii,optargout{ii}(1).Name))
         end
     end
     cd(startDir)
@@ -97,8 +101,8 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
         ExecuteGridRefinement(unstructReshape,param);
     snakSave=[];
     if strcmp(gridDistrib,'randMod')
-        [unstructReshape,gridrefined,connectstructinfo]=TestNonRectangleGrid(gridrefined,...
-            connectstructinfo,unstructReshape);
+        [unstructReshape,gridrefined,connectstructinfo]=TestNonRectangleGrid...
+            (gridrefined,connectstructinfo,unstructReshape);
         [unstructured]=ModifReshape(unstructReshape);
         [unstructuredrefined]=ModifReshape(gridrefined);
     end
@@ -131,8 +135,9 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     varExtract={'useSnakes'};
     [useSnakes]=ExtractVariables(varExtract,param);
     if useSnakes
-        [snaxel,snakposition,snakSave,loop,restartsnake,optargout]=ExecuteSnakes(gridrefined,snakrestart,...
-            unstructReshape,connectstructinfo,param);
+        [snaxel,snakposition,snakSave,loop,restartsnake,optargout]=...
+            ExecuteSnakes(gridrefined,snakrestart,unstructReshape,...
+            connectstructinfo,param);
     end
     unstructured=ModifReshape(unstructReshape);
     unstructuredrefined=ModifReshape(gridrefined);
