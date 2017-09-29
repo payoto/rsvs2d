@@ -3,7 +3,7 @@ function [restartPath]=IdentifyRestart(restartDir,distinct,preStr,postStr)
     c=dir(restartDir);
     
     allNames={c(:).name};
-    restartNamesFull=allNames(~cellfun(@isempty,regexp(allNames,'OptimRes')));
+    restartNamesFull=allNames(~cellfun(@isempty,regexp(allNames,preStr)));
     
     restartNames=regexprep(restartNamesFull,preStr,'');
     restartNames=regexprep(restartNames,postStr,'');
