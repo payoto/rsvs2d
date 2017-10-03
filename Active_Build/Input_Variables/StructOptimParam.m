@@ -1689,7 +1689,7 @@ function paroptim=volsweeplocal(e,gridCase)
     [paroptim]=SmoothModes(paroptim);
     [paroptim]=AdaptiveRefinement(paroptim);
     
-    lvl=7;
+    lvl=1;
     nIter=paroptim.refine.refineIter;
     
     paroptim.general.startPop='loadshape';
@@ -1730,6 +1730,21 @@ function paroptim=volsweeplocal(e,gridCase)
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     
     
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+end
+
+function paroptim=volsweeplocalnoref(e,gridCase)
+    paroptim=volsweeplocal(e,gridCase);
+     paroptim.parametrisation.optiminit.cellLevels=[12,2];
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+    paroptim.refine.refineOptim=0;
+    
+    
+    paroptim.refine.refineSteps=0;
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     
