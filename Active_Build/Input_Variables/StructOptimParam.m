@@ -1748,6 +1748,7 @@ function paroptim=volsweeplocalnoref(e,gridCase)
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     
+    paroptim.parametrisation.snakes.refine.axisRatio = (8*e*1.5);
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
