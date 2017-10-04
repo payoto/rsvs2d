@@ -10,6 +10,18 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% 
+% function [] = OptimisationOutput()
+%     FUNCTIONLIST allows local functions to be used globally once it has
+%     been used.
+%     
+%     funcHandles=localfunctions;
+%     funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
+%     HeaderActivation(funcHandles,funcDir)
+%     
+% end
+% 
+
 
 function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
     
@@ -334,7 +346,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
         tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
         ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
-            tecPlotFile,axisRatio,paroptim,allRootDir);
+            tecPlotFile,axisRatio,paroptim,allRootDir,isGradient);
         
     end
     if strcmp(objectiveName,'InverseDesign') || strcmp(objectiveName,'InverseDesignTopo')
@@ -614,7 +626,7 @@ function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
 end
 
 function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
-        tecPlotFile,ratio,paramoptim,allRootDir)
+        tecPlotFile,ratio,paramoptim,allRootDir,isGradient)
     
     
     varExtract={'defaultVal','worker','CFDfolder'};
@@ -641,6 +653,10 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
             [minRes,minPos]=min(iterRes,[],2);
         case 'max'
             [minRes,minPos]=max(iterRes,[],2);
+    end
+    if isGradient
+        minPos(1:2:end)=1;
+        minRes(1:2:end)=iterRes(1:2:end,:);
     end
     % Prepare CFD file with newest version
     for ii=1:nIter
@@ -1614,14 +1630,14 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     xlabel('design variable')
     title('previous direction')
     view(0,90)
-    subplot(2,2,3)
+    subplot(2,3,4)
     grads=vertcat(supportOptim.hist(:).prevStep);
     surf(((grads)),(abs((grads))))
     ylabel('iteration')
     xlabel('design variable')
     title('previous direction')
     view(0,90)
-    subplot(2,2,4)
+    subplot(2,3,5)
     hold on
     grads=vertcat(supportOptim.hist(:).gradfk);
     grads(:,rmCol)=[];
@@ -1682,7 +1698,58 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     l(ii).DisplayName='Norm of Gradient';
     ii=ii+1;
     legend(l)
+    ax=subplot(2,3,6);
+    [ax]=PlotDiffVsCFDConv(optimstruct,ax);
+end
+
+function [ax,h]=PlotDiffVsCFDConv(optimstruct,ax)
     
+    if nargin<2
+        h=figure;
+        ax=axes;
+    else
+        h=ax.Parent;
+    end
+    
+    hold on
+    baseStruct=struct('dat',[],'mean',[],'max',[],'min',[]);
+    convTest=struct('objres',repmat(baseStruct,size(1:2:length(optimstruct)))...
+        ,'diffres',repmat(baseStruct,size(1:2:length(optimstruct))));
+    kk=1;
+    convFields=fieldnames(convTest);
+    
+    for ii=1:2:length(optimstruct)
+        for jj=2:numel(optimstruct(ii).population)
+            convTest.objres(kk).dat(jj-1)=[optimstruct(ii).population(jj).objective]./...
+                10.^[optimstruct(ii).population(jj).additional.res];
+            convTest.diffres(kk).dat(jj-1)=abs([optimstruct(ii).population(jj).objective]-...
+                optimstruct(ii).population(1).objective)./...
+                10^[optimstruct(ii).population(jj).additional.res];
+        end
+        for jj=1:numel(convFields)
+            convTest.(convFields{jj})(kk).mean=mean(convTest.(convFields{jj})(kk).dat);
+            convTest.(convFields{jj})(kk).max=max(convTest.(convFields{jj})(kk).dat);
+            convTest.(convFields{jj})(kk).min=min(convTest.(convFields{jj})(kk).dat);
+        end
+        kk=kk+1;
+    end
+    x=1:length(convTest.objres);
+    l3=plot(ax,x,[convTest.objres(:).mean],...
+       x,[convTest.diffres(:).mean]);
+    
+    l3(1).DisplayName='obj/res';
+    c{1}=l3(1).Color;
+    c{2}=l3(2).Color;
+    l3(2).DisplayName='diff/res';
+    
+    l2=plot(ax,x,[convTest.objres(:).min],'--',...
+        x,[convTest.diffres(:).min],'--');
+    [l2.Color]=deal(c{:});
+    l2=plot(ax,x,[convTest.objres(:).max],'--',...
+        x,[convTest.diffres(:).max],'--');
+    [l2.Color]=deal(c{:});
+    legend(l3);
+    ax.YScale='log'; 
 end
 
 %% Rebuild Test population 
