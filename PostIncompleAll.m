@@ -1,4 +1,5 @@
-for ii=1
+
+for ii=1:2
 
     fid=fopen('PostDir2.txt','r');
     for jj=1:ii
@@ -12,10 +13,10 @@ for ii=1
         jj=jj+1;
     end
     optimstruct=optimstruct(1:end-jj-1);
-%     try
+     try
         PostTreatIncomplete(pathStr,[],optimstruct);
-%     catch MEid
-%         T{ii}=MEid;
-%         
-%     end
+     catch MEid
+         T{ii}=MEid;
+         
+     end
 end
