@@ -656,7 +656,7 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     end
     if isGradient
         minPos(1:2:end)=1;
-        minRes(1:2:end)=iterRes(1:2:end,:);
+        minRes(1:2:end)=iterRes(1:2:end,1);
     end
     % Prepare CFD file with newest version
     for ii=1:nIter
