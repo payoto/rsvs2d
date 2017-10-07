@@ -1614,6 +1614,13 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     paroptim.refine.refineOptimRatio=ratio(2);
     
     paroptim.general.worker=12;
+    paroptim.general.maxIter=100;
+end
+
+function [paroptim]=N12_LRef_MMeshre(refmethod,optimiser)
+    [paroptim]=N12_LRef_MMesh(refmethod,optimiser);
+    
+    paroptim.general.worker=12;
     paroptim.general.maxIter=0;
 end
 
