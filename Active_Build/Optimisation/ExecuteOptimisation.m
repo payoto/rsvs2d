@@ -45,6 +45,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         ,paramoptim);
     startIter=1;
     firstValidIter=1;
+    refStart=1;
     % Restart
     inNFlag=nargin;
     if inNFlag==2 || ~isempty(restartSource{1})
@@ -56,6 +57,10 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
             HandleVariableRestart(restartSource{1},paramoptim,outinfo,...
             iterstruct,baseGrid,gridrefined,connectstructinfo,restartsnake,...
             startIter,maxIter);
+        if refineSteps>0
+            refStart=numel(outinfo);
+        end
+        
         [iterstruct,paramoptim,firstValidIter]=GenerateRestartPop(paramoptim,...
             iterstruct,startIter,restartSource{2},baseGrid);
         
@@ -67,7 +72,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
     % debugScrip
     
     % Specify starting population
-    for refStage=1:refineSteps+1
+    for refStage=refStart:refStart+refineSteps
         
         % Start optimisation Loop
         for nIter=startIter:maxIter
@@ -107,13 +112,23 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         
         if isempty(nIter)
             nIter=numel(iterstruct);
+            while isempty([iterstruct(nIter).population.objective]) && nIter>1
+                nIter=nIter-1;
+            end
             startIter=1;
+            while numel(iterstruct(nIter).population(1).fill)>...
+                    numel(iterstruct(startIter).population(1).fill)
+                startIter=startIter+1;
+            end
+            flagOutSingle=false;
         end
         %try
         %save(['PreOptimOutFinal',int2str(refStage),'.mat'])
         try
-            if exist('flagOut','var') && ~flagOut
+            if (exist('flagOut','var') && ~flagOut) || ...
+                    (exist('flagOutSingle','var') && ~flagOutSingle)
                 disp('Output Skipped')
+                flagOutSingle=true;
             else
                 [paramoptim]=FindKnownOptim(paramoptim,iterstruct(1:nIter),...
                     baseGrid,gridrefined,restartsnake,connectstructinfo,...
@@ -228,14 +243,14 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
     % handles variability of restart inputs
     [optionalin]=LoadRestart(restartPath);
     fieldsIn=fieldnames(optionalin);
-    
+    maxIterInit=maxIter;
     for ii=1:numel(fieldsIn)
         repeatflag=true; % allows to rerun a field if they appear in wrong order
         while repeatflag
             switch fieldsIn{ii}
                 case 'optimstruct'
                     startIter=length(optionalin.(fieldsIn{ii}));
-                    maxIter=startIter+maxIter;
+                    maxIter=startIter+maxIterInit;
                     if ~isfield(optionalin.(fieldsIn{ii})(1).population,...
                             'nonfillvar')
                         for kk=1:numel(optionalin.(fieldsIn{ii}))
@@ -266,7 +281,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                     paramoptim=SetVariables({'startVol'},{startVol},paramoptim);
                     
                     isGrid=true;
-                    
+                    needNewRestartSnake=true;
                     if exist('isOptimStruct','var');
                         repeatflag=isOptimStruct;
                         fieldsIn{ii}='optimstruct';
@@ -297,6 +312,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                 case 'restartsnak'
                     restartsnake=optionalin.(fieldsIn{ii});
                     repeatflag=false;
+                    isNewRestartSnake=true;
                 case 'outinfo'
                     
                     outinfo=optionalin.(fieldsIn{ii});
@@ -308,7 +324,24 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
         end
     end
     
+    if exist('needNewRestartSnake','var')
+        if exist('isNewRestartSnake','var')
+            needNewRestartSnake=~isNewRestartSnake;
+        end
+        if needNewRestartSnake
+            varExtract={'boundstr'};
+            [boundstr]=ExtractVariables(varExtract,paramoptim.parametrisation);
+            [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
+            [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
+            baseGrid,connectstructinfo,paramoptim.initparam,...
+            paramoptim.spline,outinfo(end),0,0,0);
+            
+        end
+    end
+    
+    
 end
+
 
 function param=ImposePresets(param,parampreset)
     
@@ -488,7 +521,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     nPop=numel(population);
     
     parfor ii=1:nPop %
-        %for ii=1:nPop
+    %for ii=1:nPop
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
