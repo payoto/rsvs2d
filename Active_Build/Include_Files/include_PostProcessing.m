@@ -987,7 +987,7 @@ function [outinfo]=ReconstructOutinfo(optimstruct)
     end
     allRootDir(rmR)=[];
     [allRootDir,uniqueRootDir]=IdentifyUniqueOptions(allRootDir);
-    outinfo=repmat(struct('rootDir','','tOutput',[],'marker',''),[1 numel(uniqueRootDir{1})]);
+    outinfo=repmat(struct('marker','','tOutput',[],'rootDir',''),[1 numel(uniqueRootDir{1})]);
     [outinfo(:).rootDir]=deal(uniqueRootDir{1}{:});
     for ii=1:numel(outinfo)
         delInd(ii)=isempty(outinfo(ii).rootDir);

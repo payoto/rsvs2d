@@ -17,7 +17,7 @@ function BP3_N12MeshMotionLocalRefineRestart(gridCase,optim)
     postStr
     [restartPath]=IdentifyRestart(restartDir,distinct,preStr,postStr);
     restartCell={restartPath,{optim,true}};
-    funcCall=sprintf('N12_LRef_MMesh(''%s'',''%s'')',gridCase,optim);
+    funcCall=sprintf('N12_LRef_MMeshre(''%s'',''%s'')',gridCase,optim);
     disp(funcCall)
     ExecuteOptimisation(funcCall,restartCell);
     
