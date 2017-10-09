@@ -1,0 +1,13 @@
+commit 1359d7af589de7cbc5a023d10e7059d742c33b75
+Author: Alexandre Payot <ap1949@bristol.ac.uk>
+Date:   Mon Oct 9 12:29:07 2017 +0100
+
+Debugging of the instability that appears in the snaking process at very high grid aspect ratios
+notably errors which appear at refinement on linux but not on windows
+
+    Debugged differential instability between linux and windows in the Snaking
+    -> difference in stability of the snaking were due to MATLAB havind different implementations
+       and precision of its linear algebra procedures
+    -> This was a problem when Hf the Hessian of the objective function problem is close to singular
+    -> this was solved by updating SQPStepFreeze in VelocityLengthMinimisationSQP.m
+       to use a different approach depending on the conditionning of the matrix it is being given.

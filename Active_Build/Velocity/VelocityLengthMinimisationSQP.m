@@ -91,10 +91,12 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc2,volumefraction,lagMultiPast,numel(volumefraction));
     isFreeze=[snaxel(:).isfreeze];
     
+
     warning('OFF','MATLAB:nearlySingularMatrix')
     [Deltax,lagMulti,condMat,finIsFreeze,HL,DeltaxisFreeze,algo]=...
         RobustStep(Df,Hf,HA,areaConstrMat,areaTargVec,isFreeze,derivtenscalc2,volumefraction,algo);
     warning('ON','MATLAB:nearlySingularMatrix')
+
     
     Deltax(finIsFreeze)=DeltaxisFreeze(finIsFreeze);
     if any(~isfinite(Deltax))
@@ -1012,17 +1014,29 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     h_vec(rmvCol)=[];
     
     
-    
-    Bkinv=(Hf)^(-1);
-    matToInv=(Dh'*Bkinv*Dh);
-    condMat=rcond(matToInv);
-    fprintf(' cond: %.3e -', condMat)
-    if true %rcond(matToInv)>1e-20
-        u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+    if rcond(Hf)>1e-15
+        Bkinv=(Hf)^(-1);
+        matToInv=(Dh'*Bkinv*Dh);
+        condMat=rcond(matToInv);
+        fprintf(' cond: %.3e -', condMat)
+        if true %rcond(matToInv)>1e-17
+            u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+        else
+            u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+        end
+        Deltax=-Bkinv*(Df+Dh*u_kp1);
     else
-        u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+        %Bkinv=(Hf)^(-1);
+        matToInv=(Dh'*(Hf\Dh));
+        condMat=rcond(matToInv);
+        fprintf(' cond: %.3e -', condMat)
+        if rcond(matToInv)>1e-15
+            u_kp1=matToInv\(h_vec-Dh'*(Hf\Df));
+        else
+            u_kp1=(Dh'*(Hf\Dh))\(h_vec-Dh'*(Hf\Df));
+        end
+        Deltax=-Hf\(Df+Dh*u_kp1);
     end
-    Deltax=-Bkinv*(Df+Dh*u_kp1);
     
     DeltaxFin=zeros(size(isFreeze));
     DeltaxFin(~isFreeze)=Deltax;
