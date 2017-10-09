@@ -67,8 +67,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         paramoptim=SetVariables({'restartSource'},{restartSource},paramoptim);
         startIter=startIter+1;
     end
-    paramoptim.parametrisation.snakes.step.snakData='all'
-    paramoptim.initparam.snakes.step.snakData='all'
+
     % Introduce debug lines of code
     % debugScrip
     
@@ -2485,7 +2484,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     %         profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,defaultFillRefMat);
-    save('TestError.mat')
+    
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...
         paramoptim.spline,outinfo,0,0,0);
