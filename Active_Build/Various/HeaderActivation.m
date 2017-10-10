@@ -94,9 +94,6 @@ function [isFound]=isFindFuncFile(rootDir,strDir)
         ii=ii+1;
         
     end
-    
-    
-    
-    
+
     
 end

@@ -112,7 +112,6 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
 end
 
 
-
 function [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess)
     
     coord=unstructured.vertex.coord;
@@ -214,11 +213,17 @@ end
 
 function [unstructured]=InitialisEdgeGrid(param)
     % Main function for the execution of the Subdivision process
+    varExtract={'cellGeometry'};
+    [cellGeometry]=ExtractVariables(varExtract,param);
     
+    switch cellGeometry
+        case 'square'
     [unstructured]=Initialisation_Square(param);
     %edgeTemplate=EdgeBuildTemplate(unstructured);
     %unstructured.edge=CreateEdges(unstructured,edgeTemplate);
-    
+        case 'triangle'
+            [unstructured]=BuildTriangularGrid(param);
+    end
 end
 
 function [fill]=InputData(typDat)
@@ -600,4 +605,140 @@ function [array]=AddZeroLayer(array,nPad,n)
         newArray(indexCell{:})=array;
         array=newArray;
     end
+end
+
+%% Triangular grid option
+
+function [unstructured]=BuildTriangularGrid(param)
+    varExtract={'ptsDistrib','cellLevels','defaultfill','passDomBounds'};
+    [ptsDistrib,cellLevels,defaultfill,passDomBounds]=ExtractVariables(...
+        varExtract,param);
+    
+    pts=DesignPtsForTriangular(cellLevels,passDomBounds,ptsDistrib);
+    
+    [unstructReshape]=Pts2DelaunayGrid(pts,defaultfill);
+    
+    
+    [unstructured]=ModifReshape(unstructReshape);
+end
+
+function pts=DesignPtsForTriangular(cellLevels,passDomBounds,ptsDistrib)
+    
+    corners=[0 0;0 1; 1 1;1 0];
+    corners=[corners;0.5 0;0 0.5; 0.5 1;1 0.5];
+    
+    switch ptsDistrib
+        case 'lhs'
+            nLhs=prod(cellLevels)/2;
+            pts=lhsdesign(nLhs,2,'criterion','maximin',...
+                'iterations',1000);
+            [dist]=DistanceFunction(pts,corners);
+            pts(find(any(dist<(1/sqrt(nLhs)/4),2)),:)=[];
+            
+            pts=[pts;corners];
+            
+        case 'FF'
+            [x,y]=meshgrid(0:cellLevels(1),0:cellLevels(2));
+            pts=[x(:)'/cellLevels(1),y(:)'/cellLevels(2)];
+        case 'rand'
+            pts=rand([prod(cellLevels),2]);
+            pts=[pts;corners];
+        case 'lhsrep'
+            isFlip=cellLevels(1)>cellLevels(2);
+            nRep=ceil(max(cellLevels)/min(cellLevels));
+            nLhs=ceil(prod(cellLevels)/nRep);
+            pts=zeros([0 2]);
+            cornTemp=zeros([0 2]);
+            for ii=1:nRep
+                cornTemp(:,2)=cornTemp(:,2)+1;
+                pts(:,2)=pts(:,2)+1;
+                ptsTemp=lhsdesign(nLhs,2,'criterion','maximin',...
+                    'iterations',1000);
+                pts=[pts;ptsTemp];
+                cornTemp=[cornTemp;corners];
+            end
+            [dist]=DistanceFunction(pts,cornTemp);
+            pts(find(any(dist<(1/sqrt(nLhs)/4),2)),:)=[];
+            pts=[pts;cornTemp];
+            pts(:,2)=pts(:,2)/nRep;
+            if isFlip
+                pts=[pts(:,2),pts(:,1)];
+            end
+            pts=RemoveIdenticalVectors(pts);
+        otherwise
+            error('unrecognised point distribution')
+    end
+    
+    for ii=1:2
+        pts(:,ii)=pts(:,ii)*(passDomBounds(ii,2)-passDomBounds(ii,1))...
+            +passDomBounds(ii,1);
+    end
+    
+end
+
+function [dist]=DistanceFunction(pts,ptsref)
+    
+    dist=zeros(size(pts,1),size(ptsref,1));
+    np=size(pts,1);
+    for ii=1:size(ptsref,1)
+        dist(:,ii)=sqrt(sum((pts-repmat(ptsref(ii,:),[np,1])).^2,2));
+    end
+    
+end
+
+function [gridtri]=Pts2DelaunayGrid(pts,defaultfill)
+    
+    dtri=delaunayTriangulation(pts);
+    [gridtri]=BasicGrid(dtri,pts);
+    [gridtri.cell(:).fill]=deal(defaultfill);
+    [gridtri]=ZeroBorderCell(gridtri);
+end
+
+function [baseGrid]=ZeroBorderCell(baseGrid)
+    
+    cellCentredGrid=CellCentredGrid(baseGrid);
+    
+    for ii=1:numel(baseGrid.cell)
+        baseGrid.cell(ii).fill=baseGrid.cell(ii).fill*(all(...
+            [cellCentredGrid(ii).edge.cellindex]>0));
+    end
+    
+    
+end
+
+function [gridtri]=BasicGrid(dtri,pts)
+    
+    kke=1;
+    ndtri2=size(dtri,2);
+    gridtri.cell=repmat(struct('index',0,'fill',[],'isactive',true),[size(dtri,1),1]);
+    gridtri.vertex=repmat(struct('index',0,'coord',[0 0]),[size(pts,1),1]);
+    gridtri.edge=repmat(struct('index',0,'cellindex',[],'vertexindex',[],'orientation',0.5),[size(dtri,1)*3,1]);
+    for ii=1:size(pts,1)
+        gridtri.vertex(ii).index=ii;
+        gridtri.vertex(ii).coord=pts(ii,:);
+    end
+    for ii=1:size(dtri,1)
+        gridtri.cell(ii).index=ii;
+        for jj=1:ndtri2
+            gridtri.edge(kke).vertexindex=sort([dtri(ii,jj),dtri(ii,mod(jj,ndtri2)+1)]);
+            gridtri.edge(kke).cellindex=ii;
+            
+            kke=kke+1;
+        end
+    end
+    
+    
+    cellSameEdge=FindIdenticalVector(vertcat(gridtri.edge(:).vertexindex));
+    edgeRm=[];
+    for ii=1:numel(cellSameEdge)
+        gridtri.edge(cellSameEdge{ii}(1)).cellindex=...
+            [gridtri.edge(cellSameEdge{ii}).cellindex];
+        if numel(gridtri.edge(cellSameEdge{ii}(1)).cellindex)==1
+           gridtri.edge(cellSameEdge{ii}(1)).cellindex(2)=0; 
+        end
+        gridtri.edge(cellSameEdge{ii}(1)).index=ii;
+        edgeRm=[edgeRm,cellSameEdge{ii}(2:end)];
+    end
+    gridtri.edge(edgeRm)=[];
+    
 end

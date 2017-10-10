@@ -1,9 +1,11 @@
+% This code has been adapted into GridGeneration
+
 function [gridtri]=Pts2DelaunayGrid(pts)
     
     dtri=delaunayTriangulation(pts);
     [gridtri]=BasicGrid(dtri,pts);
     
-    CheckGrid(gridtri)
+    %CheckGrid(gridtri)
 end
 
 

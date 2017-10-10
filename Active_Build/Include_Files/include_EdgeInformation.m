@@ -71,7 +71,7 @@ function [gridreshape]=EdgePropertiesReshape(gridreshape)
     boundaryisHalf=((isElse==2));
     boundaryis0=((is0==1));
     boundaryis1=((is1==1));
-
+    
     solidisIn0=((is0==2));
     solidnotIn0=((is0~=2));
     solidisIn1=((is1==2));
