@@ -42,6 +42,7 @@ function paramgeneral=default_general()
     paramgeneral.boundstr{3}='0bound';
     paramgeneral.restart=true;
     paramgeneral.buildInternal=false;
+    paramgeneral.internalLoopStep=10;
     paramgeneral.internalConv=1e-4;
     
 end
@@ -75,7 +76,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.arrivalTolerance=1e-2;
     paramsnakesstep.subStep=1;
     paramsnakesstep.snakesMinSteps=1;
-    paramsnakesstep.snakData='all';
+    paramsnakesstep.snakData='all'; % 'interm'=='all' 'all'=='debug' 'light' unchanged
     paramsnakesstep.snakesConsole=true;
     paramsnakesstep.stepType='indiv'; % 'strict' 'bounded' 'indiv' 'mixed'
     paramsnakesstep.vSwitch=1e-15;
@@ -88,7 +89,7 @@ function paramsnakesstep=default_snakes_step()
     
     paramsnakesstep.fillLooseStep=0;
     paramsnakesstep.fillLooseCut=1e-3;
-    paramsnakesstep.fillErrStep=5;
+    paramsnakesstep.fillErrStep=3;
     paramsnakesstep.fillErrCut=10; % Ratio at which error scaling cuts off
     
     paramsnakesstep.vertLooseStep=20;
@@ -147,6 +148,8 @@ end
 
 function paramoptiminit=default_optimInit()
     
+    paramoptiminit.cellGeometry='square';
+    paramoptiminit.ptsDistrib='lhs';
     paramoptiminit.cellLevels=[8,2];
     paramoptiminit.refineCellLvl=[0];
     paramoptiminit.defaultfill=0.5;
@@ -570,6 +573,38 @@ function [param]=optimDefault()
     param.general.passDomBounds(2,:)=param.general.passDomBounds(2,:)*sizeRatio;
     
     
+end
+
+function [param]=TestTriangularOptimInit(ii)
+    [param]=DefaultCase();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='optimInit';
+    param.optiminit.cellGeometry='triangle';
+    param.optiminit.ptsDistrib='lhs';
+    param.optiminit.cellLevels=[8,ii];
+    param.snakes.refine.refineGrid=3;
+    param.optiminit.defaultfill=0.4;
+    param.snakes.step.snakesSteps=200;
+    param.general.buildInternal=true;
+end
+
+function [param]=TestTriangularOptimInit2(ii)
+    [param]=DefaultCase();
+    
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='optimInit';
+    param.optiminit.cellGeometry='triangle';
+    param.optiminit.ptsDistrib='lhsrep';
+    param.optiminit.cellLevels=[8,ii];
+    param.snakes.refine.refineGrid=3;
+    param.optiminit.defaultfill=0.4;
+    param.snakes.step.snakesSteps=200;
+    param.general.buildInternal=true;
 end
 
 function [param]=OptimNoRestart()

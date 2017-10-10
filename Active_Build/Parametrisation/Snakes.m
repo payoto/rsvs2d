@@ -52,15 +52,48 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
     
 end
 
-function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
         RunSnakesProcessInternalHoleSupport(refinedGriduns,refinedGrid,looprestart,...
         oldGrid,oldGridUns,connectionInfo,param)
     
     
-    varExtract={'boundstr','snakData','internalConv'};
-    [boundstr,snakData,internalConv]=ExtractVariables(varExtract,param);
+    varExtract={'boundstr','snakData','internalLoopStep'};
+    [boundstr,snakData,internalLoopStep]=ExtractVariables(varExtract,param);
     kk=0;
     flagCont=true;
+    varargout{1}=cell(0);
+    paramintern=param;
+    if internalLoopStep>0
+        paramintern=SetVariables({'snakesSteps'},{internalLoopStep},paramintern);
+
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout{1}]=...
+            MultiRunSakesProcess(refinedGriduns,refinedGrid,looprestart,...
+            oldGrid,oldGridUns,connectionInfo,paramintern);
+        
+        [snaxel,snakposition,snakSavePart,loopsnaxel,restartsnake,varargout{2}]=...
+            RunSnakesProcess(refinedGriduns,refinedGrid,restartsnake,...
+            oldGrid,oldGridUns,connectionInfo,param);
+        
+        [snakSave]=[snakSave,snakSavePart];
+    else
+        [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout{1}]=...
+            MultiRunSakesProcess(refinedGriduns,refinedGrid,looprestart,...
+            oldGrid,oldGridUns,connectionInfo,paramintern);
+    end
+    if ~exist('varargout','var')
+        varargout{1}=cell(0);
+    end
+end
+
+function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
+        MultiRunSakesProcess(refinedGriduns,refinedGrid,looprestart,...
+        oldGrid,oldGridUns,connectionInfo,param)
+    
+    varExtract={'boundstr','snakData','internalLoopStep'};
+    [boundstr,snakData,internalLoopStep]=ExtractVariables(varExtract,param);
+    kk=0;
+    flagCont=true;
+    varargout{1}=cell(0);
     
     while flagCont
         
@@ -78,7 +111,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
             [looprestart]=GenerateSnakStartLoop(refinedGrid,boundstr);
         end
         
-        [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart,varargout]=...
+        [snaxelPart,snakpositionPart,snakSavePart,loopsnaxelPart,restartsnakePart,varargout{1}]=...
             RunSnakesProcess(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,oldGridUns,connectionInfo,param);
         
@@ -129,6 +162,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake]=...
         end
         kk=kk+1;
     end
+    
+    
 end
 
 function [snakposition1]=ConcatenateSnakposition(snakposition1,snakposition2)
@@ -351,7 +386,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             fprintf(' -  Snakes Converged!\n')
             break
         end
-        fprintf([' DVol = ', num2str(currentConvVolume)]);
+        fprintf(' DVol = %10.4e', currentConvVolume);
         % visualise results
         if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) || sum(ii==debugPlot)
             [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,snaxelmodvel,makeMov,volumefraction);
