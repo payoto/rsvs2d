@@ -220,6 +220,77 @@ function [edgeFill]=EdgeFillInformation(unstructured)
     
 end
 
+function [loop]=EdgeInCondForVertex(loop,gridRefined,boundStr)
+    
+    edgeVertInd=[gridRefined.edge.vertexindex];
+    edgeCellInd=[gridRefined.edge.cellindex];
+    edgeInd=[gridRefined.edge.index];
+    cellInd=[gridRefined.cell.index];
+    cellFill=[gridRefined.cell.fill];
+    
+    switch boundStr
+        case '0bound'
+            condFill=@(fill) find(fill>0);
+        case '1bound'
+            
+            condFill=@(fill) find(fill<1);
+        case 'intermBound'
+             error('Unsupported option')
+    end
+    
+    for ii=1:numel(loop)
+        nEdgeL=numel(loop(ii).edge.index);
+        for jj=1:numel(loop(ii).vertex.index)
+            
+            % Defining entry and exit cells
+            edgeInOut(1)=loop(ii).edge.index(mod(jj-2,nEdgeL)+1);
+            edgeInOut(2)=loop(ii).edge.index(mod(jj-1,nEdgeL)+1);
+            edgeInOutSub=FindObjNum([],edgeInOut,edgeInd);
+            cellIndIn=edgeCellInd(edgeInOutSub(1)*2-1:edgeInOutSub(1)*2);
+            cellIndOut=edgeCellInd(edgeInOutSub(2)*2-1:edgeInOutSub(2)*2);
+            cellIndIn=cellIndIn(condFill(cellFill(...
+                FindObjNum([],cellIndIn,cellInd))));
+            cellIndOut=cellIndOut(condFill(cellFill(...
+                FindObjNum([],cellIndOut,cellInd))));
+            
+            % Defining remaining cell List
+            edgeSub=ceil(FindObjNum([],loop(ii).vertex.index(jj),edgeVertInd)/2);
+            [~,ordEdgeSub]=setdiff(edgeSub,edgeInOutSub);
+            edgeSub=edgeSub(sort(ordEdgeSub));
+            edgeSub=reshape(edgeSub,[numel(edgeSub),1]);
+            cellChain=edgeCellInd([edgeSub*2-1,edgeSub*2]);
+            
+            [~,rowInd]=FollowChain(cellChain,cellIndIn,cellIndOut);
+            loop(ii).vertcon(jj).index=loop(ii).vertex.index(jj);
+            loop(ii).vertcon(jj).inedge=edgeInd(edgeSub(rowInd));
+            loop(ii).vertcon(jj).outedge=edgeInd(edgeSub(...
+                setdiff(1:numel(edgeSub),rowInd)));
+            loop(ii).vertcon(jj).bordedge=edgeInOut;
+        end
+    end
+    
+end
+
+function [chain,rowInd]=FollowChain(indChain,startInd,endInd)
+    % Does not accept self intersecting chains (See ORDERBLockEdges for
+    % that functionality)
+    
+    currInd=startInd;
+    indChainWork=indChain;
+    maxStep=size(indChain,1);
+    nStep=0;
+    rowInd=[];
+    while (endInd~=currInd) && nStep<maxStep
+        nStep=nStep+1;
+        [ii,jj]=find(indChainWork==currInd);
+        rowInd(nStep)=ii;
+        jjNext=abs(jj-3);
+        currInd=indChainWork(ii,jjNext);
+        indChainWork(ii,:)=Inf;
+    end
+    chain=indChain(rowInd,:);
+    
+end
 %% Function cell centred grid extraction
 
 function [edge,edgeLength]=CalculateEdgeLengths(edge,vertex)

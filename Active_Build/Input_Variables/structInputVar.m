@@ -583,12 +583,12 @@ function [param]=TestTriangularOptimInit(ii)
     
     param.general.typDat='optimInit';
     param.optiminit.cellGeometry='triangle';
-    param.optiminit.ptsDistrib='lhs';
+    param.optiminit.ptsDistrib='FFStaggered';
     param.optiminit.cellLevels=[8,ii];
-    param.snakes.refine.refineGrid=3;
+    param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
-    param.snakes.step.snakesSteps=200;
-    param.general.buildInternal=true;
+    param.snakes.step.snakesSteps=100;
+    param.general.buildInternal=false;
 end
 
 function [param]=TestTriangularOptimInit2(ii)

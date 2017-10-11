@@ -175,6 +175,11 @@ function [cellOrderedVertex,cellOrderedEdges]=...
         [ii,jj]=find(blockEdgesWorking==nextVertex);
         if length(ii)>1
             nAct=find(blockCellTruncWorking(ii)==currBlockCell);
+            tempBlock=blockCellTruncWorking(ii);
+            if isempty(nAct)
+                nAct=find(~any(repmat(tempBlock,flip(size(tempBlock)))==...
+                    repmat(tempBlock',size(tempBlock)) & ~eye(numel(ii))));
+            end
             ii=ii(nAct);
             jj=jj(nAct);
             disp('Loops neighbouring at corner')
@@ -318,6 +323,7 @@ function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     cond=boundstr{3};
     [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
     
+    [loop]=EdgeInCondForVertex(loop,gridrefined2,cond);
 end
 
 function [loopsnaxel]=ExtractSnaxelLoops(snaxel,param)
