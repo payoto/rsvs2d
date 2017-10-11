@@ -106,7 +106,8 @@ function [figh]=CheckResultsLight(unstructured,snakposition,snaxel,figh)
             %PlotCell(figh,axh,unstructured, isCellFull(ii),'bs')
         end
         %PlotSnaxel(figh,axh,snakposition)
-        PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+        %PlotSnaxelLoop(figh,axh,snakposition,snaxel)
+        PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
         %PlotSnaxelIndex(figh,axh,snakposition)
         
         %[normalcontourvec]=ContourNormal(snaxel,snakposition);
@@ -162,6 +163,7 @@ function []=PlotSnaxel(figh,axh,snakposition,snaxel)
     figure(figh)
     axes(axh)
     quiver(X,Y,U,V,0,'r-')
+    plot(X,Y,'rs')
     
 end
 

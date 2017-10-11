@@ -66,6 +66,7 @@ function [unstructured,loop,unstructReshape]=...
     end
     disp('Reshaping')
     [unstructReshape]=ModifUnstructured(unstructured);
+    [loop]=EdgeInCondForVertex(loop,unstructReshape,cond);
 end
 
 function [unstructured]=GridRedistrib(unstructured,gridDistrib)
@@ -620,6 +621,11 @@ function [unstructured]=BuildTriangularGrid(param)
     
     
     [unstructured]=ModifReshape(unstructReshape);
+    [~,sortOrd]=sort(unstructured.edge.index);
+    for ii=fieldnames(unstructured.edge)
+        unstructured.edge.(ii{1})=unstructured.edge.(ii{1})(sortOrd,:);
+    end
+    
 end
 
 function pts=DesignPtsForTriangular(cellLevels,passDomBounds,ptsDistrib)
@@ -639,7 +645,14 @@ function pts=DesignPtsForTriangular(cellLevels,passDomBounds,ptsDistrib)
             
         case 'FF'
             [x,y]=meshgrid(0:cellLevels(1),0:cellLevels(2));
-            pts=[x(:)'/cellLevels(1),y(:)'/cellLevels(2)];
+            pts=[x(:)/cellLevels(1),y(:)/cellLevels(2)];
+        case 'FFStaggered'
+            [x,y]=meshgrid(0:cellLevels(1),0:ceil(cellLevels(2)/2));
+            pts=[x(:)/cellLevels(1),y(:)/ceil(cellLevels(2)/2)];
+            [x,y]=meshgrid(0:cellLevels(1)-1,0:ceil(cellLevels(2)/2)-1);
+            pts2=[x(:)/cellLevels(1)+0.5/cellLevels(1),...
+                y(:)/ceil(cellLevels(2)/2)+0.5/ceil(cellLevels(2)/2)];
+            pts=[pts;pts2];
         case 'rand'
             pts=rand([prod(cellLevels),2]);
             pts=[pts;corners];

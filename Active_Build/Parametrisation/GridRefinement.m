@@ -52,12 +52,14 @@ function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
     [unstructuredrefined]=ModifReshape(gridrefined2);
 end
 
+
 function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     
     isEdge=[gridrefined2.edge(:).(boundstr{1})];
     cond=boundstr{3};
     [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
     
+    [loop]=EdgeInCondForVertex(loop,gridrefined2,cond);
 end
 
 function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefine)

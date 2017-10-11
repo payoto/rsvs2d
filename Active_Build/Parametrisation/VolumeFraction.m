@@ -283,7 +283,7 @@ function [areaBlock]=BuildAreaBlock(coordList,cellSnax,currSnaxList)
         coordList=flip(coordList);
     end
     n=size(coordList,1);
-    areaBlock=repmat(struct('areablock',struct('length',[],'centre',[0 0],'normal',[0 0])),[1,n]);
+    areaBlock=repmat(struct('length',[],'centre',[0 0],'normal',[0 0]),[1,n]);
     rotCW=[0 1;-1 0];
     for ii=1:n
         iip1=mod(ii,n)+1;
