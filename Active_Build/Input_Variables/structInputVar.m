@@ -589,6 +589,7 @@ function [param]=TestTriangularOptimInit(ii)
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=100;
     param.general.buildInternal=false;
+    param.snakes.step.vertLooseStep=500;
 end
 
 function [param]=TestTriangularOptimInit2(ii)
@@ -605,6 +606,7 @@ function [param]=TestTriangularOptimInit2(ii)
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=200;
     param.general.buildInternal=true;
+    param.snakes.step.vertLooseStep=500;
 end
 
 function [param]=OptimNoRestart()
