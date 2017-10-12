@@ -593,13 +593,13 @@ end
 
 %% Base Structural Operation
 
-function [edge]=AddEdgeStructure(index,cellIndex,vertexIndex,fill)
+function [edge]=AddEdgeStructure(index,cellIndex,vertexIndex,orientation)
     % Creates the strucure for an edge
     
     edge.index=index;
     edge.cellindex=cellIndex;
     edge.vertexindex=vertexIndex;
-    edge.orientation=fill;
+    edge.orientation=orientation;
 %     edge.boundaryisHalf=false;
 %     edge.boundaryis0=false;
 %     edge.boundaryis1=false;
@@ -632,27 +632,90 @@ end
 function [refGrid,origconnec]=RefineTriangular(baseGrid,nRefine)
     
     tempGrid=baseGrid;
+    delField={'boundaryisHalf','boundaryis0','boundaryis1','solidisIn0',...
+        'solidnotIn0','solidisIn1','fill'};
+    tempGrid.edge=rmfield(tempGrid.edge,delField);
     origconnec.edge=struct([]);
     [origconnec.cell(1:numel(baseGrid.cell)).old]=deal(baseGrid.cell.index);
     [origconnec.cell(1:numel(baseGrid.cell)).new]=deal(baseGrid.cell.index);
-    for ii=1:nRefine
-        
-       [tempGrid,cellVert]=BreakEdgesHalf(tempGrid);
-       [tempGrid,connecstructinfo]=AddNewCellsAndEdges(tempGrid,cellVert);
-       
-       newOld=[connecstructinfo.cell.old];
-       for jj=1:numel(origconnec.cell)
-           origconnec.cell(jj).new=[connecstructinfo.cell(FindObjNum([],...
-               origconnec.cell(jj).new,newOld)).new];
-       end
-       
+    
+    [tempGrid,connecstructinfo]=RefineCellViaCentre(tempGrid);
+    newOld=[connecstructinfo.cell.old];
+    for jj=1:numel(origconnec.cell)
+        origconnec.cell(jj).new=[connecstructinfo.cell(FindObjNum([],...
+            origconnec.cell(jj).new,newOld)).new];
     end
     
+    for ii=1:nRefine
+        
+        [tempGrid,cellVert]=BreakEdgesHalf(tempGrid);
+        [tempGrid,connecstructinfo]=AddNewCellsAndEdges(tempGrid,cellVert);
+        
+        newOld=[connecstructinfo.cell.old];
+        for jj=1:numel(origconnec.cell)
+            origconnec.cell(jj).new=[connecstructinfo.cell(FindObjNum([],...
+                origconnec.cell(jj).new,newOld)).new];
+        end
+        
+    end
     
     refGrid=tempGrid;
 end
 
-
+function [refGrid,connec]=RefineCellViaCentre(baseGrid)
+    
+    cellCentreGrid=CellCentredGrid(baseGrid);
+    [edgeInd]=[baseGrid.edge.index];
+    cellInd=[baseGrid.cell.index];
+    vertInd=[baseGrid.vertex.index];
+    
+    maxEdgeInd=max(edgeInd)+1;
+    maxCellInd=max(cellInd)+1;
+    maxVertInd=max(vertInd)+1;
+    
+    connec.edge=struct([]);
+    connec.cell=repmat(struct('old',[],'new',[]),size(baseGrid.cell));
+    
+    for ii=1:numel(cellCentreGrid)
+        nVert=numel(baseGrid.vertex);
+        nCell=numel(baseGrid.cell);
+        nEdge=numel(baseGrid.edge);
+        
+        newCoord=mean(vertcat(cellCentreGrid(ii).vertex.coord));
+        baseGrid.vertex(nVert+1).index=maxVertInd;
+        baseGrid.vertex(nVert+1).coord=newCoord;
+        
+        cellEdgeInd=[cellCentreGrid(ii).edge.index];
+        [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(...
+            vertcat(cellCentreGrid(ii).edge.vertexindex),...
+            cellEdgeInd);
+        if numel(cellOrderedEdges)>1
+            error('Unknown error in orderblockedges')
+        end
+        nNewEdge=numel(cellCentreGrid(ii).edge);
+        newCellInd=[cellCentreGrid(ii).index,maxCellInd:maxCellInd+1];
+        [baseGrid.cell(nCell+1:nCell+nNewEdge-1)]=deal(baseGrid.cell(ii));
+        for jj=1:nNewEdge-1
+            baseGrid.cell(nCell+jj).index=newCellInd(jj+1);
+            maxCellInd=maxCellInd+1;
+        end
+        connec.cell(ii).old=baseGrid.cell(ii).index;
+        connec.cell(ii).new=newCellInd;
+        
+        edgeSub=FindObjNum([],cellEdgeInd(cellOrderedEdges{1}),edgeInd);
+        for jj=1:nNewEdge
+            logCell=baseGrid.edge(edgeSub(jj)).cellindex==newCellInd(1);
+            baseGrid.edge(edgeSub(jj)).cellindex(logCell)=newCellInd(jj);
+            baseGrid.edge(nEdge+jj)=AddEdgeStructure(maxEdgeInd,...
+                newCellInd([mod(jj-2,nNewEdge)+1,jj]),...
+                [cellOrderedVertex{1}(jj,1),maxVertInd],0.5);
+            maxEdgeInd=maxEdgeInd+1;
+        end
+        maxVertInd=maxVertInd+1;
+    end
+    
+    refGrid=baseGrid;
+end
 
 
 function [baseGrid,cellVert]=BreakEdgesHalf(baseGrid)
@@ -696,7 +759,7 @@ function [baseGrid,cellVert]=BreakEdgesHalf(baseGrid)
 end
 
 function [refGrid,connec]=AddNewCellsAndEdges(baseGrid,cellVert)
-    
+    % Refines a triangular cell by linkin all the new vertices
     cellInd=[0,baseGrid.cell.index];
     edgeInd=[baseGrid.edge.index];
     

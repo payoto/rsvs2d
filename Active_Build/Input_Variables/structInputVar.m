@@ -74,7 +74,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.maxDt=0.5;
     paramsnakesstep.convLevel=10^-8;
     paramsnakesstep.arrivalTolerance=1e-2;
-    paramsnakesstep.subStep=1;
+    paramsnakesstep.subStep=0;
     paramsnakesstep.snakesMinSteps=1;
     paramsnakesstep.snakData='all'; % 'interm'=='all' 'all'=='debug' 'light' unchanged
     paramsnakesstep.snakesConsole=true;
@@ -82,6 +82,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.vSwitch=1e-15;
     paramsnakesstep.dtRatio=5;
     paramsnakesstep.snaxInitPos=1e-4;
+    paramsnakesstep.multiStepConv=5e-4;
     
     paramsnakesstep.convCheckRate=100;
     paramsnakesstep.convCheckRange=15;
@@ -585,11 +586,12 @@ function [param]=TestTriangularOptimInit(ii)
     param.optiminit.cellGeometry='triangle';
     param.optiminit.ptsDistrib='FFStaggered';
     param.optiminit.cellLevels=[8,ii];
-    param.snakes.refine.refineGrid=2;
+    param.snakes.refine.refineGrid=1;
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=100;
     param.general.buildInternal=false;
     param.snakes.step.vertLooseStep=500;
+    param.snakes.step.subStep=0;
 end
 
 function [param]=TestTriangularOptimInit2(ii)
@@ -602,11 +604,13 @@ function [param]=TestTriangularOptimInit2(ii)
     param.optiminit.cellGeometry='triangle';
     param.optiminit.ptsDistrib='lhsrep';
     param.optiminit.cellLevels=[8,ii];
-    param.snakes.refine.refineGrid=3;
+    param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=200;
     param.general.buildInternal=true;
-    param.snakes.step.vertLooseStep=500;
+    param.snakes.step.vertLooseStep=20;
+    param.snakes.step.subStep=0;
+    param.snakes.force.vel.algo='HF';
 end
 
 function [param]=OptimNoRestart()
@@ -1603,7 +1607,7 @@ function [param]=SnakesFoilVVSmall4()
     
     param.general.typDat='vvlofoil4';
     param.snakes.step.snakesSteps=100;
-    param.snakes.refine.refineGrid=[2 2 2];
+    param.snakes.refine.refineGrid=[4 4 2];
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.25,0.25];
     param.general.refineSteps=5;
