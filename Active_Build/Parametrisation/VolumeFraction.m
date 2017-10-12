@@ -279,7 +279,12 @@ end
 function [areaBlock]=BuildAreaBlock(coordList,cellSnax,currSnaxList)
     
    % if ~CCWLoop(RemoveIdenticalConsecutivePoints(coordList))
-   if ~CCWLoopSnax(cellSnax,currSnaxList)
+   ccwtest=~CCWLoop(coordList);
+   if isempty(ccwtest)
+       ccwtest=false;
+   end
+   
+   if ~CCWLoopSnax(cellSnax,currSnaxList) %|| ccwtest
         coordList=flip(coordList);
     end
     n=size(coordList,1);
@@ -369,6 +374,10 @@ function [volume,areablock]=CalculateCellVolume(areablock,totalVol)
     
     if volume<0
         warning('Volume<0')
+%         volume=abs(volume);
+%         for ii=1:length(areablock)
+%             areablock(ii).blockstruct=areablock(ii).blockstruct;
+%         end
     end
 end
 

@@ -84,7 +84,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
             [derivtenscalc2]=ExtractDataForDerivatives_directionSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,dirEpsilon);
     end
     
-    derivtenscalc2=MatchCellToderivtenscal(derivtenscalc2,coeffstructure,volumefraction);
+    [derivtenscalc2,areaConstrMat]=MatchCellToderivtenscal(derivtenscalc2,areaConstrMat,coeffstructure,volumefraction);
     if isempty(lagMultiPast)
         lagMultiPast=zeros([numel(volumefraction) 1]);
     end
@@ -258,7 +258,7 @@ function [isFreezeRnd2]=VelocityThawing(isFreeze,DxisFreeze)
     isFreezeRnd2= logical(isFreeze) & ~isThaw;
 end
 
-function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volumefraction)
+function [derivtenscal,areaConstrMat]=MatchCellToderivtenscal(derivtenscal,areaConstrMat,coeffstructure,volumefraction)
     coeffSnaxInd=[coeffstructure(:).snaxelindex];
     
     allNewCells=[volumefraction(:).newCellInd];
@@ -272,6 +272,7 @@ function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volu
         kk=kk+nCurr;
     end
     err=false;
+    delDeriv=[];
     for ii=1:numel(derivtenscal)
         newCell=unique([coeffstructure(FindObjNum([],[derivtenscal(ii).index],coeffSnaxInd)).cellindex]);
         newCell2=unique([coeffstructure(FindObjNum([],[derivtenscal(ii).snaxprec],coeffSnaxInd)).cellindex]);
@@ -280,7 +281,16 @@ function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volu
         oldCell=unique(allOldCells(subs));
         oldCell2=unique(allOldCells(subs2));
         [i2,i1]=find((ones([numel(oldCell2) 1])*oldCell)==(oldCell2'*ones([1 numel(oldCell)])));
-        err=err || isempty(i1);
+        
+        if isempty(i1)
+            % this caters for snaxels connecting through the outside of the
+            % domain
+            if numel(newCell)==1 && numel(newCell2)==1
+                delDeriv=[delDeriv,ii];
+            else
+                err=err || isempty(i1);
+            end
+        end
         if numel(i1)==2
             [i2,i1]=find((ones([numel(subs) 1])*subs2')==(subs*ones([1 numel(subs2)])));
         end
@@ -289,7 +299,15 @@ function [derivtenscal]=MatchCellToderivtenscal(derivtenscal,coeffstructure,volu
         derivtenscal(ii).cellprecsub=unique(allOldCellsSub(subs(i1)));
         
     end
-    
+%     derivtenscal(delDeriv)=[];
+%     areaConstrMat(:,delDeriv)=[];
+%     if ~isempty(delDeriv)
+%         disp('\nWarning: Snaxel Travelling at domain boundary')
+%         for ii=1:numel(derivtenscal)
+%             derivtenscal(ii).precsub=derivtenscal(ii).precsub...
+%                 -sum(delDeriv<derivtenscal(ii).precsub);
+%         end
+%     end
     if err
         error('snakes:connectivity:nonSharedCell',...
             'Snaxels do not share a cell despite connection \n connectivity information damaged')
@@ -935,15 +953,16 @@ function [Df,Hf,HA]=BuildJacobianAndHessian(derivtenscalc,volumefraction,lagMult
         %         Hessian(ii,neighSub,ii)=derivtenscalc(ii).d2fiddim;
         %         Hessian(neighSub,ii,ii)=derivtenscalc(ii).d2fiddim;
         %         Hessian(neighSub,neighSub,ii)=derivtenscalc(ii).d2fiddm2;
-        
-        HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
-            -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)))...
-            /volumefraction(derivtenscalc(ii).cellprecsub).totalvolume;
-        
-        HessianConst(ii,neighSub)=HessianConst(ii,neighSub)+...
-            HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
-        HessianConst(neighSub,ii)=HessianConst(neighSub,ii)+...
-            HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
+        if ~isempty(derivtenscalc(ii).cellprecsub)
+            HessConstr=0.5*(dot(derivtenscalc(ii).Dg_m,rot90(derivtenscalc(ii).Dg_i))...
+                -dot(derivtenscalc(ii).Dg_i,rot90(derivtenscalc(ii).Dg_m)))...
+                /volumefraction(derivtenscalc(ii).cellprecsub).totalvolume;
+            
+            HessianConst(ii,neighSub)=HessianConst(ii,neighSub)+...
+                HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
+            HessianConst(neighSub,ii)=HessianConst(neighSub,ii)+...
+                HessConstr*lagMulti(derivtenscalc(ii).cellprecsub);
+        end
         %          HessianConst(ii,neighSub,derivtenscalc(ii).cellprecsub)=...
         %             HessConstr;
         %         HessianConst(neighSub,ii,derivtenscalc(ii).cellprecsub)=...
@@ -1067,21 +1086,29 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,Dh,h_vec,isFreez
     
     
     
-    Bkinv=(HL)^(-1);
-    matToInv=(Dh'*Bkinv*Dh);
-    
-    condMat=rcond(matToInv);
-    fprintf(' cond: %.3e -', condMat)
-    if true %rcond(matToInv)>1e-20
-        u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+    if rcond(HL)>1e-15
+        Bkinv=(HL)^(-1);
+        matToInv=(Dh'*Bkinv*Dh);
+        condMat=rcond(matToInv);
+        fprintf(' cond: %.3e -', condMat)
+        if true %rcond(matToInv)>1e-17
+            u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+        else
+            u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+        end
+        Deltax=-Bkinv*(Df+Dh*u_kp1);
     else
-        u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+        %Bkinv=(Hf)^(-1);
+        matToInv=(Dh'*(HL\Dh));
+        condMat=rcond(matToInv);
+        fprintf(' cond: %.3e -', condMat)
+        if rcond(matToInv)>1e-15
+            u_kp1=matToInv\(h_vec-Dh'*(HL\Df));
+        else
+            u_kp1=(Dh'*(HL\Dh))\(h_vec-Dh'*(HL\Df));
+        end
+        Deltax=-HL\(Df+Dh*u_kp1);
     end
-    Deltax=-Bkinv*(Df+Dh*u_kp1);
-    
-    DeltaxFin=zeros(size(isFreeze));
-    DeltaxFin(~isFreeze)=Deltax;
-    lagMulti(actCol)=u_kp1;
 end
 
 function [DeltaxFin,lagMulti]=SQPStepFreeze_quadprog(Df,Hf,Dh,h_vec,isFreeze)

@@ -65,7 +65,7 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
     paramintern=param;
     if internalLoopStep>0
         paramintern=SetVariables({'snakesSteps'},{internalLoopStep},paramintern);
-
+        
         [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout{1}]=...
             MultiRunSakesProcess(refinedGriduns,refinedGrid,looprestart,...
             oldGrid,oldGridUns,connectionInfo,paramintern);
@@ -364,10 +364,10 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     global snaxInitPos
     varExtract={'snakesSteps','mergeTopo','makeMov','convLevel','debugPlot','plotInterval',...
         'subStep','snakesMinSteps','stepType','vSwitch','convCheckRate',...
-        'convCheckRange','convDistance','dtRatio','refineGrid'};
+        'convCheckRange','convDistance','dtRatio','refineGrid','multiStepConv'};
     [snakesSteps,mergeTopo,makeMov,convLevel,debugPlot,...
         plotInterval,subStep,snakesMinSteps,stepType,vSwitch,convCheckRate,...
-        convCheckRange,convDistance,dtRatio,refineGrid]...
+        convCheckRange,convDistance,dtRatio,refineGrid,multiStepConv]...
         =ExtractVariables(varExtract,param);
     
     trigCount=0;
@@ -383,8 +383,8 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     nonBreedNextIter=[];
     for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
-%         memUsage=MonitorMemory(whos);
-%         fprintf('Memory Usage: %14.5f\n',memUsage)
+        %         memUsage=MonitorMemory(whos);
+        %         fprintf('Memory Usage: %14.5f\n',memUsage)
         
         
         fprintf('     Step %4i  -',ii);
@@ -433,16 +433,23 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             lastConvCheck=ii;
         end
         
-        for subStep=1:subStep
-            snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist,stepType);
-            [snakposition]=PositionSnakes(snaxel,refinedGriduns);
-            [snakposition]=SnaxelNormal2(snaxel,snakposition);
-            fprintf('\n        substep: ')
-            [~,~,~,~,...
+        snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist,stepType);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        if multiStepConv>currentConvVolume
+            for subStep=1:subStep
+                fprintf('\n        substep: ')
+                [dt,dtSnax,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
+                    stepType,vSwitch,edgeDat,mergeTopo);
+                [~,~,~,~,...
                     ~,~,~,~,~,...
                     snaxel,~,~,~]=...
                     VelocityAndVolumeProcess(param,snaxel,snakposition,refinedGrid,volfracconnec,...
                     cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,trigCount);
+                snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist,stepType);
+                [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+                [snakposition]=SnaxelNormal2(snaxel,snakposition);
+            end
         end
         % Topology Trimming, Merging and Freezing
         [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
@@ -642,7 +649,7 @@ function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
 end
 
 function [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid)
-    minEdgeScale=1;
+    minEdgeScale=0.05;
     edgeOrient=[refinedGrid.edge(:).orientation];
     edgeIndList=[refinedGrid.edge(:).index];
     if numel(refineGrid)==1
@@ -668,7 +675,8 @@ function [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid)
     %         .*max(cellEdgeLDat(cellEdgeSub(1:2:end),3),cellEdgeLDat(cellEdgeSub(2:2:end),3))')...
     %         ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1;
     edgeDat.indivRatio=max((([refinedGrid.edge(:).length])...
-        ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1,minEdgeScale);
+        ./min(cellEdgeLDat(cellEdgeSub(1:2:end),4),...
+        cellEdgeLDat(cellEdgeSub(2:2:end),4))').^-1,minEdgeScale);
     
 end
 
