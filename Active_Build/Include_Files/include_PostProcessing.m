@@ -1064,7 +1064,7 @@ function [pathStr,t,marker]=FindTime2(pathStr)
     dirLoc=flip(find(~cellfun(@isempty,regexp(splitPath,'Dir'))));
     dirName=splitPath{dirLoc};
     splitDir=regexp(dirName,'_');
-    t=datenum(dirName(splitDir(1)+1:splitDir(2)-1),'yyyy-dd-mmTHHMMSS');
+    t=datenum(dirName(splitDir(1)+1:splitDir(2)-1),'yyyy-mm-ddTHHMMSS');
     marker=dirName(splitDir(2)+1:end);
 end
 
