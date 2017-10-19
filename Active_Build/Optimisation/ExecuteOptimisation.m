@@ -94,7 +94,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
             [~]=PrintEnd(procStr,1,tStart);
             % Convergence tests
             if ConvergenceTest_sloperefine(paramoptim,iterstruct,nIter,startIter) ...
-                    && (mod(nIter,2)==0) && (refStage~=refineSteps+1)
+                    && (mod(nIter,2)==0) && (refStage~=(refineSteps+refStart))
                 fprintf('\n Optimisation Stopped By Slope convergence condition \n');
                 break
             end
@@ -142,7 +142,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         %debugScript2
         
         save([outinfo(refStage).rootDir,filesep,'DvpAnisRefineMat.mat'])
-        if refStage<(refineSteps+1)
+        if refStage<(refineSteps+refStart)
             %save('DvpAnisRefineMat.mat')
             [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
@@ -315,7 +315,17 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                     isNewRestartSnake=true;
                 case 'outinfo'
                     
+                    outinfonew=outinfo;
                     outinfo=optionalin.(fieldsIn{ii});
+                    outinfo(end+1)=outinfonew;
+                    if ~isempty(regexp(outinfo(end-1).rootDir,'_[0-9]{1,2}&', 'once'))
+                        numFinStage=regexprep(regexp(outinfo(end-1).rootDir,...
+                            '_[0-9]{1,2}&','match'),'_','');
+                        for jj=1:str2double(numFinStage{1})
+                            outinfo(end).rootDir=[outinfo(end).rootDir,'_',int2str(jj)];
+                        end
+                        copyfile(outinfonew.rootDir,outinfo(end).rootDir)
+                    end
                     repeatflag=false;
                 otherwise
                     warning([fieldsIn{ii},' is an unhandled restart input'])
