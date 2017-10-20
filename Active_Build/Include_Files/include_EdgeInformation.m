@@ -124,9 +124,14 @@ function [loop]=GenerateEdgeLoop(grid,boundstr,isReshape)
     if isReshape
         isEdge=[grid.edge(:).(boundstr{1})];
         [loop]=OrderSurfaceVertexReshape(grid,isEdge,cond);
+        
+        
+        [loop]=EdgeInCondForVertex(loop,grid,cond);
     else
         isEdge=grid.edge.(boundstr{1});
         [loop]=OrderSurfaceVertex(grid,isEdge,cond);
+        [grid]=ModifUnstructured(grid);
+        [loop]=EdgeInCondForVertex(loop,grid,cond);
     end
 end
 

@@ -1610,7 +1610,7 @@ function [coeffList]=ReturnSmoothingCoeff(smoothType,nCell,nSmooth)
         coeffstructure(ii).minCell=numel(coeffstructure(ii).coeff);
     end
     
-    if ~strcmp(smoothType,'peaksmooth')
+    if ~(strcmp(smoothType,'peaksmooth') || strcmp(smoothType,'exact') )
         minCell=[coeffstructure(:).minCell];
         maxSmooth=[coeffstructure(:).maxsmooth];
         posValid=find((minCell<=nCell) & (maxSmooth<=nSmooth));

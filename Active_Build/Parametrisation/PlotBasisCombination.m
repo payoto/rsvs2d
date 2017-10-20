@@ -99,6 +99,164 @@ title('Derivatives')
 legend(lGrad,legEntry)
 coeffstruct.peaksmooth.coeff=coeffs;
 coeffstruct.peaksmooth.maxsmooth=10;
+%% Sequential Peak Scaling 2
+
+nBases=10;
+matCoeff=double(matCoeff);
+
+desRange=[-30 30];
+xpeak=@(a,b) -b./(2*a);
+peakHeight=@(a,b,c,xp) a.*xp.^2+b.*xp+c;
+basisInd=0;
+coeffs=1;
+basePeak=peakHeight(matCoeff(1,1),matCoeff(2,1),matCoeff(3,1),...
+xpeak(matCoeff(1,1),matCoeff(2,1)));
+legEntry={};
+
+lBasis(1)=PlotBasisSums(desRange,d,pp,-1:1,[0 1 0]);
+legEntry{1}=['Smoothing Level: ',int2str(0)];
+for ii=1:nBases
+    
+    actPoly=ii-basisInd+1;
+    a=sum(matCoeff(1,actPoly).*coeffs);
+    b=sum(matCoeff(2,actPoly).*coeffs);
+    c=sum(matCoeff(3,actPoly).*coeffs);
+    xp=xpeak(a,b);
+    peakHeightVal=peakHeight(a,b,c,xpeak(a,b));
+    bCoeff=matCoeff(:,1)+matCoeff(:,1+ii*2);
+    basePeak=peakHeight(bCoeff(1,1),bCoeff(2,1),bCoeff(3,1),...
+        xpeak(bCoeff(1,1),bCoeff(2,1)));
+    bxp=xpeak(bCoeff(1),bCoeff(2));
+    offSetRatio=(bxp+abs(bxp-xp))/(bxp+abs(bxp-d));
+    
+    newCoeff=-peakHeightVal/basePeak*offSetRatio;
+    
+    coeffs=[newCoeff,coeffs,newCoeff];
+    
+    basisInd=-ii:ii;
+    lBasis(ii+1)=PlotBasisSums(desRange,d,pp,basisInd,coeffs);
+    
+    legEntry{ii+1}=['Smoothing Level: ',int2str(ii)];
+end
+h=figure('Name','Sequential Peak basis smoothing');
+ax=subplot(1,2,1);
+lNew=copyobj(lBasis,ax);
+cOrd=get(gca,'ColorOrder');
+for ii=1:length(lNew)
+    lNew(ii).LineStyle='-';
+    lNew(ii).Color=cOrd(mod(ii-1,7)+1,:);
+end
+title('Smoothed basis function')
+legend(lNew,legEntry)
+overShoot=[];
+for ii=1:length(lNew)
+    overShoot(ii)=abs(min(lNew(ii).YData))/abs(max(lNew(ii).YData));
+end
+subplot(2,2,4)
+semilogy(0:nBases,overShoot)
+xlabel('Smoothing Level')
+ylabel('Overshoot/peak')
+title('Overshoot Comparison')
+subplot(2,2,2)
+hold on
+lGrad=[];
+for ii=1:length(lNew)
+    
+    grad=[lNew(ii).YData(1)-lNew(ii).YData(2),...
+        lNew(ii).YData(1:end-2)-lNew(ii).YData(3:end),...
+        lNew(ii).YData(end-1)-lNew(ii).YData(end)]./...
+        [lNew(ii).XData(1)-lNew(ii).XData(2),...
+        lNew(ii).XData(1:end-2)-lNew(ii).XData(3:end),...
+        lNew(ii).XData(end-1)-lNew(ii).XData(end)];
+    lGrad(ii)=plot(lNew(ii).XData,grad);
+end
+title('Derivatives')
+legend(lGrad,legEntry)
+coeffstruct.peaksmooth.coeff=coeffs;
+coeffstruct.peaksmooth.maxsmooth=10;
+
+%% Sequential Peak Scaling 3
+
+nBases=10;
+matCoeff=double(matCoeff);
+
+desRange=[-30 30];
+xpeak=@(a,b) -b./(2*a);
+peakHeight=@(a,b,c,xp) a.*xp.^2+b.*xp+c;
+basisInd=0;
+coeffs=1;
+basePeak=peakHeight(matCoeff(1,1),matCoeff(2,1),matCoeff(3,1),...
+xpeak(matCoeff(1,1),matCoeff(2,1)));
+legEntry={};
+
+lBasis(1)=PlotBasisSums(desRange,d,pp,-1:1,[0 1 0]);
+legEntry{1}=['Smoothing Level: ',int2str(0)];
+for ii=1:nBases
+    
+    actPoly=ii-basisInd+1;
+    actPoly=actPoly+1;
+    a=sum(matCoeff(1,actPoly).*coeffs);
+    b=sum(matCoeff(2,actPoly).*coeffs);
+    c=sum(matCoeff(3,actPoly).*coeffs);
+    xp=xpeak(a,b);
+    peakHeightVal=peakHeight(a,b,c,xpeak(a,b));
+    
+    currCoeff=matCoeff(:,2)+matCoeff(:,2+ii*2);
+    
+    bCoeff=matCoeff(:,1)+matCoeff(:,1+ii*2);
+    basePeak=peakHeight(bCoeff(1,1),bCoeff(2,1),bCoeff(3,1),...
+        xpeak(bCoeff(1,1),bCoeff(2,1)));
+    bxp=xpeak(bCoeff(1),bCoeff(2));
+    offSetRatio=(bxp+abs(bxp-xp))/(bxp+abs(bxp-d));
+    
+    newCoeff=-peakHeightVal/basePeak*offSetRatio;
+    
+    newCoeff=-mean([a,b,c]'./currCoeff);
+    
+    coeffs=[newCoeff,coeffs,newCoeff];
+    
+    basisInd=-ii:ii;
+    lBasis(ii+1)=PlotBasisSums(desRange,d,pp,basisInd,coeffs);
+    
+    legEntry{ii+1}=['Smoothing Level: ',int2str(ii)];
+end
+h=figure('Name','Sequential Peak basis smoothing');
+ax=subplot(1,2,1);
+lNew=copyobj(lBasis,ax);
+cOrd=get(gca,'ColorOrder');
+for ii=1:length(lNew)
+    lNew(ii).LineStyle='-';
+    lNew(ii).Color=cOrd(mod(ii-1,7)+1,:);
+end
+title('Smoothed basis function')
+legend(lNew,legEntry)
+overShoot=[];
+for ii=1:length(lNew)
+    overShoot(ii)=abs(min(lNew(ii).YData))/abs(max(lNew(ii).YData));
+end
+subplot(2,2,4)
+semilogy(0:nBases,overShoot)
+xlabel('Smoothing Level')
+ylabel('Overshoot/peak')
+title('Overshoot Comparison')
+subplot(2,2,2)
+hold on
+lGrad=[];
+for ii=1:length(lNew)
+    
+    grad=[lNew(ii).YData(1)-lNew(ii).YData(2),...
+        lNew(ii).YData(1:end-2)-lNew(ii).YData(3:end),...
+        lNew(ii).YData(end-1)-lNew(ii).YData(end)]./...
+        [lNew(ii).XData(1)-lNew(ii).XData(2),...
+        lNew(ii).XData(1:end-2)-lNew(ii).XData(3:end),...
+        lNew(ii).XData(end-1)-lNew(ii).XData(end)];
+    lGrad(ii)=plot(lNew(ii).XData,grad);
+end
+title('Derivatives')
+legend(lGrad,legEntry)
+coeffstruct.peaksmooth.coeff=coeffs;
+coeffstruct.peaksmooth.maxsmooth=10;
+
 %% Poly coeff smoothing
 matCoeff=double(matCoeff);
 nBases=30;
