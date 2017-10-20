@@ -7,7 +7,7 @@ function BP3_N12MeshMotionLocalRefineRestart(gridCase,optim)
     
     
     
-    distinct=[gridCase,'_',optim,'__1_2_3_4'];
+    distinct=[gridCase,'_',optim,'__1_2_3_4_5_6'];
     preStr='^RestartOptim.*_MMesh_';
     postStr='.mat';
     
@@ -16,9 +16,12 @@ function BP3_N12MeshMotionLocalRefineRestart(gridCase,optim)
     preStr
     postStr
     [restartPath]=IdentifyRestart(restartDir,distinct,preStr,postStr);
-    restartCell={restartPath,{optim,true}};
-    funcCall=sprintf('N12_LRef_MMeshre(''%s'',''%s'')',gridCase,optim);
+    
+    funcCall=sprintf('N12_LRef_MMesh(''%s'',''%s'')',gridCase,optim);
     disp(funcCall)
+    resdat=load(restartPath);
+    
+    restartCell={restartPath,{optim,~mod(numel(resdat.optimstruct),2)}};
     ExecuteOptimisation(funcCall,restartCell);
     
 

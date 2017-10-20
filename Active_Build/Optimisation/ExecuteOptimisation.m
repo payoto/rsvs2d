@@ -318,11 +318,12 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                     outinfonew=outinfo;
                     outinfo=optionalin.(fieldsIn{ii});
                     outinfo(end+1)=outinfonew;
-                    if ~isempty(regexp(outinfo(end-1).rootDir,'_[0-9]{1,2}&', 'once'))
+                    if ~isempty(regexp(outinfo(end-1).rootDir,'_[0-9]{1,2}$', 'once'))
                         numFinStage=regexprep(regexp(outinfo(end-1).rootDir,...
-                            '_[0-9]{1,2}&','match'),'_','');
+                            '_[0-9]{1,2}$','match'),'_','');
                         for jj=1:str2double(numFinStage{1})
                             outinfo(end).rootDir=[outinfo(end).rootDir,'_',int2str(jj)];
+                            outinfo(end).marker=[outinfo(end).marker,'_',int2str(jj)];
                         end
                         copyfile(outinfonew.rootDir,outinfo(end).rootDir)
                     end
@@ -2777,8 +2778,8 @@ function [loop]=GenerateSnakStartLoop(gridrefined2,boundstr)
     
     isEdge=[gridrefined2.edge(:).(boundstr{1})];
     cond=boundstr{3};
-    [loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
-    
+    %[loop]=OrderSurfaceVertexReshape(gridrefined2,isEdge,cond);
+    [loop]=GenerateEdgeLoop(gridrefined2,boundstr,1);
 end
 
 function [iterstruct]=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,...

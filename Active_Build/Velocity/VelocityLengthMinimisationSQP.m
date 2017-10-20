@@ -1033,18 +1033,18 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     h_vec(rmvCol)=[];
     
     
-    if rcond(Hf)>1e-15
-        Bkinv=(Hf)^(-1);
-        matToInv=(Dh'*Bkinv*Dh);
-        condMat=rcond(matToInv);
-        fprintf(' cond: %.3e -', condMat)
-        if true %rcond(matToInv)>1e-17
-            u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
-        else
-            u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
-        end
-        Deltax=-Bkinv*(Df+Dh*u_kp1);
-    else
+%     if rcond(Hf)>1e-15
+%         Bkinv=(Hf)^(-1);
+%         matToInv=(Dh'*Bkinv*Dh);
+%         condMat=rcond(matToInv);
+%         fprintf(' cond: %.3e -', condMat)
+%         if true %rcond(matToInv)>1e-17
+%             u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+%         else
+%             u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+%         end
+%         Deltax=-Bkinv*(Df+Dh*u_kp1);
+%     else
         %Bkinv=(Hf)^(-1);
         matToInv=(Dh'*(Hf\Dh));
         condMat=rcond(matToInv);
@@ -1055,7 +1055,7 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
             u_kp1=(Dh'*(Hf\Dh))\(h_vec-Dh'*(Hf\Df));
         end
         Deltax=-Hf\(Df+Dh*u_kp1);
-    end
+%     end
     
     DeltaxFin=zeros(size(isFreeze));
     DeltaxFin(~isFreeze)=Deltax;
@@ -1086,18 +1086,18 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,Dh,h_vec,isFreez
     
     
     
-    if rcond(HL)>1e-15
-        Bkinv=(HL)^(-1);
-        matToInv=(Dh'*Bkinv*Dh);
-        condMat=rcond(matToInv);
-        fprintf(' cond: %.3e -', condMat)
-        if true %rcond(matToInv)>1e-17
-            u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
-        else
-            u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
-        end
-        Deltax=-Bkinv*(Df+Dh*u_kp1);
-    else
+%     if rcond(HL)>1e-15
+%         Bkinv=(HL)^(-1);
+%         matToInv=(Dh'*Bkinv*Dh);
+%         condMat=rcond(matToInv);
+%         fprintf(' cond: %.3e -', condMat)
+%         if true %rcond(matToInv)>1e-17
+%             u_kp1=matToInv\(h_vec-Dh'*Bkinv*Df);
+%         else
+%             u_kp1=pinv(matToInv)*(h_vec-Dh'*Bkinv*Df);
+%         end
+%         Deltax=-Bkinv*(Df+Dh*u_kp1);
+%     else
         %Bkinv=(Hf)^(-1);
         matToInv=(Dh'*(HL\Dh));
         condMat=rcond(matToInv);
@@ -1108,7 +1108,10 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,Dh,h_vec,isFreez
             u_kp1=(Dh'*(HL\Dh))\(h_vec-Dh'*(HL\Df));
         end
         Deltax=-HL\(Df+Dh*u_kp1);
-    end
+%     end
+    DeltaxFin=zeros(size(isFreeze));
+    DeltaxFin(~isFreeze)=Deltax;
+    lagMulti(actCol)=u_kp1;
 end
 
 function [DeltaxFin,lagMulti]=SQPStepFreeze_quadprog(Df,Hf,Dh,h_vec,isFreeze)

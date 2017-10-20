@@ -972,6 +972,15 @@ function [paroptim]=TestlinProgSmooth()
     [paroptim]=invdestopo('contcurvevol',1,'m4412',0);
     paroptim.parametrisation.optiminit.modeSmoothType='optimlinprog';
 end
+
+function paroptim=TestExactSmooth()
+    
+    paroptim=invdestopo('curvelength',3,'m244',1);
+    
+    
+    paroptim.general.maxIter=4;
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+end
 %% Test cases for length Area
 
 function [paroptim]=Test_smoothCG_Area()
@@ -1950,7 +1959,7 @@ function paroptim=invdeslocal_test6(gridCase,refmethod,cornAct,ratioPos)
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
 end
 
-function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
+function paroptim=invdestopo(refcrit,cornAct,aeroName,objtype)
     
     % refcrit = 'curvelength' 'contcurvevol'
     gridCase='uo';
@@ -2000,7 +2009,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,lvlExtra)
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
-    switch lvlExtra
+    switch objtype
         case 0
             paroptim.obj.invdes.profileComp='area';
         case 1
