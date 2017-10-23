@@ -1026,7 +1026,7 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     %h_vec(rmvCol)=[];
     % output vector for lagrange multiplier
     lagMulti=zeros([length(Dh(1,:)),1]);
-    actCol=(sum(Dh~=0)~=0);
+    actCol=find(sum(Dh~=0)~=0);
     
     rmvCol=find(sum(Dh~=0)==0);
     Dh(:,rmvCol)=[];
@@ -1046,12 +1046,20 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
 %         Deltax=-Bkinv*(Df+Dh*u_kp1);
 %     else
         %Bkinv=(Hf)^(-1);
+        
+        newOrd=1:numel(actCol);
         matToInv=(Dh'*(Hf\Dh));
         condMat=rcond(matToInv);
         fprintf(' cond: %.3e -', condMat)
-        if rcond(matToInv)>1e-15
+        if condMat>1e-15
             u_kp1=matToInv\(h_vec-Dh'*(Hf\Df));
+        elseif condMat~=0
+            u_kp1=(Dh'*(Hf\Dh))\(h_vec-Dh'*(Hf\Df));
         else
+            [~,newOrd]=sort(sum(abs(Dh)));
+            Dh=Dh(:,newOrd);
+            h_vec=h_vec(newOrd);
+            condMat=rcond((Dh'*(Hf\Dh)));
             u_kp1=(Dh'*(Hf\Dh))\(h_vec-Dh'*(Hf\Df));
         end
         Deltax=-Hf\(Df+Dh*u_kp1);
@@ -1059,7 +1067,7 @@ function [DeltaxFin,lagMulti,condMat]=SQPStepFreeze(Df,Hf,Dh,h_vec,isFreeze)
     
     DeltaxFin=zeros(size(isFreeze));
     DeltaxFin(~isFreeze)=Deltax;
-    lagMulti(actCol)=u_kp1;
+    lagMulti(actCol(newOrd))=u_kp1;
 end
 
 function [DeltaxFin,lagMulti,condMat]=SQPStepLagFreeze(Df,Hf,HA,Dh,h_vec,isFreeze)

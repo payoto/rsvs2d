@@ -940,6 +940,7 @@ function [paroptim]=TestVolScale()
     paroptim.general.maxIter=6;
     paroptim.general.worker=4;
     
+    %paroptim.parametrisation.snakes.force.vel.algo='HF';
 end
 
 function [paroptim]=TestProfConstr()
@@ -977,8 +978,7 @@ function paroptim=TestExactSmooth()
     
     paroptim=invdestopo('curvelength',3,'m244',1);
     
-    
-    paroptim.general.maxIter=4;
+    %paroptim.general.maxIter=4;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
 end
 %% Test cases for length Area
@@ -2008,7 +2008,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,objtype)
     paroptim.refine.rankType=refmethod;
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
-    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+    paroptim.parametrisation.optiminit.modeSmoothType='exact';%'peaksmooth';
     switch objtype
         case 0
             paroptim.obj.invdes.profileComp='area';
