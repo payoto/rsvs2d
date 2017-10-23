@@ -183,7 +183,7 @@ function [snaxel,snakposition,loopsnaxel]=FinishSnakes(snaxel,...
     
 end
 
-function [snaxel,snakposition,sensSnax,volumefraction,sensSnaxRaw]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
+function [snaxel2,snakposition2,sensSnax,volumefraction,sensSnaxRaw]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
@@ -193,9 +193,21 @@ function [snaxel,snakposition,sensSnax,volumefraction,sensSnaxRaw]=GetSnaxelSens
     forceparam.isLast=true;
     %     forceparam.lengthEpsilon=0;
     %     forceparam.distEpsilon=0;
-    [snaxel,snakposition,~,~,sensSnax]...
+    [snaxel2,snakposition2,~,~,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
+    if (all(sensSnax(:)==0))
+        forceparam.vel.algo='HF';
+        [snaxel2,snakposition2,~,~,sensSnax]...
+            =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
+            coeffstructure,forceparam);
+        warning('Snaxel Sensitivity algorithm changed to HF for stability')
+        if (all(sensSnax(:)==0))
+            errstruct.identifier='Snakes:Sensitivity:EmptySens';
+            errstruct.identifier='The snaxel sensitivity produced by the SQP is invalid';
+            error(errstruct)
+        end
+    end
     sensSnaxRaw=sensSnax;
     sensSnaxRaw(:,find(any(sensSnax~=0)))=sensSnax(:,find(any(sensSnax~=0)))./...
         repmat(sqrt(sum(sensSnax(:,find(any(sensSnax~=0))).^2)),[size(sensSnax,1),1]);

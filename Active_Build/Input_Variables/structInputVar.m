@@ -82,7 +82,7 @@ function paramsnakesstep=default_snakes_step()
     paramsnakesstep.vSwitch=1e-15;
     paramsnakesstep.dtRatio=5;
     paramsnakesstep.snaxInitPos=1e-4;
-    paramsnakesstep.multiStepConv=5e-4;
+    paramsnakesstep.multiStepConv=0;
     
     paramsnakesstep.convCheckRate=100;
     paramsnakesstep.convCheckRange=15;
