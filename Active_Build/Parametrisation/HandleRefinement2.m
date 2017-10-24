@@ -138,7 +138,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     
     
     if isempty(returnSub)
-        disp('FindDir Could not find requested item')
+        fprintf('FindDir Could not find requested item %s in:\n%s \n',strDir,rootDir)
     end
     for ii=1:length(returnSub)
         returnPath{ii}=[rootDir,filesep,subDir(returnSub(ii)).name];
