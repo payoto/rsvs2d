@@ -230,8 +230,8 @@ function [loop]=EdgeInCondForVertex(loop,gridRefined,boundStr)
     edgeVertInd=[gridRefined.edge.vertexindex];
     edgeCellInd=[gridRefined.edge.cellindex];
     edgeInd=[gridRefined.edge.index];
-    cellInd=[gridRefined.cell.index];
-    cellFill=[gridRefined.cell.fill];
+    cellInd=[0,gridRefined.cell.index];
+    cellFill=[0,gridRefined.cell.fill];
     
     switch boundStr
         case '0bound'

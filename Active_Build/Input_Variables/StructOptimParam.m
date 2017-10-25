@@ -1964,7 +1964,7 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,objtype)
     % refcrit = 'curvelength' 'contcurvevol'
     gridCase='uo';
     ratioPos=1;
-    lvl=8;
+    lvl=12;
     [aeroName]=MultiTopoAeroCases(aeroName);
     paroptim=refsweeplocal(gridCase,aeroName,100,lvl);
     

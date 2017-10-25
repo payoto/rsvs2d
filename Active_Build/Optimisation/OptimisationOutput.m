@@ -1699,7 +1699,9 @@ function [h,directionChange]=PlotGradients(paramoptim,optimstruct)
     ii=ii+1;
     legend(l)
     ax=subplot(2,3,6);
-    [ax]=PlotDiffVsCFDConv(optimstruct,ax);
+    if isfield(optimstruct(1).population(1).additional,'res')
+        [ax]=PlotDiffVsCFDConv(optimstruct,ax);
+    end
 end
 
 function [ax,h]=PlotDiffVsCFDConv(optimstruct,ax)

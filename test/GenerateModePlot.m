@@ -211,7 +211,7 @@ end
 
 %%
 
-for ii=[2 ];
+for ii=[8];
     
     h=findobj(ii,'type','axes');
     if numel(h)>0
