@@ -23,7 +23,12 @@ function [nurbstruct,loop]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
     
     for jj=1:size(nurbstruct,1)
         for ii=1:size(nurbstruct,2)
-            u=linspace(0,1,20*str2double(cellStr{jj})*24+1);
+            if isfinite(str2double(cellStr{jj}))
+                n=str2double(cellStr{jj});
+            else
+                n=10;
+            end
+            u=linspace(0,1,20*n*24+1);
             C=PlotNURBS(u,nurbstruct(jj,ii).P,nurbstruct(jj,ii).U,nurbstruct(jj,ii).w,2);
             loop(jj,ii).nurbs.pts=C;
             loop(jj,ii).nurbs.ctrl=nurbstruct(jj,ii).P;
@@ -80,9 +85,10 @@ function [nurbstruct,loop]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
     ax(2).YTick=10.^-[8:-2:1];
     ax(2).YGrid='on';
     
-   
-    PlotErrorConvergence(loop,cellfun(@str2num,cellStr))
-    
+   try
+        PlotErrorConvergence(loop,cellfun(@str2num,cellStr))
+   catch
+   end
 end
 
 function []=PlotErrorConvergence(loop,vec)

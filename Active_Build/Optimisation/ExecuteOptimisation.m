@@ -454,7 +454,8 @@ function []=StartParallelPool(nWorker,nTry)
         saveProfile(clusterObj);
         
         try
-            parpool(poolName)
+            p=parpool(poolName);
+            p.IdleTimeout=Inf
         catch ME
             
         end
@@ -2066,7 +2067,7 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
             disp('  ')
             disp('--------------------------------------------------------------------------------------------')
             disp(procStart)
-            disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            disp(['    Time Elapsed:',int2str(floor(tElapsed*24)),datestr(tElapsed,':MM:SS:FFF')]);
             disp(datestr(tStart,0))
             disp('--------------------------------------------------------------------------------------------')
             disp('********************************************************************************************')
@@ -2075,7 +2076,7 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
         case 1
             disp('  ')
             disp('--------------------------------------------------------------------------------------------')
-            disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            disp(['    Time Elapsed:',int2str(floor(tElapsed*24)),datestr(tElapsed,':MM:SS:FFF')]);
             disp(procStart)
             disp('--------------------------------------------------------------------------------------------')
             disp('--------------------------------------------------------------------------------------------')
@@ -2084,7 +2085,7 @@ function [tElapsed]=PrintEnd(procStr,lvl,tStart)
         case 2
             
             
-            disp(['    Time Elapsed:',datestr(tElapsed,'HH:MM:SS:FFF')]);
+            disp(['    Time Elapsed:',int2str(floor(tElapsed*24)),datestr(tElapsed,':MM:SS:FFF')]);
             disp(procStart)
             disp('-----------------------')
             disp('  ')
