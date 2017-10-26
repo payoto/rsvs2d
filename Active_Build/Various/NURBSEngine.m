@@ -28,7 +28,7 @@ function [nurbstruct,loop]=NURBSEngine(runType,snaxel,snaxgrid,varargin)
             else
                 n=10;
             end
-            u=linspace(0,1,20*n*24+1);
+            u=linspace(0,1,5*n*24+1);u(end)=[];
             C=PlotNURBS(u,nurbstruct(jj,ii).P,nurbstruct(jj,ii).U,nurbstruct(jj,ii).w,2);
             loop(jj,ii).nurbs.pts=C;
             loop(jj,ii).nurbs.ctrl=nurbstruct(jj,ii).P;
@@ -299,7 +299,7 @@ function [nurbstruct]=BuildNurbsLoops(nurbstructPart,nextsub,deg)
         nurbstruct(nLoops).w=[nurbstruct(nLoops).w;nurbstructPart(currprec).w(3)];
         d=nurbstruct(nLoops).d;
         nurbstruct(nLoops).U=[zeros(d,1);(ceil((0:size(nurbstruct(nLoops).P,1))/...
-            2)/ceil(size(nurbstruct(nLoops).P,1))/2)';ones(d,1)];
+            2)/ceil(size(nurbstruct(nLoops).P,1)/2))';ones(d,1)];
         nLoops=nLoops+1;
     end
 end
@@ -440,7 +440,7 @@ function Z = SplineBasis(i,p,u,U)  % from Dom
     
     i = i+1;
     if p==0
-        % Z=zeros(1,length(u));
+         Z=zeros(1,length(u));
         for j=1:length(u);
             if j==length(u)
                 if u(j)>=U(i) && u(j)<=U(i+1)

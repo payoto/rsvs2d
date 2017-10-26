@@ -1,7 +1,7 @@
 function [a]=opstruct(operator,varargin)
     % Takes in an operator and then returns
-    
-    if numel(varargin)==2
+    flag2varop=(numel(varargin)==2) && (numel(operator)<3) && ischar(operator);
+    if flag2varop
         a=varargin{1};
         b=varargin{2};
         operator2='';
