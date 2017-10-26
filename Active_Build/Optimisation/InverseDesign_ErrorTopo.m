@@ -50,6 +50,8 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTopo(analysisLoop,targCoord);
         case 'areapdist'
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaPRawDistTopo(analysisLoop,targCoord);
+        case 'normdist'
+            [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(analysisLoop,targCoord);
             %ax.YScale='log';
         otherwise
             error('not coded yet')
@@ -60,13 +62,67 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
     PlotLoop(analysisLoop,'coord')
     hold on
     PlotLoop(targCoord,'coord')
-
-    patches=PlotLoop(indepLoop,'coord',1);
-    [patches.FaceAlpha]=deal(0.2);
-    [patches.LineStyle]=deal('none');
+    if exist('indeploop','var')
+        patches=PlotLoop(indepLoop,'coord',1);
+        [patches.FaceAlpha]=deal(0.2);
+        [patches.LineStyle]=deal('none');
+    end
     legend('snake points','Target points')
     ax=subplot(2,1,2);
     plotPoints(modifiedDistance)
+    
+end
+
+function [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(testLoop,targLoop)
+    % test intersection and internal with inpolygon
+    % targLoop ->
+    % testLoop |
+    typeLoop='coord';
+    
+    [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop);
+    
+    % once tested establish the appropriate objective function
+    objChoice=all(any(intersectTable~=0,1));
+    
+    %
+    if objChoice % use iterative area condition
+        
+        errorMeasure=cell([1,numel(testLoop)]);
+        modifiedDistance=cell([1,numel(testLoop)]);
+        for ii=1:numel(testLoop)
+            targActTest=find(intersectTable(ii,:));
+            errorMeasureTemp=cell([1,numel(targActTest)]);
+            for jj=1:numel(targActTest)
+                analysisCoord=RemoveIdenticalConsecutivePoints(targLoop(...
+                    targActTest(jj)).coord);
+                targCoord=RemoveIdenticalConsecutivePoints(testLoop(ii).coord);
+                [errorMeasureTemp{jj},modifiedDistanceTemp]=CompareProfilesDistance2(analysisCoord,targCoord);
+                modifiedDistance{ii}(:,1)=modifiedDistanceTemp(:,1);
+                modifiedDistance{ii}(:,1+jj)=modifiedDistanceTemp(:,2);
+            end
+            modifiedDistance{ii}(:,2)=sum(modifiedDistance{ii}(:,2:end),2);
+            errorMeasure{ii}.sum=sum(modifiedDistance{ii}(:,2));
+            errorMeasure{ii}.mean=mean(modifiedDistance{ii}(:,2));
+            errorMeasure{ii}.std=std(modifiedDistance{ii}(:,2));
+            errorMeasure{ii}.max=max(modifiedDistance{ii}(:,2));
+            errorMeasure{ii}.min=min(modifiedDistance{ii}(:,2));
+            
+        end
+        for ii=2:numel(errorMeasure)
+            errorMeasure{1}=opstruct('+',errorMeasure{[1,ii]});
+        end
+        errorMeasure=errorMeasure{1};
+        modifiedDistance2=zeros([0 2]);
+        for ii=1:numel(modifiedDistance)
+            modifiedDistance2=[modifiedDistance2;[1,0];modifiedDistance{ii}];
+        end
+        modifiedDistance=modifiedDistance2;
+%         [~,iSort]=sort(modifiedDistance(:,1));
+%         modifiedDistance=modifiedDistance(iSort,:);
+    else % use nearest neighbour aproach with area matching
+        error('Profiles are not valid for distance matching')
+    end
+    
     
 end
 
