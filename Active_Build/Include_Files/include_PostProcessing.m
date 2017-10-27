@@ -831,7 +831,6 @@ end
 
 %% Tecplot
 
-
 function [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID,time)
     
     
@@ -966,8 +965,6 @@ end
 
 %% Incomplete processing
 
-
-
 function [outinfo]=ReconstructOutinfo(optimstruct)
     
     allRootDir=repmat(struct('rootDir',''),[1 numel(optimstruct)]);
@@ -1054,7 +1051,6 @@ function [t,marker]=FindTime(pathStr)
     marker=regexprep(returnName,'.txt','');
     
 end
-
 
 function [pathStr,t,marker]=FindTime2(pathStr)
     
@@ -1154,3 +1150,5 @@ function [isgreedy]=TestGreed(optimMethod)
     
     
 end
+
+
