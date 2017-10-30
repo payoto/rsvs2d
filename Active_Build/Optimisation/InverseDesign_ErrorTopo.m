@@ -51,7 +51,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
         case 'areapdist'
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaPRawDistTopo(analysisLoop,targCoord);
         case 'area2parea'
-            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredpAreaTopo(testLoop,targLoop);
+            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredpAreaTopo(analysisLoop,targCoord);
         case 'normdist'
             [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(analysisLoop,targCoord);
             %ax.YScale='log';
