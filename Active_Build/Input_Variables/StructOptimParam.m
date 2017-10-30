@@ -1999,6 +1999,11 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,objtype)
         case 3
             paroptim.parametrisation.general.passDomBounds(1,:)=...
                 paroptim.parametrisation.general.passDomBounds(1,:)/1.2+0.1;
+        case 4 
+            paroptim.parametrisation.general.passDomBounds(1,:)=...
+                paroptim.parametrisation.general.passDomBounds(1,:)/1.2+0.1;
+            paroptim.parametrisation.optiminit.cellLevels=[12,2];
+            
     end
     
     paroptim.optim.CG.varActive='snaksensiv';
@@ -2011,12 +2016,14 @@ function paroptim=invdestopo(refcrit,cornAct,aeroName,objtype)
     paroptim.parametrisation.optiminit.modeSmoothType='exact';%'peaksmooth';
     switch objtype
         case 0
-            paroptim.obj.invdes.profileComp='area';
-        case 1
             paroptim.obj.invdes.profileComp='areasquared';
+        case 1
+            paroptim.obj.invdes.profileComp='area2parea';
         case 2
-            paroptim.obj.invdes.profileComp='areadist';
+            paroptim.obj.invdes.profileComp='area';
         case 3
+            paroptim.obj.invdes.profileComp='areadist';
+        case 4
             paroptim.obj.invdes.profileComp='areapdist';
         otherwise
             error('invalid profileComp')

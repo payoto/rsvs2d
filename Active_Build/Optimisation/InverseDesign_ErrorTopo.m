@@ -50,6 +50,8 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaRawDistTopo(analysisLoop,targCoord);
         case 'areapdist'
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaPRawDistTopo(analysisLoop,targCoord);
+        case 'area2parea'
+            [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredpAreaTopo(testLoop,targLoop);
         case 'normdist'
             [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(analysisLoop,targCoord);
             %ax.YScale='log';
@@ -178,6 +180,40 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTop
         funArea{1}=@(x) x.^2;
         funArea{2}=@(x) sqrt(x);
         [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea,funArea);
+    else % use nearest neighbour aproach with area matching
+        indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
+        [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
+        [errorMeasure,modifiedDistance]=NotIntersectCondition(targLoop,testLoop,typeLoop,errA);
+    end
+    
+    
+end
+function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredpAreaTopo(testLoop,targLoop)
+    % test intersection and internal with inpolygon
+    % targLoop ->
+    % testLoop |
+    typeLoop='coord';
+    
+    [intersectTable]=BuildIntersectionTable(testLoop,targLoop,typeLoop);
+    
+    % once tested establish the appropriate objective function
+    objChoice=all(any(intersectTable~=0,1));
+    
+    %
+    if objChoice % use iterative area condition
+        [indepLoop]=AreaErrorTopo(testLoop,targLoop);
+        
+        targArea=0;
+        for ii=1:numel(targLoop)
+            targArea=targArea+abs(CalculatePolyArea(targLoop(ii).coord));
+        end
+        funArea{1}=@(x) x.^2;
+        funArea{2}=@(x) sqrt(x);
+        [errorMeasure,modifiedDistance,indepLoop]=IndepProfileError(indepLoop,targArea,funArea);
+        [errorMeasure2,modifiedDistance2,indepLoop]=IndepProfileError(indepLoop,targArea);
+        
+        errorMeasure=opstruct(@(a,b)(a+b)/2,errorMeasure,errorMeasure2);
+        modifiedDistance=(modifiedDistance+modifiedDistance2)/2;
     else % use nearest neighbour aproach with area matching
         indepLoop=repmat(struct('coord',zeros([0 2])),[0 1]);
         [errA]=NotIntersectAreaCondition(targLoop,testLoop,typeLoop);
