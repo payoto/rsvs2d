@@ -1151,4 +1151,153 @@ function [isgreedy]=TestGreed(optimMethod)
     
 end
 
+%% Triangles support
 
+function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,structmesh)
+    % Loop is a set of closed loops
+    % typeLoop is the field from that structure to use
+    % structmesh is a structure with the following fields or a char
+    % .boundaryMarkers is used to mark boundaries as internal or external
+    %   depending on the final use of the mesh
+    %   It is structure =struct('loop',0,'outbound',0,'sym',0) or a char
+    % .flagInOut is used to differentiate between meshing inside geometries
+    %   and outside (Flow vs structure) 0=structural mesh 1=flow mesh
+    % .domainBound is the distance in chords from which the domain should be
+    %   generated
+    %  Information about .poly file : https://www.cs.cmu.edu/~quake/triangle.poly.html
+    
+    if ischar(structmesh)
+        [structmesh]=BoundaryMarkersCharCases(structmesh);
+    end
+    boundaryMarkers=structmesh.boundaryMarkers;
+    flagInOut=structmesh.flagInOut;
+    domainBound=structmesh.domainBound;
+    
+    polystruct=struct('vertex',zeros([0,4]),'segment',zeros([0,4]),'hole',zeros([0,3]));
+    % Builds Loops as .poly
+    [polystruct]=BuildPolyStruct(polystruct,loop,typeLoop,boundaryMarkers.loop,flagInOut);
+    
+    % Builds domain boundary if needed
+    if flagInOut
+        coord=vertcat(loop.(typeLoop));
+        dist=max((max(coord)-min(coord)))*domainBound;
+        ldom.coord=dist*[-1 -1; -1 1; 1 1; 1 -1]+repmat((max(coord)+min(coord))/2,[4,1]);
+        [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',...
+             boundaryMarkers.outbound,0);
+    end
+    
+    % output to file
+    FID=fopen(fileName,'w');
+    polyCell=WritePolyStruct2Cell(polystruct);
+    WriteToFile(polyCell,FID)
+    fclose(FID);
+end
+
+function [structmesh2]=BoundaryMarkersCharCases(structmesh)
+    switch structmesh
+        case 'cutcellflow'
+            structmesh2.boundaryMarkers=struct('loop',-2,'outbound',-1,'sym',-3);
+            structmesh2.flagInOut=1;
+            structmesh2.domainBound=25;
+        case 'su2'
+            
+            error('Not coded yet')
+            case 'structures'
+                error('Not coded yet')
+        case 'none'
+            structmesh2.boundaryMarkers=struct('loop',0,'outbound',0,'sym',0);
+            structmesh2.flagInOut=1;
+            structmesh2.domainBound=25;
+        otherwise
+            warning('unrecognised boundaryMarkers')
+            boundaryMarkers=struct('loop',1,'outbound',1,'sym',1);
+    end
+    
+    
+end
+
+function [polyCell]=WritePolyStruct2Cell(polystruct)
+    
+    ii=1;
+    
+    dim=2;
+    isBoundMarker=1;
+    %  <# of vertices> <dimension (must be 2)> <# of attributes> <# of boundary markers (0 or 1)>
+    polyCell{ii}=sprintf('%i %i %i %i',size(polystruct.vertex,1),dim,...
+        size(polystruct.vertex,2)-(dim+1+isBoundMarker),isBoundMarker);
+    ii=ii+1;
+    polyCell{ii}=num2str(polystruct.vertex,'%i  %.24e    %.24e    %i');
+    ii=ii+1;
+    polyCell{ii}=sprintf('%i  %i',size(polystruct.segment,1),isBoundMarker);
+    ii=ii+1;
+    polyCell{ii}=num2str(polystruct.segment,'%i  %i    %i   %i');
+    ii=ii+1;
+    polyCell{ii}=sprintf('%i',size(polystruct.hole,1));
+    ii=ii+1;
+    polyCell{ii}=num2str(polystruct.hole,'%i  %.24e    %.24e');
+    
+end
+
+function [polystruct]=BuildPolyStruct(polystruct,loop,typeLoop,loopBoundMark,flagInOut)
+    % currently no support for "Attributes"
+    
+    [isInternal]=FindInternalLoop(loop,typeLoop);
+    isInternal=xor(isInternal,flagInOut);
+    
+    for ii=1:numel(loop)
+        tempVert=loop(ii).(typeLoop);
+        
+        tempVert=[size(polystruct.vertex,1)+[1:size(tempVert,1)]',...
+            tempVert,ones([size(tempVert,1),1])*loopBoundMark]; %#ok<AGROW>
+        
+        tempSegment=[size(polystruct.segment,1)+[1:size(tempVert,1)]',...
+            [tempVert(:,1),tempVert([2:end,1],1)]...
+            ,ones([size(tempVert,1),1])*loopBoundMark];
+        polystruct.vertex=[polystruct.vertex;tempVert];
+        polystruct.segment=[polystruct.segment;tempSegment];
+        if isInternal(ii)
+            [p]=FindInternalPoint(loop(ii).(typeLoop));
+            tempHole=[size(polystruct.hole,1)+1,p];
+            polystruct.hole=[polystruct.hole;tempHole];
+        end
+    end
+
+end
+
+function [p]=FindInternalPoint(coord)
+    np=size(coord,1);
+    eps=1e-6;
+    epsNorm=1e-12;
+    flagDone=false;
+    while ~flagDone
+        for jj=1:np
+            p1=coord(jj,:);
+            p2=coord(mod(jj,np)+1,:);
+            pr=(p1+p2)/2;
+            pvec=p1-p2;
+            if sqrt(sum(pvec.^2))>epsNorm
+                
+                pvec=([0 1; -1 0]*(pvec/sqrt(sum(pvec.^2))*eps)')';
+                pTest=repmat(pr,[2 1])+[1;-1]*pvec;
+                isIn=inpolygon(pTest(:,1),pTest(:,2),coord(:,1),coord(:,2));
+                if any(isIn)
+                    flagDone=true;
+                    break;
+                end
+            end
+        end
+        if ~epsNorm
+            flagDone=true;
+        end
+        if ~flagDone
+            eps=1e-10;
+            epsNorm=0;
+        end
+    end
+    p=pTest(find(isIn),:);
+    if isempty(p)
+        errstruct.message='Could not find an internal point to specify the hole of .poly file';
+        errstruct.identifier='mesh:triangle:polyFile:hole';
+        error(errstruct)
+    end
+end
