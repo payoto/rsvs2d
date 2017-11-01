@@ -64,7 +64,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
     PlotLoop(analysisLoop,'coord')
     hold on
     PlotLoop(targCoord,'coord')
-    if exist('indeploop','var')
+    if exist('indepLoop','var')
         patches=PlotLoop(indepLoop,'coord',1);
         [patches.FaceAlpha]=deal(0.2);
         [patches.LineStyle]=deal('none');
