@@ -1153,7 +1153,7 @@ end
 
 %% Triangles support
 
-function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,structmesh)
+function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,structmesh,nElmZone)
     % Loop is a set of closed loops
     % typeLoop is the field from that structure to use
     % structmesh is a structure with the following fields or a char
@@ -1165,27 +1165,34 @@ function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,
     % .domainBound is the distance in chords from which the domain should be
     %   generated
     %  Information about .poly file : https://www.cs.cmu.edu/~quake/triangle.poly.html
-    
+    if nargin<5
+        nElmZone=4000;
+    end
     if ischar(structmesh)
-        [structmesh]=BoundaryMarkersCharCases(structmesh);
+        [structmesh]=BoundaryMarkersCharCases(structmesh,nElmZone);
     end
     boundaryMarkers=structmesh.boundaryMarkers;
     flagInOut=structmesh.flagInOut;
     domainBound=structmesh.domainBound;
     
-    polystruct=struct('vertex',zeros([0,4]),'segment',zeros([0,4]),'hole',zeros([0,3]));
+    polystruct=struct('vertex',zeros([0,4]),'segment',zeros([0,4]),'hole',zeros([0,3]),'region',zeros([0,4]));
     % Builds Loops as .poly
     [polystruct]=BuildPolyStruct(polystruct,loop,typeLoop,boundaryMarkers.loop,flagInOut);
     
     % Builds domain boundary if needed
     if flagInOut
         coord=vertcat(loop.(typeLoop));
-        dist=max((max(coord)-min(coord)))*domainBound;
+        dist=max((max(coord)-min(coord)))*domainBound(1);
         ldom.coord=dist*[-1 -1; -1 1; 1 1; 1 -1]+repmat((max(coord)+min(coord))/2,[4,1]);
         [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',...
              boundaryMarkers.outbound,0);
+         [p]=FindInternalPoint(ldom.coord);
+        tempHole=[size(polystruct.region,1)+1,p,...
+            abs(CalculatePolyArea(ldom.coord)/domainBound(2))];
+        polystruct.region=[polystruct.region;tempHole];
     end
     
+    [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,structmesh);
     % output to file
     FID=fopen(fileName,'w');
     polyCell=WritePolyStruct2Cell(polystruct);
@@ -1193,12 +1200,81 @@ function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,
     fclose(FID);
 end
 
-function [structmesh2]=BoundaryMarkersCharCases(structmesh)
+
+
+function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,structmesh)
+    
+    normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
+    plotPoints= @(points) points;%plot(points([1:end,1],1),points([1:end,1],2),'-o');
+    
+    coord=vertcat(loop.(typeLoop));
+    ldom.coordbase=coord(convhull(coord(:,1),coord(:,2)),:);
+    
+    plotPoints(ldom.coordbase);
+    ldom.coordbase(1:2:size(ldom.coordbase,1)*2,:)=ldom.coordbase;
+    ldom.coordbase(2:2:end+1,:)=(ldom.coordbase(1:2:end,:)+ldom.coordbase([3:2:end,1],:))/2;
+     
+    plotPoints(ldom.coordbase);
+    
+    
+    ldom.normVec=(ldom.coordbase([2:end,1],:)-ldom.coordbase)./...
+        normRep(ldom.coordbase([2:end,1],:)-ldom.coordbase)+...
+        (ldom.coordbase-ldom.coordbase([end,1:end-1],:))./...
+        normRep(ldom.coordbase-ldom.coordbase([end,1:end-1],:));
+    ldom.normVec=([0 1;-1 0]*ldom.normVec')'./normRep(ldom.normVec);
+    
+    plotPoints(ldom.coordbase);
+    dist=[max(ldom.coordbase);min(ldom.coordbase)];
+    dist=dist(1,:)-dist(2,:);
+    ldom.coord=ldom.coordbase+ldom.normVec*max(dist)*0.05/2;
+    plotPoints(ldom.coordbase);
+    paramspline.splineCase='convhulltri';
+    [ldom.coordbase]=ResampleSpline(ldom.coordbase,paramspline);
+    plotPoints(ldom.coordbase);
+    ldom.normVec=(ldom.coordbase([2:end,1],:)-ldom.coordbase)./...
+        normRep(ldom.coordbase([2:end,1],:)-ldom.coordbase)+...
+        (ldom.coordbase-ldom.coordbase([end,1:end-1],:))./...
+        normRep(ldom.coordbase-ldom.coordbase([end,1:end-1],:));
+    ldom.normVec=([0 1;-1 0]*ldom.normVec')'./normRep(ldom.normVec);
+    
+    
+    for ii=1:size(structmesh.subDomains,1)
+        m=structmesh.subDomains(ii,1);
+        r=dist(1)/dist(2);
+        ldom.coord=ldom.coordbase+ldom.normVec*max(dist)*m/2;
+         plotPoints(ldom.coord);
+
+        [ldom.coord]=ResampleSpline(ldom.coord,paramspline);
+         plotPoints(ldom.coord);
+
+        [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',0,0);
+        [p]=FindInternalPoint(ldom.coord);
+        tempHole=[size(polystruct.region,1)+1,p,...
+            abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2))];
+        polystruct.region=[polystruct.region;tempHole];
+    end
+    
+    %         ldom.coord=ldom.coordbase-[-1 -1; -1 1; 1 1; 1 -1]*max(dist)*m/2;
+%         ldom.coord(:,1)=(ldom.coord(:,1)-mean(ldom.coord(:,1)))*...
+%             (max(r,1)*min(m,2)+max(m-2,2))*max(r,1)...
+%             +mean(ldom.coord(:,1));
+%         ldom.coord(:,2)=(ldom.coord(:,2)-mean(ldom.coord(:,2)))*...
+%             (max(1/r,1)*min(m,2)+max(m-2,2))*max(1/r,1)...
+%             +mean(ldom.coord(:,2));
+end
+function [structmesh2]=BoundaryMarkersCharCases(structmesh,nElmZone)
     switch structmesh
         case 'cutcellflow'
-            structmesh2.boundaryMarkers=struct('loop',-2,'outbound',-1,'sym',-3);
+            structmesh2.boundaryMarkers=struct('loop',-1,'outbound',-2,'sym',-3);
             structmesh2.flagInOut=1;
-            structmesh2.domainBound=25;
+            structmesh2.domainBound=[25 10];
+            % each line of subdomains are is a distance cage and the number
+            % of cells that must fit.
+%             structmesh2.subDomains=[.1 2*nElmZone;.25 nElmZone;.5 nElmZone;...
+%                 1 nElmZone;2 nElmZone;8 nElmZone];
+            structmesh2.subDomains=logspace(log10(.1),log10(20),15)';
+            structmesh2.subDomains(:,2)=logspace(log10(2),log10(1),15)'*nElmZone;
+            
         case 'su2'
             
             error('Not coded yet')
@@ -1208,6 +1284,7 @@ function [structmesh2]=BoundaryMarkersCharCases(structmesh)
             structmesh2.boundaryMarkers=struct('loop',0,'outbound',0,'sym',0);
             structmesh2.flagInOut=1;
             structmesh2.domainBound=25;
+            structmesh2.subDomains=zeros(0,2);
         otherwise
             warning('unrecognised boundaryMarkers')
             boundaryMarkers=struct('loop',1,'outbound',1,'sym',1);
@@ -1235,6 +1312,10 @@ function [polyCell]=WritePolyStruct2Cell(polystruct)
     polyCell{ii}=sprintf('%i',size(polystruct.hole,1));
     ii=ii+1;
     polyCell{ii}=num2str(polystruct.hole,'%i  %.24e    %.24e');
+    ii=ii+1;
+    polyCell{ii}=sprintf('%i',size(polystruct.region,1));
+    ii=ii+1;
+    polyCell{ii}=num2str(polystruct.region,'%i  %.24e    %.24e   %.24e');
     
 end
 

@@ -578,3 +578,25 @@ function [parspline]=CaseSpline_naca0012()
     %parspline.samplingScope='local';
     
 end
+
+function [parspline]=CaseSpline_convhulltri()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='l'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.typCurve='closed';
+    
+    parspline.distribution='calc';
+    parspline.domain='none'; % 'normalizeX' 'normalizeL'
+    parspline.scale=1;
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=101;
+    parspline.samplingDistrib='even';
+    parspline.splitProf=false;
+    parspline.typeInterp='linear';
+    %parspline.samplingScope='local';
+    
+end
