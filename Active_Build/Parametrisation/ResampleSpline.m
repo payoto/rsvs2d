@@ -125,6 +125,27 @@ function parList=ExtractParameterList(parType,points)
             parList=points(:,2);
         case 'l'
             parList=LengthProfile(points);
+        case 'clmma' % length + curvature
+            parList=LengthProfile(points);
+            parList=parList/max(parList);
+            [curvParam]=CurvatureProfile(points(1:end-1,:));
+            curvParam=sqrt([0;curvParam]);
+            n=max(ceil(0.1*size(points,1)),4);
+            %curvParam=flip(MovingAverage(flip(MovingAverage(curvParam'/max(curvParam),n)),n))';
+            curvParam=MovingAverageLoop(curvParam',n)';
+            curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
+            parList=parList+curvParam;
+            
+        case 'clint'
+            parList=LengthProfile(points);
+            parList=parList/max(parList);
+            [~,edgeCurvNorm]=CurvatureProfile(points(1:end-1,:));
+            edgeCurvNorm(end+1)=edgeCurvNorm(1);
+            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,edgeCurvNorm,0.015));
+            
+            curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
+            parList=1.5*parList+curvParam;
+            
         case 'i'
             parList=(0:(length(points(:,1))-1))/(length(points(:,1))-1);
         otherwise
@@ -177,6 +198,11 @@ end
 function [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList)
     
     nSample=parspline.samplingN;
+    if isempty(nSample)
+        nSample=size(normPoints,1);
+    elseif nSample<0
+        nSample=size(normPoints,1)*-nSample;
+    end
     eps=parspline.eps;
     [interestPoints]=FindLocalExtremum(parList,eps);
     
@@ -594,6 +620,28 @@ function [parspline]=CaseSpline_convhulltri()
     
     parspline.samplingParam='param';
     parspline.samplingN=101;
+    parspline.samplingDistrib='even';
+    parspline.splitProf=false;
+    parspline.typeInterp='linear';
+    %parspline.samplingScope='local';
+    
+end
+
+function [parspline]=CaseSpline_smoothpts()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='clint'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.typCurve='closed';
+    
+    parspline.distribution='calc';
+    parspline.domain='none'; % 'normalizeX' 'normalizeL'
+    parspline.scale=1;
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=[];
     parspline.samplingDistrib='even';
     parspline.splitProf=false;
     parspline.typeInterp='linear';

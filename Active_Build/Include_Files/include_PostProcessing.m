@@ -1200,8 +1200,6 @@ function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,
     fclose(FID);
 end
 
-
-
 function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,structmesh)
     
     normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
@@ -1262,6 +1260,7 @@ function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,struc
 %             (max(1/r,1)*min(m,2)+max(m-2,2))*max(1/r,1)...
 %             +mean(ldom.coord(:,2));
 end
+
 function [structmesh2]=BoundaryMarkersCharCases(structmesh,nElmZone)
     switch structmesh
         case 'cutcellflow'
