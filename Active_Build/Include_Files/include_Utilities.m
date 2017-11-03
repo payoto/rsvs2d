@@ -274,6 +274,33 @@ function [lengthParam,edgeLength]=LengthProfile(points)
     
 end
 
+function [curvParam,edgeCurvNorm,edgeCurve]=CurvatureProfile(points)
+    
+    curvFunc=@(pi,pip1,pim1,s1,s2)(-pi.*(s1+s2)+pip1.*s2+pim1.*s1)./(s1.^2.*s2+s2.^2.*s1);
+    normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
+
+    edgeCurve=curvFunc(points,points([2:end,1],:),...
+        points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
+        normRep(points-points([end,1:end-1],:)));
+    edgeCurvNorm=sqrt(sum(edgeCurve.^2,2));
+    curvParam=cumsum(edgeCurvNorm);
+    
+end
+
+function [curvParam,edgeCurvNorm,edgeCurve]=CurvatureRadiusProfile(points)
+    
+    curvFunc=@(pi,pip1,pim1,s1,s2)(-pi.*(s1+s2)+pip1.*s2+pim1.*s1)./(s1.^2.*s2+s2.^2.*s1);
+    normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
+
+    edgeCurve=curvFunc(points,points([2:end,1],:),...
+        points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
+        normRep(points-points([end,1:end-1],:)));
+    edgeCurvNorm=sqrt(sum(edgeCurve.^2,2));
+    curvParam=cumsum(edgeCurvNorm);
+    
+end
+
+
 function CopyFileLinux(p1,p2)
     
     system(['cp -rp ''',p1,''' ''',p2,'''']);
@@ -364,6 +391,61 @@ function [mma]=MovingAverage(dat,span)
     end
     mma=mma./mmaspanned;
 end
+
+function [mma]=MovingAverageCentral(dat,span)
+    
+    mma=zeros(size(dat));
+    mmaspanned=zeros(size(dat));
+    for ii=-ceil(span/2)+1:ceil(span/2)-1
+        inds=(1:size(dat,2))-ii;
+        indsDest=find(inds>0 & inds<=size(dat,2));
+        inds=inds(inds>0 & inds<=size(dat,2));
+        mmaspanned(:,indsDest)=mmaspanned(:,indsDest)+1;
+        mma(:,indsDest)=mma(:,indsDest)+dat(:,inds);
+    end
+    mma=mma./mmaspanned;
+end
+
+function [mma]=MovingAverageLoop(dat,span)
+    
+    mma=zeros(size(dat));
+    mmaspanned=zeros(size(dat));
+    for ii=-ceil(span/2)+1:ceil(span/2)-1
+        inds=mod((1:size(dat,2))-ii-1,size(dat,2))+1;
+        indsDest=find(inds>0 & inds<=size(dat,2));
+        inds=inds(inds>0 & inds<=size(dat,2));
+        mmaspanned(:,indsDest)=mmaspanned(:,indsDest)+1;
+        mma(:,indsDest)=mma(:,indsDest)+dat(:,inds);
+    end
+    mma=mma./mmaspanned;
+end
+
+function [datmat]=MovingIntegralWindowLoop(x,dat,span)
+    
+    % calculate start and end of each window
+    sizDat=size(dat);
+    x=reshape(x,[numel(x),1]);
+    dat=reshape(dat,[numel(x),sizDat(sizDat~=numel(x))]);
+    xAll=sort(mod([x-span;x;x+span],max(x)));
+    datAll = interp1(x,dat,xAll);
+    %calculate central portion of integration window
+    % the final and first point are assumed to be in the same place
+    xallMat=repmat(xAll,[1 numel(x)]);
+    xDelta=(xallMat-repmat(x',[numel(xAll) 1]));
+    actMat=(mod(xDelta,max(x))>=-span & mod(xDelta,max(x))<span) | ...
+        (mod(-xDelta,max(x))>=-span & mod(-xDelta,max(x))<span);
+    datmat=repmat(reshape(datAll,[size(datAll,1) 1 size(datAll,2)]),[1 numel(x)]);
+    datmat=(datmat+datmat([2:end,1],:,:))/2.*...
+        repmat(mod(xallMat([2:end,1],:)-xallMat,max(x)),[1 1 size(dat,2)]);
+    datmat(~actMat)=0;
+    datmat=reshape(sum(datmat,1),[size(datmat,2) size(datmat,3)])/(2*span);
+    
+end
+
+%% From FileExchange
+
+
+
 
 % function [A]=CalculatePolyArea(points)
 %     
