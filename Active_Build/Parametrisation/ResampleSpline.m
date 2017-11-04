@@ -139,12 +139,12 @@ function parList=ExtractParameterList(parType,points)
         case 'clint'
             parList=LengthProfile(points);
             parList=parList/max(parList);
-            [~,edgeCurvNorm]=CurvatureProfile(points(1:end-1,:));
-            edgeCurvNorm(end+1)=edgeCurvNorm(1);
-            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,edgeCurvNorm,0.015));
+            %[~,edgeCurvNorm]=CurvatureProfile(points(1:end-1,:));edgeCurvNorm(end+1)=edgeCurvNorm(1);
+            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
+            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,sqrt(edgeCurvNorm),0.015));
             
             curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
-            parList=1.5*parList+curvParam;
+            parList=parList+curvParam;
             
         case 'i'
             parList=(0:(length(points(:,1))-1))/(length(points(:,1))-1);
