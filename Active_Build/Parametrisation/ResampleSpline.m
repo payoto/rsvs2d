@@ -156,6 +156,36 @@ function parList=ExtractParameterList(parType,points)
     
 end
 
+function [forcedPoints]=ForceSpecialPoints(parspline,points,parList,resampPoints,resampPar)
+    
+    switch parspline.forcePts
+        case 'maxcurv'
+            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
+            edgeCurvNorm([1,end],:)=[];
+            edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
+            edgeCurvNormTest=edgeCurvNorm;
+            isLocalMax=edgeCurvNormTest>edgeCurvNormTest([end,1:end-1]) &...
+                edgeCurvNormTest>edgeCurvNormTest([2:end,1]);
+            edgeCurvNormTest(~isLocalMax)=0;
+            nMax=5;
+            ptsToSave=zeros([nMax,2]);
+            for ii=1:nMax
+                [ptsToSave(ii,2),ptsToSave(ii,1)]=max(edgeCurvNormTest);
+                edgeCurvNormTest(ptsToSave(ii))=0;
+            end
+            
+            
+        case 'LETE'
+            
+    end
+    
+    for ii=1:nMax
+        
+        resampPar
+        
+    end
+end
+
 function splitPoints=SplitAtTrailingEdge(points,TEisLeft,distribution)
     splitPoints=points;
     if strcmp(distribution,'cosine') || strcmp(distribution,'2cosine') || strcmp(distribution,'split')
