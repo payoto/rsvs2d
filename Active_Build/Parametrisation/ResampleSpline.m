@@ -19,8 +19,9 @@ function [resampPoints,splineblock]=ResampleSpline(points,paramspline)
     [normPoints,parList,domSize]=GenerateParameterList(parspline,points);
     [nPoints,nDim]=size(normPoints);
     [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList);
-    [resampPoints,splineblock]=ResampleSplinePatches(splineblock,parspline,nPoints);
-    
+    [resampPoints,newPar,splineblock]=ResampleSplinePatches(splineblock,parspline,nPoints);
+    [resampPoints]=ForceSpecialPoints(parspline,normPoints,parList,...
+        resampPoints,newPar);
     if ExtractVariables({'splitProf'},parspline)
         resampPoints=VertSplitPointsSym(resampPoints);
     end
@@ -141,7 +142,7 @@ function parList=ExtractParameterList(parType,points)
             parList=parList/max(parList);
             %[~,edgeCurvNorm]=CurvatureProfile(points(1:end-1,:));edgeCurvNorm(end+1)=edgeCurvNorm(1);
             edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
-            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,sqrt(edgeCurvNorm),0.015));
+            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,sqrt(edgeCurvNorm),0.02));
             
             curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
             parList=parList+curvParam;
@@ -156,9 +157,10 @@ function parList=ExtractParameterList(parType,points)
     
 end
 
-function [forcedPoints]=ForceSpecialPoints(parspline,points,parList,resampPoints,resampPar)
+function [resampPoints]=ForceSpecialPoints(parspline,points,parList,...
+        resampPoints,resampPar)
     
-    switch parspline.forcePts
+    switch parspline.forcePts{1}
         case 'maxcurv'
             edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
             edgeCurvNorm([1,end],:)=[];
@@ -177,12 +179,30 @@ function [forcedPoints]=ForceSpecialPoints(parspline,points,parList,resampPoints
             
         case 'LETE'
             
+            ptsToSave=zeros([2,2]);
+            ii=1;
+            [ptsToSave(ii,2),ptsToSave(ii,1)]=max(points(:,1));
+            ii=2;
+            [ptsToSave(ii,2),ptsToSave(ii,1)]=min(points(:,1));
+        case 'none'
+            ptsToSave=zeros([0 2]);
     end
-    
-    for ii=1:nMax
-        
-        resampPar
-        
+    switch parspline.forcePts{2}
+        case 'add'
+            for ii=1:size(ptsToSave,1)
+                ind=sum(resampPar<parList(ptsToSave(ii,1)));
+                resampPar=[resampPar(1:ind);parList(ptsToSave(ii,1));...
+                    resampPar(ind+1:end)];
+                resampPoints=[resampPoints(1:ind,:);points(ptsToSave(ii,1),:);...
+                    resampPoints(ind+1:end,:)];
+            end
+        case 'replace'
+            for ii=1:size(ptsToSave,1)
+                [~,ind]=min(abs(resampPar-parList(ptsToSave(ii,1))));
+                resampPar(ind)=parList(ptsToSave(ii,1));
+                resampPoints(ind,:)=points(ptsToSave(ii,1),:);
+            end
+        case 'none'
     end
 end
 
@@ -307,7 +327,7 @@ end
 
 %% Resample patches
 
-function [newPoints,newblocks]=ResampleSplinePatches(splineblocks,parspline,nPoints)
+function [newPoints,newPar,newblocks]=ResampleSplinePatches(splineblocks,parspline,nPoints)
     
     for ii=length(splineblocks):-1:1
         
@@ -316,7 +336,9 @@ function [newPoints,newblocks]=ResampleSplinePatches(splineblocks,parspline,nPoi
     end
     
     newPoints=vertcat(newblocks(:).newPoints);
-    newPoints=RemoveIdenticalConsecutivePoints(newPoints);
+    newPar=[newblocks(:).newParList]';
+    [newPoints,indRm]=RemoveIdenticalConsecutivePoints(newPoints);
+    newPar(indRm)=[];
 end
 
 function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
@@ -480,7 +502,7 @@ function [parspline]=CaseSpline_default()
     parspline.smoothing=0;
     parspline.TEisLeft=0;
     parspline.eps=1e-7;
-    
+    parspline.forcePts={'none','none'};
     parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
     parspline.typCurve='closed';
     
@@ -664,6 +686,7 @@ function [parspline]=CaseSpline_smoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='clint'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.forcePts={'maxcurv','replace'};
     parspline.typCurve='closed';
     
     parspline.distribution='calc';
