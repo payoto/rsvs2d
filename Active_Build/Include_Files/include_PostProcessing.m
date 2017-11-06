@@ -1247,8 +1247,14 @@ function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,struc
 
         [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',0,0);
         [p]=FindInternalPoint(ldom.coord);
-        tempHole=[size(polystruct.region,1)+1,p,...
-            abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2))];
+        if structmesh.subDomains(ii,2)>0
+            tempHole=[size(polystruct.region,1)+1,p,...
+                abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2))];
+        elseif structmesh.subDomains(ii,2)<0
+            tempHole=[size(polystruct.region,1)+1,p,...
+               -structmesh.subDomains(ii,2)];
+        end
+            
         polystruct.region=[polystruct.region;tempHole];
     end
     
@@ -1269,10 +1275,33 @@ function [structmesh2]=BoundaryMarkersCharCases(structmesh,nElmZone)
             structmesh2.domainBound=[25 10];
             % each line of subdomains are is a distance cage and the number
             % of cells that must fit.
-%             structmesh2.subDomains=[.1 2*nElmZone;.25 nElmZone;.5 nElmZone;...
-%                 1 nElmZone;2 nElmZone;8 nElmZone];
+            %             structmesh2.subDomains=[.1 2*nElmZone;.25 nElmZone;.5 nElmZone;...
+            %                 1 nElmZone;2 nElmZone;8 nElmZone];
             structmesh2.subDomains=logspace(log10(.1),log10(20),15)';
-            structmesh2.subDomains(:,2)=logspace(log10(2),log10(1),15)'*nElmZone;
+            if nElmZone>0
+                structmesh2.subDomains(:,2)=logspace(log10(2),log10(1),15)'*nElmZone;
+            elseif nElmZone<0
+                structmesh2.subDomains(:,2)=logspace(log10(1),...
+                    log10(structmesh2.subDomains(end,1)^2),15)'*nElmZone;
+            end
+            
+        case 'cutcellflow2'
+            structmesh2.boundaryMarkers=struct('loop',-1,'outbound',-2,'sym',-3);
+            structmesh2.flagInOut=1;
+            structmesh2.domainBound=[25 10];
+            % each line of subdomains are is a distance cage and the number
+            % of cells that must fit.
+            %             structmesh2.subDomains=[.1 2*nElmZone;.25 nElmZone;.5 nElmZone;...
+            %                 1 nElmZone;2 nElmZone;8 nElmZone];
+            nRef=round((log2(max(structmesh2.domainBound)^2)-log2(abs(nElmZone)))/2);
+            structmesh2.subDomains(1:nRef,2)=nElmZone*4.^(0:nRef-1)';
+            
+            structmesh2.subDomains(:,1)=sqrt(abs(structmesh2.subDomains(1:nRef,2))).*logspace(log10(20),...
+                log10(10),nRef)';
+            structmesh2.subDomains(find(structmesh2.subDomains...
+                (:,1)>max(structmesh2.domainBound)),:)=[];
+            
+            
             
         case 'su2'
             
