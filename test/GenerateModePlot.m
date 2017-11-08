@@ -8,6 +8,47 @@ yDat=vertcat(l(:).YData);
 %%
 [~,xPos]=max(yDat(1,:));
 xDat=xDat/(xDat(xPos+2)-xDat(xPos));
+
+%% Subdivision Stuff
+
+
+h=figure;
+for ii=1:4;subplot(1,4,ii);end
+h=findobj(h);
+[h(2:4).Visible]=deal('off');
+[h(2:5).Visible]=deal('off');
+plotPoints= @(points,formatStr) plot(points([1:end,1],1),points([1:end,1],2),formatStr{:});
+pts=[0 0 ; 0 1 ; 1 1 ; 1 0]+rand([4,2])*0.15
+%plotPoints(pts,{'*-'})
+pts=[0 0 ; 0 1 ; 1 1 ; 1 0]+(rand([4,2])-0.5)*0.25
+%plotPoints(pts,{'*-'})
+[h(2:5).Visible]=deal('off');
+ptsCell{1}=pts;
+for ii=1:5
+    ptsCell{ii+1}=SubDivision(ptsCell{1},ii,'chaikin',[0 0],'none');
+end
+h2=figure;
+hold on;
+for ii=1:6;
+    plotPoints(ptsCell{ii},{'.-','markersize',10});
+end
+figure,hold on
+for ii=1:6;
+    plotPoints(ptsCell{ii},{'.-','markersize',10});
+end
+l=findobj(h2,'type','line')
+axI=[5 4 3 2]
+lI=[6 5;5 4;4 3 ;3 2]
+for ii=1:4; copyobj(l(lI(ii,:)),h(axI(ii)));
+end
+h2=findobj(h2);
+[h(2:5).XLim]=deal(h2(2).XLim);
+[h(2:5).YLim]=deal(h2(2).YLim);
+for ii=2:5;
+    h(ii).OuterPosition=[(4-(ii-1))/4 0 0.25 0.88];
+end
+h(1).Name='Progressive subdivision';
+
 %%
 [~,xPos]=max(yDat(1,:));
 xDat=xDat-xDat(xPos);
