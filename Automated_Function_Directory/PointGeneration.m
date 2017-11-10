@@ -1,4 +1,5 @@
 function [varargout]=PointGeneration(varargin)
+% include_SnakeParam
 global PointGeneration_Handle
 nOut=nargout(PointGeneration_Handle);
 nOutReq=nargout;

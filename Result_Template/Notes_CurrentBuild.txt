@@ -1,4 +1,11 @@
 These Notes on the current build are to be kept up to date:
+<<<<<<< HEAD
 Updated 21/02/16
  
 Current development focused on improving results archive and smoothing.
+=======
+Updated 17/03/16
+ 
+Development in progress aims to improve convergence properties of the algorithms
+both in terms of number of iterations and the accuracy of the converged result.
+>>>>>>> init_v2

@@ -1,0 +1,12 @@
+c 0 BFGS
+u 0 BFGS
+c 1 BFGS
+u 1 BFGS
+c 2 BFGS
+u 2 BFGS
+c 0 conjgrad
+u 0 conjgrad
+c 1 conjgrad
+u 1 conjgrad
+c 2 conjgrad
+u 2 conjgrad

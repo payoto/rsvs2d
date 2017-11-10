@@ -1,4 +1,5 @@
 function [varargout]=ExtractAngle360(varargin)
+% include_SnakeParam
 global ExtractAngle360_Handle
 nOut=nargout(ExtractAngle360_Handle);
 nOutReq=nargout;

@@ -1,4 +1,5 @@
 function [varargout]=OrderSurfaceVertexReshape(varargin)
+% include_EdgeInformation
 global OrderSurfaceVertexReshape_Handle
 nOut=nargout(OrderSurfaceVertexReshape_Handle);
 nOutReq=nargout;

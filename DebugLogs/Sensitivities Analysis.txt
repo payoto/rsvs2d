@@ -1,0 +1,58 @@
+21/03/2017 - Analysis of the geometric response of the parametrisation under smoothing and scaling conditions.
+
+This folder contains runs that were used to plot the sensitivities of a practical case.
+
+The basis functions plotted in figures Dir*/iter87*.fig are effective basis functions, ie extracted from the data.
+
+Observations:
+Big improvements in the overshoot of the design variables through smoothing. 
+Big improvements in the overshoot of the design variables through scaling.
+normfill scaling is best for obtaining modes of roughly the same magnitude.
+
+raw analytical sensitivity with normfill and peaksmooth should work well, shows very similar modes to the snaking option. 
+
+C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\results\Optimisation\Development Notes\Profile Modes\Sensitivities\
+Sumarry of data sets
+Set 1 : Classic Snake sensitivity with smoothing and mode scaling
+Dir_2017-03-21T143158_test_grad1
+Dir_2017-03-21T144750_test_grad2
+Dir_2017-03-21T145054_test_grad3
+Dir_2017-03-21T145407_test_grad4 - no scaling
+Dir_2017-03-21T145719_test_grad5 - no smoothing
+
+Set 2 : Classic Snake sensitivity with smoothing - old version of the scaling
+Dir_2017-03-21T151302_test_grad1
+Dir_2017-03-21T151613_test_grad2
+Dir_2017-03-21T151920_test_grad3
+
+Set 3 : Analytical Sensitivity - raw mode broken
+Dir_2017-03-21T154631_test_grad1
+Dir_2017-03-21T154731_test_grad2
+Dir_2017-03-21T154831_test_grad3
+Dir_2017-03-21T154933_test_grad4
+
+
+Set 4 : Analytical Sensitivity - raw mode working
+Dir_2017-03-21T161351_test_grad1
+Dir_2017-03-21T162010_test_grad2
+Dir_2017-03-21T162145_test_grad3
+Dir_2017-03-21T162242_test_grad4
+
+Set 5 : Analytical Sensitivity - smooth mode - normal (not effective)
+Dir_2017-03-21T164744_test_grad1
+Dir_2017-03-21T164845_test_grad2
+Dir_2017-03-21T164945_test_grad3
+Dir_2017-03-21T165047_test_grad4
+
+Set 5 : Analytical Sensitivity - smooth mode - inverted (not effective)
+Dir_2017-03-21T170201_test_grad1
+Dir_2017-03-21T170303_test_grad2
+Dir_2017-03-21T170405_test_grad3
+Dir_2017-03-21T170505_test_grad4
+
+
+Code:
+
+for ii=1:24;
+[out1{ii},out2{ii}]=ShowAreaError('folder',false,pathStr4{ii},[iter 1],[ones([1,ngrad])*iter;2:(ngrad+1)]');
+end

@@ -1,0 +1,354 @@
+MATLAB crash file:C:\Users\ap1949\AppData\Local\Temp\matlab_crash_dump.10540-1:
+
+
+------------------------------------------------------------------------
+          Access violation detected at Fri Sep 30 12:06:21 2016
+------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding      : Disabled
+  Crash Mode          : continue (default)
+  Current Graphics Driver: Unknown hardware 
+  Default Encoding    : windows-1252
+  Graphics card 1     : NVIDIA ( 0x10de ) NVIDIA Quadro K620 Version 9.18.13.4121
+  Host Name           : IT062038
+  MATLAB Architecture : win64
+  MATLAB Root         : C:\Program Files\MATLAB\R2015a
+  MATLAB Version      : 8.5.0.197613 (R2015a)
+  OpenGL              : hardware
+  Operating System    : Microsoft Windows 7 Enterprise 
+  Processor ID        : x86 Family 6 Model 60 Stepping 3, GenuineIntel
+  Virtual Machine     : Java 1.7.0_60-b19 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+  Window System       : Version 6.1 (Build 7601: Service Pack 1)
+
+Fault Count: 1
+
+
+Abnormal termination:
+Access violation
+
+Register State (from fault):
+  RAX = 0000003000000001  RBX = 00000005aa9c02b0
+  RCX = 000000ffffffffff  RDX = 0000000000000000
+  RSP = 00000000040182b0  RBP = 0000000098ec41f0
+  RSI = 0000000000000000  RDI = 0000000000000000
+ 
+   R8 = 0000000098ec41e0   R9 = 0000000099b6dbe0
+  R10 = 0000000000000002  R11 = 0000005e007d0035
+  R12 = 0000000004240000  R13 = 0000000098e1aab0
+  R14 = 000000000000127f  R15 = 0000000000000000
+ 
+  RIP = 00000000770eeef1  EFL = 00010202
+ 
+   CS = 0033   FS = 0053   GS = 002b
+
+Stack Trace (from fault):
+[  0] 0x00000000770eeef1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00323313 RtlAnsiStringToUnicodeString+00000289
+[  1] 0x0000000076fa1a0a                   C:\WINDOWS\system32\kernel32.dll+00137738 HeapFree+00000010
+[  2] 0x000007fef3ec69d8                   C:\WINDOWS\system32\MSVCR120.dll+00420312 free+00000028
+[  3] 0x000007fef9e6864b C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00034379 OutputGridStruct+00000619
+[  4] 0x000007fef9e686d7 C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00034519 InitialiseGridFromFile_MEX+00000103
+[  5] 0x000007fef9e6130d C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\MEX_Function_Directory\MEX_Executables\gridgen\GridInit_MEX.mexw64+00004877 mexFunction+00000045
+[  6] 0x00000000fc5f3751 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00079697 mexRunMexFile+00000129
+[  7] 0x00000000fc5f2a72 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00076402 inSwapMexfileReader+00000594
+[  8] 0x00000000fc5f25c8 C:\Program Files\MATLAB\R2015a\bin\win64\libmex.dll+00075208 mexUnlock+00002840
+[  9] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 10] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 11] 0x0000000005306ca6 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00355494 inGetCurrentWS+00127158
+[ 12] 0x0000000005306414 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00353300 inGetCurrentWS+00124964
+[ 13] 0x000000000530c64c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00378444 inGetCurrentWS+00150108
+[ 14] 0x000000000530bcd5 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00376021 inGetCurrentWS+00147685
+[ 15] 0x00000000052cf19c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00127388 in_is_matlab_function+00072012
+[ 16] 0x00000000052c9f95 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106389 in_is_matlab_function+00051013
+[ 17] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 18] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 19] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 20] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 21] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 22] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 23] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 24] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 25] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 26] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 27] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 28] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 29] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 30] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 31] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 32] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 33] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 34] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 35] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 36] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 37] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 38] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 39] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 40] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 41] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 42] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 43] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 44] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 45] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 46] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 47] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 48] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 49] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 50] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 51] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 52] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 53] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 54] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 55] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 56] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 57] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 58] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 59] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 60] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 61] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 62] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 63] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 64] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 65] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 66] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 67] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 68] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 69] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 70] 0x00000000053e31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
+[ 71] 0x00000000052cb69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
+[ 72] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 73] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 74] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 75] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 76] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 77] 0x00000000051e2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
+[ 78] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 79] 0x000000000539b268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
+[ 80] 0x000000000539b864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
+[ 81] 0x000000000539ba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
+[ 82] 0x000000000539b9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
+[ 83] 0x000000000539b9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
+[ 84] 0x000000000534f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
+[ 85] 0x000000000534854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
+[ 86] 0x0000000005348471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
+[ 87] 0x000000000663e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
+[ 88] 0x000000000663f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
+[ 89] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
+[ 90] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
+[ 91] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
+[ 92] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
+[ 93] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
+[ 94] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
+[ 95] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
+[ 96] 0x0000000076ea87b2                     C:\WINDOWS\system32\USER32.dll+00165810 GetMenuBarInfo+00000626
+[ 97] 0x0000000076e8f597                     C:\WINDOWS\system32\USER32.dll+00062871 SystemParametersInfoW+00000247
+[ 98] 0x0000000076e94845                     C:\WINDOWS\system32\USER32.dll+00084037 IsProcessDPIAware+00000453
+[ 99] 0x00000000770eba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
+[100] 0x0000000076e990aa                     C:\WINDOWS\system32\USER32.dll+00102570 PeekMessageW+00000182
+[101] 0x0000000076e9509e                     C:\WINDOWS\system32\USER32.dll+00086174 GetKeyState+00000238
+[102] 0x0000000076e93a17                     C:\WINDOWS\system32\USER32.dll+00080407 PeekMessageA+00000087
+[103] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
+[104] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
+[105] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
+[106] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
+[107] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
+[108] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
+[109] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
+[110] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
+[111] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
+[112] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
+[113] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
+[114] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
+[115] 0x00000000069ca27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
+[116] 0x00000000069ca838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
+[117] 0x00000000069caa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
+[118] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
+[119] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
+[120] 0x0000000076f959cd                   C:\WINDOWS\system32\kernel32.dll+00088525 BaseThreadInitThunk+00000013
+[121] 0x00000000770ca2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
+
+
+This error was detected while a MEX-file was running. If the MEX-file
+is not an official MathWorks function, please examine its source code
+for errors. Please consult the External Interfaces Guide for information
+on debugging MEX-files.
+
+If this problem is reproducible, please submit a Service Request via:
+    http://www.mathworks.com/support/contact_us/
+
+A technical support engineer might contact you with further information.
+
+Thank you for your help.
+
+
+
+MATLAB crash file:C:\Users\ap1949\AppData\Local\Temp\matlab_crash_dump.4980-1:
+
+
+------------------------------------------------------------------------
+          Access violation detected at Fri Sep 30 11:53:13 2016
+------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding      : Disabled
+  Crash Mode          : continue (default)
+  Current Graphics Driver: NVIDIA Corporation Quadro K620/PCIe/SSE2 Version 4.4.0
+  Default Encoding    : windows-1252
+  Graphics card 1     : NVIDIA ( 0x10de ) NVIDIA Quadro K620 Version 9.18.13.4121
+  Host Name           : IT062038
+  MATLAB Architecture : win64
+  MATLAB Root         : C:\Program Files\MATLAB\R2015a
+  MATLAB Version      : 8.5.0.197613 (R2015a)
+  OpenGL              : hardware
+  Operating System    : Microsoft Windows 7 Enterprise 
+  Processor ID        : x86 Family 6 Model 60 Stepping 3, GenuineIntel
+  Virtual Machine     : Java 1.7.0_60-b19 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+  Window System       : Version 6.1 (Build 7601: Service Pack 1)
+
+Fault Count: 1
+
+
+Abnormal termination:
+Access violation
+
+Register State (from fault):
+  RAX = 0000005b00000001  RBX = 000000017499dd40
+  RCX = 0000000000000000  RDX = 0000000100000001
+  RSP = 000000000401a590  RBP = 00000001704daa50
+  RSI = 0000000000000000  RDI = 0000000000000000
+ 
+   R8 = 00000001704daa40   R9 = 0000000000000000
+  R10 = 0000000000000000  R11 = 0000000000000000
+  R12 = 0000000004150000  R13 = 0000000100000001
+  R14 = ffffffff00007fff  R15 = 00000000ffff0000
+ 
+  RIP = 00000000770ef416  EFL = 00010246
+ 
+   CS = 0033   FS = 0053   GS = 002b
+
+Stack Trace (from fault):
+[  0] 0x00000000770ef416                      C:\WINDOWS\SYSTEM32\ntdll.dll+00324630 RtlInitUnicodeString+00000086
+[  1] 0x0000000076fa1a0a                   C:\WINDOWS\system32\kernel32.dll+00137738 HeapFree+00000010
+[  2] 0x000007fef3746338 C:\Program Files\MATLAB\R2015a\bin\win64\MSVCR110.dll+00418616 free+00000028
+[  3] 0x00000000051e21ee C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00074222 mdMxarrayFunctionHandle::isHiddenFunctionBinding+00001646
+[  4] 0x000000000522f677 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00390775 mdSetCurrentIntFcnIndexProtected::mdSetCurrentIntFcnIndexProtected+00000711
+[  5] 0x00000000051e1efa C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00073466 mdMxarrayFunctionHandle::isHiddenFunctionBinding+00000890
+[  6] 0x00000000051e1ac6 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00072390 Mdispatcher::lookup_binding+00000102
+[  7] 0x00000000052c951c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103708 in_is_matlab_function+00048332
+[  8] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[  9] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 10] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 11] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 12] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 13] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 14] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 15] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 16] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 17] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 18] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 19] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 20] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 21] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 22] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 23] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 24] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 25] 0x00000000051e1847 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00071751 mdSetCurrentIntFcnIndexProtected::~mdSetCurrentIntFcnIndexProtected+00002135
+[ 26] 0x00000000053b92e6 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01086182 inFunctionHandleInterface::getWorkspaceObj+00010854
+[ 27] 0x00000000053b91d5 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01085909 inFunctionHandleInterface::getWorkspaceObj+00010581
+[ 28] 0x00000000057cc6d5 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+05359317 inFunctionHandleInterface::UnloadWorkspaces+00627845
+[ 29] 0x00000000052cc0b9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00114873 in_is_matlab_function+00059497
+[ 30] 0x00000000052ca09c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106652 in_is_matlab_function+00051276
+[ 31] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 32] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 33] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 34] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 35] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 36] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 37] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 38] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 39] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 40] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 41] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 42] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 43] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 44] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 45] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 46] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 47] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 48] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 49] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 50] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 51] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 52] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 53] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 54] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 55] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 56] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 57] 0x00000000052ca1ab C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00106923 in_is_matlab_function+00051547
+[ 58] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 59] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 60] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 61] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 62] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 63] 0x00000000051e2694 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075412 Mfh_file::dispatch_fh+00000548
+[ 64] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 65] 0x00000000052c9597 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00103831 in_is_matlab_function+00048455
+[ 66] 0x00000000053e31a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+01257895 inIsKeyword+00027799
+[ 67] 0x00000000052cb69a C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00112282 in_is_matlab_function+00056906
+[ 68] 0x000000000539684f C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944207 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000991
+[ 69] 0x00000000053967b1 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00944049 MathWorks::MException::MExceptionEnvelope::MCOSClassID+00000833
+[ 70] 0x000000000530da75 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00383605 inGetCurrentWS+00155269
+[ 71] 0x000000000530ce8c C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00380556 inGetCurrentWS+00152220
+[ 72] 0x000000000530b6e9 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00374505 inGetCurrentWS+00146169
+[ 73] 0x00000000051e2757 C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00075607 Mfh_file::dispatch_fh+00000743
+[ 74] 0x00000000051e2a7e C:\Program Files\MATLAB\R2015a\bin\win64\m_dispatcher.dll+00076414 Mfunction_handle::dispatch+00000766
+[ 75] 0x000000000539b268 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00963176 inAnonymousFunction+00000360
+[ 76] 0x000000000539b864 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00964708 inAnonymousFunction+00001892
+[ 77] 0x000000000539ba25 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965157 inAnonymousFunction+00002341
+[ 78] 0x000000000539b9f2 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965106 inAnonymousFunction+00002290
+[ 79] 0x000000000539b9a7 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00965031 inAnonymousFunction+00002215
+[ 80] 0x000000000534f6bd C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00652989 inGetCallersWorkSpace+00001805
+[ 81] 0x000000000534854d C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623949 inEvalCmdWithLocalReturn+00000285
+[ 82] 0x0000000005348471 C:\Program Files\MATLAB\R2015a\bin\win64\m_interpreter.dll+00623729 inEvalCmdWithLocalReturn+00000065
+[ 83] 0x000000000663e82d C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00059437 mnGetPrompt+00002717
+[ 84] 0x000000000663f2a9 C:\Program Files\MATLAB\R2015a\bin\win64\libmwbridge.dll+00062121 mnParser+00000745
+[ 85] 0x00000000fd0e13d4   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00398292 mcrInstance::mnParser_on_interpreter_thread+00000036
+[ 86] 0x00000000fd0a9757   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169815 mcr::runtime::setInterpreterThreadToCurrent+00019751
+[ 87] 0x00000000fd0a9793   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00169875 mcr::runtime::setInterpreterThreadToCurrent+00019811
+[ 88] 0x00000000fd0a9f91   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00171921 mcr::runtime::setInterpreterThreadToCurrent+00021857
+[ 89] 0x00000000fab5d216   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00512534 UIW_AttachThreadInput+00001270
+[ 90] 0x00000000fab5caa5   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510629 wsd_to_MSW+00004373
+[ 91] 0x00000000fab5cb29   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00510761 wsd_to_MSW+00004505
+[ 92] 0x0000000076ea87b2                     C:\WINDOWS\system32\USER32.dll+00165810 GetMenuBarInfo+00000626
+[ 93] 0x0000000076e8f597                     C:\WINDOWS\system32\USER32.dll+00062871 SystemParametersInfoW+00000247
+[ 94] 0x0000000076e94845                     C:\WINDOWS\system32\USER32.dll+00084037 IsProcessDPIAware+00000453
+[ 95] 0x00000000770eba75                      C:\WINDOWS\SYSTEM32\ntdll.dll+00309877 KiUserCallbackDispatcher+00000031
+[ 96] 0x0000000076e990aa                     C:\WINDOWS\system32\USER32.dll+00102570 PeekMessageW+00000182
+[ 97] 0x0000000076e9509e                     C:\WINDOWS\system32\USER32.dll+00086174 GetKeyState+00000238
+[ 98] 0x0000000076e93a17                     C:\WINDOWS\system32\USER32.dll+00080407 PeekMessageA+00000087
+[ 99] 0x00000000fab09bdb   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00170971 UIW_ShowMenuItem+00005179
+[100] 0x00000000fab5db52   C:\Program Files\MATLAB\R2015a\bin\win64\uiw.dll+00514898 UIW_SuspendAttachThreadInput+00000466
+[101] 0x0000000100122c83 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01256579 services::system_events::PpeDispatchHook::dispatchOne+00032291
+[102] 0x000000010012e6f5 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304309 sysq::addProcessPendingEventsUnitTestHook+00005813
+[103] 0x000000010012e7a0 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01304480 sysq::addProcessPendingEventsUnitTestHook+00005984
+[104] 0x0000000100130595 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01312149 sysq::getCondition+00004629
+[105] 0x0000000100131f52 C:\Program Files\MATLAB\R2015a\bin\win64\libmwservices.dll+01318738 svWS_ProcessPendingEvents+00000162
+[106] 0x00000000fd0aa6ad   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00173741 mcr::runtime::setInterpreterThreadToCurrent+00023677
+[107] 0x00000000fd0ab31a   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00176922 mcr::runtime::setInterpreterThreadToCurrent+00026858
+[108] 0x00000000fd0a2f75   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00143221 mcr_process_events+00007557
+[109] 0x00000000fd0a4882   C:\Program Files\MATLAB\R2015a\bin\win64\mcr.dll+00149634 mcr_process_events+00013970
+[110] 0x00000000fa7eb49d C:\Program Files\MATLAB\R2015a\bin\win64\MVMLocal.dll+00177309 mvm_server::inproc::LocalFactory::terminate+00048141
+[111] 0x00000000069ca27a   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00828026 mvm::detail::initLocalMvmHack+00000490
+[112] 0x00000000069ca838   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00829496 mvm::detail::SessionImpl::privateSession+00000376
+[113] 0x00000000069caa88   C:\Program Files\MATLAB\R2015a\bin\win64\mvm.dll+00830088 mvm::detail::SessionImpl::privateSession+00000968
+[114] 0x000000014000630d C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00025357
+[115] 0x0000000140007dd0 C:\Program Files\MATLAB\R2015a\bin\win64\MATLAB.exe+00032208
+[116] 0x0000000076f959cd                   C:\WINDOWS\system32\kernel32.dll+00088525 BaseThreadInitThunk+00000013
+[117] 0x00000000770ca2e1                      C:\WINDOWS\SYSTEM32\ntdll.dll+00172769 RtlUserThreadStart+00000033
+
+
+If this problem is reproducible, please submit a Service Request via:
+    http://www.mathworks.com/support/contact_us/
+
+A technical support engineer might contact you with further information.
+
+Thank you for your help.
