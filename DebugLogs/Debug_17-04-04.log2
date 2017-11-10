@@ -1,0 +1,33 @@
+Debugging of Errors appearing in "DebugLogs\ErrorFilesSummary_17-04-04.mat"
+
+Error 1: ' error: MATLAB:badsubscripterror: MATLAB:improperIndexMatrixRef '
+linked to large movements during the line search
+
+Non critical error due to the use of the "LETE" option. When topology at the LE or TE collapses
+around a pinned vertex it can lead to loops with 0 area e.g. [0 1; 0 1; 0 1; 0 1]
+these loops do not go through the subdivision process properly and return empty arrays which lead to 
+an overflow later when trying to determine wether they are internal or not.
+
+Fixed by setting the subdivision points to be equal to the startpoints if they come out empty.
+
+
+Error 2: ' error: MATLAB:nonStrucReference '
+
+Due to the objective function not being evaluated consitently when there was not intersection 
+in the area error of the inverse design.
+Fixed by coding the appropriate section.
+
+
+Error 3: ' error: error: MATLAB:improperIndexMatrixRef '
+
+error in SnakeSensitivity due to the ordering of cells.
+The starting point of the ordering was open to breaking in the case where both cells matched and were different.
+Fixed by introducing additional checks.
+
+Error 4:
+
+Most complex error. This manifests itself as the profiles being generated with Nan by the sensitivity process.
+These appear when profiles have multiple snaxels in the same location (notably around pinned features).
+
+code has been altered where the stepping happens to avoid the appearance of NaN in cases where there are obvious
+alternatives. The generality and the robustness of the fix are uncertain.

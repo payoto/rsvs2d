@@ -1,4 +1,5 @@
 function [varargout]=EdgeFillInformationReshape(varargin)
+% include_EdgeInformation
 global EdgeFillInformationReshape_Handle
 nOut=nargout(EdgeFillInformationReshape_Handle);
 nOutReq=nargout;

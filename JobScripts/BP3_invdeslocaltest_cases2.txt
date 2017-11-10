@@ -1,0 +1,10 @@
+uo rank 0
+uo rank 1
+uo rankvalue 0
+uo rankvalue 1
+uo rank 2
+uo rankvalue 2
+uo number 0
+uo number 1
+uo number 2
+uo value 2

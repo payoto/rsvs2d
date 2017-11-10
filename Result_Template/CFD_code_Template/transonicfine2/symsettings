@@ -1,0 +1,1 @@
+1 1 0.0 1E-8  # (0 vertical - 1 horizontal) (1 keep above / to the right - -1 keep to the left/ bellow) (position of last vertex line to keep) (tolerance bellow) 

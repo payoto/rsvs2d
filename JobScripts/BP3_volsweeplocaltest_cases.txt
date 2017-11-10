@@ -1,0 +1,4 @@
+contcurve 0 
+contcurvescale 0 
+contlengthnorm 0 
+contlength 0 

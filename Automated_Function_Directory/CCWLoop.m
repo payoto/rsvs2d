@@ -1,4 +1,5 @@
 function [varargout]=CCWLoop(varargin)
+% include_SnakeParam
 global CCWLoop_Handle
 nOut=nargout(CCWLoop_Handle);
 nOutReq=nargout;

@@ -1,0 +1,27 @@
+
+Resolve the change in geometry in between refinement stages:
+
+Two Identified causes:
+ -> Corner active corresponds to changing volume fractions which affects TE and LE geometries with disproportionate effects on TE and LE geometries
+		Fix: Remove the special case included with corner active. Fill and active inherited from previous refinement level without modification.
+ -> Change in geometry due to the change in grid refinement which leads to changes in the position and the resolution of the points which also affects the drag.
+ 
+ Fixing process:
+ 
+ -> Quantify the change in geometry under exact refinement.
+ 
+ 
+ Observations:
+ -> Between refinement stages large change in the area error between two profiles
+ -> Area error is quite large:
+	Change in fill at edges
+	change in the effect of subdivision (i.e. error magnified by subdivision) due to the increase in points 
+	 |-> Need to look at Dom's maths
+	 
+	 
+	 
+ Code:
+ load loop 100 8
+ load loop 101 1
+ [errorMeasure,areaDistrib]=CompareProfilesAreaStandAlone(loop_100_8.snaxel.coord,loop_101_1.snaxel.coord);
+ [errorMeasure,areaDistrib]=CompareProfilesAreaStandAlone(loop_100_8.subdivision,loop_101_1.subdivision);
