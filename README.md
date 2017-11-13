@@ -1,7 +1,7 @@
 # README #
 Last updated 13/11/2017
 
-## What is this repository for? ##
+# What is this repository for? #
 
 This repository is the MATLAB implementation of the 2D R-Snake Volume of Solid (RSVS) parameterisation.
 It includes an optimisation framework designed for to explore generic optimisation problems using this parameterisation.
@@ -10,7 +10,7 @@ A number of objective functions are included.
 Relevant publications are at the end of this readme.
 
 
-## Pre-requisites ##
+# Pre-requisites #
 
 For this code to work necessary programs:   
  +  MATLAB installed (2015a or later) - including parallel toolbox  
@@ -22,7 +22,7 @@ For this code to work necessary programs:
 
 
 
-## How do I get set up? ##
+# How do I get set up? #
 
 To get started:
 (Linux - First Time) 
@@ -78,7 +78,7 @@ respectively. All result files and folders are time stamped such that a named so
 These files and their location are entered into a file  at:
 	../results/<archive_name>/Index_<archive_name>.txt
 
-## Outline of the code ##
+# Outline of the code #
 
 The code is centred around an optimisation framework executed through the function `ExecuteOptimisation`
 This framework was developped to exploit the RSVS which is implemented in function `Snakes` and executed through function `Main`
@@ -114,7 +114,7 @@ isRestart stores whether a gradient based optimisation should be restarted from 
 	in general mod(numel(optimstruct)+1,2) will give you the right answer for gradient based optimisation. Always 1 for DE.  
 
 
-## Contribution guidelines ##
+# Contribution guidelines #
 
 To add new features a few things must be considered (roughly in order of importance):
 + Maintaining the git archive's integrity and minimising merge conflicts for yourself and other users.
@@ -122,7 +122,7 @@ To add new features a few things must be considered (roughly in order of importa
 + Simplicity of deployment.
 + Maintaining consistent coding style.
 
-### Managing git ###
+## Managing git ##
 
 To manage the git repo's integrity new features should be developed in new folders contained in `./Active_Build/`
 Make sure that names of functions are logical and express what they do. If large numbers of files are needed, make sure each contain information
@@ -132,16 +132,16 @@ Use a separate git branch for development of new experimental features that may 
 
 Large new features should add their own parameter default to `StructOptimParam.m`.
 
-### Execution by other users ###
+## Execution by other users ##
 
 Execution by other users relies on maintaining a consitent way of calling cases. This means that parameters for new features
 should use the parameter structure syntax already in place.
 
-### Simple deployment ###
+## Simple deployment ##
 
 Provide scripts to deploy any new utilities required and make sure they are executed by the `deploylinux.sh` code.
 
-### Coding Style ###
+## Coding Style ##
 
 Lines of code shall not be longer than 80 characters.
 
@@ -166,9 +166,133 @@ All parameters are added to a single structure at the start in `StructOptimParam
 	[var1,var2,var3,...,varN]=ExtractVariables({cell array of variable names},paramstructure);
 	paramstructure=SetVariables({cell array of variable names},{var1,var2,var3,...,varN},paramstructure);
 
-## Gosh, how the hell does this parameter thing work? ##
+# Gosh, how the hell does this parameter thing work? #
+
+## Motivation ##
+
+It seems a bit complicated but the idea is to reduce the number of inputs and outputs functions have and make sure all functions 
+have all the inputs they need even when they are changed without having to edit an entire stack of upstream functions. At the most 
+basic level setting parameters has been centralised: it all happens in `StructOptimParam` and `structInputVar`.
+
+All access to parameters, to extract and more rarely to change the value of a parameter, is done through two functions `ExtractVariables` and `SetVariables`.
+An example call is shown below
+
+	[var1,var2,var3,...,varN]=ExtractVariables({cell array of variable names},paramstructure);
+	paramstructure=SetVariables({cell array of variable names},{var1,var2,var3,...,varN},paramstructure);
+
+The structure `paramoptim` (or `paroptim` oops I've been inconsistant) is then passed around. This greatly reduces 
+the ease with which new features can be tested and implemented. And no globals are needed for passing parameters. 
+And it scales really well.
+
+## Initialising the parameter structures ##
+
+All parameters are stored and passed using a single structure: `paramoptim`  
+This structure has got fields which reflect the purpose of the parameters:  
+`paramoptim.obj.flow` for the aerodynamic objective functions  
+`paramoptim.constraint` for optimisation constraints  
+
+All these parameters are set in file `StructOptimParam.m`. All of these fields is set by calling local function:
+`DefaultOptim`. This function then calls a set of subfunctions assigning each of the results to a single field. 
+The calls for the two examples above are shown here.
+
+	paramoptim.obj.flow=DefaultCutCell_Flow();
+    paroptim.constraint=DefaultConstraint();
+
+This populates paramoptim with a set of default values which can then be changed in additional local functions added to `StructOptimParam.m`.
+
+One field is an exception:
+`paramoptim.parameterisation` is for parameters needed for the RSVS and is built independently using file `structInputVar.m`.
+`structInputVar.m` works exactly like `StructOptimParam.m` but is for any parameters needed in function `Snakes.m` (the RSVS engine).
+
+
+## Creating a parameter set to run a case ##
+
+To create a new run case a local function must be added at the end of `StructOptimParam.m`. This process is shown for a
+function called `NewCaseOfUserX`. This set of parameters once added can be called from the MATLAB console using
+`ExecuteOptimisation('NewCaseOfUserX')`. 
+
+`StructOptimParam` works by calling `[paroptim]=eval(caseStr);` where `caseStr` is the first input to `ExecuteOptimisation`.
+
+### Simple case ###
+
+There are three steps to building a new parameter set to that will run a new optimisation case:
+ 1.  Building the entire parameter structure (using a callable function with a single output)
+ 2.  Aplying standard modifications (using a callable function with a valid structure as an input and output)
+ 3.  Applying bespoke parameter changes (using . structure assignements or `SetVariables method`).
+
+Below is an example of this process:
+
+	function [paroptim]=NewCaseOfUserX()
+		% 1. Build parameter structure with default settings
+		[paroptim]=DefaultOptim(); 
+		
+		% 2. Apply a Standard modification to default settings: for example change all the 
+		% settings required to change the optimiser for aero, differential evolution cases:
+		paroptim=CutCellObjective(paroptim);
+		paroptim=OptimDE(paroptim);
+		
+		% 3. Single changes to specific parameters:
+		paroptim.general.maxIter=5; % maximum number of optimisation iteration
+		paramoptim=SetVariables({'worker'},{2},paramoptim); % number of parallel workers
+		% Previous line equivalent to: paroptim.general.worker=2;
+	end
+
+
+### I liked my previous case and want to keep it but want to change one parameter... I'll just copy paste it, right? ###
+
+No. Don't do that. Part of the reason the current code looks terrifying is because I did this 2 years ago. We never recovered.
+Since then I've found better solution(s). Just call the parent case `NewCaseOfUserX` instead of `DefaultOptim()`. Your `NewCaseOfUserX_v2`
+will look something like this:
+
+	function [paroptim]=NewCaseOfUserX_v2()
+		% 1. Build parameter structure with default settings
+		[paroptim]=NewCaseOfUserX(); 
+		
+		
+		% 3. Single changes to specific parameters:
+		paroptim.general.maxIter=30; % maximum number of optimisation iteration
+	end
+
+`NewCaseOfUserX` is still callable and if you make any changes to it they will be duplicated to case `NewCaseOfUserX_v2`. This is 
+very useful when you want to make sure a bunch of cases are similar.
 	
-## I don't get it what does this ACTUALLY do and who do I talk to?##
+### Building your own standard modifications ###
+
+You've run your first case and you liked a lot of the settings? The new feature you implemented requires the modification 
+of the same 10 default parameters every time? You've used a parent case, but now you have children of children of 
+children and backtracking through that stack is a pain?
+ 
+This is the time to add a new "standard" modification function. These functions do not define a callable execution case
+but modify a few of the input parameter directly in the structure and return the modified structure. For this let us look 
+at function `CutCellObjective` which is used whenever the cut-cell flow solver needs to be run.
+
+	function paroptim=CutCellObjective(paroptim)
+		
+		paroptim.general.objectiveName='CutCellFlow';
+		paroptim.general.direction='min';
+		paroptim.general.defaultVal=1e3;
+	end
+
+### Advanced - Making parameter sweeps ###
+
+These bespoke case functions can be adapted to accept inputs.
+
+	function [paroptim]=NewCaseOfUserX_varin(n)
+		% 1. Build parameter structure with default settings
+		[paroptim]=NewCaseOfUserX(); 
+		
+		
+		% 3. Single changes to specific parameters:
+		paroptim.general.maxIter=n; % maximum number of optimisation iteration
+	end
+
+To call this function from the console is done with the following command:
+
+	ExecuteOptimisation('NewCaseOfUserX_varin(5)')
+
+this will set the value of `maxIter` to be 5.
+
+# I don't get it what does this ACTUALLY do and who do I talk to?#
 
 For more information about what the code does (i.e. the science of it)  
 [Restricted Snakes: a Flexible Topology Parameterisation Method for Aerodynamic Optimisation](https://arc.aiaa.org/doi/pdf/10.2514/6.2017-1410)  
