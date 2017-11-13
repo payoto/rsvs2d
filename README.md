@@ -215,10 +215,10 @@ function called `NewCaseOfUserX`. This set of parameters once added can be calle
 
 ### Simple case ###
 
-There are three steps to building a new parameter set to that will run a new optimisation case:
- 1.  Building the entire parameter structure (using a callable function with a single output)
- 2.  Aplying standard modifications (using a callable function with a valid structure as an input and output)
- 3.  Applying bespoke parameter changes (using . structure assignements or `SetVariables method`).
+There are three steps to building a new parameter set to that will run a new optimisation case:  
+ 1.  Building the entire parameter structure (using a callable function with a single output)  
+ 2.  Aplying standard modifications (using a callable function with a valid structure as an input and output)  
+ 3.  Applying bespoke parameter changes (using . structure assignements or `SetVariables method`).  
 
 Below is an example of this process:
 
