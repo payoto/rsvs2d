@@ -80,3 +80,25 @@ chmod 755 ../*/*.sh
 # chmod 755 ../transonicfine/RunOnlyFlow.sh
 # chmod 755 ../transonicfine/RunPost.sh
 
+<<<<<<< HEAD
+=======
+cd $DIR
+
+gfortran -O3 -o cartcell.exe CartCellv29.f90
+gfortran -O3 -freal-8-real-16 -o eulerflowuns.exe EulerFlowUns14.f90
+gfortran -O3 -o postproc.exe pproc10_AP.f90
+
+cp -rp cartcell.exe ../supersonic_biplane/cartcell.exe
+cp -rp eulerflowuns.exe ../supersonic_biplane/eulerflowuns.exe
+cp -rp postproc.exe ../supersonic_biplane/postproc.exe
+chmod 755 ../supersonic_biplane/RunFlow.sh
+chmod 755 ../supersonic_biplane/RunOnlyFlow.sh
+chmod 755 ../supersonic_biplane/RunPost.sh
+
+cp -rp cartcell.exe ../supersonic_ogive/cartcell.exe
+cp -rp eulerflowuns.exe ../supersonic_ogive/eulerflowuns.exe
+cp -rp postproc.exe ../supersonic_ogive/postproc.exe
+chmod 755 ../supersonic_ogive/RunFlow.sh
+chmod 755 ../supersonic_ogive/RunOnlyFlow.sh
+chmod 755 ../supersonic_ogive/RunPost.sh
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a

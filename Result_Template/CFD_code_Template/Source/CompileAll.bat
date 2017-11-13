@@ -1,9 +1,15 @@
 cd %~dp0
+<<<<<<< HEAD
 gfortran -O3 -o cartcell.exe CartCellv31.f90
 gfortran -O3 -o eulerflowuns.exe EulerFlowUns41_AP.f90
 gfortran -O3 -o postproc.exe pproc12_AP.f90
 gfortran -O3 -o showmesh.exe showmesh2_AP.f90
 gcc -O3 -o meshsym.exe meshsym_1.c
+=======
+gfortran -O3 -o cartcell.exe CartCellv29.f90
+gfortran -O3 -freal-8-real-16 -o eulerflowuns.exe EulerFlowUns14.f90
+gfortran -O3 -o postproc.exe pproc10_AP.f90
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
 
 copy "cartcell.exe" "..\supersonic_biplane\cartcell.exe"
 copy "eulerflowuns.exe" "..\supersonic_biplane\eulerflowuns.exe"

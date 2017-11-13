@@ -337,10 +337,18 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         end
     end
     if strcmp(objectiveName,'CutCellFlow')
+<<<<<<< HEAD
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
         tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
         tecPlotPre{2}=['Tec360plt_Snak_',marker,'_pre.plt'];
+=======
+        [knownOptim]=SupersonicOptimLinRes(paroptim,rootDir,...,
+            dat.xMin,dat.xMax,dat.A,dat.nPoints);
+        knownOptim=0;
+        tecPlotFile{1}=[writeDirectory,filesep,'Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=[writeDirectory,filesep,'Tec360plt_Snak_',marker,'.plt'];
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
         [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
         PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
         tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
@@ -586,6 +594,7 @@ function [FID]=OpenOptimumSnakLayFile(writeDirectory,marker)
     copyfileRobust(originalLayFile,[writeDirectory,filesep,fileName])
     FID=fopen([writeDirectory,filesep,fileName],'r+');
     
+<<<<<<< HEAD
 end
 
 function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
@@ -596,6 +605,10 @@ function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
         rootDirName='';
         iterFolders={};
     end
+=======
+    delete(tecPlotFile{1});
+    delete(tecPlotFile{2});
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
     
     
     if ~isempty(iterFolders)
@@ -642,10 +655,16 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     rootDirName=rootDirName(~cellfun(@isempty,rootDirName));
     compType=computer;
     for ii=1:nIter
+<<<<<<< HEAD
         itL=[optimstruct(ii).population(:).objective];
         nVarLoc=length(itL);
         iterRes(ii,1:nVarLoc)=itL;
         %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
+=======
+        nAct=length(optimstruct(ii).population);
+        iterRes(ii,1:nAct)=[optimstruct(ii).population(:).objective];
+        
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
     end
     
     switch dirOptim
@@ -653,10 +672,13 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
             [minRes,minPos]=min(iterRes,[],2);
         case 'max'
             [minRes,minPos]=max(iterRes,[],2);
+<<<<<<< HEAD
     end
     if isGradient
         minPos(1:2:end)=1;
         minRes(1:2:end)=iterRes(1:2:end,1);
+=======
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
     end
     % Prepare CFD file with newest version
     for ii=1:nIter
@@ -685,7 +707,14 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     parfor jj=1:kk
         ii=needRerun(jj);
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
+<<<<<<< HEAD
         try
+=======
+        %if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+        
+        
+            RunCFDPostProcessing(minIterPos);
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
             if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
                 RunCFDPostProcessing(minIterPos);
                 if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
@@ -701,10 +730,14 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
                     end
                 end
             end
+<<<<<<< HEAD
         catch ME
             disp(ME.getReport);
             postLog(jj)=false;
         end
+=======
+        %end
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
         
     end
     postList((~postLog))=[];
@@ -778,6 +811,19 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     
 end
 
+<<<<<<< HEAD
+=======
+function RunCFDPostProcessing(profilePath)
+    
+    compType=computer;
+    profilePath=MakePathCompliant(profilePath);
+    
+    postRootPath='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Result_Template\CFD_code_Template\Source\postproc.exe';    
+    copyfile(postRootPath,[profilePath,filesep,'CFD',filesep,'postproc.exe']);
+    
+    postPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
+    if strcmp(compType(1:2),'PC')
+>>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
 
 function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
         tecPlotFile,ratio,paramoptim,allRootDir)
