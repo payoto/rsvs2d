@@ -64,8 +64,7 @@ These tests will save results in:
 
 	../results/Standard_Execution/<Archive_YYYY_MM>/Day_YY_MM_DD/
 	
-
-	and
+and
 	
 	../results/Optimisation/<Archive_YYYY_MM>/Day_YY_MM_DD/
 	
@@ -131,12 +130,12 @@ Large new features should add their own parameter default to `StructOptimParam.m
 
 ## What does this ACTUALLY do and who do I talk to?##
 
-For more information about what the code does (i.e. the science of it)
+For more information about what the code does (i.e. the science of it)  
 [Restricted Snakes: a Flexible Topology Parameterisation Method for Aerodynamic Optimisation](https://arc.aiaa.org/doi/pdf/10.2514/6.2017-1410)  
-[Mixing and Refinement of Design Variables for Geometry and Topology Optimization in Aerodynamics](https://arc.aiaa.org/doi/pdfplus/10.2514/6.2017-3577)
+[Mixing and Refinement of Design Variables for Geometry and Topology Optimization in Aerodynamics](https://arc.aiaa.org/doi/pdfplus/10.2514/6.2017-3577)  
 
 (Also available on research gate)
 
-Alexandre Payot - a.payot@bristol.ac.uk
-[ResearchGate profile](https://www.researchgate.net/profile/Alexandre_Payot)
-[Google Scholar profile](https://scholar.google.co.uk/citations?user=JX_AmkwAAAAJ&hl=en)
+Alexandre Payot - a.payot@bristol.ac.uk  
+[ResearchGate profile](https://www.researchgate.net/profile/Alexandre_Payot)  
+[Google Scholar profile](https://scholar.google.co.uk/citations?user=JX_AmkwAAAAJ&hl=en)  
