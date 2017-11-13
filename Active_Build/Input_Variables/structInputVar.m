@@ -656,6 +656,7 @@ function [param]=optimSupersonic()
     param.snakes.refine.axisRatio=0.25;
     
     param.snakes.step.mergeTopo=true;
+
     param.snakes.step.snakesSteps=100;
     param.snakes.step.snakData='light';
     param.snakes.step.snakesConsole=false;
@@ -666,9 +667,10 @@ function [param]=optimSupersonic()
     param.results.tags={'snakes','optimisation'};
     
     param.snakes.refine.axisRatio=0.25;
-    
+
     param.optiminit.cellLevels=[12,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
+
     
     param.general.subdivType='chaikin';
     param.snakes.refine.TEShrink=true;
