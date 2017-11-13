@@ -1169,8 +1169,8 @@ function [newRootFill,desVarList]=OverflowHandling(paramoptim,desVarList,newRoot
 end
 
 <<<<<<< HEAD
-%}
-=======
+
+
 %%
 
 function [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient2(paramoptim,iterCurr,iterm1)
@@ -1536,3 +1536,4 @@ function [newGradPop,deltas]=GenerateNewGradientPop(rootFill,desVarRange,stepSiz
     
 end
 >>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
+%}
