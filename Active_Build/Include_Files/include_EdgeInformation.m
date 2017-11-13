@@ -33,6 +33,7 @@ function [loop]=OrderSurfaceVertexReshape(gridreshape,isEdge,cond)
             fillCell(:,1)=fillCell(:,1)>fillCell(:,2);
             fillCell(:,2)=fillCell(:,2)>fillCell(:,1); 
     end
+
     for ii=1:length(fillCell(:,1))
         %colNum=find(fillCell(ii,:));
         blockCellTrunc(ii)=blockCell(ii,find(fillCell(ii,:)));
@@ -71,7 +72,6 @@ function [gridreshape]=EdgePropertiesReshape(gridreshape)
     boundaryisHalf=((isElse==2));
     boundaryis0=((is0==1));
     boundaryis1=((is1==1));
-    
     solidisIn0=((is0==2));
     solidnotIn0=((is0~=2));
     solidisIn1=((is1==2));
@@ -157,6 +157,7 @@ function [loop]=OrderSurfaceVertex(unstructured,isEdge,cond)
             fillCell(:,1)=fillCell(:,1)>fillCell(:,2);
             fillCell(:,2)=fillCell(:,2)>fillCell(:,1); 
     end
+
     for ii=1:length(fillCell(:,1))
         %colNum=find(fillCell(ii,:));
         blockCellTrunc(ii)=blockCell(ii,find(fillCell(ii,:)));
@@ -167,6 +168,7 @@ function [loop]=OrderSurfaceVertex(unstructured,isEdge,cond)
     
     % Order edges into closed loops
     %[cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
+
     [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
     
     for ii=1:length(cellOrderedVertex)
@@ -224,6 +226,7 @@ function [edgeFill]=EdgeFillInformation(unstructured)
     end
     
 end
+
 
 function [loop]=EdgeInCondForVertex(loop,gridRefined,boundStr)
     

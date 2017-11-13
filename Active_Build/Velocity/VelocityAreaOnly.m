@@ -12,7 +12,11 @@
 %             Alexandre Payot
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
+
+=======
 %#codegen
+>>>>>>> init_v2
 
 function [snaxel,snakposition,snaxelmodvel]=VelocityAreaOnly(snaxel,snakposition,volumefraction,coeffstructure,forceparam)
     
@@ -386,5 +390,8 @@ function [positionHash]=CompareHashKeys(hashList,hashTest)
     
 end
 
+<<<<<<< HEAD
+=======
 %% Find Correct position single step
 
+>>>>>>> init_v2

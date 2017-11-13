@@ -65,7 +65,11 @@ $!THREEDAXIS
 $!PLOTTYPE  = CARTESIAN2D
 $!FRAMENAME  = 'Frame 001'
 $!GLOBALTIME 
+<<<<<<< HEAD
+  SOLUTIONTIME = 48.319400000000002
+=======
   SOLUTIONTIME = 6.9134963759413841
+>>>>>>> init_v2
 $!ACTIVEFIELDMAPS  =  [1-2,4-5]
 $!GLOBALRGB 
   REDCHANNELVAR = 3
@@ -75,7 +79,10 @@ $!GLOBALRGB
   RANGEMAX = 1
 $!GLOBALCONTOUR  1
   VAR = 5
+<<<<<<< HEAD
+=======
   COLORMAPNAME = 'Large Rainbow'
+>>>>>>> init_v2
   DEFNUMLEVELS = 21
   LEGEND
     {
@@ -95,8 +102,13 @@ $!GLOBALCONTOUR  1
     COLORMAPDISTRIBUTION = CONTINUOUS
     CONTINUOUSCOLOR
       {
+<<<<<<< HEAD
+      CMIN = -2
+      CMAX = 2
+=======
       CMIN = -0.1
       CMAX = 0.1
+>>>>>>> init_v2
       }
     }
 $!CONTOURLEVELS NEW
@@ -461,6 +473,10 @@ $!FIELDMAP  [1]
   MESH
     {
     COLOR = WHITE
+<<<<<<< HEAD
+    LINEPATTERN = DASHED
+=======
+>>>>>>> init_v2
     }
   CONTOUR
     {
@@ -518,7 +534,10 @@ $!FIELDMAP  [2]
     {
     COLOR = WHITE
     LINEPATTERN = DOTTED
+<<<<<<< HEAD
+=======
     PATTERNLENGTH = 1.5
+>>>>>>> init_v2
     }
   CONTOUR
     {
@@ -631,8 +650,13 @@ $!FIELDMAP  [3]
 $!FIELDMAP  [4]
   MESH
     {
+<<<<<<< HEAD
+    COLOR = RED
+    LINETHICKNESS = 0.2
+=======
     COLOR = MULTI
     LINETHICKNESS = 0.4
+>>>>>>> init_v2
     }
   CONTOUR
     {
@@ -900,16 +924,28 @@ $!TWODAXIS
 $!TWODAXIS 
   XDETAIL
     {
+<<<<<<< HEAD
+    RANGEMIN = -0.28751024950525417
+    RANGEMAX = 0.18365411614933955
+    GRSPACING = 0.1
+=======
     RANGEMIN = -1.261910273352268
     RANGEMAX = 1.1195760121964269
     GRSPACING = 0.5
+>>>>>>> init_v2
     }
 $!TWODAXIS 
   YDETAIL
     {
+<<<<<<< HEAD
+    RANGEMIN = 0.22231969848342514
+    RANGEMAX = 0.66330794378163094
+    GRSPACING = 0.05
+=======
     RANGEMIN = -1.1532818076051901
     RANGEMAX = 1.0756801742857705
     GRSPACING = 0.2
+>>>>>>> init_v2
     }
 $!ISOSURFACEATTRIBUTES  1
   OBEYSOURCEZONEBLANKING = NO
@@ -1171,6 +1207,10 @@ $!STREAMATTRIBUTES
   MAXSTEPS = 10000
 $!FIELDLAYERS 
   SHOWCONTOUR = YES
+<<<<<<< HEAD
+  SHOWVECTOR = YES
+=======
+>>>>>>> init_v2
   SHOWSHADE = YES
   SHOWEDGE = NO
 $!STREAMTRACELAYERS 
@@ -1205,7 +1245,11 @@ $!THREEDAXIS
 $!PLOTTYPE  = CARTESIAN2D
 $!FRAMENAME  = 'Frame 002'
 $!GLOBALTIME 
+<<<<<<< HEAD
+  SOLUTIONTIME = 48.319400000000002
+=======
   SOLUTIONTIME = 6.9134963759413841
+>>>>>>> init_v2
 $!ACTIVEFIELDMAPS  =  [4-5]
 $!GLOBALRGB 
   REDCHANNELVAR = 5
@@ -1597,7 +1641,65 @@ $!GLOBALSCATTER
     CELLLABELTYPE = VARVALUE
     CELLLABELVAR = 5
     }
+<<<<<<< HEAD
+$!FIELDMAP  [1]
+  MESH
+    {
+    COLOR = BLACK
+    }
+  CONTOUR
+    {
+    CONTOURTYPE = FLOOD
+    COLOR = BLACK
+    USELIGHTINGEFFECT = YES
+    }
+  VECTOR
+    {
+    COLOR = BLACK
+    }
+  SCATTER
+    {
+    COLOR = BLACK
+    }
+  SHADE
+    {
+    COLOR = CUSTOM2
+    }
+  EDGELAYER
+    {
+    SHOW = NO
+    COLOR = BLACK
+    LINETHICKNESS = 0.1
+    }
+  POINTS
+    {
+    POINTSTOPLOT = SURFACENODES
+    }
+  SURFACES
+    {
+    SURFACESTOPLOT = KPLANES
+    IRANGE
+      {
+      MAX = 1
+      }
+    }
+  VOLUMEMODE
+    {
+    VOLUMEOBJECTSTOPLOT
+      {
+      SHOWISOSURFACES = NO
+      SHOWSLICES = NO
+      SHOWSTREAMTRACES = NO
+      }
+    }
+  EFFECTS
+    {
+    LIGHTINGEFFECT = GOURAUD
+    }
+$!FIELDMAP  [2]
+=======
 $!FIELDMAP  [1-2]
+>>>>>>> init_v2
   MESH
     {
     COLOR = BLACK
@@ -2276,7 +2378,11 @@ $!THREEDAXIS
 $!PLOTTYPE  = CARTESIAN2D
 $!FRAMENAME  = 'Frame 003'
 $!GLOBALTIME 
+<<<<<<< HEAD
+  SOLUTIONTIME = 48.319400000000002
+=======
   SOLUTIONTIME = 6.9134963759413841
+>>>>>>> init_v2
 $!ACTIVEFIELDMAPS  =  [6-9]
 $!GLOBALRGB 
   REDCHANNELVAR = 3
@@ -2447,7 +2553,65 @@ $!CONTOURLEVELS NEW
 $!GLOBALSCATTER 
   VAR = 3
   RELATIVESIZE = 0.008773
+<<<<<<< HEAD
+$!FIELDMAP  [1]
+  MESH
+    {
+    COLOR = BLACK
+    }
+  CONTOUR
+    {
+    CONTOURTYPE = FLOOD
+    COLOR = BLACK
+    USELIGHTINGEFFECT = YES
+    }
+  VECTOR
+    {
+    COLOR = BLACK
+    }
+  SCATTER
+    {
+    COLOR = BLACK
+    }
+  SHADE
+    {
+    COLOR = CUSTOM2
+    }
+  EDGELAYER
+    {
+    SHOW = NO
+    COLOR = BLACK
+    LINETHICKNESS = 0.1
+    }
+  POINTS
+    {
+    POINTSTOPLOT = SURFACENODES
+    }
+  SURFACES
+    {
+    SURFACESTOPLOT = KPLANES
+    IRANGE
+      {
+      MAX = 1
+      }
+    }
+  VOLUMEMODE
+    {
+    VOLUMEOBJECTSTOPLOT
+      {
+      SHOWISOSURFACES = NO
+      SHOWSLICES = NO
+      SHOWSTREAMTRACES = NO
+      }
+    }
+  EFFECTS
+    {
+    LIGHTINGEFFECT = GOURAUD
+    }
+$!FIELDMAP  [2]
+=======
 $!FIELDMAP  [1-2]
+>>>>>>> init_v2
   MESH
     {
     COLOR = BLACK
@@ -2859,8 +3023,13 @@ $!TWODAXIS
   XDETAIL
     {
     RANGEMIN = 0
+<<<<<<< HEAD
+    RANGEMAX = 160
+    GRSPACING = 20
+=======
     RANGEMAX = 400
     GRSPACING = 100
+>>>>>>> init_v2
     TITLE
       {
       TITLEMODE = USETEXT
@@ -2870,7 +3039,11 @@ $!TWODAXIS
 $!TWODAXIS 
   YDETAIL
     {
+<<<<<<< HEAD
+    RANGEMIN = -16
+=======
     RANGEMIN = -10
+>>>>>>> init_v2
     RANGEMAX = 2
     GRSPACING = 2
     TITLE
