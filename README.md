@@ -1,6 +1,16 @@
 # README #
 Last updated 13/11/2017
 
+## What is this repository for? ##
+
+This repository is the MATLAB implementation of the 2D R-Snake Volume of Solid (RSVS) parameterisation.
+It includes an optimisation framework designed for to explore generic optimisation problems using this parameterisation.
+A number of objective functions are included.
+
+Relevant publications are at the end of this readme.
+
+
+## Pre-requisites ##
 
 For this code to work necessary programs:  
 +	MATLAB installed (2015a or later) - including parallel toolbox  
@@ -9,12 +19,7 @@ For this code to work necessary programs:
 +	fortran (90+) compiler for compilation of flow solvers   
 +	Cygwin needed for compilation of some flow solver features(Mesh motion) on windows with the "make" utility  
 
-	
-## What is this repository for? ##
 
-This repository is the MATLAB implementation of the 2D R-Snake Volume of Solid (RSVS) parameterisation.
-It includes an optimisation framework designed for to explore generic optimisation problems using this parameterisation.
-A number of objective functions are included
 
 ## How do I get set up? ##
 
@@ -124,11 +129,45 @@ about the creator, the feature they are part of and the intended purpose.
 
 Use a separate git branch for development of new experimental features that may break the main code (and not just the new feature).
 
-Large new features should add their own parameter default to `StructOptimParam.m` 
+Large new features should add their own parameter default to `StructOptimParam.m`.
 
-### Managing git ###
+### Execution by other users ###
 
-## What does this ACTUALLY do and who do I talk to?##
+Execution by other users relies on maintaining a consitent way of calling cases. This means that parameters for new features
+should use the parameter structure syntax already in place.
+
+### Simple deployment ###
+
+Provide scripts to deploy any new utilities required and make sure they are executed by the `deploylinux.sh` code.
+
+### Coding Style ###
+
+Lines of code shall not be longer than 80 characters.
+
+camelCase is used:
+
+	MyNewFunctionName 
+	myNewVariableName 
+	mynewstructure.withitsfield
+	% Unfortunately I was not always super consistent for structures you might encounter:
+	myNewStructure.withitsfield
+	% Curse past-me silently and get on with your life.
+	
+The aproach followed in the code is close to functional programming. The idea is to have short functions (20 lines) 
+which perform a single simple process. The functions should be named according to their purpose and should include just below a short (1 sentence)
+description of what they are supposed to do. Inputs should have clear meaningful names and a brief description of what they are should be in the function
+
+The code is geared to have robust predictable behaviour rather than speed. It is built to be modular and facilitate the future implementation
+of unintended features. Any new feature should be easy to enable from file `StructOptimParam.m`.
+
+All parameters are added to a single structure at the start in `StructOptimParam.m`. These can then be accessed using:
+
+	[var1,var2,var3,...,varN]=ExtractVariables({cell array of variable names},paramstructure);
+	paramstructure=SetVariables({cell array of variable names},{var1,var2,var3,...,varN},paramstructure);
+
+## Gosh, how the hell does this parameter thing work? ##
+	
+## I don't get it what does this ACTUALLY do and who do I talk to?##
 
 For more information about what the code does (i.e. the science of it)  
 [Restricted Snakes: a Flexible Topology Parameterisation Method for Aerodynamic Optimisation](https://arc.aiaa.org/doi/pdf/10.2514/6.2017-1410)  
