@@ -25,13 +25,13 @@ For this code to work necessary programs:
 
 # How do I get set up? #
 
-To get started:
-(Linux - First Time) 
-	Run: `./Result_Template/Source/CompileAll.sh`
+To get started:  
+(Linux - First Time)  
+	Run: `./Result_Template/Source/CompileAll.sh`  
 		This compiles all the separate utilities (mesher, flow solver, mesh deformation)
-		requires fortran and c compilers
-	Launch Matlab from the source directory
-	in matlab:
+		requires fortran and c compilers  
+	Launch Matlab from the source directory  
+	in matlab:  
 		>> InitialiseSnakeFlow
 		>> Compile_Mex
 		>> ExecInclude
