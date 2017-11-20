@@ -626,6 +626,7 @@ end
 
 function [h]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         volfracconnec,cellCentredGrid,insideContourInfo,forceparam)
+    global unstructglobal
     
     [snakposition]=PositionSnakes(snaxel,refinedGriduns);
     [snakposition]=SnaxelNormal2(snaxel,snakposition);
@@ -633,10 +634,13 @@ function [h]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         cellCentredGrid,insideContourInfo);
     forceparam.isLast=true;
     forceparam.lengthEpsilon=0;
+    
     [snaxel,snakposition,snaxelmodvel,velcalcinfo,forceparam,sensSnax]...
         =VelocityCalculationVolumeFraction(snaxel,snakposition,volumefraction,...
         coeffstructure,forceparam);
-    h=testSensitivity(snaxel,snakposition,sensSnax);
+    [cellordstruct]=BuildCellConnectivity(snaxel,ModifUnstructured(unstructglobal),refinedGrid,volfracconnec);
+
+    h=testSensitivity(snaxel,snakposition,sensSnax,cellordstruct);
 end
 
 function [snaxelRev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
@@ -3324,7 +3328,7 @@ function []=PlotVolFrac(figh,axh,coord,frac)
 end
 
 %% Check sensitivity
-function [h]=testSensitivity(snaxel,snakposition,sensSnax)
+function [h]=testSensitivity(snaxel,snakposition,sensSnax,varargin)
     
     global unstructglobal
     sensSnax(:,find(sum(abs(sensSnax))==0))=[];
@@ -3349,14 +3353,31 @@ function [h]=testSensitivity(snaxel,snakposition,sensSnax)
     l=max(sum(vertcat(snakposition(:).vectornotnorm).^2,2));
     h=figure;
     hold on
+    cellInd=sort([varargin{1}.index]);
     for ii=1:length(sensSnax(1,:)),
+        h(ii)=figure;
+        hold on
         snaxCopy=snaxel;
         e1=(1)./sensSnax(:,ii);
         e2=(-1)./sensSnax(:,ii);
         e1_sel=min(e1(e1>0));
         e2_sel=min(e2(e2>0));
         e_sel(ii)=min([e1_sel,e2_sel]);
-        dChange{ii}=sensSnax(:,ii)/max(abs(sensSnax(:,ii)))*1;
+        sensAct=sensSnax(:,ii);
+        sensAct=sensSnax(:,ii)/max(abs(sensSnax(:,ii)));
+        if numel(varargin)==1
+            cellSub=FindObjNum([],cellInd(ii),[varargin{1}.index]);
+            if ~isempty(cellSub) && cellSub~=0
+                sensAct=sensAct+(sensSnax(:,FindObjNum([],varargin{1}(cellSub).nextcell,cellInd))/...
+                    max(abs(sensSnax(:,FindObjNum([],varargin{1}(cellSub).nextcell,cellInd))))*0.25);
+                sensAct=sensAct+(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd))/...
+                    max(abs(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd))))*0.25);
+%                   sensAct=sensAct+0.25*(sensSnax(:,FindObjNum([],varargin{1}(cellSub).nextcell,cellInd)));
+%                   sensAct=sensAct+0.25*(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd)));
+            end
+        end
+        dChange{ii}=sensAct/max(abs(sensAct))*1;
+        
         %dChange{ii}=-sensSnax(:,ii)/100;
         dAct=dCurr'+dChange{ii};
         
@@ -3376,9 +3397,9 @@ function [h]=testSensitivity(snaxel,snakposition,sensSnax)
         end
         l2(ii)=plot(coord2(newOrd,1),coord2(newOrd,2),'o-');
         hold on
-        %         for jj=1:length(newOrd)
-        %             plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
-        %         end
+        for jj=1:length(newOrd)
+            plot([coord1(newOrd(jj),1),coord2(newOrd(jj),1)],[coord1(newOrd(jj),2),coord2(newOrd(jj),2)],'k--')
+        end
         l2(ii).DisplayName=['mode ',int2str(ii)];
         
     end
