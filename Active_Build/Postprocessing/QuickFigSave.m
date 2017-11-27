@@ -1,4 +1,9 @@
-function []=QuickFigSave(figList)
+function []=QuickFigSave(figList,isNum)
+    
+    if nargin<2
+        isNum=1;
+    end
+    if isNum==0;isNum=[];end
     
     addpath ..\..\matlabpackages\export_fig
     for ii=figList;
@@ -8,9 +13,10 @@ function []=QuickFigSave(figList)
         axh=findobj(h(1),'type','axes');
         for jj=1:numel(axh)
             hCol{jj}=axh(jj).Color;
-            axh(jj).Color='none';
+            %axh(jj).Color='none';
         end
-        figName=matlab.lang.makeValidName([h(1).Name,int2str(ii)]);
+        
+        figName=matlab.lang.makeValidName([h(1).Name,int2str(ii(isNum))]);
         %print(h(1),'-r300','-dpng',['.\fig\',figName,'.png'])
         export_fig(h(1),'-transparent','-r300',['.\fig\',figName,'.png'])
         h(1).Renderer='painters';
