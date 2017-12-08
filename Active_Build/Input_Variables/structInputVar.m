@@ -1483,6 +1483,25 @@ function [param]=SnakesFoilVVSmall_ref()
     param.snakes.refine.edgeFinish='none';
 end
 
+function [param]=SnakesFoilVVSmall2body()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='small2foil';
+    param.snakes.step.snakesSteps=150;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-1,1];
+    param.general.refineSteps=2;
+    param.snakes.step.mergeTopo=true;
+    param.snakes.step.convLevel=10^-8;
+    param.snakes.refine.TEShrink=true;
+    param.snakes.refine.LEShrink=false;
+    param.snakes.refine.edgeFinish='none';
+end
+
 function [param]=Supersonic()
     
     [param]=DefaultCase();
