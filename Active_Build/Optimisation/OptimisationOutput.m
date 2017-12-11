@@ -784,19 +784,6 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
     
 end
 
-% <<<<<<< HEAD
-% =======
-% function RunCFDPostProcessing(profilePath)
-%     
-%     compType=computer;
-%     profilePath=MakePathCompliant(profilePath);
-%     
-%     postRootPath='C:\Users\ap1949\Local Documents\PhD\Development Work\Snakes Volume Parametrisation\source\Result_Template\CFD_code_Template\Source\postproc.exe';    
-%     copyfile(postRootPath,[profilePath,filesep,'CFD',filesep,'postproc.exe']);
-%     
-%     postPath=[profilePath,filesep,'CFD',filesep,'RunPost'];
-%     if strcmp(compType(1:2),'PC')
-% >>>>>>> 2f6fdfae0c257288b7da037c663953265f6f756a
 
 function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
         tecPlotFile,ratio,paramoptim,allRootDir)
