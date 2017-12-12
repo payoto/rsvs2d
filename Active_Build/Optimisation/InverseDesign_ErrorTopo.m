@@ -53,7 +53,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
         case 'area2parea'
             [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredpAreaTopo(analysisLoop,targCoord);
         case 'normdist'
-            [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(analysisLoop,targCoord);
+            [errorMeasure,modifiedDistance,analysisLoop]=CompareProfilesNormDistTopo(analysisLoop,targCoord);
             %ax.YScale='log';
         otherwise
             error('not coded yet')
@@ -75,7 +75,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
     
 end
 
-function [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(testLoop,targLoop)
+function [errorMeasure,modifiedDistance,testLoop]=CompareProfilesNormDistTopo(testLoop,targLoop)
     % test intersection and internal with inpolygon
     % targLoop ->
     % testLoop |
@@ -90,33 +90,34 @@ function [errorMeasure,modifiedDistance]=CompareProfilesNormDistTopo(testLoop,ta
     if objChoice % use iterative area condition
         
         errorMeasure=cell([1,numel(testLoop)]);
-        modifiedDistance=cell([1,numel(testLoop)]);
+        modifiedDistanceFull=cell([1,numel(testLoop)]);
         for ii=1:numel(testLoop)
             targActTest=find(intersectTable(ii,:));
             errorMeasureTemp=cell([1,numel(targActTest)]);
             for jj=1:numel(targActTest)
                 analysisCoord=RemoveIdenticalConsecutivePoints(targLoop(...
                     targActTest(jj)).coord);
-                targCoord=RemoveIdenticalConsecutivePoints(testLoop(ii).coord);
-                [errorMeasureTemp{jj},modifiedDistanceTemp]=CompareProfilesDistance2(analysisCoord,targCoord);
-                modifiedDistance{ii}(:,1)=modifiedDistanceTemp(:,1);
-                modifiedDistance{ii}(:,1+jj)=modifiedDistanceTemp(:,2);
+                testCoord=RemoveIdenticalConsecutivePoints(testLoop(ii).coord);
+                [errorMeasureTemp{jj},modifiedDistanceTemp]=...
+                    CompareProfilesDistance2(testCoord,analysisCoord);
+                modifiedDistanceFull{ii}(:,1)=modifiedDistanceTemp(:,1);
+                modifiedDistanceFull{ii}(:,1+jj)=modifiedDistanceTemp(:,2);
             end
-            modifiedDistance{ii}(:,2)=sum(modifiedDistance{ii}(:,2:end),2);
-            errorMeasure{ii}.sum=sum(modifiedDistance{ii}(:,2));
-            errorMeasure{ii}.mean=mean(modifiedDistance{ii}(:,2));
-            errorMeasure{ii}.std=std(modifiedDistance{ii}(:,2));
-            errorMeasure{ii}.max=max(modifiedDistance{ii}(:,2));
-            errorMeasure{ii}.min=min(modifiedDistance{ii}(:,2));
-            
+            modifiedDistanceFull{ii}(:,2)=sum(modifiedDistanceFull{ii}(:,2:end),2);
+            errorMeasure{ii}.sum=sum(modifiedDistanceFull{ii}(:,2));
+            errorMeasure{ii}.mean=mean(modifiedDistanceFull{ii}(:,2));
+            errorMeasure{ii}.std=std(modifiedDistanceFull{ii}(:,2));
+            errorMeasure{ii}.max=max(modifiedDistanceFull{ii}(:,2));
+            errorMeasure{ii}.min=min(modifiedDistanceFull{ii}(:,2));
+            testLoop(ii).localerror=modifiedDistanceFull{ii}(:,2);
         end
         for ii=2:numel(errorMeasure)
             errorMeasure{1}=opstruct('+',errorMeasure{[1,ii]});
         end
         errorMeasure=errorMeasure{1};
         modifiedDistance2=zeros([0 2]);
-        for ii=1:numel(modifiedDistance)
-            modifiedDistance2=[modifiedDistance2;[1,0];modifiedDistance{ii}];
+        for ii=1:numel(modifiedDistanceFull)
+            modifiedDistance2=[modifiedDistance2;[1,0];modifiedDistanceFull{ii}];
         end
         modifiedDistance=modifiedDistance2;
 %         [~,iSort]=sort(modifiedDistance(:,1));

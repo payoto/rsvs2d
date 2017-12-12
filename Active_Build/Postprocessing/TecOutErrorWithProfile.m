@@ -1,9 +1,90 @@
-function []=TecOutErrorWithProfile()
+function []=TecOutErrorWithProfile(pathStr)
     
+    [pathstruct,optimstruct]=FindRestartsTecsubfile(pathStr);
+    for ii=1:numel(pathstruct)
+        %[paramoptim]=BuildErrorTecSubfile(pathstruct(ii));
+    end
+    load(pathstruct(end).param)
+    marker='RefinementSummary';
     
+    tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
+    tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
+    tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
+    tecPlotPre{2}=['Tec360plt_Snak_',marker,'_pre.plt'];
+    
+    [FID]=OpenOptimumSnakLayFile(pathStr,marker);
+    PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
+    tecPlotFile{1}=[pathStr,filesep,tecPlotFile{1}];
+    tecPlotFile{2}=[pathStr,filesep,tecPlotFile{2}];
+    axisRatio=ExtractVariables({'axisRatio'},paramoptim.parametrisation);
+    ExtractOptimalSnake(optimstruct,pathStr,'min',...
+            tecPlotFile,axisRatio,paramoptim,{pathstruct(:).dir});
 end
 
 %% Create the additional tecsubfile with error as vel
+
+function [pathstruct,optimstruct]=FindRestartsTecsubfile(pathStr)
+    
+    dirPath=FindDir(pathStr,'Dir_',1);
+    
+    % Reorder paths to be in order of refinement
+    dirOrd=regexp(dirPath,'[0-9]*$','match');
+    dirOrd=[dirOrd{:}];
+    dirPath(cellfun(@isempty,dirOrd))=[];
+    dirOrd(cellfun(@isempty,dirOrd))=[];
+    dirOrd=cellfun(@str2num,dirOrd);
+    [~,dirOrd]=sort(dirOrd);
+    dirPath=dirPath(dirOrd);
+    
+    for ii=1:numel(dirPath)
+        optimPath=FindDir(dirPath{ii},'Optimal_',1);
+        restartTemp=FindDir(optimPath{1},'restart_',0);
+        [tecTemp,tecName]=FindDir(optimPath{1},'tecsubfile',0);
+        tt=find(~cellfun(@isempty,regexp(tecName,'^tecsubfile_.*\.dat$')));
+        pathstruct(ii).restart=restartTemp{1};
+        pathstruct(ii).tecplot=tecTemp{tt};
+        pathstruct(ii).param=FindDir(dirPath{ii},'FinalParam',0);
+        pathstruct(ii).param=pathstruct(ii).param{1};
+        pathstruct(ii).dir=dirPath{ii};
+        
+        optimstruct(ii).population=struct('objective',1,'location',optimPath{1});
+    end
+    
+end
+
+function [paramoptim]=BuildErrorTecSubfile(pathStruct)
+    
+    load(pathStruct.param)
+    load(pathStruct.restart)
+    paramoptim=SetVariables({'profileComp'},{'normdist'},paramoptim);
+    [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramoptim,loop);
+    close(h)
+    snaxel=repmat(struct('index',0,'snaxnext',0,...
+    'v',0),[sum([analysisLoop(:).nPts]) 1]);
+    snakposition=repmat(struct('index',0,'coord',[0 0]...
+        ,'vector',[0 0]),[sum([analysisLoop(:).nPts]) 1]);
+    
+    kk=1;
+    for ii=1:numel(analysisLoop)
+        
+        kkStart=kk;
+        for jj=1:analysisLoop(ii).nPts
+            snaxel(kk).index=kk;
+            snaxel(kk).snaxnext=kk+1;
+            snaxel(kk).v=analysisLoop(ii).localerror(jj);
+            snakposition(kk).index=kk;
+            snakposition(kk).coord=analysisLoop(ii).coord(jj,:);
+            kk=kk+1;
+        end
+        snaxel(kk-1).snaxnext=kkStart;
+    end
+    tCell=regexp(regexp(pathStruct.restart,'restart_.*$','match'),'[0-9]*','match');
+    time=str2num([tCell{1}{1},'.',tCell{1}{2}]);
+    [cellMesh]=SnaxelToCellOut(snaxel,snakposition,10,time);
+    FID=fopen(pathStruct.tecplot,'a');
+    WriteToFile(cellMesh,FID)
+    fclose(FID);
+end
 
 % Function to concatenate it all.
 
@@ -81,8 +162,8 @@ function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
         %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
         dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
         expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'};
-        val={ii,[3 4],minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
-        nOccur=[2 2 1 1];
+        val={ii,[3 4 10],minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
+        nOccur=[3 3 1 1];
         [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
         
 %         [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'CFD'],...
@@ -304,5 +385,36 @@ function [destPath]=EditVariablePLT_FEPOLYGON(varList,ratio,offsets,cfdPath,file
     end
     fclose('all');
 end
+
+function [cellMesh]=SnaxelToCellOut(snaxel,snakposition,strandID,time)
+    
+    
+    coordDat=vertcat(snakposition(:).coord);
+    vectorDat=vertcat(snakposition(:).vector);
+    velDat=[snaxel(:).v]';
+    %velDat=[[snaxel(:).isfreeze]']*2+1;
+    %velDat=[[snaxel(:).orderedge]'];
+    vectorDat(:,1)=vectorDat(:,1).*velDat;
+    vectorDat(:,2)=vectorDat(:,2).*velDat;
+    vectorDat=[vectorDat,velDat];
+    vertIndex=[snakposition(:).index];
+    connDat=[[snaxel(:).index]',[snaxel(:).snaxnext]'];
+    
+    [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID,time);
+    
+end
+
+function [FID]=OpenOptimumSnakLayFile(writeDirectory,marker)
+    % Creates a file in the current directory to write data to.
+    
+    writeDirectory=MakePathCompliant(writeDirectory);
+    fileName=['EvolSnake_',marker,'.lay'];
+    originalLayFile=[cd,'\Result_Template\Layout_OptimSnak.lay'];
+    originalLayFile=MakePathCompliant(originalLayFile);
+    copyfileRobust(originalLayFile,[writeDirectory,filesep,fileName])
+    FID=fopen([writeDirectory,filesep,fileName],'r+');
+    
+end
+
 
 %% 
