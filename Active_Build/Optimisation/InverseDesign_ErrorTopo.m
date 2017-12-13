@@ -103,7 +103,8 @@ function [errorMeasure,modifiedDistance,testLoop]=CompareProfilesNormDistTopo(te
                 modifiedDistanceFull{ii}(:,1)=modifiedDistanceTemp(:,1);
                 modifiedDistanceFull{ii}(:,1+jj)=modifiedDistanceTemp(:,2);
             end
-            modifiedDistanceFull{ii}(:,2)=sum(modifiedDistanceFull{ii}(:,2:end),2);
+            modifiedDistanceFull{ii}(:,2)=min(modifiedDistanceFull{ii}(:,2:end),[],2);
+            modifiedDistanceFull{ii}(:,3:end)=[];
             errorMeasure{ii}.sum=sum(modifiedDistanceFull{ii}(:,2));
             errorMeasure{ii}.mean=mean(modifiedDistanceFull{ii}(:,2));
             errorMeasure{ii}.std=std(modifiedDistanceFull{ii}(:,2));

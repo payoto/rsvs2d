@@ -18,7 +18,7 @@ function []=TecOutErrorWithProfile(pathStr)
     tecPlotFile{2}=[pathStr,filesep,tecPlotFile{2}];
     axisRatio=ExtractVariables({'axisRatio'},paramoptim.parametrisation);
     ExtractOptimalSnake(optimstruct,pathStr,'min',...
-            tecPlotFile,axisRatio,paramoptim,{pathstruct(:).dir});
+            tecPlotFile,axisRatio,paramoptim,{pathstruct(2:end).dir});
 end
 
 %% Create the additional tecsubfile with error as vel
@@ -36,16 +36,21 @@ function [pathstruct,optimstruct]=FindRestartsTecsubfile(pathStr)
     [~,dirOrd]=sort(dirOrd);
     dirPath=dirPath(dirOrd);
     
-    for ii=1:numel(dirPath)
-        optimPath=FindDir(dirPath{ii},'Optimal_',1);
+    for ii=1:numel(dirPath)+1
+        if ii==1
+            optimPath={MakePathCompliant([dirPath{max(ii-1,1)},...
+                '\iteration_1\'])};
+        else
+            optimPath=FindDir(dirPath{max(ii-1,1)},'Optimal_',1);
+        end
         restartTemp=FindDir(optimPath{1},'restart_',0);
         [tecTemp,tecName]=FindDir(optimPath{1},'tecsubfile',0);
         tt=find(~cellfun(@isempty,regexp(tecName,'^tecsubfile_.*\.dat$')));
         pathstruct(ii).restart=restartTemp{1};
         pathstruct(ii).tecplot=tecTemp{tt};
-        pathstruct(ii).param=FindDir(dirPath{ii},'FinalParam',0);
+        pathstruct(ii).param=FindDir(dirPath{max(ii-1,1)},'FinalParam',0);
         pathstruct(ii).param=pathstruct(ii).param{1};
-        pathstruct(ii).dir=dirPath{ii};
+        pathstruct(ii).dir=dirPath{max(ii-1,1)};
         
         optimstruct(ii).population=struct('objective',1,'location',optimPath{1});
     end
@@ -162,7 +167,8 @@ function [tecPlotPre]=ExtractOptimalSnake(optimstruct,rootFolder,dirOptim,...
         %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
         dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
         expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'};
-        val={ii,[3 4 10],minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
+        val={ii,[3 4 10],minIterRootDirNum(ii)*5,...
+            minIterRootDirNum(ii)*5};
         nOccur=[3 3 1 1];
         [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
         
