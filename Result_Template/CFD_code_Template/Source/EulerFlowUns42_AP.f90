@@ -43,10 +43,10 @@
      &  amp2,disp
 
 !     INTEGER VARS
-      integer::t,ncell,nedge,nvert,nc,iunflag,                          &
+      integer::ed,t,ncell,nedgei,nvert,nc,iunflag,nedgeb,nedge,         &
      &  nreal,nrealstop,tstopi,nsurf,rbf_type,irest,dimnum,npercyc,nv
       integer,allocatable,dimension(:)::dsf,m,tstop,INDX,list
-      integer,allocatable,dimension(:,:)::edge
+      integer,allocatable,dimension(:,:)::edgei,edgeb,edge
 
       double precision::machinfuse,aoause,aoainc,machinc
       integer::aamax,mmax,aa,mm,OOF
@@ -136,6 +136,32 @@
      &                  ,edge,volnp1,k1,k2,dsf,m,iunflag,irest,         &
      &                 rfreq,nrealstop,npercyc,chord,rbf_type,sr,aamax, &
      &          machinc,mmax,aoainc,conflag,resval,aeromode,airoff)
+
+      print *,"Sorting internal and boundary faces..."
+      nedgei=0
+      nedgeb=0
+      do ed=1,nedge
+        if((edge(ed,3).lt.0).or.(edge(ed,4).lt.0))then
+          nedgeb=nedgeb+1
+        else
+          nedgei=nedgei+1
+        endif
+      enddo
+      print *, "Internal faces:",nedgei
+      print *, "Boundary faces:",nedgeb
+      allocate(edgei(nedgei,4))
+      allocate(edgeb(nedgeb,4))
+      nedgei=0
+      nedgeb=0
+      do ed=1,nedge
+        if((edge(ed,3).lt.0).or.(edge(ed,4).lt.0))then
+          nedgeb=nedgeb+1
+          edgeb(nedgeb,:)=edge(ed,:)
+        else
+          nedgei=nedgei+1
+          edgei(nedgei,:)=edge(ed,:)
+        endif
+      enddo
 
       if(aeromode.ge.1)then
         open(888,file='struct_hist.plt',status='unknown') 
@@ -472,7 +498,8 @@
         call JAMESON(ncell,nedge,nvert,edge,grdnp1,rho,u,v,E,p,         &
      &             Runiv,machinfuse,rhoinf,Tinf,gam,aoause,volnp1,voln, &
      &              volnm1,Wnp1,Wn,Wnm1,fnp1,fn,fnm1,fvel,deltat,       &
-     &                   k1,k2,dsf,iunflag,m,lam,aeromode)      
+     &                   k1,k2,dsf,iunflag,m,lam,aeromode,              &
+     &            nedgei,nedgeb,edgei,edgeb)  
                                                
           !print *, 'resid'               
         call RESID(ncell,nvert,nedge,grdnp1,edge,rho,rhohold,deltat,    &        
@@ -506,7 +533,7 @@
           if(ccnt.gt.250)then
             if(log10(res).lt.resval) switch=1
           endif 
-		  if(ccnt.gt.tstop(nreal)) switch=1
+		      if(ccnt.gt.tstop(nreal)) switch=1
         endif
      
         enddo !subits
@@ -719,7 +746,7 @@
 
 !     *****************************************************
       subroutine DISS(ncell,nedge,nvert,W,edge,rho,u,v,p,gam,grd,       &
-     &  k1,k2,D,m,lam,nstage,vol)                                           
+     &  k1,k2,D,m,lam,nstage,vol,LAP,pdss,pdssdf,pdsssm)                                            
       
       implicit none
       
@@ -730,7 +757,7 @@
       integer,intent(in),dimension(nedge,4)::edge
       double precision,intent(in)::k1,k2,gam
       double precision,intent(in),dimension(nvert,2)::grd
-      double precision,intent(out),dimension(ncell,4)::D
+      double precision,intent(inout),dimension(ncell,4)::D
       !integer,dimension(ncell)::m
       integer,intent(in),dimension(ncell)::m
       double precision,intent(inout),dimension(ncell)::lam
@@ -738,15 +765,16 @@
       integer::ed,nc
       double precision::alp1,alp2,p3,p4,u01x,u01y,c01,S01,dx,dy,psi1,psi0           &
      &  ,psi01,lam01
-      double precision,dimension(ncell,4)::LAP
+      double precision,intent(inout),dimension(ncell,4)::LAP
       double precision::s2,s4
-      double precision,dimension(ncell)::pdss,pdssdf,pdsssm
+      double precision,intent(inout),dimension(ncell)::pdss,pdssdf,pdsssm
       
       double precision,dimension(4)::W3,W4
       double precision::ul,ur,vl,vr,cl,cr
       !double precision,dimension(ncell)::psi
       
-      LAP=0.0                 
+
+      !LAP=0.0                  
       
       do ed=1,nedge      
         if((edge(ed,3).gt.0).and.(edge(ed,4).gt.0)) then
@@ -768,9 +796,10 @@
       !  LAP(nc)=LAP(nc)/vol(nc)
       !enddo
       
-      pdss=0.0
-      pdssdf=0.0
-      pdsssm=0.0
+
+      !pdss=0.0
+      !pdssdf=0.0
+      !pdsssm=0.0
       
       do ed=1,nedge      
         if((edge(ed,3).gt.0).and.(edge(ed,4).gt.0)) then
@@ -844,7 +873,7 @@
         enddo
       endif      
                         
-      D=0.0
+      !D=0.0
       
       do ed=1,nedge      
         if((edge(ed,3).gt.0).and.(edge(ed,4).gt.0)) then
@@ -907,7 +936,7 @@
       double precision,intent(in),dimension(ncell)::rho,u,v,E,p
       double precision,intent(in),dimension(nedge,2)::fvel
       integer,intent(in),dimension(nedge,4)::edge  
-      double precision,intent(out),dimension(ncell,4)::R
+      double precision,intent(inout),dimension(ncell,4)::R
       double precision,intent(in)::Runiv,machinf,rhoinf,Tinf,gam,aoa
       double precision,intent(in),dimension(nvert,2)::grd
       
@@ -932,7 +961,7 @@
       enddo
       !print *, 'f1',ncell
       
-      R=0.0
+      !R=0.0
       FLX=0.0
       FLXF=0.0
       FLXG=0.0
@@ -1377,14 +1406,18 @@
 !     ***********************************************************
 
 !     **********************************************************      
-      subroutine JAMESON(ncell,nedge,nvert,edge,grd,rho,u,v,E,p,        &
+         subroutine JAMESON(ncell,nedge,nvert,edge,grd,rho,u,v,E,p,        &
      &                   Runiv,machinf,rhoinf,Tinf,gam,aoa,vol,voln,    &
      &                volnm1,W1,Wn,Wnm1,fnp1,fn,fnm1,fvel,deltat,       &
-     &                   k1,k2,dsf,iunflag,m,lam,aeromode)      
+     &                   k1,k2,dsf,iunflag,m,lam,aeromode,              &
+     &              nedgei,nedgeb,edgei,edgeb)      
                                     
       implicit none
       
-      integer,intent(in)::ncell,nedge,nvert,iunflag,aeromode            
+      integer,intent(in)::ncell,nedge,nvert,iunflag,aeromode
+      integer,intent(in)::nedgei,nedgeb  
+      integer,intent(in),dimension(nedgei,4)::edgei
+      integer,intent(in),dimension(nedgeb,4)::edgeb      
       double precision,intent(in),dimension(nvert,2)::grd
       double precision,intent(in),dimension(ncell)::vol,voln,volnm1,deltat
       double precision,intent(in),dimension(nedge,2)::fvel
@@ -1396,7 +1429,7 @@
       integer,intent(in),dimension(ncell)::m
       !integer,dimension(nedge,4)::edge2 
       
-      double precision,dimension(ncell,4)::R,D,RT
+      double precision,dimension(ncell,4)::R,D,RT,LAP,pdss,pdssdf,pdsssm
       double precision,dimension(ncell,4)::W0
       double precision,intent(in),dimension(ncell,4)::Wn,Wnm1
       double precision,intent(inout),dimension(ncell,4)::W1
@@ -1411,16 +1444,29 @@
       D=0.0
                   
       do nstage=4,1,-1        
-      
+   
+        ! R is shared between internal and boudnary version of FLUX      
         R=0.0
                                                                    
-        call FLUX(ncell,nedge,nvert,edge,grd,rho,u,v,E,p,fvel,R,        &
+        call FLUXI(ncell,nedgei,nvert,edgei,grd,rho,u,v,E,p,fvel,R,     &
+     &         Runiv,machinf,rhoinf,Tinf,gam,aoa)
+        call FLUX(ncell,nedgeb,nvert,edgeb,grd,rho,u,v,E,p,fvel,R,      &
      &         Runiv,machinf,rhoinf,Tinf,gam,aoa)
                 
         if(dsf(nstage).eq.1)then
-        D=0.0        
-         call DISS(ncell,nedge,nvert,W1,edge,rho,u,v,p,                 &
-     &             gam,grd,k1,k2,D,m,lam,nstage,vol)
+
+         ! These must be shared between the internal and boundary
+         ! versions of DISS for the integrals to be correct
+         D=0.0  
+         LAP=0.0
+         pdss=0.0
+         pdssdf=0.0
+         pdsssm=0.0  
+
+         call DISSI(ncell,nedgei,nvert,W1,edgei,rho,u,v,p,              &
+     &        gam,grd,k1,k2,D,m,lam,nstage,vol,LAP,pdss,pdssdf,pdsssm)
+         call DISS(ncell,nedgeb,nvert,W1,edgeb,rho,u,v,p,               &
+     &        gam,grd,k1,k2,D,m,lam,nstage,vol,LAP,pdss,pdssdf,pdsssm)
         endif
         
         if(iunflag.eq.1)then
@@ -2392,6 +2438,245 @@
 
       END SUBROUTINE ELGS
 !     ***********************************************************
+
+
+
+!     *****************************************************            
+      subroutine FLUXI(ncell,nedge,nvert,edge,grd,rho,u,v,E,p,fvel,R,   &
+     &  Runiv,machinf,rhoinf,Tinf,gam,aoa)
+      
+      implicit none
+      
+      integer,intent(in)::ncell,nedge,nvert
+      double precision,intent(in),dimension(ncell)::rho,u,v,E,p
+      double precision,intent(in),dimension(nedge,2)::fvel
+      integer,intent(in),dimension(nedge,4)::edge  
+      double precision,intent(inout),dimension(ncell,4)::R
+      double precision,intent(in)::Runiv,machinf,rhoinf,Tinf,gam,aoa
+      double precision,intent(in),dimension(nvert,2)::grd
+      
+      double precision,dimension(4)::F3,F4,G3,G4,FLX,FLXF,FLXG
+      double precision,dimension(ncell)::mach
+      double precision::absspd,dy,dx,S01,vnorm
+      integer::ed,nc
+       
+      !mods=0 
+      !angle=0.0
+      !print *, 'influx'
+      !F=0.0
+      !G=0.0
+      
+      do nc=1,ncell
+        absspd=sqrt(u(nc)**2+v(nc)**2)
+        if(((p(nc)).le.0.0).or.(rho(nc).le.0.0))then
+        print *, "neg sound"
+        stop
+        endif
+        mach(nc)=absspd/(sqrt(gam*p(nc)/rho(nc)))
+      enddo
+      !print *, 'f1',ncell
+      
+      !R=0.0
+      FLX=0.0
+      FLXF=0.0
+      FLXG=0.0
+                          
+      do ed=1,nedge
+                                          
+        F3=0.0
+        G3=0.0
+        F4=0.0
+        G4=0.0
+        FLX=0.0
+        FLXF=0.0
+        FLXG=0.0
+                
+!       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa              
+          call GETFG(rho(edge(ed,3)),u(edge(ed,3)),                     &
+     &     v(edge(ed,3)),E(edge(ed,3)),p(edge(ed,3)),fvel(ed,:)         &
+     &     ,F3,G3)
+
+          call GETFG(rho(edge(ed,4)),u(edge(ed,4)),                     &
+     &     v(edge(ed,4)),E(edge(ed,4)),p(edge(ed,4)),fvel(ed,:)         &
+     &     ,F4,G4)
+!       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                
+
+
+!       dddddddddddddddddddddddddddddddddddddddddddddddddddddddd                                    
+        FLXF(:)=0.5*(F3(:)+F4(:))*                                      &
+     &    (grd(edge(ed,2),2)-grd(edge(ed,1),2))
+        FLXG(:)=0.5*(G3(:)+G4(:))*                                      &
+     &   (grd(edge(ed,2),1)-grd(edge(ed,1),1))
+             
+        FLX(:)=FLXF(:)-FLXG(:)                        
+                                        
+        if(edge(ed,3).gt.0)then
+          R(edge(ed,3),:)=R(edge(ed,3),:)+FLX(:)
+        endif
+        if(edge(ed,4).gt.0)then
+          R(edge(ed,4),:)=R(edge(ed,4),:)-FLX(:)
+        endif
+!       dddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+             
+                                                   
+      enddo
+      
+      end subroutine FLUXI
+!     *****************************************************    
+
+
+!     *****************************************************
+      subroutine DISSI(ncell,nedge,nvert,W,edge,rho,u,v,p,gam,grd,      &
+     &  k1,k2,D,m,lam,nstage,vol,LAP,pdss,pdssdf,pdsssm)                                       
+      
+      implicit none
+      
+      integer,intent(in)::ncell,nedge,nvert,nstage
+      double precision,intent(in),dimension(ncell,4)::W
+      double precision,intent(in),dimension(ncell)::vol
+      double precision,intent(in),dimension(ncell)::rho,u,v,p
+      integer,intent(in),dimension(nedge,4)::edge
+      double precision,intent(in)::k1,k2,gam
+      double precision,intent(in),dimension(nvert,2)::grd
+      double precision,intent(inout),dimension(ncell,4)::D
+      !integer,dimension(ncell)::m
+      integer,intent(in),dimension(ncell)::m
+      double precision,intent(inout),dimension(ncell)::lam
+      
+      integer::ed,nc
+      double precision::alp1,alp2,p3,p4,u01x,u01y,c01,S01,dx,dy,psi1,psi0           &
+     &  ,psi01,lam01
+      double precision,intent(inout),dimension(ncell,4)::LAP
+      double precision::s2,s4
+      double precision,intent(inout),dimension(ncell)::pdss,pdssdf,pdsssm
+      
+      double precision,dimension(4)::W3,W4
+      double precision::ul,ur,vl,vr,cl,cr
+      !double precision,dimension(ncell)::psi
+      
+      !LAP=0.0                 
+      
+      do ed=1,nedge      
+          W3=W(edge(ed,3),:)
+          W4=W(edge(ed,4),:)
+
+          dx=grd(edge(ed,2),1)-grd(edge(ed,1),1)
+          dy=grd(edge(ed,2),2)-grd(edge(ed,1),2)
+          S01=sqrt(dx**2+dy**2)
+        
+          LAP(edge(ed,3),:)=LAP(edge(ed,3),:)+(W4-W3)!*S01
+          LAP(edge(ed,4),:)=LAP(edge(ed,4),:)-(W4-W3)!*S01
+      enddo
+
+      !do nc=1,ncell
+      !  LAP(nc)=LAP(nc)/vol(nc)
+      !enddo
+      
+      
+      
+      do ed=1,nedge      
+          p3=p(edge(ed,3))
+          p4=p(edge(ed,4))
+        
+          pdssdf(edge(ed,3))=pdssdf(edge(ed,3))+(p4-p3)!/(p4+p3)
+          pdssdf(edge(ed,4))=pdssdf(edge(ed,4))-(p4-p3)!/(p4+p3)
+          
+          pdsssm(edge(ed,3))=pdsssm(edge(ed,3))+(p4+p3)
+          pdsssm(edge(ed,4))=pdsssm(edge(ed,4))+(p4+p3)          
+      enddo
+      
+      do ed=1,nedge      
+        pdss(edge(ed,3))=abs(pdssdf(edge(ed,3)))/(pdsssm(edge(ed,3)))
+        pdss(edge(ed,4))=abs(pdssdf(edge(ed,4)))/(pdsssm(edge(ed,4)))
+      enddo
+
+      if(nstage.lt.4)then
+              
+        lam=0.0
+
+        do ed=1,nedge      
+          cl=sqrt((gam*p(edge(ed,3))/rho(edge(ed,3))))
+          ul=u(edge(ed,3))
+          vl=v(edge(ed,3))
+        
+          cr=sqrt((gam*p(edge(ed,4))/rho(edge(ed,4))))
+          ur=u(edge(ed,4))
+          vr=v(edge(ed,4))
+
+        u01x=0.5*(ul+ur)
+        u01y=0.5*(vl+vr)
+        c01=0.5*(cl+cr)
+        
+        dx=grd(edge(ed,2),1)-grd(edge(ed,1),1)
+        dy=grd(edge(ed,2),2)-grd(edge(ed,1),2)
+        S01=sqrt(dx**2+dy**2)
+        dx=dx/S01
+        dy=dy/S01
+            
+          lam(edge(ed,3))=lam(edge(ed,3))+                              &
+     &    (abs(dy*u01x-dx*u01y)+c01)*S01
+        
+          lam(edge(ed,4))=lam(edge(ed,4))+                              &
+     &    (abs(-dy*u01x+dx*u01y)+c01)*S01
+
+        enddo
+      endif      
+                        
+      !D=0.0
+      
+      do ed=1,nedge      
+        
+          W3=W(edge(ed,3),:)
+          W4=W(edge(ed,4),:)
+          
+          c01=0.5*(sqrt(gam*p(edge(ed,3))/rho(edge(ed,3)))+            &
+     &   sqrt(gam*p(edge(ed,4))/rho(edge(ed,4))))
+     
+          u01x=0.5*(u(edge(ed,3))+u(edge(ed,4)))
+          u01y=0.5*(v(edge(ed,3))+v(edge(ed,4)))
+        
+          dx=grd(edge(ed,2),1)-grd(edge(ed,1),1)
+          dy=grd(edge(ed,2),2)-grd(edge(ed,1),2)
+          S01=sqrt(dx**2+dy**2)
+          dx=dx/S01
+          dy=dy/S01
+          
+          lam01=(abs(dy*u01x-dx*u01y)+c01)*S01
+          psi0=lam(edge(ed,3))/(4*lam01)
+          psi1=lam(edge(ed,4))/(4*lam01)          
+          psi01=4*psi1*psi0/(psi0+psi1)
+          if(psi01.le.0.0)then
+            print *, 'warning no diss edge',ed
+            stop
+          endif
+          !if(psi01.eq.0.0)then
+          !  print *, 'warning no diss edge',ed
+          !endif 
+
+          s2=3.0*((m(edge(ed,3))+m(edge(ed,4))))/                       &
+     &     (m(edge(ed,3))*m(edge(ed,4)))  
+          s4=(s2**2)/4.0        
+          
+          alp1=k1*0.5*(pdss(edge(ed,3))+pdss(edge(ed,4)))*s2      
+          alp2=max(0.0,k2-alp1)*s4
+          !alp2=k2        
+                  
+          D(edge(ed,3),:)=D(edge(ed,3),:)+((alp1*(W3(:)-W4(:))-         &
+     &    alp2*(LAP(edge(ed,3),:)-LAP(edge(ed,4),:))))*psi01*lam01
+     
+          D(edge(ed,4),:)=D(edge(ed,4),:)-((alp1*(W3(:)-W4(:))-         &
+     &    alp2*(LAP(edge(ed,3),:)-LAP(edge(ed,4),:))))*psi01*lam01
+        
+      enddo
+      !d=0.0      
+      
+      end subroutine DISSI
+!     *****************************************************
+
+
+
+
+
 
 
       

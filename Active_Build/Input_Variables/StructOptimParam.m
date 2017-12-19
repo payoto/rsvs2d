@@ -150,6 +150,8 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.flowRestart=false;
     paroptimobjflow.rootMesh={'none',''};
     paroptimobjflow.parentMesh='';
+    paroptimobjflow.mesher='cutcell';
+    paroptimobjflow.meshRefLvl=12;
     
 end
 
@@ -354,6 +356,20 @@ function paroptim=InvDesObjective(paroptim)
     paroptim.general.defaultVal=1000;
     
 end
+
+function paroptim=CutCellObjectiveTriangle(paroptim)
+    
+    paroptim.general.objectiveName='CutCellFlow';
+    paroptim.general.direction='min';
+    paroptim.general.defaultVal=1e3;
+    paroptim.spline.splineCase='smoothpts';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.typeLoop='subdivspline';
+    paroptim.obj.flow.CFDfolder=[cd,...
+        '\Result_Template\CFD_code_Template\triangle'];
+    
+end
+
 
 % Run Sizes
 function paroptim=FullOpt_bp3(paroptim)

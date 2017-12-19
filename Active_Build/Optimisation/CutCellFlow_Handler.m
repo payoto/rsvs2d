@@ -47,8 +47,8 @@ end
 
 
 function []=GenerateMesh(paramoptim,targFolder)
-    varExtract={'isSymFlow','parentMesh'};
-    [isSymFlow,parentMesh]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'isSymFlow','parentMesh','mesher'};
+    [isSymFlow,parentMesh,mesher]=ExtractVariables(varExtract,paramoptim);
     compType=computer;
     if strcmp(compType(1:2),'PC')
         extStr='bat';
@@ -63,7 +63,14 @@ function []=GenerateMesh(paramoptim,targFolder)
         meshGenCommand=['cp "',parentMesh,'" "',targFolder,filesep,'griduns"'];
         isDeformation=true;
     else
-        meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
+        switch mesher
+            case 'cutcell'
+               meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
+            case 'triangle'
+                MakeTriangleMesh(paramoptim,targFolder);
+                meshGenCommand=['"',targFolder,filesep,'RunTriangleCart.',extStr,'"'];
+                
+        end
         isDeformation=false; % probably the right choice
     end
     [status,stdout]=system(meshGenCommand);
@@ -100,6 +107,25 @@ function []=GenerateMesh(paramoptim,targFolder)
     
 end
 
+function []=MakeTriangleMesh(paramoptim,cfdDir)
+    
+    loop=BoundaryInput([cfdDir,filesep,'boundary.dat']);
+    [splineCase,meshRefLvl]=ExtractVariables({'splineCase','meshRefLvl'},paramoptim);
+    typeLoop=ExtractVariables({'typeLoop'},paramoptim.parametrisation);
+    
+    if ~strcmp(splineCase,'smoothpts') || ~strcmp(typeLoop,'subdivspline')
+        errstruct.message=['Trying to use incompatible profile with triangle mesher:\n',...
+            'splineCase ~= smoothpts or typeLoop ~= subdivspline'];
+        errstruct.identifier='Optimiser:CartCell:IncompatibleParam:TriangleBoundary';
+        error(errstruct)
+    end
+    
+    polyName=[cfdDir,filesep,'boundtriangle.poly'];
+    Amax=50*50/4^(meshRefLvl+1);    
+    [polystruct]=OutputLoop2TrianglePoly(polyName,loop,'coord'...
+        ,'cutcellflow',-Amax);
+    
+end
 
 function [obj]=SolveFlow(paramoptim,targFolder)
     
