@@ -15,9 +15,22 @@
 function [paroptim]=StructOptimParam(caseStr)
     % Main function that allows changes
     
-    [paroptim]=eval(caseStr);
+    modifDelim=regexp(caseStr,'!');
+    modifDelim(end+1)=numel(caseStr)+1;
+    caseStrTrim=caseStr(1:modifDelim(1)-1);
+    modifCell=cell([1,numel(modifDelim)-1]);
+    for ii=2:numel(modifDelim)
+        modifCell{ii-1}=caseStr(modifDelim(ii-1)+1:modifDelim(ii)-1);
+    end
+    
+    [paroptim]=eval(caseStrTrim);
+    
+    [paroptim]=ModifyCase(paroptim,modifCell);
+    
     paroptim.general.optimCase=regexprep(regexprep(...
-        regexprep(caseStr,'(\(|\)|,)','_'),'\.','_'),'''','');
+        regexprep(caseStrTrim,'(\(|\)|,)','_'),'\.','_'),'''','');
+    
+    paroptim.general.optimCase=[paroptim.general.optimCase,modifCell{:}];
     
 end
 
@@ -195,6 +208,23 @@ function paroptim=ModifySnakesParam(paroptim,paramCase)
     paroptim.general.paramCase=paramCase;
     paroptim.parametrisation=structInputVar(paramCase);
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+end
+
+%% Post-Modifiers
+
+function [paroptim]=ModifyCase(paroptim,modifCell)
+    
+    for ii=1:length(modifCell)
+        switch modifCell{ii}
+            case 'tri'
+                paroptim=CutCellObjectiveTriangle(paroptim);
+            otherwise
+                warning('Unknown Case Modifier')
+        end
+        
+    end
+    
     
 end
 
