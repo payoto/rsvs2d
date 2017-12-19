@@ -10,6 +10,8 @@ gfortran -O3 -o postproc.exe pproc12_AP.f90
 gfortran -O3 -o showmesh.exe showmesh2_AP.f90
 gcc -O3 -o meshsym.exe meshsym_1.c
 gcc -O3 -o meshvol.exe meshvol_1.c
+gcc -O3 "../../../MEX_Function_Directory/C_Development/Triangle2PLT/triangle2plt.c" -o triangle2plt.exe
+
 
 chmod 755 CompileMeshDef.sh
 ./CompileMeshDefWin.sh

@@ -4,7 +4,7 @@
 
 #include "mex.h" /* Always include this */
 #include "matrix.h"
-//#include "llist.h"
+/*#include "llist.h"*/
 /* Constant declaration */
 /*int dim() = 2; */
 #define MEX_COMPILE
@@ -51,8 +51,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	outPtr=mxGetPr(plhs[0]);
 	for (ii=0;ii<nFound;ii++){outPtr[ii]=(double)(dest[ii]+1);}
 		
-	//free(lookup);
-	//free(listInd);
+	/*free(lookup);*/
+	/*free(listInd);*/
 	free(dest);
 	/*} else {plhs[0]=(mxCreateDoubleMatrix(1,0,mxREAL));}*/
 	
@@ -110,17 +110,17 @@ int BuildFindObjHashTable(double *lookup, double *listInd, int nLook, int nList,
 		while(hashValue[ind]!=-1  && kk<=nHash){
 			if (hashKey[ind]==(int)listInd[ii] && hashValue[ind]<(nList)){
 				hashValue[ind]=hashValue[ind]+nList;
-				//printf("%i %i %i \n",listInd[ii],hashKey[ind],hashValue[ind]);
+				/*printf("%i %i %i \n",listInd[ii],hashKey[ind],hashValue[ind]);*/	
 			}
 			ind=(ind+1)%nHash;
 
 			kk++;
 		}
-		//printf("%i\n",kk);
+		/*printf("%i\n",kk);*/
 		jjErr=(kk>jjErr)*kk+(kk<=jjErr)*jjErr;
 		hashKey[ind]=(int)listInd[ii];		
 		hashValue[ind]=ii;
-		//printf("%i %i %i \n",listInd[ii],hashKey[ind],hashValue[ind]);
+		/*printf("%i %i %i \n",listInd[ii],hashKey[ind],hashValue[ind]);*/
 		
 	}
 	return(jjErr);
@@ -156,7 +156,7 @@ int ReadFindObjHashTable(int **dest,double *lookup, double *listInd, int nLook, 
 			ind=(ind+1)%nHash;
 			kk++;
 		}
-		//printf("%i\n",kk);
+		/*printf("%i\n",kk);*/
 		isFound=kkStart!=ll;
 		jjErr=(kk>jjErr)*kk+(kk<=jjErr)*jjErr;
 		(*dest)[ll]=hashValue[ind];
