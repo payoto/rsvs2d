@@ -3,7 +3,7 @@ function BP3_AeroGrad(caseStr,ii)
     InitialiseSnakeFlow;
 
     
-    ExecuteOptimisation([caseStr,'(',num2str(ii,'%e'),')']);
+    ExecuteOptimisation([caseStr,'(',num2str(ii,'%e'),')!tri']);
     
 
 end
