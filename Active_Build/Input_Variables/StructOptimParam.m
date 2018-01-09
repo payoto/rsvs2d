@@ -394,9 +394,10 @@ function paroptim=CutCellObjectiveTriangle(paroptim)
     paroptim.general.defaultVal=1e3;
     paroptim.spline.splineCase='smoothpts';
     paroptim.spline.resampleSnak=true;
-    paroptim.parametrisation.typeLoop='subdivspline';
+    paroptim.parametrisation.general.typeLoop='subdivspline';
+    paroptim.obj.flow.mesher='triangle';
     paroptim.obj.flow.CFDfolder=[cd,...
-        '\Result_Template\CFD_code_Template\triangle'];
+        '\Result_Template\CFD_code_Template\trianglemesh'];
     
 end
 
@@ -1752,7 +1753,7 @@ function paroptim=volsweeplocal(e,gridCase)
     [paroptim]=SmoothModes(paroptim);
     [paroptim]=AdaptiveRefinement(paroptim);
     
-    lvl=1;
+    lvl=6;
     nIter=paroptim.refine.refineIter;
     
     paroptim.general.startPop='loadshape';

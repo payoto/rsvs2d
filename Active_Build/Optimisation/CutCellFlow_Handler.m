@@ -78,6 +78,7 @@ function []=GenerateMesh(paramoptim,targFolder)
     if fidMesh<0
         errstruct.identifier='Optimiser:CartCell:InvalidMesh:NoMeshFile';
         errstruct.message=['Mesh file failed to open',fidErrMes];
+        disp(stdout)
         error(errstruct)
     end
     
@@ -123,7 +124,7 @@ function []=MakeTriangleMesh(paramoptim,cfdDir)
     polyName=[cfdDir,filesep,'boundtriangle.poly'];
     Amax=50*50/4^(meshRefLvl+1);    
     [polystruct]=OutputLoop2TrianglePoly(polyName,loop,'coord'...
-        ,'cutcellflow',-Amax);
+        ,'cutcellflow2',-Amax);
     
 end
 

@@ -12,15 +12,15 @@
 
 % 
 % function [] = OptimisationOutput()
-%     FUNCTIONLIST allows local functions to be used globally once it has
-%     been used.
+% %    FUNCTIONLIST allows local functions to be used globally once it has
+% %    been used.
 %     
 %     funcHandles=localfunctions;
 %     funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
 %     HeaderActivation(funcHandles,funcDir)
 %     
 % end
-% 
+
 
 
 function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
@@ -1727,13 +1727,20 @@ function [ax,h]=PlotDiffVsCFDConv(optimstruct,ax)
     convFields=fieldnames(convTest);
     
     for ii=1:2:length(optimstruct)
+        keepdiffres=true([1, numel(optimstruct(ii).population)-1]);
         for jj=2:numel(optimstruct(ii).population)
-            convTest.objres(kk).dat(jj-1)=[optimstruct(ii).population(jj).objective]./...
-                10.^[optimstruct(ii).population(jj).additional.res];
-            convTest.diffres(kk).dat(jj-1)=abs([optimstruct(ii).population(jj).objective]-...
-                optimstruct(ii).population(1).objective)./...
-                10^[optimstruct(ii).population(jj).additional.res];
+            if ~isempty(optimstruct(ii).population(jj).additional.res)
+                convTest.objres(kk).dat(jj-1)=[optimstruct(ii).population(jj).objective]./...
+                    10.^[optimstruct(ii).population(jj).additional.res];
+                convTest.diffres(kk).dat(jj-1)=abs([optimstruct(ii).population(jj).objective]-...
+                    optimstruct(ii).population(1).objective)./...
+                    10^[optimstruct(ii).population(jj).additional.res];
+            else 
+                keepdiffres(jj-1)=false;
+            end
         end
+        convTest.diffres(kk).dat=convTest.diffres(kk).dat(keepdiffres);
+        convTest.objres(kk).dat=convTest.objres(kk).dat(keepdiffres);
         for jj=1:numel(convFields)
             convTest.(convFields{jj})(kk).mean=mean(convTest.(convFields{jj})(kk).dat);
             convTest.(convFields{jj})(kk).max=max(convTest.(convFields{jj})(kk).dat);
