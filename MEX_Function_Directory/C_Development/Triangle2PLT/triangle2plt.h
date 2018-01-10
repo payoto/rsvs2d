@@ -12,6 +12,7 @@
 	void WriteGridUns(FILE* fileout, int nPts,int nEdge, int nCell, int *edgeDat, double *vertCoord , 
 	    double *cellVolume);
 	int BuildSu2(char *argv[]);
+	int BuildSu2Edge(char *argv[]);
 	void ShowHashDistrib(int tDistrib, double *hashDistrib, int nbar);
 	double HashEdge(int *edgeDat,int cEdPos,int nCell, int nPts);
 

@@ -131,9 +131,9 @@ end
 function [obj]=SolveFlow(paramoptim,targFolder)
     
     varExtract={'stoponerror','targConv','restartIter','lengthConvTest',...
-        'maxRestart','startIterFlow','flowRestart','parentMesh'};
+        'maxRestart','startIterFlow','flowRestart','parentMesh','maxminCFL'};
     [stoponerror,targConv,restartIter,lengthConvTest,maxRestart,...
-        startIterFlow,flowRestart,parentMesh]...
+        startIterFlow,flowRestart,parentMesh,maxminCFL]...
         =ExtractVariables(varExtract,paramoptim);
     
     
@@ -158,7 +158,7 @@ function [obj]=SolveFlow(paramoptim,targFolder)
         endstr=RunFlowSolverOnly(compType,targFolder);
         errFlag=CutCellErrorHandling(endstr,false);
         if kk>=1
-            RestartModifiedSettings(targFolder,'cfl',8)
+            RestartModifiedSettings(targFolder,'cfl',8,1,maxminCFL)
         end
         kk=kk+1;
         if kk==1 && flowRestart && sum(errFlag)
@@ -175,7 +175,7 @@ function [obj]=SolveFlow(paramoptim,targFolder)
         [isfinished,restartNormal,restartCFL,theoretConvIter]=...
             TestCutCellConvergence(obj.res,targConv,targFolder,lengthConvTest);
         kk=0;
-        while ~isfinished && kk<maxRestart
+        while ~isfinished && kk<maxRestart % Main restart convergence loop
             theoretConvIter(theoretConvIter<=0)=Inf;
             theoretConvIter(theoretConvIter<=20)=20;
             if restartNormal || restartCFL
@@ -185,23 +185,28 @@ function [obj]=SolveFlow(paramoptim,targFolder)
             end
             
             if restartCFL~=0
-                RestartModifiedSettings(targFolder,'cfl',8,restartCFL);
+                RestartModifiedSettings(targFolder,'cfl',8,restartCFL,maxminCFL);
             end
-            
-            endstr=RunFlowSolverOnly(compType,targFolder);
+            jj=0;
+            while jj==0 || (any(errFlag) && jj<10) % Secondary error recovery loop.
+                endstr=RunFlowSolverOnly(compType,targFolder);
+                errFlag=CutCellErrorHandling(endstr,false);
+                jj=jj+1;
+                if sum(errFlag)
+                    isfinished=false;
+                    restartNormal=false;
+                    restartCFL=true;
+                    RestartModifiedSettings(targFolder,'cfl',8,restartCFL,maxminCFL);
+                else
+                    [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
+                    [isfinished,restartNormal,restartCFL,theoretConvIter]=...
+                        TestCutCellConvergence(obj.res,targConv,targFolder,lengthConvTest);
+                    iterN=obj.iter;
+                end
+            end
             kk=kk+1;
-            
-            if sum(errFlag)
-                isfinished=false;
-                restartNormal=false;
-                restartCFL=true;
-            else
-                [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
-                [isfinished,restartNormal,restartCFL,theoretConvIter]=...
-                    TestCutCellConvergence(obj.res,targConv,targFolder,lengthConvTest);
-                iterN=obj.iter;
-            end
         end
+        
         errFlag=CutCellErrorHandling(endstr,stoponerror);
     end
     
@@ -407,12 +412,15 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
     cflLine=fgetl(fidSetR);
     switch typeChange
         case 'cfl'
+            dirCFL=1;
+            maxminCFL=[2 0.1]; % solver value
             if nargin>3
                 dirCFL=varargin{1};
-            else
-                dirCFL=1;
+                if nargin>4
+                    maxminCFL=varargin{2};
+                end
             end
-            cfloutstr=ReplaceCFLNum(cflLine,dirCFL);
+            cfloutstr=ReplaceCFLNum(cflLine,dirCFL,maxminCFL);
         case 'iter'
             cfloutstr=ReplaceIter(cflLine,varargin{1});
         case 'restart'
@@ -431,7 +439,7 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
     fclose('all');
 end
 
-function strOut=ReplaceCFLNum(strIn,dirCFL)
+function strOut=ReplaceCFLNum(strIn,dirCFL,maxminCFL)
     
     cflStr=regexp(strIn,'\d*\.\d*','match','once');
     strOut=regexprep(strIn,cflStr,'%f');
@@ -441,7 +449,7 @@ function strOut=ReplaceCFLNum(strIn,dirCFL)
     else
         cflNum=cflNum*(1+(0.2*round(abs(dirCFL))));
     end
-    cflNum=max(min(cflNum,1.5),0.1);
+    cflNum=max(min(cflNum,max(maxminCFL)),min(maxminCFL));
     strOut=sprintf([strOut,'\n'],cflNum);
     
 end

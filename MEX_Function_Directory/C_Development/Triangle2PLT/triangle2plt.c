@@ -17,8 +17,10 @@ int main ( int argc, char *argv[] )
         errorMsg=OutputGridUns(argv);
     } else if (!strcmp(argv[2],"plt")){
         errorMsg=OutputFelineSeg(argv);
-    } if (!strcmp(argv[2],"su2")){
+    } else if (!strcmp(argv[2],"su2")){
         errorMsg=BuildSu2(argv);
+    } else if (!strcmp(argv[2],"su2e")){
+        errorMsg=BuildSu2Edge(argv);
     }
     if (errorMsg){
         return(-1);
@@ -406,7 +408,127 @@ int BuildSu2(char *argv[]){
         }
         fprintf(fileout," %i\n",ii);
     }
+    
+    // Write Point Data
+    fprintf(fileout,"NPOIN= %i\n",nPts);
+    for(ii=0;ii<nPts;ii++){
+        fscanf(filein[0],"%i ",&discardInt);
+        for (jj=0;jj<2;jj++){
+            fscanf(filein[0],"%lf ",&discardDouble);
+            fprintf(fileout," %lf ",discardDouble);
+        }
+        fscanf(filein[0],"%i ",&discardInt);
+        fprintf(fileout," %i\n",ii);
+    }
 
+    // Read Boundary regions
+    edgeDat=(int*) malloc(3*nEdge*sizeof(int));
+    kk=0;
+    nBound=0;
+    printf("nVert: %i ; nEdge: %i ; nCell: %i\n",nPts,nEdge,nCell);
+
+    for (ii=0;ii<nEdge;ii++){
+        // Read Data from file
+        fscanf(filein[1]," %i ",&discardInt);
+        currPos=kk*3;
+        for(jj=0;jj<3;jj++){
+            fscanf(filein[1]," %i ",&edgeDat[currPos+jj]);
+            
+        }
+        kk=kk+(edgeDat[currPos+2]<0);
+
+        // MAtch to previous recognised boundaries
+        jj=0;
+        flagMatch=0;
+        
+        while(edgeDat[currPos+2]<0 && jj<nBound && jj<10 && !flagMatch){
+            flagMatch=boundType[jj]==edgeDat[currPos+2];
+            jj++;
+        }
+        /*
+        if (edgeDat[currPos+2]<0){
+            for (int i = 0; i < 3; ++i){
+                printf("%i ",edgeDat[currPos+i]);
+            }
+            printf("%i %i ",kk,jj,flagMatch);
+            printf("\n");
+        }*/
+        if (!flagMatch && edgeDat[currPos+2]<0){
+            boundType[nBound]=edgeDat[currPos+2];
+            nElmBound[nBound]=1;
+            nBound++;
+        } else if (edgeDat[currPos+2]<0) {
+            nElmBound[jj-1]++;
+        }
+    }
+    // Write Boundary COnditions
+    
+    fprintf(fileout,"NMARK= %i\n",nBound);
+    for(ii=0;ii<nBound;ii++){
+
+        fprintf(fileout, "MARKER_TAG= %i\n", boundType[ii]);
+        fprintf(fileout, "MARKER_ELEMS= %i\n", nElmBound[ii]);
+
+        for (jj=0;jj<kk;jj++){
+            if(edgeDat[jj*3+2]==boundType[ii]){
+                fprintf(fileout, "3 %i %i\n",edgeDat[jj*3+0]-1,edgeDat[jj*3+1]-1);
+            }
+        }
+    }
+    
+    // Clean Exit
+    free(edgeDat);
+    for (int i = 0; i < 4; ++i)
+    {
+        fclose(filein[i]);
+    }
+    fclose(fileout);
+    return(0);
+}
+
+
+
+int BuildSu2Edge(char *argv[]){
+
+    int ii,jj,kk;
+    FILE *filein[5];
+    FILE *fileout;
+    char fileext[5][9];
+
+    int nPts,nCell,nEdge,nQuant,discardInt,nDisc,nBound,currPos,flagMatch;
+    double dataPt,discardDouble;
+    int *edgeDat=NULL,*vertBound=NULL,boundType[10],nElmBound[10];
+    double *edgeVal=NULL,*vertCoord=NULL,*cellVolume=NULL;
+
+    strcpy(fileext[4], ".e.su2");
+    OpenInFiles(filein, &fileout, fileext,argv);
+
+    // Find the sizes of arraysfileext
+    fscanf(filein[0],"%i %i %i ",&nPts,&discardInt,&nQuant);
+    fscanf(filein[0],"%i  ",&discardInt);
+    fscanf(filein[1],"%i %i ",&nEdge,&discardInt);
+    fscanf(filein[2],"%i %i %i ",&nCell,&discardInt,&nQuant);
+    fscanf(filein[3],"%i  ",&discardInt);
+    fscanf(filein[3],"%i  ",&discardInt);
+    printf("nVert: %i ; nEdge: %i ; nCell: %i\n",nPts,nEdge,nCell);
+
+    fprintf(fileout,"NDIME= 2\n");
+    fprintf(fileout,"NELEM= %i\n",nEdge);
+
+    // Write Edge date for cell Data
+    for(ii=0;ii<nEdge;ii++){
+        fprintf(fileout," 3 ");
+        fscanf(filein[1],"%i ",&discardInt);
+        for (jj=0;jj<2;jj++){
+            fscanf(filein[1],"%i ",&discardInt);
+            fprintf(fileout," %i ",discardInt-1);
+        }
+        fscanf(filein[1],"%i ",&discardInt);
+        fprintf(fileout," %i\n",ii);
+    }
+    fseek(filein[1],0,SEEK_SET);
+    fscanf(filein[1],"%i %i ",&nEdge,&discardInt);
+    
     // Write Point Data
     fprintf(fileout,"NPOIN= %i\n",nPts);
     for(ii=0;ii<nPts;ii++){

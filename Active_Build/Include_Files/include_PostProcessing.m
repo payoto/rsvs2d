@@ -1242,9 +1242,18 @@ function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,struc
         ldom.coord=ldom.coordbase+ldom.normVec*max(dist)*m/2;
          plotPoints(ldom.coord);
 
+        
+        if structmesh.subDomains(ii,2)>0
+            Acons=abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2));
+        elseif structmesh.subDomains(ii,2)<0
+            Acons=-structmesh.subDomains(ii,2);
+        end
+        [~,edgeLength]=LengthProfile(ldom.coord);
+        
+        paramspline.samplingN=ceil(min([sum(edgeLength)/sqrt(Acons),100])/2)*2+1;
+        
         [ldom.coord]=ResampleSpline(ldom.coord,paramspline);
-         plotPoints(ldom.coord);
-
+        plotPoints(ldom.coord);
         [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',0,0);
         [p]=FindInternalPoint(ldom.coord);
         if structmesh.subDomains(ii,2)>0
@@ -1349,7 +1358,14 @@ end
 
 function [polystruct]=BuildPolyStruct(polystruct,loop,typeLoop,loopBoundMark,flagInOut)
     % currently no support for "Attributes"
-    
+    % First line: <# of vertices> <dimension (must be 2)> <# of attributes> <# of boundary markers (0 or 1)>
+    % Following lines: <vertex #> <x> <y> [attributes] [boundary marker]
+    % One line: <# of segments> <# of boundary markers (0 or 1)>
+    % Following lines: <segment #> <endpoint> <endpoint> [boundary marker]
+    % One line: <# of holes>
+    % Following lines: <hole #> <x> <y>
+    % Optional line: <# of regional attributes and/or area constraints>
+    % Optional following lines: <region #> <x> <y> <attribute> <maximum area>
     [isInternal]=FindInternalLoop(loop,typeLoop);
     isInternal=xor(isInternal,flagInOut);
     

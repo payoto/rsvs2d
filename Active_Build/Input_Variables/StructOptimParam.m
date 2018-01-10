@@ -165,6 +165,7 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.parentMesh='';
     paroptimobjflow.mesher='cutcell';
     paroptimobjflow.meshRefLvl=12;
+    paroptimobjflow.maxminCFL=[1.5 0.1];
     
 end
 
@@ -387,6 +388,7 @@ function paroptim=InvDesObjective(paroptim)
     
 end
 
+
 function paroptim=CutCellObjectiveTriangle(paroptim)
     
     paroptim.general.objectiveName='CutCellFlow';
@@ -398,6 +400,11 @@ function paroptim=CutCellObjectiveTriangle(paroptim)
     paroptim.obj.flow.mesher='triangle';
     paroptim.obj.flow.CFDfolder=[cd,...
         '\Result_Template\CFD_code_Template\trianglemesh'];
+    paroptim.obj.flow.lengthConvTest=500;
+    paroptim.obj.flow.restartIter=2000;
+    paroptim.obj.flow.startIterFlow=6000;
+    paroptim.obj.flow.maxRestart=5;
+    paroptim.obj.flow.maxminCFL=[1 0.1];
     
 end
 
