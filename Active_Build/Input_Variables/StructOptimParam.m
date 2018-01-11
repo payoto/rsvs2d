@@ -1793,7 +1793,17 @@ function paroptim=volsweeplocal(e,gridCase)
         otherwise
             error('Unknown gridcase')
     end
-    
+    if numel(gridCase)==3
+        switch gridCase(3)
+            case 'v'
+                paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+            case 'h'
+                paroptim.parametrisation.snakes.refine.refineGrid=[1 4];
+            otherwise
+                error('Unknown gridcase')
+        end
+        
+    end
     paroptim.parametrisation.snakes.refine.axisRatio = min(4*e*1.5,1);
     paroptim.parametrisation.general.typeLoop='subdivision';
     

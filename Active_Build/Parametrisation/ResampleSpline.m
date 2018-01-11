@@ -248,8 +248,15 @@ end
 function [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList)
     
     nSample=parspline.samplingN;
+    meanEdgeL=parspline.meanEdgeLength;
     if isempty(nSample)
-        nSample=size(normPoints,1);
+        if isempty(meanEdgeL)
+            nSample=size(normPoints,1);
+        else % sets number of samples based on mean edge length
+            [~,lProf]=LengthProfile(normPoints);
+            nSample=max(ceil(sum(lProf)/meanEdgeL),21);
+            
+        end
     elseif nSample<0
         nSample=size(normPoints,1)*-nSample;
     end
@@ -513,6 +520,7 @@ function [parspline]=CaseSpline_default()
     
     parspline.samplingParam='param';
     parspline.samplingN=50;
+    parspline.meanEdgeLength=[];
     parspline.samplingDistrib='even';
     
     parspline.LocMinDeriv='smooth';
@@ -695,6 +703,7 @@ function [parspline]=CaseSpline_smoothpts()
     
     parspline.samplingParam='param';
     parspline.samplingN=[];
+    parspline.meanEdgeLength=2/301;
     parspline.samplingDistrib='even';
     parspline.splitProf=false;
     parspline.typeInterp='linear';

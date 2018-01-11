@@ -486,8 +486,6 @@ int BuildSu2(char *argv[]){
     return(0);
 }
 
-
-
 int BuildSu2Edge(char *argv[]){
 
     int ii,jj,kk;
