@@ -1236,26 +1236,29 @@ function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,struc
     ldom.normVec=([0 1;-1 0]*ldom.normVec')'./normRep(ldom.normVec);
     
     
-    for ii=1:size(structmesh.subDomains,1)
+    for ii=1:size(structmesh.subDomains,1) %find(isfinite(structmesh.subDomains(:,1)))'%
         m=structmesh.subDomains(ii,1);
-        r=dist(1)/dist(2);
-        ldom.coord=ldom.coordbase+ldom.normVec*max(dist)*m/2;
-         plotPoints(ldom.coord);
+        if isfinite(m) % build a new region and hole
+            ldom.coord=ldom.coordbase+ldom.normVec*max(dist)*m/2;
+             plotPoints(ldom.coord);
 
-        
-        if structmesh.subDomains(ii,2)>0
-            Acons=abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2));
-        elseif structmesh.subDomains(ii,2)<0
-            Acons=-structmesh.subDomains(ii,2);
+
+            if structmesh.subDomains(ii,2)>0
+                Acons=abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2));
+            elseif structmesh.subDomains(ii,2)<0
+                Acons=-structmesh.subDomains(ii,2);
+            end
+            [~,edgeLength]=LengthProfile(ldom.coord);
+
+            paramspline.samplingN=ceil(min([sum(edgeLength)/sqrt(Acons),100])/2)*2+1;
+
+            [ldom.coord]=ResampleSpline(ldom.coord,paramspline);
+            plotPoints(ldom.coord);
+            [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',0,0);
+            [p]=FindInternalPoint(ldom.coord);
+        else % if it is infinite put a subdomain constraint on the other side
+            [~,p]=FindInternalPoint(ldom.coord);
         end
-        [~,edgeLength]=LengthProfile(ldom.coord);
-        
-        paramspline.samplingN=ceil(min([sum(edgeLength)/sqrt(Acons),100])/2)*2+1;
-        
-        [ldom.coord]=ResampleSpline(ldom.coord,paramspline);
-        plotPoints(ldom.coord);
-        [polystruct]=BuildPolyStruct(polystruct,ldom,'coord',0,0);
-        [p]=FindInternalPoint(ldom.coord);
         if structmesh.subDomains(ii,2)>0
             tempHole=[size(polystruct.region,1)+1,p,...
                 abs(CalculatePolyArea(ldom.coord)/structmesh.subDomains(ii,2))];
@@ -1305,12 +1308,11 @@ function [structmesh2]=BoundaryMarkersCharCases(structmesh,nElmZone)
             nRef=round((log2(max(structmesh2.domainBound)^2)-log2(abs(nElmZone)))/2);
             structmesh2.subDomains(1:nRef,2)=nElmZone*4.^(0:nRef-1)';
             
-            structmesh2.subDomains(:,1)=sqrt(abs(structmesh2.subDomains(1:nRef,2))).*logspace(log10(20),...
+            structmesh2.subDomains(:,1)=2*sqrt(abs(structmesh2.subDomains(1:nRef,2))).*logspace(log10(20),...
                 log10(10),nRef)';
-            structmesh2.subDomains(find(structmesh2.subDomains...
-                (:,1)>max(structmesh2.domainBound)),:)=[];
-            
-            
+            outOffBound=find(structmesh2.subDomains(:,1)>max(structmesh2.domainBound));
+            structmesh2.subDomains(outOffBound(1),1)=-inf;
+            structmesh2.subDomains(outOffBound(2:end),:)=[];
             
         case 'su2'
             
@@ -1389,7 +1391,7 @@ function [polystruct]=BuildPolyStruct(polystruct,loop,typeLoop,loopBoundMark,fla
 
 end
 
-function [p]=FindInternalPoint(coord)
+function [pIn,pOut]=FindInternalPoint(coord)
     np=size(coord,1);
     eps=1e-6;
     epsNorm=1e-12;
@@ -1419,8 +1421,9 @@ function [p]=FindInternalPoint(coord)
             epsNorm=0;
         end
     end
-    p=pTest(find(isIn),:);
-    if isempty(p)
+    pIn=pTest(find(isIn),:);
+    pOut=pTest(find(~isIn),:);
+    if isempty(pIn)
         errstruct.message='Could not find an internal point to specify the hole of .poly file';
         errstruct.identifier='mesh:triangle:polyFile:hole';
         error(errstruct)

@@ -1423,7 +1423,7 @@ INTERFACE
 					left=edge(ed,3)
 					right=edge(ed,4)
 					if((lastcell.ne.left).and.(lastcell.ne.right))then
-						print *, "whoa!!!",lastcell,left,right
+						print *, "Last cell does not match left or right (last left right)",lastcell,left,right
 						stop
 					endif
 					if(lastcell.eq.left)then
@@ -2084,7 +2084,7 @@ do i=1,nedge
 		!print *, 'A',left
 		if(left.gt.0) then
 			if(nbound(left).eq.boundmax)then
-				print *, "Exceeded boundmax"
+				print *, "Exceeded boundmax" , boundmax
 				stop
 			endif
 			nbound(left)=nbound(left)+1
@@ -2094,7 +2094,7 @@ do i=1,nedge
 		!print *, 'B'        
 		if(right.gt.0) then
 			if(nbound(right).eq.boundmax)then
-				print *, "Exceeded boundmax"
+				print *, "Exceeded boundmax", boundmax
 				stop
 			endif 
 			nbound(right)=nbound(right)+1

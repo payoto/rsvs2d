@@ -125,9 +125,12 @@ int OutputFelineSeg(char *argv[])
             for (jj = 0; jj < (2); ++jj){
                 fscanf(filein[1],"%i",&discardDat);
                 fprintf(fileout,"%i ",discardDat);
+            	if(ii==38933 || ii==39263 || ii==39278){printf("%i ",discardDat);}
             }
+            
             nDisc=1;for (jj = 0; jj < nDisc; ++jj){fscanf(filein[1],"%i",&discardDat);}
             fprintf(fileout,"\n");
+            if(ii==38933 || ii==39263 || ii==39278){printf("      %i\n ",ii);}
         }
         fclose(filein[0]);
         fclose(filein[1]);
@@ -200,16 +203,18 @@ int OutputGridUns(char *argv[]){
 void BuildEdgeDataFromTriangle(FILE *filein[4],int *edgeDat,double *vertCoord,
     double *cellVolume,int nQuant,int nPts, int nEdge, int nCell ){
 
-    int ii,kk,discardInt,jj,nDisc;
+    int ii,kk,discardInt,jj,jjj,nDisc,cEdPosTest;
     int vertInd[3],cellInd[3],currCell,cEdPos,cEdSaved,flagInc,edgeHashInd,nConflicts,flagMatch,nEdgeHash,tDistrib;
-    double discardDouble,x1,y1,x2,y2,edgeHash,nHashRatio;
+    double discardDouble,x1,y1,x2,y2,edgeHash,nHashRatio,saveHash;
     double *edgeVal=NULL,*hashDistrib=NULL;
+    int *edgePos=NULL;
     nConflicts=0;
     cEdSaved=0;
     nHashRatio=2;
     tDistrib=20+2;
-    nEdgeHash=ceil(nEdge*nHashRatio);
+    nEdgeHash=ceil((nEdge+nCell)*nHashRatio);
     edgeVal=(double*)calloc(nEdgeHash+1,sizeof(double));
+    edgePos=(int*)calloc(nEdgeHash+1,sizeof(int));
     hashDistrib=(double*)calloc(tDistrib,sizeof(double));
 
     for (ii = 0; ii< nCell; ++ii)
@@ -229,6 +234,8 @@ void BuildEdgeDataFromTriangle(FILE *filein[4],int *edgeDat,double *vertCoord,
             edgeDat[cEdPos+2]=vertInd[(jj+1)%3];
             edgeDat[cEdPos+3]=currCell;
             edgeDat[cEdPos+4]=cellInd[(3+jj-1)%3];
+
+            
             // Calculate cell volume with greens theorem
             x1=vertCoord[(vertInd[jj]-1)*2];
             y1=vertCoord[(vertInd[jj]-1)*2+1];
@@ -247,9 +254,16 @@ void BuildEdgeDataFromTriangle(FILE *filein[4],int *edgeDat,double *vertCoord,
             // This tests if an edge with the same hash has been saved
             flagInc=1;kk=0;flagMatch=0;
             while (kk<nEdgeHash && flagInc && !flagMatch){
-                flagInc=(edgeVal[(kk+edgeHashInd)%nEdgeHash]!=edgeHash) 
+                if ((edgeVal[(kk+edgeHashInd)%nEdgeHash]!=0) && (edgeVal[(kk+edgeHashInd)%nEdgeHash]==edgeHash)){
+                	cEdPosTest=(edgePos[(kk+edgeHashInd)%nEdgeHash])*4-1;
+                	flagMatch=((edgeDat[cEdPos+1]==edgeDat[cEdPosTest+1]) || (edgeDat[cEdPos+1]==edgeDat[cEdPosTest+2])) &&
+                			  ((edgeDat[cEdPos+2]==edgeDat[cEdPosTest+1]) || (edgeDat[cEdPos+2]==edgeDat[cEdPosTest+2])) &&
+                			  ((edgeDat[cEdPos+3]==edgeDat[cEdPosTest+3]) || (edgeDat[cEdPos+3]==edgeDat[cEdPosTest+4])) &&
+                			  ((edgeDat[cEdPos+4]==edgeDat[cEdPosTest+3]) || (edgeDat[cEdPos+4]==edgeDat[cEdPosTest+4]));
+                }
+
+                flagInc=(!flagMatch) 
                     && (edgeVal[(kk+edgeHashInd)%nEdgeHash]!=0);
-                flagMatch=(edgeVal[(kk+edgeHashInd)%nEdgeHash]==edgeHash) ;
                 kk++;
             }
             nConflicts=nConflicts+kk;
@@ -262,8 +276,23 @@ void BuildEdgeDataFromTriangle(FILE *filein[4],int *edgeDat,double *vertCoord,
                     edgeDat[cEdPos+3],edgeDat[cEdPos+4],edgeVal[cEdSaved]);
                 printf("%6i %6i \n",cEdSaved,flagInc );
             }*/
+   //          if(ii==24063 || ii==24050 || ii==23829 || ii==24066){
+	  //           for (jjj=1;jjj<5;++jjj){
+			// 		printf("%i ",edgeDat[cEdPos+jjj]);
+			// 	}
+			// 	printf("%i   %i    %i    %i   %i    %i    %li\n",cEdPos,ii,flagMatch,cEdSaved,
+			// 		edgeHashInd,(kk+edgeHashInd)%nEdgeHash,edgeHash);
+			// }
+			// if(edgeHashInd==56049){
+	  //           for (jjj=1;jjj<5;++jjj){
+			// 		printf("%8i ",edgeDat[cEdPos+jjj]);
+			// 	}
+			// 	printf("%8i %8i %8i %8i %8i %8i %.20lf\n",cEdPos,ii,flagMatch,cEdSaved,
+			// 		edgeHashInd,(kk+edgeHashInd)%nEdgeHash,edgeHash);
+			// }
             if (!flagMatch){
                 edgeVal[(kk-1+edgeHashInd)%nEdgeHash]=edgeHash;
+                edgePos[(kk-1+edgeHashInd)%nEdgeHash]=cEdSaved;
                 cEdSaved=cEdSaved+1;
             }
         }
@@ -273,7 +302,14 @@ void BuildEdgeDataFromTriangle(FILE *filein[4],int *edgeDat,double *vertCoord,
     printf("%20.10lf %10i %10i %10i %10i \n",edgeHash,edgeHashInd,kk-1,nConflicts,cEdSaved);
     ShowHashDistrib( tDistrib, hashDistrib, 50);
     printf("Hash Efficiency : O(%.2lf)\n",((double)nConflicts/(double)cEdSaved));
-
+    for (ii=0;ii<40000;++ii){
+		if(ii==38933 || ii==39263 || ii==39278){
+			for (jj=0;jj<4;++jj){
+				printf("%i ",edgeDat[4*ii+jj]);
+			}
+			printf("%i \n",ii);
+		}
+	}
     free(edgeVal);
     free(hashDistrib);
 }
@@ -283,21 +319,47 @@ double HashEdge(int *edgeDat,int cEdPos,int nCell, int nPts){
 
     double edgeHash;
 
-    edgeHash=2.0*(
-        (double)(abs((edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+
-         (edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+2]))
-        *(1.0/(double)(nPts+1)/(double)(nPts+1)/(double)(nCell+1)/(double)(nCell+1))+
-        (double)(abs((edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+
-         (edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+2]))
-        *((double)1.0/((double)(nPts+1)*(double)(nCell+1)*(double)(nCell+1)))+
-        (double)(abs((edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
-         (edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+4]))
-        *((double)1.0/((double)(nCell+1)*(double)(nCell+1)))+
-        (double)(abs((edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
-         (edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+4]))
-        *((double)(1.0)/((nCell+1))));
+    // edgeHash=2.0*(
+    //     (double)(abs((edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+
+    //      (edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+2]))
+    //     *(1.0/(double)(nPts+1)/(double)(nPts+1)/(double)(nCell+1)/(double)(nCell+1))+
+    //     (double)(abs((edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+
+    //      (edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+2]))
+    //     *((double)1.0/((double)(nPts+1)*(double)(nCell+1)*(double)(nCell+1)))+
+    //     (double)(abs((edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
+    //      (edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+4]))
+    //     *((double)1.0/((double)(nCell+1)*(double)(nCell+1)))+
+    //     (double)(abs((edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
+    //      (edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+4]))
+    //     *((double)(1.0)/((nCell+1))));
     
-    edgeHash=(edgeHash)*(edgeHash<=1)+(edgeHash>1)*(edgeHash-1);
+    // edgeHash=2.0*(((((((((
+    //     ((double)(abs((edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+ // min vert value
+    //      (edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+2]))))/(double)(nPts+1))+
+
+    //     ((double)(abs((edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+ // max vert value
+    //      (edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+2]))))/(double)(nPts+1))+
+
+    //     ((double)(abs((edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
+    //      (edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+4]))))/(double)(nCell+1))+
+
+    //     ((double)(abs((edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
+    //      (edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+4])))))/(double)(nCell+1));
+
+	edgeHash=
+        ((double)(((edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+ // min vert value
+         (edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+2])))/(double)(nPts+1);
+
+    edgeHash=(edgeHash+(double)(((edgeDat[cEdPos+1]>edgeDat[cEdPos+2])*edgeDat[cEdPos+1]+ // max vert value
+         (edgeDat[cEdPos+1]<edgeDat[cEdPos+2])*edgeDat[cEdPos+2])))/(double)(nPts+1);
+
+    edgeHash=(edgeHash+(double)(((edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
+         (edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+4])))/(double)(nCell+1);
+
+    edgeHash=(edgeHash+(double)(((edgeDat[cEdPos+3]>edgeDat[cEdPos+4])*edgeDat[cEdPos+3]+
+         (edgeDat[cEdPos+3]<edgeDat[cEdPos+4])*edgeDat[cEdPos+4])))/(double)(nCell+1);
+	edgeHash=edgeHash;
+    edgeHash=2.0*(edgeHash)*(edgeHash<=0.5)+2.0*(edgeHash>0.5)*(edgeHash-0.5);
             //edgeHash=(edgeHash*0.5);
     return(edgeHash);
 

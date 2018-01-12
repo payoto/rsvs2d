@@ -703,7 +703,7 @@ function [parspline]=CaseSpline_smoothpts()
     
     parspline.samplingParam='param';
     parspline.samplingN=[];
-    parspline.meanEdgeLength=2/301;
+    parspline.meanEdgeLength=2/501;
     parspline.samplingDistrib='even';
     parspline.splitProf=false;
     parspline.typeInterp='linear';
