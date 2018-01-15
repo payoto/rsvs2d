@@ -45,7 +45,6 @@ function [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc)
     
 end
 
-
 function []=GenerateMesh(paramoptim,targFolder)
     varExtract={'isSymFlow','parentMesh','mesher'};
     [isSymFlow,parentMesh,mesher]=ExtractVariables(varExtract,paramoptim);
@@ -65,7 +64,8 @@ function []=GenerateMesh(paramoptim,targFolder)
     else
         switch mesher
             case 'cutcell'
-               meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
+                GenerateCutCellMeshSettings(paramoptim,cfdDir)
+                meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
             case 'triangle'
                 MakeTriangleMesh(paramoptim,targFolder);
                 meshGenCommand=['"',targFolder,filesep,'RunTriangleCart.',extStr,'"'];
@@ -105,26 +105,6 @@ function []=GenerateMesh(paramoptim,targFolder)
     
     
     
-    
-end
-
-function []=MakeTriangleMesh(paramoptim,cfdDir)
-    
-    loop=BoundaryInput([cfdDir,filesep,'boundary.dat']);
-    [splineCase,meshRefLvl]=ExtractVariables({'splineCase','meshRefLvl'},paramoptim);
-    typeLoop=ExtractVariables({'typeLoop'},paramoptim.parametrisation);
-    
-    if ~strcmp(splineCase,'smoothpts') || ~strcmp(typeLoop,'subdivspline')
-        errstruct.message=['Trying to use incompatible profile with triangle mesher:\n',...
-            'splineCase ~= smoothpts or typeLoop ~= subdivspline'];
-        errstruct.identifier='Optimiser:CartCell:IncompatibleParam:TriangleBoundary';
-        error(errstruct)
-    end
-    
-    polyName=[cfdDir,filesep,'boundtriangle.poly'];
-    Amax=50*50/4^(meshRefLvl+1);    
-    [polystruct]=OutputLoop2TrianglePoly(polyName,loop,'coord'...
-        ,'cutcellflow2',-Amax);
     
 end
 
@@ -213,6 +193,49 @@ function [obj]=SolveFlow(paramoptim,targFolder)
     [obj]=ExtractFinalData(targFolder,iterN,sum(errFlag));
     
 end
+
+%% Meshing
+
+function []=MakeTriangleMesh(paramoptim,cfdDir)
+    
+    loop=BoundaryInput([cfdDir,filesep,'boundary.dat']);
+    [splineCase,meshRefLvl]=ExtractVariables({'splineCase','meshRefLvl'},paramoptim);
+    typeLoop=ExtractVariables({'typeLoop'},paramoptim.parametrisation);
+    
+    if ~strcmp(splineCase,'smoothpts') || ~strcmp(typeLoop,'subdivspline')
+        errstruct.message=['Trying to use incompatible profile with triangle mesher:\n',...
+            'splineCase ~= smoothpts or typeLoop ~= subdivspline'];
+        errstruct.identifier='Optimiser:CartCell:IncompatibleParam:TriangleBoundary';
+        error(errstruct)
+    end
+    
+    polyName=[cfdDir,filesep,'boundtriangle.poly'];
+    Amax=50*50/4^(meshRefLvl+1);    
+    [polystruct]=OutputLoop2TrianglePoly(polyName,loop,'coord'...
+        ,'cutcellflow2',-Amax);
+    
+end
+
+function []=GenerateCutCellMeshSettings(paramoptim,cfdDir)
+    
+    varExtract={'meshRefLvl','meshRefSpread','meshOffset','meshSettingsWrite'};
+    [meshRefLvl,meshRefSpread,meshOffset,meshSettingsWrite]=...
+        ExtractVariables(varExtract,paramoptim);
+    
+    if meshSettingsWrite
+        cutsettingsStr={'3  3  0  0','-25.0 -25.0','25.0 25.0'};
+        cutsettingsStr{end+1}=int2str(meshOffset);
+        cutsettingsStr{end+1}=int2str(meshRefLvl);
+        for ii=0:meshRefLvl-1
+            refArray(ii+1,1:2)=[meshRefLvl-ii,round(max(meshRefSpread/1.4^ii,5))];
+        end
+        cutsettingsStr{end+1}=int2str(flip(refArray));
+
+        fid=fopen([cfdDir,filesep,'cutsettings'],'r');
+    end
+    
+end
+
 
 %% Flow solver operations
 

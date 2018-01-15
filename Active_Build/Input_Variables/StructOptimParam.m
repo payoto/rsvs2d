@@ -164,7 +164,10 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.rootMesh={'none',''};
     paroptimobjflow.parentMesh='';
     paroptimobjflow.mesher='cutcell';
+    paroptimobjflow.meshSettingsWrite=false; % controls wether mesh settings should be written
     paroptimobjflow.meshRefLvl=12;
+    paroptimobjflow.meshRefSpread=20;
+    paroptimobjflow.meshOffset=1; % Mesh Offset to avoid intersections
     paroptimobjflow.maxminCFL=[1.5 0.1];
     
 end
