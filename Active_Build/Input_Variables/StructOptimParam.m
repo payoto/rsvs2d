@@ -919,7 +919,6 @@ function [paroptim]=TestNonFill()
     paroptim.refine.refineOptimType='contcurvenoedge';
 end
 
-
 function [paroptim]=BF_sens_oscill()
     [paroptim]=invdeslocal_test4('uv','contcurve',0,1);
     
@@ -1037,6 +1036,18 @@ function paroptim=TestExactSmooth()
     
     %paroptim.general.maxIter=4;
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth';
+end
+
+function paroptim=FlowSolverBench()
+    [paroptim]=DefaultOptim();
+    paroptim=CutCellObjectiveTriangle(paroptim);
+    paroptim.obj.flow.meshSettingsWrite=true; % controls wether mesh settings should be written
+    paroptim.obj.flow.meshRefLvl=12;
+    paroptim.obj.flow.meshRefSpread=20;
+    paroptim.obj.flow.meshOffset=1; % Mesh Offset to avoid intersections
+    paroptim.obj.flow.maxminCFL=[1.5 0.1];
+    
+    
 end
 %% Test cases for length Area
 

@@ -64,7 +64,7 @@ function []=GenerateMesh(paramoptim,targFolder)
     else
         switch mesher
             case 'cutcell'
-                GenerateCutCellMeshSettings(paramoptim,cfdDir)
+                GenerateCutCellMeshSettings(paramoptim,targFolder)
                 meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
             case 'triangle'
                 MakeTriangleMesh(paramoptim,targFolder);
@@ -231,7 +231,9 @@ function []=GenerateCutCellMeshSettings(paramoptim,cfdDir)
         end
         cutsettingsStr{end+1}=int2str(flip(refArray));
 
-        fid=fopen([cfdDir,filesep,'cutsettings'],'r');
+        fid=fopen([cfdDir,filesep,'cutsettings'],'w');
+        WriteToFile(cutsettingsStr,fid)
+        fclose(fid);
     end
     
 end
