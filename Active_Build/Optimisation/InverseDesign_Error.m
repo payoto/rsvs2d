@@ -9,8 +9,17 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+function [] = InverseDesign_Error()
+    %FUNCTIONLIST allows local functions to be used globally once it has
+    %been used.
+    
+    funcHandles=localfunctions;
+    funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
+    HeaderActivation(funcHandles,funcDir)
+    
+end
 
-function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim,loop)
+function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error2(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);

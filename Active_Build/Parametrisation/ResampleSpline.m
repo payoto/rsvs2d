@@ -349,7 +349,7 @@ function [newPoints,newPar,newblocks]=ResampleSplinePatches(splineblocks,parspli
 end
 
 function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
-    
+    global kk
     samplingDistrib=parspline.samplingDistrib;
     nSample=splineblock.nNew;
     domParam=splineblock.domParam;
@@ -369,6 +369,10 @@ function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
         cond.active(2,:),cond.ValsY,splineblock.newParList,typeInterp);
     
     splineblock.newPoints=[newX',newY'];
+    assignin('base',['normPoints',int2str(kk)],splineblock.normPoints);
+    assignin('base',['parList',int2str(kk)],splineblock.newParList);
+    assignin('base',['newPts',int2str(kk)],splineblock.newPoints);
+    kk=kk+1;
 end
 
 function [cond]=PickEndcond(parspline,indRange,nPoints)
@@ -434,9 +438,14 @@ function [newPoints,interPP]=BuildSplineInterpolant(parList,data,cond,condVals,n
             newPoints=ppval(interPP,newParList);
             
         case 'linear'
+            
+            
             [parList,newOrd]=sort(parList);
             interPP = griddedInterpolant(parList,data(newOrd,:));
+            
+            
             newPoints= interPP(newParList);
+            
         otherwise
             error('unknown interpolation')
             
