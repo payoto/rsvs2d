@@ -105,7 +105,7 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
             vecTrans=[points(minXi,1),0];
             
             normPoints=ratio*(points-(ones(size(points(:,1)))*vecTrans));
-        
+            
             
         otherwise
             normPoints=points;
@@ -114,7 +114,7 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
 end
 
 function parList=ExtractParameterList(parType,points)
-    
+    global kk
     switch parType
         case 'x'
             parList=points(:,1);
@@ -138,22 +138,93 @@ function parList=ExtractParameterList(parType,points)
             parList=parList+curvParam;
             
         case 'clint'
+            points=round(points,12);
             parList=LengthProfile(points);
             parList=parList/max(parList);
-            %[~,edgeCurvNorm]=CurvatureProfile(points(1:end-1,:));edgeCurvNorm(end+1)=edgeCurvNorm(1);
+            %             [~,edgeCurvNorm,edgeCurv,edgeCurvErr]=CurvatureProfile(points(1:end-1,:));
+            %             edgeCurvNorm(end+1)=edgeCurvNorm(1);
+            %             rndOff=min(8-round(log10(edgeCurvNorm)),8);
+            %             for ii=1:numel(edgeCurvNorm)
+            %
+            %                 edgeCurvNorm(ii)=round(abs(edgeCurvNorm(ii)),rndOff(ii));
+            %
+            %             end
+            %             for ii=1:size(edgeCurv,1)
+            %                 edgeCurv(ii,:)=round((edgeCurv(ii,:)),rndOff(ii));
+            %                 edgeCurvErr(ii,:)=round((edgeCurvErr(ii,:)),rndOff(ii));
+            %             end
+            
             edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
-            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,sqrt(edgeCurvNorm),0.02));
+            [curvParam]=cumsum(MovingIntegralWindowLoop(parList,(edgeCurvNorm),0.02));
             
             curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
-            parList=parList+curvParam;
+            parList=parList*2/3+curvParam*1/3;
             
+        case 'clintmma'
+            points=round(points,12);
+            [parList,edgeLength]=LengthProfile(points);
+            edgeLength=edgeLength/max(parList);
+            parList=parList/max(parList);
+            %             [~,edgeCurvNorm,edgeCurv,edgeCurvErr]=CurvatureProfile(points(1:end-1,:));
+            %             edgeCurvNorm(end+1)=edgeCurvNorm(1);
+            nAverage=max(round(0.025*numel(edgeLength)),4);
+            edgeCurvNorm=CurvatureParameter(points);
+            
+            curvParam=SmoothingParameter(parList,edgeCurvNorm,'intmma',...
+                nAverage,nAverage*mean(edgeLength));
+            
+            parList=parList*2/3+curvParam*1/3;
+            %figure,hold on, plot(curvParam), plot(parList)
         case 'i'
             parList=(0:(length(points(:,1))-1))/(length(points(:,1))-1);
         otherwise
             warning('Unsupported Parameter for Spline Generation, using x')
             parList=points(:,1);
     end
+    %      assignin('base',['curvParam',int2str(kk)],edgeCurvNorm);
+    %      assignin('base',['curvParamErr',int2str(kk)],edgeCurvErr);
     
+end
+%% Curvature parameters
+
+function edgeCurvNorm=CurvatureParameter(points)
+    edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
+    
+    edgeCurvNormTest=edgeCurvNorm;
+%     edgeCurvNormTest=MovingAverageLoop(edgeCurvNormTest',5)';
+%     edgeCurvNormTest=MovingAverageLoop(edgeCurvNormTest',5)';
+    figure,hold on, plot(edgeCurvNorm), plot(edgeCurvNormTest)
+    isLocalMax=edgeCurvNormTest>edgeCurvNormTest([end,1:end-1]) &...
+        edgeCurvNormTest>edgeCurvNormTest([2:end,1]);
+    edgeCurvNormTest(~isLocalMax)=0;
+    nMax=6;
+    ptsToSave=zeros([nMax,2]);
+    for ii=1:nMax
+        [ptsToSave(ii,2),ptsToSave(ii,1)]=max(edgeCurvNormTest);
+        edgeCurvNormTest(ptsToSave(ii))=0;
+    end
+    edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
+end
+
+function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
+    
+    switch type
+        case 'int'
+            
+        case 'mma'
+            curvParam=MovingAverageLoop(curvParam',nMMA)';
+            curvParam=MovingAverageLoop(curvParam',nMMA)';
+        case 'cos'
+            
+        case 'intmma'
+            
+            [curvParam]=(MovingIntegralWindowLoop(parList,(curvParam),lInt));
+            curvParam=MovingAverageLoop(curvParam',nMMA)';
+            curvParam=MovingAverageLoop(curvParam',nMMA)';
+            
+    end
+    curvParam=cumsum(curvParam);
+    curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
     
 end
 
@@ -368,9 +439,10 @@ function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
         BuildSplineInterpolant(splineblock.parList,splineblock.normPoints(:,2),...
         cond.active(2,:),cond.ValsY,splineblock.newParList,typeInterp);
     
-    splineblock.newPoints=[newX',newY'];
+    splineblock.newPoints=[reshape(newX,[numel(newX) 1] ),reshape(newY,[numel(newX) 1] )];
     assignin('base',['normPoints',int2str(kk)],splineblock.normPoints);
-    assignin('base',['parList',int2str(kk)],splineblock.newParList);
+    assignin('base',['newParList',int2str(kk)],splineblock.newParList);
+    assignin('base',['parList',int2str(kk)],splineblock.parList);
     assignin('base',['newPts',int2str(kk)],splineblock.newPoints);
     kk=kk+1;
 end
@@ -436,8 +508,13 @@ function [newPoints,interPP]=BuildSplineInterpolant(parList,data,cond,condVals,n
                 interPP = csape(parList,data');
             end
             newPoints=ppval(interPP,newParList);
-            
         case 'linear'
+            [parList,newOrd]=sort(parList);
+            interPP = griddedInterpolant(parList,data(newOrd,:));
+            
+            
+            [newPoints]=InterpolateLinear(parList,data,newParList);
+        case 'shitlinear'
             
             
             [parList,newOrd]=sort(parList);
@@ -450,6 +527,45 @@ function [newPoints,interPP]=BuildSplineInterpolant(parList,data,cond,condVals,n
             error('unknown interpolation')
             
     end
+    
+end
+function [newPoints,newPoints1]=InterpolateLinear(parList,data,newParList)
+    % interpolates newPoints from newParList as defined by parList
+    newPoints=zeros(size(newParList,1),size(data,2));
+    %     newPoints1=zeros(size(newParList,1),size(data,2));
+    nPar=numel(parList);
+    ll=0;
+    for ii=1:numel(newParList)
+        jj=1;
+        flag=false;
+        while(~(flag) && jj<=nPar)
+            
+            flag=(parList(jj)<=newParList(ii) && parList(mod(jj,nPar)+1)>=newParList(ii));
+            jjSave=jj;
+            jj=jj+1;
+            
+        end
+        if ~flag
+            error('Interpolate failed as parameter is not bracketed')
+        end
+        
+        newPoints(ii,:)=(data(mod(jjSave,nPar)+1,:)-data(jjSave,:))./...
+            (parList(mod(jjSave,nPar)+1)-parList(jjSave))*(newParList(ii)-parList(jjSave))...
+            +data(jjSave,:);
+        %         eps=1e-5;
+        %         if (abs(data(mod(jjSave,nPar)+1,:)-data(jjSave,:)) <= eps) || ...
+        %              (abs((parList(mod(jjSave,nPar)+1)-parList(jjSave))) <= eps) || ...
+        %              (abs((newParList(ii)-parList(jjSave))) <= eps)
+        %             ll=ll+1;
+        %
+        %         end
+        
+        %         newPoints(ii,:)=(data(mod(jj,nPar)+1,:)-data(jj,:))./...
+        %             (parList(mod(jj,nPar)+1)-parList(jj))*(newParList(ii)-parList(jj))...
+        %             +data(jj,:);
+        
+    end
+    
     
 end
 
@@ -702,7 +818,7 @@ function [parspline]=CaseSpline_smoothpts()
     
     parspline.TEisLeft=0;
     
-    parspline.parameter='clint'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.parameter='clintmma'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
     parspline.forcePts={'maxcurv','replace'};
     parspline.typCurve='closed';
     

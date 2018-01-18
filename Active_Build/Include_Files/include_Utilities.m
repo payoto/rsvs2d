@@ -274,16 +274,27 @@ function [lengthParam,edgeLength]=LengthProfile(points)
     
 end
 
-function [curvParam,edgeCurvNorm,edgeCurve]=CurvatureProfile(points)
+function [curvParam,edgeCurvNorm,edgeCurve,edgeCurveErr]=CurvatureProfile(points)
     
     curvFunc=@(pi,pip1,pim1,s1,s2)(-pi.*(s1+s2)+pip1.*s2+pim1.*s1)./(s1.^2.*s2+s2.^2.*s1);
+    curvFuncPrec=@(pi,pip1,pim1,s1,s2,eps)(-vpa(pi,eps).*(vpa(s1,eps)+...
+        vpa(s2,eps))+vpa(pip1,eps).*vpa(s2,eps)+vpa(pim1,eps).*vpa(s1,eps))./...
+        (vpa(s1,eps).^2.*vpa(s2,eps)+vpa(s2,eps).^2.*vpa(s1,eps));
+    
+    curvFuncErr=@(pi,pip1,pim1,s1,s2)(-pi.*(s1+s2)+pip1.*s2+pim1.*s1)./(3*s1.*s2+3*s2.*s1);
     normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
 
     edgeCurve=curvFunc(points,points([2:end,1],:),...
         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
         normRep(points-points([end,1:end-1],:)));
+%     edgeCurve=curvFuncPrec(points,points([2:end,1],:),...
+%         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
+%         normRep(points-points([end,1:end-1],:)),64);
+    edgeCurveErr=curvFuncErr(points,points([2:end,1],:),...
+        points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
+        normRep(points-points([end,1:end-1],:)));
     edgeCurvNorm=sqrt(sum(edgeCurve.^2,2));
-    curvParam=cumsum(edgeCurvNorm);
+    curvParam=(cumsum(edgeCurvNorm));
     
 end
 
@@ -437,6 +448,29 @@ function [datmat]=MovingIntegralWindowLoop(x,dat,span)
     datmat=repmat(reshape(datAll,[size(datAll,1) 1 size(datAll,2)]),[1 numel(x)]);
     datmat=(datmat+datmat([2:end,1],:,:))/2.*...
         repmat(mod(xallMat([2:end,1],:)-xallMat,max(x)),[1 1 size(dat,2)]);
+    datmat(~actMat)=0;
+    datmat=reshape(sum(datmat,1),[size(datmat,2) size(datmat,3)])/(2*span);
+    
+end
+
+function [datmat]=MovingIntegralWindowLoop2(x,dat,span)
+    
+    % calculate start and end of each window
+    sizDat=size(dat);
+    x=reshape(x,[numel(x),1]);
+    dat=reshape(dat,[numel(x),sizDat(sizDat~=numel(x))]);
+    xAll=sort(mod([x-span;x;x+span],max(x)));
+    datAll = interp1(x,dat,xAll);
+    %calculate central portion of integration window
+    % the final and first point are assumed to be in the same place
+    xallMat=repmat(xAll,[1 numel(x)]);
+    xDelta=(xallMat-repmat(x',[numel(xAll) 1]));
+    actMat=(mod(xDelta,max(x))>=-span & mod(xDelta,max(x))<span) | ...
+        (mod(-xDelta,max(x))>=-span & mod(-xDelta,max(x))<span);
+    datmat=repmat(reshape(datAll,[size(datAll,1) 1 size(datAll,2)]),[1 numel(x)]);
+%     datmat=(datmat+datmat([2:end,1],:,:))/2.*...
+%         repmat(mod(xallMat([2:end,1],:)-xallMat,max(x)),[1 1 size(dat,2)]);
+    datmat=(datmat+datmat([2:end,1],:,:))/2;
     datmat(~actMat)=0;
     datmat=reshape(sum(datmat,1),[size(datmat,2) size(datmat,3)])/(2*span);
     
