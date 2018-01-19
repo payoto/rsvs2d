@@ -24,7 +24,7 @@ end
 fields={'snaxelcoord','subdivision','subdivspline','subdispline2'};
 for ii=1:numel(fields)
     analysisCoord=iter(1).loop.(fields{ii});
-    for jj=2:numel(iter)
+    for jj=2:3
         targCoord=iter(jj).loop.(fields{ii});
         analysisCoord=RemoveIdenticalConsecutivePoints(analysisCoord);
         targCoord=RemoveIdenticalConsecutivePoints(targCoord);
@@ -50,7 +50,7 @@ clear newParList*
 clear curvParam*
 clear curvParamErr*
 kk=1;
-for ii=1:numel(iter);
+for ii=1:3;
 for jj=1:numel(iter(ii).loop)
     iter(ii).loop(jj).subdispline2=ResampleSpline(iter(ii).loop(jj).subdivision,paramspline);
 end
@@ -102,6 +102,8 @@ plot(log10(abs(curvParamErr6)))
 %% testing multi-body
 
 ii=4
+figure,
+plotPoints= @(points,f) plot(points([1:end,1],1),points([1:end,1],2),['-',f]);
 for jj=1:numel(iter(ii).loop)
 iter(ii).loop(jj).subdispline2=ResampleSpline(iter(ii).loop(jj).coord,paramspline);
 end
