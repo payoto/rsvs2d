@@ -1,11 +1,12 @@
 
 % piece of code to benchmark the flow solver options
+InitialiseSnakeFlow
 ExecInclude
 
 %% Define Cases
 geometriesBound=FindDir('.\Active_Build\Sample Geometries\sampleboundaries','boundary',0);
 testCellParam(1,1:3)={'meshRefLvl',{10 11 12 13 },1};
-testCellParam(2,1:3)={'mesher',{'cutcell','triangle'},1};
+testCellParam(2,1:3)={'mesher',{'cutcell','cutcell','triangle','triangle','triangle'},1};
 testCellParam(4,1:3)={'nMach',{0.85,2},1};
 testCellParam(3,1:3)={'geometry',geometriesBound,0};
 
@@ -39,10 +40,11 @@ isParam=find([testCellParam{:,3}]);
 
 MEflow=cell([1,nTest]);
 MEproc=cell([1,nTest]);
-
+paramspline.splineCase='smoothpts';
+paramsplinepre.splineCase='presmoothpts';
 for ii=1:nTest
     
-    try 
+%     try 
         
         teststruct(ii).flowpath=[writeDirectory,filesep,'flow_',int2str(ii)];
         mkdir(teststruct(ii).flowpath);
@@ -50,6 +52,18 @@ for ii=1:nTest
         fidParam=fopen([teststruct(ii).flowpath,filesep,'param.dat'],'w');
         
         boundaryLoc=FindDir(teststruct(ii).flowpath,'boundary',0);
+        loop=BoundaryInput(boundaryLoc{1});
+        for kk=1:numel(loop)
+            loop(kk).coord=loop(kk).coord+(1e-16 - rand(size(loop(kk).coord))*2e-16);
+            if numel(loop(kk).coord)<10
+                loop(kk).coord=ResampleSpline(loop(kk).coord,paramsplinepre);
+                loop(kk).coord2=loop(kk).coord;
+            end
+            loop(kk).coord=ResampleSpline(loop(kk).coord,paramspline);
+        end
+        fidBoundary=fopen(boundaryLoc{1});
+        BoundaryOutput(loop,fidBoundary,'coord',0);
+        fclose(fidBoundary)
         %resCell{ii}=CutCellFlow_Handler(paramoptim,boundaryLoc)
         setCell=cell(numel(isParam),1);
         kk=1;
@@ -67,10 +81,56 @@ for ii=1:nTest
         catch ME
             MEflow{ii}=ME;
         end
-    catch ME
-        
-        MEproc{ii}=ME;
-    end
+%     catch ME
+%         
+%         MEproc{ii}=ME;
+%     end
     
 end
 save([writeDirectory,filesep,'alldata.mat']);
+
+
+%% Postprocess results
+
+% plots with respect to refLevelCell
+listNames=cell(0);
+for ii=1:(numel(teststruct)/numel(testCellParam{1,2}))
+    indStart=(ii-1)*numel(testCellParam{1,2})+1;
+    indEnd=(ii)*numel(testCellParam{1,2});
+    seriesName=[regexprep(regexprep(teststruct(indStart).geometry,'^.*boundary_',''),'\.dat',''),...
+        '_',num2str(teststruct(indStart).nMach,'%.2f')];
+    
+    jj=0;
+    flagMatch=false;
+    while jj<numel(listNames) && ~flagMatch
+        jj=jj+1;
+        flagMatch=strcmp(listNames{jj},seriesName);
+    end
+    
+    if ~flagMatch
+        listNames{end+1}=seriesName;
+        h(jj+1)=figure('Name',seriesName);
+    else
+        figure(jj);
+    end
+    fieldsRes=fieldnames(teststruct(indStart).res);
+    for kk=1:numel(fieldsRes)
+        subplot(3,3,kk),hold on;
+        title(fieldsRes{kk})
+        x=[teststruct(indStart:indEnd).meshRefLvl];
+        inds=indStart:indEnd;
+        y=zeros(size(inds));
+        for ll=1:numel(inds)
+            y(ll)=[teststruct(inds(ll)).res.(fieldsRes{kk})];
+        end
+        plot(x,y,'-','DisplayName',[teststruct(indStart).mesher,'_',int2str(ii),'_',int2str(kk)])
+    end
+    
+end
+
+for ii=1:numel(h)
+    hgsave(h(ii),[writeDirectory,filesep,h(ii).Names,'.fig'])
+end
+
+
+

@@ -43,7 +43,8 @@ function [normPoints,parList,domSize]=GenerateParameterList(parspline,points)
     
     % Extract Parameter Type
     parType=parspline.parameter;
-    parList=ExtractParameterList(parType,normPoints);
+    expectExtrema=parspline.extrema;
+    parList=ExtractParameterList(parType,normPoints,expectExtrema);
     
     % Extract Domain
     [domSize]=ExtractDomain(normPoints,parList);
@@ -113,8 +114,8 @@ function [normPoints]=NormalizePoints(normType,points,normScale)
     
 end
 
-function parList=ExtractParameterList(parType,points)
-    global kk
+function parList=ExtractParameterList(parType,points,expectExtrema)
+    
     switch parType
         case 'x'
             parList=points(:,1);
@@ -127,6 +128,9 @@ function parList=ExtractParameterList(parType,points)
         case 'l'
             parList=LengthProfile(points);
         case 'clmma' % length + curvature
+            if size(points,1)<6
+                warning('Number of points to resample is very low and might not work with chosen distribution')
+            end
             points=round(points,12);
             [parList,edgeLength]=LengthProfile(points);
             edgeLength=edgeLength/max(parList);
@@ -141,6 +145,9 @@ function parList=ExtractParameterList(parType,points)
             parList=parList*3/4+curvParam*1/4;
             
         case 'clint'
+            if size(points,1)<6
+                warning('Number of points to resample is very low and might not work with chosen distribution')
+            end
             points=round(points,12);
             parList=LengthProfile(points);
             parList=parList/max(parList);
@@ -151,6 +158,9 @@ function parList=ExtractParameterList(parType,points)
             curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
             parList=parList*3/4+curvParam*1/4;
         case 'clint2'
+            if size(points,1)<6
+                warning('Number of points to resample is very low and might not work with chosen distribution')
+            end
             points=round(points,12);
             parList=LengthProfile(points);
             parList=parList/max(parList);
@@ -161,6 +171,9 @@ function parList=ExtractParameterList(parType,points)
             curvParam=(curvParam-min(curvParam))/(max(curvParam)-min(curvParam));
             parList=parList*3/4+curvParam*1/4;
         case 'clintmma'
+            if size(points,1)<6
+                warning('Number of points to resample is very low and might not work with chosen distribution')
+            end
             points=round(points,12);
             [parList,edgeLength]=LengthProfile(points);
             edgeLength=edgeLength/max(parList);
@@ -176,22 +189,25 @@ function parList=ExtractParameterList(parType,points)
             parList=parList*3/4+curvParam*1/4;
         case 'clcos'
             points=round(points,12);
+            if size(points,1)<6
+                warning('Number of points to resample is very low and might not work with chosen distribution')
+            end
             [parList,edgeLength]=LengthProfile(points);
             edgeLength=edgeLength/max(parList);
             parList=parList/max(parList);
-            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
             
             nAverage=max(round(0.03*numel(edgeLength)),2);
             
-            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
+            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
+            edgeCurvNorm([1,end],:)=[];
             edgeCurvNormTest=edgeCurvNorm;
-            [ptsToSave]=FindNMax(edgeCurvNormTest,2);
+            [ptsToSave]=FindNMax(edgeCurvNormTest(1:end-1),expectExtrema);
             edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
             
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
             
-            curvParam=SmoothingParameter(parList,edgeCurvNorm,'cos',2,0.5);
+            curvParam=SmoothingParameter(parList,edgeCurvNorm,'cos',expectExtrema,0.5);
 %             subplot(1,2,1)
 %             hold on
 %             %plot(linspace(0,1,numel(curvParam)),curvParam)
@@ -229,23 +245,44 @@ function [ptsToSave]=FindNMax(quantTest,nMax,tol)
     % Finds nMax local maximums in function quantTest
     % tol allows to find the remaining maximums which are at least
     % min(ptsToSave(:,2))*tol high.
+    quantWeak=quantTest;
     isLocalMax=quantTest>quantTest([end,1:end-1]) &...
         quantTest>quantTest([2:end,1]);
+    isLocalMaxWeak=quantTest>=quantTest([end,1:end-1]) &...
+        quantTest>=quantTest([2:end,1]);
+
     quantTest(~isLocalMax)=-inf;
-   
-    ptsToSave=zeros([nMax,2]);
-    for ii=1:min(nMax,numel(quantTest))
-        [ptsToSave(ii,2),ptsToSave(ii,1)]=max(quantTest);
-        if ~isfinite(ptsToSave(ii,2))
-            break
+    quantWeak(~isLocalMaxWeak)=-inf;
+    brkFlag=false;
+    if isfinite(nMax)
+        ptsToSave=zeros([nMax,2]);
+        for ii=1:min(nMax,numel(quantTest))
+            [ptsToSave(ii,2),ptsToSave(ii,1)]=max(quantTest);
+            if ~isfinite(ptsToSave(ii,2))
+                brkFlag=true;
+                [ptsToSave(ii,2),ptsToSave(ii,1)]=max(quantWeak);
+                if ~isfinite(ptsToSave(ii,2))
+                    ptsToSave(ii:end,:)=[];
+                    break
+                end
+            end
+            quantTest(ptsToSave(ii,1))=-inf;
+            quantWeak(ptsToSave(ii,1))=-inf;
         end
-        quantTest(ptsToSave(ii,1))=-inf;
+    else
+        ptsToSave=[find(isLocalMax),quantTest(isLocalMax)];
     end
     
     if exist('tol','var')
-        addPts=find(min(ptsToSave(:,2))*tol<quantTest);
-        ptsToSave=[ptsToSave;[reshape(addPts,[numel(addPts) 1]),...
-            reshape(quantTest(addPts),[numel(addPts) 1])]];
+        if brkFlag
+            addPts=find(min(ptsToSave(:,2))*tol<quantWeak);
+            ptsToSave=[ptsToSave;[reshape(addPts,[numel(addPts) 1]),...
+                reshape(quantWeak(addPts),[numel(addPts) 1])]];
+        else
+            addPts=find(min(ptsToSave(:,2))*tol<quantTest);
+            ptsToSave=[ptsToSave;[reshape(addPts,[numel(addPts) 1]),...
+                reshape(quantTest(addPts),[numel(addPts) 1])]];
+        end
     end
 end
 
@@ -265,7 +302,7 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
             curvParam=MovingAverageLoop(curvParam',nMMA)';
             curvParam=MovingAverageLoop(curvParam',nMMA)';
         case 'cos'
-            [ptsToSave]=FindNMax(curvParam,nMMA,lInt);
+            [ptsToSave]=FindNMax(curvParam(1:end-1),nMMA,lInt);
             ind=sort(ptsToSave(:,1));
             nMMA=numel(ind);
             curvParam2=zeros(size(curvParam));
@@ -291,9 +328,13 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
 %                     multiPar+startPar;
                 %plot(linspace(0,1,numel(tempPar)),acos(tempPar)/pi)
                 eps=0.98;
-                tempPar=tempPar*eps;
-                curvParam2(indArray)=((acos(tempPar)-acos(eps))/...
-                    (acos(-eps)-acos(eps)))*multiPar+startPar;
+                if numel(tempPar)>2
+                    tempPar=tempPar*eps;
+                    curvParam2(indArray)=((acos(tempPar)-acos(eps))/...
+                        (acos(-eps)-acos(eps)))*multiPar+startPar;
+                else
+                    curvParam2(indArray)=parList(indArray);
+                end
 
             end
             curvParam=curvParam2;
@@ -330,7 +371,7 @@ function [resampPoints]=ForceSpecialPoints(parspline,points,parList,...
             edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
             edgeCurvNormTest=edgeCurvNorm;
             [ptsToSave]=FindNMax(edgeCurvNormTest,5);
-            
+            ptsToSave(:,2)=parList(ptsToSave(:,1));
             
         case 'LETE'
             
@@ -339,6 +380,10 @@ function [resampPoints]=ForceSpecialPoints(parspline,points,parList,...
             [ptsToSave(ii,2),ptsToSave(ii,1)]=max(points(:,1));
             ii=2;
             [ptsToSave(ii,2),ptsToSave(ii,1)]=min(points(:,1));
+            ptsToSave(:,2)=parList(ptsToSave(:,1));
+        case 'all'
+            ptsToSave=[(1:size(points,1))',points(:,1)];
+            ptsToSave(:,2)=parList(ptsToSave(:,1));
         case 'none'
             ptsToSave=zeros([0 2]);
     end
@@ -504,7 +549,7 @@ function [newPoints,newPar,newblocks]=ResampleSplinePatches(splineblocks,parspli
 end
 
 function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
-    global kk
+    %global kk
     samplingDistrib=parspline.samplingDistrib;
     nSample=splineblock.nNew;
     domParam=splineblock.domParam;
@@ -524,11 +569,11 @@ function [splineblock]=ResampleBlock(splineblock,parspline,nPoints)
         cond.active(2,:),cond.ValsY,splineblock.newParList,typeInterp);
     
     splineblock.newPoints=[reshape(newX,[numel(newX) 1] ),reshape(newY,[numel(newX) 1] )];
-    assignin('base',['normPoints',int2str(kk)],splineblock.normPoints);
-    assignin('base',['newParList',int2str(kk)],splineblock.newParList);
-    assignin('base',['parList',int2str(kk)],splineblock.parList);
-    assignin('base',['newPts',int2str(kk)],splineblock.newPoints);
-    kk=kk+1;
+%     assignin('base',['normPoints',int2str(kk)],splineblock.normPoints);
+%     assignin('base',['newParList',int2str(kk)],splineblock.newParList);
+%     assignin('base',['parList',int2str(kk)],splineblock.parList);
+%     assignin('base',['newPts',int2str(kk)],splineblock.newPoints);
+%     kk=kk+1;
 end
 
 function [cond]=PickEndcond(parspline,indRange,nPoints)
@@ -721,6 +766,7 @@ function [parspline]=CaseSpline_default()
     parspline.forcePts={'none','none'};
     parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
     parspline.typCurve='closed';
+    parspline.extrema=2;
     
     parspline.distribution='provided';
     parspline.newParList=[];
@@ -913,6 +959,29 @@ function [parspline]=CaseSpline_smoothpts()
     parspline.samplingParam='param';
     parspline.samplingN=[];
     parspline.meanEdgeLength=2/501;
+    parspline.samplingDistrib='even';
+    parspline.splitProf=false;
+    parspline.typeInterp='linear';
+    %parspline.samplingScope='local';
+    
+end
+function [parspline]=CaseSpline_presmoothpts()
+    
+    [parspline]=CaseSpline_default();
+    
+    parspline.TEisLeft=0;
+    
+    parspline.parameter='i'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.forcePts={'all','replace'};
+    parspline.typCurve='closed';
+    
+    parspline.distribution='calc';
+    parspline.domain='none'; % 'normalizeX' 'normalizeL'
+    parspline.scale=1;
+    
+    parspline.samplingParam='param';
+    parspline.samplingN=[];
+    parspline.meanEdgeLength=2/51;
     parspline.samplingDistrib='even';
     parspline.splitProf=false;
     parspline.typeInterp='linear';
