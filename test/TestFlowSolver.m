@@ -4,8 +4,8 @@ InitialiseSnakeFlow
 ExecInclude
 
 %% Define Cases
-geometriesBound=FindDir('.\Active_Build\Sample Geometries\sampleboundaries','boundary',0);
-testCellParam(1,1:3)={'meshRefLvl',{10 11 12 13 },1};
+geometriesBound=FindDir(MakePathCompliant('.\Active_Build\Sample Geometries\sampleboundaries'),'boundary',0);
+testCellParam(1,1:3)={'meshRefLvl',{10 11 12 13 14},1};
 testCellParam(2,1:3)={'mesher',{'cutcell','cutcell','triangle','triangle','triangle'},1};
 testCellParam(4,1:3)={'nMach',{0.85,2},1};
 testCellParam(3,1:3)={'geometry',geometriesBound,0};
@@ -16,6 +16,11 @@ paramoptim=StructOptimParam('FlowSolverBench');
 [resultRoot]=ExtractVariables({'resultRoot'},paramoptim.parametrisation);
 [marker,t]=GenerateResultMarker('FlowSolverBench');
 [writeDirectory]=GenerateResultDirectoryName(marker,resultRoot,'ParamValidation',t);
+diaryFile=[writeDirectory,'\Latest_Diary.log'];
+diaryFile=MakePathCompliant(diaryFile);
+fidDiary=fopen(diaryFile,'w');
+fclose(fidDiary);
+diary(diaryFile);
 
 %% Build Test matrix
 for ii=1:size(testCellParam,1)
@@ -41,10 +46,11 @@ isParam=find([testCellParam{:,3}]);
 MEflow=cell([1,nTest]);
 MEproc=cell([1,nTest]);
 paramspline.splineCase='smoothpts';
+
 paramsplinepre.splineCase='presmoothpts';
-for ii=1:nTest
+parfor ii=1:nTest
     
-%     try 
+     try 
         
         teststruct(ii).flowpath=[writeDirectory,filesep,'flow_',int2str(ii)];
         mkdir(teststruct(ii).flowpath);
@@ -53,17 +59,19 @@ for ii=1:nTest
         
         boundaryLoc=FindDir(teststruct(ii).flowpath,'boundary',0);
         loop=BoundaryInput(boundaryLoc{1});
+        paramspline2=paramspline;
         for kk=1:numel(loop)
             loop(kk).coord=loop(kk).coord+(1e-16 - rand(size(loop(kk).coord))*2e-16);
             if numel(loop(kk).coord)<10
+                paramspline2.extrema=size(loop(kk).coord,1);
                 loop(kk).coord=ResampleSpline(loop(kk).coord,paramsplinepre);
                 loop(kk).coord2=loop(kk).coord;
             end
-            loop(kk).coord=ResampleSpline(loop(kk).coord,paramspline);
+            loop(kk).coord=ResampleSpline(loop(kk).coord,paramspline2);
         end
-        fidBoundary=fopen(boundaryLoc{1});
+        fidBoundary=fopen(boundaryLoc{1},'w');
         BoundaryOutput(loop,fidBoundary,'coord',0);
-        fclose(fidBoundary)
+        fclose(fidBoundary);
         %resCell{ii}=CutCellFlow_Handler(paramoptim,boundaryLoc)
         setCell=cell(numel(isParam),1);
         kk=1;
@@ -74,17 +82,18 @@ for ii=1:nTest
         paramoptim1=SetVariables({testCellParam{isParam,1}},setCell,paramoptim);
         GenerateParameterFile(fidParam,paramoptim1,now,'flowtest');
         try 
-            teststruct(ii).res=CutCellFlow_Handler(paramoptim1,teststruct(ii).flowpath);
+            teststruct(ii).res=CutCellFlow_Handler(paramoptim1,...
+                teststruct(ii).flowpath);
 %             if isempty(boundaryLoc)
 %                 error('Flow Bound failed')
 %             end
         catch ME
             MEflow{ii}=ME;
         end
-%     catch ME
-%         
-%         MEproc{ii}=ME;
-%     end
+    catch ME
+        
+        MEproc{ii}=ME;
+    end
     
 end
 save([writeDirectory,filesep,'alldata.mat']);
@@ -97,7 +106,8 @@ listNames=cell(0);
 for ii=1:(numel(teststruct)/numel(testCellParam{1,2}))
     indStart=(ii-1)*numel(testCellParam{1,2})+1;
     indEnd=(ii)*numel(testCellParam{1,2});
-    seriesName=[regexprep(regexprep(teststruct(indStart).geometry,'^.*boundary_',''),'\.dat',''),...
+    seriesName=[regexprep(regexprep(teststruct(indStart).geometry,...
+        '^.*boundary_',''),'\.dat',''),...
         '_',num2str(teststruct(indStart).nMach,'%.2f')];
     
     jj=0;
@@ -129,7 +139,7 @@ for ii=1:(numel(teststruct)/numel(testCellParam{1,2}))
 end
 
 for ii=1:numel(h)
-    hgsave(h(ii),[writeDirectory,filesep,h(ii).Names,'.fig'])
+    hgsave(h(ii),[writeDirectory,filesep,h(ii).Name,'.fig'])
 end
 
 

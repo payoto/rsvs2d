@@ -151,7 +151,7 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogive'];
     paroptimobjflow.stoponerror=true;
     paroptimobjflow.targConv=-6;
-    paroptimobjflow.lengthConvTest=100;
+    paroptimobjflow.lengthConvTest=500;
     paroptimobjflow.restartIter=1000;
     paroptimobjflow.startIterFlow=4000;
     paroptimobjflow.maxRestart=5;
@@ -223,6 +223,7 @@ function [paroptim]=ModifyCase(paroptim,modifCell)
         switch modifCell{ii}
             case 'tri'
                 paroptim=CutCellObjectiveTriangle(paroptim);
+                [paroptim]=MeshMotionSens(paroptim); % required for FD triangular
             otherwise
                 warning('Unknown Case Modifier')
         end
@@ -404,9 +405,9 @@ function paroptim=CutCellObjectiveTriangle(paroptim)
     paroptim.obj.flow.CFDfolder=[cd,...
         '\Result_Template\CFD_code_Template\trianglemesh'];
     paroptim.obj.flow.lengthConvTest=500;
-    paroptim.obj.flow.restartIter=2000;
-    paroptim.obj.flow.startIterFlow=6000;
-    paroptim.obj.flow.maxRestart=5;
+    paroptim.obj.flow.restartIter=4000;
+    paroptim.obj.flow.startIterFlow=5000;
+    paroptim.obj.flow.maxRestart=10;
     paroptim.obj.flow.maxminCFL=[1 0.1];
     
 end
@@ -494,6 +495,14 @@ function [paroptim]=MeshMotionFull(paroptim)
     paroptim.obj.flow.meshDefSens=true;
     paroptim.obj.flow.flowRestart=true;
     paroptim.obj.flow.meshDefNorm=true;
+    paroptim.obj.flow.rootMesh={'previter',''};
+    paroptim.obj.flow.parentMesh='';
+    
+end
+
+function [paroptim]=MeshMotionSens(paroptim)
+    
+    paroptim.obj.flow.meshDefSens=true;
     paroptim.obj.flow.rootMesh={'previter',''};
     paroptim.obj.flow.parentMesh='';
     
@@ -1045,7 +1054,7 @@ function paroptim=FlowSolverBench()
     paroptim.obj.flow.meshRefLvl=12;
     paroptim.obj.flow.meshRefSpread=20;
     paroptim.obj.flow.meshOffset=1; % Mesh Offset to avoid intersections
-    paroptim.obj.flow.maxminCFL=[1.5 0.1];
+    paroptim.obj.flow.maxminCFL=[1 0.1];
     
     
 end
@@ -1779,9 +1788,10 @@ function paroptim=volsweeplocal(e,gridCase)
     
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
-    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3]; %[0,2
     paroptim.constraint.desVarVal={e};
-    paroptim.optim.CG.minDiffStep=1e-6;
+    paroptim.optim.CG.minDiffStep=1e-5;
+    paroptim.optim.CG.nLineSearch=8;
     paroptim.general.maxIter=nIter;
     paroptim.general.worker=8;
     paroptim.general.refineOptim=0;

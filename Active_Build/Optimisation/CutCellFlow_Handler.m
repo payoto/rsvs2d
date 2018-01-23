@@ -77,7 +77,8 @@ function []=GenerateMesh(paramoptim,targFolder)
     [fidMesh,fidErrMes]=fopen([targFolder,filesep,'griduns'],'r');
     if fidMesh<0
         errstruct.identifier='Optimiser:CartCell:InvalidMesh:NoMeshFile';
-        errstruct.message=['Mesh file failed to open',fidErrMes];
+        errstruct.message=['Mesh file failed to open',fidErrMes,'\n ',...
+            targFolder,filesep,'griduns'];
         disp(stdout)
         error(errstruct)
     end
@@ -412,7 +413,7 @@ function [isConverging,theoretConvIter,corrCoefConvRate]=TestConvergenceRate(res
         isConverging=false;
     end
     
-    if abs(corrCoefConvRate)>0.9 && theoretConvIter>2000
+    if abs(corrCoefConvRate)>0.98 && theoretConvIter>10000
         isConverging=2;
     end
     
