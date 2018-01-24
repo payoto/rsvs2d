@@ -126,6 +126,8 @@ function [analysisCoord1,analysisCoord2,modeCoord]=ShowAreaError(entryPoint,isfi
             for ii=1:size(in2,1)
                 [paramoptim,analysisCoord1,analysisCoord2{ii}]=FindCFDFromFolder(rootStr,...
                     in1,in2(ii,:));
+                [analysisCoord1,~]=ReorganiseAerofoil(analysisCoord1);
+                [analysisCoord2{ii},~]=ReorganiseAerofoil(analysisCoord2{ii});
                 
             end
             try
@@ -201,6 +203,28 @@ function [analysisCoord1,analysisCoord2,modeCoord]=ShowAreaError(entryPoint,isfi
         hgsave(h,[pathStr,filesep,'iter',int2str(intfig),'_',[entryPoint,'_',modeSmoothScale],'.fig'])
         
     end
+end
+
+function [pts,newOrd]=ReorganiseAerofoil(pts)
+    
+    
+    x=pts(:,1);
+    y=pts(:,2);
+    
+    [xMax,iXMax]=max(x);
+    [xMin,iXMin]=min(x);
+    
+    m=(y(iXMax)-y(iXMin))/(xMax-xMin);
+    p=-m*xMin+xMin;
+    
+    loFoil=find((m*x+p)>y);
+    hiFoil=find((m*x+p)<=y);
+    [~,sortLo]=sort(x(loFoil));
+    [~,sortHi]=sort(x(hiFoil));
+    sortHi=flip(sortHi);
+    newOrd=[loFoil(sortLo);hiFoil(sortHi)];
+    pts=pts(newOrd,:);
+    
 end
 
 function [posL,deltaCoord,normDeltaCoord]=PlotProfileDifference(coord1,coord2,ax)

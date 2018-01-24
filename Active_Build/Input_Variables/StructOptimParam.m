@@ -316,7 +316,7 @@ end
 function [paroptim]=SumVolumeConstraint2(paroptim)
     
     paroptim.constraint.desVarConstr={'MinSumVolFrac'};
-    paroptim.constraint.desVarVal={4};
+    paroptim.constraint.desVarVal={0.01};
     paroptim.constraint.resConstr={' '};
     paroptim.constraint.resVal={[]};
     
@@ -409,6 +409,8 @@ function paroptim=CutCellObjectiveTriangle(paroptim)
     paroptim.obj.flow.startIterFlow=5000;
     paroptim.obj.flow.maxRestart=10;
     paroptim.obj.flow.maxminCFL=[1 0.1];
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3]; %[0,2
+    paroptim.optim.CG.minDiffStep=1e-4;
     
 end
 
@@ -1788,7 +1790,7 @@ function paroptim=volsweeplocal(e,gridCase)
     
     paroptim.general.startPop='loadshape';
     paroptim.general.specificFillName='.\Active_Build\Input_Variables\Parabola.mat';
-    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3]; %[0,2
+    paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2
     paroptim.constraint.desVarVal={e};
     paroptim.optim.CG.minDiffStep=1e-5;
     paroptim.optim.CG.nLineSearch=8;
@@ -5352,4 +5354,19 @@ function [paroptim]=MBBbeam1_constraint(paroptim)
     
 end
 
-
+function [paroptim]=MBBbeam2_constraint(paroptim)
+    
+    paroptim.constraint.desVarConstr={' '};
+    paroptim.constraint.desVarVal={[]};
+%   Uncomment these two lines to impose a 50% volume design space
+%   constraint
+%   paroptim.constraint.desVarConstr={'MeanVolFrac'};
+%   paroptim.constraint.desVarVal={0.5};
+    paroptim.constraint.initConstr={'LocalVolFrac_image'};
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\MBBbeam1.png','min'}};
+    % To force exact constraint change the 'min' to 'equal' (other possible value is 'max')
+    paroptim.constraint.resConstr={' '};
+    paroptim.constraint.resVal={[]};
+    
+    paroptim.desvar.symType='vert';
+end
