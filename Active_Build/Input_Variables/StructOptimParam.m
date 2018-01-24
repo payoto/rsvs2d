@@ -5368,5 +5368,6 @@ function [paroptim]=MBBbeam2_constraint(paroptim)
     paroptim.constraint.resConstr={' '};
     paroptim.constraint.resVal={[]};
     
+    % Impose vertical (direction of the plane) symmetry
     paroptim.desvar.symType='vert';
 end

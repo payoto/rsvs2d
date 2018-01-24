@@ -35,6 +35,21 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
         case 'lib'
             
             [targCoord]=GenerateLibCoord(targPrep(:,1),targPrep(:,2),aeroName);
+        case 'loop'
+            inDat=load(MakePathCompliant(aeroName));
+            if isfield(inDat,'loop')
+                targCoord=inDat.loop;
+                if ~isfield(targCoord,'coord')
+                    errstruct.identifier='Optimiser:InvTopo:BadInput:LoopNoCoord';
+                    errstruct.message='Input "loop" variable must have a field called "coord"';
+                    error(errstruct)
+                end
+            else
+                errstruct.identifier='Optimiser:InvTopo:BadInput:NoLoop';
+                errstruct.message=char('.mat file "aeroName"  must contain a variable called "loop"',...
+                    ['aeroName = ',aeroName]);
+                error(errstruct)
+            end
         otherwise
             error('not coded yet')
     end
