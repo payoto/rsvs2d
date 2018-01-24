@@ -1,3 +1,3 @@
 cd %~dp0
 
-START /WAIT gridtoxyz.sh
+START /WAIT bash.exe gridtoxyz.sh

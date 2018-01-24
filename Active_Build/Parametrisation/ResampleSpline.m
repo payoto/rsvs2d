@@ -363,47 +363,65 @@ end
 
 function [resampPoints]=ForceSpecialPoints(parspline,points,parList,...
         resampPoints,resampPar)
-    
-    switch parspline.forcePts{1}
-        case 'maxcurv'
-            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
-            edgeCurvNorm([1,end],:)=[];
-            edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
-            edgeCurvNormTest=edgeCurvNorm;
-            [ptsToSave]=FindNMax(edgeCurvNormTest,5);
-            ptsToSave(:,2)=parList(ptsToSave(:,1));
-            
-        case 'LETE'
-            
-            ptsToSave=zeros([2,2]);
-            ii=1;
-            [ptsToSave(ii,2),ptsToSave(ii,1)]=max(points(:,1));
-            ii=2;
-            [ptsToSave(ii,2),ptsToSave(ii,1)]=min(points(:,1));
-            ptsToSave(:,2)=parList(ptsToSave(:,1));
-        case 'all'
-            ptsToSave=[(1:size(points,1))',points(:,1)];
-            ptsToSave(:,2)=parList(ptsToSave(:,1));
-        case 'none'
-            ptsToSave=zeros([0 2]);
+    for iii=1:size( parspline.forcePts,1)
+        switch parspline.forcePts{iii,1}
+            case 'maxcurv'
+                edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
+                edgeCurvNorm([1,end],:)=[];
+                edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
+                edgeCurvNormTest=edgeCurvNorm;
+                [ptsToSave]=FindNMax(edgeCurvNormTest,5);
+                ptsToSave(:,2)=parList(ptsToSave(:,1));
+                
+            case 'LETE'
+                
+                ptsToSave=zeros([2,2]);
+                ii=1;
+                [ptsToSave(ii,2),ptsToSave(ii,1)]=max(points(:,1));
+                ii=2;
+                [ptsToSave(ii,2),ptsToSave(ii,1)]=min(points(:,1));
+                ptsToSave(:,2)=parList(ptsToSave(:,1));
+            case 'all'
+                ptsToSave=[(1:size(points,1))',points(:,1)];
+                ptsToSave(:,2)=parList(ptsToSave(:,1));
+            case 'none'
+                ptsToSave=zeros([0 2]);
+        end
+        switch parspline.forcePts{iii,2}
+            case 'add'
+                for ii=1:size(ptsToSave,1)
+                    ind=sum(resampPar<parList(ptsToSave(ii,1)));
+                    resampPar=[resampPar(1:ind);parList(ptsToSave(ii,1));...
+                        resampPar(ind+1:end)];
+                    resampPoints=[resampPoints(1:ind,:);points(ptsToSave(ii,1),:);...
+                        resampPoints(ind+1:end,:)];
+                end
+            case 'replace'
+                indSave=zeros(size(ptsToSave,1),1);
+                indAdd=[];
+                for ii=1:size(ptsToSave,1)
+                    [~,ind]=min(abs(resampPar-parList(ptsToSave(ii,1))));
+                    indSave(ii)=ind;
+                    if any(ind==indSave(1:ii-1))
+                        indAdd=[indAdd,ii];
+                    else
+                        resampPar(ind)=parList(ptsToSave(ii,1));
+                        resampPoints(ind,:)=points(ptsToSave(ii,1),:);
+                    end
+                end
+                % adds points for already replaced.
+                for ii=indAdd;
+                    ind=sum(resampPar<parList(ptsToSave(ii,1)));
+                    resampPar=[resampPar(1:ind);parList(ptsToSave(ii,1));...
+                        resampPar(ind+1:end)];
+                    resampPoints=[resampPoints(1:ind,:);points(ptsToSave(ii,1),:);...
+                        resampPoints(ind+1:end,:)];
+                end
+            case 'none'
+        end
     end
-    switch parspline.forcePts{2}
-        case 'add'
-            for ii=1:size(ptsToSave,1)
-                ind=sum(resampPar<parList(ptsToSave(ii,1)));
-                resampPar=[resampPar(1:ind);parList(ptsToSave(ii,1));...
-                    resampPar(ind+1:end)];
-                resampPoints=[resampPoints(1:ind,:);points(ptsToSave(ii,1),:);...
-                    resampPoints(ind+1:end,:)];
-            end
-        case 'replace'
-            for ii=1:size(ptsToSave,1)
-                [~,ind]=min(abs(resampPar-parList(ptsToSave(ii,1))));
-                resampPar(ind)=parList(ptsToSave(ii,1));
-                resampPoints(ind,:)=points(ptsToSave(ii,1),:);
-            end
-        case 'none'
-    end
+    [resampPoints,ptsRem]=RemoveIdenticalConsecutivePoints(resampPoints);
+    resampPar(ptsRem)=[];
 end
 
 function splitPoints=SplitAtTrailingEdge(points,TEisLeft,distribution)
@@ -949,7 +967,7 @@ function [parspline]=CaseSpline_smoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='clcos'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.forcePts={'maxcurv','replace'};
+    parspline.forcePts={'maxcurv','replace';'LETE','add'};
     parspline.typCurve='closed';
     
     parspline.distribution='calc';
@@ -972,7 +990,7 @@ function [parspline]=CaseSpline_presmoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='i'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.forcePts={'all','replace'};
+    parspline.forcePts={'all','replace';'LETE','add'};
     parspline.typCurve='closed';
     
     parspline.distribution='calc';

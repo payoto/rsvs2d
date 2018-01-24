@@ -36,20 +36,7 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramop
             
             [targCoord]=GenerateLibCoord(targPrep(:,1),targPrep(:,2),aeroName);
         case 'loop'
-            inDat=load(MakePathCompliant(aeroName));
-            if isfield(inDat,'loop')
-                targCoord=inDat.loop;
-                if ~isfield(targCoord,'coord')
-                    errstruct.identifier='Optimiser:InvTopo:BadInput:LoopNoCoord';
-                    errstruct.message='Input "loop" variable must have a field called "coord"';
-                    error(errstruct)
-                end
-            else
-                errstruct.identifier='Optimiser:InvTopo:BadInput:NoLoop';
-                errstruct.message=char('.mat file "aeroName"  must contain a variable called "loop"',...
-                    ['aeroName = ',aeroName]);
-                error(errstruct)
-            end
+            [targCoord]=LoadLoopData(aeroName);
         otherwise
             error('not coded yet')
     end
@@ -205,6 +192,7 @@ function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredTop
     
     
 end
+
 function [errorMeasure,modifiedDistance,indepLoop]=CompareProfilesAreaSquaredpAreaTopo(testLoop,targLoop)
     % test intersection and internal with inpolygon
     % targLoop ->
@@ -667,6 +655,37 @@ function [coord,TEPos]=GenerateNACACoordOrient(x,naca4Num,l,rot,refPos,tFunc,cFu
     TEPos=coord(iTE,:);
 end
 
+function [targCoord]=LoadLoopData(aeroName)
+    
+    aeroName=MakePathCompliant(aeroName);
+    switch aeroName(end-2:end)
+        case 'mat'
+            [targCoord]=LoadLoopDataFromMat(aeroName);
+        case 'dat'
+            targCoord=BoundaryInput(aeroName);
+        otherwise
+            errstruct.identifier='Optimiser:InvTopo:BadInput:UnrecognisedExtension';
+            errstruct.message='for "loop" class of profile to match recognised file extensions are .mat and .dat';
+            error(errstruct)
+    end
+end
+
+function [targCoord]=LoadLoopDataFromMat(aeroName)
+    inDat=load(aeroName);
+    if isfield(inDat,'loop')
+        targCoord=inDat.loop;
+        if ~isfield(targCoord,'coord')
+            errstruct.identifier='Optimiser:InvTopo:BadInput:LoopNoCoord';
+            errstruct.message='Input "loop" variable must have a field called "coord"';
+            error(errstruct)
+        end
+    else
+        errstruct.identifier='Optimiser:InvTopo:BadInput:NoLoop';
+        errstruct.message=char('.mat file "aeroName"  must contain a variable called "loop"',...
+            ['aeroName = ',aeroName]);
+        error(errstruct)
+    end
+end
 %% Error Matching
 
 function [errorMeasure,modifiedDistance]=CompareProfilesDistance(profileCoord,targCoord)
