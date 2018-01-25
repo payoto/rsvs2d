@@ -80,6 +80,8 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
             [derivtenscalc2]=ExtractDataForDerivatives_LengthDSmear(snaxel,snakposition,snakPosIndex,smearLengthEps);
         case 'd'
             [derivtenscalc2]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon);
+        case 'dlim'
+            [derivtenscalc2]=ExtractDataForDerivatives_dlim(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon);
         case 'dir'
             [derivtenscalc2]=ExtractDataForDerivatives_directionSmear(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,dirEpsilon);
     end
@@ -802,6 +804,86 @@ function [derivtenscalc]=ExtractDataForDerivatives_distanceSmear(snaxel,snakposi
     end
 end
 
+function [derivtenscalc]=ExtractDataForDerivatives_dlim(snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon)
+    normVec=@(vec) sqrt(sum(vec.^2,2));
+    derivtenscalcTemplate=struct('index',[],...
+        'snaxprec',[],...
+        'precsub',[],...,...
+        'cellprec',[],...
+        'cellprecsub',[],...
+        'Dg_i',[],...
+        'Dg_m',[],...
+        'g1_i',[],...
+        'g1_m',[],...
+        'd_i',[],...
+        'd_m',[],...
+        'p_i',[],...
+        'p_m',[],...
+        'normFi',[],...
+        'a_i',[],...
+        'a_m',[],...
+        'a_im',[],...
+        'b_i',[],...
+        'b_m',[],...
+        'c',[],...
+        'dfiddi',[],...
+        'dfiddm',[],...
+        'd2fiddi2',[],...
+        'd2fiddm2',[],...
+        'd2fiddim',[]...
+        );
+    derivtenscalc=repmat(derivtenscalcTemplate,[1,length(snakposition)]);
+    
+    for ii=length(snakposition):-1:1
+        neighSub=FindObjNum([],[snaxel(ii).snaxprec],snakPosIndex);
+        
+        derivtenscalc(ii).index=snakposition(ii).index;
+        derivtenscalc(ii).snaxprec=snaxel(ii).snaxprec;
+        derivtenscalc(ii).precsub=neighSub;
+        % extracting data from preexisting arrays
+        derivtenscalc(ii).Dg_i=snakposition(ii).vectornotnorm;
+        derivtenscalc(ii).Dg_m=snakposition(neighSub).vectornotnorm;
+        derivtenscalc(ii).g1_i=snakposition(ii).vertInit;
+        derivtenscalc(ii).g1_m=snakposition(neighSub).vertInit;
+        
+        derivtenscalc(ii).d_i=(1-2*distEpsilon)*snaxel(ii).d+distEpsilon;
+        derivtenscalc(ii).d_m=(1-2*distEpsilon)*snaxel(neighSub).d+distEpsilon;
+        % calculating data
+        derivtenscalc(ii).p_i=(derivtenscalc(ii).g1_i+...
+            derivtenscalc(ii).Dg_i*derivtenscalc(ii).d_i);
+        derivtenscalc(ii).p_m=(derivtenscalc(ii).g1_m+...
+            derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m);
+        %         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+sum(...
+        %             (derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        derivtenscalc(ii).normFi=sqrt(smearLengthEps^2*...
+            min(normVec(derivtenscalc(ii).Dg_i),normVec(derivtenscalc(ii).Dg_m))^2+...
+            sum((derivtenscalc(ii).p_i- derivtenscalc(ii).p_m).^2));
+        %         derivtenscalc(ii).normFi=sqrt(smearLengthEps^2+...
+        %             sum(((derivtenscalc(ii).g1_i+derivtenscalc(ii).Dg_i*...
+        %             derivtenscalc(ii).d_i)-(derivtenscalc(ii).g1_m+...
+        %             derivtenscalc(ii).Dg_m*derivtenscalc(ii).d_m)).^2));
+    end
+    
+    for ii=length(snakposition):-1:1
+        [derivtenscalc(ii).a_i,...
+            derivtenscalc(ii).a_m,...
+            derivtenscalc(ii).a_im,...
+            derivtenscalc(ii).b_i,...
+            derivtenscalc(ii).b_m,...
+            derivtenscalc(ii).c]=...
+            Calc_LengthDerivCoeff(...
+            derivtenscalc(ii).Dg_i,derivtenscalc(ii).Dg_m,...
+            derivtenscalc(ii).g1_i,derivtenscalc(ii).g1_m);
+        
+        [derivtenscalc(ii)]=CalculateDerivatives_d_lim(derivtenscalc(ii),smearLengthEps);
+        
+    end
+    testnan=find(isnan([derivtenscalc(:).d2fiddi2]));
+    if ~isempty(testnan)
+        testnan
+    end
+end
+
 function [derivtenscalc]=ExtractDataForDerivatives_directionSmear...
         (snaxel,snakposition,snakPosIndex,smearLengthEps,distEpsilon,smearLengthDir)
     normVec=@(vec) sqrt(sum(vec.^2,2));
@@ -1279,6 +1361,166 @@ function [d2fiddim]=Calc_D2FiDdim_d(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
     
 end
 
+%% Derivative calculations - Distance Smearing + Limit Taking
+
+function [derivtenscalcII]=CalculateDerivatives_d_lim(derivtenscalcII,lSmear)
+    
+    %     varExtract={'a_i','a_m','a_im','b_i','b_m','c','normFi','d_i','d_m'};
+    %
+    %     for ii=1:length(varExtract)
+    %         eval([varExtract{ii},'=derivtenscalcII.(varExtract{ii});'])
+    %     end
+    
+    optNum=3; % 2 is bad
+    maxVal=1;
+    
+    
+    a_i=derivtenscalcII.a_i;
+    a_m=derivtenscalcII.a_m;
+    a_im=derivtenscalcII.a_im;
+    b_i=derivtenscalcII.b_i;
+    b_m=derivtenscalcII.b_m;
+    c=derivtenscalcII.c;
+    normFi=derivtenscalcII.normFi;
+    d_i=derivtenscalcII.d_i;
+    d_m=derivtenscalcII.d_m;
+    
+    [derivtenscalcII.dfiddi]=Calc_DFiDdi_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear,optNum);
+    [derivtenscalcII.dfiddm]=Calc_DFiDdm_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear,optNum);
+    
+    if normFi==0
+        normFi=1e-10;
+    end
+    
+    [derivtenscalcII.d2fiddi2]=Calc_D2FiDdi2_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    if abs(derivtenscalcII.d2fiddi2)>maxVal
+        derivtenscalcII.d2fiddi2=maxVal*sign(derivtenscalcII.d2fiddi2);
+    end
+    
+    [derivtenscalcII.d2fiddm2]=Calc_DFiDdm2_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    if abs(derivtenscalcII.d2fiddm2)>maxVal
+        derivtenscalcII.d2fiddm2=maxVal*sign(derivtenscalcII.d2fiddm2);
+    end
+    
+    [derivtenscalcII.d2fiddim]=Calc_D2FiDdim_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,d_i,d_m,lSmear);
+    if abs(derivtenscalcII.d2fiddim)>maxVal
+        derivtenscalcII.d2fiddim=maxVal*sign(derivtenscalcII.d2fiddim);
+    end
+    
+ end
+% function [dfiddi]=Calc_DFiDdi_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear,optNum)
+%     
+%     if normFi~=0
+%         dfiddi=((2*a_i*di*(1-2*lSmear)+a_im*dm*(1-2*lSmear)+b_i*(1-2*lSmear))/(2*(normFi)));
+%     else 
+%         dfiddi=0;
+%         if optNum==1
+%             dfiddi=sqrt(a_i);
+%         elseif optNum==2
+%             dfiddi=a_im/(2*sqrt(a_m));
+%         elseif optNum==3
+%             dfiddi=(2*a_i+a_im)/(2*sqrt(a_i+a_m+a_im));
+%         end
+%     end
+%     
+%     
+% end
+% function [dfiddm]=Calc_DFiDdm_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear,optNum)
+%     
+%     
+%     if normFi~=0
+%         dfiddm=(2*a_m*dm*(1-2*lSmear)+a_im*di*(1-2*lSmear)+b_m*(1-2*lSmear))/(2*(normFi));
+%     else 
+%         dfiddm=0;
+%         if optNum==1
+%             dfiddm=sqrt(a_m);
+%         elseif optNum==2
+%             dfiddm=a_im/(2*sqrt(a_i));
+%         elseif optNum==3
+%             dfiddm=(2*a_m+a_im)/(2*sqrt(a_m+a_i+a_im));
+%         end
+%     end
+% end
+% function [d2fiddi2]=Calc_D2FiDdi2_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+%     
+%     
+%     d2fiddi2=((2*a_i*(1-2*lSmear)*(1-2*lSmear)*2*(normFi)^2)...
+%         -(2*a_i*di*(1-2*lSmear)+a_im*dm*(1-2*lSmear)+b_i*(1-2*lSmear))^2) ...
+%         /(4*((normFi)^3));
+%     
+% end
+% function [d2fiddm2]=Calc_DFiDdm2_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+%     
+%     d2fiddm2=((2*a_m*(1-2*lSmear)*(1-2*lSmear)*2*(normFi)^2)...
+%         -(2*a_m*dm*(1-2*lSmear)+a_im*di*(1-2*lSmear)+b_m*(1-2*lSmear))^2) ...
+%         /(4*(normFi)^3);
+% end
+% function [d2fiddim]=Calc_D2FiDdim_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+%     
+%     
+%     d2fiddim=((a_im*(1-2*lSmear)*(1-2*lSmear)*2*(normFi)^2)...
+%         -((2*a_m*dm*(1-2*lSmear)+a_im*di*(1-2*lSmear)+b_m*(1-2*lSmear))*(2*a_i*di*(1-2*lSmear)+a_im*dm*(1-2*lSmear)+b_i*(1-2*lSmear)))) ...
+%         /(4*(normFi)^3);
+%     
+%     
+% end
+
+function [dfiddi]=Calc_DFiDdi_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear,optNum)
+    
+    if normFi~=0
+        dfiddi=((2*a_i*di+a_im*dm+b_i)/(2*(normFi)));
+    else 
+        dfiddi=0;
+        if optNum==1
+            dfiddi=sqrt(a_i);
+        elseif optNum==2
+            dfiddi=a_im/(2*sqrt(a_m));
+        elseif optNum==3
+            dfiddi=(2*a_i+a_im)/(2*sqrt(a_i+a_m+a_im));
+        end
+    end
+    
+    
+end
+function [dfiddm]=Calc_DFiDdm_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear,optNum)
+    
+    
+    if normFi~=0
+        dfiddm=(2*a_m*dm+a_im*di+b_m)/(2*(normFi));
+    else 
+        dfiddm=0;
+        if optNum==1
+            dfiddm=sqrt(a_m);
+        elseif optNum==2
+            dfiddm=a_im/(2*sqrt(a_i));
+        elseif optNum==3
+            dfiddm=(2*a_m+a_im)/(2*sqrt(a_m+a_i+a_im));
+        end
+    end
+end
+function [d2fiddi2]=Calc_D2FiDdi2_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    
+    d2fiddi2=((2*a_i*2*(normFi)^2)...
+        -(2*a_i*di+a_im*dm+b_i)^2) ...
+        /(4*((normFi)^3));
+    
+end
+function [d2fiddm2]=Calc_DFiDdm2_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    d2fiddm2=((2*a_m*2*(normFi)^2)...
+        -(2*a_m*dm+a_im*di+b_m)^2) ...
+        /(4*(normFi)^3);
+end
+function [d2fiddim]=Calc_D2FiDdim_d_lim(a_i,a_m,a_im,b_i,b_m,c,normFi,di,dm,lSmear)
+    
+    
+    d2fiddim=((a_im*2*(normFi)^2)...
+        -((2*a_m*dm+a_im*di+b_m)*(2*a_i*di+a_im*dm+b_i))) ...
+        /(4*(normFi)^3);
+    
+    
+end
 
 %% Calculate position derivatives versus constraints
 

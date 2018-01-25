@@ -1,6 +1,6 @@
 
 
-function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
+function [obj]=SU2Flow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     
@@ -23,7 +23,7 @@ function [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc)
     
     inDir=what(boundaryLoc);
     boundaryLoc=inDir.path;
-    targFolder=[boundaryLoc,filesep,'CFD'];
+    targFolder=[boundaryLoc,filesep,'SU2CFD'];
     targFolder=MakePathCompliant(targFolder);
     if strcmp(compType(1:2),'PC')
         copyfile(CFDfolder,targFolder)
@@ -56,7 +56,7 @@ function []=GenerateMesh(paramoptim,targFolder)
     end
     
     % Either Generate or Load Mesh
-    parentMesh=[parentMesh,filesep,'CFD',filesep,'griduns'];
+    parentMesh=[parentMesh,filesep,'SU2CFD',filesep,'griduns'];
     isLoad=numel(dir(parentMesh))>0;
     if isLoad
         meshGenCommand=['cp "',parentMesh,'" "',targFolder,filesep,'griduns"'];
@@ -64,23 +64,22 @@ function []=GenerateMesh(paramoptim,targFolder)
     else
         switch mesher
             case 'cutcell'
-                GenerateCutCellMeshSettings(paramoptim,targFolder)
-                meshGenCommand=['"',targFolder,filesep,'RunCartCell.',extStr,'"'];
+                error('Incompatible Mesher')
 
             case 'triangle'
                 MakeTriangleMesh(paramoptim,targFolder);
-                meshGenCommand=['"',targFolder,filesep,'RunTriangleCart.',extStr,'"'];
+                meshGenCommand=['"',targFolder,filesep,'RunTriangleSU2.',extStr,'"'];
                 
         end
         isDeformation=false; % probably the right choice
     end
     [status,stdout]=system(meshGenCommand);
 
-    [fidMesh,fidErrMes]=fopen([targFolder,filesep,'griduns'],'r');
+    [fidMesh,fidErrMes]=fopen([targFolder,filesep,'triangularmesh.su2'],'r');
     if fidMesh<0
-        errstruct.identifier='Optimiser:CartCell:InvalidMesh:NoMeshFile';
+        errstruct.identifier='Optimiser:SU2Mesh:InvalidMesh:NoMeshFile';
         errstruct.message=['Mesh file failed to open',fidErrMes,'\n ',...
-            targFolder,filesep,'griduns'];
+            targFolder,filesep,'triangularmesh.su2'];
         disp(stdout)
         error(errstruct)
     end
@@ -121,7 +120,7 @@ function [obj]=SolveFlow(paramoptim,targFolder)
     
     
     if flowRestart && (numel(parentMesh)>0)
-        flowPath=FindDir([parentMesh,filesep,'CFD'],'flow.dump',false);
+        flowPath=FindDir([parentMesh,filesep,'SU2CFD'],'flow.dump',false);
         if numel(flowPath)>0
             flowCopy=['cp "',flowPath{1},'" "',targFolder,filesep,'flow.dump"'];
             [status,stdout]=system(flowCopy);

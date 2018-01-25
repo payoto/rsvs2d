@@ -47,6 +47,7 @@ MEflow=cell([1,nTest]);
 MEproc=cell([1,nTest]);
 paramspline.splineCase='smoothpts';
 
+
 paramsplinepre.splineCase='presmoothpts';
 parfor ii=1:nTest
     

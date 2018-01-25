@@ -180,6 +180,9 @@ function [cellOrderedVertex,cellOrderedEdges]=...
                 nAct=find(~any(repmat(tempBlock,flip(size(tempBlock)))==...
                     repmat(tempBlock',size(tempBlock)) & ~eye(numel(ii))));
             end
+            if numel(nAct)>1
+                error('Initial Snake building process failed')
+            end
             ii=ii(nAct);
             jj=jj(nAct);
             disp('Loops neighbouring at corner')
@@ -192,6 +195,8 @@ function [cellOrderedVertex,cellOrderedEdges]=...
             iCell=iCell+1;
             % Restart teh edge count
             iEdge=0;
+        elseif numel(ii)>1
+            error('Initial Snake building process failed')
         end
     end
     

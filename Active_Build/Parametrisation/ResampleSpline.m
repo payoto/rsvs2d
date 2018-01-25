@@ -967,7 +967,7 @@ function [parspline]=CaseSpline_smoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='clcos'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.forcePts={'maxcurv','replace';'LETE','add'};
+    parspline.forcePts={'maxcurv','add';'LETE','add'};
     parspline.typCurve='closed';
     
     parspline.distribution='calc';
@@ -990,7 +990,7 @@ function [parspline]=CaseSpline_presmoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='i'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.forcePts={'all','replace';'LETE','add'};
+    parspline.forcePts={'all','add';'LETE','add'};
     parspline.typCurve='closed';
     
     parspline.distribution='calc';

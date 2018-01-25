@@ -170,6 +170,7 @@ function param=OptimConvergence(param)
     param.results.noteFiles={'CurrentBuild','OptimSQP'};
     param.results.tags={'snakes','Opimisation','SQP','Profile Length'};
     
+    param=AvoidLocalOptim(param);
 end
 
 function param=AvoidLocalOptim(param)
@@ -191,7 +192,11 @@ function param=AvoidLocalOptim(param)
     param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.distEpsilon=5e-7;
     param.snakes.force.dirEpsilon=1e-7;
-    param.snakes.force.typeSmear='d';
+    param.snakes.step.snaxInitPos=0;
+    param.snakes.force.lengthEpsilon=0;
+    param.snakes.force.distEpsilon=0;
+    param.snakes.force.dirEpsilon=0;
+    param.snakes.force.typeSmear='dlim';
     
 end
 
@@ -246,12 +251,13 @@ function [param]=Snakestestsmooth1()
     [param]=DefaultCase();
     param=OptimConvergence(param);
     %param=LinOptimSmoothing(param);
+    param=AvoidLocalOptim(param);
     param.general.typDat='testsmooth1';
     
-    param.snakes.force.lengthEpsilon=1e-5;
-    param.snakes.force.typeSmear='length';
-    param.snakes.step.arrivalTolerance=10e-3;
-    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
+%     param.snakes.force.lengthEpsilon=1e-5;
+%     param.snakes.force.typeSmear='length';
+%     param.snakes.step.arrivalTolerance=10e-3;
+%    param.snakes.step.snaxInitPos=10*param.snakes.force.lengthEpsilon;
     
     param.snakes.step.snakesSteps=200;
     param.snakes.refine.refineGrid=8;
@@ -606,9 +612,10 @@ function [param]=TestTriangularOptimInit2(ii)
     param.optiminit.cellLevels=[8,ii];
     param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
-    param.snakes.step.snakesSteps=200;
+    param.snakes.step.snakesSteps=40;
     param.general.buildInternal=true;
     param.snakes.step.vertLooseStep=20;
+    param.general.internalLoopStep=1;
     param.snakes.step.subStep=0;
     param.snakes.force.vel.algo='HF';
 end

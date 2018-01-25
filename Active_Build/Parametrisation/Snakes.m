@@ -1600,9 +1600,9 @@ function [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd
     for ii=rePopSub
         snaxel(ii).d=snaxel(ii).d+currTravel(ii);
     end
-    if any([snaxel(rePopSub).d]==0 | [snaxel(rePopSub).d]==1)
-        disp('Stop here')
-    end
+%     if any([snaxel(rePopSub).d]==0 | [snaxel(rePopSub).d]==1)
+%         disp('Stop here')
+%     end
 end
 
 function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTravel)
