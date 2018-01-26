@@ -23,6 +23,8 @@ function [loop]=OrderSurfaceVertexReshape(gridreshape,isEdge,cond)
     blockEdges=vertcat(gridreshape.edge(isEdgeIndex).vertexindex);
     blockCell=vertcat(gridreshape.edge(isEdgeIndex).cellindex);
     fillCell=vertcat(gridreshape.edge(isEdgeIndex).fill);
+    fillCellIntern=vertcat(gridreshape.edge(:).fill);
+    fillCellInternLog=all(fillCellIntern>0,2);
     if ~exist('cond','var'), cond='1bound';end
     switch cond
         case '0bound'
@@ -39,12 +41,15 @@ function [loop]=OrderSurfaceVertexReshape(gridreshape,isEdge,cond)
         blockCellTrunc(ii)=blockCell(ii,find(fillCell(ii,:)));
         
     end
+    edgeVertCellIntern=[vertcat(gridreshape.edge(fillCellInternLog).vertexindex),...
+        vertcat(gridreshape.edge(fillCellInternLog).cellindex)];
     
     coordVertex=vertcat(gridreshape.vertex(:).coord);
     vertexIndex=[gridreshape.vertex(:).index];
     % Order edges into closed loops
     %[cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
-    [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,blockCellTrunc);
+    [cellOrderedVertex,cellOrderedEdges]=OrderBlockEdges(blockEdges,...
+        blockCellTrunc,edgeVertCellIntern);
     
     for ii=1:length(cellOrderedVertex)
         loop(ii).vertex.index=[cellOrderedVertex{ii}(:,1);cellOrderedVertex{ii}(1:2,1)];

@@ -191,12 +191,13 @@ function param=AvoidLocalOptim(param)
     param.snakes.step.snaxInitPos=1e-5;
     param.snakes.force.lengthEpsilon=1e-6;
     param.snakes.force.distEpsilon=5e-7;
-    param.snakes.force.dirEpsilon=1e-7;
-    param.snakes.step.snaxInitPos=0;
-    param.snakes.force.lengthEpsilon=0;
-    param.snakes.force.distEpsilon=0;
-    param.snakes.force.dirEpsilon=0;
-    param.snakes.force.typeSmear='dlim';
+    param.snakes.force.dirEpsilon=1e-7;    
+    param.snakes.force.typeSmear='d';
+%     param.snakes.step.snaxInitPos=1e-5;
+%     param.snakes.force.lengthEpsilon=0;
+%     param.snakes.force.distEpsilon=0;
+%     param.snakes.force.dirEpsilon=0;
+%     param.snakes.force.typeSmear='dlim';
     
 end
 
@@ -592,7 +593,7 @@ function [param]=TestTriangularOptimInit(ii)
     param.optiminit.cellGeometry='triangle';
     param.optiminit.ptsDistrib='FFStaggered';
     param.optiminit.cellLevels=[8,ii];
-    param.snakes.refine.refineGrid=1;
+    param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=100;
     param.general.buildInternal=false;
@@ -609,14 +610,15 @@ function [param]=TestTriangularOptimInit2(ii)
     param.general.typDat='optimInit';
     param.optiminit.cellGeometry='triangle';
     param.optiminit.ptsDistrib='lhsrep';
-    param.optiminit.cellLevels=[8,ii];
+    param.optiminit.cellLevels=[5,ii];
     param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
-    param.snakes.step.snakesSteps=40;
+    param.snakes.step.snakesSteps=200;
     param.general.buildInternal=true;
     param.snakes.step.vertLooseStep=20;
-    param.general.internalLoopStep=1;
+    param.general.internalLoopStep=5;
     param.snakes.step.subStep=0;
+    param.snakes.step.fillLooseStep=0;
     param.snakes.force.vel.algo='HF';
 end
 

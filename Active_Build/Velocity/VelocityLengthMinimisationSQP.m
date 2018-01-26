@@ -1371,7 +1371,7 @@ function [derivtenscalcII]=CalculateDerivatives_d_lim(derivtenscalcII,lSmear)
     %         eval([varExtract{ii},'=derivtenscalcII.(varExtract{ii});'])
     %     end
     
-    optNum=3; % 2 is bad
+    optNum=1; % 2 is bad
     maxVal=1;
     
     

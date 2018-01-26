@@ -388,6 +388,167 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     cntSave=1;
     nonBreedNextIter=[];
     for ii=1:snakesSteps
+    %ii=1
+        %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
+        %         memUsage=MonitorMemory(whos);
+        %         fprintf('Memory Usage: %14.5f\n',memUsage)
+        
+        
+        fprintf('     Step %4i  -',ii);
+        tStepStart=now;
+        
+        
+        [dt,dtSnax,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,dtMin,...
+            stepType,vSwitch,edgeDat,mergeTopo);
+        
+        snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist,stepType);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        
+        % Topology Trimming, Merging and Freezing
+        [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
+        [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,...
+            insideContourInfo);
+        
+        %         [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
+        %             volumefraction,cellCentredGridSnax,currentConvVelocity,...
+        %             currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+        %         cntSave=cntSave+1;
+        % Snaxel Repopulation In both directions
+        
+        [nonBreedVert]=SetNonBreedVertices(borderVertices,ii,param);
+        nonBreedVert=[nonBreedVert,nonBreedVertPersist]; %#ok<AGROW>
+        borderVertices.nonBreedVert=nonBreedVert;
+        newSnaxInd=max([snaxel(:).index]);
+        [snaxel,insideContourInfo,newNonBreedVert]=SnaxelBreeding(snaxel,...
+            insideContourInfo,refinedGriduns,nonBreedVert,edgeDat,mergeTopo);
+        if numel(snaxel)==0
+            warning('Contour has collapsed')
+            break
+        end
+        
+        [snaxelrev,insideContourInfoRev]=ReverseSnaxelInformation(snaxel,...
+            insideContourInfo,refinedGriduns);
+        
+        [snaxelrev,insideContourInfoRev,newNonBreedVertRev]=SnaxelBreeding(snaxelrev,...
+            insideContourInfoRev,refinedGriduns,[nonBreedVert,newNonBreedVert],...
+            edgeDat,mergeTopo);
+        if numel(snaxelrev)==0
+            warning('Contour has collapsed')
+            break
+        end
+        
+        [snaxel,insideContourInfo]=ReverseSnaxelInformation(snaxelrev,...
+            insideContourInfoRev,refinedGriduns);
+        nonBreedNextIter=[newNonBreedVert,newNonBreedVertRev];
+        
+        % Topology Trimming, Merging and Freezing
+        [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd,...
+            edgeDat,mergeTopo);
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snaxel]=FreezingFunction(snaxel,borderVertices,edgeDat,mergeTopo);
+        [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,...
+            insideContourInfo);
+        
+        
+        nSnax=length(snaxel);
+        frozen=sum(logical([snaxel(:).isfreeze]));
+        tStepEnd=now;
+        
+        fprintf(['  Time Taken: ',datestr(tStepEnd-tStepStart,'HH:MM:SS:FFF'),' ']);
+        
+        if nSnax==frozen
+            break
+        end
+        
+        [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+        [snakposition]=SnaxelNormal2(snaxel,snakposition);
+        
+        [volumefraction,coeffstructure,cellCentredGridSnax,convergenceCondition,...
+            currentConvVelocity,currentConvVolume,forceparam,lastAlgo,trigCount,...
+            snaxel,snakposition,snaxelmodvel,velcalcinfo]=...
+            VelocityAndVolumeProcess(param,snaxel,snakposition,refinedGrid,volfracconnec,...
+            cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,trigCount);
+        
+        if convergenceCondition && ii>snakesMinSteps && lastAlgo
+            fprintf(' -  Snakes Converged!\n')
+            break
+        end
+        fprintf(' DVol = %10.4e \n', currentConvVolume);
+        % visualise results
+        if ((round(ii/plotInterval)==ii/plotInterval) && plotInterval) ...
+                || sum(ii==debugPlot)
+            [movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,...
+                snaxelmodvel,makeMov,volumefraction);
+            %[movFrame]=CheckResults(ii,refinedGriduns,oldGrid,snakposition,...
+            %snaxel,makeMov,volumefraction);
+            
+        end
+         % Save and exit conditions
+        [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
+            volumefraction,cellCentredGridSnax,currentConvVelocity,...
+            currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
+        cntSave=cntSave+1;
+        
+        if mod(ii,convCheckRate)==0 && ii>convCheckRange ...
+                && (~isChangeddtMax || (mod(ii-lastConvCheck,convCheckRate)==0))
+            [maxDt,isConvergingPast,isChangeddtMax]=TestConvergenceRate(...
+                [snakSave((end-convCheckRange):end).currentConvVolume],convLevel,maxDt,...
+                convDistance,isConvergingPast);
+            maxDt=max([maxDt,dtMinStart]);
+            dtMin=maxDt/dtRatio;
+            lastConvCheck=ii;
+        end
+        if multiStepConv>currentConvVolume
+            for subStep=1:subStep
+                fprintf('\n        substep: ')
+                [dt,dtSnax,maxDist]=TimeStepCalculation(snaxel,maxStep,maxDt,...
+                    dtMin,stepType,vSwitch,edgeDat,mergeTopo);
+                [~,~,~,~,...
+                    ~,~,~,~,~,...
+                    snaxel,~,~,~]=...
+                    VelocityAndVolumeProcess(param,snaxel,snakposition,...
+                    refinedGrid,volfracconnec,...
+                    cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,...
+                    trigCount);
+                snaxel=SnaxelDistanceUpdate(snaxel,dt,dtSnax,maxDist,stepType);
+                [snakposition]=PositionSnakes(snaxel,refinedGriduns);
+                [snakposition]=SnaxelNormal2(snaxel,snakposition);
+            end
+        end
+    end
+    
+end
+function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentConvVolume,edgeDat]=...
+        IterSnakes2(param,snaxel,refinedGriduns,refinedGrid,volfracconnec,cellCentredGrid,...
+        insideContourInfo,forceparam,oldGrid,maxStep,maxDt,dtMin,borderVertices)
+    
+    global snaxInitPos
+    varExtract={'snakesSteps','mergeTopo','makeMov','convLevel','debugPlot','plotInterval',...
+        'subStep','snakesMinSteps','stepType','vSwitch','convCheckRate',...
+        'convCheckRange','convDistance','dtRatio','refineGrid','multiStepConv'};
+    [snakesSteps,mergeTopo,makeMov,convLevel,debugPlot,...
+        plotInterval,subStep,snakesMinSteps,stepType,vSwitch,convCheckRate,...
+        convCheckRange,convDistance,dtRatio,refineGrid,multiStepConv]...
+        =ExtractVariables(varExtract,param);
+    
+    trigCount=0;
+    movFrame=struct([]);
+    isConvergingPast=true;
+    isChangeddtMax=false;
+    lastConvCheck=0;
+    dtMinStart=dtMin;
+    [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid);
+    borderVertices.nonbreedpers=nonBreedVertPersist;
+    [edgeDat]=BuildEdgeDat(cellCentredGrid,refinedGrid,refineGrid);
+    cntSave=1;
+    nonBreedNextIter=[];
+    for ii=1:snakesSteps
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
         %         memUsage=MonitorMemory(whos);
         %         fprintf('Memory Usage: %14.5f\n',memUsage)
@@ -410,7 +571,6 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             cellCentredGrid,insideContourInfo,convLevel,forceparam,ii,trigCount);
         
         if convergenceCondition && ii>snakesMinSteps && lastAlgo
-            
             fprintf(' -  Snakes Converged!\n')
             break
         end
@@ -1342,7 +1502,7 @@ function [kk,cellSimVertex,snaxel]=GenerateVertexSnaxel(snaxelEdges,kk,...
         snaxIndex=kk+snaxelIndexStart;
         cellSimVertex(jj)=snaxIndex;
         dist=snaxInitPos*distRatio(jj); % Snaxel initialisation, it starts at the vertex
-        velocity=0; % Initialisation velocity
+        velocity=-1; % Initialisation velocity
         vertexOrig=initVertexIndexSingle;
         vertexDest=edgeVertIndex(snaxelEdgesSub(jj),:);
         vertexDest(vertexDest==vertexOrig)=[];
@@ -3535,7 +3695,6 @@ function [snaxelrev]=ReverseSnakesConnection(snaxel)
     
     
 end
-
 
 function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
         connectstructinfo,newFracs)

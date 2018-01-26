@@ -138,10 +138,11 @@ end
 % Order BlockEdges might cause problems as the different versions were not
 % consistant.
 function [cellOrderedVertex,cellOrderedEdges]=...
-        OrderBlockEdges(blockEdges,blockCellTrunc)
+        OrderBlockEdges(blockEdges,blockCellTrunc,edgeVertCellIntern)
     
     if ~exist('blockCellTrunc','var')
         blockCellTrunc=ones([length(blockEdges(:,1)),1]);
+        edgeVertCellIntern=ones(1,4);
     end
     
     [mBE,~]=size(blockEdges);
@@ -175,13 +176,20 @@ function [cellOrderedVertex,cellOrderedEdges]=...
         [ii,jj]=find(blockEdgesWorking==nextVertex);
         if length(ii)>1
             nAct=find(blockCellTruncWorking(ii)==currBlockCell);
-            tempBlock=blockCellTruncWorking(ii);
+            
             if isempty(nAct)
+                tempBlock=blockCellTruncWorking(ii);
                 nAct=find(~any(repmat(tempBlock,flip(size(tempBlock)))==...
                     repmat(tempBlock',size(tempBlock)) & ~eye(numel(ii))));
             end
             if numel(nAct)>1
-                error('Initial Snake building process failed')
+                [currBlockCell]=ExploreEdgeCellConnectivity(nextVertex,...
+                    currBlockCell,edgeVertCellIntern);
+                nAct=find(blockCellTruncWorking(ii)==currBlockCell);
+                if numel(nAct)>1
+                   error('Failed to find a connected set of vertices')
+                end
+                
             end
             ii=ii(nAct);
             jj=jj(nAct);
@@ -200,6 +208,42 @@ function [cellOrderedVertex,cellOrderedEdges]=...
         end
     end
     
+end
+
+function [newTargCell]=ExploreEdgeCellConnectivity(nextVertex,targCell,...
+        edgeVertCellIntern)
+    % Should work with convex grids
+    [ii,~]=find(edgeVertCellIntern(:,1:2)==nextVertex);
+    edgeVertCellIntern=edgeVertCellIntern(ii,:);
+    tempBlock=[targCell,reshape(edgeVertCellIntern(:,3:4)',[1,...
+        numel(edgeVertCellIntern(:,3:4))])];
+    connLog=repmat(tempBlock,flip(size(tempBlock)))==...
+                    repmat(tempBlock',size(tempBlock)) & ~eye(numel(tempBlock));
+    nCell=size(edgeVertCellIntern,1);
+    connLogRed=zeros(nCell+1);
+    connLogRed(1,2:end)=sum(reshape(connLog(1,2:end),[2,nCell]));
+    connLogRed(2:end,1)=connLogRed(1,2:end)';
+    for ii=1:size(edgeVertCellIntern,1)
+        for jj=1:size(edgeVertCellIntern,1)
+            connLogRed(ii+1,jj+1)=sum(sum(connLog(2+(ii-1)*2:2+(ii-1)*2+1,...
+                2+(jj-1)*2:2+(jj-1)*2+1)));
+        end
+    end
+    nIt=0;
+    iiprec=1;
+    ii=find(connLogRed(iiprec,:));
+    while any(connLogRed(ii,[1:iiprec(end)-1,iiprec(end)+1:end])) && nIt<nCell
+        nIt=nIt+1;
+        iiprec(end+1)=ii;
+        
+        ii=find(connLogRed(ii,:));
+        ii=ii(ii~=iiprec(end-1));
+    end
+    ii=ii-1;
+    iiprec=iiprec(end)-1;
+    jj=find(~any(connLog(max(2+(iiprec-1)*2:2+(iiprec-1)*2+1,1),max(2+(ii-1)*2:2+(ii-1)*2+1,1)),1));
+    
+    newTargCell=edgeVertCellIntern(ii,jj+2);
 end
 
 function [vecAngles]=ExtractAnglepm180(baseVector,testVector)
