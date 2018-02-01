@@ -249,7 +249,6 @@ function [rootDirName]=InitOptimalFlowOutput(rootFolder,ratio,tecPlotFile)
     end
 end
 
-
 function [destPath]=EditPLTTimeStrand(time,strand,nOccur,cfdPath,filename)
     
     cfdPath=MakePathCompliant(cfdPath);
