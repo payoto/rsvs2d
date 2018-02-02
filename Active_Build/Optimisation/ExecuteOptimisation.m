@@ -1609,6 +1609,10 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             specificFillName=MakePathCompliant(specificFillName);
             [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
             origPop=ones([nPop 1])*rootFill{2};
+        case 'initfreefempop'
+            
+            [origPop]=InitFreefemPopulation(cellLevels,nPop,nDesVar,desVarConstr,...
+                desVarVal);
     end
     
     

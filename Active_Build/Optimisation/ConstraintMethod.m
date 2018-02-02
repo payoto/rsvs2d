@@ -249,6 +249,8 @@ function [population,constrDistance]=DesignVariableConsCaller(constrName,constrV
             [population]=ValSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'MinSumVolFrac'
             [population]=MinSumVolumeFraction(constrVal,paroptim,population,varargin{1});
+        case 'MaxSumVolFrac'
+            [population]=MaxSumVolumeFraction(constrVal,paroptim,population,varargin{1});
         case 'MinValVolFrac'
             [population]=MinValSumVolume(constrVal,paroptim,population,varargin{1});
         case 'Naca0012'
@@ -646,6 +648,36 @@ function [fill,isConstr]=IterativeValFill(fill,desVarRange,constrVal,volVec,totv
     if kk>n+1
         isConstr=false;
     end
+end
+
+
+function [population]=MaxSumVolumeFraction(constrVal,paroptim,population,baseGrid)
+    
+    varExtract={'desVarRange'};
+    [desVarRange]=ExtractVariables(varExtract,paroptim);
+    cellCentred=CellCentreGridInformation(baseGrid);
+    isActive=logical([cellCentred(:).isactive]);
+    volVec=[cellCentred(isActive).volume];
+    totvol=sum(volVec);
+    
+    for ii=1:length(population)
+        
+        fillStart=population(ii).fill;
+        
+        sumFill=sum(fillStart.*volVec)/totvol;
+        ratio=constrVal/sumFill;
+        if ~isfinite(ratio)
+            population(ii).fill=fillStart;
+            population(ii).constraint=false;
+        elseif ratio>=1
+            population(ii).fill=fillStart;
+        elseif ratio>1
+            population(ii).fill=fillStart/ratio;
+        end
+    end
+    
+    
+    
 end
 
 %% Results cases
