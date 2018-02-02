@@ -79,6 +79,18 @@ respectively. All result files and folders are time stamped such that a named so
 These files and their location are entered into a file  at:
 	../results/<archive_name>/Index_<archive_name>.txt
 
+# Updating the code#
+
+Updating your files to be up to date with the master branch can be done using git very efficiently. With a few steps.  
+ +  Add all your local changes `git add -u` then `git add *.m` then `git add Active_Build*png`   
+ +  Commit all your local changes `git commit  -m "Add comment about what was done"`
+ +  Switch to the master branch `git checkout master`  
+ +  Pull the latest version from the remote repository: `git pull`  
+ +  If there are any merge issues resolve them using a text editor (if there are you will need to run `git add -u` and `git commit` before the next step)   
+ +  Switch to your local branch `git checkout <your branch name>`   
+ +  Merge the new master with your local branch `git merge master`   
+ +  If there are any merge issues resolve them using a text editor (if there are you will need to run `git add -u` and `git commit`)
+
 # Outline of the code #
 
 The code is centred around an optimisation framework executed through the function `ExecuteOptimisation`
