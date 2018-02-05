@@ -3851,7 +3851,10 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     
     
     [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr);
-    [grid,loop,restartsnake,snakSave,newFill]=RestartSnakeFill(debugArgIn{:});
+    if numel(debugArgIn)>5
+        paramoptim=debugArgIn{6};
+    end
+    [grid,loop,restartsnake,snakSave,newFill]=RestartSnakeFill(debugArgIn{1:5});
     popuDebug=iterstruct(1).population(1);
     
     if iscell(newFill)

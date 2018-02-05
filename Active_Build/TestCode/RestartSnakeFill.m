@@ -4,7 +4,8 @@
 function [grid,loop,restartsnak,snakSave,newFill]=RestartSnakeFill(...
         optimstruct,nIter,nProf,rootFolder,restartType)
     % Runs if 3rd input of ExecuteOptimisation exists.
-    [grid,loop,restartsnak,snakSave]=ExtractRestartPaths(optimstruct,nIter,restartType,rootFolder);
+    [grid,loop,restartsnak,snakSave]=ExtractRestartPaths(optimstruct,...
+        nIter,restartType,rootFolder);
     % get grid information
     
     % run as in ExecuteOptimisation
@@ -16,7 +17,8 @@ function [grid,loop,restartsnak,snakSave,newFill]=RestartSnakeFill(...
     
 end
 
-function [grid,loop,restartsnak,snakSave]=ExtractRestartPaths(optimstruct,nIter,restartType,rootFolder)
+function [grid,loop,restartsnak,snakSave]=ExtractRestartPaths(optimstruct,...
+        nIter,restartType,rootFolder)
     
     
     pathGrid=[rootFolder,filesep,'iteration_0',filesep,'profile_0',filesep];
