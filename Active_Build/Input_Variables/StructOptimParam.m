@@ -77,6 +77,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     
     paroptimgeneral.knownOptimStart=[0.146088675]; %#ok<*NBRAK>
     paroptimgeneral.useSnake=true;
+    paroptimgeneral.regulariseSnakeBounds='';
     
     
     paroptimgeneral.iterGap=1;

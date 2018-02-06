@@ -394,6 +394,9 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Initialise Optimisation
     % Get Parametrisation parameters
     paramoptim=StructOptimParam(caseStr);
+    [~,paramoptim]=ConstraintMethod('init',paramoptim,[]); % Constraint setup early
+    [paramoptim]=CheckConsistantParamoptim(paramoptim);
+    
     [outinfo]=OptimisationOutput('init',paramoptim);
     diaryFile=[outinfo.rootDir,'\Latest_Diary.log'];
     diaryFile=MakePathCompliant(diaryFile);
@@ -401,7 +404,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     fclose(fidDiary);
     diary(diaryFile);
     
-    [~,paramoptim]=ConstraintMethod('init',paramoptim,[]); % Constraint setup early
+    
     % Initialise Grid
     [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
         =GridInitAndRefine(paramoptim.parametrisation);
@@ -428,6 +431,23 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [~]=PrintEnd(procStr,1,tStart);
 end
 
+function [paramoptim]=CheckConsistantParamoptim(paramoptim)
+    varExtract={'cellLevels','passDomBounds','corneractive','regulariseSnakeBounds'};
+    [cellLevels,passDomBounds,corneractive]=ExtractVariables(varExtract(1:3),...
+        paramoptim.parametrisation);
+    [regulariseSnakeBounds]=ExtractVariables(varExtract(4),paramoptim);
+    
+    switch regulariseSnakeBounds
+        case ''
+        case '2c_orig'
+            [passDomBounds]=MakeCartesianGridBounds(cellLevels);
+        otherwise
+            warning('Unrecognised regulariseSnakeBounds case')
+    end
+    paramoptim.parametrisation=SetVariables(varExtract(1:3),...
+        {cellLevels,passDomBounds,corneractive},paramoptim.parametrisation);  
+    
+end
 function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
     [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);

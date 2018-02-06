@@ -81,23 +81,41 @@ end
 
 function [paramoptim]=LocalConstraintExtraction_Image(paramoptim,constrVal)
     
-    varExtract={'cellLevels','desVarConstr','desVarVal'};
-    [cellLevels]=ExtractVariables(varExtract(1),paramoptim.parametrisation);
-    [desVarConstr,desVarVal]=ExtractVariables(varExtract(2:3),paramoptim);
+    varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
+    [cellLevels,passDomBounds]=ExtractVariables(varExtract(1:2),paramoptim.parametrisation);
+    [desVarConstr,desVarVal]=ExtractVariables(varExtract(3:4),paramoptim);
     
-    [desVal,cellLevels]=ImageProcess(constrVal{1},cellLevels);
-    
+    [desVal,cellLevelsImage]=ImageProcess(constrVal{1},cellLevels);
+    if any(cellLevels~=cellLevelsImage)
+        warning(['Attempting to resolve inconsitant sizes between',...
+            ' constraint Image size and requested grid size'])
+        [cellLevels,desVal]=ResolveDiffCellLevels(cellLevels,...
+            cellLevelsImage,desVal);
+    end
     desVal{end+1}=constrVal{1};
     [desVarConstr,desVarVal]=OverWriteExistingConstraint(desVal,...
         constrVal,desVarVal,desVarConstr);
     
     varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
-    passBounds=(MakeCartesianGridBounds(cellLevels)+[1 1; 0 0 ])/2;
+    
+    %passDomBoundsImage=(MakeCartesianGridBounds(cellLevelsImage)+[1 1; 0 0 ])/2;
     [paramoptim.parametrisation]=SetVariables(varExtract(1:2),{cellLevels,...
-        passBounds},paramoptim.parametrisation);
+        passDomBounds},paramoptim.parametrisation);
     [paramoptim.initparam]=SetVariables(varExtract(1:2),{cellLevels,...
         MakeCartesianGridBounds(cellLevels)},paramoptim.initparam);
+    
     [paramoptim]=SetVariables(varExtract(3:4),{desVarConstr,desVarVal},paramoptim);
+end
+
+function [cellLevels,desVal]=ResolveDiffCellLevels(cellLevels,cellLevelsImage,desVal)
+    [i,j]=ind2sub(cellLevelsImage,desVal{1});
+    
+    if any(i>cellLevels(1)) || any(j>cellLevels(2))
+        errstruct.identifier='Optimiser:Parameters:IncompatibleInputParameters';
+        errstruct.message='cellLevels cannot accomodate constraint images';
+        error(errstruct)
+    end
+    desVal{1}=sub(cellLevels,i,j);
 end
 
 function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gridReshape)
