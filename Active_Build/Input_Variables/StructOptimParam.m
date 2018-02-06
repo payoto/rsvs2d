@@ -5334,6 +5334,7 @@ function [paroptim]=AlexT_test()
     
     [paroptim]=MBBbeam1_constraint(paroptim);
     paroptim=ModifySnakesParam(paroptim,'MBBbeam1_parametrisation'); % Get snake parameters
+    paroptim.parametrisation.snakes.step.vertLooseStep = [00]; 
     [paroptim]=OptimDE(paroptim);
     paroptim.general.objectiveName='FreeFemPPTest';
     

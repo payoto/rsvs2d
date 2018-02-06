@@ -3870,7 +3870,7 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     else
         popuDebug.fill=newFill;
     end
-    paramoptim.parametrisation.snakes.step.snakesSteps=200;
+    paramoptim.parametrisation.snakes.step.snakesSteps=100;
     paramoptim.parametrisation.snakes.step.snakData='all';
     paramoptim.parametrisation.snakes.step.snakesConsole=true;
     
