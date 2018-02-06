@@ -543,6 +543,36 @@ function [param]=TestRand(caseStr)
     %param.snakes.refine.gridDistrib='randMod';
     param.snakes.refine.cellRefineShape='triangle';
 end
+
+function [param]=SnakesBugInternal()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat='buginout_test';
+    
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.buildInternal=true;
+    param.snakes.step.snakData='all';
+end
+function [param]=SnakesBugInternal2()
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat='buginout_test2';
+    
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=4;
+    param.snakes.refine.typeRefine='all';
+    param.general.buildInternal=true;
+    param.snakes.step.snakData='all';
+end
+
 %% Optimisation Cases
 
 function [param]=optimDefault()

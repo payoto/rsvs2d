@@ -82,11 +82,12 @@ function [figh]=CheckResultsLight(unstructured,snakposition,snaxel,figh)
     if nDim==2
         if nargin==3
             figh=figure;
+        axh=axes;
+            hold on
         else
             figure(figh)
-        end
-        axh=axes;
         hold on
+        end
         
         colString='bgcmyk';
         
@@ -227,19 +228,26 @@ function []=PlotSnaxelLoopDir(figh,axh,snakposition,snaxel)
     % Plots the snaxels as arrows on the plot
     figure(figh)
     axes(axh)
+    hold on
     snaxInd=[snaxel(:).index];
     for jj=1:length(snaxel)
         line=[snaxel(jj).index,snaxel(jj).snaxnext];
-        for ii=1:length(line)
-            currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
-            X(ii)=snakposition(currSnaxSub).coord(1);
-            Y(ii)=snakposition(currSnaxSub).coord(2);
+        try
+            for ii=1:length(line)
+                currSnaxSub=FindObjNum(snakposition,line(ii),snaxInd);
+                
+                X(ii)=snakposition(currSnaxSub).coord(1);
+                Y(ii)=snakposition(currSnaxSub).coord(2);
+                
+                
+            end
             
-        end
-        U=X(2)-X(1);
-        
+            U=X(2)-X(1);
         V=Y(2)-Y(1);
         quiver(X(1),Y(1),U,V,0)
+        
+        catch
+        end
     end
     
 end

@@ -1255,8 +1255,8 @@ function [snaxel,insideContourInfo]=SnaxelLoop(unstructured,loop,...
     snaxel=DeleteSnaxel(snaxel,delIndex);
     % Use Backup  method to check for snaxels on wrong edges
     
-    [snaxel]=TestSnaxelLoopDirection2(snaxel);
-    [snaxel]=TestSnaxelLoopDirection(snaxel,unstructured);
+    [snaxel]=TestSnaxelLoopDirection2(snaxel,isInsideFill);
+    [snaxel]=TestSnaxelLoopDirection(snaxel,unstructured,isInsideFill);
     
     
 end
@@ -1368,7 +1368,7 @@ function [pos]=FindMatchingVectors(vecList,vec)
     
 end
 
-function [snaxel]=TestSnaxelLoopDirection(snaxel,unstructured)
+function [snaxel]=TestSnaxelLoopDirection(snaxel,unstructured,isInsideFill)
     
     snakpos=PositionSnakes(snaxel,unstructured);
     snaxInd=[snaxel.index];
@@ -1379,13 +1379,13 @@ function [snaxel]=TestSnaxelLoopDirection(snaxel,unstructured)
         nextSub=FindObjNum([],snaxel(nextSub).snaxnext,snaxInd);
     end
     
-    if ~CCWLoop(coord)
+    if xor(CCWLoop(coord),isInsideFill)
         [snaxel]=ReverseSnakesConnection(snaxel);
     end
     
 end
 
-function [snaxel]=TestSnaxelLoopDirection2(snaxel)
+function [snaxel]=TestSnaxelLoopDirection2(snaxel,isInsideFill)
     
     global unstructglobal
     snakpos=PositionSnakes(snaxel,unstructglobal);
@@ -1415,17 +1415,16 @@ function [snaxel]=TestSnaxelLoopDirection2(snaxel)
     end
     
     if sum(testAngles>pi/2)==0
-        if isCCW
+        if isCCW && isInsideFill
             [snaxel]=ReverseSnakesConnection(snaxel);
         end
     else
-        if ~isCCW
+        if ~isCCW && isInsideFill
             [snaxel]=ReverseSnakesConnection(snaxel);
         end
     end
     
 end
-
 function [snaxel,cellSimVertex]=InitialSnaxelStructure(initVertexIndex,edgeVertIndex,...
         edgeIndex,currLoopEdgeIndex,invalidEdgeIndex,snaxelIndexStart,isInside,edgeLength,connectivity)
     % Creates the basic snaxel structure, no removal of unworthy snaxels is
