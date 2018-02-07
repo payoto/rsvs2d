@@ -21,6 +21,7 @@ function []=InitialiseSnakeFlow(isRm)
     else
         clear all
         setenv('TMP','/local/')
+        isRm=0;
     end
     
     singleFolder={''};

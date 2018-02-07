@@ -4,10 +4,14 @@ function [obj]=CutCellFlow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     
+    varExtract={'solveFlow'};
+    [solveFlow]=ExtractVariables(varExtract,paramoptim);
     
     [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc);
     GenerateMesh(paramoptim,targFolder);
-    [obj]=SolveFlow(paramoptim,targFolder);
+    if solveFlow
+        [obj]=SolveFlow(paramoptim,targFolder);
+    end
 end
 
 

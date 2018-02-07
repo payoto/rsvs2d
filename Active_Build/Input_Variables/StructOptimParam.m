@@ -150,6 +150,7 @@ end
 function paroptimobjflow=DefaultCutCell_Flow()
     
     paroptimobjflow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\supersonic_ogive'];
+    paroptimobjflow.solveFlow=true;
     paroptimobjflow.stoponerror=true;
     paroptimobjflow.targConv=-6;
     paroptimobjflow.lengthConvTest=500;
