@@ -7,7 +7,10 @@ function [obj]=SU2Flow_Handler(paramoptim,boundaryLoc)
     
     [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc);
     GenerateMesh(paramoptim,targFolder);
-    [obj]=SolveFlow(paramoptim,targFolder);
+    
+    if solveFlow
+        [obj]=SolveFlow(paramoptim,targFolder);
+    end
 end
 
 

@@ -413,7 +413,11 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     % Start Parallel Pool
-    StartParallelPool(ExtractVariables({'worker'},paramoptim),10);
+    nWorker=ExtractVariables({'worker'},paramoptim);
+    workerList=StartParallelPool(nWorker,10);
+    [machineList]=WriteMachineFiles(nWorker,outinfo.rootDir);
+    paramoptim=SetVariables({'workerList','machineList'},{workerList,machineList},paramoptim);
+    
     if ExtractVariables({'useSnake'},paramoptim)
         
         [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
@@ -460,7 +464,7 @@ function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
     
 end
 
-function []=StartParallelPool(nWorker,nTry)
+function [workerList]=StartParallelPool(nWorker,nTry)
     kk=0;
     while numel(gcp('nocreate'))==0 && kk<nTry
         comStr=computer;
@@ -475,7 +479,8 @@ function []=StartParallelPool(nWorker,nTry)
         
         try
             p=parpool(poolName);
-            p.IdleTimeout=Inf
+            p.IdleTimeout=Inf;
+           
         catch ME
             
         end
@@ -488,7 +493,20 @@ function []=StartParallelPool(nWorker,nTry)
         %error('Parrallel pool failed to start')
         throw(ME)
     end
-    
+    ll=1;
+    workerList=[];
+    while numel(workerList)<nWorker && ll<10
+        thisworker=zeros([1 ll*nWorker]);
+        parfor ii=1:ll*nWorker
+            tempworker = getCurrentWorker;
+            thisworker(ii)=tempworker.ProcessId;
+        end
+        workerList=unique(thisworker);
+        ll=ll+1;
+    end
+    if numel(workerList)<nWorker
+        error('Failed to recover a list of workers')
+    end
 end
 
 function [paramoptim]=InitialiseObjective(paramoptim)
@@ -684,7 +702,7 @@ function [population,supportstruct,captureErrors]=IterateNoSensitivity(paramopti
     parfor ii=1:nPop
         %for ii=1:nPop
         %for ii=flip(1:nPop)
-        
+        worker = getCurrentWorker
         currentMember=population(ii).fill;
         [newGrid,newRefGrid,newrestartsnake]=ReFillGrids(baseGrid,gridrefined,...
             restartsnake,connectstructinfo,currentMember);

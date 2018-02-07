@@ -70,6 +70,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.specificFillName='24DVaverage';
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
+    paroptimgeneral.workerList=[];
+    paroptimgeneral.machineList={};
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
     paroptimgeneral.direction='min';
     paroptimgeneral.defaultVal=1e3;
@@ -5343,7 +5345,7 @@ function [paroptim]=AlexT_test()
     paroptim.general.nPop=15; % Number of members in a population
     paroptim.general.startPop='rand';
     paroptim.general.maxIter=30;
-    paroptim.general.worker=2;
+    paroptim.general.worker=4;
 end
 
 
