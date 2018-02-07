@@ -452,6 +452,7 @@ function [paramoptim]=CheckConsistantParamoptim(paramoptim)
         {cellLevels,passDomBounds,corneractive},paramoptim.parametrisation);  
     
 end
+
 function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
     [desvarconnec,~,~]=ExtractVolumeCellConnectivity(baseGrid);
     [desvarconnec]=ExtractDesignVariableConnectivity(baseGrid,desvarconnec);
@@ -556,7 +557,7 @@ function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,pop
         supportstruct,isSensiv,captureErrors,iterstruct);
     
     [population,captureErrors]=ParallelObjectiveCalc...
-        (objectiveName,paramoptim,population,supportstruct,captureErrors);
+        (objectiveName,paramoptim,population,supportstruct,baseGrid,captureErrors);
     
     [population]=ConstraintMethod('Res',paramoptim,population);
     population=EnforceConstraintViolation(population,defaultVal);
@@ -566,7 +567,7 @@ function [population,restartsnake]=PerformIteration(paramoptim,outinfo,nIter,pop
 end
 
 function [population,captureErrors]=ParallelObjectiveCalc...
-        (objectiveName,paramoptim,population,supportstruct,captureErrors)
+        (objectiveName,paramoptim,population,supportstruct,baseGrid,captureErrors)
     
     nPop=numel(population);
     
@@ -575,8 +576,15 @@ function [population,captureErrors]=ParallelObjectiveCalc...
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
-                supportstruct(ii));
+                supportstruct(ii),baseGrid);
+            % Overwrite fill if filldelta exists
             fieldsAdd=fieldnames(additional);
+            filldeltaInd=find(~cellfun(@isempty,regexp(fieldsAdd,'filldelta')));
+            if ~isempty(filldeltaInd)
+                population(ii).fill=population(ii).fill+additional.filldelta;
+            end
+            % Additional Data to be saved
+            fieldsAdd(filldeltaInd)=[];
             for jj=1:numel(fieldsAdd)
                 population(ii).additional.(fieldsAdd{jj})=additional.(fieldsAdd{jj});
             end
@@ -2040,6 +2048,11 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             addstruct=struct('sum',[],'mean',[],'std',[],'max',[],'min',[],'A',...
                 [],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],'snaxelVelResV',[]...
                 ,'Airfoil','');
+        case 'ASOFlow'
+            addstruct=struct('CL',[],'CD',[],'CM',[],'directResidual',[],...
+                'directNIter',[],'adjointResidual',[],'adjointNIter'...
+                ,[],'A',[],'L',[],'t',[],'c',[],'tc',[],'snaxelVolRes',[],...
+                'snaxelVelResV',[]);
             
         case 'FreeFemPPTest'
             addstruct=struct('A',...
@@ -2140,16 +2153,22 @@ end
 
 %% Objective Function
 
-function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,member,supportstruct)
+function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
+        member,supportstruct,baseGrid)
     
     procStr=['Calculate Objective - ',objectiveName];
     [tStart]=PrintStart(procStr,2);
+    
+    objInput=ExtractVariables({'objInput'},paramoptim);
+    
     % DVP : replace loop by full support struct add the mesh motion to
     % paramoptim
     loop=supportstruct.loop;
     paramoptim=SetVariables({'parentMesh'},{supportstruct.parentMesh},paramoptim);
     objValue=[];
-    [objValue,additional]=eval([objectiveName,'(paramoptim,member,loop);']);
+    
+    
+    [objValue,additional]=eval([objectiveName,'(paramoptim,member,',objInput,');']);
     
     [tElapsed]=PrintEnd(procStr,2,tStart);
 end
@@ -2367,7 +2386,7 @@ function [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,..
         newGrid,connectstructinfo,paramsnake,paramspline,outinfo,0,1,paramoptim);
     [population.objective,population.additional]=...
         EvaluateObjective(objectiveName,paramoptim,population,...
-        supportstruct);
+        supportstruct,baseGrid);
     knownOptim=population.objective;
     paramoptim=SetVariables({'knownOptim'},{knownOptim},paramoptim);
 end

@@ -48,6 +48,7 @@ function [paroptim]=DefaultOptim()
     paroptim.spline=DefaultOptimSpline();
     paroptim.obj.flow=DefaultCutCell_Flow();
     paroptim.obj.invdes=DefaultInversedesign();
+    paroptim.obj.aso=DefaultASOFlow();
     paroptim.constraint=DefaultConstraint();
     
     paroptim.optim.supportOptim=[];
@@ -73,6 +74,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.workerList=[];
     paroptimgeneral.machineList={};
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
+    paroptimgeneral.objInput='loop';
     paroptimgeneral.direction='min';
     paroptimgeneral.defaultVal=1e3;
     paroptimgeneral.knownOptim=[0.146088675]; %#ok<*NBRAK>
@@ -174,6 +176,13 @@ function paroptimobjflow=DefaultCutCell_Flow()
     paroptimobjflow.meshOffset=1; % Mesh Offset to avoid intersections
     paroptimobjflow.maxminCFL=[1.5 0.1];
     
+end
+
+function paroptimobjaso=DefaultASOFlow()
+    
+    paroptimobjaso.asoPath=[cd,'\..\..\ASO_LK\SRC'];
+    paroptimobjaso.asoCase=@ASODefaults;
+    paroptimobjaso.asoReturnFillChange=false;
 end
 
 function [paroptimspline]=DefaultOptimSpline()
@@ -712,6 +721,7 @@ function [paroptim]=Inverse_Bulk()
     paroptim.desvar.symType='none'; % 'horz'
     
 end
+
 %% TEST functions
 
 function [paroptim]=TestOptim()
@@ -1267,6 +1277,32 @@ function [paroptim]=areabusesweep(e)
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     
     
+end
+
+function [paroptim]=buseASONoreturn()
+    [paroptim]=areabusesweep(0.12);
+    
+    paroptim.general.nPop=24;
+    paroptim.general.maxIter=30;
+    paroptim.general.worker=12;
+    
+    paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
+    paroptim.general.objInput='loop,baseGrid';
+    
+    paroptim.obj.aso.asoReturnFillChange=false;
+end
+
+function [paroptim]=buseASOFillreturn()
+    [paroptim]=areabusesweep(0.12);
+    
+    paroptim.general.nPop=24;
+    paroptim.general.maxIter=30;
+    paroptim.general.worker=12;
+    
+    paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
+    paroptim.general.objInput='loop,baseGrid';
+    
+    paroptim.obj.aso.asoReturnFillChange=true;
 end
 
 function [paroptim]=areabuseaxrat(e)
