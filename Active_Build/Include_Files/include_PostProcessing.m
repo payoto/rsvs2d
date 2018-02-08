@@ -40,9 +40,13 @@ function pathName=MakePathCompliant(pathName)
     compStr=computer;
     if strcmp(compStr(1:2),'PC')
         pathName=regexprep(pathName,'/','\\');
+        pathName=regexprep(pathName,'\\[^\\]*\\\.\.','\\');
+        pathName=regexprep(pathName,'\\*','\\');
     else
         
         pathName=regexprep(pathName,'\\','/');
+        pathName=regexprep(pathName,'/[^*/]/\.\.','/');
+        pathName=regexprep(pathName,'/*','/');
     end
 end
 

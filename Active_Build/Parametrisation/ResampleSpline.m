@@ -240,7 +240,6 @@ function edgeCurvNorm=CurvatureParameter(points)
     edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
 end
 
-
 function [ptsToSave]=FindNMax(quantTest,nMax,tol)
     % Finds nMax local maximums in function quantTest
     % tol allows to find the remaining maximums which are at least

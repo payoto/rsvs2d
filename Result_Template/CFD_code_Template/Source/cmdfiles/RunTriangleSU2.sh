@@ -3,7 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd $DIR
-
+echo $$ > actpid
 triangle -pq33aDenV boundtriangle
 triangle2plt boundtriangle.1 su2
 
