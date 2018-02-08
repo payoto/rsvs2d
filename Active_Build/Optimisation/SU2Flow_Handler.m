@@ -4,6 +4,8 @@ function [obj]=SU2Flow_Handler(paramoptim,boundaryLoc)
     
     % copy standard executables and setting
     
+    varExtract={'solveFlow'};
+    [solveFlow]=ExtractVariables(varExtract,paramoptim);
     
     [targFolder]=PrepareCFDFolder(paramoptim,boundaryLoc);
     GenerateMesh(paramoptim,targFolder);
@@ -88,9 +90,10 @@ function []=GenerateMesh(paramoptim,targFolder)
     end
     
     str=fgetl(fidMesh);
-    meshSize=str2num(str);
+    str=fgetl(fidMesh);
+    meshSize=str2num(regexprep(str,'NELEM= ',''));
     if meshSize(1)<100
-        errstruct.identifier='Optimiser:CartCell:InvalidMesh:NoCell';
+        errstruct.identifier='Optimiser:SU2:InvalidMesh:NoCell';
         errstruct.message='Mesh not generated properly the final number of cells was less than 100';
         error(errstruct)
     end

@@ -7,9 +7,9 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     % Generate Mesh
     boundaryLoc=member.location;
     SU2Flow_Handler(paramoptim,boundaryLoc);
-    copyfile([boundaryLoc,filesep,'CFDSU2',filesep,'triangularmesh.su2'],...
+    copyfile([boundaryLoc,filesep,'SU2CFD',filesep,'triangularmesh.su2'],...
         [boundaryLoc,filesep,'mesh.su2'])
-    rmdir([boundaryLoc,filesep,'CFDSU2'])
+    rmdir([boundaryLoc,filesep,'SU2CFD'],'s')
     
     
     % ---------------------
@@ -24,18 +24,18 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     % ---------------------
     % Call ASO
-    varExtract={'asoCase','asoPath','nMach'};
-    [asoCase,asoPath,nMach]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'asoCase','asoPath','nMach','asoReturnFillChange'};
+    [asoCase,asoPath,nMach,asoReturnFillChange]=ExtractVariables(varExtract,paramoptim);
     addpath(MakePathCompliant(asoPath));
     
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
     ASOOptions.solver.np=currentMachineFile.slots;
-    ASOOptions.solver.mpiOpts=['--hostfile ',currentMachineFile.file];
+    ASOOptions.solver.mpiOpts=['--hostfile "',currentMachineFile.file,'"'];
     
     ASOresult = ASO(optimDirectory,ASOOptions);
-    
-    
+%     ASOresult.flow.CD=0;
+%     ASOresult.loop=loop;
     % ---------------------
     % Organise Outputs
     
@@ -52,12 +52,35 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     % ---------------------
     % Calculate Fill Movement
+    
+    varExtract={'typeLoop'};
+    [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
     if asoReturnFillChange
         %error('Returning Fill delta not coded yet')
+        if ~isfield(ASOresult.loop,'coord')
+            [ASOresult.loop.coord]=deal(ASOresult.loop.(typeLoop));
+        end
         [fill,~]=LoopToFill(ASOresult.loop,baseGrid);
         additional.filldelta=fill-member.fill;
     else
         additional.filldelta=member.fill-member.fill;
     end
     
+end
+
+
+function [objValue,additional]=LengthArea(paramoptim,member,loop)
+    for ii=1:length(loop)
+        
+        [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=...
+            ClosedLoopProperties(loop(ii).snaxel.coord(1:end-1,:));
+        
+    end
+    objValue=sum(A)/sum(L);
+    
+    additional.A=sum(A);
+    additional.L=sum(L);
+    additional.t=sum(t);
+    additional.c=max(xMax)-min(xMin);
+    additional.tc=additional.t/additional.c;
 end

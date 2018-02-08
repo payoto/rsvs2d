@@ -1282,25 +1282,27 @@ end
 function [paroptim]=buseASONoreturn()
     [paroptim]=areabusesweep(0.12);
     
-    paroptim.general.nPop=24;
+    paroptim.general.nPop=4;
     paroptim.general.maxIter=30;
-    paroptim.general.worker=12;
+    paroptim.general.worker=4;
     
     paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
     paroptim.general.objInput='loop,baseGrid';
+    paroptim.spline.splineCase='smoothpts';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.general.typeLoop='subdivspline';
+    paroptim.obj.flow.mesher='triangle';
+    paroptim.obj.flow.CFDfolder=[cd,...
+        '\Result_Template\CFD_code_Template\trianglemesh'];
+    paroptim.obj.flow.solveFlow=false;
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
     
     paroptim.obj.aso.asoReturnFillChange=false;
 end
 
 function [paroptim]=buseASOFillreturn()
-    [paroptim]=areabusesweep(0.12);
-    
-    paroptim.general.nPop=24;
-    paroptim.general.maxIter=30;
-    paroptim.general.worker=12;
-    
-    paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
-    paroptim.general.objInput='loop,baseGrid';
+    [paroptim]=buseASONoreturn();
     
     paroptim.obj.aso.asoReturnFillChange=true;
 end
