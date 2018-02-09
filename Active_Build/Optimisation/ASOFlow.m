@@ -36,6 +36,8 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
     ASOOptions.solver.np=currentMachineFile.slots;
+    ASOOptions.problemargin={'area_gt'};
+    
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
     

@@ -350,6 +350,22 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
             tecPlotFile,axisRatio,paroptim,allRootDir,isGradient);
         
     end
+    
+    if strcmp(objectiveName,'ASOFlow')
+
+        tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
+        tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
+        tecPlotPre{1}=['Tec360plt_Flow_',marker,'_pre.plt'];
+        tecPlotPre{2}=['Tec360plt_Snak_',marker,'_pre.plt'];
+        [FID]=OpenOptimumFlowLayFile(writeDirectory,marker);
+        PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
+        tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
+        tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
+        ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
+            tecPlotFile,axisRatio,paroptim,allRootDir,isGradient);
+        
+    end
+    
     if strcmp(objectiveName,'InverseDesign') || strcmp(objectiveName,'InverseDesignTopo')
         tecPlotFile{1}=['Tec360plt_Flow_',marker,'.plt'];
         tecPlotFile{2}=['Tec360plt_Snak_',marker,'.plt'];
@@ -744,6 +760,165 @@ function [tecPlotPre]=ExtractOptimalFlow(optimstruct,rootFolder,dirOptim,...
         copyfileRobust([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
         
         copyfileRobust([[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt'],...
+            [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
+        
+        %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
+        dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
+        expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'};
+        val={ii,[3 4],minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5};
+        nOccur=[2 2 1 1];
+        [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
+        
+        [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'CFD'],...
+            ['flowplt_cell.plt',int2str(ii)]);
+    end
+    
+    % dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'}
+    % expr={'SOLUTIONTIME=%f','STRANDID=%i','CONNECTIVITYSHAREZONE=%i','VARSHARELIST=([1,2]=%i)'}
+    % val={ii,3,minIterRootDirNum(ii)*5,minIterRootDirNum(ii)*5}
+    % nOccur=[2 2 1 1]
+    % [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur)
+    
+    for ii=postList
+        
+        if strcmp(compType(1:2),'PC')
+            [~,~]=system(['type "',flowPlt{ii},'" >> "',tecPlotFile{1},'"']);
+            [~,~]=system(['type "',snakPlt{ii},'" >> "',tecPlotFile{2},'"']);
+        else
+            [~,~]=system(['cat ''',flowPlt{ii},''' >> ''',tecPlotFile{1},'''']);
+            [~,~]=system(['cat ''',snakPlt{ii},''' >> ''',tecPlotFile{2},'''']);
+        end
+    end
+    tecPlotPre=regexprep(tecPlotFile,'\.plt','_pre.plt');
+    if strcmp(compType(1:2),'PC')
+        [d,c]=system(['preplot "',tecPlotFile{1},'" "',tecPlotPre{1},'"']);
+        [d,c]=system(['preplot "',tecPlotFile{2},'" "',tecPlotPre{2},'"']);
+    end
+    
+    
+    
+    
+end
+
+function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
+        tecPlotFile,ratio,paramoptim,allRootDir,isGradient)
+    
+    
+    varExtract={'defaultVal','worker','CFDfolder'};
+    [defaultVal,worker,CFDfolder]=ExtractVariables(varExtract,paramoptim);
+    
+    delete(tecPlotFile{1});
+    delete(tecPlotFile{2});
+    [iterRes,nIter,nVar]=BuildIterRes(optimstruct,defaultVal);
+    
+    for ii=1:numel(allRootDir)
+        rootDirName{ii}=InitOptimalFlowOutput(allRootDir{ii},ratio,tecPlotFile);
+    end
+    rootDirName=rootDirName(~cellfun(@isempty,rootDirName));
+    compType=computer;
+    for ii=1:nIter
+
+        itL=[optimstruct(ii).population(:).objective];
+        nVarLoc=length(itL);
+        iterRes(ii,1:nVarLoc)=itL;
+        %lSub1(1)=plot(ones(1,nVarLoc)*ii,iterRes(ii,1:nVarLoc),'b.','markersize',5);
+
+    end
+    
+    switch dirOptim
+        case 'min'
+            [minRes,minPos]=min(iterRes,[],2);
+        case 'max'
+            [minRes,minPos]=max(iterRes,[],2);
+
+    end
+    if isGradient
+        minPos(1:2:end)=1;
+        minRes(1:2:end)=iterRes(1:2:end,1);
+    end
+    % Prepare CFD file with newest version
+    for ii=1:nIter
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        %         PrepareCFDPostProcessing(minIterPos);
+        
+    end
+    
+    kk=1;
+    needRerun(kk)=1;
+    for ii=2:nIter
+        
+        precIterPos=optimstruct(ii-1).population(minPos(ii-1)).location;
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        if ~strcmp(precIterPos,minIterPos)
+            kk=kk+1;
+            needRerun(kk)=ii;
+            
+        end
+        
+    end
+    disp([int2str(kk), ' Reruns needed, stop bitching and be patient'])
+    %parfor jj=1:kk
+    postList=needRerun;
+    postLog=true(size(1:kk));
+    parfor jj=1:kk
+        ii=needRerun(jj);
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+
+        try
+
+            if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                RunCFDPostProcessing(minIterPos);
+                if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                    CutCellFlow_Handler(paramoptim,minIterPos)
+                    RunCFDPostProcessing(minIterPos);
+                    if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                        PrepareCFDPostProcessing(minIterPos,CFDfolder);
+                        CutCellFlow_Handler(paramoptim,minIterPos)
+                        RunCFDPostProcessing(minIterPos);
+                        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
+                            error(sprintf('Could Not gernerate flow plot for %s',minIterPos))
+                        end
+                    end
+                end
+            end
+
+        catch ME
+            disp(ME.getReport);
+            postLog(jj)=false;
+        end
+        
+    end
+    postList((~postLog))=[];
+    minIterRootDirNum=zeros([1,nIter]);
+    
+    for ii=postList
+        
+        minIterPos=optimstruct(ii).population(minPos(ii)).location;
+        [~,filename]=FindDir( minIterPos,'tecsubfile',false);
+        jj=1;
+        while isempty(regexp(minIterPos,rootDirName{jj}, 'once')) && jj<numel(rootDirName)
+            jj=jj+1;
+        end
+        minIterRootDirNum(ii)=jj;
+        jj=1;
+        try
+            while ~isempty(regexp(filename{jj},'copy', 'once'))
+                jj=jj+1;
+            end
+        catch ME
+            ME.getReport
+            minIterPos
+            optimstruct(ii).population
+            jj=jj
+            ii=ii
+            filename
+            throw(ME)
+        end
+        
+        
+        copyfileRobust([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
+        
+        copyfileRobust([[minIterPos,filesep,'run'],filesep,'flow.dat'],...
             [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
         
         %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
