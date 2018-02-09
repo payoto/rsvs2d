@@ -689,8 +689,8 @@ function [population]=MaxSumVolumeFraction(constrVal,paroptim,population,baseGri
             population(ii).constraint=false;
         elseif ratio>=1
             population(ii).fill=fillStart;
-        elseif ratio>1
-            population(ii).fill=fillStart/ratio;
+        elseif ratio<1
+            population(ii).fill=fillStart*ratio;
         end
     end
     

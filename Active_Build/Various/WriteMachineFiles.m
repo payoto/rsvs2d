@@ -42,7 +42,7 @@ function [machinedat]=GenerateMachineFiles(writeDir,machinedat,marker)
         end
         for jj=1:size(machinedat(ii).node,1)
             
-            fprintf(fid,'%s slots=%i max_slots=%i\n',machinedat(ii).node(jj,:),...
+            fprintf(fid,'%s slots=%i max-slots=%i\n',machinedat(ii).node(jj,:),...
                 machinedat(ii).nodeslots(jj,:),machinedat(ii).nodeslots(jj,:));
         end
         fclose(fid);

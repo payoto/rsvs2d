@@ -30,12 +30,14 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     [asoCase,asoPath,nMach,asoReturnFillChange]=ExtractVariables(varExtract,paramoptim);
     addpath(MakePathCompliant(asoPath));
     addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
-    
+    copyfile([MakePathCompliant(asoPath),filesep,'templatesu2.cfg'],...
+        [optimDirectory,filesep,'su2.cfg'])
     
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
     ASOOptions.solver.np=currentMachineFile.slots;
-    ASOOptions.solver.mpiOpts=['--hostfile "',currentMachineFile.file,'"'];
+    copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
+    ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
     
     origDir=cd(optimDirectory);
     optimDirectory=['.'];
@@ -80,9 +82,12 @@ end
 function [loopconstr]=PushConvHull(loop,typeLoop)
     loopconstr=repmat(struct('coord',zeros([0,2]),'coord',zeros([0,2]),...
         'coord',zeros([0,2])),size(loop));
-    
+    paramspline.splineCase='convhulltri';
     for ii=1:numel(loop)
         loopconstr(ii).coord=loop(ii).(typeLoop);
+        loopconstr(ii).constraint=loopconstr(ii).coord(...
+            convhull(loopconstr(ii).coord(:,1),loopconstr(ii).coord(:,2)),:);
+%         paramspline.splineCase=min(max(
         loopconstr(ii).constraint=ResampleSpline
         
     end
