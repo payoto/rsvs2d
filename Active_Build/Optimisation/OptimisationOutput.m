@@ -265,7 +265,8 @@ end
 
 function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
     
-    varExtract={'direction','knownOptim','objectiveName','defaultVal','optimMethod','useSnake'};
+    varExtract={'direction','knownOptim','objectiveName','defaultVal',...
+        'optimMethod','useSnake'};
     [direction,knownOptim,objectiveName,defaultVal,optimMethod,useSnake]...
         =ExtractVariables(varExtract,paroptim);
     varExtract={'axisRatio'};
@@ -361,7 +362,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         PersnaliseLayFile(FID,tecPlotPre(2:-1:1));
         tecPlotFile{1}=[writeDirectory,filesep,tecPlotFile{1}];
         tecPlotFile{2}=[writeDirectory,filesep,tecPlotFile{2}];
-        ExtractOptimalFlow(optimstruct,writeDirectory,direction,...
+        ExtractOptimalFlowSU2(optimstruct,writeDirectory,direction,...
             tecPlotFile,axisRatio,paroptim,allRootDir,isGradient);
         
     end
@@ -865,23 +866,29 @@ function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
 
         try
-
-            if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                RunCFDPostProcessing(minIterPos);
-                if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                    CutCellFlow_Handler(paramoptim,minIterPos)
-                    RunCFDPostProcessing(minIterPos);
-                    if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                        PrepareCFDPostProcessing(minIterPos,CFDfolder);
-                        CutCellFlow_Handler(paramoptim,minIterPos)
-                        RunCFDPostProcessing(minIterPos);
-                        if isempty(FindDir([minIterPos,filesep,'CFD'],'flowplt_cell',false))
-                            error(sprintf('Could Not gernerate flow plot for %s',minIterPos))
-                        end
-                    end
-                end
+            
+            if isempty(FindDir([minIterPos,filesep,'run'],'flow.dat',false))
+                error(sprintf('Could Not gernerate flow plot for %s',minIterPos))
             end
-
+            if isempty(FindDir([minIterPos,filesep,'run'],'flowplt_cell',false))
+                
+                fileOrig=[minIterPos,filesep,'run',filesep,'flow.dat'];
+                fileNew=[minIterPos,filesep,'run',filesep,'flowplt_cell.plt'];
+                fidOrig=fopen(fileOrig,'r');
+                fidNew=fopen(fileNew,'w');
+                str=fgetl(fidOrig);
+                fprintf(fidNew,'%s \n',fgetl(fidOrig));
+                fprintf(fidNew,'ZONE \n');
+                fprintf(fidNew,'STRANDID = 1 \n');
+                fprintf(fidNew,'SOLUTIONTIME = 1 \n');
+                fprintf(fidNew,'%s \n',regexprep(fgetl(fidOrig),'ZONE ',''));
+                while ~feof(fidOrig)
+                    fprintf(fidNew,'%s \n',fgetl(fidOrig));
+                end
+                fclose(fidOrig);
+                fclose(fidNew);
+            end
+            
         catch ME
             disp(ME.getReport);
             postLog(jj)=false;
@@ -918,8 +925,8 @@ function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
         
         copyfileRobust([minIterPos,filesep,filename{jj}],[minIterPos,filesep,filename{jj},int2str(ii)])
         
-        copyfileRobust([[minIterPos,filesep,'run'],filesep,'flow.dat'],...
-            [[minIterPos,filesep,'CFD'],filesep,'flowplt_cell.plt',int2str(ii)])
+        copyfileRobust([[minIterPos,filesep,'run'],filesep,'flowplt_cell.plt'],...
+            [[minIterPos,filesep,'run'],filesep,'flowplt_cell.plt',int2str(ii)])
         
         %[snakPlt{ii}]=EditPLTTimeStrand(ii,3,2,minIterPos,[filename{jj},int2str(ii)]);
         dat={'SOLUTIONTIME','STRANDID','CONNECTIVITYSHAREZONE','VARSHARELIST'};
@@ -928,7 +935,7 @@ function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
         nOccur=[2 2 1 1];
         [snakPlt{ii}]=EditPLTHeader(minIterPos,[filename{jj},int2str(ii)],dat,expr,val,nOccur);
         
-        [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'CFD'],...
+        [flowPlt{ii}]=EditPLTTimeStrand(ii,1,2,[minIterPos,filesep,'run'],...
             ['flowplt_cell.plt',int2str(ii)]);
     end
     

@@ -73,10 +73,33 @@ function [addstruct]=RerunASOFlow(pathToDir,reRunDir)
     end
     
     if exist('MEid','var')
+       try
+            OutputErrorReport(MEid,reRunDir,{pathToDir,reRunDir});
+        catch
+        end
         rethrow(MEid)
+        
     elseif exist('MEid2','var')
         rethrow(MEid2)
     else
         disp('exited without errors')
     end
+end
+
+function []=OutputErrorReport(ME,pathOut,errPaths)
+    t=now;
+    filename=['bughpc_',datestr(t,'yymmdd'),'.txt'];
+   
+    fid=fopen([pathOut,filesep,filename],'w');
+    fprintf(fid,'date : %s \n',datestr(t));
+    for ii=1:numel(errPaths)
+        fprintf(fid,'Path: %s \n',errPaths{ii});
+    end
+    fprintf(fid,'Identifier: %s \n\n',ME.identifier);
+    fprintf(fid,'Frequency: \n\n Observations: \n\n Solution: \n\n');
+    
+    
+    fprintf(fid,'Full Error Message:\n\n %s ',ME.getReport);
+    fclose(fid);
+    
 end
