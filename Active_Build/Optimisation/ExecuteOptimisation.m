@@ -2069,6 +2069,8 @@ function [popstruct]=GeneratePopulationStruct(paroptim)
             addstruct=struct('y',[]);
             
     end
+    addstruct.objTime=[];
+    
     optimdatstruct=struct('var',[],'value',[],'mutVecPopInd',[],'mutVecFillInd',[]);
     popstruct=struct('fill',valFill,'nonfillvar',valFill2,'location','','objective',[],'constraint'...
         ,true,'optimdat',optimdatstruct,'additional',addstruct,'exception','');
@@ -2171,6 +2173,7 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
     [objValue,additional]=eval([objectiveName,'(paramoptim,member,',objInput,');']);
     
     [tElapsed]=PrintEnd(procStr,2,tStart);
+    additional.objTime='tElapsed';
 end
 
 function [objValue,additional]=LengthArea(paramoptim,member,loop)

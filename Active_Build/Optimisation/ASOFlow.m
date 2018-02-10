@@ -19,8 +19,11 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     thisworker = getCurrentWorker;
     varExtract={'workerList','machineList'};
     [workerList,machineList]=ExtractVariables(varExtract,paramoptim);
-    
-    currentMachineFile=machineList(thisworker.ProcessId==workerList);
+    if ~isempty(thisworker)
+        currentMachineFile=machineList(thisworker.ProcessId==workerList);
+    else
+        currentMachineFile=machineList(1);
+    end
     optimDirectory=boundaryLoc;
     
     
