@@ -237,13 +237,13 @@ function parList=ExtractParameterList(parType,points,expectExtrema)
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
             figure
             curvParam=SmoothingParameter(parList,edgeCurvNorm,'coscut',expectExtrema,0.5);
-                        subplot(1,2,1)
-                        hold on
-                        plot(linspace(0,1,numel(curvParam)),curvParam)
-                        plot(linspace(0,1,numel(curvParam)),edgeCurvNorm/max(edgeCurvNorm))
-                        subplot(1,2,2)
-                        hold on
-                        plot(parList,curvParam)
+%             subplot(1,2,1)
+%             hold on
+%             plot(linspace(0,1,numel(curvParam)),curvParam)
+%             plot(linspace(0,1,numel(curvParam)),edgeCurvNorm/max(edgeCurvNorm))
+%             subplot(1,2,2)
+%             hold on
+%             plot(parList,curvParam)
             parList=curvParam;
         case 'i'
             parList=(0:(length(points(:,1))-1))/(length(points(:,1))-1);
@@ -374,12 +374,18 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
                 curvParam(1:b-1)=curvParam(1:b-1)-curvParam(b-1)+parList(b-1);
             end
         case 'coscut'
+            func=@(v) [-acos(1+v(v<0));acos(1-v(v>=0))]+pi/2;
             [ptsToSave]=FindNMax(curvParam(1:end-1),nMMA,lInt);
-            ind=sort(ptsToSave(:,1));
-            nMMA=numel(ind);
+            indcentre=sort(ptsToSave(:,1));
+            nMMA=numel(indcentre);
             curvParam2=zeros(size(curvParam));
+            indDelta=(indcentre-indcentre([end,1:end-1]));
+            indNeg=find(indDelta<0);
+            indDelta(indNeg)=indcentre(indNeg)-1+numel(parList)-indcentre(mod(indNeg-2,nMMA)+1);
+            ind=mod(round(indcentre-indDelta/2)-1,numel(parList))+1;
             
-            for ii=1:numel(ind)
+            
+            for ii=1:numel(indcentre)
                 indArray=(ind(ii):(ind(mod(ii,nMMA)+1)));
                 
                 if isempty(indArray)
@@ -388,22 +394,26 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
                         +(parList(indArray(end))-parList(1));
                     startPar=parList(indArray(1));
                     tempPar=[parList(ind(ii):numel(parList));parList(end)+parList(1:(ind(mod(ii,nMMA)+1)))];
-                    tempPar=(tempPar-parList(ind(ii)))/(max(tempPar)-min(tempPar))*-2+1;
+                    
+                    
+                    %tempPar=(tempPar-parList(ind(ii)))/(max(tempPar)-min(tempPar))*-2+1;
                 else
                     startPar=parList(indArray(1));
                     multiPar=parList(indArray(end))-parList(indArray(1));
                     
-                    tempPar=(parList(indArray)-parList(indArray(1)))/...
-                        (parList(indArray(end))-parList(indArray(1)))*-2+1;
+                    tempPar=parList(indArray);
                 end
+                tempDelta=max(abs(tempPar([1,end])-parList(indcentre(ii))));
+                tempPar=(tempPar-parList(indcentre(ii)))/tempDelta;
                 %                 curvParam2(indArray)=(0.5-0.5*cos(linspace(0,pi,numel(indArray))))*...
                 %                     multiPar+startPar;
                 %plot(linspace(0,1,numel(tempPar)),acos(tempPar)/pi)
                 eps=1;
                 if numel(tempPar)>2
                     tempPar=tempPar*eps;
-                    curvParam2(indArray)=((acos(tempPar)-acos(eps))/...
-                        (acos(-eps)-acos(eps)))*multiPar+startPar;
+                    tempCurv=func(tempPar);
+                    tempCurv=(tempCurv-min(tempCurv))/(max(tempCurv)-min(tempCurv));
+                    curvParam2(indArray)=tempCurv*multiPar+startPar;
                 else
                     curvParam2(indArray)=parList(indArray);
                 end
@@ -494,7 +504,40 @@ function [resampPoints]=ForceSpecialPoints(parspline,points,parList,...
     [resampPoints,ptsRem]=RemoveIdenticalConsecutivePoints(resampPoints);
     resampPar(ptsRem)=[];
 end
-
+function [ptsToReturn]=ReturnEnforcedPoints(parspline,points,parList)
+    ptsToReturn=zeros([0 2]);
+    for iii=1:size( parspline.forcePts,1)
+        switch parspline.forcePts{iii,1}
+            case 'maxcurv'
+                edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
+                edgeCurvNorm([1,end],:)=[];
+                edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
+                edgeCurvNormTest=edgeCurvNorm;
+                [ptsToSave]=FindNMax(edgeCurvNormTest,5);
+                ptsToSave(:,2)=parList(ptsToSave(:,1));
+                
+            case 'LETE'
+                
+                ptsToSave=zeros([2,2]);
+                ii=1;
+                [ptsToSave(ii,2),ptsToSave(ii,1)]=max(points(:,1));
+                ii=2;
+                [ptsToSave(ii,2),ptsToSave(ii,1)]=min(points(:,1));
+                ptsToSave(:,2)=parList(ptsToSave(:,1));
+            case 'all'
+                ptsToSave=[(1:size(points,1))',points(:,1)];
+                ptsToSave(:,2)=parList(ptsToSave(:,1));
+            case 'none'
+                ptsToSave=zeros([0 2]);
+        end
+        switch parspline.forcePts{iii,2}
+           
+            case 'split'
+                ptsToReturn=[ptsToReturn;ptsToSave];
+        end
+    end
+    
+    end
 function splitPoints=SplitAtTrailingEdge(points,TEisLeft,distribution)
     splitPoints=points;
     if strcmp(distribution,'cosine') || strcmp(distribution,'2cosine') || strcmp(distribution,'split')
@@ -553,7 +596,9 @@ function [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList)
     [interestPoints]=FindLocalExtremum(parList,eps);
     
     
-    intNodes=find(sum(interestPoints,2));
+    intNodes=find(any(interestPoints~=0,2));
+    [ptsToReturn]=ReturnEnforcedPoints(parspline,normPoints,parList);
+    intNodes=unique([intNodes;ptsToReturn(:,1)]);
     
     if ~isempty(intNodes)
         [trimBlocks,domBlocks,blockLength,totDomLength]=SplitSplineBlocks(intNodes,parList);
@@ -1038,7 +1083,7 @@ function [parspline]=CaseSpline_smoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='clcoscut'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.forcePts={'maxcurv','add';'LETE','add'};
+    parspline.forcePts={'maxcurv','split';'LETE','split'}; %
     parspline.typCurve='closed';
     
     parspline.distribution='calc';
@@ -1062,7 +1107,7 @@ function [parspline]=CaseSpline_presmoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='i'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
-    parspline.forcePts={'all','add';'LETE','add'};
+    parspline.forcePts={'all','split';'LETE','split'};
     parspline.typCurve='closed';
     
     parspline.distribution='calc';
