@@ -236,14 +236,14 @@ function parList=ExtractParameterList(parType,points,expectExtrema)
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
             figure
-            curvParam=SmoothingParameter(parList,edgeCurvNorm,'coscut',expectExtrema,0.5);
-%             subplot(1,2,1)
-%             hold on
-%             plot(linspace(0,1,numel(curvParam)),curvParam)
-%             plot(linspace(0,1,numel(curvParam)),edgeCurvNorm/max(edgeCurvNorm))
-%             subplot(1,2,2)
-%             hold on
-%             plot(parList,curvParam)
+            curvParam=SmoothingParameter(parList,edgeCurvNorm,'coscut',expectExtrema,0.33);
+            subplot(1,2,1)
+            hold on
+            plot(linspace(0,1,numel(curvParam)),curvParam)
+            plot(linspace(0,1,numel(curvParam)),edgeCurvNorm/max(edgeCurvNorm))
+            subplot(1,2,2)
+            hold on
+            plot(parList,curvParam)
             parList=curvParam;
         case 'i'
             parList=(0:(length(points(:,1))-1))/(length(points(:,1))-1);
@@ -374,7 +374,9 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
                 curvParam(1:b-1)=curvParam(1:b-1)-curvParam(b-1)+parList(b-1);
             end
         case 'coscut'
-            func=@(v) [-acos(1+v(v<0));acos(1-v(v>=0))]+pi/2;
+            func=@(v,eps) [(-(acos((1+v(v<0))*eps)-acos(eps))/...
+                        (acos(-eps)-acos(eps)));((acos((1-v(v>=0))*eps)-acos(eps))/...
+                        (acos(-eps)-acos(eps)))]+pi/2;
             [ptsToSave]=FindNMax(curvParam(1:end-1),nMMA,lInt);
             indcentre=sort(ptsToSave(:,1));
             nMMA=numel(indcentre);
@@ -403,15 +405,15 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
                     
                     tempPar=parList(indArray);
                 end
-                tempDelta=max(abs(tempPar([1,end])-parList(indcentre(ii))));
-                tempPar=(tempPar-parList(indcentre(ii)))/tempDelta;
+                tempDelta=max(abs(tempPar([1,end])-tempPar(indcentre(ii)==indArray)));
+                tempPar=(tempPar-tempPar(indcentre(ii)==indArray))/tempDelta;
                 %                 curvParam2(indArray)=(0.5-0.5*cos(linspace(0,pi,numel(indArray))))*...
                 %                     multiPar+startPar;
                 %plot(linspace(0,1,numel(tempPar)),acos(tempPar)/pi)
-                eps=1;
+                eps=0.98;
                 if numel(tempPar)>2
-                    tempPar=tempPar*eps;
-                    tempCurv=func(tempPar);
+                    
+                    tempCurv=func(tempPar,eps);
                     tempCurv=(tempCurv-min(tempCurv))/(max(tempCurv)-min(tempCurv));
                     curvParam2(indArray)=tempCurv*multiPar+startPar;
                 else

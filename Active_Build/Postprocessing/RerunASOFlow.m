@@ -1,10 +1,19 @@
-function [addstruct]=RerunASOFlow(pathToDir,reRunDir)
+function [addstruct]=RerunASOFlow(pathToDir,reRunDir,isRun)
     % Utility to call ASOFlow from an interactive matlab session loading
     % all the necessary data
-    if nargin==1
+    % pathToDir <str> : Original data and run location
+    % reRunDir  <str> : Location where to place the new run of the same
+    %                   case
+    % isRun <logical> : Provides the option to not run ASOFlow (when false) and post
+    %                   treat the existing result
+    
+    if nargin<=2
+        isRun=true;
+    end
+    if nargin<=1
         reRunDir=pathToDir;
     end
-        
+    
     [paramPath]=FindDir([pathToDir,filesep,'..',filesep,'..'],'FinalParam',0);
     [optimPath]=FindDir([pathToDir,filesep,'..',filesep,'..'],'OptimRes',0);
     [gridPath]=FindDir([pathToDir,filesep,'..',filesep,'..',filesep,...
@@ -32,13 +41,18 @@ function [addstruct]=RerunASOFlow(pathToDir,reRunDir)
         member.location=reRunDir;
         system(cmd);
     end
-    try 
-        [objValue,addstruct]=ASOFlow(paramoptim,member,...
-            loop,gridBase);
+    try
+        if isRun
+            [objValue,addstruct]=ASOFlow(paramoptim,member,...
+                loop,gridBase);
+        else
+            objValue=[]
+            addstruct=[];
+        end
     catch MEid
         
     end
-    %% Additional postreatment 
+    %% Additional postreatment
     try
         SU2.SU2toPLT([reRunDir,filesep,'mesh.su2'])
         SU2.SU2toPLT([reRunDir,filesep,'run',filesep,'mesh.su2'])
@@ -46,7 +60,8 @@ function [addstruct]=RerunASOFlow(pathToDir,reRunDir)
         fileToPlt={'mesh.su2.dat',['run',filesep,'mesh.su2.dat'],['run',filesep,'flow.dat']};
         
         for ii=1:numel(fileToPlt)
-            cmd=['mv "',fileToPlt{ii},'" "',regexprep(fileToPlt{ii},'dat','plt'),'"'];
+            cmd=['mv "',reRunDir,filesep,fileToPlt{ii},'" "',...
+                reRunDir,filesep,regexprep(fileToPlt{ii},'dat','plt'),'"'];
             system(cmd)
         end
     catch MEid2
@@ -73,7 +88,7 @@ function [addstruct]=RerunASOFlow(pathToDir,reRunDir)
     end
     
     if exist('MEid','var')
-       try
+        try
             OutputErrorReport(MEid,reRunDir,{pathToDir,reRunDir});
         catch
         end
@@ -89,7 +104,7 @@ end
 function []=OutputErrorReport(ME,pathOut,errPaths)
     t=now;
     filename=['bughpc_',datestr(t,'yymmdd'),'.txt'];
-   
+    
     fid=fopen([pathOut,filesep,filename],'w');
     fprintf(fid,'date : %s \n',datestr(t));
     for ii=1:numel(errPaths)

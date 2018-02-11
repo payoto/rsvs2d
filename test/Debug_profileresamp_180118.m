@@ -105,12 +105,12 @@ ii=6
 figure,
 plotPoints= @(points,f) plot(points([1:end,1],1),points([1:end,1],2),['-',f]);
 for jj=1:numel(iter(ii).loop)
-    iter(ii).loop(jj).subdispline2=ResampleSpline(iter(ii).loop(jj).coord,paramspline);
+    iter(ii).loop(jj).subdispline2=ResampleSpline(iter(ii).loop(jj).subdivision,paramspline);
 end
 figure, hold on
 for jj=1:numel(iter(ii).loop)
     plotPoints(iter(ii).loop(jj).subdispline2,'o');
 end
 for jj=1:numel(iter(ii).loop)
-    plotPoints(iter(ii).loop(jj).coord,'');
+    plotPoints(iter(ii).loop(jj).subdivision,'');
 end

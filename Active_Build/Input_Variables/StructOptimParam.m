@@ -1282,9 +1282,9 @@ end
 function [paroptim]=buseASONoreturn()
     [paroptim]=areabusesweep(0.12);
     
-    paroptim.general.nPop=4;
+    paroptim.general.nPop=24;
     paroptim.general.maxIter=30;
-    paroptim.general.worker=4;
+    paroptim.general.worker=12;
     
     paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
     paroptim.general.objInput='loop,baseGrid';
