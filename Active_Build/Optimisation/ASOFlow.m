@@ -28,9 +28,12 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     
     % ---------------------
-    % Call ASO
-    varExtract={'asoCase','asoPath','nMach','asoReturnFillChange'};
-    [asoCase,asoPath,nMach,asoReturnFillChange]=ExtractVariables(varExtract,paramoptim);
+    % Match ASO and Current Optimisation
+    varExtract={'asoCase','asoPath','nMach','asoReturnFillChange',...
+        'desVarConstr','desVarVal'};
+    [asoCase,asoPath,nMach,asoReturnFillChange,desVarConstr,desVarVal]...
+        =ExtractVariables(varExtract,paramoptim);
+    
     addpath(MakePathCompliant(asoPath));
     addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
     copyfile([MakePathCompliant(asoPath),filesep,'templatesu2.cfg'],...
@@ -39,19 +42,34 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
     ASOOptions.solver.np=currentMachineFile.slots;
-    ASOOptions.problemargin={'area_gt'};
     
+    % Call the correct constraints
+    for ii=1:numel(desVarConstr)
+        switch desVarConstr{ii}
+            case 'ValVolFrac'
+            case 'MinSumVolFrac'
+                ASOOptions.problemargin=[ASOOptions.problemargin,...
+                    {'area_gt',desVarVal{ii}}];
+            case 'MaxSumVolFrac'
+            case 'MinValVolFrac'
+            case 'LocalVolFrac_min'
+            case 'LocalVolFrac_equal'
+            case 'LocalVolFrac_max'
+        end
+    end
+   
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
+    
+    % --------------------------
+    % Call ASO
     
     origDir=cd(optimDirectory);
     optimDirectory=['.'];
     ASOresult = ASO(optimDirectory,ASOOptions);
-    % meshfile: SU2.SU2toPLT(path2Mesh)
-    % meshfile: !SU2_SOL run/su2.cfg
     optimDirectory=cd(origDir);
-%     ASOresult.flow.CD=0;
-%     ASOresult.loop=loop;
+
+    
     % ---------------------
     % Organise Outputs
     
