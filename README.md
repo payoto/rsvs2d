@@ -41,6 +41,7 @@ To get started:
 
 	mv deploylinux.sh ../
 	cd ..
+	chmod 755 deploylinux.sh
 	deploylinux.sh <source directory name>
 		
 (Windows) 
