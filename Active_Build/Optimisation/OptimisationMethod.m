@@ -111,7 +111,7 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
             currRandVecs=[vertcat(iterCurr(rInd).fill),vertcat(iterCurr(rInd).nonfillvar)];
             currVec=[(iterCurr(ii).fill),(iterCurr(ii).nonfillvar)];
             mutVec=projFunc(projInv(currRandVecs(1,:))+diffAmp*...
-                (projInv(currRandVecs(2,:))-projInv(currRandVecs(1,:))));
+                (projInv(currRandVecs(2,:))-projInv(currRandVecs(3,:))));
             %mutVec=mutVec*(max(desVarRange)-min(desVarRange))+min(desVarRange);
             %         mutVec(mutVec>max(desVarRange))=max(desVarRange);
             %         mutVec(mutVec<min(desVarRange))=min(desVarRange);
