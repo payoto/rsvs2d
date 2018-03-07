@@ -83,24 +83,40 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
     
     switch geneType
         case 'single'
-            nDes=nFill;
-            for ii=nFill:-1:1
-                indexmap{ii}=ii;
-            end
-            
+            geneTypeList={'single'};
         case 'horz'
-            nDes=cellLevels(2);
-            indices=reshape(1:nFill,cellLevels)';
-            for ii=nDes:-1:1
-                indexmap{ii}=indices(ii,:);
-            end
-            
+            geneTypeList={'horz'};
         case 'vert'
-            nDes=cellLevels(1);
-            indices=reshape(1:nFill,cellLevels);
-            for ii=nDes:-1:1
-                indexmap{ii}=indices(ii,:);
-            end
+            geneTypeList={'vert'};
+        case 'horzvert'
+            geneTypeList={'horz','vert'};
+        case 'all'
+            geneTypeList={'horz','vert','single'};
+
+    end
+    
+    for jj=1:numel(geneTypeList)
+        switch geneTypeList{jj}
+            case 'single'
+                nDes=nFill;
+                for ii=nFill:-1:1
+                    indexmap{jj}{ii}=ii;
+                end
+                
+            case 'horz'
+                nDes=cellLevels(2);
+                indices=reshape(1:nFill,cellLevels)';
+                for ii=nDes:-1:1
+                    indexmap{jj}{ii}=indices(ii,:);
+                end
+                
+            case 'vert'
+                nDes=cellLevels(1);
+                indices=reshape(1:nFill,cellLevels);
+                for ii=nDes:-1:1
+                    indexmap{jj}{ii}=indices(ii,:);
+                end
+        end
     end
     
     if nPop>=4
@@ -118,7 +134,8 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
             % Crossover
             crossVec=-ones(size(currVec));
             
-            [fromMutVecLog]=ExtractDEIndices(nDes,nFill,nNonFill,CR,indexmap);
+            indMapChoice=randi(numel(indexmap),1);
+            [fromMutVecLog]=ExtractDEIndices(nDes,nFill,nNonFill,CR,indexmap{indMapChoice});
             
             crossVec(fromMutVecLog)=mutVec(fromMutVecLog);
             crossVec(~fromMutVecLog)=currVec(~fromMutVecLog);

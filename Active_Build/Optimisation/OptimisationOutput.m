@@ -867,12 +867,25 @@ function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
 
         try
             
-            if isempty(FindDir([minIterPos,filesep,'run'],'flow.dat',false))
-                error(sprintf('Could Not gernerate flow plot for %s',minIterPos))
+            fileOrig=[minIterPos,filesep,'run',filesep,'flow.dat'];
+            if ~exist(fileOrig,'file')
+                configOrig=[minIterPos,filesep,'run',filesep,'su2.cfg'];
+                configEdit=[minIterPos,filesep,'run',filesep,'su2pp.cfg'];
+                fidOrig=fopen(configOrig,'r');
+                fidEdit=fopen(configEdit,'w');
+                while ~feof(fidOrig)
+                    fprintf(fidEdit,'%s\n',regexprep(fgetl(fidOrig),...
+                        '^MATH_PROBLEM=.*$','MATH_PROBLEM=DIRECT'));
+                end
+                fclose(fidOrig);
+                fclose(fidEdit);
+                system(['SU2_SOL "',configEdit,'"']);
+                if ~exist(fileOrig,'file')
+                    error('Could not generate solution file')
+                end
             end
             if isempty(FindDir([minIterPos,filesep,'run'],'flowplt_cell',false))
                 
-                fileOrig=[minIterPos,filesep,'run',filesep,'flow.dat'];
                 fileNew=[minIterPos,filesep,'run',filesep,'flowplt_cell.plt'];
                 fidOrig=fopen(fileOrig,'r');
                 fidNew=fopen(fileNew,'w');
