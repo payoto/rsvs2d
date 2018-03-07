@@ -325,7 +325,10 @@ the parameter selection is performed by adding:
 	caseNum=$PBS_ARRAYID 
 	funcName=<function to call> 
 	textfile=<text file containing parameters> 
-	"${funcname}(`awk '"NR==${num}" {printf "%s" , $1}' ${txtfile}`)"
+	matlabcall="${funcname}(`awk '"NR==${num}" {printf "%s" , $1}' ${txtfile}`)"
+	options="-nosplash -nodesktop -noFigureWindows"
+	matlab $options -r $matlabcall
+	
 
 # I don't get it what does this ACTUALLY do and who do I talk to?#
 
