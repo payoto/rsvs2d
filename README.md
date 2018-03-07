@@ -320,9 +320,9 @@ For this the job submission (`pbsjob.sh` in this example) file must be modified 
 
 	\#PBS -t 1-<n>
 
-- the parameter selection is performed by adding:  
+- the parameter selection is performed by adding:
 
-	caseNum=$PBS_ARRAYID 
+	caseNum=$PBS_ARRAYID
 	funcName=<function to call>
 	textfile=<text file containing parameters>
 	"${funcname}(`awk '"NR==${num}" {printf "%s" , $1}' ${txtfile}`)"
