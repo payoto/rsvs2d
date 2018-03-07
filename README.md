@@ -306,6 +306,27 @@ To call this function from the console is done with the following command:
 
 this will set the value of `maxIter` to be 5.
 
+Using the sprintf function the string defining the optimCase can be conveniently modified:
+
+	optimCase=sprintf('NewCaseOfUserX_varin(%i)',5);
+	ExecuteOptimisation(optimCase);
+
+#### Integration with bluecrystal ####
+
+This feature becomes very useful on bluecrystal using the PBS queuing system. It is useful to be able to submit in one go a set of jobs with different input values to the parameters of the Optimisation.
+For this the job submission (`pbsjob.sh` in this example) file must be modified to define a `PBS_ARRAY` and extract the correct parameter(s) from a text file:
+
+- Defining the Array requires this line to be added to the header (where `<n>` should be replaced by the desired number of jobs):
+
+	#PBS -t 1-<n>
+
+- the parameter selection is performed by adding:  
+
+	caseNum=$PBS_ARRAYID 
+	funcName=<function to call>
+	textfile=<text file containing parameters>
+	"${funcname}(`awk '"NR==${num}" {printf "%s" , $1}' ${txtfile}`)"
+
 # I don't get it what does this ACTUALLY do and who do I talk to?#
 
 For more information about what the code does (i.e. the science of it)  
