@@ -861,7 +861,7 @@ function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
     %parfor jj=1:kk
     postList=needRerun;
     postLog=true(size(1:kk));
-    parfor jj=1:kk
+    for jj=1:kk
         ii=needRerun(jj);
         minIterPos=optimstruct(ii).population(minPos(ii)).location;
 
@@ -879,7 +879,7 @@ function [tecPlotPre]=ExtractOptimalFlowSU2(optimstruct,rootFolder,dirOptim,...
                 end
                 fclose(fidOrig);
                 fclose(fidEdit);
-                system(['SU2_SOL "',configEdit,'"']);
+                system(['cd "',minIterPos,'" && SU2_SOL run',filesep,'su2pp.cfg']);
                 if ~exist(fileOrig,'file')
                     error('Could not generate solution file')
                 end
