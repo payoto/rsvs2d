@@ -318,7 +318,7 @@ For this the job submission (`pbsjob.sh` in this example) file must be modified 
 
 - Defining the Array requires this line to be added to the header (where `<n>` should be replaced by the desired number of jobs):
 
-	#PBS -t 1-<n>
+	\#PBS -t 1-<n>
 
 - the parameter selection is performed by adding:  
 
