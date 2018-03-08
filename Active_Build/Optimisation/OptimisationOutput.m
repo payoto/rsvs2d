@@ -522,7 +522,15 @@ function [profPaths]=FindProfile(iterDir)
     for ii=1:length(returnPath)
         
         profPaths(ii)=FindDir(returnPath{ii},'tecsubfile',false);
-        
+        try
+            surfPlt=[returnPath{ii},filesep,'run',filesep,'surface.plt'];
+            if exist(surfPlt,'file')
+                MergeTecSubfile(profPaths(ii),surfPlt);
+
+            end
+        catch ME
+            ME.getReport
+        end
     end
     
 end
