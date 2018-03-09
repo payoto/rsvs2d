@@ -30,9 +30,9 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     % ---------------------
     % Match ASO and Current Optimisation
     varExtract={'asoCase','asoPath','nMach','asoReturnFillChange',...
-        'desVarConstr','desVarVal'};
-    [asoCase,asoPath,nMach,asoReturnFillChange,desVarConstr,desVarVal]...
-        =ExtractVariables(varExtract,paramoptim);
+        'desVarConstr','desVarVal','su2ProcSec','asoProcSec'};
+    [asoCase,asoPath,nMach,asoReturnFillChange,desVarConstr,desVarVal,...
+        su2ProcSec,asoProcSec]=ExtractVariables(varExtract,paramoptim);
     
     addpath(MakePathCompliant(asoPath));
     addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
@@ -42,6 +42,9 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
     ASOOptions.solver.np=currentMachineFile.slots;
+    
+    ASOOptions.solver.timeout = su2ProcSec/currentMachineFile.slots;
+    ASOOptions.snopt.wcLimit = asoProcSec/currentMachineFile.slots;
     
     % Call the correct constraints
     for ii=1:numel(desVarConstr)

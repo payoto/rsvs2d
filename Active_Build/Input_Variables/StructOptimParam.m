@@ -183,6 +183,8 @@ function paroptimobjaso=DefaultASOFlow()
     paroptimobjaso.asoPath=[cd,'\..\..\ASO_LK\SRC'];
     paroptimobjaso.asoCase=@ASODefaults;
     paroptimobjaso.asoReturnFillChange=false;
+    paroptimobjaso.su2ProcSec=4*1800;
+    paroptimobjaso.asoProcSec=4*5400;
 end
 
 function [paroptimspline]=DefaultOptimSpline()
@@ -1284,7 +1286,7 @@ function [paroptim]=buseASONoreturn()
     
     paroptim.general.nPop=24;
     paroptim.general.maxIter=30;
-    paroptim.general.worker=12;
+    paroptim.general.worker=8;
     
     paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
     paroptim.general.objInput='loop,baseGrid';
