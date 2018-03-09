@@ -63,6 +63,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
    
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
+    % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
     
     % --------------------------
     % Call ASO
