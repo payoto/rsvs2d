@@ -95,10 +95,17 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
     if asoReturnFillChange
         %error('Returning Fill delta not coded yet')
-        if ~isfield(ASOresult.loop,'ASOResult')
+        if isempty(ASOresult.loop)
+            ASOresult.loop=struct('coord',[]);
+            for ii=1:numel(loop)
+                ASOresult.loop(ii).coord=(loop(ii).(typeLoop));
+            end
+            warning('ASOresult is not returning the loop')
+        elseif ~isfield(ASOresult.loop,'ASOResult') && isstruct(ASOresult.loop)
             [ASOresult.loop.coord]=deal(ASOresult.loop.(typeLoop));
-        else
+        elseif ~isempty(ASOresult.loop)
             [ASOresult.loop.coord]=deal(ASOresult.loop.ASOResult);
+
         end
         [fill,~]=LoopToFill(ASOresult.loop,baseGrid);
         additional.filldelta=fill-member.fill;

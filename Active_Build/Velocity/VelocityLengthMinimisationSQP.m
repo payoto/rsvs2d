@@ -121,7 +121,7 @@ function [snaxeltensvel,snakposition,velcalcinfostruct,sensSnax,forceparam]=...
     
     if (condMat<1e-12 && (mean(abs(Deltax))*maxForceStd<std(abs(Deltax)))) %|| posDefVal~=0
         fprintf(' ! DeltaX is Oscillatory std/mean: %.2e ! ',std(abs(Deltax))/mean(abs(Deltax)))
-        Deltax=Deltax*scaleOscil/max(abs(Deltax));
+        %Deltax=Deltax*scaleOscil/max(abs(Deltax));
     elseif mean(abs(Deltax))>maxForceMean
         fprintf(' ! DeltaX is Large %.2e ! ',mean(abs(Deltax)))
         Deltax=Deltax*maxForceMean/mean(abs(Deltax));

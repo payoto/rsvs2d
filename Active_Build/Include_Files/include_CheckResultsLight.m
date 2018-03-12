@@ -123,15 +123,15 @@ end
 function []=PlotEdge(figh,axh,unstructured,subEdge,format)
     figure(figh)
     %axes(axh)
-    
-    vertices=unstructured.edge.vertexindex(subEdge,:);
-    vertsub(1)=find(unstructured.vertex.index==vertices(1));
-    vertsub(2)=find(unstructured.vertex.index==vertices(2));
-    coord=unstructured.vertex.coord(vertsub,:);
-    
-    
-    plot(coord(:,1),coord(:,2),format)
-    
+    for ii=1:numel(subEdge)
+        vertices=unstructured.edge.vertexindex(subEdge(ii),:);
+        vertsub(1)=find(unstructured.vertex.index==vertices(1));
+        vertsub(2)=find(unstructured.vertex.index==vertices(2));
+        coord=unstructured.vertex.coord(vertsub,:);
+        
+        
+        plot(coord(:,1),coord(:,2),format)
+    end
 end
 
 function []=PlotVert(figh,axh,unstructured,subVert,format)

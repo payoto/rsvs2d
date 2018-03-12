@@ -10,7 +10,19 @@ function [grid,loop,restartsnak,snakSave,newFill]=RestartSnakeFill(...
     
     % run as in ExecuteOptimisation
     if isstruct(optimstruct)
-        newFill=optimstruct(nIter).population(nProf).fill;
+        if numel(nProf)==numel(nIter)
+            for ii=1:numel(nProf)
+                newFill(ii,:)=optimstruct(nIter(ii)).population(nProf(ii)).fill;
+            end
+        elseif numel(nIter)==1
+            for ii=1:numel(nProf)
+                newFill(ii,:)=optimstruct(nIter).population(nProf(ii)).fill;
+            end
+        else
+            warning('Unknown profile / iter configuration')
+            newFill=optimstruct(nIter).population(nProf).fill;
+        end
+        
     else
         newFill=optimstruct{2};
     end

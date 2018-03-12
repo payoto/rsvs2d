@@ -525,7 +525,7 @@ function [profPaths]=FindProfile(iterDir)
         try
             surfPlt=[returnPath{ii},filesep,'run',filesep,'surface.plt'];
             if exist(surfPlt,'file')
-                MergeTecSubfile(profPaths(ii),surfPlt);
+                MergeTecSubfile(profPaths{ii},surfPlt);
 
             end
         catch ME

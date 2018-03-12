@@ -388,7 +388,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
     cntSave=1;
     nonBreedNextIter=[];
     for ii=1:snakesSteps
-    %ii=1
+        %ii=1
         %snaxInitPos=snaxInitPos*min(exp(-1/20*(ii-snakesSteps/2)),1);
         %         memUsage=MonitorMemory(whos);
         %         fprintf('Memory Usage: %14.5f\n',memUsage)
@@ -489,7 +489,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             %snaxel,makeMov,volumefraction);
             
         end
-         % Save and exit conditions
+        % Save and exit conditions
         [snakSave(cntSave)]=WriteSnakSave(param,snaxel,dt,snakposition,...
             volumefraction,cellCentredGridSnax,currentConvVelocity,...
             currentConvVolume,movFrame,velcalcinfo,insideContourInfo);
@@ -528,7 +528,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         IterSnakes(param,snaxel,refinedGriduns,refinedGrid,volfracconnec,cellCentredGrid,...
         insideContourInfo,forceparam,oldGrid,maxStep,maxDt,dtMin,borderVertices)
     
-    global snaxInitPos
+    global snaxInitPos unstructglobal
     varExtract={'snakesSteps','mergeTopo','makeMov','convLevel','debugPlot','plotInterval',...
         'subStep','snakesMinSteps','stepType','vSwitch','convCheckRate',...
         'convCheckRange','convDistance','dtRatio','refineGrid','multiStepConv'};
@@ -554,6 +554,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         %         fprintf('Memory Usage: %14.5f\n',memUsage)
         
         
+        
         fprintf('     Step %4i  -',ii);
         tStepStart=now;
         %snaxel=SnaxelDistanceUpdate(snaxel,0.1,ones([1,length(snaxel)]), ...
@@ -561,6 +562,7 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
         %arrivalTolerance=arrivalTolerance1*exp(-decayCoeff*ii);
         
         % snaxel properties calculation
+        
         [snakposition]=PositionSnakes(snaxel,refinedGriduns);
         [snakposition]=SnaxelNormal2(snaxel,snakposition);
         
@@ -684,6 +686,8 @@ function [ii,snaxel,snakposition,insideContourInfo,forceparam,snakSave,currentCo
             break
         end
     end
+    
+    
     
 end
 
@@ -817,7 +821,7 @@ function [h]=GetSnaxelSensitivities(snaxel,refinedGriduns,refinedGrid,...
         coeffstructure,forceparam);
     [cellordstruct]=BuildCellConnectivity(snaxel,...
         ModifUnstructured(unstructglobal),refinedGrid,volfracconnec);
-
+    
     h=testSensitivity(snaxel,snakposition,sensSnax,cellordstruct);
 end
 
@@ -1759,9 +1763,9 @@ function [snaxel]=RepositionNewSnaxel(snaxInitPos,snaxel,snakposition,newSnaxInd
     for ii=rePopSub
         snaxel(ii).d=snaxel(ii).d+currTravel(ii);
     end
-%     if any([snaxel(rePopSub).d]==0 | [snaxel(rePopSub).d]==1)
-%         disp('Stop here')
-%     end
+    %     if any([snaxel(rePopSub).d]==0 | [snaxel(rePopSub).d]==1)
+    %         disp('Stop here')
+    %     end
 end
 
 function [currTravel]=DefineDesiredDistanceRatios(snaxpart,snakpospart,currTravel)
@@ -2462,6 +2466,23 @@ function [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,newInside
     insideContourInfo(newInsideEdgesSub)=true;
     
 end
+function [insideContourInfo]=UpdateOutsideContourInfo(insideContourInfo,newInsideEdges,snaxel)
+    % Updates the logical inside contour info
+    
+    global unstructglobal
+    
+    edgeInd=unstructglobal.edge.index;
+    snaxEdges=[snaxel(:).edge];
+    [snaxEdges]=RemoveIdenticalEntries(snaxEdges);
+    
+    stillSnaxEdge=FindObjNum([],newInsideEdges,snaxEdges)>0;
+    newInsideEdges(stillSnaxEdge)=[];
+    
+    newInsideEdgesSub=FindObjNum([],newInsideEdges,edgeInd);
+    insideContourInfo=logical(insideContourInfo);
+    insideContourInfo(newInsideEdgesSub)=false;
+    
+end
 
 function [snaxel]=InitisaliseSnaxelOrder(snaxel)
     % Initialises the order of all snaxels
@@ -2810,9 +2831,12 @@ end
 
 %% Cleaning conquest
 
-function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo)
+function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo,isFlip)
     % Function containing the process allowing the deletion of Snaxels at each
     % time step
+    if nargin==2
+        isFlip=0;
+    end
     delIndex=0;
     kk=0;
     
@@ -2826,8 +2850,13 @@ function [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourIn
         delSub=FindObjNum([],delIndex,[snaxel(:).index]);
         insideEdgesInd=[snaxel(delSub).edge];
         snaxel=DeleteSnaxel(snaxel,delIndex);
-        [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
-            insideEdgesInd,snaxel);
+        if ~isFlip
+            [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
+                insideEdgesInd,snaxel);
+        else
+            [insideContourInfo]=UpdateOutsideContourInfo(insideContourInfo,...
+                insideEdgesInd,snaxel);
+        end
         kk=kk+1;
     end
     
@@ -3175,6 +3204,7 @@ function [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,i
     [mergeIndex,workingPair]=FreezeEdgeContact(snaxel,true);
     ll=1;
     savMergeInd=[];
+    isFlip=false([0 0]);
     snaxOrig=snaxel;
     while ~isempty(workingPair)
         
@@ -3183,8 +3213,9 @@ function [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,i
             [precSnax(ii),nextSnax(ii)]=CCWNeighbours(snaxel,workingPair(ii),snakposition);
         end
         if ~isempty(workingPair)
-            [snaxel]=MergeTopologies(snaxel,workingPair,precSnax,nextSnax);
-            [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,insideContourInfo);
+            [snaxel,isFlip(ll)]=MergeTopologies(snaxel,workingPair,precSnax,nextSnax);
+            [snaxel,insideContourInfo]=SnaxelCleaningProcess(snaxel,...
+                insideContourInfo,isFlip(ll));
             savMergeInd(ll)=mergeIndex;
             ll=ll+1;
         end
@@ -3196,17 +3227,19 @@ function [snaxel,insideContourInfo]=TopologyMergingProcess(snaxel,snakposition,i
     insideEdgesInd=[snaxOrig(insideSnaxSub).edge];
     
     [insideContourInfo]=UpdateInsideContourInfo(insideContourInfo,...
-        insideEdgesInd,snaxel);
+        insideEdgesInd(~isFlip),snaxel);
+    [insideContourInfo]=UpdateOutsideContourInfo(insideContourInfo,...
+        insideEdgesInd(isFlip),snaxel);
     
 end
 
-function [snaxel]=MergeTopologies(snaxel,workPair,precSnak,nextSnak)
+function [snaxel,isFlip]=MergeTopologies(snaxel,workPair,precSnak,nextSnak)
     % Merges topologies by inverting connections
     
     workSub=FindObjNum([],workPair,[snaxel(:).index]);
     snakSave=snaxel(workSub);
     snaxel=DeleteSnaxel(snaxel,workPair);
-    
+    isFlip=sum([snakSave.d])>1 || sum([snakSave.v])<0;
     snaxInd=[snaxel(:).index];
     precSub=FindObjNum(snaxel,precSnak,snaxInd);
     nextSub=FindObjNum(snaxel,nextSnak,snaxInd);
@@ -3372,14 +3405,15 @@ function []=PlotEdge(figh,axh,unstructured,subEdge,format)
     figure(figh)
     %axes(axh)
     
-    vertices=unstructured.edge.vertexindex(subEdge,:);
-    vertsub(1)=find(unstructured.vertex.index==vertices(1));
-    vertsub(2)=find(unstructured.vertex.index==vertices(2));
-    coord=unstructured.vertex.coord(vertsub,:);
-    
-    
-    plot(coord(:,1),coord(:,2),format)
-    
+    for ii=1:numel(subEdge)
+        vertices=unstructured.edge.vertexindex(subEdge(ii),:);
+        vertsub(1)=find(unstructured.vertex.index==vertices(1));
+        vertsub(2)=find(unstructured.vertex.index==vertices(2));
+        coord=unstructured.vertex.coord(vertsub,:);
+        
+        
+        plot(coord(:,1),coord(:,2),format)
+    end
 end
 
 function []=PlotVert(figh,axh,unstructured,subVert,format)
@@ -3549,8 +3583,8 @@ function [h]=testSensitivity(snaxel,snakposition,sensSnax,varargin)
                     max(abs(sensSnax(:,FindObjNum([],varargin{1}(cellSub).nextcell,cellInd))))*0.25);
                 sensAct=sensAct+(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd))/...
                     max(abs(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd))))*0.25);
-%                   sensAct=sensAct+0.25*(sensSnax(:,FindObjNum([],varargin{1}(cellSub).nextcell,cellInd)));
-%                   sensAct=sensAct+0.25*(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd)));
+                %                   sensAct=sensAct+0.25*(sensSnax(:,FindObjNum([],varargin{1}(cellSub).nextcell,cellInd)));
+                %                   sensAct=sensAct+0.25*(sensSnax(:,FindObjNum([],varargin{1}(cellSub).prevcell,cellInd)));
             end
         end
         dChange{ii}=sensAct/max(abs(sensAct))*1;
@@ -3721,6 +3755,35 @@ function [newGrid,newRefGrid]=ReFracGrids(baseGrid,refinedGrid,...
         newSub=FindObjNum([],[connectstructinfo.cell(activConnecSub(ii)).new],refCellInd);
         [newRefGrid.cell(newSub).fill]=deal(newFracs(ii));
     end
+    
+end
+
+function []=TestEdgeInOut(refinedGriduns,refinedGrid,snaxel,insideContourInfo)
+    
+    isInsideVert=false([3,numel(refinedGriduns.vertex)]);
+    isSnaxEdge=FindObjNum([],[snaxel.edge],[refinedGrid.edge.index]);
+    isIn=insideContourInfo;
+    isIn(isSnaxEdge)=false;
+    isInsideVert(1,FindObjNum([],...
+        unique([refinedGrid.edge(isIn).vertexindex]),...
+        refinedGriduns.vertex.index))=true;
+    isInsideVert(2,FindObjNum([],...
+        unique([refinedGrid.edge(isSnaxEdge).vertexindex]),...
+        refinedGriduns.vertex.index))=true;
+    isOut=~insideContourInfo;
+    isOut(isSnaxEdge)=false;
+    isInsideVert(3,FindObjNum([],...
+        unique([refinedGrid.edge(isOut).vertexindex]),...
+        refinedGriduns.vertex.index))=true;
+    if any(all(isInsideVert([1,3],:)))
+        
+        h=figure; hold on
+        PlotEdge(h,[],refinedGriduns,find(insideContourInfo),'b-')
+        PlotEdge(h,[],refinedGriduns,find(~insideContourInfo),'r-')
+        PlotEdge(h,[],refinedGriduns,unique([snaxel.edge]),'g-')
+    end
+    
+    
     
 end
 

@@ -3924,9 +3924,11 @@ function []=OptimisationDebug(caseStr,debugArgIn)
         end
     elseif size(newFill,1)>1
         popuDebug=repmat(popuDebug,[1,size(newFill,1)]);
-        for ii=1:numel(newFill)
+        for ii=1:size(newFill,1)
             popuDebug(ii).fill=newFill(ii,:);
+            newFill2{ii}=newFill(ii,:);
         end
+        newFill=newFill2;
     else
         popuDebug.fill=newFill;
     end
@@ -3956,7 +3958,7 @@ function []=OptimisationDebug(caseStr,debugArgIn)
                 restartsnake,connectstructinfo,newFill{ii});
             [popuDebug(ii),supportstruct{ii}]=NormalExecutionIteration(...
                 popuDebug(ii),newRefGrid,newrestartsnake,newGrid,...
-                connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2},debugArgIn{3}+ii-1,paramoptim);
+                connectstructinfo,paramsnake,paramspline,outinfo,debugArgIn{2}(1),debugArgIn{3}(1)+ii-1,paramoptim);
         end
     else
         
