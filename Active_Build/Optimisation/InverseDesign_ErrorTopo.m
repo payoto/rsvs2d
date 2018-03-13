@@ -8,7 +8,7 @@
 %        for parametric snakes
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%{
+
 function [] = InverseDesign_ErrorTopo()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -18,8 +18,8 @@ function [] = InverseDesign_ErrorTopo()
     HeaderActivation(funcHandles,funcDir)
     
 end
-%}
-function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramoptim,loop)
+
+function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo2(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);

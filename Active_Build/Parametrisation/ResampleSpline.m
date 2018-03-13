@@ -14,6 +14,8 @@ function [resampPoints,splineblock]=ResampleSpline(points,paramspline)
     
     [parspline]=BuildSpecifiedCase(paramspline);
     points=RemoveIdenticalConsecutivePoints(points);
+    %[points]=RemoveIdenticalConsecutivePointsTol(points,1e-5); % Non
+    %symmetric process
     points=SplitAtTrailingEdge(points,parspline.TEisLeft,parspline.samplingDistrib);
     
     [normPoints,parList,domSize]=GenerateParameterList(parspline,points);
@@ -198,8 +200,9 @@ function parList=ExtractParameterList(parType,points,expectExtrema)
             
             nAverage=max(round(0.03*numel(edgeLength)),2);
             
-            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
-            edgeCurvNorm([1,end],:)=[];
+            
+            edgeCurvNorm=CalcCurvature(points);
+            
             edgeCurvNormTest=edgeCurvNorm;
             [ptsToSave]=FindNMax(edgeCurvNormTest(1:end-1),expectExtrema);
             edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
@@ -227,23 +230,32 @@ function parList=ExtractParameterList(parType,points,expectExtrema)
             
             nAverage=max(round(0.03*numel(edgeLength)),2);
             
-            edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
-            edgeCurvNorm([1,end],:)=[];
+            edgeCurvNorm=CalcCurvature(points);
+            
             edgeCurvNormTest=edgeCurvNorm;
+%             figure
+%             hold on
+%             plot(edgeCurvNorm)
             [ptsToSave]=FindNMax(edgeCurvNormTest(1:end-1),expectExtrema);
             edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
             
+%             plot(edgeCurvNorm)
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
+            %[edgeCurvNorm]=MovingIntegralWindowLoop2(parList,edgeCurvNorm,span);
+            
+%             plot(edgeCurvNorm)
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
-            figure
-            curvParam=SmoothingParameter(parList,edgeCurvNorm,'coscut',expectExtrema,0.33);
-            subplot(1,2,1)
-            hold on
-            plot(linspace(0,1,numel(curvParam)),curvParam)
-            plot(linspace(0,1,numel(curvParam)),edgeCurvNorm/max(edgeCurvNorm))
-            subplot(1,2,2)
-            hold on
-            plot(parList,curvParam)
+%             
+%             plot(edgeCurvNorm)
+%             figure
+            curvParam=SmoothingParameter(parList,edgeCurvNorm,'coscut',expectExtrema,0.25);
+%             subplot(1,2,1)
+%             hold on
+%             plot(linspace(0,1,numel(curvParam)),curvParam)
+%             plot(linspace(0,1,numel(curvParam)),edgeCurvNorm/max(edgeCurvNorm))
+%             subplot(1,2,2)
+%             hold on
+%             plot(parList,curvParam)
             parList=curvParam;
         case 'i'
             parList=(0:(length(points(:,1))-1))/(length(points(:,1))-1);
@@ -257,8 +269,18 @@ function parList=ExtractParameterList(parType,points,expectExtrema)
 end
 %% Curvature parameters
 
+function edgeCurvNorm=CalcCurvature(points)
+    
+%     edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
+%     edgeCurvNorm([1,end],:)=[];
+    
+    tangentVec=points-points([end,1:end-1],:);
+    tangentVec=tangentVec./repmat(sum((tangentVec(:,1)-tangentVec(:,2)).^2,2),[1,2]);
+    edgeCurvNorm=abs(ExtractAnglepm180(tangentVec,tangentVec([end,1:end-1],:)));
+end
+
 function edgeCurvNorm=CurvatureParameter(points)
-    edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));edgeCurvNorm([1,end],:)=[];
+    edgeCurvNorm=CalcCurvature(points);
     
     edgeCurvNormTest=edgeCurvNorm;
     %     edgeCurvNormTest=MovingAverageLoop(edgeCurvNormTest',5)';
@@ -268,6 +290,7 @@ function edgeCurvNorm=CurvatureParameter(points)
     [ptsToSave]=FindNMax(edgeCurvNormTest,4);
     edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
 end
+
 
 function [ptsToSave]=FindNMax(quantTest,nMax,tol)
     % Finds nMax local maximums in function quantTest
@@ -449,8 +472,9 @@ function [resampPoints]=ForceSpecialPoints(parspline,points,parList,...
     for iii=1:size( parspline.forcePts,1)
         switch parspline.forcePts{iii,1}
             case 'maxcurv'
-                edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
-                edgeCurvNorm([1,end],:)=[];
+                
+                edgeCurvNorm=CalcCurvature(points);
+                
                 edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
                 edgeCurvNormTest=edgeCurvNorm;
                 [ptsToSave]=FindNMax(edgeCurvNormTest,5);
@@ -511,8 +535,9 @@ function [ptsToReturn]=ReturnEnforcedPoints(parspline,points,parList)
     for iii=1:size( parspline.forcePts,1)
         switch parspline.forcePts{iii,1}
             case 'maxcurv'
-                edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
-                edgeCurvNorm([1,end],:)=[];
+                
+                edgeCurvNorm=CalcCurvature(points);
+                
                 edgeCurvNorm=sqrt(edgeCurvNorm)/sqrt(max(edgeCurvNorm));
                 edgeCurvNormTest=edgeCurvNorm;
                 [ptsToSave]=FindNMax(edgeCurvNormTest,5);

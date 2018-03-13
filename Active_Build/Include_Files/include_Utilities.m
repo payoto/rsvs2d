@@ -197,6 +197,23 @@ function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
     trimmedPoints(indRmv,:)=[];
 end
 
+function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePointsTol(points,tol)
+    
+%     [~,edgeLength]=LengthProfile(points);
+%     indRmv=find(edgeLength<1e-10);
+%     indRmv(1)=[]; % remove first point which has 0 distance.
+%     trimmedPoints=points;
+%     trimmedPoints(indRmv,:)=[];
+% tol below the mean
+    edgeL=sqrt(sum((points-points([end,1:end-1],:)).^2,2));
+    indRmv=find((edgeL)<(mean(edgeL)*tol));
+    if numel(indRmv)==size(points,1);
+        indRmv(indRmv==1)=[];
+    end
+    trimmedPoints=points;
+    trimmedPoints(indRmv,:)=[];
+end
+
 function cellSimilar=FindIdenticalVector(blockSegments)
     % this function takes in a group of Segments and returns the indices of
     % those identical grouped within a cell array. blockSegments should be a
