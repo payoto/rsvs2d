@@ -19,6 +19,9 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     thisworker = getCurrentWorker;
     varExtract={'workerList','machineList'};
     [workerList,machineList]=ExtractVariables(varExtract,paramoptim);
+    varExtract={'axisRatio'};
+    [axisRatio]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    
     if ~isempty(thisworker)
         currentMachineFile=machineList(thisworker.ProcessId==workerList);
     else
@@ -51,16 +54,16 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
         switch desVarConstr{ii}
             case 'ValVolFrac'
             case 'MinSumVolFrac'
-                ASOOptions.problemargin=[ASOOptions.problemargin,...
-                    {'area_gt',desVarVal{ii}}];
             case 'MaxSumVolFrac'
             case 'MinValVolFrac'
+                ASOOptions.problemargin=[ASOOptions.problemargin,...
+                    {'area_gt',desVarVal{ii}}];
             case 'LocalVolFrac_min'
             case 'LocalVolFrac_equal'
             case 'LocalVolFrac_max'
         end
     end
-   
+    
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
     % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
@@ -72,7 +75,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     optimDirectory=['.'];
     ASOresult = ASO(optimDirectory,ASOOptions);
     optimDirectory=cd(origDir);
-
+    
     
     % ---------------------
     % Organise Outputs
@@ -81,11 +84,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     obj=ASOresult.flow;
     objValue=obj.CD;
     additional=obj;
-    additional.A=areaAdd.A;
-    additional.L=areaAdd.L;
-    additional.t=areaAdd.t;
-    additional.c=areaAdd.c;
-    additional.tc=areaAdd.tc;
+   
     
     
     % ---------------------
@@ -105,7 +104,11 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
             [ASOresult.loop.coord]=deal(ASOresult.loop.(typeLoop));
         elseif ~isempty(ASOresult.loop)
             [ASOresult.loop.coord]=deal(ASOresult.loop.ASOResult);
-
+            
+        end
+        [~,areaAdd]=LengthArea(paramoptim,member,{ASOresult.loop.ASOResult});
+        for ii=1:numel(ASOresult.loop)
+            ASOresult.loop(ii).ASOResult(:,2)=ASOresult.loop(ii).ASOResult(:,2)/axisRatio;
         end
         [fill,~]=LoopToFill(ASOresult.loop,baseGrid);
         additional.filldelta=fill-member.fill;
@@ -113,6 +116,11 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
         additional.filldelta=member.fill-member.fill;
     end
     
+    additional.A=areaAdd.A;
+    additional.L=areaAdd.L;
+    additional.t=areaAdd.t;
+    additional.c=areaAdd.c;
+    additional.tc=areaAdd.tc;
 end
 
 function [loopconstr]=PushConvHull(loop,typeLoop)
@@ -123,7 +131,7 @@ function [loopconstr]=PushConvHull(loop,typeLoop)
         loopconstr(ii).coord=loop(ii).(typeLoop);
         loopconstr(ii).constraint=loopconstr(ii).coord(...
             convhull(loopconstr(ii).coord(:,1),loopconstr(ii).coord(:,2)),:);
-%         paramspline.splineCase=min(max(
+        %         paramspline.splineCase=min(max(
         loopconstr(ii).constraint=ResampleSpline
         
     end
@@ -142,11 +150,20 @@ function []=MeshTriangleSU2()
 end
 
 function [objValue,additional]=LengthArea(paramoptim,member,loop)
-    for ii=1:length(loop)
-        
-        [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=...
-            ClosedLoopProperties(loop(ii).snaxel.coord(1:end-1,:));
-        
+    if isstruct(loop)
+        for ii=1:length(loop)
+            
+            [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=...
+                ClosedLoopProperties(loop(ii).snaxel.coord(1:end-1,:));
+            
+        end
+    elseif iscell(loop)
+        for ii=1:length(loop)
+            
+            [xMin(ii),xMax(ii),t(ii),L(ii),A(ii)]=...
+                ClosedLoopProperties(loop{ii});
+            
+        end
     end
     objValue=sum(A)/sum(L);
     

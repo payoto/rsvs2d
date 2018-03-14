@@ -246,7 +246,8 @@ function [out]=OptimisationOutput_iteration(paramoptim,nIter,out,population,erro
     tecFilePath=[rootDir,filesep,'Tec360PLT_',fullMark,'.plt'];
     tecFilePath=MakePathCompliant(tecFilePath);
     if ExtractVariables({'useSnake'},paramoptim)
-        ConcatenateTecplotFile(writeDirectory,tecFilePath)
+        axisRatio=ExtractVariables({'axisRatio'},paramoptim.parametrisation);
+        ConcatenateTecplotFile(writeDirectory,tecFilePath,axisRatio)
     end
 end
 
@@ -497,8 +498,8 @@ function []=TecplotPortion_Init(nIter,nPop,nProf,profPath,baseGrid,fineGrid,...
     
 end
 
-function []=ConcatenateTecplotFile(iterDir,tecFilePath)
-    [profPaths]=FindProfile(iterDir);
+function []=ConcatenateTecplotFile(iterDir,tecFilePath,axisRatio)
+    [profPaths]=FindProfile(iterDir,axisRatio);
     
     compType=computer;
     
@@ -515,7 +516,7 @@ function []=ConcatenateTecplotFile(iterDir,tecFilePath)
     
 end
 
-function [profPaths]=FindProfile(iterDir)
+function [profPaths]=FindProfile(iterDir,axisRatio)
     
     [returnPath]=FindDir(iterDir,'profile',true);
     
@@ -525,7 +526,7 @@ function [profPaths]=FindProfile(iterDir)
         try
             surfPlt=[returnPath{ii},filesep,'run',filesep,'surface.plt'];
             if exist(surfPlt,'file')
-                MergeTecSubfile(profPaths{ii},surfPlt);
+                MergeTecSubfile(profPaths{ii},surfPlt,axisRatio);
 
             end
         catch ME

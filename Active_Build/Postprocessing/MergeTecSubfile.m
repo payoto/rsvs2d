@@ -1,4 +1,4 @@
-function []=MergeTecSubfile(tecSub,surfPlt)
+function []=MergeTecSubfile(tecSub,surfPlt,axisRatio)
     
     
     
@@ -30,14 +30,16 @@ function []=MergeTecSubfile(tecSub,surfPlt)
     cellData=cell([1 str2num(nNodes)*2]);
     kk=1;
     catStr=[' ',int2str(zeros([1 nVarAdd]))];
-    while ~feof(fidSurf)
-        cellData{kk}=[fgetl(fidSurf),catStr];
-        if kk==str2num(nNodes)
-            catStr='';
-        end
+    nNodes=str2num(nNodes); %#ok<ST2NM>
+    while ~feof(fidSurf) && kk<=nNodes
+        cellData{kk}=[num2str(str2num(fgetl(fidSurf))./[1 axisRatio],'%.16f '),catStr]; %#ok<ST2NM>
+
         kk=kk+1;
     end
-    
+    while ~feof(fidSurf) 
+        cellData{kk}=fgetl(fidSurf);
+        kk=kk+1;
+    end
     
     fclose(fidOrig);
     fclose(fidSurf);
