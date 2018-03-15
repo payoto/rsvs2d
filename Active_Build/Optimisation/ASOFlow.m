@@ -102,13 +102,13 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
             warning('ASOresult is not returning the loop')
         elseif ~isfield(ASOresult.loop,'ASOResult') && isstruct(ASOresult.loop)
             [ASOresult.loop.coord]=deal(ASOresult.loop.(typeLoop));
-        elseif ~isempty(ASOresult.loop)
+        else
             [ASOresult.loop.coord]=deal(ASOresult.loop.ASOResult);
             
         end
-        [~,areaAdd]=LengthArea(paramoptim,member,{ASOresult.loop.ASOResult});
+        [~,areaAdd]=LengthArea(paramoptim,member,{ASOresult.loop.coord});
         for ii=1:numel(ASOresult.loop)
-            ASOresult.loop(ii).ASOResult(:,2)=ASOresult.loop(ii).ASOResult(:,2)/axisRatio;
+            ASOresult.loop(ii).coord(:,2)=ASOresult.loop(ii).coord(:,2)/axisRatio;
         end
         [fill,~]=LoopToFill(ASOresult.loop,baseGrid);
         additional.filldelta=fill-member.fill;

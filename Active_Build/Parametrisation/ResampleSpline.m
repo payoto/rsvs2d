@@ -274,9 +274,9 @@ function edgeCurvNorm=CalcCurvature(points)
 %     edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
 %     edgeCurvNorm([1,end],:)=[];
     
-    tangentVec=points-points([end,1:end-1],:);
+    tangentVec=points-points([end-1,1:end-1],:);
     tangentVec=tangentVec./repmat(sum((tangentVec(:,1)-tangentVec(:,2)).^2,2),[1,2]);
-    edgeCurvNorm=abs(ExtractAnglepm180(tangentVec,tangentVec([end,1:end-1],:)));
+    edgeCurvNorm=abs(ExtractAnglepm180(tangentVec,tangentVec([2:end,2],:)));
 end
 
 function edgeCurvNorm=CurvatureParameter(points)

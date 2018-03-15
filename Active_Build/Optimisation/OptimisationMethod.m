@@ -135,7 +135,8 @@ function [newPop,iterCurr,paramoptim]=DifferentialEvolution(paramoptim,proj,iter
             crossVec=-ones(size(currVec));
             
             indMapChoice=randi(numel(indexmap),1);
-            [fromMutVecLog]=ExtractDEIndices(nDes,nFill,nNonFill,CR,indexmap{indMapChoice});
+            [fromMutVecLog]=ExtractDEIndices(numel(indexmap{indMapChoice}),...
+                nFill,nNonFill,CR,indexmap{indMapChoice});
             
             crossVec(fromMutVecLog)=mutVec(fromMutVecLog);
             crossVec(~fromMutVecLog)=currVec(~fromMutVecLog);
