@@ -101,7 +101,7 @@ plot(log10(abs(curvParamErr6)))
 
 %% testing multi-body
 
-ii=5
+ii=7
 figure,
 plotPoints= @(points,f) plot(points([1:end,1],1),points([1:end,1],2),['-',f]);
 for jj=1:numel(iter(ii).loop)

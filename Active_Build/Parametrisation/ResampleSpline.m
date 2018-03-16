@@ -233,20 +233,20 @@ function parList=ExtractParameterList(parType,points,expectExtrema)
             edgeCurvNorm=CalcCurvature(points);
             
             edgeCurvNormTest=edgeCurvNorm;
-%             figure
-%             hold on
-%             plot(edgeCurvNorm)
+            %             figure
+            %             hold on
+            %             plot(edgeCurvNorm)
             [ptsToSave]=FindNMax(edgeCurvNormTest(1:end-1),expectExtrema);
             edgeCurvNorm(edgeCurvNorm>edgeCurvNorm(ptsToSave(end,1)))=edgeCurvNorm(ptsToSave(end,1));
             
-%             plot(edgeCurvNorm)
+            %             plot(edgeCurvNorm)
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
             %[edgeCurvNorm]=MovingIntegralWindowLoop2(parList,edgeCurvNorm,span);
             
-%             plot(edgeCurvNorm)
+            %             plot(edgeCurvNorm)
             edgeCurvNorm=MovingAverageLoop(edgeCurvNorm',nAverage)';
-%             
-%             plot(edgeCurvNorm)
+            %
+            %             plot(edgeCurvNorm)
 %             figure
             curvParam=SmoothingParameter(parList,edgeCurvNorm,'coscut',expectExtrema,0.25);
 %             subplot(1,2,1)
@@ -271,11 +271,11 @@ end
 
 function edgeCurvNorm=CalcCurvature(points)
     
-%     edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
-%     edgeCurvNorm([1,end],:)=[];
+    %     edgeCurvNorm=abs(LineCurvature2D(points([end-1,1:end,2],:)));
+    %     edgeCurvNorm([1,end],:)=[];
     
     tangentVec=points-points([end-1,1:end-1],:);
-    tangentVec=tangentVec./repmat(sum((tangentVec(:,1)-tangentVec(:,2)).^2,2),[1,2]);
+    %tangentVec=tangentVec./repmat(sum((tangentVec(:,1)-tangentVec(:,2)).^2,2),[1,2]);
     edgeCurvNorm=abs(ExtractAnglepm180(tangentVec,tangentVec([2:end,2],:)));
 end
 
@@ -398,8 +398,8 @@ function curvParam=SmoothingParameter(parList,curvParam,type,nMMA,lInt)
             end
         case 'coscut'
             func=@(v,eps) [(-(acos((1+v(v<0))*eps)-acos(eps))/...
-                        (acos(-eps)-acos(eps)));((acos((1-v(v>=0))*eps)-acos(eps))/...
-                        (acos(-eps)-acos(eps)))]+pi/2;
+                (acos(-eps)-acos(eps)));((acos((1-v(v>=0))*eps)-acos(eps))/...
+                (acos(-eps)-acos(eps)))]+pi/2;
             [ptsToSave]=FindNMax(curvParam(1:end-1),nMMA,lInt);
             indcentre=sort(ptsToSave(:,1));
             nMMA=numel(indcentre);
@@ -558,13 +558,13 @@ function [ptsToReturn]=ReturnEnforcedPoints(parspline,points,parList)
                 ptsToSave=zeros([0 2]);
         end
         switch parspline.forcePts{iii,2}
-           
+            
             case 'split'
                 ptsToReturn=[ptsToReturn;ptsToSave];
         end
     end
     
-    end
+end
 function splitPoints=SplitAtTrailingEdge(points,TEisLeft,distribution)
     splitPoints=points;
     if strcmp(distribution,'cosine') || strcmp(distribution,'2cosine') || strcmp(distribution,'split')
@@ -608,6 +608,7 @@ function [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList)
     
     nSample=parspline.samplingN;
     meanEdgeL=parspline.meanEdgeLength;
+    isMonotonous=parspline.isMonotonous;
     if isempty(nSample)
         if isempty(meanEdgeL)
             nSample=size(normPoints,1);
@@ -620,10 +621,13 @@ function [splineblock]=ExtractSplineBlocks(parspline,normPoints,parList)
         nSample=size(normPoints,1)*-nSample;
     end
     eps=parspline.eps;
-    [interestPoints]=FindLocalExtremum(parList,eps);
+    if ~isMonotonous
+        [interestPoints]=FindLocalExtremum(parList,eps);
+        intNodes=find(any(interestPoints~=0,2));
+    else
+        intNodes=[];
+    end
     
-    
-    intNodes=find(any(interestPoints~=0,2));
     [ptsToReturn]=ReturnEnforcedPoints(parspline,normPoints,parList);
     intNodes=unique([intNodes;ptsToReturn(:,1)]);
     
@@ -926,6 +930,7 @@ function [parspline]=CaseSpline_default()
     parspline.eps=1e-7;
     parspline.forcePts={'none','none'};
     parspline.parameter='x'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.isMonotonous=false;
     parspline.typCurve='closed';
     parspline.extrema=2;
     
@@ -1112,6 +1117,7 @@ function [parspline]=CaseSpline_smoothpts()
     parspline.parameter='clcoscut'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
     parspline.forcePts={'maxcurv','split';'LETE','split'}; %
     parspline.typCurve='closed';
+    parspline.isMonotonous=true;
     
     parspline.distribution='calc';
     parspline.domain='none'; % 'normalizeX' 'normalizeL'
@@ -1134,6 +1140,7 @@ function [parspline]=CaseSpline_presmoothpts()
     parspline.TEisLeft=0;
     
     parspline.parameter='i'; % 'y'  'l'(edge length) 'i'(index) 'Dx' (absolute change in X)
+    parspline.isMonotonous=true;
     parspline.forcePts={'all','split';'LETE','split'};
     parspline.typCurve='closed';
     

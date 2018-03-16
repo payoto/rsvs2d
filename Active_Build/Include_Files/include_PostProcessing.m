@@ -15,9 +15,10 @@ print(figh,figname,'-djpeg','-r600')
 
 end
 
-function [marker,t]=GenerateResultMarker(typDat)
-    
-    t=now;
+function [marker,t]=GenerateResultMarker(typDat,t)
+    if nargin==1
+        t=now;
+    end
     marker=[datestr(t,'yyyy-mm-ddTHHMMSS')...
         ,'_',typDat];
     
@@ -468,7 +469,8 @@ function [loop]=BoundaryInput(fileName)
         numLoops=str2double(fgetl(fid));
         numPoints=str2num(fgetl(fid));
         
-        loop=repmat(struct('coord',[],'isccw',true,'isinternal',false),[1,numLoops]);
+        loop=repmat(struct('coord',[],'isccw',true,'isinternal',false),...
+            [1,numLoops]);
         
         for ii=1:numLoops
             numPts(ii)=str2double(fgetl(fid));
@@ -1065,7 +1067,7 @@ function [pathStr,t,marker]=FindTime2(pathStr)
     dirName=splitPath{dirLoc};
     splitDir=regexp(dirName,'_');
     t=datenum(dirName(splitDir(1)+1:splitDir(2)-1),'yyyy-mm-ddTHHMMSS');
-    marker=dirName(splitDir(2)+1:end);
+    marker=dirName(splitDir(1)+1:end);
 end
 
 function [paramoptim]=ReconstructParameter(pathStr,marker)
