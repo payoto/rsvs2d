@@ -5392,7 +5392,7 @@ end
 function [paroptim]=ConjugateGradient_FE(paroptim)
     
     [paroptim]=OptimCG(paroptim);
-    % leave these as is 
+    % leave these as is
     paroptim.optim.CG.sensCalc='analytical'; 
     paroptim.optim.CG.sensAnalyticalType='raw';
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
