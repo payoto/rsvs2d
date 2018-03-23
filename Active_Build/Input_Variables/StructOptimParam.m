@@ -5392,13 +5392,17 @@ end
 function [paroptim]=ConjugateGradient_FE(paroptim)
     
     [paroptim]=OptimCG(paroptim);
-    paroptim.optim.CG.varActive='snaksensiv';
-    paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
+    % leave these as is 
+    paroptim.optim.CG.sensCalc='analytical'; 
     paroptim.optim.CG.sensAnalyticalType='raw';
     paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
     paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
     paroptim.parametrisation.optiminit.modeSmoothNum=6;
     paroptim.parametrisation.optiminit.modeScale='length';
+    
+    
+    paroptim.optim.CG.varActive='snaksensiv'; % try this first can replace by 
+    % 'border' or 'all' if things are not working
     %size of the volume steps for gradient calculation
     paroptim.optim.CG.diffStepSize=[1e-3,-1e-3]; 
     paroptim.optim.CG.minDiffStep=1e-3;
