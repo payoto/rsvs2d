@@ -5411,7 +5411,9 @@ function [paroptim]=AdaptiveRefinement_FE(paroptim)
     % Constraint here is an actual volume value as opposed to a
     % volume fraction
     paroptim.constraint.desVarConstr={'ValVolFrac'};
-    paroptim.constraint.desVarVal={0.1};
+    paroptim.constraint.desVarVal={0.4}; % if you make the useful part 
+    % of the grid to be between [0 0] and [1 1] defining the correct
+    % area for a 50% is 0.5
     
     paroptim.refine.refineOptim=[2 2]; % 2 by 2 refinement
     paroptim.refine.refineSteps=3; % number of refinements

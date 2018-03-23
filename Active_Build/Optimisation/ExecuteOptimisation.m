@@ -2484,7 +2484,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     diary off
     diary(diaryFile);
     
-    warning('[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]); Not supported');
+    warning(['[~,paramoptim]=ConstraintMethod(''init'',paramoptim,[]);',...
+        ' partially supported no refinement in constrained cells']);
     
     % Refine Grid
     varNames={'refineOptim'};
