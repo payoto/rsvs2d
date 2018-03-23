@@ -2494,7 +2494,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Need to add here the additional refinement options
     refinementStruct.oldgrid=oldGrid;
     refinementStruct.pop=iterstruct(end).population;
-    refinementStruct.param=paramoptim; %#ok<STRNU>
+    refinementStruct.param=paramoptim; 
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
     [gridrefined,connectstructinfo,oldGrid,refCellLevels]=AnisotropicRefinement...
@@ -2934,6 +2934,14 @@ function oldGrid=SelectRefinementCells(lastpopulation,oldGrid,paramoptim)
         case 'all'
             % refines all cells
             isRefine=true(size(isRefine));
+        case 'notempty'
+            activeCell=logical([oldGrid.base(:).isactive]);
+            
+            activeCellSub=find(activeCell);
+            
+            for ii=indexPop;
+                isRefine(activeCellSub)= isRefine(activeCellSub) | (lastpopulation(ii).fill>0);
+            end
         case 'contour'
             % refines all cells with snaxels
             for ii=indexPop;
@@ -3787,13 +3795,23 @@ end
 function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(baseGrid,oldGrid,...
         paramoptim,iterstruct,refStep)
     
-    varNames={'refinePattern','refineOptim','refineOptimPopRatio','direction'};
-    [refinePattern,refineOptim,refineOptimPopRatio,direction]=ExtractVariables(varNames,paramoptim);
+    varNames={'refinePattern','refineOptim','refineOptimPopRatio','direction','desVarVal','desVarConstr'};
+    [refinePattern,refineOptim,refineOptimPopRatio,direction,desVarVal,...
+        desVarConstr]=ExtractVariables(varNames,paramoptim);
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
         {oldGrid.connec.cell(:).new},...
         {oldGrid.connec.cell(:).old},'UniformOutput',false));
     
+    
+    % Do not refine any cell which is subject to a local constraint
+    actSub=find(logical([baseGrid.cell(:).isactive]));
+    listLocConstr=find(~cellfun(@isempty,regexp(desVarConstr,'LocalVolFrac_')));
+    for ii=listLocConstr
+        [baseGrid.cell(actSub(desVarVal{ii}{1})).isrefine]=deal(false);
+    end
+    
+    % implement different refinement patterns
     switch refinePattern
         case 'preset'
             refineList=[[baseGrid.cell(:).index];[baseGrid.cell(:).isrefine]];
@@ -3808,7 +3826,6 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
         otherwise
             error('Refinement Pattern does not exist')
     end
-    
     
     
     % Need to add here the additional refinement options

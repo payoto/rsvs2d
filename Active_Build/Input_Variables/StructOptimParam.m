@@ -5389,6 +5389,45 @@ function [paroptim]=AlexT_test()
 end
 
 
+function [paroptim]=ConjugateGradient_FE(paroptim)
+    
+    [paroptim]=OptimCG(paroptim);
+    paroptim.optim.CG.varActive='snaksensiv';
+    paroptim.optim.CG.sensCalc='analytical'; % 'analytical'
+    paroptim.optim.CG.sensAnalyticalType='raw';
+    paroptim.parametrisation.optiminit.modeSmoothScale='lengthvolnormfill';
+    paroptim.parametrisation.optiminit.modeSmoothType='peaksmooth'; % 'peaksmooth' 'polysmooth';
+    paroptim.parametrisation.optiminit.modeSmoothNum=6;
+    paroptim.parametrisation.optiminit.modeScale='length';
+    %size of the volume steps for gradient calculation
+    paroptim.optim.CG.diffStepSize=[1e-3,-1e-3]; 
+    paroptim.optim.CG.minDiffStep=1e-3;
+    paroptim.optim.CG.validVol=0.8; % Line search length
+    
+end
+
+function [paroptim]=AdaptiveRefinement_FE(paroptim)
+    
+    % Constraint here is an actual volume value as opposed to a
+    % volume fraction
+    paroptim.constraint.desVarConstr={'ValVolFrac'};
+    paroptim.constraint.desVarVal={0.1};
+    
+    paroptim.refine.refineOptim=[2 2]; % 2 by 2 refinement
+    paroptim.refine.refineSteps=3; % number of refinements
+    paroptim.refine.refineIter=60; % Number of iterations after refinement
+    paroptim.refine.refinePattern='preset'; % choice of 'edgecross' (used in paper) and 'preset'
+    paroptim.refine.refineOptimType='contcurvevol';
+    paroptim.refine.refineOptimRatio=15; % (max) number of cells to refine at each step
+    paroptim.refine.rankType='number';
+    paroptim.refine.slopeConv=0.2;
+    paroptim.refine.refineOptimPopRatio=0.5;
+    
+    % 'contlength' 'desvargradadvanced' 'contcurve'  'contlengthnorm'
+    % 'desvargrad' 'contcurvescale' 'contcurvevol' 'contour'
+    
+end
+
 function [paroptim]=MBBbeam1_constraint(paroptim)
     
     paroptim.constraint.desVarConstr={' '};
