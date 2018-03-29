@@ -2617,7 +2617,7 @@ end
 
 function [profloops]=ExtractVolInfo(optimRootDir)
     
-    [iterationPath,iterName]=FindDir(optimRootDir,'iteration',true);
+    [iterationPath,iterName]=FindDirRegex(optimRootDir,'iteration_[0-9]+',true);
     iterNum=regexp(iterName,'iteration_','split');
     
     profloops=repmat(struct('iter',[],'prof',[],'refinevolfrac',[],'isfilled',false),[1 0]);
@@ -2655,6 +2655,7 @@ function [returnPath,returnName]=FindDir(rootDir,strDir,isTargDir)
     end
     
 end
+
 
 function [profloops]=FindProfileLoops(rootDir,iterNum)
     
