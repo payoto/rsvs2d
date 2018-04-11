@@ -67,7 +67,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         paramoptim=SetVariables({'restartSource'},{restartSource},paramoptim);
         startIter=startIter+1;
     end
-
+    
     % Introduce debug lines of code
     % debugScrip
     
@@ -144,7 +144,7 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         save([outinfo(end).rootDir,filesep,'DvpAnisRefineMat.mat'])
         if refStage<(refineSteps+refStart)
             %save('DvpAnisRefineMat.mat')
-            [paramoptim,outinfo(refStage+1),iterstruct2,~,baseGrid,gridrefined,...
+            [paramoptim,outinfo(end+1),iterstruct2,~,baseGrid,gridrefined,...
                 connectstructinfo,~,restartsnake]=...
                 HandleRefinement(paramoptim,iterstruct(1:nIter),...
                 outinfo(end),baseGrid,gridrefined,connectstructinfo,...
@@ -340,13 +340,15 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
             needNewRestartSnake=~isNewRestartSnake;
         end
         if needNewRestartSnake
-            varExtract={'boundstr'};
-            [boundstr]=ExtractVariables(varExtract,paramoptim.parametrisation);
-            [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
-            [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
-            baseGrid,connectstructinfo,paramoptim.initparam,...
-            paramoptim.spline,outinfo(end),0,0,0);
-            
+%             varExtract={'boundstr'};
+%             [boundstr]=ExtractVariables(varExtract,paramoptim.parametrisation);
+%             [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
+%             [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
+%                 baseGrid,connectstructinfo,paramoptim.initparam,...
+%                 paramoptim.spline,outinfo(end),0,0,0);
+%             
+            [restartsnake]=ReInitSnake(paramoptim,gridrefined,baseGrid,connectstructinfo,...
+                    iterstruct(end),outinfo);
         end
     end
     
@@ -435,6 +437,33 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     [~]=PrintEnd(procStr,1,tStart);
 end
 
+function [restartsnake]=ReInitSnake(paramoptim,gridrefined,baseGrid,connectstructinfo,...
+        iterstruct,outinfo)
+    
+    rmdir([outinfo(end),filesep,'iteration_0'], 's')
+    [pltFile]=FindDir(outinfo(end),'Tec360PLT',0);
+    delete(pltFile{1})
+    varExtract={'boundstr'};
+    [boundstr]=ExtractVariables(varExtract,paramsnake);
+    varExtract={'nPop'};
+    [nPop]=ExtractVariables(varExtract,paramoptim);
+    
+    [gridrefined]=EdgePropertiesReshape(gridrefined);
+    [baseGrid]=EdgePropertiesReshape(baseGrid);
+    [newrestartsnake]=GenerateEdgeLoop(gridrefined,boundstr,true);
+    
+    [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,newrestartsnake,...
+        baseGrid,connectstructinfo,paramoptim.initparam,...
+        paramoptim.spline,outinfo(end),0,0,0);
+    
+    
+    
+    [~]=OptimisationOutput('iteration',...
+        paramoptim,0,outinfo(end),iterstruct(1),{});
+    
+end
+
+
 function [paramoptim]=CheckConsistantParamoptim(paramoptim)
     varExtract={'cellLevels','passDomBounds','corneractive','regulariseSnakeBounds'};
     [cellLevels,passDomBounds,corneractive]=ExtractVariables(varExtract(1:3),...
@@ -449,7 +478,7 @@ function [paramoptim]=CheckConsistantParamoptim(paramoptim)
             warning('Unrecognised regulariseSnakeBounds case')
     end
     paramoptim.parametrisation=SetVariables(varExtract(1:3),...
-        {cellLevels,passDomBounds,corneractive},paramoptim.parametrisation);  
+        {cellLevels,passDomBounds,corneractive},paramoptim.parametrisation);
     
 end
 
@@ -481,7 +510,7 @@ function [workerList]=StartParallelPool(nWorker,nTry)
         try
             p=parpool(poolName);
             p.IdleTimeout=Inf;
-           
+            
         catch ME
             
         end
@@ -572,7 +601,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     nPop=numel(population);
     
     parfor ii=1:nPop %
-    %for ii=1:nPop
+        %for ii=1:nPop
         try
             [population(ii).objective,additional]=...
                 EvaluateObjective(objectiveName,paramoptim,population(ii),...
@@ -1131,7 +1160,7 @@ function [population,supportstruct,restartsnake]=PostExecutionIteration(populati
     population.additional.snaxelVolRes=snakSave(end).currentConvVolume;
     population.additional.snaxelVelResV=snakSave(end).currentConvVelocity;
     
-    supportstruct.loop=loop; 
+    supportstruct.loop=loop;
     supportstruct.parentMesh='';
 end
 
@@ -1579,10 +1608,10 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
                 origPop(:,LEind)=origPop(:,LEind)/5;
                 origPop(:,TEind)=origPop(:,TEind)/5;
                 
-%                 origPop(:,LEind+1)=origPop(:,LEind+1)/2;
-%                 origPop(:,TEind-1)=origPop(:,TEind-1)/2;
-%                 origPop(:,LEind)=defaultCorner;
-%                 origPop(:,TEind)=defaultCorner;
+                %                 origPop(:,LEind+1)=origPop(:,LEind+1)/2;
+                %                 origPop(:,TEind-1)=origPop(:,TEind-1)/2;
+                %                 origPop(:,LEind)=defaultCorner;
+                %                 origPop(:,TEind)=defaultCorner;
             end
             
             
@@ -2495,7 +2524,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     % Need to add here the additional refinement options
     refinementStruct.oldgrid=oldGrid;
     refinementStruct.pop=iterstruct(end).population;
-    refinementStruct.param=paramoptim; 
+    refinementStruct.param=paramoptim;
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
     [gridrefined,connectstructinfo,oldGrid,refCellLevels]=AnisotropicRefinement...
@@ -3990,8 +4019,8 @@ function []=OptimisationDebug(caseStr,debugArgIn)
     
     
     
-%     [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
-%         restartsnake,connectstructinfo,outinfo);
+    %     [paramoptim]=FindKnownOptimInvDesign(paramoptim,baseGrid,gridrefined,...
+    %         restartsnake,connectstructinfo,outinfo);
 end
 
 function [paramoptim,outinfo,iterstruct]=OptimisationDebugStart(caseStr)
