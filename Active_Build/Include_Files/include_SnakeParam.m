@@ -626,6 +626,7 @@ function [lSnax,curvSnax,lSnaxNorm,curvSnaxNoBord]=ExploreSnaxelChain(snaxelpart
     snaxCon=[snaxPrec;snaxNext];
     isVisited=false(size(snaxInd));
     lSnax=0;
+    lSnaxNorm=0;
     curvSnax=sum(sqrt(sum(vertcat(snaxelpart(:).curv).^2,2)));
     curvSnaxNoBord=sum(sqrt(sum(vertcat(snaxelpart(~logical([snaxelpart(:).isborder])).curv).^2,2)));
 %     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
@@ -646,7 +647,7 @@ function [lSnax,curvSnax,lSnaxNorm,curvSnaxNoBord]=ExploreSnaxelChain(snaxelpart
                 coord1=snaxelpart(currSub).coord;
                 coord2=snaxelpart(nextSub).coord;
                 lSnax=lSnax+sqrt(sum((coord2-coord1).^2));
-                lSnaxNorm=lSnax+sqrt(sum(((coord2-coord1)./cellLength).^2));
+                lSnaxNorm=lSnaxNorm+sqrt(sum(((coord2-coord1)./cellLength).^2));
                 currSub=nextSub;
                 flag=~isVisited(currSub);
             end
