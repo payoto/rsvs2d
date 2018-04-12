@@ -440,11 +440,11 @@ end
 function [restartsnake]=ReInitSnake(paramoptim,gridrefined,baseGrid,connectstructinfo,...
         iterstruct,outinfo)
     
-    rmdir([outinfo(end),filesep,'iteration_0'], 's')
-    [pltFile]=FindDir(outinfo(end),'Tec360PLT',0);
+    rmdir([outinfo(end).rootDir,filesep,'iteration_0'], 's')
+    [pltFile]=FindDir(outinfo(end).rootDir,'Tec360PLT',0);
     delete(pltFile{1})
     varExtract={'boundstr'};
-    [boundstr]=ExtractVariables(varExtract,paramsnake);
+    [boundstr]=ExtractVariables(varExtract,paramoptim.parametrisation);
     varExtract={'nPop'};
     [nPop]=ExtractVariables(varExtract,paramoptim);
     

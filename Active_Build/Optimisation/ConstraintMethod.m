@@ -68,7 +68,7 @@ function [population,argout]=InitVariableConsCaller(constrName,constrVal,paropti
                 argout{1}=paramoptim;
             end
         case 'Naca0012'
-            
+        case 'ColumnFill'
         case ' '
             
         otherwise
@@ -77,6 +77,43 @@ function [population,argout]=InitVariableConsCaller(constrName,constrVal,paropti
     
     
     
+end
+
+function [paramoptim]=LocalConstraintExtraction_LETE(paramoptim,constrVal)
+    
+    varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
+    [cellLevels,passDomBounds]=ExtractVariables(varExtract(1:2),paramoptim.parametrisation);
+    [desVarConstr,desVarVal]=ExtractVariables(varExtract(3:4),paramoptim);
+    
+    finishedImage=zeros(cellLevels);
+    activityLayer=false(cellLevels);
+    switch constrVal{1}
+        case 'LETE'
+            finishedImage([1,end],:)=constrVal{3};
+            activityLayer([1,end],:)=true;
+        case 'LE'
+            finishedImage(1,:)=constrVal{3};
+            activityLayer(1,:)=true;
+        case 'TE'
+            finishedImage(end,:)=constrVal{3};
+            activityLayer(1,:)=true;
+        otherwise
+            error('Not coded yet')
+    end
+    [desVal]=ArrayToConstraint(finishedImage,activityLayer);
+    desVal{end+1}=constrVal{1};
+    [desVarConstr,desVarVal]=OverWriteExistingConstraint(desVal,...
+        constrVal,desVarVal,desVarConstr);
+    
+    varExtract={'cellLevels','passDomBounds','desVarConstr','desVarVal'};
+    
+    %passDomBoundsImage=(MakeCartesianGridBounds(cellLevelsImage)+[1 1; 0 0 ])/2;
+    [paramoptim.parametrisation]=SetVariables(varExtract(1:2),{cellLevels,...
+        passDomBounds},paramoptim.parametrisation);
+    [paramoptim.initparam]=SetVariables(varExtract(1:2),{cellLevels,...
+        passDomBounds},paramoptim.initparam);
+    
+    [paramoptim]=SetVariables(varExtract(3:4),{desVarConstr,desVarVal},paramoptim);
 end
 
 function [paramoptim]=LocalConstraintExtraction_Image(paramoptim,constrVal)

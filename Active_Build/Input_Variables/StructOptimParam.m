@@ -355,6 +355,14 @@ function [paroptim]=LocalVolumeConstraint(paroptim)
     
 end
 
+function [paroptim]=LimitLETE(paroptim)
+    
+
+    paroptim.constraint.initConstr={'LocalVolFrac_image'};
+    paroptim.constraint.initVal={{'LETE','max',0.05}};
+
+    
+end
 function [paroptim]=NoConstraint(paroptim)
     paroptim.constraint.initConstr={};
     paroptim.constraint.initVal={};
@@ -1258,7 +1266,7 @@ function [paroptim]=areabusesweep(e)
     
     [paroptim]=MultiTopo_DEhoriz();
     [paroptim]=SumVolumeConstraint(paroptim);
-    
+    [paroptim]=LimitLETE(paroptim);
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     
