@@ -33,9 +33,9 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     % ---------------------
     % Match ASO and Current Optimisation
     varExtract={'asoCase','asoPath','nMach','asoReturnFillChange',...
-        'desVarConstr','desVarVal','su2ProcSec','asoProcSec'};
+        'desVarConstr','desVarVal','su2ProcSec','asoProcSec','snoptIter'};
     [asoCase,asoPath,nMach,asoReturnFillChange,desVarConstr,desVarVal,...
-        su2ProcSec,asoProcSec]=ExtractVariables(varExtract,paramoptim);
+        su2ProcSec,asoProcSec,snoptIter]=ExtractVariables(varExtract,paramoptim);
     
     addpath(MakePathCompliant(asoPath));
     addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
@@ -48,7 +48,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     ASOOptions.solver.timeout = su2ProcSec/currentMachineFile.slots;
     ASOOptions.snopt.wcLimit = asoProcSec/currentMachineFile.slots;
-    
+    ASOOptions.snopt.maxIter = snoptIter;
     % Call the correct constraints
     for ii=1:numel(desVarConstr)
         switch desVarConstr{ii}
@@ -68,6 +68,17 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
     % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
     
+    % Other Options
+    ASOOptions.structdat=GetStructureData(ASOOptions);
+    paramoveride=paramoptim.obj.aso.paramoveride;
+    fieldsOverride=fieldnames(paramoveride);
+    
+    for ii=1:numel(fieldsOverride)
+        ASOOptions=SetVariables(fieldsOverride(ii),...
+            {paramoveride.(fieldsOverride(ii))},ASOOptions);
+    end
+    
+    ASOOptions=rmfield(ASOOptions,'structdat');
     % --------------------------
     % Call ASO
     

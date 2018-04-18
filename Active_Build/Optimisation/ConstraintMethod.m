@@ -69,6 +69,8 @@ function [population,argout]=InitVariableConsCaller(constrName,constrVal,paropti
             end
         case 'Naca0012'
         case 'ColumnFill'
+            [paramoptim]=LocalConstraintExtraction_LETE(paramoptim,constrVal);
+            argout{1}=paramoptim;
         case ' '
             
         otherwise

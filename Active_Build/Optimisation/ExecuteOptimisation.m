@@ -40,8 +40,8 @@ function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         connectstructinfo,~,restartsnake]...
         =InitialiseOptimisation(caseStr);
     
-    varExtract={'maxIter','restartSource','refineSteps','refineIter'};
-    [maxIter,restartSource,refineSteps,refineIter]=ExtractVariables(varExtract...
+    varExtract={'maxIter','restartSource','refineSteps','refineIter','restartIterNum'};
+    [maxIter,restartSource,refineSteps,refineIter,restartIterNum]=ExtractVariables(varExtract...
         ,paramoptim);
     startIter=1;
     firstValidIter=1;
@@ -239,7 +239,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
         connectstructinfo,restartsnake,startIter,maxIter]=...
         HandleVariableRestart...
         (restartPath,paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
-        connectstructinfo,restartsnake,startIter,maxIter)
+        connectstructinfo,restartsnake,startIter,maxIter,restartIterNum)
     % handles variability of restart inputs
     [optionalin]=LoadRestart(restartPath);
     fieldsIn=fieldnames(optionalin);
@@ -249,7 +249,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
         while repeatflag
             switch fieldsIn{ii}
                 case 'optimstruct'
-                    startIter=length(optionalin.(fieldsIn{ii}));
+                    startIter=min(length(optionalin.(fieldsIn{ii})),restartIterNum);
                     maxIter=startIter+maxIterInit;
                     if ~isfield(optionalin.(fieldsIn{ii})(1).population,...
                             'nonfillvar')
@@ -258,7 +258,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                                 .nonfillvar]=deal([]);
                         end
                     end
-                    iterstruct=[optionalin.(fieldsIn{ii}),iterstruct]; %#ok<AGROW>
+                    iterstruct=[optionalin.(fieldsIn{ii})(1:startIter),iterstruct]; %#ok<AGROW>
                     isOptimStruct=true;
                     repeatflag=false;
                 case 'grid'

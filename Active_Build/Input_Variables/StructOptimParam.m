@@ -86,9 +86,9 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     
     paroptimgeneral.iterGap=1;
     
-    
     paroptimgeneral.restartSource={'',''};
     paroptimgeneral.isRestart=false;
+    paroptimgeneral.restartIterNum=inf;
     paroptimgeneral.spillCutOff=2e-2;
     paroptimgeneral.initInterp={};
 end
@@ -185,6 +185,9 @@ function paroptimobjaso=DefaultASOFlow()
     paroptimobjaso.asoReturnFillChange=false;
     paroptimobjaso.su2ProcSec=4*1800;
     paroptimobjaso.asoProcSec=4*5400;
+    paroptimobjaso.snoptIter=10;
+    paroptimobjaso.paramoveride=struct('maxFunCalls',150,...
+        'surfaceFcn',@(geom) Geometry.Subdivision(geom,1,'const'));
 end
 
 function [paroptimspline]=DefaultOptimSpline()
@@ -358,7 +361,7 @@ end
 function [paroptim]=LimitLETE(paroptim)
     
 
-    paroptim.constraint.initConstr={'LocalVolFrac_image'};
+    paroptim.constraint.initConstr={'ColumnFill'};
     paroptim.constraint.initVal={{'LETE','max',0.05}};
 
     
@@ -1273,7 +1276,7 @@ function [paroptim]=areabusesweep(e)
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=150;
-    paroptim.general.worker=8;
+    paroptim.general.worker=12;
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
@@ -1315,6 +1318,35 @@ function [paroptim]=buseASOFillreturn()
     [paroptim]=buseASONoreturn();
     
     paroptim.obj.aso.asoReturnFillChange=true;
+end
+
+
+function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,startIter)
+    [paroptim]=areabusesweep(0.12);
+    paroptim.general.maxIter=1;
+    
+    paroptim.general.worker=8;
+    paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
+    paroptim.general.objInput='loop,baseGrid';
+    paroptim.spline.splineCase='smoothpts';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.general.typeLoop='subdivspline';
+    paroptim.obj.flow.mesher='triangle';
+    paroptim.obj.flow.CFDfolder=[cd,...
+        '\Result_Template\CFD_code_Template\trianglemesh'];
+    paroptim.obj.flow.solveFlow=false;
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
+
+    paroptim.general.restartIterNum=startIter;
+    
+    paroptim.general.optimMethod='none';
+    
+    paroptim.obj.aso.paramoveride.surfaceFcn=@(geom) Geometry.Subdivision(geom,lvlSubdiv,errTreatment);
+    paroptim.obj.aso.asoReturnFillChange=false;
+    paroptim.obj.aso.su2ProcSec=4*1800;
+    paroptim.obj.aso.asoProcSec=4*12*3600;
+    paroptim.obj.aso.snoptIter=100;
 end
 
 function [paroptim]=areabuseaxrat(e)

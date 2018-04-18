@@ -29,6 +29,9 @@ function [newPop,iterCurr,paramoptim,deltas]=OptimisationMethod(paramoptim,varar
             
         case 'conjgrad'
             [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,varargin{1},varargin{2},varargin{3});
+        case 'none'
+            iterCurr=varargin{1};
+            newPop=vertcat(iterCurr.fill);
             
         case 'DEStrip'
             
