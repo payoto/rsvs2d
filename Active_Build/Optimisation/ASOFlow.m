@@ -57,7 +57,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
             case 'MaxSumVolFrac'
             case 'MinValVolFrac'
                 ASOOptions.problemargin=[ASOOptions.problemargin,...
-                    {'area_gt',desVarVal{ii}}];
+                    {'area_gt',desVarVal(ii)}];
             case 'LocalVolFrac_min'
             case 'LocalVolFrac_equal'
             case 'LocalVolFrac_max'
@@ -75,7 +75,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     for ii=1:numel(fieldsOverride)
         ASOOptions=SetVariables(fieldsOverride(ii),...
-            {paramoveride.(fieldsOverride(ii))},ASOOptions);
+            {paramoveride.(fieldsOverride{ii})},ASOOptions);
     end
     
     ASOOptions=rmfield(ASOOptions,'structdat');
