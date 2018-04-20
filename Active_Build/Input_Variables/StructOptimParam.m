@@ -126,6 +126,8 @@ function [paroptimDE]=DefaultOptimDE()
     paroptimDE.diffAmplification=0.5; %[0,2]
     paroptimDE.xOverRatio=0.5;
     paroptimDE.geneType='single'; % 'horz' 'vert'
+    
+    paroptimDE.nonePopKeep=1; % ratio of population to keep for optimiser 'none'
 end
 
 function [paroptimoptimCG]=DefaultOptimCG()

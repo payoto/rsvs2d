@@ -30,8 +30,7 @@ function [newPop,iterCurr,paramoptim,deltas]=OptimisationMethod(paramoptim,varar
         case 'conjgrad'
             [newPop,iterCurr,paramoptim,deltas]=ConjugateGradient(paramoptim,varargin{1},varargin{2},varargin{3});
         case 'none'
-            iterCurr=varargin{1};
-            newPop=vertcat(iterCurr.fill);
+            [newPop,iterCurr,paramoptim]=NoOptimiserRun(paramoptim,varargin{1});
             
         case 'DEStrip'
             
@@ -167,6 +166,30 @@ function [fromMutVecLog]=ExtractDEIndices(nDes,nFill,nNonFill,CR,indexmap)
     fromMutVecLog=[fromMutVecLog,fromMutVecLogNonFill];
 end
 
+function [newPop,iterCurr,paramoptim]=NoOptimiserRun(paramoptim,iterCurr)
+    
+    try
+        varExtract={'nonePopKeep','direction'};
+        [nonePopKeep,direction]=ExtractVariables(varExtract,paramoptim);
+    catch
+        warning('nonePopKeep not defined in paramoptim')
+        nonePopKeep=1;
+        varExtract={'direction'};
+        [direction]=ExtractVariables(varExtract,paramoptim);
+    end
+    
+    switch direction
+        case 'min'
+            [~,keepInd]=sort(iterCurr.objective,'ascend');
+        case 'max'
+            [~,keepInd]=sort(iterCurr.objective,'descend');
+    end
+    
+    keepInd=keepInd(1:(numel(keepInd)*nonePopKeep));
+    
+    
+    newPop=vertcat(iterCurr(sort(keepInd)).fill);
+end
 %% Conjugate gradient
 
 function [newPop,iterOrig,paramoptim,deltas]=ConjugateGradient(paramoptim,iterCurr,iterm1,baseGrid)
