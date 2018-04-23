@@ -103,24 +103,26 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     varExtract={'typeLoop'};
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    
+    %error('Returning Fill delta not coded yet')
+    if isempty(ASOresult.loop)
+        ASOresult.loop=struct('coord',[]);
+        for ii=1:numel(loop)
+            ASOresult.loop(ii).coord=(loop(ii).(typeLoop));
+        end
+        warning('ASOresult is not returning the loop')
+    elseif ~isfield(ASOresult.loop,'ASOResult') && isstruct(ASOresult.loop)
+        [ASOresult.loop.coord]=deal(ASOresult.loop.(typeLoop));
+    else
+        [ASOresult.loop.coord]=deal(ASOresult.loop.ASOResult);
+        
+    end
+    for ii=1:numel(ASOresult.loop)
+        ASOresult.loop(ii).coord(:,2)=ASOresult.loop(ii).coord(:,2)/axisRatio;
+    end
+    [~,areaAdd]=LengthArea(paramoptim,member,{ASOresult.loop.coord});
     if asoReturnFillChange
-        %error('Returning Fill delta not coded yet')
-        if isempty(ASOresult.loop)
-            ASOresult.loop=struct('coord',[]);
-            for ii=1:numel(loop)
-                ASOresult.loop(ii).coord=(loop(ii).(typeLoop));
-            end
-            warning('ASOresult is not returning the loop')
-        elseif ~isfield(ASOresult.loop,'ASOResult') && isstruct(ASOresult.loop)
-            [ASOresult.loop.coord]=deal(ASOresult.loop.(typeLoop));
-        else
-            [ASOresult.loop.coord]=deal(ASOresult.loop.ASOResult);
-            
-        end
-        [~,areaAdd]=LengthArea(paramoptim,member,{ASOresult.loop.coord});
-        for ii=1:numel(ASOresult.loop)
-            ASOresult.loop(ii).coord(:,2)=ASOresult.loop(ii).coord(:,2)/axisRatio;
-        end
+        
         [fill,~]=LoopToFill(ASOresult.loop,baseGrid);
         additional.filldelta=fill-member.fill;
     else
