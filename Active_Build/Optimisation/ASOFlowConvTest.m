@@ -94,7 +94,7 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     
     [~,areaAdd]=LengthArea(paramoptim,member,loop);
     obj=ASOresult.flow;
-    objValue=obj.CD;
+    objValue=1;
     additional=obj;
    
     
