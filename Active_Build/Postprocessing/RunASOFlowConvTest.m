@@ -1,4 +1,4 @@
-function [addstruct]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
+function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
     % Utility to call ASOFlow from an interactive matlab session loading
     % all the necessary data
     % pathToDir <str> : Original data and run location
@@ -71,7 +71,8 @@ function [addstruct]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
             addstruct=[];
         end
     catch MEid
-        
+        disp(population(ii).location)
+        disp(MEid.getReport)
     end
     %% Additional postreatment
     for jj=1:numel(population)
