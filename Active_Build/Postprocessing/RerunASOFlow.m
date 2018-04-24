@@ -46,7 +46,7 @@ function [addstruct]=RerunASOFlow(pathToDir,reRunDir,isRun)
             [objValue,addstruct]=ASOFlow(paramoptim,member,...
                 loop,gridBase);
         else
-            objValue=[]
+            objValue=[];
             addstruct=[];
         end
     catch MEid
