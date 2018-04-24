@@ -7,7 +7,7 @@ function [addstruct]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
     % isRun <logical> : Provides the option to not run ASOFlow (when false) and post
     %                   treat the existing result
     
-    if nargin<=2
+    if nargin<=4
         isRun=true;
     end
     if nargin<=1
@@ -29,7 +29,7 @@ function [addstruct]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
     
     % EXTRACT CORRECT PROFILES
     population=[optimstruct(iter).population];
-    population=population(repmat(reshape(prof,[1 numel(prof)]),[1 numel(nIter)]));
+    population=population(repmat(reshape(prof,[1 numel(prof)]),[1 numel(iter)]))
     for ii=1:numel(population)
         population(ii).location
         [loopPath,loopName]=FindDir(population(ii).location,'restart',0);
@@ -42,7 +42,7 @@ function [addstruct]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
     
     
     mkdir(reRunDir)
-    reRunDir=[reRunDir,filesep,regexp(pathToDir,'^*Dir_','Dir_')];
+    reRunDir=[reRunDir,filesep,regexprep(pathToDir,'^.*Dir_','Dir_')];
     mkdir(reRunDir)
     
     for ii=1:numel(population)
