@@ -48,7 +48,7 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     for ii=1:numel(population)
         iterProfNum=regexprep(regexp(population(ii).loopName,'_','split'),'[^0-9]','');
         iterProfNum=cellfun(@str2double,iterProfNum(~cellfun(@isempty,iterProfNum)));
-        optimstruct(iterProfNum(1)).population(iterProfNum(2));    
+        optimstruct(iterProfNum(1)).population(iterProfNum(2));
         population(ii).oldlocation=population(ii).location;
         population(ii).location=[reRunDir,filesep,'profile_',...
             int2str(iterProfNum(1)),'_',int2str(iterProfNum(2))];
@@ -60,35 +60,36 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
         
         system(cmd);
     end
-    try
-        if isRun
-            for ii=1:numel(population)
+    
+    if isRun
+        for ii=1:numel(population)
+            try
                 [objValue,addstruct(ii)]=ASOFlowConvTest(paramoptim,population(ii),...
                     population(ii).loop,gridBase);
+            catch MEid
+                disp(population(ii).location)
+                disp(MEid.getReport)
             end
-        else
-            objValue=[];
-            addstruct=[];
         end
-    catch MEid
-        disp(population(ii).location)
-        disp(MEid.getReport)
+    else
+        objValue=[];
+        addstruct=[];
     end
     %% Additional postreatment
     for jj=1:numel(population)
         try
             SU2.SU2toPLT([population(jj).locationclean,filesep,'mesh.su2'])
             SU2.SU2toPLT([population(jj).locationclean,filesep,'run',filesep,'mesh.su2'])
-
+            
             fileToPlt={'mesh.su2.dat',['run',filesep,'mesh.su2.dat'],['run',filesep,'flow.dat']};
-
+            
             for ii=1:numel(fileToPlt)
                 cmd=['mv "',population(jj).locationclean,filesep,fileToPlt{ii},'" "',...
                     population(jj).locationclean,filesep,regexprep(fileToPlt{ii},'dat','plt'),'"'];
                 system(cmd)
             end
         catch MEid2
-
+            
         end
     end
     
