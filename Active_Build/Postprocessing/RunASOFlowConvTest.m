@@ -1,4 +1,4 @@
-function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,isRun)
+function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,np)
     % Utility to call ASOFlow from an interactive matlab session loading
     % all the necessary data
     % pathToDir <str> : Original data and run location
@@ -7,13 +7,16 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     % isRun <logical> : Provides the option to not run ASOFlow (when false) and post
     %                   treat the existing result
     
-    if nargin<=4
-        isRun=true;
-    end
+    
+    isRun=true;
     if nargin<=1
         reRunDir='.';
     end
+    if nargin<=4
+        np=4;
+    end
     
+    disp('Preparing Data')
     [paramPath]=FindDir([pathToDir],'FinalParam',0);
     [optimPath]=FindDir([pathToDir],'OptimRes',0);
     [gridPath]=FindDir([pathToDir,filesep,...
@@ -29,9 +32,8 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     
     % EXTRACT CORRECT PROFILES
     population=[optimstruct(iter).population];
-    population=population(repmat(reshape(prof,[1 numel(prof)]),[1 numel(iter)]))
+    population=population(repmat(reshape(prof,[1 numel(prof)]),[1 numel(iter)]));
     for ii=1:numel(population)
-        population(ii).location
         [loopPath,loopName]=FindDir(population(ii).location,'restart',0);
         out=load(loopPath{1},'loop');
         population(ii).loop=out.loop;
@@ -39,43 +41,52 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     end
     
     % MAKE THE CORRECT RERUNDIR COPIES
-    
-    
+    disp('Preparing directories')
     mkdir(reRunDir)
     reRunDir=[reRunDir,filesep,regexprep(pathToDir,'^.*Dir_','Dir_')];
+    
     mkdir(reRunDir)
     
     for ii=1:numel(population)
+        
         iterProfNum=regexprep(regexp(population(ii).loopName,'_','split'),'[^0-9]','');
         iterProfNum=cellfun(@str2double,iterProfNum(~cellfun(@isempty,iterProfNum)));
         optimstruct(iterProfNum(1)).population(iterProfNum(2));
         population(ii).oldlocation=population(ii).location;
         population(ii).location=[reRunDir,filesep,'profile_',...
             int2str(iterProfNum(1)),'_',int2str(iterProfNum(2))];
-        cmd=['cp -r "',population(ii).oldlocation,filesep,'" "',...
+        filename=['boundary_',int2str(iterProfNum(1)),'_',int2str(iterProfNum(2)),'.dat'];
+        cmd=['cp -r "',population(ii).oldlocation,filesep,filename,'" "',...
             population(ii).location,filesep,'"'];
         finDir=regexp(population(ii).location,filesep,'split');
         finDir=finDir(~cellfun(@isempty,finDir));
         population(ii).locationclean=[reRunDir,filesep,finDir{end}];
-        
+        if isdir(population(ii).location)
+            system(['rm -rf ',population(ii).location])
+        end
+        mkdir(population(ii).location)
         system(cmd);
+        disp(['Profile ',int2str(ii), ' copied'])
     end
     
-    if isRun
-        for ii=1:numel(population)
-            try
-                [objValue,addstruct(ii)]=ASOFlowConvTest(paramoptim,population(ii),...
-                    population(ii).loop,gridBase);
-            catch MEid
-                disp(population(ii).location)
-                disp(MEid.getReport)
-            end
+    % RUN THE CONVERGENCE TESTS
+    disp('Starting CFD runs for convergence testing')
+    for ii=1:numel(population)
+        origDir=cd;
+        try
+            [objValue,addstruct(ii)]=ASOFlowConvTest(paramoptim,population(ii),...
+                population(ii).loop,gridBase,np);
+            disp(['SUCCESS : ',population(ii).location])
+        catch MEid
+            disp(['FAILURE : ',population(ii).location])
+            disp(MEid.getReport)
+            cd(origDir)
         end
-    else
-        objValue=[];
-        addstruct=[];
     end
+    
     %% Additional postreatment
+    
+    disp('Post treatment of CFD runs')
     for jj=1:numel(population)
         try
             SU2.SU2toPLT([population(jj).locationclean,filesep,'mesh.su2'])

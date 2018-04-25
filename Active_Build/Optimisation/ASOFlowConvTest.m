@@ -1,4 +1,4 @@
-function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
+function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid,np)
     % Function for the interface of the RSVS shape optimisation framework
     % and the B-Spline and Smoothness constraint ASO
     %
@@ -6,11 +6,11 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     % ---------------------
     % Generate Mesh
     
-     boundaryLoc=member.location;
-%     SU2Flow_Handler(paramoptim,boundaryLoc);
-%     copyfile([boundaryLoc,filesep,'SU2CFD',filesep,'triangularmesh.su2'],...
-%         [boundaryLoc,filesep,'mesh.su2'])
-%     rmdir([boundaryLoc,filesep,'SU2CFD'],'s')
+    boundaryLoc=member.location;
+    SU2Flow_Handler(paramoptim,boundaryLoc);
+    copyfile([boundaryLoc,filesep,'SU2CFD',filesep,'triangularmesh.su2'],...
+        [boundaryLoc,filesep,'mesh.su2'])
+    rmdir([boundaryLoc,filesep,'SU2CFD'],'s')
     
     % ---------------------
     % Generate convHull boundary
@@ -45,10 +45,10 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
-    ASOOptions.solver.np=currentMachineFile.slots;
+    ASOOptions.solver.np=np;
     
-    ASOOptions.solver.timeout = su2ProcSec/currentMachineFile.slots;
-    ASOOptions.snopt.wcLimit = asoProcSec/currentMachineFile.slots;
+    ASOOptions.solver.timeout = su2ProcSec/np;
+    ASOOptions.snopt.wcLimit = asoProcSec/np;
     ASOOptions.snopt.maxIter = snoptIter;
     % Call the correct constraints
     for ii=1:numel(desVarConstr)
@@ -66,7 +66,7 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     end
     
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
-    ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
+    ASOOptions.solver.mpiOpts='';
     % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
     
     % Other Options
@@ -96,7 +96,7 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     obj=ASOresult.flow;
     objValue=1;
     additional=obj;
-   
+    
     
     
     % ---------------------
