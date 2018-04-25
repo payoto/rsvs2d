@@ -8,7 +8,6 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     %                   treat the existing result
     
     
-    isRun=true;
     if nargin<=1
         reRunDir='.';
     end
@@ -90,7 +89,15 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
             population(ii).errorMsg=[population(ii).errorMsg,MEid.getReport];
         end
     end
+    save([reRunDir,filesep,'workspace_convtest.mat']);
+    
     [addstruct(1:numel(population)).errorMsg]=deal(population(:).errorMsg);
+    for ii=1:numel(population)
+        population(ii).asocase=asoCase();
+        addstruct(ii).asocase=asoCase();
+    end
+    save([reRunDir,filesep,'workspace_convtest.mat']);
+    
     %% Additional postreatment
     
     disp('Post treatment of CFD runs')
