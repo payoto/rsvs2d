@@ -1,4 +1,4 @@
-function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,np)
+function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,caseStr)
     % Utility to call ASOFlow from an interactive matlab session loading
     % all the necessary data
     % pathToDir <str> : Original data and run location
@@ -12,11 +12,12 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     if nargin<=1
         reRunDir='.';
     end
-    if nargin<=4
-        np=4;
-    end
-    
     disp('Preparing Data')
+    if nargin<=4
+        caseStr='Default';
+    end
+    [asoCase]=ParamConvTest(caseStr);
+    
     [paramPath]=FindDir([pathToDir],'FinalParam',0);
     [optimPath]=FindDir([pathToDir],'OptimRes',0);
     [gridPath]=FindDir([pathToDir,filesep,...
@@ -29,6 +30,8 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     optimstruct=out.optimstruct;
     out=load(gridPath{1},'grid');
     gridBase=out.grid.base;
+    
+    paramoptim.obj.aso.asoCase=asoCase;
     
     % EXTRACT CORRECT PROFILES
     population=[optimstruct(iter).population];
@@ -43,7 +46,7 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     % MAKE THE CORRECT RERUNDIR COPIES
     disp('Preparing directories')
     mkdir(reRunDir)
-    reRunDir=[reRunDir,filesep,regexprep(pathToDir,'^.*Dir_','Dir_')];
+    reRunDir=[reRunDir,filesep,regexprep(pathToDir,'^.*Dir_','Dir_'),caseStr];
     
     mkdir(reRunDir)
     
@@ -71,19 +74,23 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     
     % RUN THE CONVERGENCE TESTS
     disp('Starting CFD runs for convergence testing')
+    [population(:).errorMsg]=deal('');
     for ii=1:numel(population)
         origDir=cd;
         try
             [objValue,addstruct(ii)]=ASOFlowConvTest(paramoptim,population(ii),...
-                population(ii).loop,gridBase,np);
+                population(ii).loop,gridBase);
             disp(['SUCCESS : ',population(ii).location])
         catch MEid
             disp(['FAILURE : ',population(ii).location])
             disp(MEid.getReport)
             cd(origDir)
+            population(ii).constraint=false;
+            population(ii).exception=[population(ii).exception,'error: ',MEid.identifier ,' - '];
+            population(ii).errorMsg=[population(ii).errorMsg,MEid.getReport];
         end
     end
-    
+    [addstruct(1:numel(population)).errorMsg]=deal(population(:).errorMsg);
     %% Additional postreatment
     
     disp('Post treatment of CFD runs')

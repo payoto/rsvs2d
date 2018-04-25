@@ -1,4 +1,4 @@
-function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid,np)
+function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     % Function for the interface of the RSVS shape optimisation framework
     % and the B-Spline and Smoothness constraint ASO
     %
@@ -45,10 +45,10 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid,n
     
     ASOOptions = asoCase();
     ASOOptions.solver.mach = nMach;
-    ASOOptions.solver.np=np;
+    ASOOptions.solver.np;
     
-    ASOOptions.solver.timeout = su2ProcSec/np;
-    ASOOptions.snopt.wcLimit = asoProcSec/np;
+    ASOOptions.solver.timeout = su2ProcSec/ASOOptions.solver.np;
+    ASOOptions.snopt.wcLimit = asoProcSec/ASOOptions.solver.np;
     ASOOptions.snopt.maxIter = snoptIter;
     % Call the correct constraints
     for ii=1:numel(desVarConstr)
