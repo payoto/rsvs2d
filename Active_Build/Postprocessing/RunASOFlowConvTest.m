@@ -17,8 +17,8 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     end
     [asoCase,caseStrPrint]=ParamConvTest(caseStr);
     
-    [paramPath]=FindDir([pathToDir],'FinalParam',0);
-    [optimPath]=FindDir([pathToDir],'OptimRes',0);
+    [paramPath]=FindDir(pathToDir,'FinalParam',0);
+    [optimPath]=FindDir(pathToDir,'OptimRes',0);
     [gridPath]=FindDir([pathToDir,filesep,...
         'iteration_0',filesep,'profile_0'],'restart',0);
     
@@ -77,8 +77,11 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     for ii=1:numel(population)
         origDir=cd;
         try
-            [objValue,addstruct(ii)]=ASOFlowConvTest(paramoptim,population(ii),...
+            [~,addstruct(ii)]=ASOFlowConvTest(paramoptim,population(ii),...
                 population(ii).loop,gridBase);
+            if ~isempty(addstruct(ii).errorObj)
+                error(addstruct(ii).errorObj)
+            end
             disp(['SUCCESS : ',population(ii).location])
         catch MEid
             disp(['FAILURE : ',population(ii).location])
