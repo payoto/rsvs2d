@@ -16,7 +16,7 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     if nargin<=4
         caseStr='Default';
     end
-    [asoCase]=ParamConvTest(caseStr);
+    [asoCase,caseStrPrint]=ParamConvTest(caseStr);
     
     [paramPath]=FindDir([pathToDir],'FinalParam',0);
     [optimPath]=FindDir([pathToDir],'OptimRes',0);
@@ -46,7 +46,7 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     % MAKE THE CORRECT RERUNDIR COPIES
     disp('Preparing directories')
     mkdir(reRunDir)
-    reRunDir=[reRunDir,filesep,regexprep(pathToDir,'^.*Dir_','Dir_'),caseStr];
+    reRunDir=[reRunDir,filesep,regexprep(pathToDir,'^.*Dir_','Dir_'),caseStrPrint];
     
     mkdir(reRunDir)
     
