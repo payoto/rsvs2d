@@ -38,8 +38,8 @@ function [objValue,additional]=ASOFlowConvTest(paramoptim,member,loop,baseGrid)
     [asoCase,asoPath,nMach,asoReturnFillChange,desVarConstr,desVarVal,...
         su2ProcSec,asoProcSec,snoptIter]=ExtractVariables(varExtract,paramoptim);
     
-    addpath(MakePathCompliant(asoPath));
-    addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
+    %addpath(MakePathCompliant(asoPath));
+    %addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
     copyfile([MakePathCompliant(asoPath),filesep,'templatesu2.cfg'],...
         [optimDirectory,filesep,'su2.cfg'])
     
