@@ -95,6 +95,7 @@ function [addstruct,population]=RunASOFlowConvTest(pathToDir,reRunDir,iter,prof,
     save([reRunDir,filesep,'workspace_convtest.mat']);
     
     [addstruct(1:numel(population)).errorMsg]=deal(population(:).errorMsg);
+    [addstruct(1:numel(population)).location]=deal(population(:).location);
     for ii=1:numel(population)
         population(ii).asocase=asoCase();
         addstruct(ii).asocase=asoCase();
