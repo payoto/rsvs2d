@@ -12,6 +12,7 @@ addpath('/panfs/panasas01/aero/ap1949/ASO_LK/SRC/matlab-snopt')
 
 
     [ASOConvstruct,population]=RunASOFlowConvTest(pathStr,...
-        '/panfs/panasas01/aero/ap1949/SnakVolParam/results/ConvSU2_2',2,...
-        1:100,['CFLadapt']);
+        '/panfs/panasas01/aero/ap1949/SnakVolParam/results/ConvSU2_3',2,...
+        1:100,['NewDefault']);
 
+save Debug_TestConv_NewDefault2

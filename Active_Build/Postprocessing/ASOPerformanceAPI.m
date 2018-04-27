@@ -72,6 +72,7 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,dirSave,nameRun)
                 try
                     ASOstruct(kk)=ASOInterface(optimstruct(ii).population(jj).location);
                     ASOstruct(kk).DEIter=ii-1;
+                    ASOstruct(kk).location=optimstruct(ii).population(jj).location;
                     kk=kk+1;
                 catch MEid
                     MEid.getReport
@@ -112,7 +113,7 @@ end
 
 function [ASOstruct]=ASOInterface(pathToASO)
     expectFields={'DEIter','majorIt','obj','refLvl','geomErrMag','ASOdesVec',...
-        'nSurfPoints','geomStepMag','objFuncCalls','CD0','errorVecMode'};
+        'nSurfPoints','geomStepMag','objFuncCalls','CD0','errorVecMode','location'};
     standardIn=cell(size(expectFields));
     [standardIn{:}]=deal(0);
     structBuild=[expectFields;standardIn];
