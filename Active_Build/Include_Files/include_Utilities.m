@@ -451,32 +451,54 @@ end
 function [datmat]=MovingIntegralWindowLoop(x,dat,span)
     
     % calculate start and end of each window
+    eps=1e-12;
     sizDat=size(dat);
+    xminmax=max(x)-min(x);
     x=reshape(x,[numel(x),1]);
     dat=reshape(dat,[numel(x),sizDat(sizDat~=numel(x))]);
-    xAll=sort(mod([x-span;x;x+span],max(x)));
+    xAll=sort(mod([x-span;x;x+span]-min(x),xminmax)+min(x));
     datAll = interp1(x,dat,xAll);
     %calculate central portion of integration window
     % the final and first point are assumed to be in the same place
     xallMat=repmat(xAll,[1 numel(x)]);
     xDelta=(xallMat-repmat(x',[numel(xAll) 1]));
-    actMat=(mod(xDelta,max(x))>=-span & mod(xDelta,max(x))<span) | ...
-        (mod(-xDelta,max(x))>=-span & mod(-xDelta,max(x))<span);
+    
+    % alternate modulus calc
+    %[xDelta1]=CustomMod(xDelta,xminmax);
+    %[xDelta2]=CustomMod(-xDelta,xminmax);
+    %actMat=min(xDelta1,xDelta2)<=span+eps;
+    %actMat=min(xDelta1,xDelta2)<=span+eps;
+    
+    actMat=(mod(xDelta,xminmax)<=(span+eps)) | ...
+        (mod(-xDelta,xminmax)<=(span+eps));
+    
+    
     datmat=repmat(reshape(datAll,[size(datAll,1) 1 size(datAll,2)]),[1 numel(x)]);
     datmat=(datmat+datmat([2:end,1],:,:))/2.*...
-        repmat(mod(xallMat([2:end,1],:)-xallMat,max(x)),[1 1 size(dat,2)]);
-    datmat(~actMat)=0;
+        repmat(mod(xallMat([2:end,1],:)-xallMat,xminmax),[1 1 size(dat,2)]);
+    datmat(~repmat(actMat,[1 1 size(dat,2)]))=0;
     datmat=reshape(sum(datmat,1),[size(datmat,2) size(datmat,3)])/(2*span);
     
 end
-
+%{
+function [xDelta1]=CustomMod(xDelta,xmax)
+    xDelta1=xDelta;
+    
+    xDelta1(xDelta<=-xmax)=xDelta1(xDelta<=-xmax)-...
+        ceil(xDelta1(xDelta<=-xmax)/-xmax).*-xmax;
+    xDelta1(xDelta1<0)=xmax+xDelta1(xDelta1<0);
+    xDelta1(xDelta1>=xmax)=xDelta1(xDelta1>=xmax)-...
+        ceil(xDelta1(xDelta1>=xmax)/xmax).*xmax;
+    
+end
+%}
 function [datmat]=MovingIntegralWindowLoop2(x,dat,span)
     
     % calculate start and end of each window
     sizDat=size(dat);
     x=reshape(x,[numel(x),1]);
     dat=reshape(dat,[numel(x),sizDat(sizDat~=numel(x))]);
-    xAll=sort(mod([x-span;x;x+span],max(x)));
+    xAll=sort(mod([x-span;x;x+span]-min(x),max(x)-min(x))+min(x));
     datAll = interp1(x,dat,xAll);
     %calculate central portion of integration window
     % the final and first point are assumed to be in the same place

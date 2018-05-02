@@ -120,7 +120,7 @@ function [dirSave,nameRun,figList]=HandleVarargin(cellArgin)
     for ii=1:2:numel(cellArgin)
         eval([cellArgin{ii},'=cellArgin{ii+1};']);
     end
-
+    
 end
 
 function [ASOstruct]=ASOInterface(pathToASO)
@@ -173,7 +173,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     c=get(axDeOpt,'colororder');
     fColor=[ 0 0 0];
     ASOstructAll=ASOstruct;
-    splitCase='subDivLevel';
+    splitCase='RunName';
     switch splitCase
         case 'errorVecMode'
             errVecModes={ASOstruct.errorVecMode};
@@ -184,6 +184,11 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
                 errVecModes{ii}=int2str(unique(ASOstruct(ii).refLvl));
             end
             
+            lErrVec=unique(errVecModes);
+            funcLogTest=@(in) ~cellfun(@isempty,regexp(errVecModes,in));
+        case 'RunName'
+            errVecModes=regexprep(regexprep({ASOstruct.location}...
+                ,'^.*Dir_[0-9-]*T[0-9]{6}_',''),'/.*$','');
             lErrVec=unique(errVecModes);
             funcLogTest=@(in) ~cellfun(@isempty,regexp(errVecModes,in));
         otherwise
@@ -211,7 +216,8 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     
     % Generate figures
     if ~isaxDef
-        figNames={'ASO Performance','ASO Performance Normalised','ASO desvar to surface','Func Maj','Scatter'};
+        figNames={'ASO Performance','ASO Performance Normalised',...
+            'ASO desvar to surface','Func Maj','Scatter','Objective'};
         tfunc=@(x)numel(unique(x));
         runExtraFig=any(cellfun(tfunc,{summaryStruct.subDivLevel}));
         if runExtraFig
@@ -242,6 +248,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     % Plot Data
     fColor=[ 0 0 0];
     fMarker='.';
+    lErrVec=regexprep(lErrVec,'_',' ');
     for iii=1:numel(summaryStruct)
         if numel(lErrVec)>1
             fColor=c(iii,:);
@@ -251,6 +258,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
         PlotASOPerformance_fig3(ax(9:12),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig4(ax(13:16),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig5(ax(17:20),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
+        PlotASOPerformance_fig6(ax(21:24),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         
         % Variable subdiv plots
         kk=kkStart;
@@ -267,7 +275,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
         
     end
     
-    for ii=[2 3 5 6 7  9 16 kkStart+(9:16)]
+    for ii=[2 3 5 6 7  9 11 16 21 23 kkStart+(9:16)]
         ax(ii).XScale='log';
     end
     % err mag plots
@@ -277,7 +285,6 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     AverageAllLines(ax(7),[1e-3 1e-2 1e-1 1 10])
     AverageAllLines(ax(9),{'lin',4})
     AddNumbersInRange(ax(3),0)
-    AddNumbersInRange(ax(11),0.9,2)
     AddNumbersInRange(ax(17),0.9,2)
     AddNumbersInRange(ax(18),0.9,2)
     AddNumbersInRange(ax(19),0.9,2)
@@ -292,6 +299,10 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     AverageAllLines(ax(14),{'lin',3})
     AverageAllLines(ax(15),{'lin',3})
     AverageAllLines(ax(16),{'log',3})
+    AverageAllLines(ax(22),[1:10:101])
+    AverageAllLines(ax(24),[1:10:101])
+    AverageAllLines(ax(21),[0.03:0.02:0.11])
+    AverageAllLines(ax(23),{'log',5})
     % sub div
     
     AverageAllLines(ax(kkStart+2),[1.5:4.5])
@@ -321,7 +332,8 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     nIter95Delta=[];    nIter95DeltaRat=[];    nDesVar=[];    nDesVarperBody=[];
     changeObjInitial=[];    changeObjInitialRat=[];    changeObjCD0=[];
     changeObjFinalCD0=[];    geomStepMag=[];    nSurfPoints=[];
-    nFuncperMaj=[];   changeAtIter10=[]; changeAtIter10Rat=[];
+    nFuncperMaj=[];   changeAtIter10=[]; changeAtIter10Rat=[]; bestObj=[];
+    cd0=[]; profNum=[];
     
     if true
         d2=who;
@@ -345,7 +357,10 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
         nDesVar=[nDesVar,ASOstruct(ii).ASOdesVec];
         nDesVarperBody=[nDesVarperBody,ASOstruct(ii).ASOdesVec/ASOstruct(ii).nTopo];
         subDivLevel=[subDivLevel,unique(ASOstruct(ii).refLvl)];
-        
+        cd0=[cd0,unique(ASOstruct(ii).CD0)*ones(size(unique(ASOstruct(ii).refLvl)))];
+        nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
+            '^.*profile_',''),'_','split'));
+        profNum=[profNum,nums(end)];
         if numel(errMagVec)~=numel(subDivLevel)
             error('subDivLevel size does not match number of errMagnitudes provided')
         end
@@ -354,6 +369,7 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
             if numel(currList)==1
                 currList(2)=currList(1);
             end
+            bestObj(jjStart+jj)=min(ASOstruct(ii).obj(currList));
             changeObj(jjStart+jj)=min(ASOstruct(ii).obj(currList))...
                 -ASOstruct(ii).obj(currList(1));
             changeObjRat(jjStart+jj)=(min(ASOstruct(ii).obj(currList))...
@@ -447,21 +463,18 @@ function []=PlotASOPerformance_fig3(ax,summarrystruct,caseName,fMarker,fColor)
     % Magnitude of the geometric step vs number of surf points and # of design variables
     plot3(ax(2),summarrystruct.nSurfPoints,summarrystruct.nDesVar,...
         summarrystruct.geomStepMag,fMarker,'color',fColor)
-    %plot(ax(3),summarrystruct.errMagVec,summarrystruct.changeObjCD0,fMarker,'color',fColor)
+    semilogy(ax(3),summarrystruct.errMagVec,abs(summarrystruct.changeObjCD0),fMarker,'color',fColor)
+    ax(3).YScale='log';
     %plot(ax(3),summarrystruct.changeAtIter10Rat,summarrystruct.changeObj,fMarker,'color',fColor)
-    s=scatter(ax(3),summarrystruct.changeAtIter10Rat,summarrystruct.changeObj,9,...
-        summarrystruct.subDivLevel);
-    ax(3).Color=[0.5 0.5 0.5];
-    s.MarkerEdgeColor=fColor;
-    s.MarkerFaceColor='flat';
+    
     plot3(ax(4),summarrystruct.nDesVarperBody,summarrystruct.changeObj,...
         summarrystruct.nIter95Delta,fMarker,'color',fColor)
     %plot(ax(4),summarrystruct.errMagVec,summarrystruct.changeObjFinalCD0,fMarker,'color',fColor)
     % Add lines and numbers indicating overUnder
     
     
-%     ax(1).XLabel.String='# surf points';
-%     ax(1).YLabel.String='# design variable';
+    %     ax(1).XLabel.String='# surf points';
+    %     ax(1).YLabel.String='# design variable';
     ax(1).XLabel.String='# desVar per body';
     ax(1).YLabel.String='Geometric step';
     ax(2).XLabel.String='# surf points';
@@ -469,8 +482,6 @@ function []=PlotASOPerformance_fig3(ax,summarrystruct,caseName,fMarker,fColor)
     ax(2).ZLabel.String='Size of Geometric Step';
     ax(3).XLabel.String='subdiv error mag';
     ax(3).YLabel.String='CD0-obj(1)';
-    ax(3).XLabel.String='Ratio change at iter 10/total change';
-    ax(3).YLabel.String='Total change';
     ax(4).XLabel.String='Des var per body';
     ax(4).YLabel.String='change in obj';
     ax(4).ZLabel.String='nIter 90%';
@@ -516,7 +527,7 @@ function []=PlotASOPerformance_fig5(ax,summarrystruct,caseName,fMarker,fColor)
     ax(3).Color=[0.6 0.6 0.6];
     s.MarkerEdgeColor=fColor;
     s.MarkerFaceColor='flat';
-   s=scatter(ax(4),summarrystruct.changeAtIter10Rat,summarrystruct.changeObjRat,9,...
+    s=scatter(ax(4),summarrystruct.changeAtIter10Rat,summarrystruct.changeObjRat,9,...
         log10(summarrystruct.nDesVarperBody));
     ax(4).Color=[0.6 0.6 0.6];
     s.MarkerEdgeColor=fColor;
@@ -538,6 +549,62 @@ function []=PlotASOPerformance_fig5(ax,summarrystruct,caseName,fMarker,fColor)
     ax(4).XLabel.String='Ratio change at iter 10/total change';
     ax(4).YLabel.String='Total change/obj val';
     ax(4).Title.String='nDesVarperBody';
+end
+
+function []=PlotASOPerformance_fig6(ax,summarrystruct,caseName,fMarker,fColor)
+    
+    
+    % Rain plots
+    %{
+    l=plot(ax(1),[summarrystruct.cd0;summarrystruct.cd0*1.05],...
+        [summarrystruct.cd0;summarrystruct.bestObj]);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    ax(1).YScale='log';
+    l=plot(ax(2),[summarrystruct.profNum;summarrystruct.profNum+0.5],...
+        [summarrystruct.cd0;summarrystruct.bestObj]);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    ax(2).YScale='log';
+    %}
+    ReorganiseSubPlots(ax,[1 4],[0.075 0.01 0.1 0.01],[0 0.075],[9 11])
+    x2=summarrystruct.errMagVec;
+    [~,i]=sort(x2);
+    l=plot(ax(1),[x2(i)],[summarrystruct.changeObjRat(i)]);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    %ax(1).YScale='log';
+    
+    x=1:100;
+    y=zeros(size(x));
+    y([summarrystruct.profNum])=[summarrystruct.changeObjRat];
+    l=plot(ax(2),x,y);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    %ax(2).YScale='log';
+    % Line plots
+    l=plot(ax(3),[x2(i);x2(i)]',...
+        [summarrystruct.cd0(i);summarrystruct.bestObj(i)]');
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    ax(3).YScale='log';
+    
+    y=zeros(size(x))*nan;
+    y([summarrystruct.profNum])=[summarrystruct.bestObj];
+    l=plot(ax(4),x,y);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    ax(4).YScale='log';
+    
+    
+    ax(1).XLabel.String='Error Mag Vec ';
+    ax(1).YLabel.String='Change of Objective';
+    ax(2).XLabel.String='Profile number';
+    ax(2).YLabel.String='Change of Objective';
+    ax(3).XLabel.String='Error Mag Vec ';
+    ax(3).YLabel.String='Best objective';
+    ax(4).XLabel.String='Profile number';
+    ax(4).YLabel.String='Best objective';
 end
 
 
@@ -644,10 +711,10 @@ function [l]=AverageLines(ax,x,y,ranges)
     for ii=1:numel(cellRanges)
         cellRanges{ii}=find(x<ranges(ii+1) & x>=ranges(ii));
         if numel(cellRanges{ii})>0
-            xPlotMean=[xPlotMean,mean(x(cellRanges{ii}))];
-            yPlotMean=[yPlotMean,mean(y(cellRanges{ii}))];
-            xPlotMedian=[xPlotMedian,median(x(cellRanges{ii}))];
-            yPlotMedian=[yPlotMedian,median(y(cellRanges{ii}))];
+            xPlotMean=[xPlotMean,mean(x(cellRanges{ii}),'omitnan' )];
+            yPlotMean=[yPlotMean,mean(y(cellRanges{ii}),'omitnan' )];
+            xPlotMedian=[xPlotMedian,median(x(cellRanges{ii}),'omitnan' )];
+            yPlotMedian=[yPlotMedian,median(y(cellRanges{ii}),'omitnan' )];
         end
     end
     
@@ -667,7 +734,7 @@ function [l]=AverageLines3D(ax,x,y,z,ranges)
     else
         rangesX=ranges{1};
         rangesY=ranges{2};
-    
+        
     end
     if iscell(ranges{2})
         switch ranges{2}{1}
