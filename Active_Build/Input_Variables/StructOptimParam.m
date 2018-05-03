@@ -1323,7 +1323,7 @@ function [paroptim]=buseASOFillreturn()
 end
 
 
-function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,startIter)
+function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
     [paroptim]=areabusesweep(0.12);
     paroptim.general.maxIter=1;
     
@@ -1340,15 +1340,19 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,startIter)
     paroptim.constraint.resConstr={};
     paroptim.constraint.resVal={};
 
-    paroptim.general.restartIterNum=startIter;
-    
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to ick the first 50% of a population
     paroptim.general.optimMethod='none';
     
-    paroptim.obj.aso.paramoveride.surfaceFcn=@(geom) Geometry.Subdivision(geom,lvlSubdiv,errTreatment);
+    paroptim.obj.aso.paramoveride.surfaceFcn=...
+        @(geom) Geometry.Subdivision(geom,lvlSubdiv,errTreatment);
+    paroptim.obj.aso.paramoveride.nLevel=max(nLevel-lvlSubdiv+1,1);
+    paroptim.obj.aso.paramoveride.maxFunCalls = 150;
+    
     paroptim.obj.aso.asoReturnFillChange=false;
     paroptim.obj.aso.su2ProcSec=4*1800;
     paroptim.obj.aso.asoProcSec=4*12*3600;
-    paroptim.obj.aso.snoptIter=100;
+    paroptim.obj.aso.snoptIter=10;
 end
 
 function [paroptim]=areabuseaxrat(e)

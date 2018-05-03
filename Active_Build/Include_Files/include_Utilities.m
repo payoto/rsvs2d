@@ -449,6 +449,8 @@ function [mma]=MovingAverageLoop(dat,span)
 end
 
 function [datmat]=MovingIntegralWindowLoop(x,dat,span)
+    % x(1) and x(end) must refer to the same location on the loop and
+    % dat(1) and dat(end) are expected to be the same value.
     
     % calculate start and end of each window
     eps=1e-12;

@@ -124,15 +124,19 @@ function [dirSave,nameRun,figList]=HandleVarargin(cellArgin)
 end
 
 function [ASOstruct]=ASOInterface(pathToASO)
-    expectFields={'DEIter','majorIt','obj','refLvl','geomErrMag','ASOdesVec',...
-        'nSurfPoints','geomStepMag','objFuncCalls','CD0','errorVecMode','location','nTopo'};
+    expectFields={'DEIter','majorIt','obj','geomStepMag','eDV', 'loops',...
+        'refLvl','geomErrMag','ASOdesVec','errX','errY','errNorm','errCNorm','errRaw',...
+        'nSurfPoints','objFuncCalls','CD0','errorVecMode',...
+        'location','nTopo'};
     standardIn=cell(size(expectFields));
     [standardIn{:}]=deal(0);
     structBuild=[expectFields;standardIn];
     ASOstruct=struct(structBuild{:});
     
-    [subdivLevel1, errorMagnitude, nDV] = ASO.Postproc.subdivData(pathToASO);
-    [majorIt, objective, subdivLevel, geomStep] = ASO.Postproc.iterationData(pathToASO);
+    [subdivLevel1, errorMagnitude, nDV,errX, errY, errNorm, errCNorm] ...
+        = ASO.Postproc.subdivData(pathToASO);
+    [majorIt, objective, subdivLevel, geomStep,eDV, loops] = ...
+        ASO.Postproc.iterationData(pathToASO);
     [CD0, nFunCall, nSurfPts,errorMode] = ASO.Postproc.ASOData(pathToASO);
     profiles = ASO.Postproc.profileData(pathToASO);
     
@@ -148,6 +152,12 @@ function [ASOstruct]=ASOInterface(pathToASO)
     ASOstruct.CD0=CD0;
     ASOstruct.errorVecMode=errorMode;
     ASOstruct.nTopo=numel(profiles);
+    ASOstruct.errX =errX ;
+    ASOstruct.errY=errY;
+    ASOstruct.errNorm=errNorm;
+    ASOstruct.errCNorm=errCNorm;
+    ASOstruct.eDV=eDV;
+    ASOstruct.loops=loops;
     
     if isempty(majorIt)
         error('No ASO was run')
@@ -195,25 +205,34 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
             error('Unknown split case')
             
     end
-    
+    h2=figure('Name','Convergence History');
+    ax2=axes(h2);
+    hold on
     for iii=1:numel(lErrVec)
         ASOstruct=ASOstructAll(funcLogTest(lErrVec{iii}));
         
         if numel(lErrVec)>1
-            fColor=c(iii,:);
+            fColor=c(mod(iii-1,size(c,1))+1,:);
         end
         % Iteration plots overlaid on DEresults
         for ii=1:numel(ASOstruct)
             plot(axDeOpt,[ASOstruct(ii).DEIter,ASOstruct(ii).DEIter+1],...
                 [ASOstruct(ii).CD0,ASOstruct(ii).obj(end)],'--','color',fColor);
-            % Possibly change this to have a changing color with better
-            % improvements
+
         end
         
         % Data rearrangement
         [summaryStruct(iii)]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec{iii});
+        
+        for ii=1:numel(ASOstruct)
+            nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
+                '^.*profile_',''),'_','split'));
+            plot3(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
+                ones([1 numel(ASOstruct(ii).obj)])*nums(end),ASOstruct(ii).obj,'.-','color',fColor);
+           
+        end
     end
-    
+    view(ax2,0,0);
     % Generate figures
     if ~isaxDef
         figNames={'ASO Performance','ASO Performance Normalised',...
@@ -248,10 +267,14 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     % Plot Data
     fColor=[ 0 0 0];
     fMarker='.';
+    markList='.+';
     lErrVec=regexprep(lErrVec,'_',' ');
     for iii=1:numel(summaryStruct)
         if numel(lErrVec)>1
-            fColor=c(iii,:);
+            fColor=c(mod(iii-1,size(c,1))+1,:);
+            if numel(lErrVec)>size(c,1)
+                fMarker=markList(mod(floor((iii-1)/size(c,1)),size(markList,2))+1);
+            end
         end
         PlotASOPerformance_fig1(ax(1:4),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig2(ax(5:8),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
@@ -318,6 +341,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     legend(ax(1),findobj(ax(1),'type','line'))
     PlotSummaryStruct(summaryStruct)
     
+    h=[h2,h];
 end
 
 function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
