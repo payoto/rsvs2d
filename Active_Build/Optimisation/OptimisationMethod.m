@@ -180,9 +180,9 @@ function [newPop,iterCurr,paramoptim]=NoOptimiserRun(paramoptim,iterCurr)
     
     switch direction
         case 'min'
-            [~,keepInd]=sort(iterCurr.objective,'ascend');
+            [~,keepInd]=sort([iterCurr.objective],'ascend');
         case 'max'
-            [~,keepInd]=sort(iterCurr.objective,'descend');
+            [~,keepInd]=sort([iterCurr.objective],'descend');
     end
     
     keepInd=keepInd(1:(numel(keepInd)*nonePopKeep));

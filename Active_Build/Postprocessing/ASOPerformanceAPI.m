@@ -344,6 +344,32 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     h=[h2,h];
 end
 
+function [ASOstruct]=PlotASOPerformance_DataPreProc(ASOstruct)
+    
+    normVec=@(x) sqrt(sum(x.^2,2));
+    
+    for ii=1:numel(ASOstruct)
+        % Calculate a value for the design represented by the error vectors
+        ASOstruct(ii).nonBasisDesign=zeros(size(ASOstruct(ii).obj));
+        actRef=unique(ASOstruct(ii).refLvl);
+        errX=[ASOstruct(ii).refX{actRef}];
+        errY=[ASOstruct(ii).refY{actRef}];
+        errMat=cell(size(actRef));
+        for jj=1:numel(actRef)
+            errMat{jj}=[errX(:,jj),errY(:,jj),errY(:,jj),errX(:,jj)];
+        end
+        for jj=1:numel(ASOstruct(ii).nonBasisDesign)
+            errVec=normVec([errMat{ASOstruct(ii).refLvl(jj)==actRef}(:,[1 3])*ASOstruct(ii).eDV(jj,[1 3]), ...
+                errMat{ASOstruct(ii).refLvl(jj)==actRef}(:,[2 4])*ASOstruct(ii).eDV(jj,[2 4])]);
+            ASOstruct(ii).nonBasisDesign(jj)=sqrt(sum(errVec.^2));
+        end
+       
+        % Calculate Measures for the onesidedness of the error Vector
+        
+    end
+    
+end
+
 function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     global iterVar;
     if true
