@@ -2,7 +2,7 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     % prepare for different cases
     runASOextract=1;
     
-    [dirSave,nameRun,figList]=HandleVarargin(varargin);
+    [dirSave,nameRun,figList,splitCase]=HandleVarargin(varargin);
     
     if isstruct(optIn)
         try
@@ -95,7 +95,9 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
         ax(2)=axes;
         hold on
     end
-    [h2]=PlotASOPerformance(ASOstruct,ax(2));
+    
+    [ASOstruct]=PlotASOPerformance_DataPreProc(ASOstruct);
+    [h2]=PlotASOPerformance(ASOstruct,ax(2),splitCase);
     h=[h,h2];
     close(h(figList))
     % Save Data
@@ -111,11 +113,12 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     
 end
 
-function [dirSave,nameRun,figList]=HandleVarargin(cellArgin)
+function [dirSave,nameRun,figList,splitCase]=HandleVarargin(cellArgin)
     
     dirSave='';
     nameRun='';
     figList=[];
+    splitCase='runCase';
     
     for ii=1:2:numel(cellArgin)
         eval([cellArgin{ii},'=cellArgin{ii+1};']);
@@ -169,9 +172,9 @@ function [ASOstruct]=ASOInterface(pathToASO)
     
 end
 
-function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
+function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     isaxDef=false;
-    if nargin==3
+    if nargin==4
         isaxDef=true;
         ax=axOther;
     end
@@ -183,7 +186,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     c=get(axDeOpt,'colororder');
     fColor=[ 0 0 0];
     ASOstructAll=ASOstruct;
-    splitCase='RunName';
+    
     switch splitCase
         case 'errorVecMode'
             errVecModes={ASOstruct.errorVecMode};
@@ -243,13 +246,21 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
             
             kk=numel(figNames);
             kkStart=4*kk;
-            xStr={'subDivLevel','nDesVarperBody'};
+            xStr={'subDivLevel','nDesVarperBody','nonBasisDesignStart','nonBasisDesignFinal',...
+                {'errorMeasure','errNormDiffdat','norm'},...
+                {'errorMeasure','errNormdat','norm'},...
+                {'errorMeasure','errCNormdat','norm'}};
             for jj=1:numel(xStr)
                 kk=numel(figNames);
-                
-                figNames(kk+(1:2))={['ASO Performance (',xStr{jj},')'],...
-                    ['ASO Performance Normalised (',xStr{jj},')']};
+                if iscell(xStr{jj})
+                    figNames(kk+(1:2))={['ASO Performance (',xStr{jj}{:},')'],...
+                        ['ASO Performance Normalised (',xStr{jj}{:},')']};
+                else
+                    figNames(kk+(1:2))={['ASO Performance (',xStr{jj},')'],...
+                        ['ASO Performance Normalised (',xStr{jj},')']};
+                end
             end
+            
         end
         
         kk=0;
@@ -286,11 +297,21 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
         % Variable subdiv plots
         kk=kkStart;
         for jj=1:numel(xStr)
-            x=summaryStruct(iii).(xStr{jj});
+            
+            if iscell(xStr{jj})
+                x=summaryStruct(iii).(xStr{jj}{1});
+                for ll=2:numel(xStr{jj})
+                    x=x.(xStr{jj}{ll});
+                end
+                xName=[xStr{jj}{:}];
+            else
+                x=summaryStruct(iii).(xStr{jj});
+                xName=xStr{jj};
+            end
             if runExtraFig
-                PlotASOPerformance_asoperffigx(ax(kk+(1:4)),x,xStr{jj},...
+                PlotASOPerformance_asoperffigx(ax(kk+(1:4)),x,xName,...
                     summaryStruct(iii),lErrVec{iii},fMarker,fColor)
-                PlotASOPerformance_asoperffignormx(ax(kk+(5:8)),x,xStr{jj},...
+                PlotASOPerformance_asoperffignormx(ax(kk+(5:8)),x,xName,...
                     summaryStruct(iii),lErrVec{iii},fMarker,fColor)
                 kk=kk+8;
             end
@@ -298,7 +319,9 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
         
     end
     
-    for ii=[2 3 5 6 7  9 11 16 21 23 kkStart+(9:16)]
+    for ii=[2 3 5 6 7  9 11 16 21 23 ...
+            kkStart+(9:16) ...
+            kkStart+2*8+(1:8)  kkStart+3*8+(1:8) kkStart+5*8+(1:8) kkStart+6*8+(1:8)]
         ax(ii).XScale='log';
     end
     % err mag plots
@@ -338,6 +361,12 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,axOther)
     AverageAllLines(ax(kkStart+14),{'log',3})
     AverageAllLines(ax(kkStart+15),{'log',3})
     AverageAllLines(ax(kkStart+16),{'log',3})
+    for ii=kkStart+4*8+1:kkStart+5*8
+        AverageAllLines(ax(ii),{'lin',4})
+    end
+    for ii=[kkStart+3*8+1:kkStart+4*8,kkStart+5*8+1:numel(ax)]
+        AverageAllLines(ax(ii),{'log',4})
+    end
     legend(ax(1),findobj(ax(1),'type','line'))
     PlotSummaryStruct(summaryStruct)
     
@@ -352,27 +381,68 @@ function [ASOstruct]=PlotASOPerformance_DataPreProc(ASOstruct)
         % Calculate a value for the design represented by the error vectors
         ASOstruct(ii).nonBasisDesign=zeros(size(ASOstruct(ii).obj));
         actRef=unique(ASOstruct(ii).refLvl);
-        errX=[ASOstruct(ii).refX{actRef}];
-        errY=[ASOstruct(ii).refY{actRef}];
+        errX=[ASOstruct(ii).errX{actRef}];
+        errY=[ASOstruct(ii).errY{actRef}];
         errMat=cell(size(actRef));
         for jj=1:numel(actRef)
             errMat{jj}=[errX(:,jj),errY(:,jj),errY(:,jj),errX(:,jj)];
         end
         for jj=1:numel(ASOstruct(ii).nonBasisDesign)
-            errVec=normVec([errMat{ASOstruct(ii).refLvl(jj)==actRef}(:,[1 3])*ASOstruct(ii).eDV(jj,[1 3]), ...
-                errMat{ASOstruct(ii).refLvl(jj)==actRef}(:,[2 4])*ASOstruct(ii).eDV(jj,[2 4])]);
+            errVec=normVec([errMat{ASOstruct(ii).refLvl(jj)==...
+                actRef}(:,[1 3])*ASOstruct(ii).eDV(jj,[1 3])', ...
+                errMat{ASOstruct(ii).refLvl(jj)==...
+                actRef}(:,[2 4])*ASOstruct(ii).eDV(jj,[2 4])']);
             ASOstruct(ii).nonBasisDesign(jj)=sqrt(sum(errVec.^2));
         end
        
         % Calculate Measures for the onesidedness of the error Vector
-        
+        for jj=1:numel(actRef)
+            xy=normVec([ASOstruct(ii).errX{actRef(jj)},...
+                ASOstruct(ii).errY{actRef(jj)}]);
+            ASOstruct(ii).errXYdat(jj)=...
+                GetErrorProperties(normVec([ASOstruct(ii).errX{actRef(jj)},...
+                ASOstruct(ii).errY{actRef(jj)}]));
+            ASOstruct(ii).errNormdat(jj)=...
+               GetErrorProperties( ASOstruct(ii).errNorm{actRef(jj)});
+            ASOstruct(ii).errCNormdat(jj)=...
+                GetErrorProperties(ASOstruct(ii).errCNorm{actRef(jj)});
+            ASOstruct(ii).errNormDiffdat=...
+                GetErrorProperties(real(sqrt(xy.^2-...
+                ASOstruct(ii).errNorm{actRef(jj)}.^2))/ASOstruct(ii).geomErrMag);
+            if any(imag(ASOstruct(ii).errNormDiffdat.norm)>0)
+                warning('is imaginary')
+            end
+        end
     end
     
 end
 
+function [datstruct]=GetErrorProperties(vec)
+    
+    datstruct.norm=sqrt(sum(vec.^2));
+    
+    datstruct.mean=mean(vec);
+    datstruct.median=median(vec);
+    datstruct.std=std(vec);
+    
+    datstruct.medianabs=median(abs(vec));
+    datstruct.meanabs=mean(abs(vec));
+    datstruct.stdabs=std(abs(vec));
+    
+    datstruct.delta=max(vec)-min(vec);
+    datstruct.max=max(vec);
+    datstruct.min=min(vec);
+    datstruct.centre=(max(vec)+min(vec))/2;
+    
+    
+end
+
 function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
-    global iterVar;
+    
+    fieldsFullExplore={'errXYdat','errNormdat','errCNormdat','errNormDiffdat'};
     if true
+        ii=1;
+        jj=1;
         d2=[];
         keepVar=[];
         d=[];
@@ -383,7 +453,13 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     changeObjInitial=[];    changeObjInitialRat=[];    changeObjCD0=[];
     changeObjFinalCD0=[];    geomStepMag=[];    nSurfPoints=[];
     nFuncperMaj=[];   changeAtIter10=[]; changeAtIter10Rat=[]; bestObj=[];
-    cd0=[]; profNum=[];
+    cd0=[]; profNum=[];nonBasisDesignFinal=[];nonBasisDesignStart=[];
+    
+    for ii=fieldsFullExplore
+        for jj=fieldnames(ASOstruct(1).(ii{1}))'
+            eval(['errorMeasure.',ii{1},'.',jj{1},'=[];']);
+        end
+    end
     
     if true
         d2=who;
@@ -411,6 +487,16 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
         nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
             '^.*profile_',''),'_','split'));
         profNum=[profNum,nums(end)];
+        
+        % Bulk variables
+        for ii1=fieldsFullExplore
+            for jj1=fieldnames(ASOstruct(ii).(ii1{1}))'
+                varName=['errorMeasure.',ii1{1},'.',jj1{1}];
+                eval([varName,'=[',varName,',ASOstruct(ii).(ii1{1}).(jj1{1})];']);
+            end
+        end
+        
+        
         if numel(errMagVec)~=numel(subDivLevel)
             error('subDivLevel size does not match number of errMagnitudes provided')
         end
@@ -430,7 +516,8 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
                 -ASOstruct(ii).obj(currList(1)))/(ASOstruct(ii).obj(currList(end))...
                 -ASOstruct(ii).obj(currList(1)));
             
-            nIter95Delta(jjStart+jj)=min(find((ASOstruct(ii).obj(1)+changeObj(jjStart+jj)*deltaPercent)>=ASOstruct(ii).obj(currList)));
+            nIter95Delta(jjStart+jj)=min(find((ASOstruct(ii).obj(1)+...
+                changeObj(jjStart+jj)*deltaPercent)>=ASOstruct(ii).obj(currList)));
             nIter95DeltaRat(jjStart+jj)=min(find((ASOstruct(ii).obj(1)+changeObj(jjStart+jj)*...
                 deltaPercent)>=ASOstruct(ii).obj(currList)))/numel(currList);
             nSurfPoints(jj+jjStart)=ASOstruct(ii).nSurfPoints;
@@ -444,6 +531,8 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
                 min(iter10,numel(currList))))-ASOstruct(ii).obj(currList(...
                 min(1,numel(currList)))));
             changeAtIter10Rat(jj+jjStart)=changeAtIter10(jj+jjStart)/changeObj(jjStart+jj);
+            nonBasisDesignFinal(jj+jjStart)=ASOstruct(ii).nonBasisDesign(currList(end));
+            nonBasisDesignStart(jj+jjStart)=ASOstruct(ii).nonBasisDesign(currList(1));
         end
         
     end
@@ -704,6 +793,9 @@ function []=PlotASOPerformance_asoperffignormx(ax,x,xStr,summarrystruct,caseName
     
 end
 
+function []=PlotGeomPerformance_asoperffig()
+    
+end
 
 function []=PlotSummaryStruct(summaryStruct)
     
@@ -723,19 +815,23 @@ function []=AverageAllLines(ax,ranges)
     for ii=1:numel(l)
         if isempty(l(ii).ZData)
             [laverage]=AverageLines(ax,l(ii).XData,l(ii).YData,ranges);
-            if isType==1
-                [laverage.Color]=deal(l(ii).Color);
-            else
-                [laverage.Color]=deal(l(ii).MarkerEdgeColor);
+            if ~isempty(laverage)
+                if isType==1
+                    [laverage.Color]=deal(l(ii).Color);
+                else
+                    [laverage.Color]=deal(l(ii).MarkerEdgeColor);
+                end
             end
         else
             [laverage]=AverageLines3D(ax,l(ii).XData,l(ii).YData,...
                 l(ii).ZData,ranges);
             [laverage.EdgeColor]=deal(l(ii).Color);
         end
-        [laverage.LineStyle]=deal('--');
-        laverage(1).Marker='*';
-        laverage(2).Marker='d';
+        if ~isempty(laverage)
+            [laverage.LineStyle]=deal('--');
+            laverage(1).Marker='*';
+            laverage(2).Marker='d';
+        end
     end
 end
 
@@ -744,9 +840,9 @@ function [l]=AverageLines(ax,x,y,ranges)
     if iscell(ranges)
         switch ranges{1}
             case 'lin'
-                ranges=linspace(min(x),max(x)+1,ranges{2}+1);
+                ranges=linspace(min(x),max(x)*1.01,ranges{2}+1);
             case 'log'
-                ranges=logspace(log10(min(x)),log10(max(x)+1),ranges{2}+1);
+                ranges=logspace(log10(min(x)),log10(max(x)*1.01),ranges{2}+1);
         end
         
     end
