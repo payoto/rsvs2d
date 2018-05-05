@@ -1181,10 +1181,13 @@ function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,
     flagInOut=structmesh.flagInOut;
     domainBound=structmesh.domainBound;
     
-    polystruct=struct('vertex',zeros([0,4]),'segment',zeros([0,4]),'hole',zeros([0,3]),'region',zeros([0,4]));
+    polystruct=struct('vertex',zeros([0,4]),'segment',zeros([0,4]),'hole',...
+        zeros([0,3]),'region',zeros([0,4]));
     % Builds Loops as .poly
     [polystruct]=BuildPolyStruct(polystruct,loop,typeLoop,boundaryMarkers.loop,flagInOut);
-    
+    if isfield(loop,'vertorder') % Allows to specify an order for surface vertices
+        [polystruct]=ReorderVertexPolyStruct(polystruct,vertcat(loop.vertorder));
+    end
     % Builds domain boundary if needed
     if flagInOut
         coord=vertcat(loop.(typeLoop));
@@ -1204,6 +1207,19 @@ function [polystruct,structmesh]=OutputLoop2TrianglePoly(fileName,loop,typeLoop,
     polyCell=WritePolyStruct2Cell(polystruct);
     WriteToFile(polyCell,FID)
     fclose(FID);
+end
+
+function [polystruct2]=ReorderVertexPolyStruct(polystruct,newOrder)
+    polystruct2=polystruct;
+    
+    polystruct2.vertex(newOrder,:)=polystruct.vertex;
+    polystruct2.segment(:,2)=FindObjNum([],polystruct2.segment(:,2),polystruct2.vertex(:,1));
+    polystruct2.segment(:,3)=FindObjNum([],polystruct2.segment(:,3),polystruct2.vertex(:,1));
+    
+    polystruct2.vertex(:,1)=(1:size(polystruct2.vertex,1))';
+    if any(polystruct2.segment(:,2)==0) || any(polystruct2.segment(:,3)==0)
+        error('Data reordering failed, could not remesh')
+    end
 end
 
 function [polystruct]=TriangleConstructSubDomains(loop,typeLoop,polystruct,structmesh)

@@ -118,7 +118,7 @@ function [dirSave,nameRun,figList,splitCase]=HandleVarargin(cellArgin)
     dirSave='';
     nameRun='';
     figList=[];
-    splitCase='runCase';
+    splitCase='errorVecMode';
     
     for ii=1:2:numel(cellArgin)
         eval([cellArgin{ii},'=cellArgin{ii+1};']);
@@ -136,7 +136,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     structBuild=[expectFields;standardIn];
     ASOstruct=struct(structBuild{:});
     
-    [subdivLevel1, errorMagnitude, nDV,errX, errY, errNorm, errCNorm] ...
+    [subdivLevel1, errorMagnitude, nDV,errX, errY, errNorm, errCNorm,errRaw] ...
         = ASO.Postproc.subdivData(pathToASO);
     [majorIt, objective, subdivLevel, geomStep,eDV, loops] = ...
         ASO.Postproc.iterationData(pathToASO);
@@ -161,6 +161,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     ASOstruct.errCNorm=errCNorm;
     ASOstruct.eDV=eDV;
     ASOstruct.loops=loops;
+    ASOstruct.errRaw=errRaw;
     
     if isempty(majorIt)
         error('No ASO was run')
