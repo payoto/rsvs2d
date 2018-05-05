@@ -2,11 +2,11 @@ function [meshFile]=ASORemesh(paramoptim,dirMesh,newMesh,surface,vertices)
     % This function is here to support the remeshing of triangular meshes
     % using the RSVS mesh handler
     % This function takes in
-    % RSVS parameter structure paramoptim
-    % dirMesh : A scratch directory where data can be generated
-    % newMesh : A file path where the new meshfile must be
-    % surface : the current surface object
-    % vertices: the current vertices
+    % paramoptim : RSVS parameter structure paramoptim
+    % dirMesh    : A scratch directory where data can be generated
+    % newMesh    : A file path where the new meshfile must be
+    % surface    : the current surface object (ASO)
+    % vertices   : the current vertices (ASO)
     
     % vertices in the order in which they need to be in the mesh
     vertConn = surface.geom.getLoops(); %
