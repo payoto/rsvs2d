@@ -66,6 +66,10 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
+    
+    ASOOptions.remeshFcn=@(dirMesh,newMesh,surface,vertices) ...
+        ASORemesh(paramoptim,dirMesh,newMesh,surface,vertices);
+    
     % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
     
     % Other Options
