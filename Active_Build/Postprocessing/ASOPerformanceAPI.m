@@ -240,7 +240,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     % Generate figures
     if ~isaxDef
         figNames={'ASO Performance','ASO Performance Normalised',...
-            'ASO desvar to surface','Func Maj','Scatter','Objective'};
+            'ASO desvar to surface','Func Maj','Scatter','Objective','Step Data'};
         tfunc=@(x)numel(unique(x));
         runExtraFig=any(cellfun(tfunc,{summaryStruct.subDivLevel}));
         if runExtraFig
@@ -278,7 +278,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     
     % Plot Data
     fColor=[ 0 0 0];
-    fMarker='.';
+    fMarker='.-';
     markList='.+';
     lErrVec=regexprep(lErrVec,'_',' ');
     for iii=1:numel(summaryStruct)
@@ -294,6 +294,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
         PlotASOPerformance_fig4(ax(13:16),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig5(ax(17:20),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig6(ax(21:24),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
+        PlotASOPerformance_fig7(ax(25:28),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         
         % Variable subdiv plots
         kk=kkStart;
@@ -350,6 +351,8 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     AverageAllLines(ax(24),[1:10:101])
     AverageAllLines(ax(21),[0.03:0.02:0.11])
     AverageAllLines(ax(23),{'log',5})
+    
+    AverageAllLines(ax(28),[1.5:4.5])
     % sub div
     
     AverageAllLines(ax(kkStart+2),[1.5:4.5])
@@ -389,11 +392,13 @@ function [ASOstruct]=PlotASOPerformance_DataPreProc(ASOstruct)
             errMat{jj}=[errX(:,jj),errY(:,jj),errY(:,jj),errX(:,jj)];
         end
         for jj=1:numel(ASOstruct(ii).nonBasisDesign)
-            errVec=normVec([errMat{ASOstruct(ii).refLvl(jj)==...
+            errVec=[errMat{ASOstruct(ii).refLvl(jj)==...
                 actRef}(:,[1 3])*ASOstruct(ii).eDV(jj,[1 3])', ...
                 errMat{ASOstruct(ii).refLvl(jj)==...
-                actRef}(:,[2 4])*ASOstruct(ii).eDV(jj,[2 4])']);
-            ASOstruct(ii).nonBasisDesign(jj)=sqrt(sum(errVec.^2));
+                actRef}(:,[2 4])*ASOstruct(ii).eDV(jj,[2 4])'];
+            ASOstruct(ii).nonBasisDesign(jj)=sqrt(sum(normVec(errVec).^2));
+            ASOstruct(ii).nonBasisDesignX(jj)=sqrt(sum((errVec(:,1)).^2));
+            ASOstruct(ii).nonBasisDesignY(jj)=sqrt(sum((errVec(:,2)).^2));
         end
        
         % Calculate Measures for the onesidedness of the error Vector
@@ -407,10 +412,10 @@ function [ASOstruct]=PlotASOPerformance_DataPreProc(ASOstruct)
                GetErrorProperties( ASOstruct(ii).errNorm{actRef(jj)});
             ASOstruct(ii).errCNormdat(jj)=...
                 GetErrorProperties(ASOstruct(ii).errCNorm{actRef(jj)});
-            ASOstruct(ii).errNormDiffdat=...
+            ASOstruct(ii).errNormDiffdat(jj)=...
                 GetErrorProperties(real(sqrt(xy.^2-...
-                ASOstruct(ii).errNorm{actRef(jj)}.^2))/ASOstruct(ii).geomErrMag);
-            if any(imag(ASOstruct(ii).errNormDiffdat.norm)>0)
+                ASOstruct(ii).errNorm{actRef(jj)}.^2))/ASOstruct(ii).geomErrMag(jj));
+            if any(imag(ASOstruct(ii).errNormDiffdat(jj).norm)>0)
                 warning('is imaginary')
             end
         end
@@ -450,6 +455,7 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
         d=who;
     end
     errMagVec=[];    subDivLevel=[];    changeObj=[];    changeObjRat=[];
+    changeObjStep=[];    changeObjStepRat=[];
     nIter95Delta=[];    nIter95DeltaRat=[];    nDesVar=[];    nDesVarperBody=[];
     changeObjInitial=[];    changeObjInitialRat=[];    changeObjCD0=[];
     changeObjFinalCD0=[];    geomStepMag=[];    nSurfPoints=[];
@@ -470,6 +476,7 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
         end
         keepCell=[d2(keepVar);'errorVecMode']';
         standardIn=cell(size(keepCell));
+        varsAct=[d2(keepVar)];
         
         structBuild=[keepCell;standardIn];
         summaryStruct=struct(structBuild{:});
@@ -480,14 +487,14 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     
     for ii=1:numel(ASOstruct)
         jjStart=numel(errMagVec);
-        errMagVec=[errMagVec,ASOstruct(ii).geomErrMag];
+        errMagVec=[errMagVec,ASOstruct(ii).geomErrMag'];
         nDesVar=[nDesVar,ASOstruct(ii).ASOdesVec];
         nDesVarperBody=[nDesVarperBody,ASOstruct(ii).ASOdesVec/ASOstruct(ii).nTopo];
-        subDivLevel=[subDivLevel,unique(ASOstruct(ii).refLvl)];
-        cd0=[cd0,unique(ASOstruct(ii).CD0)*ones(size(unique(ASOstruct(ii).refLvl)))];
+        subDivLevel=[subDivLevel,unique(ASOstruct(ii).refLvl)'];
+        cd0=[cd0,unique(ASOstruct(ii).CD0)*ones(size(unique(ASOstruct(ii).refLvl)))'];
         nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
             '^.*profile_',''),'_','split'));
-        profNum=[profNum,nums(end)];
+        profNum=[profNum,nums(end)*ones(size(unique(ASOstruct(ii).refLvl)))'];
         
         % Bulk variables
         for ii1=fieldsFullExplore
@@ -508,9 +515,13 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
             end
             bestObj(jjStart+jj)=min(ASOstruct(ii).obj(currList));
             changeObj(jjStart+jj)=min(ASOstruct(ii).obj(currList))...
+                -ASOstruct(ii).obj(1);
+            changeObjRat(jjStart+jj)=changeObj(jjStart+jj)/ASOstruct(ii).obj(1); %#ok<*AGROW>
+            
+            changeObjStep(jjStart+jj)=min(ASOstruct(ii).obj(currList))...
                 -ASOstruct(ii).obj(currList(1));
-            changeObjRat(jjStart+jj)=(min(ASOstruct(ii).obj(currList))...
-                -ASOstruct(ii).obj(currList(1)))/ASOstruct(ii).obj(currList(1));
+            changeObjStepRat(jjStart+jj)=changeObjStep(jjStart+jj)/ASOstruct(ii).obj(currList(1));
+            
             changeObjInitial(jjStart+jj)=(ASOstruct(ii).obj(currList(2))...
                 -ASOstruct(ii).obj(currList(1)));
             changeObjInitialRat(jjStart+jj)=(ASOstruct(ii).obj(currList(2))...
@@ -535,7 +546,19 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
             nonBasisDesignFinal(jj+jjStart)=ASOstruct(ii).nonBasisDesign(currList(end));
             nonBasisDesignStart(jj+jjStart)=ASOstruct(ii).nonBasisDesign(currList(1));
         end
-        
+        % Add nans in between subdivision runs to see them
+        for ll=1:numel(varsAct)
+            if ~strcmp(varsAct{ll},'errorMeasure')
+                eval([varsAct{ll},'=[',varsAct{ll},',nan];']);
+            else
+                for ii1=fieldsFullExplore
+                    for jj1=fieldnames(ASOstruct(ii).(ii1{1}))'
+                        varName=['errorMeasure.',ii1{1},'.',jj1{1}];
+                        eval([varName,'=[',varName,',nan];']);
+                    end
+                end
+            end
+        end
     end
     fieldsSum=fieldnames(summaryStruct);
     for ii=1:numel(fieldsSum)-1
@@ -708,31 +731,32 @@ function []=PlotASOPerformance_fig6(ax,summarrystruct,caseName,fMarker,fColor)
     ax(2).YScale='log';
     %}
     ReorganiseSubPlots(ax,[1 4],[0.075 0.01 0.1 0.01],[0 0.075],[9 11])
-    x2=summarrystruct.errMagVec;
+    
+    notNan=find(~isnan(summarrystruct.profNum));
+    x2=summarrystruct.errMagVec(notNan);
     [~,i]=sort(x2);
-    l=plot(ax(1),[x2(i)],[summarrystruct.changeObjRat(i)]);
-    [l.Marker]=deal(fMarker);
+    l=plot(ax(1),[x2(i)],[summarrystruct.changeObjRat(notNan(i))]);
+    [l.Marker]=deal(fMarker(1));
     [l.Color]=deal(fColor);
     %ax(1).YScale='log';
-    
     x=1:100;
     y=zeros(size(x));
-    y([summarrystruct.profNum])=[summarrystruct.changeObjRat];
+    y([summarrystruct.profNum(notNan)])=[summarrystruct.changeObjRat(notNan)];
     l=plot(ax(2),x,y);
-    [l.Marker]=deal(fMarker);
+    [l.Marker]=deal(fMarker(1));
     [l.Color]=deal(fColor);
     %ax(2).YScale='log';
     % Line plots
     l=plot(ax(3),[x2(i);x2(i)]',...
         [summarrystruct.cd0(i);summarrystruct.bestObj(i)]');
-    [l.Marker]=deal(fMarker);
+    [l.Marker]=deal(fMarker(1));
     [l.Color]=deal(fColor);
     ax(3).YScale='log';
     
     y=zeros(size(x))*nan;
-    y([summarrystruct.profNum])=[summarrystruct.bestObj];
+    y([summarrystruct.profNum(notNan)])=[summarrystruct.bestObj(notNan)];
     l=plot(ax(4),x,y);
-    [l.Marker]=deal(fMarker);
+    [l.Marker]=deal(fMarker(1));
     [l.Color]=deal(fColor);
     ax(4).YScale='log';
     
@@ -745,6 +769,65 @@ function []=PlotASOPerformance_fig6(ax,summarrystruct,caseName,fMarker,fColor)
     ax(3).YLabel.String='Best objective';
     ax(4).XLabel.String='Profile number';
     ax(4).YLabel.String='Best objective';
+end
+
+function []=PlotASOPerformance_fig7(ax,summarrystruct,caseName,fMarker,fColor)
+    
+    
+    % Rain plots
+    %{
+    l=plot(ax(1),[summarrystruct.cd0;summarrystruct.cd0*1.05],...
+        [summarrystruct.cd0;summarrystruct.bestObj]);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    ax(1).YScale='log';
+    l=plot(ax(2),[summarrystruct.profNum;summarrystruct.profNum+0.5],...
+        [summarrystruct.cd0;summarrystruct.bestObj]);
+    [l.Marker]=deal(fMarker);
+    [l.Color]=deal(fColor);
+    ax(2).YScale='log';
+    %}
+    ReorganiseSubPlots(ax(1:2),[1 2],[0.075 0.01 0.51 0.01],[0 0.075],[9 11])
+    
+    notNan=find(~isnan(summarrystruct.profNum));
+    x2=summarrystruct.errMagVec(notNan);
+    [~,i]=sort(x2);
+    x=1:100;
+    y=zeros(size(x));
+    y([summarrystruct.profNum(notNan)])=[summarrystruct.changeObj(notNan)];
+    l=plot(ax(1),x,y);
+    plot(ax(1),summarrystruct.profNum,summarrystruct.changeObj,fMarker,'color',fColor)
+    [l.Marker]=deal(fMarker(1));
+    [l.Color]=deal(fColor);
+    %ax(1).YScale='log';
+    x=1:100;
+    y=zeros(size(x));
+    y([summarrystruct.profNum(notNan)])=[summarrystruct.changeObjRat(notNan)];
+    l=plot(ax(2),x,y);
+    plot(ax(2),summarrystruct.profNum,summarrystruct.changeObjRat,fMarker,'color',fColor)
+    [l.Marker]=deal(fMarker(1));
+    [l.Color]=deal(fColor);
+    %ax(2).YScale='log';
+    % Line plots
+    l=plot(ax(3),[x2(i);x2(i)]',...
+        [summarrystruct.cd0(i);summarrystruct.bestObj(i)]');
+    [l.Marker]=deal(fMarker(1));
+    [l.Color]=deal(fColor);
+    ax(3).YScale='log';
+    
+    y=zeros(size(x))*nan;
+    plot(ax(4),summarrystruct.subDivLevel,summarrystruct.changeObjStepRat,fMarker,'color',fColor)
+    ax(4).YScale='log';
+    
+    
+    ax(1).XLabel.String='Error Mag Vec ';
+    ax(1).YLabel.String='Change of Objective';
+    ax(2).XLabel.String='Profile number';
+    ax(2).YLabel.String='Change of Objective';
+    ax(3).XLabel.String='Error Mag Vec ';
+    ax(3).YLabel.String='Best objective';
+    ax(4).XLabel.String='Subdivision Level';
+    ax(4).YLabel.String='Change of objective per step';
 end
 
 

@@ -31,12 +31,21 @@ function []=PlotConvASO(ASOstruct,nIter)
     for jj=1:numel(nIter)
         h2=figure('Name',['Convergence History profile ',int2str(nIter(jj))]);
         ax2=axes(h2);
+        hold on
+        h3=figure('Name',['Convergence History eDV ',int2str(nIter(jj))]);
+        for ii=1:4
+            ax3(ii)=subplot(2,2,ii);
+            hold on
+        end
+        h4=figure('Name',['Convergence History nonBasis design  ',int2str(nIter(jj))]);
+        ax4=axes(h4);
+        hold on
         
         c=get(ax2,'colororder');
         hold on
     
         clear l;
-        kk
+        
         for iii=1:numel(lErrVec)
             ASOstruct=ASOstructAll(funcLogTest(lErrVec{iii}));
             ASOstruct=ASOstruct(find(~cellfun(@isempty,regexp({ASOstruct.location},...
@@ -52,13 +61,18 @@ function []=PlotConvASO(ASOstruct,nIter)
                     ASOstruct(ii).obj,'.-','color',fColor);
                     %ones([1 numel(ASOstruct(ii).obj)])*nums(end),
                  l(iii).DisplayName=lName{iii};
+                 plot(ax4,ASOstruct(ii).nonBasisDesign,'.-','color',fColor)
+                 for lll=1:4
+                     plot(ax3(lll),ASOstruct(ii).eDV(:,lll),'.-','color',fColor)
+                 end
             end
            
         end
         if exist('l','var')
-            legend(ax2,l);
+            %legend(ax2,l);
         end
     end
     
     
 end
+

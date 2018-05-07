@@ -1353,6 +1353,27 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
     paroptim.obj.aso.su2ProcSec=4*1800;
     paroptim.obj.aso.asoProcSec=4*12*3600;
     paroptim.obj.aso.snoptIter=10;
+    
+    paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{},...
+        'subdiv_ebasis',{},'chord_max',{}};
+end
+
+function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)
+    [paroptim]=ASOMS_subdiv(lvlSubdiv,'basis',nLevel);
+    
+    switch constrCase
+        case 'cross'
+            paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{}};
+        case 'error'
+            paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{},...
+                'subdiv_ebasis',{}};
+        case 'chord'
+            paroptim.obj.aso.paramoveride.problemargin={'chord_max',{}};
+            
+        otherwise
+            error('Unknown constraint case');
+    end
+    
 end
 
 function [paroptim]=areabuseaxrat(e)

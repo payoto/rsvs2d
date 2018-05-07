@@ -49,20 +49,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     ASOOptions.solver.timeout = su2ProcSec/currentMachineFile.slots;
     ASOOptions.snopt.wcLimit = asoProcSec/currentMachineFile.slots;
     ASOOptions.snopt.maxIter = snoptIter;
-    % Call the correct constraints
-    for ii=1:numel(desVarConstr)
-        switch desVarConstr{ii}
-            case 'ValVolFrac'
-            case 'MinSumVolFrac'
-            case 'MaxSumVolFrac'
-            case 'MinValVolFrac'
-                ASOOptions.problemargin=[ASOOptions.problemargin,...
-                    {'area_gt',desVarVal(ii)}];
-            case 'LocalVolFrac_min'
-            case 'LocalVolFrac_equal'
-            case 'LocalVolFrac_max'
-        end
-    end
+    
     
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
@@ -80,6 +67,28 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     for ii=1:numel(fieldsOverride)
         ASOOptions=SetVariables(fieldsOverride(ii),...
             {paramoveride.(fieldsOverride{ii})},ASOOptions);
+    end
+    
+    % Call the correct constraints
+    for ii=1:numel(desVarConstr)
+        switch desVarConstr{ii}
+            case 'subdiv_ebasis_cross'
+                ASOOptions.problemargin=[ASOOptions.problemargin,...
+                    {'subdiv_ebasis_cross',{}}];
+                
+            case 'subdiv_ebasis_lim'
+                ASOOptions.problemargin=[ASOOptions.problemargin,...
+                    {'subdiv_ebasis',{}}];
+            case 'ValVolFrac'
+            case 'MinSumVolFrac'
+            case 'MaxSumVolFrac'
+            case 'MinValVolFrac'
+                ASOOptions.problemargin=[ASOOptions.problemargin,...
+                    {'area_gt',desVarVal(ii)}];
+            case 'LocalVolFrac_min'
+            case 'LocalVolFrac_equal'
+            case 'LocalVolFrac_max'
+        end
     end
     
     ASOOptions=rmfield(ASOOptions,'structdat');
