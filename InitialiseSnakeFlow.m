@@ -23,6 +23,7 @@ function []=InitialiseSnakeFlow(isRm)
         if ~isempty(regexp(hostName,'4', 'once'))
             clear all
             setenv('TMP','/mnt/storage/scratch/ap1949/tmp/')
+            isRm=0;
         elseif ~isempty(regexp(hostName,'3', 'once'))
             clear all
             setenv('TMP','/local/')
