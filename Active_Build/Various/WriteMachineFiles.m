@@ -22,6 +22,7 @@ function [machinedat]=WriteMachineFiles(nWorker,writeDir)
         pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-1;
         pbsdat.numppntotal=sum(pbsdat.numppnnode); % total number of processors
     else
+        [~,hostName]=system('whichbluecrystal');
         if ~isempty(regexp(hostName,'4', 'once'))
             [pbsdat]=CollectSLURMData();
         elseif ~isempty(regexp(hostName,'3', 'once'))
