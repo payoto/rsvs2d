@@ -4,7 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd "$DIR/meshdfrbf"
 
-mv makefilelinux makefile
+cp makefilelinux makefile
 
 mkdir obj/
 mkdir mod/
