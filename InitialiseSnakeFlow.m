@@ -19,9 +19,15 @@ function []=InitialiseSnakeFlow(isRm)
     if strcmp(comStr(1:2),'PC')
         
     else
-        clear all
-        setenv('TMP','/local/')
-        isRm=0;
+        hostName=system('hostname');
+        if ~isempty(regexp(hostName,'bc4', 'once'))
+            
+        else
+            clear all
+            setenv('TMP','/local/')
+            isRm=0;
+        end
+        
     end
     
     singleFolder={''};
