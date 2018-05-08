@@ -102,7 +102,7 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
             ax(2)=axes;
             hold on
         end
-        ax=findobj(h(1),'type','axes');
+        
         if ~isempty(dirSave)
             
             save([dirSave,filesep,'ASOperformance',nameRun,'.mat'],'ASOstruct');

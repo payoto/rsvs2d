@@ -19,10 +19,11 @@ function []=InitialiseSnakeFlow(isRm)
     if strcmp(comStr(1:2),'PC')
         
     else
-        hostName=system('hostname');
-        if ~isempty(regexp(hostName,'bc4', 'once'))
-            
-        else
+        [~,hostName]=system('whichbluecrystal');
+        if ~isempty(regexp(hostName,'4', 'once'))
+            clear all
+            setenv('TMP','/mnt/storage/scratch/ap1949/tmp/')
+        elseif ~isempty(regexp(hostName,'3', 'once'))
             clear all
             setenv('TMP','/local/')
             isRm=0;
