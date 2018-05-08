@@ -3,23 +3,30 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     runASOextract=1;
     
     [dirSave,nameRun,figList,splitCase]=HandleVarargin(varargin);
-    
+    isParam=false;
+    isOptimStruct=false;
     if isstruct(optIn)
         try
             optimstruct=optIn.optimstruct;
             paramoptim=optIn.paramoptim;
-            
+            isOptimStruct=true;
         catch
             runASOextract=0;
             ASOstruct=optIn;
         end
     elseif ischar(optIn)
-        optPath=FindDir(optIn,'OptimRes',0);
-        paramPath=FindDir(optIn,'FinalParam',0);
-        optimstruct=load(optPath{1});
-        optimstruct=optimstruct.optimstruct;
-        paramoptim=load(paramPath{1});
-        paramoptim=paramoptim.paramoptim;
+        try
+            optPath=FindDir(optIn,'OptimRes',0);
+            paramPath=FindDir(optIn,'FinalParam',0);
+            optimstruct=load(optPath{1});
+            optimstruct=optimstruct.optimstruct;
+            paramoptim=load(paramPath{1});
+            paramoptim=paramoptim.paramoptim;
+            isParam=true;
+            isOptimStruct=true;
+        catch
+            [optimstruct]=RecoverProfileLocations(optIn,ASOiters);
+        end
         if isempty(dirSave)
             
             dirSave=optIn;
@@ -33,19 +40,20 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
         
         paramoptim=load(paramPath{1});
         paramoptim=paramoptim.paramoptim;
-        
+        isParam=true;
         for ii=1:numel(optIn)
             optPath=FindDir(optIn{ii},'OptimRes',0);
             loadDat=load(optPath{1});
             if exist('optimstruct','var')
                 optimstruct=[optimstruct,loadDat.optimstruct(ASOiters)];
+                
             else
                 optimstruct=loadDat.optimstruct;
             end
             
         end
         ASOiters=1:numel(optimstruct);
-        
+        isOptimStruct=true;
     else
         error('unknown input argument type')
     end
@@ -55,17 +63,20 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     kk=1;
     ll=0;
     if runASOextract
-        
-        varExtract={'direction','knownOptim','objectiveName'};
-        [direction,knownOptim,objectiveName]=ExtractVariables(varExtract,paramoptim);
+        if isParam
+            varExtract={'direction','knownOptim','objectiveName'};
+            [direction,knownOptim,objectiveName]=ExtractVariables(varExtract,paramoptim);
+        end
         % ---------
         % This will cause issues when using many optimstructs stuck
         % together
-        rmPop=false(size(optimstruct));
-        for ii=1:numel(optimstruct)
-            rmPop(ii)=isempty(optimstruct(ii).population(1).objective);
+        if isOptimStruct
+            rmPop=false(size(optimstruct));
+            for ii=1:numel(optimstruct)
+                rmPop(ii)=isempty(optimstruct(ii).population(1).objective);
+            end
+            optimstruct=optimstruct(~rmPop);
         end
-        optimstruct=optimstruct(~rmPop);
         % ---------
         for ii=ASOiters
             for jj=1:numel(optimstruct(ii).population)
@@ -83,7 +94,14 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
             end
         end
         disp([int2str(ll),' failures to ',int2str(kk),' success'])
-        h=OptimHistory(0,optimstruct,knownOptim,1000,'min');
+        if isOptimStruct
+            h=OptimHistory(0,optimstruct,knownOptim,1000,'min');
+        else
+            h=figure('Name','ConvHistory');
+            
+            ax(2)=axes;
+            hold on
+        end
         ax=findobj(h(1),'type','axes');
         if ~isempty(dirSave)
             
@@ -112,7 +130,18 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     end
     
 end
-
+function [optimstruct]=RecoverProfileLocations(pathStr,iternum)
+    
+    for ii=iternum
+        iterPaths=FindDirRegex(pathStr,['iteration_',int2str(ii),'$'],1);
+        profPaths=FindDirRegex(iterPaths{1},'profile_',1);
+        
+        [optimstruct(ii).population(1:numel(profPaths)).location]...
+            =deal(profPaths{:});
+        
+    end
+end
+    
 function [dirSave,nameRun,figList,splitCase]=HandleVarargin(cellArgin)
     
     dirSave='';
@@ -127,7 +156,7 @@ function [dirSave,nameRun,figList,splitCase]=HandleVarargin(cellArgin)
 end
 
 function [ASOstruct]=ASOInterface(pathToASO)
-    expectFields={'DEIter','majorIt','obj','geomStepMag','eDV', 'loops',...
+    expectFields={'DEIter','majorIt','obj','opt','geomStepMag','eDV', 'loops',...
         'refLvl','geomErrMag','ASOdesVec','errX','errY','errNorm','errCNorm','errRaw',...
         'nSurfPoints','objFuncCalls','CD0','errorVecMode',...
         'location','nTopo'};
@@ -138,7 +167,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     
     [subdivLevel1, errorMagnitude, nDV,errX, errY, errNorm, errCNorm,errRaw] ...
         = ASO.Postproc.subdivData(pathToASO);
-    [majorIt, objective, subdivLevel, geomStep,eDV, loops] = ...
+    [majorIt, objective, subdivLevel, geomStep,eDV, loops, opt] = ...
         ASO.Postproc.iterationData(pathToASO);
     [CD0, nFunCall, nSurfPts,errorMode] = ASO.Postproc.ASOData(pathToASO);
     profiles = ASO.Postproc.profileData(pathToASO);
@@ -162,6 +191,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     ASOstruct.eDV=eDV;
     ASOstruct.loops=loops;
     ASOstruct.errRaw=errRaw;
+    ASOstruct.opt=opt;
     
     if isempty(majorIt)
         error('No ASO was run')

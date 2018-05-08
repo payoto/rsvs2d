@@ -351,7 +351,12 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                     iterstruct(end),outinfo);
         end
     end
-    
+    if isOptimStruct
+        if ~CheckIfGradient(ExtractVariables({'optimMethod'},paramoptim))
+            nPop=numel(iterstruct(1).population);
+            paramoptim=SetVariables({'nPop'},{nPop},paramoptim);
+        end
+    end
     
 end
 
@@ -534,7 +539,7 @@ function [workerList]=StartParallelPool(nWorker,nTry)
         workerList=unique(thisworker);
         ll=ll+1;
     end
-    if numel(workerList)<nWorker
+    if numel(workerList)<nWorker && ~strcmp(computer,'PCWIN64')
         error('Failed to recover a list of workers')
     end
 end
