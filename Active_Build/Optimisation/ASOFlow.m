@@ -46,8 +46,8 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     ASOOptions.solver.mach = nMach;
     ASOOptions.solver.np=currentMachineFile.slots;
     
-    ASOOptions.solver.timeout = su2ProcSec/currentMachineFile.slots;
-    ASOOptions.snopt.wcLimit = asoProcSec/currentMachineFile.slots;
+    ASOOptions.solver.timeout = max(ceil(su2ProcSec/currentMachineFile.slots),60);
+    ASOOptions.snopt.wcLimit = ceil(asoProcSec/currentMachineFile.slots);
     ASOOptions.snopt.maxIter = snoptIter;
     
     
