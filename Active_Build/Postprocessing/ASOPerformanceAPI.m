@@ -308,7 +308,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     
     % Plot Data
     fColor=[ 0 0 0];
-    fMarker='.-';
+    fMarker='.:';
     markList='.+';
     lErrVec=regexprep(lErrVec,'_',' ');
     for iii=1:numel(summaryStruct)
@@ -372,6 +372,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     AverageAllLines(ax(12),{{'lin',4} , {'lin',4}})
     AverageAllLines(ax(4),{'lin',4})
     
+    AverageAllLines(ax(kkStart+7),[1.5:4.5])
     AverageAllLines(ax(10),{750:250:2000 , 50:50:250})
     AverageAllLines(ax(13),{'lin',3})
     AverageAllLines(ax(14),{'lin',3})
@@ -558,10 +559,13 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
                 -ASOstruct(ii).obj(currList(1)))/(ASOstruct(ii).obj(currList(end))...
                 -ASOstruct(ii).obj(currList(1)));
             
-            nIter95Delta(jjStart+jj)=min(find((ASOstruct(ii).obj(1)+...
-                changeObj(jjStart+jj)*deltaPercent)>=ASOstruct(ii).obj(currList)));
-            nIter95DeltaRat(jjStart+jj)=min(find((ASOstruct(ii).obj(1)+changeObj(jjStart+jj)*...
-                deltaPercent)>=ASOstruct(ii).obj(currList)))/numel(currList);
+            if changeObj(jjStart+jj)<0
+                nIter95Delta(jjStart+jj)=min(find((ASOstruct(ii).obj(1)+...
+                    changeObj(jjStart+jj)*deltaPercent)>=ASOstruct(ii).obj(currList)));
+            else
+                nIter95Delta(jjStart+jj)=0;
+            end
+            nIter95DeltaRat(jjStart+jj)=nIter95Delta(jjStart+jj)/numel(currList);
             nSurfPoints(jj+jjStart)=ASOstruct(ii).nSurfPoints;
             
             
@@ -682,7 +686,7 @@ end
 
 function []=PlotASOPerformance_fig4(ax,summarrystruct,caseName,fMarker,fColor)
     
-    plot(ax(1),summarrystruct.nSurfPoints,summarrystruct.nFuncperMaj,fMarker,'color',fColor)
+    plot(ax(1),summarrystruct.subDivLevel,summarrystruct.nFuncperMaj,fMarker,'color',fColor)
     % Magnitude of the geometric step vs number of surf points and # of design variables
     plot(ax(2),summarrystruct.nDesVar,summarrystruct.nFuncperMaj,fMarker,'color',fColor)
     plot(ax(3),summarrystruct.nDesVarperBody,summarrystruct.nFuncperMaj,fMarker,'color',fColor)
@@ -942,7 +946,7 @@ function []=AverageAllLines(ax,ranges)
             [laverage.EdgeColor]=deal(l(ii).Color);
         end
         if ~isempty(laverage)
-            [laverage.LineStyle]=deal('--');
+            [laverage.LineStyle]=deal('-');
             laverage(1).Marker='*';
             laverage(2).Marker='d';
         end

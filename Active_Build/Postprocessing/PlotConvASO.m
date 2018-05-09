@@ -45,7 +45,7 @@ function []=PlotConvASO(ASOstruct,nIter)
         hold on
     
         clear l;
-        
+        kk=1;
         for iii=1:numel(lErrVec)
             ASOstruct=ASOstructAll(funcLogTest(lErrVec{iii}));
             ASOstruct=ASOstruct(find(~cellfun(@isempty,regexp({ASOstruct.location},...
@@ -57,10 +57,11 @@ function []=PlotConvASO(ASOstruct,nIter)
             for ii=1:numel(ASOstruct)
                 nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
                     '^.*profile_',''),'_','split'));
-                l(iii)=plot(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
+                l(kk)=plot(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
                     ASOstruct(ii).obj,'.-','color',fColor);
                     %ones([1 numel(ASOstruct(ii).obj)])*nums(end),
-                 l(iii).DisplayName=lName{iii};
+                 l(kk).DisplayName=lName{iii};
+                 kk=kk+1;
                  plot(ax4,ASOstruct(ii).nonBasisDesign,'.-','color',fColor)
                  for lll=1:4
                      plot(ax3(lll),ASOstruct(ii).eDV(:,lll),'.-','color',fColor)
@@ -69,7 +70,7 @@ function []=PlotConvASO(ASOstruct,nIter)
            
         end
         if exist('l','var')
-            %legend(ax2,l);
+            legend(ax2,l);
         end
     end
     
