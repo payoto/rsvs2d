@@ -25,7 +25,7 @@ function [targFolder,boundaryLoc]=PrepareCFDFolder(paramoptim,boundaryLoc)
     compType=computer;
     boundaryLoc=MakePathCompliant(boundaryLoc);
     CFDfolder=MakePathCompliant(CFDfolder);
-    
+    mkdir(boundaryLoc)
     inDir=what(boundaryLoc);
     boundaryLoc=inDir.path;
     targFolder=[boundaryLoc,filesep,'SU2CFD'];
