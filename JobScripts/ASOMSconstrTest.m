@@ -5,7 +5,8 @@ function ASOMSconstrTest(lvlSubdiv,errTreatment,startIter)
 
     disp(sprintf('ASOMS_subdivconstr(%i,''%s'',%i)',...
         lvlSubdiv,errTreatment,startIter));
-    restartPath='/panfs/panasas01/aero/ap1949/SnakVolParam/restarts/restart_ASOMS_Short.mat';
+    [~,pathHome]=system('echo -n $HOME');
+    restartPath=[pathHome,'/SnakVolParam/restarts/restart_ASOMS_Short.mat'];
     ExecuteOptimisation(sprintf('ASOMS_subdivconstr(%i,''%s'',%i)',...
         lvlSubdiv,errTreatment,startIter),{restartPath,{'none',true}});
     

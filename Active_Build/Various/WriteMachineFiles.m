@@ -120,14 +120,17 @@ function [pbsdat]=CollectSLURMData()
     % Collects PBS Data
     
     [~,jobid]=system('echo $SLURM_JOBID');
-   
+    
     [~,nodeListFull]=system('echo $SLURM_JOB_NODELIST'); % format is compute[092,387]
     
     
     [~,numNodes]=system('echo $SLURM_NNODES');
     [~,numPPNNode]=system('echo $SLURM_NTASKS_PER_NODE');
     
-    matNode=regexp(nodeListFull,'\n','split');
+    
+    nodeList=SlurmToNodeList(nodeListFull);
+    [~,host]=system('hostname');
+    matNode=regexp(host,'\.','split');
     
     nodeListCell=regexp(nodeList,'\n','split');
     nodeListCell=nodeListCell(~cellfun(@isempty,nodeListCell));
@@ -137,8 +140,7 @@ function [pbsdat]=CollectSLURMData()
     matInd=find(~cellfun(@isempty,regexp(nodeListCell,pbsdat.matnode)));
     
     pbsdat.jobid=jobid;
-    pbsdat.nodelist=SlurmToNodeList(nodeListFull);
-    pbsdat.matnode=pbsdat.nodelist(1,:);
+    pbsdat.nodelist=nodeList;
     pbsdat.numnode=str2double(numNodes); % Number of unique nodes
     pbsdat.numppnnode=ones([1,pbsdat.numnode])*str2double(numPPNNode); % Number of processor per node
     pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-1;
@@ -155,30 +157,33 @@ function [nodelist]=SlurmToNodeList(slurmOut)
     nodeCells=cell(0);
     kk=0;
     for ii=1:numel(slurmCells)
-        sepPoint=regexp(slurmCells{ii},'\[.*');
-        if isempty(sepPoint)
-            nodeCells{kk+1}=slurmCells{ii};
-            kk=kk+1;
-        else
-            baseName=slurmCells{ii}(1:sepPoint-1);
-            
-            numArray=regexp(slurmCells{ii}(sepPoint+1:end),',','split');
-            
-            for jj=1:numel(numArray)
-                if numel(numArray{jj})==3
-                    nodeCells{kk+1}=[baseName,numArray{jj}];
-                    kk=kk+1;
-                else % case where the num appears as ###-###
-                    intArray=cellfun(@str2double,regexp(numArray{jj},'-','split'));
-                    for ll=intArray(1):intArray(2)
-                        nodeCells{kk+1}=[baseName,num2str(ll,'%3i')];
+        if ~isempty(regexp(slurmCells{ii},'\S','once'))
+            sepPoint=regexp(slurmCells{ii},'\[.*');
+            if isempty(sepPoint)
+                nodeCells{kk+1}=slurmCells{ii};
+                kk=kk+1;
+            else
+                baseName=slurmCells{ii}(1:sepPoint-1);
+                
+                numArray=regexp(slurmCells{ii}(sepPoint+1:end),',','split');
+                
+                for jj=1:numel(numArray)
+                    if numel(numArray{jj})==3
+                        nodeCells{kk+1}=[baseName,numArray{jj}];
                         kk=kk+1;
+                    else % case where the num appears as ###-###
+                        intArray=cellfun(@str2double,regexp(numArray{jj},'-','split'));
+                        for ll=intArray(1):intArray(2)
+                            nodeCells{kk+1}=[baseName,num2str(ll,'%3i')];
+                            kk=kk+1;
+                        end
                     end
                 end
             end
         end
     end
-    nodeCells=nodeCells(~cellfun(@isempty,nodeCells));
+    nodeCells=regexprep(nodeCells,'\s','');
+    nodeCells=deblank(nodeCells(~cellfun(@isempty,nodeCells)));
     nodelist=char(nodeCells{:});
     
 end
