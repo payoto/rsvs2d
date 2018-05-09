@@ -1327,7 +1327,6 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
     [paroptim]=areabusesweep(0.12);
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
-    paroptim.general.worker=8;
     paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
     paroptim.general.objInput='loop,baseGrid';
     paroptim.spline.splineCase='smoothpts';
@@ -1356,6 +1355,9 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
     
     paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{},...
         'subdiv_ebasis',{},'chord_max',{}};
+    dbcont
+    
+    paroptim.general.worker=8;
 end
 
 function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)

@@ -29,7 +29,10 @@ function [meshFile]=ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry)
     
     
     % Finish process
-    copyfile(meshFile,newMesh);
+    stat=copyfile(meshFile,newMesh,'f');
+    if ~stat
+        error('The mesh could not be copied')
+    end
     rmdir([dirMesh,filesep,'SU2CFD'],'s')
 end
 
