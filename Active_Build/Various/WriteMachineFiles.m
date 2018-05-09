@@ -131,8 +131,9 @@ function [pbsdat]=CollectSLURMData()
     nodeList=SlurmToNodeList(nodeListFull);
     [~,host]=system('hostname');
     matNode=regexp(host,'\.','split');
-    
-    nodeListCell=regexp(nodeList,'\n','split');
+    for ii=1:size(nodeList,1)
+        nodeListCell{ii}=nodeList(ii,:);
+    end
     nodeListCell=nodeListCell(~cellfun(@isempty,nodeListCell));
     
     pbsdat.matnode=matNode{1}; % Node Matlab is running on

@@ -54,7 +54,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
     [~,hostName]=system('whichbluecrystal');
     if ~isempty(regexp(hostName,'4', 'once'))
-        
+        ASOOptions.solver.mpiOpts=['-hosts ',currentMachineFile.node,' '];
     elseif ~isempty(regexp(hostName,'3', 'once'))
         ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
     end
