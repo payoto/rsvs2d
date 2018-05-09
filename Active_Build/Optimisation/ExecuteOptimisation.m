@@ -542,6 +542,7 @@ function [workerList]=StartParallelPool(nWorker,nTry)
     if numel(workerList)<nWorker && ~strcmp(computer,'PCWIN64')
         error('Failed to recover a list of workers')
     end
+    pctRunOnAll ExecInclude
 end
 
 function [paramoptim]=InitialiseObjective(paramoptim)
