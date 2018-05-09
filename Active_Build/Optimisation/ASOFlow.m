@@ -25,7 +25,12 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     if ~isempty(thisworker)
         currentMachineFile=machineList(thisworker.ProcessId==workerList);
     else
+        try
         currentMachineFile=machineList(1);
+        catch
+            machineList=WriteMachineFiles(1,'test');
+            currentMachineFile=machineList(1);
+        end
     end
     optimDirectory=boundaryLoc;
     
@@ -60,8 +65,8 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     end
     
     
-    ASOOptions.remeshFcn=@(dirMesh,newMesh,surface,vertices) ...
-        ASORemesh(paramoptim,dirMesh,newMesh,surface,vertices);
+    ASOOptions.solver.remeshFcn=@(dirMesh,newMesh,surfaceGeometry) ...
+        ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry);
     
     % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
     
