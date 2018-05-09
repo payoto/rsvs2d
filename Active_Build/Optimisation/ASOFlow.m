@@ -52,7 +52,13 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     
     copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
-    ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
+    [~,hostName]=system('whichbluecrystal');
+    if ~isempty(regexp(hostName,'4', 'once'))
+        
+    elseif ~isempty(regexp(hostName,'3', 'once'))
+        ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
+    end
+    
     
     ASOOptions.remeshFcn=@(dirMesh,newMesh,surface,vertices) ...
         ASORemesh(paramoptim,dirMesh,newMesh,surface,vertices);
