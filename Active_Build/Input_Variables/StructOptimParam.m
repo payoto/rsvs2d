@@ -1353,8 +1353,7 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
     paroptim.obj.aso.asoProcSec=4*12*3600;
     paroptim.obj.aso.snoptIter=10;
     
-    paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{},...
-        'subdiv_ebasis',{},'chord_max',{}};
+    paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{}};
     
     
     if ispc || ismac
