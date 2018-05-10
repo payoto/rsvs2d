@@ -235,6 +235,21 @@ function paroptim=ModifySnakesParam(paroptim,paramCase)
     
 end
 
+function [paroptim]=ChooseNworkerASO(paroptim)
+    if ispc || ismac
+        paroptim.general.worker=4;
+    elseif isunix
+        switch BlueCrystalCheck()
+            case 3
+                paroptim.general.worker=8;
+            case 4
+                paroptim.general.worker=12;
+            otherwise
+                error('whichbluecrystal failed')
+        end
+            
+    end
+end
 %% Post-Modifiers
 
 function [paroptim]=ModifyCase(paroptim,modifCell)
@@ -1294,13 +1309,41 @@ function [paroptim]=areabusesweep(e)
     
 end
 
-function [paroptim]=buseASONoreturn()
-    [paroptim]=areabusesweep(0.12);
+function [paroptim]=areabusesweepmoretopo(e)
+    % Need to add support of the axis ratio as a design variable in there
+    % as well.
     
-    paroptim.general.nPop=24;
-    paroptim.general.maxIter=30;
-    paroptim.general.worker=8;
+    [paroptim]=MultiTopo_DEhoriz();
+    [paroptim]=SumVolumeConstraint(paroptim);
+    [paroptim]=LimitLETE(paroptim);
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.optimMethod='DE';
     
+    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
+    paroptim.general.nPop=100;
+    paroptim.general.maxIter=150;
+    paroptim.general.worker=12;
+    
+    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
+    paroptim.parametrisation.optiminit.cellLevels=...
+        paroptim.parametrisation.optiminit.cellLevels*2;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
+    paroptim.constraint.desVarVal={e};
+    paroptim.constraint.desVarConstr={'MinValVolFrac'};
+    
+    %     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
+    %     paroptim.desvar.numNonFillVar=[1 ];
+    %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
+    %     paroptim.desvar.startPopNonFill={'rand'};
+    [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    
+    
+end
+
+%% ASO Cases
+% standards
+function [paroptim]=standard_ASO(paroptim)
     paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
     paroptim.general.objInput='loop,baseGrid';
     paroptim.spline.splineCase='smoothpts';
@@ -1312,6 +1355,57 @@ function [paroptim]=buseASONoreturn()
     paroptim.obj.flow.solveFlow=false;
     paroptim.constraint.resConstr={};
     paroptim.constraint.resVal={};
+    
+    paroptim.obj.aso.paramoveride.maxFunCalls = 150;
+    paroptim.obj.aso.su2ProcSec=4*1800;
+    paroptim.obj.aso.asoProcSec=4*12*3600;
+    paroptim.obj.aso.snoptIter=10;
+end
+
+function [paroptim]=standard_MultiLevel(paroptim,lvlSubdiv,errTreatment,nLevel)
+
+    paroptim.obj.aso.paramoveride.surfaceFcn=...
+        @(geom) Geometry.Subdivision(geom,lvlSubdiv,errTreatment);
+    paroptim.obj.aso.paramoveride.nLevel=max(nLevel-lvlSubdiv+1,1);
+    paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{}};
+    
+    
+end
+
+function [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,vol)
+    [paroptim]=areabusesweep(vol);
+    [paroptim]=ChooseNworkerASO(paroptim);
+    [paroptim]=standard_ASO(paroptim);
+    [paroptim]=standard_MultiLevel(paroptim,lvlSubdiv,errTreatment,nLevel);
+    
+     paroptim.obj.aso.asoReturnFillChange=false;
+     
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=100;
+    
+    % Swap to no optim for multistart
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+
+end
+
+% Callers
+
+% Hybrid opt
+function [paroptim]=buseASONoreturn()
+    [paroptim]=areabusesweep(0.12);
+    [paroptim]=ChooseNworkerASO(paroptim);
+    [paroptim]=standard_ASO(paroptim);
+    [paroptim]=standard_MultiLevel(paroptim,3,'basis',1); % single level 3
+    paroptim.general.nPop=24;
+    paroptim.general.maxIter=30;
+    
+    paroptim.obj.aso.paramoveride.maxFunCalls = 150;
+    paroptim.obj.aso.su2ProcSec=4*1800;
+    paroptim.obj.aso.asoProcSec=2*4*3600;
+    paroptim.obj.aso.snoptIter=10;
     
     paroptim.obj.aso.asoReturnFillChange=false;
 end
@@ -1322,58 +1416,22 @@ function [paroptim]=buseASOFillreturn()
     paroptim.obj.aso.asoReturnFillChange=true;
 end
 
-
+% Multi start
 function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
-    [paroptim]=areabusesweep(0.12);
+    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,vol);
+    
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
-    paroptim.general.objectiveName='ASOFlow'; % 'InverseDesign' 'CutCellFlow'
-    paroptim.general.objInput='loop,baseGrid';
-    paroptim.spline.splineCase='smoothpts';
-    paroptim.spline.resampleSnak=true;
-    paroptim.parametrisation.general.typeLoop='subdivspline';
-    paroptim.obj.flow.mesher='triangle';
-    paroptim.obj.flow.CFDfolder=[cd,...
-        '\Result_Template\CFD_code_Template\trianglemesh'];
-    paroptim.obj.flow.solveFlow=false;
-    paroptim.constraint.resConstr={};
-    paroptim.constraint.resVal={};
+
 
     paroptim.general.restartIterNum=1;
-    paroptim.optim.DE.nonePopKeep=1; % parameter to ick the first 50% of a population
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
-    paroptim.obj.aso.paramoveride.surfaceFcn=...
-        @(geom) Geometry.Subdivision(geom,lvlSubdiv,errTreatment);
-    paroptim.obj.aso.paramoveride.nLevel=max(nLevel-lvlSubdiv+1,1);
-    paroptim.obj.aso.paramoveride.maxFunCalls = 150;
-    
-    paroptim.obj.aso.asoReturnFillChange=false;
-    paroptim.obj.aso.su2ProcSec=4*1800;
-    paroptim.obj.aso.asoProcSec=4*12*3600;
-    paroptim.obj.aso.snoptIter=10;
-    
-    paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{}};
-    
-    
-    if ispc || ismac
-        paroptim.general.worker=4;
-    elseif isunix
-        switch BlueCrystalCheck()
-            case 3
-                paroptim.general.worker=8;
-            case 4
-                paroptim.general.worker=12;
-            otherwise
-                error('whichbluecrystal failed')
-        end
-            
-    end
-        
 end
 
 function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)
-    [paroptim]=ASOMS_subdiv(lvlSubdiv,'basis',nLevel);
+    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,'basis',nLevel,vol);
     
     switch constrCase
         case 'cross'
@@ -1392,6 +1450,60 @@ function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)
     paroptim.general.nPop=23;
 end
 
+function [paroptim]=ASOMS_pop(restartPos)
+    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,0.12);
+    
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=100;
+
+    paroptim.general.restartIterNum=restartPos;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+end
+
+function [paroptim]=ASOMS_popsmall(restartPos)
+    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,0.12);
+    
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=50;
+
+    paroptim.general.restartIterNum=restartPos;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+end
+
+function [paroptim]=ASOMS_vol(vol)
+    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,vol);
+    
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=100;
+
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+end
+
+function [paroptim]=ASOMS_moretopo()
+    vol=0.12;
+    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,vol);
+    
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=100;
+
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+    
+    paroptim.parametrisation.optiminit.cellLevels=...
+        paroptim.parametrisation.optiminit.cellLevels*2;
+    [paroptim]=AdaptSizeforBusemann(paroptim,vol);
+end
+
+%% Buseman variations
 function [paroptim]=areabuseaxrat(e)
     % Need to add support of the axis ratio as a design variable in there
     % as well.

@@ -130,6 +130,7 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     end
     
 end
+
 function [optimstruct]=RecoverProfileLocations(pathStr,iternum)
     
     for ii=iternum
