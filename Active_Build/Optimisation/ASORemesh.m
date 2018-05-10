@@ -19,7 +19,7 @@ function [meshFile]=ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry)
             
         end
         loopRemesh(ii).coord=vertices(vertConn{ii},:);
-        loopRemesh(ii).isccw=CCWLoop(loopRemesh.coord);
+        loopRemesh(ii).isccw=CCWLoop(loopRemesh(ii).coord);
         
         loopRemesh(ii).vertorder=vertConn{ii};
     end
