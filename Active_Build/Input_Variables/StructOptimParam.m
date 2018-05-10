@@ -1355,9 +1355,22 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
     
     paroptim.obj.aso.paramoveride.problemargin={'subdiv_ebasis_cross',{},...
         'subdiv_ebasis',{},'chord_max',{}};
-    dbcont
     
-    paroptim.general.worker=8;
+    
+    if ispc || ismac
+        paroptim.general.worker=4;
+    elseif isunix
+        switch BlueCrystalCheck()
+            case 3
+                paroptim.general.worker=8;
+            case 4
+                paroptim.general.worker=12;
+            otherwise
+                error('whichbluecrystal failed')
+        end
+            
+    end
+        
 end
 
 function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)

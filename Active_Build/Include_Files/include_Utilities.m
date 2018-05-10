@@ -281,6 +281,12 @@ end
 
 %% Various
 
+function [num]=BlueCrystalCheck()
+    [stat,bcNum]=system('whichbluecrystal');
+    
+    num=str2double(bcNum);
+end
+
 function [lengthParam,edgeLength]=LengthProfile(points)
     
     points=points([1,1:end],:);
