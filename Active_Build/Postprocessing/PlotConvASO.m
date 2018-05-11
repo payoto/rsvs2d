@@ -30,7 +30,9 @@ function []=PlotConvASO(ASOstruct,nIter)
     lName=regexprep(lErrVec,'_',' ');
     for jj=1:numel(nIter)
         h2=figure('Name',['Convergence History profile ',int2str(nIter(jj))]);
-        ax2=axes(h2);
+        ax2=subplot(1,2,1);
+        hold on
+        ax22=subplot(1,2,2);
         hold on
         h3=figure('Name',['Convergence History eDV ',int2str(nIter(jj))]);
         for ii=1:4
@@ -59,6 +61,8 @@ function []=PlotConvASO(ASOstruct,nIter)
                     '^.*profile_',''),'_','split'));
                 l(kk)=plot(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
                     ASOstruct(ii).obj,'.-','color',fColor);
+                plot(ax22,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
+                    ASOstruct(ii).opt(ASOstruct(ii).majorIt),'.-','color',fColor);
                     %ones([1 numel(ASOstruct(ii).obj)])*nums(end),
                  l(kk).DisplayName=lName{iii};
                  kk=kk+1;
