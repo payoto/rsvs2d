@@ -1498,8 +1498,8 @@ function [paroptim]=ASOMS_moretopo()
     paroptim.general.optimMethod='none';
     
     
-    paroptim.parametrisation.optiminit.cellLevels=...
-        paroptim.parametrisation.optiminit.cellLevels*2;
+    paroptim.parametrisation.optiminit.cellLevels(2)=...
+        paroptim.parametrisation.optiminit.cellLevels(2)*2;
     [paroptim]=AdaptSizeforBusemann(paroptim,vol);
 end
 

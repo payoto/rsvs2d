@@ -278,7 +278,7 @@ function [obj]=ExtractFinalData(targFolder,iter,isErr)
             obj.(structName{ii})=1000;
         end
     end
-    fclose('all');
+    fclose(fid);
     obj.iter=obj.iter+iter;
     
 end
@@ -403,7 +403,7 @@ function [streamArray]=ExtractConvergenceRate(targFolder,numAverage)
     
     reorderStream=[ii+1:min([kk,numAverage]),1:ii];
     streamArray=streamArray(reorderStream,:);
-    fclose('all');
+    fclose(fidHist);
     
     
 end
@@ -477,7 +477,8 @@ function []=RestartModifiedSettings(targFolder,typeChange,lineNum,varargin)
     while (~feof(fidSetR))
         fprintf(fidSetW,fgets(fidSetR));
     end
-    fclose('all');
+    fclose(fidSetR);
+    fclose(fidSetW);
 end
 
 function strOut=ReplaceCFLNum(strIn,dirCFL,maxminCFL)

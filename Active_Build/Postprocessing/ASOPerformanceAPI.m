@@ -96,6 +96,7 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
         disp([int2str(ll),' failures to ',int2str(kk),' success'])
         if isOptimStruct
             h=OptimHistory(0,optimstruct,knownOptim,1000,'min');
+            ax=findobj(h(1),'type','axes');
         else
             h=figure('Name','ConvHistory');
             
