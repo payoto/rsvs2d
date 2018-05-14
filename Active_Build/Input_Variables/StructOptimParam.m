@@ -1418,7 +1418,7 @@ end
 
 % Multi start
 function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
-    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,vol);
+    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,0.12);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;

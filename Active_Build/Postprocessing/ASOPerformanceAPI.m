@@ -227,7 +227,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
             funcLogTest=@(in) ~cellfun(@isempty,regexp(errVecModes,in));
         case 'subDivLevel'
             for ii=1:numel(ASOstruct)
-                errVecModes{ii}=int2str(unique(ASOstruct(ii).refLvl));
+                errVecModes{ii}=int2str(unique(ASOstruct(ii).refLvl)');
             end
             
             lErrVec=unique(errVecModes);
@@ -401,7 +401,7 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     for ii=kkStart+4*8+1:kkStart+5*8
         AverageAllLines(ax(ii),{'lin',4})
     end
-    for ii=[kkStart+3*8+1:kkStart+4*8,kkStart+5*8+1:numel(ax)]
+    for ii=[kkStart+2*8+1:kkStart+4*8,kkStart+5*8+1:numel(ax)]
         AverageAllLines(ax(ii),{'log',4})
     end
     legend(ax(1),findobj(ax(1),'type','line'))
