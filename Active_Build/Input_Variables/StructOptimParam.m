@@ -1293,7 +1293,7 @@ function [paroptim]=areabusesweep(e)
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=150;
-    paroptim.general.worker=12;
+    [paroptim]=ChooseNworkerASO(paroptim);
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
@@ -1322,11 +1322,11 @@ function [paroptim]=areabusesweepmoretopo(e)
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=150;
-    paroptim.general.worker=12;
+    [paroptim]=ChooseNworkerASO(paroptim);
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
-    paroptim.parametrisation.optiminit.cellLevels=...
-        paroptim.parametrisation.optiminit.cellLevels*2;
+    paroptim.parametrisation.optiminit.cellLevels(2)=...
+        paroptim.parametrisation.optiminit.cellLevels(2)*2;
     
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
     paroptim.constraint.desVarVal={e};

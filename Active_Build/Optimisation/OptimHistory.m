@@ -218,7 +218,7 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
     [iterGrid,varGrid]=meshgrid(iterVec,varVec);
     [objGrid,~]=meshgrid(objNominal,varVec);
     [meanGrid,~]=meshgrid(meanRes,varVec);
-    
+    try
     surf(iterGrid,varGrid,popNominal',objGrid)
     colorbar;
     xlabel('Iteration', 'interpreter','latex','fontsize',12)
@@ -233,8 +233,10 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
 %     surf(iterGrid,varGrid,minFill')
 
     % Figure 2
+    catch
+    end
     h(2)=figure('Name','Design Variable Evolution','Position',[20 100 1000 600]);
-    
+    try
     axh=subplot(2,2,1,'ticklabelinterpreter','latex');
     s(1)=surf(iterGrid,varGrid,meanFill');
     caxis([0 1])
@@ -277,7 +279,8 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
         axc(ii).Label.String=cLabel{ii};
         axc(ii).Label.FontSize=14;
     end
-    
+    catch
+    end
     
     
     %{
