@@ -99,7 +99,6 @@ end
 
 %%
 
-
 for ii=figList;
     h=findobj(ii,'type','axes');
     if numel(h)>0
@@ -107,6 +106,10 @@ for ii=figList;
             h(jj).TickLabelInterpreter='latex';
             h(jj).XLabel.Interpreter='latex';
             h(jj).YLabel.Interpreter='latex';
+            try
+                h(jj).ZLabel.Interpreter='latex';
+            catch
+            end
         end
     end
     h=findobj(ii,'type','legend');
@@ -122,6 +125,7 @@ for ii=figList;
         end
     end
 end
+
 %%
 for ii=figList;
     h=findobj(ii);

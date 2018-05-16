@@ -1503,6 +1503,24 @@ function [paroptim]=ASOMS_moretopo()
     [paroptim]=AdaptSizeforBusemann(paroptim,vol);
 end
 
+function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
+    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,'basis',nLevel,0.12);
+    
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=3;
+    paroptim.general.worker=3;
+
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+    paroptim.obj.aso.paramoveride.maxFunCalls = 200;
+    paroptim.obj.aso.su2ProcSec=4*1800;
+    paroptim.obj.aso.asoProcSec=4*48*3600;
+    paroptim.obj.aso.snoptIter=snoptStep;
+end
+
+
 %% Buseman variations
 function [paroptim]=areabuseaxrat(e)
     % Need to add support of the axis ratio as a design variable in there

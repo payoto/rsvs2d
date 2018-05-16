@@ -272,7 +272,9 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     % Generate figures
     if ~isaxDef
         figNames={'ASO Performance','ASO Performance Normalised',...
-            'ASO desvar to surface','Func Maj','Scatter','Objective','Step Data'};
+            'ASO desvar to surface','Func Maj','Scatter','Objective',...
+            'Step Data','Box Plots'};
+        figNamesSingle={};
         tfunc=@(x)numel(unique(x));
         runExtraFig=any(cellfun(tfunc,{summaryStruct.subDivLevel}));
         if runExtraFig
@@ -306,6 +308,12 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
                 hold on
             end
         end
+        for ii=1:numel(figNamesSingle)
+            h2(ii+1)=figure('Name',figNamesSingle{ii});
+            axSingle(ii)=axes;
+            hold on
+            
+        end
     end
     
     % Plot Data
@@ -313,6 +321,15 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     fMarker='.:';
     markList='.+';
     lErrVec=regexprep(lErrVec,'_',' ');
+    
+    PlotASOPerformance_BoxPlot(ax(29),summaryStruct,lErrVec,...
+        'changeObjRat','Obj Value change (% of orig objective)',0)
+    PlotASOPerformance_BoxPlot(ax(30),summaryStruct,lErrVec,...
+        'changeObj','Obj Value change',0)
+    PlotASOPerformance_BoxPlot(ax(31),summaryStruct,lErrVec,...
+        'bestObj','Best Objective',0.2)
+    PlotASOPerformance_BoxPlot(ax(32),summaryStruct,lErrVec,...
+        'geomStepMag','Geometric step',0)
     for iii=1:numel(summaryStruct)
         if numel(lErrVec)>1
             fColor=c(mod(iii-1,size(c,1))+1,:);
@@ -327,7 +344,6 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
         PlotASOPerformance_fig5(ax(17:20),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig6(ax(21:24),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
         PlotASOPerformance_fig7(ax(25:28),summaryStruct(iii),lErrVec{iii},fMarker,fColor)
-        
         % Variable subdiv plots
         kk=kkStart;
         for jj=1:numel(xStr)
@@ -494,6 +510,7 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     changeObjFinalCD0=[];    geomStepMag=[];    nSurfPoints=[];
     nFuncperMaj=[];   changeAtIter10=[]; changeAtIter10Rat=[]; bestObj=[];
     cd0=[]; profNum=[];nonBasisDesignFinal=[];nonBasisDesignStart=[];
+    changeAtIter10LocalLvl=[];changeAtIter10LocalLvlRat=[];
     
     for ii=fieldsFullExplore
         for jj=fieldnames(ASOstruct(1).(ii{1}))'
@@ -576,9 +593,13 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
             geomStepMag(jj+jjStart)=ASOstruct(ii).geomStepMag(currList(end));
             nFuncperMaj(jj+jjStart)=ASOstruct(ii).objFuncCalls/numel(currList);
             changeAtIter10(jj+jjStart)=(ASOstruct(ii).obj(currList(...
+                min(iter10,numel(currList))))-ASOstruct(ii).obj(1));
+            changeAtIter10Rat(jj+jjStart)=changeAtIter10(jj+jjStart)/changeObj(jjStart+jj);
+            
+            changeAtIter10LocalLvl(jj+jjStart)=(ASOstruct(ii).obj(currList(...
                 min(iter10,numel(currList))))-ASOstruct(ii).obj(currList(...
                 min(1,numel(currList)))));
-            changeAtIter10Rat(jj+jjStart)=changeAtIter10(jj+jjStart)/changeObj(jjStart+jj);
+            changeAtIter10LocalLvlRat(jj+jjStart)=changeAtIter10LocalLvl(jj+jjStart)/changeObj(jjStart+jj);
             nonBasisDesignFinal(jj+jjStart)=ASOstruct(ii).nonBasisDesign(currList(end));
             nonBasisDesignStart(jj+jjStart)=ASOstruct(ii).nonBasisDesign(currList(1));
         end
@@ -602,6 +623,60 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     end
     summaryStruct.(fieldsSum{end})=lErrVec;
     
+end
+
+function []=PlotASOPerformance_BoxPlot(ax,summarrystruct,caseName,fieldName,...
+        str,replaceNan)
+    if ~exist('str','var');str=fieldName;end
+    if ~exist('replaceNan','var');replaceNan=nan;end
+    
+    nDat=cellfun(@numel,{summarrystruct.(fieldName)});
+    for ii=1:numel(summarrystruct)
+        for jj=1:nDat(ii)-1
+            if ~isnan(summarrystruct(ii).(fieldName)(jj+1))
+                summarrystruct(ii).(fieldName)(jj)=nan;
+            end
+        end
+        summarrystruct(ii).(fieldName)(isnan(summarrystruct(ii).(fieldName)))=[];
+    end
+    
+    nDat=cellfun(@numel,{summarrystruct.(fieldName)});
+    boxDat=nan([max(nDat),numel(summarrystruct)]);
+    boxDat(isnan(boxDat))=replaceNan;
+    for ii=1:numel(summarrystruct)
+        boxDat(1:nDat(ii),ii)=summarrystruct(ii).(fieldName);
+    end
+    
+    
+    boxplot(ax,boxDat,caseName)
+    
+    ax.YLabel.String=str; 
+end
+
+function []=PlotASOPerformance_BoxPlotLog(ax,summarrystruct,caseName,fieldName,str)
+    if ~exist('str','var');str=fieldName;end
+    
+    nDat=cellfun(@numel,{summarrystruct.(fieldName)});
+    for ii=1:numel(summarrystruct)
+        for jj=1:nDat(ii)-1
+            if ~isnan(summarrystruct(ii).(fieldName)(jj+1))
+                summarrystruct(ii).(fieldName)(jj)=nan;
+            end
+        end
+        summarrystruct(ii).(fieldName)(isnan(summarrystruct(ii).(fieldName)))=[];
+    end
+    
+    nDat=cellfun(@numel,{summarrystruct.(fieldName)});
+    boxDat=nan([max(nDat),numel(summarrystruct)]);
+    
+    for ii=1:numel(summarrystruct)
+        boxDat(1:nDat(ii),ii)=summarrystruct(ii).(fieldName);
+    end
+    
+    
+    boxplot(ax,log10(boxDat),caseName)
+    
+    ax.YLabel.String=str; 
 end
 
 function []=PlotASOPerformance_fig1(ax,summarrystruct,caseName,fMarker,fColor)
@@ -1083,13 +1158,14 @@ function []=AddNumbersInRange(ax,overUnder,dim)
         x=[l.YData];
     end
     over=sum(y>overUnder);
-    under=numel(y)-over;
+    under=numel(y(~isnan(y)))-over;
     
     boxAx=axis(ax);
     if dim==2
         boxAx=[boxAx(3:4),boxAx(1:2)];
     end
-    boxAx(1:2)=[min(x),max(x)];
+    minMax=[min(x(isfinite(x))),max(x(isfinite(x)))];
+    boxAx(1:2)=minMax;
     if strcmp(ax.XScale,'linear')
         boxAx(1:2)=boxAx(1:2)+[-0.1 0.1]*(boxAx(2)-boxAx(1));
     else
@@ -1118,9 +1194,9 @@ function []=AddNumbersInRange(ax,overUnder,dim)
     end
     if flag
         if dim==1
-            plot(ax,[min(x),max(x)],[1 1]*overUnder,'--','color',fColor)
+            plot(ax,minMax,[1 1]*overUnder,'--','color',fColor)
         else
-            plot(ax,[1 1]*overUnder,[min(x),max(x)],'--','color',fColor)
+            plot(ax,[1 1]*overUnder,minMax,'--','color',fColor)
         end
         
     end
