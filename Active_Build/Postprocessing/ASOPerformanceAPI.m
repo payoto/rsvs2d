@@ -161,7 +161,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     expectFields={'DEIter','majorIt','obj','opt','geomStepMag','eDV', 'loops',...
         'refLvl','geomErrMag','ASOdesVec','errX','errY','errNorm','errCNorm','errRaw',...
         'nSurfPoints','objFuncCalls','CD0','errorVecMode',...
-        'location','nTopo'};
+        'location','nTopo','residual'};
     standardIn=cell(size(expectFields));
     [standardIn{:}]=deal(0);
     structBuild=[expectFields;standardIn];
@@ -169,7 +169,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     
     [subdivLevel1, errorMagnitude, nDV,errX, errY, errNorm, errCNorm,errRaw] ...
         = ASO.Postproc.subdivData(pathToASO);
-    [majorIt, objective, subdivLevel, geomStep,eDV, loops, opt] = ...
+    [majorIt, objective, subdivLevel, geomStep,eDV, loops, opt, residual] = ...
         ASO.Postproc.iterationData(pathToASO);
     [CD0, nFunCall, nSurfPts,errorMode] = ASO.Postproc.ASOData(pathToASO);
     profiles = ASO.Postproc.profileData(pathToASO);
@@ -194,6 +194,7 @@ function [ASOstruct]=ASOInterface(pathToASO)
     ASOstruct.loops=loops;
     ASOstruct.errRaw=errRaw;
     ASOstruct.opt=opt;
+    ASOstruct.residual=residual;
     
     if isempty(majorIt)
         error('No ASO was run')

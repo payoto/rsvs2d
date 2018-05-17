@@ -44,6 +44,7 @@ function []=PlotConvASO(ASOstruct,nIter)
         hold on
         
         c=get(ax2,'colororder');
+        markerOrd='.+do';
         hold on
     
         clear l;
@@ -54,21 +55,22 @@ function []=PlotConvASO(ASOstruct,nIter)
                 ['profile_',int2str(nIter(jj)),'$']))));
             if numel(lErrVec)>1
                 fColor=c(mod(iii-1,size(c,1))+1,:);
+                fMarker=markerOrd(mod(floor((iii-1)/size(c,1)),numel(markerOrd))+1);
             end
 
             for ii=1:numel(ASOstruct)
                 nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
                     '^.*profile_',''),'_','split'));
                 l(kk)=plot(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
-                    ASOstruct(ii).obj,'.-','color',fColor);
+                    ASOstruct(ii).obj,[fMarker,'-'],'color',fColor);
                 plot(ax22,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
-                    ASOstruct(ii).opt(ASOstruct(ii).majorIt),'.-','color',fColor);
+                    ASOstruct(ii).opt(ASOstruct(ii).majorIt),[fMarker,'-'],'color',fColor);
                     %ones([1 numel(ASOstruct(ii).obj)])*nums(end),
                  l(kk).DisplayName=lName{iii};
                  kk=kk+1;
-                 plot(ax4,ASOstruct(ii).nonBasisDesign,'.-','color',fColor)
+                 plot(ax4,ASOstruct(ii).nonBasisDesign,[fMarker,'-'],'color',fColor)
                  for lll=1:4
-                     plot(ax3(lll),ASOstruct(ii).eDV(:,lll),'.-','color',fColor)
+                     plot(ax3(lll),ASOstruct(ii).eDV(:,lll),[fMarker,'-'],'color',fColor)
                  end
             end
            
