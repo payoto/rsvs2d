@@ -238,6 +238,12 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
                 ,'^.*Dir_[0-9-]*T[0-9]{6}_',''),'/.*$','');
             lErrVec=unique(errVecModes);
             funcLogTest=@(in) ~cellfun(@isempty,regexp(errVecModes,in));
+        case 'ProfileNum'
+            errVecModes=regexprep(regexprep({ASOstruct.location}...
+                ,'^.*profile_',''),'/.*$','');
+            lErrVec=unique(errVecModes);
+            funcLogTest=@(in) ~cellfun(@isempty,regexp(errVecModes,in));
+            
         otherwise
             error('Unknown split case')
             

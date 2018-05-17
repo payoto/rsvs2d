@@ -32,7 +32,9 @@ function []=PlotConvASO(ASOstruct,nIter)
         h2=figure('Name',['Convergence History profile ',int2str(nIter(jj))]);
         ax2=subplot(1,2,1);
         hold on
-        ax22=subplot(1,2,2);
+        ax22(1)=subplot(2,2,2);
+        hold on
+        ax22(2)=subplot(2,2,4);
         hold on
         h3=figure('Name',['Convergence History eDV ',int2str(nIter(jj))]);
         for ii=1:4
@@ -44,7 +46,7 @@ function []=PlotConvASO(ASOstruct,nIter)
         hold on
         
         c=get(ax2,'colororder');
-        markerOrd='.+do';
+        markerOrd='.+d';
         hold on
     
         clear l;
@@ -54,8 +56,10 @@ function []=PlotConvASO(ASOstruct,nIter)
             ASOstruct=ASOstruct(find(~cellfun(@isempty,regexp({ASOstruct.location},...
                 ['profile_',int2str(nIter(jj)),'$']))));
             if numel(lErrVec)>1
-                fColor=c(mod(iii-1,size(c,1))+1,:);
-                fMarker=markerOrd(mod(floor((iii-1)/size(c,1)),numel(markerOrd))+1);
+%                 fColor=c(mod(iii-1,size(c,1))+1,:);
+%                 fMarker=markerOrd(mod(floor((iii-1)/size(c,1)),numel(markerOrd))+1);
+                fColor=c(mod(floor((iii-1)/numel(markerOrd)),size(c,1))+1,:);
+                fMarker=markerOrd(mod((iii-1),numel(markerOrd))+1);
             end
 
             for ii=1:numel(ASOstruct)
@@ -63,8 +67,17 @@ function []=PlotConvASO(ASOstruct,nIter)
                     '^.*profile_',''),'_','split'));
                 l(kk)=plot(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
                     ASOstruct(ii).obj,[fMarker,'-'],'color',fColor);
-                plot(ax22,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
-                    ASOstruct(ii).opt(ASOstruct(ii).majorIt),[fMarker,'-'],'color',fColor);
+%                 plot(ax22(1),ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
+%                     ASOstruct(ii).opt(ASOstruct(ii).majorIt),[fMarker,'-'],'color',fColor);
+                
+                field={'adjointMax','adjoint'};
+                for jjj=1:numel(field)
+                [ASOstruct(ii).residual(cellfun(@isempty,...
+                    {ASOstruct(ii).residual.(field{jjj})})).(field{jjj})]=deal(nan);
+                res=[ASOstruct(ii).residual.(field{jjj})];
+                plot(ax22(mod(jjj,numel(ax22))+1),ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
+                    res(ASOstruct(ii).majorIt),[fMarker,'-'],'color',fColor);
+                end
                     %ones([1 numel(ASOstruct(ii).obj)])*nums(end),
                  l(kk).DisplayName=lName{iii};
                  kk=kk+1;

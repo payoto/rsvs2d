@@ -1514,9 +1514,9 @@ function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
-    paroptim.obj.aso.paramoveride.maxFunCalls = 200;
+    paroptim.obj.aso.paramoveride.maxFunCalls =10000;
     paroptim.obj.aso.su2ProcSec=4*1800;
-    paroptim.obj.aso.asoProcSec=4*48*3600;
+    paroptim.obj.aso.asoProcSec=16*48*3600;
     paroptim.obj.aso.snoptIter=snoptStep;
 end
 
