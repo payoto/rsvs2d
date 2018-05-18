@@ -274,6 +274,10 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
                 ones([1 numel(ASOstruct(ii).obj)])*nums(end),ASOstruct(ii).obj,'.-','color',fColor);
            
         end
+        if strcmp(splitCase,'NameRun')
+            h3=ShowChangingOrder(ASOstruct);
+            h2=[h2,h3];
+        end
     end
     view(ax2,0,0);
     % Generate figures
@@ -329,14 +333,16 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     markList='.+';
     lErrVec=regexprep(lErrVec,'_',' ');
     
-    PlotASOPerformance_BoxPlot(ax(29),summaryStruct,lErrVec,...
+    PlotASOPerformance_BoxPlotLine(ax(29),summaryStruct,lErrVec,...
         'changeObjRat','Obj Value change (% of orig objective)',0)
-    PlotASOPerformance_BoxPlot(ax(30),summaryStruct,lErrVec,...
+    PlotASOPerformance_BoxPlotLine(ax(30),summaryStruct,lErrVec,...
         'changeObj','Obj Value change',0)
-    PlotASOPerformance_BoxPlot(ax(31),summaryStruct,lErrVec,...
-        'bestObj','Best Objective',0.2)
-    PlotASOPerformance_BoxPlot(ax(32),summaryStruct,lErrVec,...
+%     PlotASOPerformance_BoxPlot(ax(31),summaryStruct,lErrVec,...
+%         'bestObj','Best Objective',0.2)
+    PlotASOPerformance_BoxPlotLine(ax(32),summaryStruct,lErrVec,...
         'geomStepMag','Geometric step',0)
+    PlotASOPerformance_BoxPlotLine(ax(31),summaryStruct,lErrVec,...
+        'geomStepMagSurf','Geometric step per surf point',0)
     for iii=1:numel(summaryStruct)
         if numel(lErrVec)>1
             fColor=c(mod(iii-1,size(c,1))+1,:);
@@ -517,7 +523,7 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
     changeObjFinalCD0=[];    geomStepMag=[];    nSurfPoints=[];
     nFuncperMaj=[];   changeAtIter10=[]; changeAtIter10Rat=[]; bestObj=[];
     cd0=[]; profNum=[];nonBasisDesignFinal=[];nonBasisDesignStart=[];
-    changeAtIter10LocalLvl=[];changeAtIter10LocalLvlRat=[];
+    changeAtIter10LocalLvl=[];changeAtIter10LocalLvlRat=[];geomStepMagSurf=[];
     
     for ii=fieldsFullExplore
         for jj=fieldnames(ASOstruct(1).(ii{1}))'
@@ -598,6 +604,8 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
             changeObjCD0(jj+jjStart)=ASOstruct(ii).obj(1)-ASOstruct(ii).CD0;
             changeObjFinalCD0(jj+jjStart)=ASOstruct(ii).obj(end)-ASOstruct(ii).CD0;
             geomStepMag(jj+jjStart)=ASOstruct(ii).geomStepMag(currList(end));
+            geomStepMagSurf(jj+jjStart)=ASOstruct(ii).geomStepMag(currList(end))/...
+                ASOstruct(ii).nSurfPoints;
             nFuncperMaj(jj+jjStart)=ASOstruct(ii).objFuncCalls/numel(currList);
             changeAtIter10(jj+jjStart)=(ASOstruct(ii).obj(currList(...
                 min(iter10,numel(currList))))-ASOstruct(ii).obj(1));
@@ -658,6 +666,36 @@ function []=PlotASOPerformance_BoxPlot(ax,summarrystruct,caseName,fieldName,...
     boxplot(ax,boxDat,caseName)
     
     ax.YLabel.String=str; 
+end
+
+function []=PlotASOPerformance_BoxPlotLine(ax,summarrystruct,caseName,fieldName,...
+        str,replaceNan)
+    if ~exist('str','var');str=fieldName;end
+    if ~exist('replaceNan','var');replaceNan=nan;end
+    
+    nDat=cellfun(@numel,{summarrystruct.(fieldName)});
+    for ii=1:numel(summarrystruct)
+        for jj=1:nDat(ii)-1
+            if ~isnan(summarrystruct(ii).(fieldName)(jj+1))
+                summarrystruct(ii).(fieldName)(jj)=nan;
+            end
+        end
+        summarrystruct(ii).(fieldName)(isnan(summarrystruct(ii).(fieldName)))=[];
+    end
+    
+    nDat=cellfun(@numel,{summarrystruct.(fieldName)});
+    boxDat=nan([max(nDat),numel(summarrystruct)]);
+    boxDat(isnan(boxDat))=replaceNan;
+    for ii=1:numel(summarrystruct)
+        boxDat(1:nDat(ii),ii)=summarrystruct(ii).(fieldName);
+    end
+    
+    
+    plot(ax,1:size(boxDat,2),boxDat)
+    ax.XTick=1:size(boxDat,2);
+    ax.XTickLabel=caseName;
+    ax.YLabel.String=str; 
+    ax.XTickLabelRotation=30;
 end
 
 function []=PlotASOPerformance_BoxPlotLog(ax,summarrystruct,caseName,fieldName,str)
