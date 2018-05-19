@@ -7,9 +7,12 @@ function ASOMSvol(vol)
     disp(callStr);
     
     
+    [~,pathHome]=system('echo -n $HOME');
+    restartPath=[pathHome,'/SnakVolParam/restarts/restart_',...
+        sprintf('ASOMS_vol_%.3f',vol),'.mat'];
     
     
-    ExecuteOptimisation(callStr);
+    ExecuteOptimisation(callStr,{restartPath,{'none',true}});
     
 
 end

@@ -1480,7 +1480,7 @@ function [paroptim]=ASOMS_vol(vol)
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
 
-    paroptim.general.restartIterNum=1;
+    paroptim.general.restartIterNum=50;
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     

@@ -118,7 +118,7 @@ function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameR
     [ASOstruct]=PlotASOPerformance_DataPreProc(ASOstruct);
     [h2]=PlotASOPerformance(ASOstruct,ax(2),splitCase);
     h=[h,h2];
-    close(h(figList))
+    close(h(unique(min(figList,numel(h)))))
     % Save Data
     if ~isempty(dirSave)
         
@@ -149,7 +149,7 @@ function [dirSave,nameRun,figList,splitCase]=HandleVarargin(cellArgin)
     dirSave='';
     nameRun='';
     figList=[];
-    splitCase='errorVecMode';
+    splitCase='RunName';
     
     for ii=1:2:numel(cellArgin)
         eval([cellArgin{ii},'=cellArgin{ii+1};']);
@@ -274,8 +274,8 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
                 ones([1 numel(ASOstruct(ii).obj)])*nums(end),ASOstruct(ii).obj,'.-','color',fColor);
            
         end
-        if strcmp(splitCase,'NameRun')
-            h3=ShowChangingOrder(ASOstruct);
+        if strcmp(splitCase,'RunName')
+            h3=ShowChangingOrder(ASOstruct,lErrVec{iii},1);
             h2=[h2,h3];
         end
     end
