@@ -1,6 +1,6 @@
 
 
-pathToConstr='C:\Users\ap1949\Local Documents\PhD\res\aso_1804\aeroconv2'
+pathToConstr='C:\Users\ap1949\Local Documents\PhD\res\aso_1804\aeroconv3'
 
 pathDir=FindDir(pathToConstr,'Dir',1);
 
@@ -9,7 +9,7 @@ for ii=1:numel(pathDir);
     perfPath{ii}=temp{1};
 end
 
-listInd=[1:19];
+listInd=[1:21];
 clear strctin; 
 kk=1;
 for ii=[listInd];
