@@ -44,6 +44,9 @@ function []=PlotConvASO(ASOstruct,nIter)
         h4=figure('Name',['Convergence History nonBasis design  ',int2str(nIter(jj))]);
         ax4=axes(h4);
         hold on
+        h5=figure('Name',['Final Profiles  ',int2str(nIter(jj))]);
+        ax5=axes(h5);
+        hold on
         
         c=get(ax2,'colororder');
         markerOrd='.+d';
@@ -67,6 +70,10 @@ function []=PlotConvASO(ASOstruct,nIter)
                     '^.*profile_',''),'_','split'));
                 l(kk)=plot(ax2,ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
                     ASOstruct(ii).obj,[fMarker,'-'],'color',fColor);
+                for ll=1:numel(ASOstruct(ii).loops{end})
+                    plot(ax5,ASOstruct(ii).loops{end}{ll}(:,1),...
+                        ASOstruct(ii).loops{end}{ll}(:,2),[fMarker,'-'],'color',fColor);
+                end
 %                 plot(ax22(1),ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
 %                     ASOstruct(ii).opt(ASOstruct(ii).majorIt),[fMarker,'-'],'color',fColor);
                 

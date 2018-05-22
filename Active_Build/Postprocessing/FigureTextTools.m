@@ -37,6 +37,13 @@ function []=LatexFigure(figList,interpreter)
                 h(jj).Interpreter=interpreter;
             end
         end
+        h=findobj(ii,'type','colorbar');
+        if numel(h)>0
+            for jj=1:numel(h)
+                h(jj).Label.Interpreter=interpreter;
+                h(jj).TickLabelInterpreter=interpreter;
+            end
+        end
         h=findobj(ii,'type','text');
         if numel(h)>0
             for jj=1:numel(h)
@@ -65,6 +72,13 @@ function []=FontSizeDeltaFigure(figList,increment)
                 h(jj).FontSize=h(jj).FontSize+increment;
             end
         end
+        h=findobj(ii,'type','colorbar');
+        if numel(h)>0
+            for jj=1:numel(h)
+                
+                h(jj).FontSize=h(jj).FontSize+increment;
+            end
+        end
     end
 end
 
@@ -83,6 +97,13 @@ function []=FontSizeFigure(figList,increment)
         h=findobj(ii,'type','text');
         if numel(h)>0
             for jj=1:numel(h)
+                h(jj).FontSize=increment;
+            end
+        end
+        h=findobj(ii,'type','colorbar');
+        if numel(h)>0
+            for jj=1:numel(h)
+                
                 h(jj).FontSize=increment;
             end
         end

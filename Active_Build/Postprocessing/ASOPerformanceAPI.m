@@ -333,15 +333,15 @@ function [h,ax]=PlotASOPerformance(ASOstruct,axDeOpt,splitCase,axOther)
     markList='.+';
     lErrVec=regexprep(lErrVec,'_',' ');
     
-    PlotASOPerformance_BoxPlotLine(ax(29),summaryStruct,lErrVec,...
+    PlotASOPerformance_BoxPlot(ax(29),summaryStruct,lErrVec,...
         'changeObjRat','Obj Value change (% of orig objective)',0)
-    PlotASOPerformance_BoxPlotLine(ax(30),summaryStruct,lErrVec,...
-        'changeObj','Obj Value change',0)
-%     PlotASOPerformance_BoxPlot(ax(31),summaryStruct,lErrVec,...
-%         'bestObj','Best Objective',0.2)
-    PlotASOPerformance_BoxPlotLine(ax(32),summaryStruct,lErrVec,...
+%     PlotASOPerformance_BoxPlot(ax(30),summaryStruct,lErrVec,...
+%         'changeObj','Obj Value change',0)
+     PlotASOPerformance_BoxPlot(ax(30),summaryStruct,lErrVec,...
+         'bestObj','Best Objective',nan)
+    PlotASOPerformance_BoxPlot(ax(32),summaryStruct,lErrVec,...
         'geomStepMag','Geometric step',0)
-    PlotASOPerformance_BoxPlotLine(ax(31),summaryStruct,lErrVec,...
+    PlotASOPerformance_BoxPlot(ax(31),summaryStruct,lErrVec,...
         'geomStepMagSurf','Geometric step per surf point',0)
     for iii=1:numel(summaryStruct)
         if numel(lErrVec)>1
@@ -666,6 +666,7 @@ function []=PlotASOPerformance_BoxPlot(ax,summarrystruct,caseName,fieldName,...
     boxplot(ax,boxDat,caseName)
     
     ax.YLabel.String=str; 
+    [ax.XTickLabelRotation]=deal(30);
 end
 
 function []=PlotASOPerformance_BoxPlotLine(ax,summarrystruct,caseName,fieldName,...
@@ -1038,7 +1039,7 @@ function []=PlotGeomPerformance_asoperffig()
 end
 
 function []=PlotSummaryStruct(summaryStruct)
-    
+    assignin('base','summaryStruct',summaryStruct)
 end
 
 
