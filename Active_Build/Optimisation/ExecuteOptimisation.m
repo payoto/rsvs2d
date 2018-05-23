@@ -420,9 +420,9 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     iterstruct(1).population=ApplySymmetry(paramoptim,iterstruct(1).population);
     % Start Parallel Pool
-    nWorker=ExtractVariables({'worker'},paramoptim);
+    [nWorker,nodeShareNum]=ExtractVariables({'worker','nodeShareNum'},paramoptim);
     workerList=StartParallelPool(nWorker,10);
-    [machineList]=WriteMachineFiles(nWorker,outinfo.rootDir);
+    [machineList]=WriteMachineFiles(nWorker*nodeShareNum,outinfo.rootDir);
     paramoptim=SetVariables({'workerList','machineList'},{workerList,machineList},paramoptim);
     
     if ExtractVariables({'useSnake'},paramoptim)

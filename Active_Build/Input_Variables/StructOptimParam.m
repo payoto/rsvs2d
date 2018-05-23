@@ -71,6 +71,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.specificFillName='24DVaverage';
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
+    paroptimgeneral.nodeShareNum=1;
     paroptimgeneral.workerList=[];
     paroptimgeneral.machineList={};
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'
@@ -1507,9 +1508,9 @@ function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
     [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,'basis',nLevel,0.12);
     
     paroptim.general.maxIter=1;
-    paroptim.general.nPop=3;
-    paroptim.general.worker=3;
-
+    paroptim.general.nPop=1;
+    paroptim.general.worker=1;
+    paroptim.general.nodeShareNum=2;
     paroptim.general.restartIterNum=1;
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
