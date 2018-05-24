@@ -553,11 +553,13 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
         errMagVec=[errMagVec,ASOstruct(ii).geomErrMag'];
         nDesVar=[nDesVar,ASOstruct(ii).ASOdesVec];
         nDesVarperBody=[nDesVarperBody,ASOstruct(ii).ASOdesVec/ASOstruct(ii).nTopo];
-        subDivLevel=[subDivLevel,unique(ASOstruct(ii).refLvl)'];
-        cd0=[cd0,unique(ASOstruct(ii).CD0)*ones(size(unique(ASOstruct(ii).refLvl)))'];
+        lvl=unique(ASOstruct(ii).refLvl);
+        lvl=reshape(lvl,[1 numel(lvl)]);
+        subDivLevel=[subDivLevel,lvl];
+        cd0=[cd0,unique(ASOstruct(ii).CD0)*ones(size(lvl))];
         nums=cellfun(@str2double,regexp(regexprep(ASOstruct(ii).location,...
             '^.*profile_',''),'_','split'));
-        profNum=[profNum,nums(end)*ones(size(unique(ASOstruct(ii).refLvl)))'];
+        profNum=[profNum,nums(end)*ones(size(lvl))];
         
         % Bulk variables
         for ii1=fieldsFullExplore
