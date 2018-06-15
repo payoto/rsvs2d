@@ -1674,6 +1674,8 @@ function [param]=SnakesFoilVVSmall4()
     param.snakes.step.mergeTopo=true;
     param.plotting.debugPlot=[0];
     param.snakes.refine.gridDistrib='none';
+    
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE([18 4]);
 end
 
 function [param]=WeirdShape()

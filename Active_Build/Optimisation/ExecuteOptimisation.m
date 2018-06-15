@@ -543,6 +543,10 @@ function [workerList]=StartParallelPool(nWorker,nTry)
         error('Failed to recover a list of workers')
     end
     pctRunOnAll ExecInclude
+    pathStr=cd;
+    parfor ii=1:ll*nWorker
+        cd(pathStr);
+    end
 end
 
 function [paramoptim]=InitialiseObjective(paramoptim)
@@ -606,7 +610,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
     nPop=numel(population);
     
-    parfor ii=1:nPop %
+    for ii=1:nPop %
         %for ii=1:nPop
         try
             [population(ii).objective,additional]=...
@@ -1564,10 +1568,13 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         'optimMethod','desvarconnec','specificFillName','initInterp','numNonFillVar'};
     [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,...
         specificFillName,initInterp,numNonFillVar]=ExtractVariables(varExtract,paroptim);
-    varExtract={'cellLevels','corneractive','defaultCorner'};
-    [cellLevels,corneractive,defaultCorner]=ExtractVariables(varExtract,paroptim.parametrisation);
+    varExtract={'cellLevels','corneractive','defaultCorner','typDat'};
+    [cellLevels,corneractive,defaultCorner,typDat]=ExtractVariables(varExtract,paroptim.parametrisation);
     
     switch startPop
+        case 'image'
+            fill=Image2Fill(typDat);
+            origPop=repmat(fill(:)',[nPop 1]);
         case 'rand'
             origPop=rand([nPop,nDesVar]);
         case 'Rosenrand'

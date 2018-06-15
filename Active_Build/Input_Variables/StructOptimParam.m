@@ -1521,6 +1521,58 @@ function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
     paroptim.obj.aso.snoptIter=snoptStep;
 end
 
+%% ASO Shape Cases
+% standards
+function [paroptim]=standard_ASOShapeMatch(paroptim)
+    paroptim.general.objectiveName='ASOShape'; % 'InverseDesign' 'CutCellFlow'
+    paroptim.general.objInput='loop,baseGrid';
+    paroptim.spline.splineCase='smoothpts';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.general.typeLoop='subdivspline';
+    paroptim.obj.flow.mesher='triangle';
+    paroptim.obj.flow.CFDfolder=[cd,...
+        '\Result_Template\CFD_code_Template\trianglemesh'];
+    paroptim.obj.aso.asoCase=@ShapeMatchDefaults;
+    paroptim.obj.flow.solveFlow=false;
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
+    paroptim.constraint.desVarConstr={};
+    paroptim.constraint.desVarVal={};
+    
+    paroptim.obj.aso.paramoveride.maxFunCalls = 2000;
+    paroptim.obj.aso.su2ProcSec=4*10;
+    paroptim.obj.aso.asoProcSec=4*12*3600;
+    paroptim.obj.aso.snoptIter=2000;
+    
+    
+end
+
+function [paroptim]=ASOShapeMatch_animation()
+    
+    lvlSubdiv=1;errTreatment='basis';nLevel=7;
+    paroptim=DefaultOptim();
+    paroptim.general.startPop='image';
+    paroptim=ModifySnakesParam(paroptim,'SnakesFoilVVSmall4');
+    [paroptim]=standard_ASOShapeMatch(paroptim);
+    [paroptim]=standard_MultiLevel(paroptim,lvlSubdiv,errTreatment,nLevel);
+    
+     paroptim.obj.aso.asoReturnFillChange=false;
+     
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=1;
+    
+    % Swap to no optim for multistart
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+    
+    [nacaStr]=MultiTopoAeroCases('m244x_example');
+    paroptim.obj.invdes.profileComp='area';
+    paroptim.obj.invdes.aeroName=nacaStr;
+    
+end
+
 
 %% Buseman variations
 function [paroptim]=areabuseaxrat(e)
@@ -2397,6 +2449,8 @@ function [nacaStr]=MultiTopoAeroCases(shortName)
             nacaStr='2_x;4416_7_0_0_0;4418_3_10_-0.005_-0.03';
         case 'm344'
             nacaStr='3;4418_7_0_0_0;2212_4_15_-0.005_-0.02;2212_2_30_-0.02_-0.015';
+        case 'm244x_example'
+            nacaStr='2_x;4416_75_0_0_0;4418_15_5_1_-0.6';
         otherwise
             error('unknown case')
     end

@@ -619,6 +619,7 @@ function [FID]=OpenTecLayFile(writeDirectory,marker)
     writeDirectory=MakePathCompliant(writeDirectory);
     fileName=['tec360lay_',marker,'.lay'];
     originalLayFile=[cd,'\Result_Template\Layout_Template.lay'];
+    
     originalLayFile=MakePathCompliant(originalLayFile);
     copyfile(originalLayFile,[writeDirectory,filesep,fileName])
     FID=fopen([writeDirectory,filesep,fileName],'r+');

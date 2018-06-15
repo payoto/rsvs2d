@@ -65,8 +65,8 @@ function [varargout]=ExtractVariables(varNames,param)
     
     for ii=1:length(varNames)
         %         if strcmp(varNames{ii},'cellLevels')
-%             warning('cellLevels used')
-%         end
+        %             warning('cellLevels used')
+        %         end
         targLocation=regexp(varInStruct,['#',varNames{ii},'#'], 'once');
         if ~isempty(targLocation)
             targLocation=targLocation+1;
@@ -184,11 +184,11 @@ end
 
 function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePoints(points)
     
-%     [~,edgeLength]=LengthProfile(points);
-%     indRmv=find(edgeLength<1e-10);
-%     indRmv(1)=[]; % remove first point which has 0 distance.
-%     trimmedPoints=points;
-%     trimmedPoints(indRmv,:)=[];
+    %     [~,edgeLength]=LengthProfile(points);
+    %     indRmv=find(edgeLength<1e-10);
+    %     indRmv(1)=[]; % remove first point which has 0 distance.
+    %     trimmedPoints=points;
+    %     trimmedPoints(indRmv,:)=[];
     indRmv=find((sum((points-points([end,1:end-1],:)).^2,2))<(1e-10)^2);
     if numel(indRmv)==size(points,1);
         indRmv(indRmv==1)=[];
@@ -199,12 +199,12 @@ end
 
 function [trimmedPoints,indRmv]=RemoveIdenticalConsecutivePointsTol(points,tol)
     
-%     [~,edgeLength]=LengthProfile(points);
-%     indRmv=find(edgeLength<1e-10);
-%     indRmv(1)=[]; % remove first point which has 0 distance.
-%     trimmedPoints=points;
-%     trimmedPoints(indRmv,:)=[];
-% tol below the mean
+    %     [~,edgeLength]=LengthProfile(points);
+    %     indRmv=find(edgeLength<1e-10);
+    %     indRmv(1)=[]; % remove first point which has 0 distance.
+    %     trimmedPoints=points;
+    %     trimmedPoints(indRmv,:)=[];
+    % tol below the mean
     edgeL=sqrt(sum((points-points([end,1:end-1],:)).^2,2));
     indRmv=find((edgeL)<(mean(edgeL)*tol));
     if numel(indRmv)==size(points,1);
@@ -306,13 +306,13 @@ function [curvParam,edgeCurvNorm,edgeCurve,edgeCurveErr]=CurvatureProfile(points
     
     curvFuncErr=@(pi,pip1,pim1,s1,s2)(-pi.*(s1+s2)+pip1.*s2+pim1.*s1)./(3*s1.*s2+3*s2.*s1);
     normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
-
+    
     edgeCurve=curvFunc(points,points([2:end,1],:),...
         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
         normRep(points-points([end,1:end-1],:)));
-%     edgeCurve=curvFuncPrec(points,points([2:end,1],:),...
-%         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
-%         normRep(points-points([end,1:end-1],:)),64);
+    %     edgeCurve=curvFuncPrec(points,points([2:end,1],:),...
+    %         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
+    %         normRep(points-points([end,1:end-1],:)),64);
     edgeCurveErr=curvFuncErr(points,points([2:end,1],:),...
         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
         normRep(points-points([end,1:end-1],:)));
@@ -325,7 +325,7 @@ function [curvParam,edgeCurvNorm,edgeCurve]=CurvatureRadiusProfile(points)
     
     curvFunc=@(pi,pip1,pim1,s1,s2)(-pi.*(s1+s2)+pip1.*s2+pim1.*s1)./(s1.^2.*s2+s2.^2.*s1);
     normRep=@(v) repmat(sqrt(sum(v.^2,2)),[1 2]);
-
+    
     edgeCurve=curvFunc(points,points([2:end,1],:),...
         points([end,1:end-1],:),normRep(points-points([2:end,1],:)),...
         normRep(points-points([end,1:end-1],:)));
@@ -407,9 +407,9 @@ end
 function [oldIndsNewOrd]=ReverseStructInfo(struct1,fieldShort,fieldLong)
     % this is designed to distribute the content of fieldShort in the same
     % length as the content of fieldLong
-   oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
-                {struct1(:).(fieldLong)},...
-                {struct1(:).(fieldShort)},'UniformOutput',false)); 
+    oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
+        {struct1(:).(fieldLong)},...
+        {struct1(:).(fieldShort)},'UniformOutput',false));
 end
 
 function [mma]=MovingAverage(dat,span)
@@ -515,12 +515,211 @@ function [datmat]=MovingIntegralWindowLoop2(x,dat,span)
     actMat=(mod(xDelta,max(x))>=-span & mod(xDelta,max(x))<span) | ...
         (mod(-xDelta,max(x))>=-span & mod(-xDelta,max(x))<span);
     datmat=repmat(reshape(datAll,[size(datAll,1) 1 size(datAll,2)]),[1 numel(x)]);
-%     datmat=(datmat+datmat([2:end,1],:,:))/2.*...
-%         repmat(mod(xallMat([2:end,1],:)-xallMat,max(x)),[1 1 size(dat,2)]);
+    %     datmat=(datmat+datmat([2:end,1],:,:))/2.*...
+    %         repmat(mod(xallMat([2:end,1],:)-xallMat,max(x)),[1 1 size(dat,2)]);
     datmat=(datmat+datmat([2:end,1],:,:))/2;
     datmat(~actMat)=0;
     datmat=reshape(sum(datmat,1),[size(datmat,2) size(datmat,3)])/(2*span);
     
+end
+
+%% Image processes
+function [fill]=Image2Fill(typDat)
+    imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
+    if strcmp(typDat(end-1:end),'_f')
+        
+        fill=ImageProcess(imPath,'wf',1);
+    else
+        fill=ImageProcess(imPath,'wc',1);
+    end
+end
+% Treatment of Input Images
+function finishedImage=ImageProcess(imPath,imType,nPad,n)
+    % Processes images into a valid input to the program
+    % impath indicates the background colour: 'k' is black and 'w' is white
+    
+    global nGridSteps % number of steps in design domain
+    if ~exist('n','var'); n=0; end % n is used to pad with ones instead of zeros
+    
+    if numel(imType)==1
+        preProcImage=PreProcImage(imPath);
+    elseif strcmp(imType(2),'c')
+        
+        preProcImage=PreProcImage(imPath);
+    elseif strcmp(imType(2),'f')
+        
+        [preProcImage]=ProcImageFine(imPath);
+    end
+    
+    preProcImage=ProcessType(imType,preProcImage);
+    procImage=GradProcessor(preProcImage);
+    finishedImage=ResizeImage(procImage);
+    [finishedImage]=AddZeroLayer(finishedImage,nPad,n);
+    sizeIm=size(finishedImage);
+    
+    nGridSteps=sizeIm;
+    
+end
+
+function [preProcImage]=PreProcImage(imPath)
+    % Load Image and reduce it to an averaged double array from 0 to 1
+    
+    preProcImage=imread(MakePathCompliant(imPath));
+    imClass=class(preProcImage);
+    numBit=str2num(regexprep(imClass,'uint',''));
+    preProcImage=mean(preProcImage,3);
+    
+    %     lvlMax=max(preProcImage(:));
+    %     lvlMin=min(preProcImage(:));
+    
+    lvlMax=2^numBit-1;
+    lvlMin=0;
+    
+    if lvlMin~=lvlMax
+        preProcImage=(preProcImage-lvlMin)/(lvlMax-lvlMin);
+    else
+        preProcImage=zeros(size(preProcImage));
+    end
+    
+end
+
+function [preProcImage]=ProcImageFine(imPath)
+    % Load Image and reduce it to an averaged double array from 0 to 1
+    % R is Small
+    % Green is inter
+    % B is big
+    imPath=MakePathCompliant(imPath);
+    preProcImage=imread(imPath);
+    imClass=class(preProcImage);
+    numBit=str2num(regexprep(imClass,'uint',''));
+    
+    preProcImage=double(preProcImage);
+    
+    lvlMax=2^numBit;
+    lvlMin=0;
+    
+    if lvlMin~=(lvlMax-1)
+        
+        for ii=1:size(preProcImage,3)
+            preProcImage(:,:,ii)=preProcImage(:,:,ii)*lvlMax^(ii-1);
+        end
+        preProcImage=sum(preProcImage,3)/lvlMax^size(preProcImage,3);
+    else
+        preProcImage=zeros(size(preProcImage));
+    end
+    
+end
+
+function [imageDat]=ProcessType(imType,imageDat)
+    % Processes the background of the image (either white or black)
+    
+    switch imType(1)
+        case 'k'
+            imBackground=0;
+        case 'w'
+            imBackground=1;
+    end
+    
+    imageDat=abs(imageDat-imBackground);
+    
+end
+
+function [finishedImage]=ResizeImage(procImage)
+    % Resizes the image to the right size for the execution of the program
+    
+    finishedImage=TrimZerosImage(procImage);
+    %finishedImage=SquareArray(procImage);
+    
+    finishedImage=finishedImage';
+    finishedImage=finishedImage(:,end:-1:1);
+end
+
+function [procImage]=GradProcessor(preProcImage)
+    % Process gradients to ones or zeros
+    
+    procImage=(preProcImage);
+end
+
+function [array]=TrimZerosImage(array)
+    % this function trims complete lines and columns of zeros from the borders
+    % of an array
+    
+    sizArray=size(array);
+    nDim=length(sizArray);
+    infoArray{nDim}=[];
+    
+    for iDim=1:nDim
+        dims=1:nDim;
+        dims(dims==iDim)=[];
+        workingArray=array;
+        for ii=dims
+            workingArray=sum(workingArray,ii);
+        end
+        infoArray{iDim}=squeeze(workingArray);
+    end
+    
+    for iDim=1:nDim
+        
+        indexCell=[];
+        indexCell{nDim}=[];
+        for ii=1:nDim
+            indexCell{ii}=':';
+        end
+        
+        candidates=find(infoArray{iDim}==0);
+        if ~isempty(candidates)
+            dimRmv=[];
+            iRmv=1;
+            kkLow=0;
+            condition=candidates(kkLow+1)==(kkLow+1);
+            while condition
+                kkLow=kkLow+1;
+                dimRmv(iRmv)=kkLow;
+                iRmv=iRmv+1;
+                condition=(kkLow+1)<=numel(candidates);
+                if condition
+                    condition=candidates(kkLow+1)==(kkLow+1);
+                end
+                
+            end
+            
+            kkHigh=sizArray(iDim)+1;
+            kk=length(candidates)+1;
+            while (candidates(kk-1)==(kkHigh-1))
+                kkHigh=kkHigh-1;
+                kk=kk-1;
+                dimRmv(iRmv)=kkHigh;
+                iRmv=iRmv+1;
+                if kk==1
+                    break
+                end
+            end
+            indexCell{iDim}=dimRmv;
+            array(indexCell{:})=[];
+        end
+    end
+    
+end
+
+function [array]=AddZeroLayer(array,nPad,n)
+    % Adds n layer of zeros to every side of the array
+    
+    sizArray=size(array);
+    sizNew=sizArray+2*nPad;
+    
+    nDim=length(sizArray);
+    for ii=1:nDim
+        sizArray=size(array);
+        sizePads=sizArray;
+        sizePads(ii)=2*nPad+sizePads(ii);
+        newArray=zeros(sizePads)+n;
+        for jj=1:nDim
+            indexCell{jj}=':';
+        end
+        indexCell{ii}=nPad+1:sizePads(ii)-nPad;
+        newArray(indexCell{:})=array;
+        array=newArray;
+    end
 end
 
 %% From FileExchange
@@ -529,14 +728,14 @@ end
 
 
 % function [A]=CalculatePolyArea(points)
-%     
+%
 %     pointsVec=points';
 %     pointsVec=pointsVec(:);
 %     plot(points(:,1),points(:,2));
 %     n=length(points(:,1));
 %     centreMat=eye(2*n);
 %     centreMat=(centreMat+centreMat(:,[end-1:end,1:end-2]))*0.5;
-%     
+%
 %     [rotDif]=[0 -1 0 1; 1 0 -1 0];
 %     normMat=zeros(2*n);
 %     for ii=1:n-1
@@ -546,7 +745,7 @@ end
 %     normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+2))=rotDif(:,1:2);
 %     normMat((2*(ii-1)+1):(2*(ii-1)+2),1:2)=rotDif(:,3:4);
 %     A=0.5*(normMat*pointsVec)'*(centreMat*pointsVec);
-%     
+%
 % end
 
 %{

@@ -21,6 +21,16 @@
 
 function [J,g]=InverseDesign_ErrorTopoAD(profileComp,analysisLoop,targCoord)
     n=0;
+    
+    if iscell(analysisLoop)
+        [analysisLoop2(1:numel(analysisLoop)).coord]=deal(analysisLoop{:});
+        analysisLoop=analysisLoop2;
+    end
+    if iscell(targCoord)
+        [targCoord2(1:numel(targCoord)).coord]=deal(targCoord{:});
+        targCoord=targCoord2;
+    end
+    
     for ii=1:numel(analysisLoop)
         nPrev=n;
         n=nPrev+size(analysisLoop(ii).coord,1);
