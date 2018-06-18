@@ -61,7 +61,7 @@ function [J,g]=InverseDesign_ErrorTopoAD(profileComp,analysisLoop,targCoord)
             error('not coded yet')
     end
     
-    [J,g]=sensiv_indeploop(indepLoop,funcArea);
+    [J,g]=sensiv_indeploop(indepLoop,funcArea,analysisLoop);
     
     
 %     plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
@@ -369,27 +369,51 @@ end
 
 %% Differentiation
 
-function [J,g]=sensiv_indeploop(indeploop,funArea)
+function [J,g]=sensiv_indeploop(indeploop,funArea,analysisLoop)
     
     for ii=1:numel(indeploop)
         if ~CCWLoop(indeploop(ii).coord)
             indeploop(ii).coord=flip(indeploop(ii).coord);
+            indeploop(ii).isanalysis=flip(indeploop(ii).isanalysis);
         end
-        multiplier=2*(indeploop(ii).out-0.5);
+        multiplier=indeploop(ii).out;
         OFModif=@(x) multiplier*funArea{1}(x);
-        [indeploop(ii).J,indeploop(ii).g]=sensivAD(indeploop(ii).coord,OFModif,...
+        [indeploop(ii).J,indeploop(ii).g]=sensivFD(indeploop(ii).coord,OFModif,...
             find(indeploop(ii).isanalysis>0));
+        if sign(indeploop(ii).J)~=sign(indeploop(ii).out)
+            indeploop(ii).J=indeploop(ii).J*-1;
+            indeploop(ii).g=indeploop(ii).g*-1;
+        end
     end
     
     J=sum([indeploop.J]);
+    if J<0
+        warning('WOOoot?')
+    end
     g=zeros(sum(cellfun(@(x)size(x,1),{indeploop.g})),2);
     for ii=1:numel(indeploop)
-        g(indeploop(ii).isanalysis(find(indeploop(ii).isanalysis>0)),:)=...
-            g(indeploop(ii).isanalysis(find(indeploop(ii).isanalysis>0)),:)+...
+        g(indeploop(ii).isanalysis(find(indeploop(ii).isanalysis>0)),1:2)=...
+            g(indeploop(ii).isanalysis(find(indeploop(ii).isanalysis>0)),1:2)+...
             indeploop(ii).g;
     end
-    
-    
+%     for ii=1:numel(indeploop)
+%         kk=1;
+%         for jj=1:numel(indeploop(ii).isanalysis)
+%             if (indeploop(ii).isanalysis(jj)>0)
+%                 g(indeploop(ii).isanalysis(jj),1:2)=indeploop(ii).g(kk,1:2);
+%                 kk=kk+1;
+%             end
+%         end
+%     end
+    kk=1;
+    ll=0;
+    for ii=1:(size(g,1))
+        flag=((ii-ll)>size(analysisLoop(kk).coord,1));
+        ll=ll+size(analysisLoop(kk).coord,1)*flag;
+        kk=kk+flag;
+        analysisLoop(kk).grad(ii-ll,1:2)=g(ii,:);
+    end
+    g={analysisLoop.grad};
 end
 
 function [J,g]=sensivFD(coord,OFModif,actind)
@@ -436,7 +460,7 @@ function [J,g]=sensivAD(coord,OFModif,actind)
 end
 
 function [J]=OF(coord,OFModif,centreMat,normMat,ind)
-    J = abs(CalculatePolyArea_calc(coord,centreMat,normMat,ind));
+    J = (CalculatePolyArea_calc(coord,centreMat,normMat,ind));
     J=OFModif(J);
 end
 
@@ -445,7 +469,7 @@ function [centreMat,normMat,ind]=CalculatePolyArea_prep(points)
     n=length(points(:,1));
 %     pointsVec=points';
 %     pointsVec=pointsVec(:);
-    ind=[1:n,1:n]'+repmat([0;n],[n,1]);
+    ind=floor([1:0.5:n+0.5])'+repmat([0;n],[n,1]);
     %pointsVec=reshape(points',[2*n,1]);
     %plot(points(:,1),points(:,2));
     centreMat=eye(2*n);
