@@ -838,6 +838,19 @@ end
 
 %% Tecplot
 
+function [cellMesh]=Loop2CellEdgeMesh(cellLoop,vectorDat,varargin)
+    
+    
+    coordDat=vertcat(cellLoop{:});
+    connDat=cellfun(@(x)[1:size(x,1);[2:size(x,1),1]]',cellLoop);
+    
+    if isempty(vectorDat)
+        vectorDat=zeros(size(coordDat));
+    end
+    
+    [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,varargin{:});
+end
+
 function [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID,time)
     
     
