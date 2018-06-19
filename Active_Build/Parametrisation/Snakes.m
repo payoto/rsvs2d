@@ -24,7 +24,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
     
     optargout=cell(0);
     varExtract={'arrivalTolerance','maxStep','maxDt','snakesConsole','case','buildInternal'};
-    [arrivalTolerance,maxStep,maxDt,snakesConsole,caseStr,buildInternal]=ExtractVariables(varExtract,param);
+    [arrivalTolerance,maxStep,maxDt,snakesConsole,caseStr,buildInternal]=...
+        ExtractVariables(varExtract,param);
     
     % ACTUALLY DOING STUFF
     refinedGriduns=ModifReshape(refinedGrid);

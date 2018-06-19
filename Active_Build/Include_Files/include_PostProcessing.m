@@ -840,14 +840,19 @@ end
 
 function [cellMesh]=Loop2CellEdgeMesh(cellLoop,vectorDat,varargin)
     
-    
+    connCreate=@(x)[1:size(x,1);[2:size(x,1),1]]';
     coordDat=vertcat(cellLoop{:});
-    connDat=cellfun(@(x)[1:size(x,1);[2:size(x,1),1]]',cellLoop);
-    
-    if isempty(vectorDat)
-        vectorDat=zeros(size(coordDat));
+    n=0;
+    connDat=cell(size(cellLoop));
+    for ii=1:numel(cellLoop)
+        connDat(ii)={connCreate(cellLoop{ii})+n};
+        n=n+size(cellLoop{ii},1);
     end
-    
+    connDat=vertcat(connDat{:});
+    if isempty(vectorDat)
+        vectorDat=zeros(size(coordDat,1),3);
+    end
+    vertIndex=1:size(coordDat,1);
     [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,varargin{:});
 end
 
@@ -858,6 +863,9 @@ function [cellMesh]=CellEdgeMesh(coordDat,vertIndex,connDat,vectorDat,strandID,t
     [numElm,nConn]=size(connDat);
     % Zone Header
     if ~exist('time','var')
+        if ~exist('strandID','var')
+            strandID=0;
+        end
         cellHeader=FELINESEGHeader(numNode,numElm,strandID);
     else
         cellHeader=FELINESEGHeader(numNode,numElm,strandID,time);

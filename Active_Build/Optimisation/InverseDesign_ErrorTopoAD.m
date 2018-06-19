@@ -307,14 +307,22 @@ function [out]=TestInternalOrIntersect(coord1,coord2)
     out=0;
     
     [in1,on1] = inpolygon(coord1(:,1),coord1(:,2),coord2(:,1),coord2(:,2));
-    isIntersect= any(on1) || xor(any(in1),all(in1));
+    inW=xor(in1,on1);
+    %isIntersect= any(on1) || xor(any(in1),all(in1));
+    isIntersect=xor(any(inW),all(inW));
     if isIntersect
         out=-1;
-    elseif any(in1)
+    elseif any(inW)
         out=1;
     else
-        [in2,~] = inpolygon(coord2(1,1),coord2(1,2),coord1(:,1),coord1(:,2));
-        out=2*any(in2);
+        [in2,on2] = inpolygon(coord2(1,1),coord2(1,2),coord1(:,1),coord1(:,2));
+        inW=xor(in2,on2);
+        isIntersect=xor(any(inW),all(inW));
+        if isIntersect
+            out=-1;
+        elseif any(in2)
+            out=2;
+        end
     end
 end
 
@@ -378,25 +386,28 @@ function [J,g]=sensiv_indeploop(indeploop,funArea,analysisLoop)
         end
         multiplier=indeploop(ii).out;
         OFModif=@(x) multiplier*funArea{1}(x);
-        [indeploop(ii).J,indeploop(ii).g]=sensivFD(indeploop(ii).coord,OFModif,...
+        [indeploop(ii).J,indeploop(ii).g]=sensivAD(indeploop(ii).coord,OFModif,...
             find(indeploop(ii).isanalysis>0));
         if sign(indeploop(ii).J)~=sign(indeploop(ii).out)
             indeploop(ii).J=indeploop(ii).J*-1;
             indeploop(ii).g=indeploop(ii).g*-1;
         end
     end
-    
-    J=sum([indeploop.J]);
+    J=(sum([indeploop.J]));
     if J<0
         warning('WOOoot?')
     end
-    g=zeros(sum(cellfun(@(x)size(x,1),{indeploop.g})),2);
+    g=zeros(sum(cellfun(@(x)size(x,1),{analysisLoop.coord})),2);
     for ii=1:numel(indeploop)
         g(indeploop(ii).isanalysis(find(indeploop(ii).isanalysis>0)),1:2)=...
             g(indeploop(ii).isanalysis(find(indeploop(ii).isanalysis>0)),1:2)+...
             indeploop(ii).g;
     end
-%     for ii=1:numel(indeploop)
+    
+    
+    J=sqrt(J);
+    g=1/2*g/(J);
+%     f*or ii=1:numel(indeploop)
 %         kk=1;
 %         for jj=1:numel(indeploop(ii).isanalysis)
 %             if (indeploop(ii).isanalysis(jj)>0)
@@ -1113,7 +1124,10 @@ function [newloop]=SeparateProfilesArea(profileCoord,targCoord,...
         end
         newloop=newloop(1:pLoop);
     else
-        
+        newloop(1).coord=profileCoord;
+        newloop(1).isanalysis=profileCoordisanalysis;
+        newloop(2).coord=targCoord;
+        newloop(2).isanalysis=targCoordisanalysis;
         error('No Intersection, should not happen')
     end
     
