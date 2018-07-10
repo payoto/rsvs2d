@@ -1,15 +1,9 @@
-function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
+function [objValue,additional]=ASOShape(paramoptim,member,loop,baseGrid)
     % Function for the interface of the RSVS shape optimisation framework
     % and the B-Spline and Smoothness constraint ASO
     %
     
-    % ---------------------
-    % Generate Mesh
-    boundaryLoc=member.location;
-    SU2Flow_Handler(paramoptim,boundaryLoc);
-    copyfile([boundaryLoc,filesep,'SU2CFD',filesep,'triangularmesh.su2'],...
-        [boundaryLoc,filesep,'mesh.su2'])
-    rmdir([boundaryLoc,filesep,'SU2CFD'],'s')
+    
     
     % ---------------------
     % Generate convHull boundary
@@ -19,8 +13,8 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     thisworker = getCurrentWorker;
     varExtract={'workerList','machineList'};
     [workerList,machineList]=ExtractVariables(varExtract,paramoptim);
-    varExtract={'axisRatio'};
-    [axisRatio]=ExtractVariables(varExtract,paramoptim.parametrisation);
+    varExtract={'axisRatio','typeLoop'};
+    [axisRatio,typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
     
     if ~isempty(thisworker)
         currentMachineFile=machineList(thisworker.ProcessId==workerList);
@@ -32,41 +26,35 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
             currentMachineFile=machineList(1);
         end
     end
-    optimDirectory=boundaryLoc;
+    optimDirectory=member.location;
     
     
     % ---------------------
     % Match ASO and Current Optimisation
     varExtract={'asoCase','asoPath','nMach','asoReturnFillChange',...
-        'desVarConstr','desVarVal','su2ProcSec','asoProcSec','snoptIter'};
+        'desVarConstr','desVarVal','su2ProcSec','asoProcSec','snoptIter',...
+        'aeroName','profileComp'};
     [asoCase,asoPath,nMach,asoReturnFillChange,desVarConstr,desVarVal,...
-        su2ProcSec,asoProcSec,snoptIter]=ExtractVariables(varExtract,paramoptim);
+        su2ProcSec,asoProcSec,snoptIter,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     
     addpath(MakePathCompliant(asoPath));
     addpath(MakePathCompliant([asoPath,filesep,'matlab-snopt']));
-    copyfile([MakePathCompliant(asoPath),filesep,'templatesu2.cfg'],...
-        [optimDirectory,filesep,'su2.cfg'])
+    
     
     ASOOptions = asoCase();
-    ASOOptions.solver.mach = nMach;
-    ASOOptions.solver.np=currentMachineFile.slots;
     
-    ASOOptions.solver.timeout = max(ceil(su2ProcSec/currentMachineFile.slots),60);
     ASOOptions.snopt.wcLimit = ceil(asoProcSec/currentMachineFile.slots);
     ASOOptions.snopt.maxIter = snoptIter;
     
-    
-    copyfile(currentMachineFile.file,[optimDirectory,filesep,'mpihostfile'])
-    [~,hostName]=system('whichbluecrystal');
-    if ~isempty(regexp(hostName,'4', 'once'))
-        ASOOptions.solver.mpiOpts=['-hosts ',currentMachineFile.node,' '];
-    elseif ~isempty(regexp(hostName,'3', 'once'))
-        ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"'];
-    end
+   
+    targetLoop=NacaMultiTopo(1000,aeroName);
+    ASOOptions.shapeMatching.initialLoops=CloseCellLoops({loop.(typeLoop)});
+    ASOOptions.shapeMatching.targetLoops=CloseCellLoops({targetLoop.coord});
     
     
-    ASOOptions.solver.remeshFcn=@(dirMesh,newMesh,surfaceGeometry) ...
-        ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry);
+    
+    ASOOptions.shapeMatching.Fcn=@(targetLoops,initialLoops) ...
+        InverseDesign_ErrorTopoAD(profileComp,initialLoops,targetLoops);
     
     % ASOOptions.solver.mpiOpts=['--hostfile "','mpihostfile','"  --oversubscribe'];
     
@@ -108,7 +96,7 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     
     origDir=cd(optimDirectory);
     optimDirectory=['.'];
-    ASOresult = ASO(optimDirectory,ASOOptions);
+    ASOresult = ShapeMatch(optimDirectory,ASOOptions);
     optimDirectory=cd(origDir);
     
     
@@ -158,6 +146,16 @@ function [objValue,additional]=ASOFlow(paramoptim,member,loop,baseGrid)
     additional.t=areaAdd.t;
     additional.c=areaAdd.c;
     additional.tc=areaAdd.tc;
+end
+
+function [cellLoop]=CloseCellLoops(cellLoop)
+    
+    for ii=1:numel(cellLoop)
+        if any(cellLoop{ii}(end,:)~=cellLoop{ii}(1,:))
+            cellLoop{ii}(end+1,:)=cellLoop{ii}(1,:);
+        end
+    end
+    
 end
 
 function [loopconstr]=PushConvHull(loop,typeLoop)

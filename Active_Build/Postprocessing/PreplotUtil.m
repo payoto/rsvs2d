@@ -4,8 +4,10 @@ function [pltPaths]=PreplotUtil(rootDir)
     [childFolder]=ExploreFolderTree(rootDir);
     
 %    FindDir([minIterPos,filesep,'CFD'],'Tec360plt_',false)
-    [pltPaths]=FindPLTFiles(childFolder);
+    [pltPaths]=FindPLTFilesEvolOptim(childFolder);
+    [pltSnakes]=FindPLTFilesSnake(childFolder);
     PreplotFiles(pltPaths)
+    PreplotFilesSnake(pltSnakes)
 end
 
 function []=PreplotFiles(pltPaths)
@@ -19,8 +21,21 @@ function []=PreplotFiles(pltPaths)
     end
     
 end
+function []=PreplotFilesSnake(pltPaths)
+   
+    for ii=1:length(pltPaths)
+        
+        preplotName=[pltPaths{ii}(1:end-4),'_pre.plt'];
+        movefile(pltPaths{ii},preplotName,'f')
+        launchcmd=['preplot "',preplotName,'" "',pltPaths{ii},'"'];
+       
+       MaxSystemCommandInstances(launchcmd,4,'preplot')
+        
+    end
+    
+end
 
-function [pltPaths]=FindPLTFiles(childFolder)
+function [pltPaths]=FindPLTFilesEvolOptim(childFolder)
     kk=1;
     pltPaths=cell(0);
     for ii=1:length(childFolder)
@@ -39,6 +54,36 @@ function [pltPaths]=FindPLTFiles(childFolder)
                 c=dir([tempName,'.plt']);
                 c(2)=dir([tempName,'_pre.plt']);
                 isRem(jj)= ~(isempty(c(2).datenum) || (c(2).datenum<c(1).datenum));
+            end
+        end
+        intermPath=intermPath(~isRem);
+        if ~isempty(intermPath)
+            pltPaths(kk:kk+numel(intermPath)-1)=intermPath;
+            kk=kk+numel(intermPath);
+        end
+    end
+    
+end
+
+function [pltPaths]=FindPLTFilesSnake(childFolder)
+    kk=1;
+    pltPaths=cell(0);
+    for ii=1:length(childFolder)
+        [intermPath,intermName]=FindDir(childFolder{ii},'Tec360PLT_',false);
+        isRem=false(size(intermName));
+        for jj=1:numel(intermName)
+            tempName=regexprep(intermName{jj},'\..*','');
+            tempName=regexprep(tempName,'_pre$','');
+            tempIsRem=~cellfun(@isempty,regexp(intermName,tempName));
+            isRem([1:jj-1,jj+1:end])=isRem([1:jj-1,jj+1:end]) | tempIsRem([1:jj-1,jj+1:end]);
+            isRem(jj)=isRem(jj) || any( tempIsRem([1:jj-1,jj+1:end]));
+        end
+        for jj=find(isRem)
+            tempName=(regexprep(intermPath{jj},'\..*',''));
+            if isempty(regexp(tempName,'_pre$','once'))
+                c=dir([tempName,'.plt']);
+                c(2)=dir([tempName,'_pre.plt']);
+                isRem(jj)= ~isempty(c(2).datenum) ;
             end
         end
         intermPath=intermPath(~isRem);

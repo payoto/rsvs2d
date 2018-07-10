@@ -19,7 +19,7 @@ function [meshFile]=ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry)
             
         end
         loopRemesh(ii).coord=vertices(vertConn{ii},:);
-        loopRemesh(ii).isccw=CCWLoop(loopRemesh.coord);
+        loopRemesh(ii).isccw=CCWLoop(loopRemesh(ii).coord);
         
         loopRemesh(ii).vertorder=vertConn{ii};
     end
@@ -29,7 +29,10 @@ function [meshFile]=ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry)
     
     
     % Finish process
-    copyfile(meshFile,newMesh);
+    stat=copyfile(meshFile,newMesh,'f');
+    if ~stat
+        error('The mesh could not be copied')
+    end
     rmdir([dirMesh,filesep,'SU2CFD'],'s')
 end
 

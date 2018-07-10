@@ -513,7 +513,7 @@ end
 function [finishedImage]=ResizeImage(procImage)
     % Resizes the image to the right size for the execution of the program
     
-    finishedImage=TrimZeros(procImage);
+    finishedImage=TrimZerosImage(procImage);
     %finishedImage=SquareArray(procImage);
     
     finishedImage=finishedImage';
@@ -526,7 +526,7 @@ function [procImage]=GradProcessor(preProcImage)
     procImage=(preProcImage);
 end
 
-function [array]=TrimZeros(array)
+function [array]=TrimZerosImage(array)
     % this function trims complete lines and columns of zeros from the borders
     % of an array
     

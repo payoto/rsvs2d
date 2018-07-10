@@ -1,16 +1,19 @@
 minII=1;
-maxII=8;
+maxII=86;
 fid=fopen('DirList.txt','r');
+pathStr=cell([maxII,2]);
 for ii=1:maxII
-    pathStr{ii}=fgetl(fid);
+    pathStr(ii,1:2)=regexp(fgetl(fid),'\s+','split');
 end
 fclose(fid);
-
-for ii=minII:maxII
-    ASOstructCell{ii}=ASOPerformanceAPI(pathStr{ii},2);
+T=cell([maxII,1]);
+parfor ii=minII:maxII
+    try 
+    ASOPerformanceAPI(pathStr{ii,1},str2double(pathStr{ii,2}));
+    catch MEid
+        T{ii}=MEid;
+    end
 end
 
-ASOstruct2=[ASOstructCell{:}];
-ASOPerformanceAPI(ASOstruct2,1,'dirSave','fig','nameRun','lvl 1-5 errmode all')
 
 

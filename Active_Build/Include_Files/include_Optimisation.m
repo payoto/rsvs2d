@@ -132,7 +132,7 @@ function [constrVal]=NacaOuterLimit4d(gridrefined,paramoptim,nacaStr)
     constrVal={fillSub,reqFrac};
 end
 
-function [nacaLoops]=NacaMultiTopo(nPtsPloop,nacaStr)
+function [nacaCoord]=NacaMultiTopo(nPtsPloop,nacaStr)
     
     % xTop and xBot need to be normalised
     a4_open=0.1015;
@@ -158,27 +158,54 @@ function [nacaLoops]=NacaMultiTopo(nPtsPloop,nacaStr)
     
     nPtsPloop=nPtsPloop/str2double(nacaCell{1}{1});
     
-    x=[linspace(0,1,round(nPtsPloop/2))];
-    x=(0.5-cos(x*pi)/2);
-    TEPos=[0 0];
-    for ii=1:str2double(nacaCell{1}{1})
-        refPos=TEPos+str2num([nacaCell{ii+1}{4},' ',nacaCell{ii+1}{5}]);
-        [nacaCoord(ii).coord,TEPos]=GenerateNACACoordOrient...
-            (x,nacaCell{ii+1}{1},nacaCell{ii+1}{2},nacaCell{ii+1}{3},...
-            refPos,naca45t,naca4c,a4_closed,teps);
-    end
-    
-    normL=sqrt(sum(TEPos.^2));
-    rot=-asin(TEPos(2)/normL);
-    for ii=1:str2double(nacaCell{1}{1})
+        x=[linspace(0,1,round(nPtsPloop/2))];
+        x=(0.5-cos(x*pi)/2);
+        TEPos=[0 0];
+        for ii=1:str2double(nacaCell{1}{1})
+            refPos=TEPos+str2num([nacaCell{ii+1}{4},' ',nacaCell{ii+1}{5}]);
+            [nacaCoord(ii).coord,TEPos]=GenerateNACACoordOrient...
+                (x,nacaCell{ii+1}{1},nacaCell{ii+1}{2},nacaCell{ii+1}{3},...
+                refPos,naca45t,naca4c,a4_closed,teps);
+        end
         
-        nacaCoord(ii).coord=nacaCoord(ii).coord/normL;
-        rotMat=[cos(rot),-sin(rot);sin(rot),cos(rot)];
-        nacaCoord(ii).coord=(rotMat*(nacaCoord(ii).coord)')';
-    end
-    
+        if numel(nacaCell{1})==1
+            condNorm='lr';
+        else
+            condNorm=nacaCell{1}{2};
+        end
+        
+        
+        switch condNorm
+            case 'lr' % rotate and length normalisation
+                normL=sqrt(sum(TEPos.^2));
+                rot=-asin(TEPos(2)/normL);
+            case 'l'
+                normL=sqrt(sum(TEPos.^2));
+                rot=0;
+            case 'r'
+                normL=1;
+                rot=-asin(TEPos(2)/normL);
+            case 'x'
+                normL=abs(TEPos(1));
+                rot=0;
+        end
+        
+        
+        for ii=1:str2double(nacaCell{1}{1})
+            
+            nacaCoord(ii).coord=nacaCoord(ii).coord/normL;
+            rotMat=[cos(rot),-sin(rot);sin(rot),cos(rot)];
+            nacaCoord(ii).coord=(rotMat*(nacaCoord(ii).coord)')';
+        end
+        
+%         plotPoints= @(points) plot(points([1:end],1),points([1:end],2));
+%         figure, hold on
+%         for ii=1:str2double(nacaCell{1}{1})
+%             plotPoints(nacaCoord(ii).coord)
+%         end
     
 end
+
 
 function [coord,TEPos]=GenerateNACACoordOrient(x,naca4Num,l,rot,refPos,tFunc,cFunc,a4,teps)
     
