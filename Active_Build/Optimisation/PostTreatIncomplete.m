@@ -24,8 +24,8 @@ function [outinfo,paramoptim,iterstruct]=PostTreatIncomplete(pathStr,nIter,iters
             catch
             end
         end
-    catch MEId
-        disp(MEId.getReport)
+    catch
+        disp('Using Reconstruction of parameters')
         [paramoptim]=ReconstructParameter(pathStr,outinfo(1).marker);
     end
     % Reconstruct iterstruct

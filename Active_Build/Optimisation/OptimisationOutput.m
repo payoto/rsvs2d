@@ -333,7 +333,7 @@ function [out]=OptimisationOutput_Final(paroptim,out,optimstruct)
         end
         
         for ii=1:length(h)
-            figName=[writeDirectory,figList{ii},marker,'.fig'];
+            figName=[writeDirectory,figList{ii},marker,'.fig']
             figName=MakePathCompliant(figName);
             hgsave(h(ii),figName);
         end
