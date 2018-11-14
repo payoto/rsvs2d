@@ -99,6 +99,12 @@ function [paramoptim]=LocalConstraintExtraction_LETE(paramoptim,constrVal)
         case 'TE'
             finishedImage(end,:)=constrVal{3};
             activityLayer(1,:)=true;
+        case 'border'
+            finishedImage([1,end],:)=constrVal{3};
+            finishedImage(:,[1,end])=constrVal{3};
+            activityLayer(1,:)=true;
+            activityLayer([1,end],:)=true;
+            activityLayer(:,[1,end])=true;
         otherwise
             error('Not coded yet')
     end
