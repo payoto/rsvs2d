@@ -1574,6 +1574,74 @@ function [paroptim]=ASOShapeMatch_animation()
 end
 
 
+%% ASO-V3 Cases
+
+function [paroptim]=standard_ASOV3(paroptim)
+    
+    paroptim.obj.aso.asoPath=getenv('ASOPATH');
+    
+    paroptim.general.objectiveName='ASOV3Flow';
+    paroptim.general.objInput='loop,baseGrid';
+    paroptim.spline.splineCase='smoothpts';
+    paroptim.spline.resampleSnak=true;
+    paroptim.parametrisation.general.typeLoop='subdivspline';
+    paroptim.obj.flow.mesher='triangle';
+    paroptim.obj.flow.CFDfolder=[cd,...
+        '\Result_Template\CFD_code_Template\trianglemesh'];
+    paroptim.obj.flow.solveFlow=false;
+    paroptim.constraint.resConstr={};
+    paroptim.constraint.resVal={};
+    
+    paroptim.obj.aso.paramoveride.maxFunCalls = 150;
+    paroptim.obj.aso.su2ProcSec=4*1800;
+    paroptim.obj.aso.asoProcSec=4*12*3600;
+    paroptim.obj.aso.snoptIter=10;
+    
+    paroptim.obj.aso.asoCase=@asocases.rsvsDragMin;
+    
+    % Not needed
+%     paroptim.obj.aso.paramoveride = rmfield(paroptim.obj.aso.paramoveride,'surfaceFcn');
+    
+end
+
+function [paroptim]=ASOV3MS(vol)
+    [paroptim]=areabusesweep(vol);
+    [paroptim]=ChooseNworkerASO(paroptim);
+    [paroptim]=standard_ASOV3(paroptim);
+    
+    paroptim.obj.aso.asoReturnFillChange=false;
+     
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=100;
+    
+    % Swap to no optim for multistart
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+
+end
+
+function [paroptim]=ASOV3MS_desktop(vol)
+    [paroptim]=ASOV3MS(vol);
+    paroptim.general.worker = 1;
+    paroptim.general.nPop=2;
+    paroptim.obj.aso.snoptIter=5;
+    
+    paroptim.obj.aso.asoCase=@asocases.rsvsDragMinDesktop;
+    
+end %function
+
+function [paroptim]=ASOV3MS_debug(vol)
+    [paroptim]=ASOV3MS(vol);
+    paroptim.general.nPop=2;
+    paroptim.obj.aso.snoptIter=5;
+    
+    paroptim.obj.aso.asoCase=@asocases.rsvsDragMinDebug;
+    
+end %function
+
+
 %% Buseman variations
 function [paroptim]=areabuseaxrat(e)
     % Need to add support of the axis ratio as a design variable in there
