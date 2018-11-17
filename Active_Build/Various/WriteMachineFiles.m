@@ -79,6 +79,9 @@ function [machinedat]=BuildMachineDat(nWorker,pbsdat)
             ppnLeft=actNumNode(ii)/targWorkerNode;
             
             machinedat(iWork).slots=round(ppnLeft);
+            slotindices = actNumNode(ii)-round(ppnLeft)+1:actNumNode(ii);
+            cpuset = strjoin(strsplit(num2str(slotindices),' '),',');
+            machinedat(iWork).cpuset=cpuset;
             actNumNode(ii)=actNumNode(ii)-machinedat(iWork).slots;
             targWorkerNode=targWorkerNode-1;
         end
