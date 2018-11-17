@@ -72,6 +72,7 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.maxIter=5;
     paroptimgeneral.worker=6; % Max 4 on this computer
     paroptimgeneral.nodeShareNum=1;
+    paroptimgeneral.node1ReserveNum = 0;
     paroptimgeneral.workerList=[];
     paroptimgeneral.machineList={};
     paroptimgeneral.objectiveName='LengthArea'; % 'InverseDesign' 'CutCellFlow'

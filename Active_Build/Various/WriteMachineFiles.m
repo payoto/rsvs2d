@@ -1,4 +1,4 @@
-function [machinedat]=WriteMachineFiles(nWorker,writeDir)
+function [machinedat]=WriteMachineFiles(nWorker,writeDir,node1ReserveNum)
     
     
     %     load('jobdat.mat','pbsdat')
@@ -19,14 +19,14 @@ function [machinedat]=WriteMachineFiles(nWorker,writeDir)
         numCores=str2double(regexprep(numCores,'NumberOfCores',''));
         matInd=1;
         pbsdat.numppnnode=ones([1,pbsdat.numnode])*numCores; % Number of processor per node
-        pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-1;
+        pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-node1ReserveNum;
         pbsdat.numppntotal=sum(pbsdat.numppnnode); % total number of processors
     else
         [~,hostName]=system('whichbluecrystal');
         if ~isempty(regexp(hostName,'4', 'once'))
-            [pbsdat]=CollectSLURMData();
+            [pbsdat]=CollectSLURMData(node1ReserveNum);
         elseif ~isempty(regexp(hostName,'3', 'once'))
-            [pbsdat]=CollectPBSData();
+            [pbsdat]=CollectPBSData(node1ReserveNum);
         end
         
     end
@@ -85,8 +85,9 @@ function [machinedat]=BuildMachineDat(nWorker,pbsdat)
     end
 end
 
-function [pbsdat]=CollectPBSData()
+function [pbsdat]=CollectPBSData(node1ReserveNum)
     % Collects PBS Data
+    %  node1ReserveNum - no. of slots to hold back on main node (for MATLAB etc.)
     
     [~,jobid]=system('echo $PBS_JOBID');
     [~,jobhost]=system('echo $PBS_O_HOST');
@@ -111,13 +112,14 @@ function [pbsdat]=CollectPBSData()
     pbsdat.nodelist=char(nodeListCell{:}); % List of unique nodes
     pbsdat.numnode=str2double(numNodes); % Number of unique nodes
     pbsdat.numppnnode=ones([1,pbsdat.numnode])*str2double(numPPNNode); % Number of processor per node
-    pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-1;
+    pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-node1ReserveNum;
     pbsdat.numppntotal=sum(pbsdat.numppnnode); % total number of processors
     %save('jobdat.mat')
 end
 
-function [pbsdat]=CollectSLURMData()
+function [pbsdat]=CollectSLURMData(node1ReserveNum)
     % Collects PBS Data
+    %  node1ReserveNum - no. of slots to hold back on main node (for MATLAB etc.)
     
     [~,jobid]=system('echo $SLURM_JOBID');
     
@@ -144,7 +146,7 @@ function [pbsdat]=CollectSLURMData()
     pbsdat.nodelist=nodeList;
     pbsdat.numnode=str2double(numNodes); % Number of unique nodes
     pbsdat.numppnnode=ones([1,pbsdat.numnode])*str2double(numPPNNode); % Number of processor per node
-    pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-1;
+    pbsdat.numppnnode(matInd)=pbsdat.numppnnode(matInd)-node1ReserveNum;
     pbsdat.numppntotal=sum(pbsdat.numppnnode); % total number of processors
     %save('jobdat.mat')
 end
