@@ -609,7 +609,7 @@ function [population,captureErrors]=ParallelObjectiveCalc...
     
     nPop=numel(population);
     
-    for ii=1:nPop %
+    parfor ii=1:nPop %
         %for ii=1:nPop
         try
             [population(ii).objective,additional]=...
