@@ -1623,6 +1623,18 @@ function [paroptim]=ASOV3MS(vol)
 
 end
 
+function paroptim = ASOV3MS_param1(vol,NCPLoop,C2sigma,C2mode,eBasis)
+
+    paroptim = ASOV3MS(vol);
+    
+    paramOverride.shapeControl.NLoop = NCPLoop;
+    paramOverride.C2sigma = C2sigma;
+    paramOverride.C2mode = C2mode;
+    paramOverride.shapeControl.eBasis = eBasis;
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMin(paramOverride);
+
+end %function
+
 function [paroptim]=ASOV3MS_desktop(vol)
     [paroptim]=ASOV3MS(vol);
     paroptim.general.worker = 1;
