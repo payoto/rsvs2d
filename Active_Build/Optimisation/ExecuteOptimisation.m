@@ -954,7 +954,8 @@ function [prevMesh]=FindPrevIterMesh(objectiveName,direction,lineSearch,iterstru
     end
 end
 %% Gradient Iteration
-function [population,supportstruct,captureErrors,restartsnake]=IterateSensitivity(paramoptim,outinfo,nIter,population,...
+function [population,supportstruct,captureErrors,restartsnake]=...
+        IterateSensitivity(paramoptim,outinfo,nIter,population,...
         gridrefined,restartsnake,baseGrid,connectstructinfo)
     
     
@@ -1567,8 +1568,9 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         'optimMethod','desvarconnec','specificFillName','initInterp','numNonFillVar'};
     [nDesVar,nPop,startPop,desVarConstr,desVarVal,optimMethod,desvarconnec,...
         specificFillName,initInterp,numNonFillVar]=ExtractVariables(varExtract,paroptim);
-    varExtract={'cellLevels','corneractive','defaultCorner','typDat'};
-    [cellLevels,corneractive,defaultCorner,typDat]=ExtractVariables(varExtract,paroptim.parametrisation);
+    varExtract={'cellLevels','corneractive','defaultCorner','typDat','axisRatio'};
+    [cellLevels,corneractive,defaultCorner,typDat,axisRatio]=ExtractVariables(...
+        varExtract,paroptim.parametrisation);
     
     switch startPop
         case 'image'
@@ -1667,7 +1669,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             end
         case 'initbusemann'
             [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
-                desVarVal);
+                desVarVal,axisRatio);
             
         case 'initaeroshell'
             [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
@@ -1800,7 +1802,7 @@ function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
 end
 
 function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
-        desVarVal)
+        desVarVal, axisRatio)
     % Initialises a random number of aerodynamic looking strips in the
     % domain
     
@@ -1809,6 +1811,13 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
         if strcmp(desVarConstr{ii},'MinSumVolFrac')
             minTargFill=desVarVal{ii};
             
+        elseif strcmp(desVarConstr{ii},'MinValVolFrac')
+            %assume length of domain is 1 in x direction
+            % size of domain is axisRatio*1*cellLevels(2)/cellLevels(1)
+            % Volume of a cell is Vd/(cellLevels(1)*cellLevels(2))
+            % Volume of a is Targ/cellVol
+            minTargFill=0*desVarVal{ii}*((cellLevels(1)-2)*cellLevels(2))/...
+                (axisRatio*1*cellLevels(2)/(cellLevels(1)-2));
         end
     end
     
@@ -1818,13 +1827,21 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
     for ii=1:nPop
         pop=zeros(cellLevels);
         while sum(sum(pop))==0
-            nAct=randi(ceil(nStrips/4));
-            stripAct=randperm(ceil(nStrips/2),ceil(nAct/2));
-            stripAct=[stripAct,stripAct+1];
+            fact = randi(2); % governs the thickness of planes
+            nAct=randi(ceil(nStrips/(4*fact)));
+            stripAct=sort(randperm(ceil(nStrips/4),nAct));
+            stripAct=stripAct*2;
+            if (fact==2)
+                deltaStrip = stripAct(2:end)-stripAct(1:end-1);
+                deltaStrip(deltaStrip~=2) = 0;
+                deltaStrip(deltaStrip==2)=1;
+                stripAct(2:end) = stripAct(2:end)+cumsum(deltaStrip);
+                stripAct=sort([stripAct,stripAct-1]);
+            end
             stripAct(stripAct>nStrips)=nStrips;
             posPeak=randi(cellLevels(1)-1);
             hPeak=rand([length(stripAct),1]);
-            ratio=minTargFill/(2*sum(hPeak));
+            ratio=minTargFill/(sum(hPeak)*(cellLevels(1)-2));
             if ratio>1
                 hPeak=ratio*hPeak;
             end
@@ -1857,9 +1874,12 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
                 pop(:,jj)=volFrac;
                 
             end
+            pop(:,ceil(nStrips/2)+1:end) = flip(pop(:,1:floor(nStrips/2)),2);
         end
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
+        
     end
+%     assignin('base','origPop',origPop)
 end
 
 function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
