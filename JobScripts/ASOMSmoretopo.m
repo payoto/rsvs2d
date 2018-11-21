@@ -7,9 +7,10 @@ function ASOMSmoretopo()
     disp(callStr);
     
    
+    [~,pathHome]=system('echo -n $HOME');
+    restartPath=[pathHome,'/SnakVolParam/restarts/Restart_ASOMS_vol_0.120_moretopo.mat'];
     
-    
-    ExecuteOptimisation(callStr);
+    ExecuteOptimisation(callStr,{restartPath,{'none',true}});
     
 
 end

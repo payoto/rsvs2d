@@ -1308,7 +1308,7 @@ function [paroptim]=areabusesweep(e)
     %     paroptim.desvar.startPopNonFill={'rand'};
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     
-    
+    paroptim.general.worker = 8;
 end
 
 function [paroptim]=areabusesweepmoretopo(e)
@@ -1327,19 +1327,23 @@ function [paroptim]=areabusesweepmoretopo(e)
     [paroptim]=ChooseNworkerASO(paroptim);
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
-    paroptim.parametrisation.optiminit.cellLevels(2)=...
-        paroptim.parametrisation.optiminit.cellLevels(2)*2;
-    
-    paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
+        
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
     
-    %     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
-    %     paroptim.desvar.numNonFillVar=[1 ];
-    %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
-    %     paroptim.desvar.startPopNonFill={'rand'};
+    % more topo setup
+    paroptim.parametrisation.optiminit.cellLevels(2)=...
+        20;
+    paroptim.parametrisation.optiminit.cellLevels(1)=3;
+    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    paroptim.parametrisation.snakes.step.snakesSteps=150;
     
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+
+    paroptim.general.worker = 8;
     
 end
 
@@ -1502,7 +1506,14 @@ function [paroptim]=ASOMS_moretopo()
     
     paroptim.parametrisation.optiminit.cellLevels(2)=...
         paroptim.parametrisation.optiminit.cellLevels(2)*2;
+    paroptim.parametrisation.optiminit.cellLevels(1)=3;
+    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
     [paroptim]=AdaptSizeforBusemann(paroptim,vol);
+    paroptim.parametrisation.snakes.step.snakesSteps=150;
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
 function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
@@ -1520,6 +1531,33 @@ function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
     paroptim.obj.aso.su2ProcSec=4*1800;
     paroptim.obj.aso.asoProcSec=16*48*3600;
     paroptim.obj.aso.snoptIter=snoptStep;
+end
+
+
+function [paroptim]=ASOMS_moretopo_test()
+    vol=0.12;
+    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,vol);
+    
+    paroptim.general.maxIter=1;
+    paroptim.general.nPop=10;
+
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+    
+    
+    paroptim.parametrisation.optiminit.cellLevels(2)=...
+        paroptim.parametrisation.optiminit.cellLevels(2)*2;
+    paroptim.parametrisation.optiminit.cellLevels(1)=...
+        3;
+    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+    paroptim.parametrisation.general.passDomBounds=...
+        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    [paroptim]=AdaptSizeforBusemann(paroptim,vol);
+    paroptim.parametrisation.snakes.step.snakesSteps=150;
+    paroptim.general.objectiveName='LengthArea';
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.general.worker=2;
 end
 
 %% ASO Shape Cases
@@ -1623,6 +1661,18 @@ function [paroptim]=ASOV3MS(vol)
 
 end
 
+function paroptim = ASOV3MS_param1(vol,NCPLoop,C2sigma,C2mode,eBasis)
+
+    paroptim = ASOV3MS(vol);
+    
+    paramOverride.shapeControl.NLoop = NCPLoop;
+    paramOverride.C2sigma = C2sigma;
+    paramOverride.C2mode = C2mode;
+    paramOverride.shapeControl.eBasis = eBasis;
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMin(paramOverride);
+
+end %function
+
 function [paroptim]=ASOV3MS_desktop(vol)
     [paroptim]=ASOV3MS(vol);
     paroptim.general.worker = 1;
@@ -1723,11 +1773,14 @@ function [paroptim]=AdaptSizeforBusemann(paroptim,e)
         ymax=max([loop(ii).subdivision(:,2);ymax]);
         ymin=min([loop(ii).subdivision(:,2);ymin]);
     end
-    nBound=(ymax-ymin)/(paroptim.parametrisation.optiminit.cellLevels(2)-4)...
-        *paroptim.parametrisation.optiminit.cellLevels(2)/2;
-    nBoundAct=paroptim.parametrisation.general.passDomBounds(2,2)...
-        -paroptim.parametrisation.general.passDomBounds(2,1);
     
+    sizSpace = (paroptim.parametrisation.general.passDomBounds(2,2)...
+        -paroptim.parametrisation.general.passDomBounds(2,1));
+    ratioAct = (paroptim.parametrisation.optiminit.cellLevels(2)-4)/...
+        paroptim.parametrisation.optiminit.cellLevels(2);
+    
+    nBound=(ymax-ymin);
+    nBoundAct=sizSpace*ratioAct;
     
     paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct;
 end
