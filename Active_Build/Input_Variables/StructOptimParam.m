@@ -1343,7 +1343,7 @@ function [paroptim]=areabusesweepmoretopo(e)
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 
-    paroptim.general.worker = 8;
+    [paroptim]=ChooseNworkerASO(paroptim);
     
 end
 
