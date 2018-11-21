@@ -1308,7 +1308,7 @@ function [paroptim]=areabusesweep(e)
     %     paroptim.desvar.startPopNonFill={'rand'};
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     
-    
+    paroptim.general.worker = 8;
 end
 
 function [paroptim]=areabusesweepmoretopo(e)
@@ -1343,7 +1343,7 @@ function [paroptim]=areabusesweepmoretopo(e)
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 
-    
+    paroptim.general.worker = 8;
     
 end
 
