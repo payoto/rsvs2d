@@ -43,7 +43,7 @@ function [objValue,additional]=ASOV3Flow(paramoptim,member,loop,baseGrid)
         su2ProcSec,asoProcSec,snoptIter]=ExtractVariables(varExtract,paramoptim);
     
     addpath(MakePathCompliant([asoPath,filesep,'src']));
-    addpath(MakePathCompliant([asoPath,filesep,'externals']));
+    addpath(genpath(MakePathCompliant([asoPath,filesep,'externals'])));
     copyfile([MakePathCompliant(asoPath),filesep,'run-cases',filesep,'data',filesep,'templatesu2.cfg'],...
         [optimDirectory,filesep,'su2.cfg'])
     
@@ -66,7 +66,7 @@ function [objValue,additional]=ASOV3Flow(paramoptim,member,loop,baseGrid)
     end
     
     
-    ASOOptions.solver.remeshFcn=@(dirMesh,newMesh,surfaceGeometry) ...
+    ASOOptions.su2.remeshFcn=@(dirMesh,newMesh,surfaceGeometry) ...
         ASORemesh(paramoptim,dirMesh,newMesh,surfaceGeometry);
     
     
