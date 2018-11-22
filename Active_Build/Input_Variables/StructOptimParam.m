@@ -243,9 +243,41 @@ function [paroptim]=ChooseNworkerASO(paroptim)
     elseif isunix
         switch BlueCrystalCheck()
             case 3
-                paroptim.general.worker=8;
+                paroptim.general.worker=16/2;
             case 4
-                paroptim.general.worker=12;
+                paroptim.general.worker=28/2;
+            otherwise
+                error('whichbluecrystal failed')
+        end
+            
+    end
+end
+
+function [paroptim]=ChooseNworkerFlow(paroptim)
+    if ispc || ismac
+        paroptim.general.worker=4;
+    elseif isunix
+        switch BlueCrystalCheck()
+            case 3
+                paroptim.general.worker=16;
+            case 4
+                paroptim.general.worker=28;
+            otherwise
+                error('whichbluecrystal failed')
+        end
+            
+    end
+end
+
+function [paroptim]=ChooseNworkerFreeFem(paroptim)
+    if ispc || ismac
+        paroptim.general.worker=4;
+    elseif isunix
+        switch BlueCrystalCheck()
+            case 3
+                paroptim.general.worker=16/2;
+            case 4
+                paroptim.general.worker=28/2;
             otherwise
                 error('whichbluecrystal failed')
         end
@@ -1295,7 +1327,7 @@ function [paroptim]=areabusesweep(e)
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
     paroptim.general.maxIter=150;
-    [paroptim]=ChooseNworkerASO(paroptim);
+    [paroptim]=ChooseNworkerFlow(paroptim);
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
     paroptim.parametrisation.snakes.refine.axisRatio =e*10; % min(10*e*1.5,1);
@@ -1404,7 +1436,7 @@ function [paroptim]=buseASONoreturn()
     [paroptim]=ChooseNworkerASO(paroptim);
     [paroptim]=standard_ASO(paroptim);
     [paroptim]=standard_MultiLevel(paroptim,3,'basis',1); % single level 3
-    paroptim.general.nPop=24;
+    paroptim.general.nPop=28;
     paroptim.general.maxIter=30;
     
     paroptim.obj.aso.paramoveride.maxFunCalls = 150;
