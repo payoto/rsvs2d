@@ -1321,7 +1321,7 @@ function [paroptim]=areabusesweepmoretopo(e)
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
     paroptim.constraint.initConstr={'ColumnFill'};
-    paroptim.constraint.initVal={{'LETE','max',0.01}};
+    paroptim.constraint.initVal={{'LETE','max',0.0025}};
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
@@ -1336,13 +1336,17 @@ function [paroptim]=areabusesweepmoretopo(e)
     % more topo setup
     paroptim.parametrisation.optiminit.cellLevels(2)=...
         20;
-    paroptim.parametrisation.optiminit.cellLevels(1)=3;
+    paroptim.parametrisation.optiminit.cellLevels(1)=4;
     paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+%     paroptim.parametrisation.general.passDomBounds=...
+%         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+%     paroptim.parametrisation.general.passDomBounds(1,:)=...
+%         paroptim.parametrisation.general.passDomBounds(1,:)-[-1 1]*0.025*...
+%         (paroptim.parametrisation.optiminit.cellLevels(1)+2);
+    ratioChord=0.025;
     paroptim.parametrisation.general.passDomBounds=...
-        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
-    paroptim.parametrisation.general.passDomBounds(1,:)=...
-        paroptim.parametrisation.general.passDomBounds(1,:)-[-1 1]*0.025*...
-        (paroptim.parametrisation.optiminit.cellLevels(1)+2);
+        SizeAerofoilRSVSGrid(...
+        paroptim.parametrisation.optiminit.cellLevels,ratioChord);
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     paroptim.parametrisation.snakes.step.snakesSteps=150;
     
@@ -1557,9 +1561,9 @@ function [paroptim]=ASOMS_moretopo_test()
 %     paroptim.parametrisation.general.passDomBounds(1,:)=...
 %         paroptim.parametrisation.general.passDomBounds(1,:)-[-1 1]*0.05*5;
 %     [paroptim]=AdaptSizeforBusemann(paroptim,vol);
-%     paroptim.parametrisation.snakes.step.snakesSteps=150;
-%     paroptim.general.objectiveName='LengthArea';
-%     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    paroptim.parametrisation.snakes.step.snakesSteps=100;
+    paroptim.general.objectiveName='LengthArea';
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 %     paroptim.general.worker=2;
 end
 

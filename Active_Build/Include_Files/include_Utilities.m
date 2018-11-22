@@ -340,59 +340,6 @@ function CopyFileLinux(p1,p2)
     system(['cp -rp ''',p1,''' ''',p2,'''']);
 end
 
-function [domainBounds]=MakeCartesianGridBounds(cellLevels)
-    
-    %cellLevels=cellLevels+2;
-    axRatio=(cellLevels+2)'/cellLevels(1);
-    domainBounds=[-axRatio,axRatio];
-    
-end
-
-function [domainBounds]=MakeBoundsOuterLayer(cellLevels,domainBounds,isact)
-    
-    domainBounds(1,:)= (domainBounds(1,:)-mean(domainBounds(1,:)))*...
-        (cellLevels(1)+2+2*(1-isact))/(cellLevels(1)-2*(1-isact))+mean(domainBounds(1,:));
-    domainBounds(2,:)= (domainBounds(2,:)-mean(domainBounds(2,:)))*...
-        (cellLevels(2)+1)/cellLevels(2)+mean(domainBounds(2,:));
-end
-
-%{
-function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
-    
-    cellNorm=cellLevels;
-    cellNorm(1)=cellNorm(1)-2;
-    
-    cellLength=1/cellNorm(1);
-    
-    axRatio=(cellLevels'+2)*cellLength;
-    domainBounds=[-axRatio,axRatio];
-    
-end
-%}
-function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
-    
-    cellNorm=cellLevels;
-    cellNorm(1)=cellNorm(1)-2;
-    
-    cellLength=1/cellNorm(1)/2;
-    
-    axRatio=(cellLevels'+2)*cellLength;
-    domainBounds=[-axRatio,axRatio];
-    domainBounds(1,:)=domainBounds(1,:)+1/2;
-end
-
-function [domainBounds]=MakeCartesianGridBoundsInactTE(cellLevels)
-    
-    cellNorm=cellLevels;
-    cellNorm(1)=cellNorm(1)-1;
-    
-    cellLength=1/cellNorm(1)/2;
-    
-    axRatio=(cellLevels'+2)*cellLength;
-    domainBounds=[-axRatio,axRatio];
-    domainBounds(1,:)=domainBounds(1,:)+cellLength+1/2;
-end
-
 function [xMin,xMax,t,L,A]=ClosedLoopProperties(points)
     
     [A]=abs(CalculatePolyArea(points));
@@ -523,6 +470,72 @@ function [datmat]=MovingIntegralWindowLoop2(x,dat,span)
     
 end
 
+%% Grid resizing
+
+function [domainBounds]=MakeCartesianGridBounds(cellLevels)
+    
+    %cellLevels=cellLevels+2;
+    axRatio=(cellLevels+2)'/cellLevels(1);
+    domainBounds=[-axRatio,axRatio];
+    
+end
+
+function [domainBounds]=MakeBoundsOuterLayer(cellLevels,domainBounds,isact)
+    
+    domainBounds(1,:)= (domainBounds(1,:)-mean(domainBounds(1,:)))*...
+        (cellLevels(1)+2+2*(1-isact))/(cellLevels(1)-2*(1-isact))+mean(domainBounds(1,:));
+    domainBounds(2,:)= (domainBounds(2,:)-mean(domainBounds(2,:)))*...
+        (cellLevels(2)+1)/cellLevels(2)+mean(domainBounds(2,:));
+end
+
+%{
+function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
+    
+    cellNorm=cellLevels;
+    cellNorm(1)=cellNorm(1)-2;
+    
+    cellLength=1/cellNorm(1);
+    
+    axRatio=(cellLevels'+2)*cellLength;
+    domainBounds=[-axRatio,axRatio];
+    
+end
+%}
+function [domainBounds]=MakeCartesianGridBoundsInactE(cellLevels)
+    
+    cellNorm=cellLevels;
+    cellNorm(1)=cellNorm(1)-2;
+    
+    cellLength=1/cellNorm(1)/2;
+    
+    axRatio=(cellLevels'+2)*cellLength;
+    domainBounds=[-axRatio,axRatio];
+    domainBounds(1,:)=domainBounds(1,:)+1/2;
+end
+
+function [domainBounds]=MakeCartesianGridBoundsInactTE(cellLevels)
+    
+    cellNorm=cellLevels;
+    cellNorm(1)=cellNorm(1)-1;
+    
+    cellLength=1/cellNorm(1)/2;
+    
+    axRatio=(cellLevels'+2)*cellLength;
+    domainBounds=[-axRatio,axRatio];
+    domainBounds(1,:)=domainBounds(1,:)+cellLength+1/2;
+end
+
+function [domainBounds]=SizeAerofoilRSVSGrid(cellLevels,ratioChord)
+    % Alias for CartesianGridRepositionLETE
+    [domainBounds]=CartesianGridRepositionLETE(cellLevels,ratioChord);
+end
+function [domainBounds]=CartesianGridRepositionLETE(cellLevels,ratioChord)
+    % Used for aerofoils
+    domainBounds=MakeCartesianGridBoundsInactE(cellLevels);
+    
+    domainBounds(1,:)=domainBounds(1,:)-([-1 1]*ratioChord*...
+        (cellLevels(1)+2)/(cellLevels(1)-2));
+end
 %% Image processes
 function [fill]=Image2Fill(typDat)
     imPath=[cd,'\Active_Build','\Sample Geometries\',typDat,'.png'];
