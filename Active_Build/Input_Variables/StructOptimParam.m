@@ -1302,57 +1302,40 @@ function [paroptim]=areabusesweep(e)
     paroptim.constraint.desVarVal={e};
     paroptim.constraint.desVarConstr={'MinValVolFrac'};
     
-    %     paroptim.desvar.nonFillVar={'axisratio'}; % {'axisratio' 'alpha' 'mach'}
-    %     paroptim.desvar.numNonFillVar=[1 ];
-    %     paroptim.desvar.desVarRangeNoFill={[0.5,1.5]*e*10}; % [0.1,3] [-10,10] [0 0.5]
-    %     paroptim.desvar.startPopNonFill={'rand'};
-    [paroptim]=AdaptSizeforBusemann(paroptim,e);
     
-    paroptim.general.worker = 8;
+    cellLevels = paroptim.parametrisation.optiminit.cellLevels;
+    ratioChord=0.03;
+    paroptim.parametrisation.general.passDomBounds=...
+        SizeAerofoilRSVSGrid(cellLevels,ratioChord);
+    [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    paroptim.constraint.initVal=...
+        {{'LETE','max',(ratioChord^2)/2*(cellLevels(1)-2)^2}};
+    
 end
 
 function [paroptim]=areabusesweepmoretopo(e)
     % Need to add support of the axis ratio as a design variable in there
     % as well.
     
-    [paroptim]=MultiTopo_DEhoriz();
-    [paroptim]=SumVolumeConstraint(paroptim);
-    [paroptim]=LimitLETE(paroptim);
-    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
-    paroptim.general.optimMethod='DE';
-    paroptim.constraint.initConstr={'ColumnFill'};
-    paroptim.constraint.initVal={{'LETE','max',0.0025}};
-    
-    paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
-    paroptim.general.nPop=100;
-    paroptim.general.maxIter=150;
-    [paroptim]=ChooseNworkerASO(paroptim);
-    
-    paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
-        
-    paroptim.constraint.desVarVal={e};
-    paroptim.constraint.desVarConstr={'MinValVolFrac'};
+    [paroptim]=areabusesweep(e);
     
     % more topo setup
-    paroptim.parametrisation.optiminit.cellLevels(2)=...
-        20;
-    paroptim.parametrisation.optiminit.cellLevels(1)=4;
-    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
-%     paroptim.parametrisation.general.passDomBounds=...
-%         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
-%     paroptim.parametrisation.general.passDomBounds(1,:)=...
-%         paroptim.parametrisation.general.passDomBounds(1,:)-[-1 1]*0.025*...
-%         (paroptim.parametrisation.optiminit.cellLevels(1)+2);
-    ratioChord=0.025;
+    cellLevels = [4 20];
+    paroptim.parametrisation.optiminit.cellLevels=cellLevels;
+    ratioChord=0.03;
     paroptim.parametrisation.general.passDomBounds=...
-        SizeAerofoilRSVSGrid(...
-        paroptim.parametrisation.optiminit.cellLevels,ratioChord);
+        SizeAerofoilRSVSGrid(cellLevels,ratioChord);
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
-    paroptim.parametrisation.snakes.step.snakesSteps=150;
+    paroptim.constraint.initVal=...
+        {{'LETE','max',(ratioChord^2)/2*(cellLevels(1)-2)^2}};
     
+    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+    paroptim.parametrisation.snakes.step.snakesSteps=110;
 
     [paroptim]=ChooseNworkerASO(paroptim);
+    
     
 end
 
@@ -1544,7 +1527,7 @@ function [paroptim]=ASOMS_moretopo_test()
     [paroptim]=ASOMS_moretopo();
     
     paroptim.general.maxIter=1;
-    paroptim.general.nPop=10;
+    paroptim.general.nPop=4;
 
     paroptim.general.restartIterNum=1;
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
@@ -1563,6 +1546,7 @@ function [paroptim]=ASOMS_moretopo_test()
 %     [paroptim]=AdaptSizeforBusemann(paroptim,vol);
     paroptim.parametrisation.snakes.step.snakesSteps=100;
     paroptim.general.objectiveName='LengthArea';
+    paroptim.general.objInput='loop';
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 %     paroptim.general.worker=2;
 end
