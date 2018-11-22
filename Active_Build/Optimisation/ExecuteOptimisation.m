@@ -502,17 +502,17 @@ function [workerList]=StartParallelPool(nWorker,nTry)
     kk=0;
     while numel(gcp('nocreate'))==0 && kk<nTry
         comStr=computer;
-        if strcmp(comStr(1:2),'PC')
-            poolName=parallel.importProfile('ExportOptimSnakes.settings');
-        else
-            poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
-        end
-        clusterObj=parcluster(poolName);
-        clusterObj.NumWorkers=nWorker;
-        saveProfile(clusterObj);
+%         if strcmp(comStr(1:2),'PC')
+%             poolName=parallel.importProfile('ExportOptimSnakes.settings');
+%         else
+%             poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+%         end
+%         clusterObj=parcluster(poolName);
+%         clusterObj.NumWorkers=nWorker;
+%         saveProfile(clusterObj);
         
         try
-            p=parpool(poolName);
+            p=parpool(nWorker);
             p.IdleTimeout=Inf;
             
         catch ME
