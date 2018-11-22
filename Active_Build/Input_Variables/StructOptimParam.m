@@ -1320,6 +1320,8 @@ function [paroptim]=areabusesweepmoretopo(e)
     [paroptim]=LimitLETE(paroptim);
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.optimMethod='DE';
+    paroptim.constraint.initConstr={'ColumnFill'};
+    paroptim.constraint.initVal={{'LETE','max',0.01}};
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
@@ -1338,6 +1340,9 @@ function [paroptim]=areabusesweepmoretopo(e)
     paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
     paroptim.parametrisation.general.passDomBounds=...
         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+    paroptim.parametrisation.general.passDomBounds(1,:)=...
+        paroptim.parametrisation.general.passDomBounds(1,:)-[-1 1]*0.025*...
+        (paroptim.parametrisation.optiminit.cellLevels(1)+2);
     [paroptim]=AdaptSizeforBusemann(paroptim,e);
     paroptim.parametrisation.snakes.step.snakesSteps=150;
     
@@ -1378,8 +1383,8 @@ function [paroptim]=standard_MultiLevel(paroptim,lvlSubdiv,errTreatment,nLevel)
     
 end
 
-function [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,vol)
-    [paroptim]=areabusesweep(vol);
+function [paroptim]=ASOMS_subdiv_orig(paroptim,lvlSubdiv,errTreatment,nLevel)
+
     [paroptim]=ChooseNworkerASO(paroptim);
     [paroptim]=standard_ASO(paroptim);
     [paroptim]=standard_MultiLevel(paroptim,lvlSubdiv,errTreatment,nLevel);
@@ -1395,6 +1400,13 @@ function [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,vol)
     paroptim.general.optimMethod='none';
     
 
+end
+
+function [paroptim]=ASOMS_subdiv_orig_areabuse(lvlSubdiv,errTreatment,nLevel,vol)
+    [paroptim]=areabusesweep(vol);
+    
+    [paroptim]=ASOMS_subdiv_orig(paroptim,lvlSubdiv,errTreatment,nLevel);
+    
 end
 
 % Callers
@@ -1424,7 +1436,8 @@ end
 
 % Multi start
 function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
-    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,errTreatment,nLevel,0.12);
+    
+    [paroptim]=ASOMS_subdiv_orig_areabuse(lvlSubdiv,errTreatment,nLevel,0.12);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
@@ -1437,7 +1450,7 @@ function [paroptim]=ASOMS_subdiv(lvlSubdiv,errTreatment,nLevel)
 end
 
 function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)
-    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,'basis',nLevel,vol);
+    [paroptim]=ASOMS_subdiv_orig_areabuse(lvlSubdiv,'basis',nLevel,vol);
     
     switch constrCase
         case 'cross'
@@ -1457,7 +1470,7 @@ function [paroptim]=ASOMS_subdivconstr(lvlSubdiv,constrCase,nLevel)
 end
 
 function [paroptim]=ASOMS_pop(restartPos)
-    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,0.12);
+    [paroptim]=ASOMS_subdiv_orig_areabuse(1,'basis',5,0.12);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
@@ -1469,7 +1482,7 @@ function [paroptim]=ASOMS_pop(restartPos)
 end
 
 function [paroptim]=ASOMS_popsmall(restartPos)
-    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,0.12);
+    [paroptim]=ASOMS_subdiv_orig_areabuse(1,'basis',5,0.12);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=50;
@@ -1481,7 +1494,7 @@ function [paroptim]=ASOMS_popsmall(restartPos)
 end
 
 function [paroptim]=ASOMS_vol(vol)
-    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,vol);
+    [paroptim]=ASOMS_subdiv_orig_areabuse(1,'basis',5,vol);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
@@ -1494,7 +1507,8 @@ end
 
 function [paroptim]=ASOMS_moretopo()
     vol=0.12;
-    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,vol);
+    [paroptim]=areabusesweepmoretopo(vol);
+    [paroptim]=ASOMS_subdiv_orig(paroptim,1,'basis',5);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
@@ -1503,21 +1517,10 @@ function [paroptim]=ASOMS_moretopo()
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
-    
-    paroptim.parametrisation.optiminit.cellLevels(2)=...
-        paroptim.parametrisation.optiminit.cellLevels(2)*2;
-    paroptim.parametrisation.optiminit.cellLevels(1)=3;
-    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
-    paroptim.parametrisation.general.passDomBounds=...
-        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
-    [paroptim]=AdaptSizeforBusemann(paroptim,vol);
-    paroptim.parametrisation.snakes.step.snakesSteps=150;
-    
-    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
 function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
-    [paroptim]=ASOMS_subdiv_orig(lvlSubdiv,'basis',nLevel,0.12);
+    [paroptim]=ASOMS_subdiv_orig_areabuse(lvlSubdiv,'basis',nLevel,0.12);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=1;
@@ -1533,10 +1536,8 @@ function [paroptim]=ASOMS_conv(lvlSubdiv,nLevel,snoptStep)
     paroptim.obj.aso.snoptIter=snoptStep;
 end
 
-
 function [paroptim]=ASOMS_moretopo_test()
-    vol=0.12;
-    [paroptim]=ASOMS_subdiv_orig(1,'basis',5,vol);
+    [paroptim]=ASOMS_moretopo();
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=10;
@@ -1545,19 +1546,21 @@ function [paroptim]=ASOMS_moretopo_test()
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
-    
-    paroptim.parametrisation.optiminit.cellLevels(2)=...
-        paroptim.parametrisation.optiminit.cellLevels(2)*2;
-    paroptim.parametrisation.optiminit.cellLevels(1)=...
-        3;
-    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
-    paroptim.parametrisation.general.passDomBounds=...
-        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
-    [paroptim]=AdaptSizeforBusemann(paroptim,vol);
-    paroptim.parametrisation.snakes.step.snakesSteps=150;
-    paroptim.general.objectiveName='LengthArea';
-    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
-    paroptim.general.worker=2;
+%     
+%     paroptim.parametrisation.optiminit.cellLevels(2)=...
+%         paroptim.parametrisation.optiminit.cellLevels(2)*2;
+%     paroptim.parametrisation.optiminit.cellLevels(1)=...
+%         3;
+%     paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+%     paroptim.parametrisation.general.passDomBounds=...
+%         MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+%     paroptim.parametrisation.general.passDomBounds(1,:)=...
+%         paroptim.parametrisation.general.passDomBounds(1,:)-[-1 1]*0.05*5;
+%     [paroptim]=AdaptSizeforBusemann(paroptim,vol);
+%     paroptim.parametrisation.snakes.step.snakesSteps=150;
+%     paroptim.general.objectiveName='LengthArea';
+%     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+%     paroptim.general.worker=2;
 end
 
 %% ASO Shape Cases
