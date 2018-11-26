@@ -1407,14 +1407,57 @@ end
 
 function []=ClearUnwantedData(paramoptim, member)
     
+    varExtract={'objectiveName'};
+    [objectiveName]=ExtractVariables(varExtract,paramoptim);
     
+    pathDel = member.location;
     
+    switch objectiveName
+        case 'CutCellFlow'
+            fileList = {
+                'CFD/*.dll'
+                'CFD/mesh*.exe'
+                'CFD/cartcell.exe'
+                'CFD/eulerflowuns.exe'
+                'CFD/*.vtk'
+                'CFD/flow.dump'
+                'CFD/grid.plt'
+                'CFD/coords.dat'
+            };
+        case 'ASOFlow'
+            fileList = {
+                '*run*.dat'
+                '*run*.csv'
+                '*run*meshdef'
+                '*run*best'
+                '*mesh.su2.meshdef*'
+                'mesh.su2.*'
+            };
+        otherwise
+            fileList = {};
+    end
     
-    
+    DeleteUnwantedFiles(pathDel, fileList);
 end
 
 
-function []=DeleteUnwantedFiles(fileList)
+function []=DeleteUnwantedFiles(pathDel, fileList)
     
-    
+    pathDel = MakePathCompliant(pathDel);
+    for ii=1:numel(fileList)
+        try
+            if ~isempty(fileList{ii})
+                pathFile = [pathDel, filesep, fileList{ii}];
+                pathFile = MakePathCompliant(pathFile);
+                delete(pathFile)
+            end
+        catch ME
+            warn.identifier = ['WARN:error:',ME.identifier];
+            warn.state = 'on';
+            warn.message = ME.message;
+            warn.cause = ME.cause;
+            warn.stack = ME.stack;
+            warning(warn)
+        end
+    end
 end
