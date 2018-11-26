@@ -1401,3 +1401,20 @@ function [loop]=ConstantArea_Klunker(xMin,xMax,A,M,nPoints)
     loop.isccw=true;
     loop.subdivision(end+1,:)=loop.subdivision(1,:);
 end
+
+%% Data removal
+
+
+function []=ClearUnwantedData(paramoptim, member)
+    
+    
+    
+    
+    
+end
+
+
+function []=DeleteUnwantedFiles(fileList)
+    
+    
+end

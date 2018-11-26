@@ -2233,6 +2233,8 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
     
     [objValue,additional]=eval([objectiveName,'(paramoptim,member,',objInput,');']);
     
+    ClearUnwantedData(paramoptim, member);
+    
     [tElapsed]=PrintEnd(procStr,2,tStart);
     additional.objTime=datestr(tElapsed,'dd-HH:MM:SS');
 end
