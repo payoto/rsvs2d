@@ -1432,7 +1432,7 @@ end
 
 % Hybrid opt
 function [paroptim]=buseASONoreturn()
-    [paroptim]=areabusesweep(0.12);
+    [paroptim]=areabusesweep(0.2);
     [paroptim]=ChooseNworkerASO(paroptim);
     [paroptim]=standard_ASO(paroptim);
     [paroptim]=standard_MultiLevel(paroptim,3,'basis',1); % single level 3
@@ -1524,15 +1524,15 @@ function [paroptim]=ASOMS_vol(vol)
     
 end
 
-function [paroptim]=ASOMS_moretopo()
-    vol=0.12;
+function [paroptim]=ASOMS_moretopo(vol,num)
+    if ~exist('num', 'var'); num=1;end
     [paroptim]=areabusesweepmoretopo(vol);
     [paroptim]=ASOMS_subdiv_orig(paroptim,1,'basis',5);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
 
-    paroptim.general.restartIterNum=1;
+    paroptim.general.restartIterNum=num;
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
@@ -1681,7 +1681,8 @@ function [paroptim]=ASOV3MS(vol)
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
-
+    paroptim.parametrisation.snakes.refine.axisRatio=...
+        paroptim.parametrisation.snakes.refine.axisRatio/2;
 end
 
 function paroptim = ASOV3MS_param1(vol,NCPLoop,C2sigma,C2mode,eBasis)
