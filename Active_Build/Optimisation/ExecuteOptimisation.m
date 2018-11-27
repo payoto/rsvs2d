@@ -512,7 +512,10 @@ function [workerList]=StartParallelPool(nWorker,nTry)
 %         saveProfile(clusterObj);
         
         try
-            p=parpool(nWorker);
+            
+            c = parcluster('local');
+            c.NumWorkers = max(c.NumWorkers, nWorker);
+            p=parpool(c, nWorker);
             p.IdleTimeout=Inf;
             
         catch ME
