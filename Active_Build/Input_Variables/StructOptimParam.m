@@ -1657,7 +1657,7 @@ function [paroptim]=standard_ASOV3(paroptim)
     paroptim.obj.aso.paramoveride.maxFunCalls = 150;
     paroptim.obj.aso.su2ProcSec=4*1800;
     paroptim.obj.aso.asoProcSec=4*12*3600;
-    paroptim.obj.aso.snoptIter=10;
+    paroptim.obj.aso.snoptIter=25;
     
     paroptim.obj.aso.asoCase=@asocases.rsvsDragMin;
     
