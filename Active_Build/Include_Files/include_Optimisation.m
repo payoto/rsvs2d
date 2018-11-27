@@ -1426,11 +1426,11 @@ function []=ClearUnwantedData(paramoptim, member)
             };
         case 'ASOFlow'
             fileList = {
-                '*run*.dat'
-                '*run*.csv'
-                '*run*meshdef'
-                '*run*best'
-                '*mesh.su2.meshdef*'
+                'run*/*.dat'
+                'run*/*.csv'
+                'run*/*meshdef'
+                'run*/*best'
+                'mesh.su2.*meshdef*'
                 'mesh.su2.*'
             };
         otherwise
