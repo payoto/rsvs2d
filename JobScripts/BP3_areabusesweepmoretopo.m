@@ -2,8 +2,8 @@ function BP3_areabusesweepmoretopo(ii)
     MoveToDir('source',1)
     InitialiseSnakeFlow;
 
-    disp(['areabusesweepmoretopo(',num2str(ii,'%e'),')'])
-    ExecuteOptimisation(['areabusesweepmoretopo(',num2str(ii,'%e'),')']);
+    disp(['areahalfbusesweepmoretopo(',num2str(ii,'%e'),')'])
+    ExecuteOptimisation(['areahalfbusesweepmoretopo(',num2str(ii,'%e'),')']);
     
 
 

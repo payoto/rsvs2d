@@ -1,5 +1,5 @@
 function ASOMSmoretopo(vol, step)
-    % vol = 0.12 or 0.2
+
     MoveToDir('source',1)
     InitialiseSnakeFlow;
     

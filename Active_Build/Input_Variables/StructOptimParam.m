@@ -1371,6 +1371,42 @@ function [paroptim]=areabusesweepmoretopo(e)
     
 end
 
+function [paroptim]=areahalfbusesweepmoretopo(e)
+    %Similar to areabusesweepmoretopo with a different population
+     [paroptim]=areabusesweep(e);
+    
+    % more topo setup
+    cellLevels = [4 20];
+    paroptim.parametrisation.optiminit.cellLevels=cellLevels;
+    ratioChord=0.03;
+    newDobBounds=...
+        SizeAerofoilRSVSGrid(cellLevels,ratioChord);
+    
+    paroptim.parametrisation.general.passDomBounds(1,:)=newDobBounds(1,:);
+    
+    [paroptim]=AdaptSizeforBusemannHalf(paroptim,e);
+    paroptim.constraint.initVal=...
+        {{'LETE','max',(ratioChord^2)/2*(cellLevels(1)-2)^2}};
+    
+    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+    paroptim.parametrisation.snakes.step.snakesSteps=110;
+
+    [paroptim]=ChooseNworkerASO(paroptim);
+    
+    paroptim.general.startPop='initbusemann2';
+end
+
+function [paroptim]=testnewbuse
+    [paroptim]=areahalfbusesweepmoretopo(0.12);
+    paroptim.general.maxIter=1;
+    paroptim.general.objectiveName='LengthArea';
+    paroptim.general.nPop=12;
+    paroptim.parametrisation.snakes.step.snakesSteps=55;
+    [paroptim]=ConstraintArea(paroptim);
+end
+
 %% ASO Cases
 % standards
 function [paroptim]=standard_ASO(paroptim)
@@ -1432,7 +1468,7 @@ end
 
 % Hybrid opt
 function [paroptim]=buseASONoreturn()
-    [paroptim]=areabusesweep(0.12);
+    [paroptim]=areabusesweep(0.2);
     [paroptim]=ChooseNworkerASO(paroptim);
     [paroptim]=standard_ASO(paroptim);
     [paroptim]=standard_MultiLevel(paroptim,3,'basis',1); % single level 3
@@ -1524,15 +1560,15 @@ function [paroptim]=ASOMS_vol(vol)
     
 end
 
-function [paroptim]=ASOMS_moretopo()
-    vol=0.12;
-    [paroptim]=areabusesweepmoretopo(vol);
+function [paroptim]=ASOMS_moretopo(vol,num)
+    if ~exist('num', 'var'); num=1;end
+    [paroptim]=areahalfbusesweepmoretopo(vol);
     [paroptim]=ASOMS_subdiv_orig(paroptim,1,'basis',5);
     
     paroptim.general.maxIter=1;
     paroptim.general.nPop=100;
 
-    paroptim.general.restartIterNum=1;
+    paroptim.general.restartIterNum=num;
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
@@ -1657,7 +1693,7 @@ function [paroptim]=standard_ASOV3(paroptim)
     paroptim.obj.aso.paramoveride.maxFunCalls = 150;
     paroptim.obj.aso.su2ProcSec=4*1800;
     paroptim.obj.aso.asoProcSec=4*12*3600;
-    paroptim.obj.aso.snoptIter=10;
+    paroptim.obj.aso.snoptIter=25;
     
     paroptim.obj.aso.asoCase=@asocases.rsvsDragMin;
     
@@ -1681,7 +1717,10 @@ function [paroptim]=ASOV3MS(vol)
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMin('vol',vol);
 
+    paroptim.parametrisation.snakes.refine.axisRatio=...
+        paroptim.parametrisation.snakes.refine.axisRatio/2;
 end
 
 function paroptim = ASOV3MS_param1(vol,NCPLoop,C2sigma,C2mode,eBasis)
@@ -1692,6 +1731,7 @@ function paroptim = ASOV3MS_param1(vol,NCPLoop,C2sigma,C2mode,eBasis)
     paramOverride.C2sigma = C2sigma;
     paramOverride.C2mode = C2mode;
     paramOverride.shapeControl.eBasis = eBasis;
+    paramOverride.vol = vol;
     paroptim.obj.aso.asoCase=@() asocases.rsvsDragMin(paramOverride);
 
 end %function
@@ -1702,7 +1742,7 @@ function [paroptim]=ASOV3MS_desktop(vol)
     paroptim.general.nPop=2;
     paroptim.obj.aso.snoptIter=5;
     
-    paroptim.obj.aso.asoCase=@asocases.rsvsDragMinDesktop;
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMinDesktop('vol',vol);
     
 end %function
 
@@ -1711,7 +1751,7 @@ function [paroptim]=ASOV3MS_debug(vol)
     paroptim.general.nPop=2;
     paroptim.obj.aso.snoptIter=5;
     
-    paroptim.obj.aso.asoCase=@asocases.rsvsDragMinDebug;
+    paroptim.obj.aso.asoCase=@i() asocases.rsvsDragMinDebug('vol',vol);
     
 end %function
 
@@ -1787,6 +1827,7 @@ function [paroptim]=areabuseCGre(e)
 end
 
 function [paroptim]=AdaptSizeforBusemann(paroptim,e)
+    % Sets constraint and axis ratio 
     include_Optimisation
     [loop]=ConstantArea_Busemann(0,1,e,2);
     paroptim.constraint.desVarVal={e};
@@ -1806,6 +1847,29 @@ function [paroptim]=AdaptSizeforBusemann(paroptim,e)
     nBoundAct=sizSpace*ratioAct;
     
     paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct;
+end
+
+function [paroptim]=AdaptSizeforBusemannHalf(paroptim,e)
+    % Sets constraint and axis ratio 
+    include_Optimisation
+    [loop]=ConstantArea_Busemann(0,1,e,2);
+    paroptim.constraint.desVarVal={e};
+    ymax=nan;
+    ymin=nan;
+    for ii=1:numel(loop)
+        ymax=max([loop(ii).subdivision(:,2);ymax]);
+        ymin=min([loop(ii).subdivision(:,2);ymin]);
+    end
+    
+    sizSpace = (paroptim.parametrisation.general.passDomBounds(2,2)...
+        -paroptim.parametrisation.general.passDomBounds(2,1));
+    ratioAct = (paroptim.parametrisation.optiminit.cellLevels(2)-4)/...
+        paroptim.parametrisation.optiminit.cellLevels(2);
+    
+    nBound=(ymax-ymin);
+    nBoundAct=sizSpace*ratioAct;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct/2;
 end
 
 function [paroptim]=areabuseTest()

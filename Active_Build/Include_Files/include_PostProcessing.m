@@ -991,6 +991,45 @@ function [str]=VariableShareZoneString(varsharezone)
     str=[str,')'];
 end
 
+
+function []=ConcatenateTecplotFile(iterDir,tecFilePath,axisRatio)
+    [profPaths]=FindProfile(iterDir,axisRatio);
+    
+    compType=computer;
+    
+    if strcmp(compType(1:2),'PC')
+        for ii=1:length(profPaths)
+            system(['type "',profPaths{ii},'" >> "',tecFilePath,'"']);
+        end
+    else
+        for ii=1:length(profPaths)
+            system(['cat ''',profPaths{ii},''' >> ''',tecFilePath,'''']);
+        end
+    end
+    
+    
+end
+
+function [profPaths]=FindProfile(iterDir,axisRatio)
+    
+    [returnPath]=FindDir(iterDir,'profile',true);
+    
+    for ii=1:length(returnPath)
+        
+        profPaths(ii)=FindDir(returnPath{ii},'tecsubfile',false);
+        try
+            surfPlt=[returnPath{ii},filesep,'run',filesep,'surface.plt'];
+            if exist(surfPlt,'file')
+                MergeTecSubfile(profPaths{ii},surfPlt,axisRatio);
+
+            end
+        catch ME
+            ME.getReport
+        end
+    end
+    
+end
+
 %% Incomplete processing
 
 function [outinfo]=ReconstructOutinfo(optimstruct)
