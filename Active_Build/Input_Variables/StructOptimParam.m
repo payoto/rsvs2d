@@ -1693,7 +1693,7 @@ function [paroptim]=standard_ASOV3(paroptim)
     paroptim.obj.aso.paramoveride.maxFunCalls = 150;
     paroptim.obj.aso.su2ProcSec=4*1800;
     paroptim.obj.aso.asoProcSec=4*12*3600;
-    paroptim.obj.aso.snoptIter=10;
+    paroptim.obj.aso.snoptIter=25;
     
     paroptim.obj.aso.asoCase=@asocases.rsvsDragMin;
     
@@ -1717,6 +1717,8 @@ function [paroptim]=ASOV3MS(vol)
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
     
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMin('vol',vol);
+
     paroptim.parametrisation.snakes.refine.axisRatio=...
         paroptim.parametrisation.snakes.refine.axisRatio/2;
 end
@@ -1729,6 +1731,7 @@ function paroptim = ASOV3MS_param1(vol,NCPLoop,C2sigma,C2mode,eBasis)
     paramOverride.C2sigma = C2sigma;
     paramOverride.C2mode = C2mode;
     paramOverride.shapeControl.eBasis = eBasis;
+    paramOverride.vol = vol;
     paroptim.obj.aso.asoCase=@() asocases.rsvsDragMin(paramOverride);
 
 end %function
@@ -1739,7 +1742,7 @@ function [paroptim]=ASOV3MS_desktop(vol)
     paroptim.general.nPop=2;
     paroptim.obj.aso.snoptIter=5;
     
-    paroptim.obj.aso.asoCase=@asocases.rsvsDragMinDesktop;
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMinDesktop('vol',vol);
     
 end %function
 
@@ -1748,7 +1751,7 @@ function [paroptim]=ASOV3MS_debug(vol)
     paroptim.general.nPop=2;
     paroptim.obj.aso.snoptIter=5;
     
-    paroptim.obj.aso.asoCase=@asocases.rsvsDragMinDebug;
+    paroptim.obj.aso.asoCase=@i() asocases.rsvsDragMinDebug('vol',vol);
     
 end %function
 
