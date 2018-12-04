@@ -573,6 +573,9 @@ function [summaryStruct]=PlotASOPerformance_DataExtraction(ASOstruct,lErrVec)
         if numel(errMagVec)~=numel(subDivLevel)
             error('subDivLevel size does not match number of errMagnitudes provided')
         end
+        if numel(ASOstruct(ii).refLvl)>numel(ASOstruct(ii).obj)
+            ASOstruct(ii).refLvl(numel(ASOstruct(ii).obj)+1:end)=[];
+        end
         for jj=1:(numel(errMagVec)-jjStart)
             currList=find(ASOstruct(ii).refLvl==subDivLevel(jj+jjStart));
             if numel(currList)==1

@@ -1371,6 +1371,42 @@ function [paroptim]=areabusesweepmoretopo(e)
     
 end
 
+function [paroptim]=areahalfbusesweepmoretopo(e)
+    %Similar to areabusesweepmoretopo with a different population
+     [paroptim]=areabusesweep(e);
+    
+    % more topo setup
+    cellLevels = [4 20];
+    paroptim.parametrisation.optiminit.cellLevels=cellLevels;
+    ratioChord=0.03;
+    newDobBounds=...
+        SizeAerofoilRSVSGrid(cellLevels,ratioChord);
+    
+    paroptim.parametrisation.general.passDomBounds(1,:)=newDobBounds(1,:);
+    
+    [paroptim]=AdaptSizeforBusemannHalf(paroptim,e);
+    paroptim.constraint.initVal=...
+        {{'LETE','max',(ratioChord^2)/2*(cellLevels(1)-2)^2}};
+    
+    paroptim.parametrisation.snakes.refine.refineGrid=[8 4];
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+    paroptim.parametrisation.snakes.step.snakesSteps=110;
+
+    [paroptim]=ChooseNworkerASO(paroptim);
+    
+    paroptim.general.startPop='initbusemann2';
+end
+
+function [paroptim]=testnewbuse
+    [paroptim]=areahalfbusesweepmoretopo(0.12);
+    paroptim.general.maxIter=1;
+    paroptim.general.objectiveName='LengthArea';
+    paroptim.general.nPop=12;
+    paroptim.parametrisation.snakes.step.snakesSteps=55;
+    [paroptim]=ConstraintArea(paroptim);
+end
+
 %% ASO Cases
 % standards
 function [paroptim]=standard_ASO(paroptim)
@@ -1526,7 +1562,7 @@ end
 
 function [paroptim]=ASOMS_moretopo(vol,num)
     if ~exist('num', 'var'); num=1;end
-    [paroptim]=areabusesweepmoretopo(vol);
+    [paroptim]=areahalfbusesweepmoretopo(vol);
     [paroptim]=ASOMS_subdiv_orig(paroptim,1,'basis',5);
     
     paroptim.general.maxIter=1;
@@ -1788,6 +1824,7 @@ function [paroptim]=areabuseCGre(e)
 end
 
 function [paroptim]=AdaptSizeforBusemann(paroptim,e)
+    % Sets constraint and axis ratio 
     include_Optimisation
     [loop]=ConstantArea_Busemann(0,1,e,2);
     paroptim.constraint.desVarVal={e};
@@ -1807,6 +1844,29 @@ function [paroptim]=AdaptSizeforBusemann(paroptim,e)
     nBoundAct=sizSpace*ratioAct;
     
     paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct;
+end
+
+function [paroptim]=AdaptSizeforBusemannHalf(paroptim,e)
+    % Sets constraint and axis ratio 
+    include_Optimisation
+    [loop]=ConstantArea_Busemann(0,1,e,2);
+    paroptim.constraint.desVarVal={e};
+    ymax=nan;
+    ymin=nan;
+    for ii=1:numel(loop)
+        ymax=max([loop(ii).subdivision(:,2);ymax]);
+        ymin=min([loop(ii).subdivision(:,2);ymin]);
+    end
+    
+    sizSpace = (paroptim.parametrisation.general.passDomBounds(2,2)...
+        -paroptim.parametrisation.general.passDomBounds(2,1));
+    ratioAct = (paroptim.parametrisation.optiminit.cellLevels(2)-4)/...
+        paroptim.parametrisation.optiminit.cellLevels(2);
+    
+    nBound=(ymax-ymin);
+    nBoundAct=sizSpace*ratioAct;
+    
+    paroptim.parametrisation.snakes.refine.axisRatio =nBound/nBoundAct/2;
 end
 
 function [paroptim]=areabuseTest()
