@@ -1751,7 +1751,7 @@ function [paroptim]=ASOV3MS_debug(vol)
     paroptim.general.nPop=2;
     paroptim.obj.aso.snoptIter=5;
     
-    paroptim.obj.aso.asoCase=@i() asocases.rsvsDragMinDebug('vol',vol);
+    paroptim.obj.aso.asoCase=@() asocases.rsvsDragMinDebug('vol',vol);
     
 end %function
 
