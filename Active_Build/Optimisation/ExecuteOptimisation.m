@@ -1746,6 +1746,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
     end
     
     iterstruct(1).population=RescaleDesVarNoFill('tovar',paroptim,iterstruct(1).population);
+    iterstruct(1).population=ApplySymmetry(paroptim,iterstruct(1).population);
 end
 
 function [nonfillPop]=InitialiseNonFillPop(paramoptim,nPop)
@@ -2103,7 +2104,7 @@ function [origPop]=InitialisePopBuseman3(cellLevels, passDomBounds,nPop,nDesVar,
             end
             sum(sum(pop))
             pop(:,ceil(nStrips/2)+1:end) = flip(pop(:,1:floor(nStrips/2)),2);
-            [pop]=SpreadFillInitBuse2(pop',@()(1e-3+rand*1e-3))';
+            [pop]=SpreadFillInitBuse2(pop',@()(1.5e-3+rand*1e-3))';
             % Redistribute fraction over 0.9
             sum(sum(pop))
         end
@@ -2164,8 +2165,8 @@ function [volFrac]=SpreadFillInitBuse2(volFrac,deltaLE)
             if(actCount>2)
                 tempOrd = ordPop(ii-actCount:ii-1);
                 ordPop(ii-actCount:ii-1) = tempOrd(SortFromCentre(valRows(ii-actCount:ii-1)));
-                isMid(ii-ceil(actCount/2))=true;
-                isMid(ii-ceil(actCount/2)+1)=true;
+                isMid(ii-floor(actCount/2)-1)=true;
+                isMid(ii-floor(actCount/2))=true;
             else
                 isMid(ii-actCount:ii-1)=true;
             end
@@ -2180,26 +2181,26 @@ function [volFrac]=SpreadFillInitBuse2(volFrac,deltaLE)
     actRows = any(volFrac>0,2);
     valRows=sum(volFrac,2);
     ordPop = 1:size(volFrac,1);
-    multiplicator=zeroes(size(volFrac,1));
+    multiplicator=ones(size(volFrac,1),1);
     actCount=0;
+    ratioEnd=0.25;
+    maxVal=0.9;
     for ii=1:size(volFrac,1)
         if actRows(ii)
             actCount = actCount+1;
         else
             if(actCount>2)
-                valRows(ii-actCount:ii-ceil(actCount/2))
-                valRows(ii-ceil(actCount/2)+1:ii-1)
-
-            else
-                isMid(ii-actCount:ii-1)=true;
+                [multiplicator(ii-actCount:ii-floor(actCount/2)-1)]=ScaleLineVecToLinear(valRows(ii-actCount:ii-floor(actCount/2)-1), ratioEnd,maxVal);
+                [multiplicator(ii-floor(actCount/2):ii-1)]=ScaleLineVecToLinear(valRows(ii-floor(actCount/2):ii-1), ratioEnd,maxVal);
             end
             actCount = 0;
         end
         
     end
-    
+    volFrac=volFrac.*repmat(multiplicator, [1, size(volFrac,2)]);
     volFrac(:,[1,end])=0;
     volFrac(find(isMid),[1,end])=deltaLE();
+%     figure, spy(volFrac)
 end
 
 function [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...

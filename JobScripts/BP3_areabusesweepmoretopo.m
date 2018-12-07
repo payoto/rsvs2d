@@ -1,9 +1,10 @@
-function BP3_areabusesweepmoretopo(ii)
+function BP3_areabusesweepmoretopo(ii, nPop)
+    if ~exist('nPop','var'); nPop = 0;end
     MoveToDir('source',1)
     InitialiseSnakeFlow;
-
-    disp(['areahalfbusesweepmoretopo(',num2str(ii,'%e'),')'])
-    ExecuteOptimisation(['areahalfbusesweepmoretopo(',num2str(ii,'%e'),')']);
+    callStr=sprintf('areahalfbusesweepmoretopo(%.3f,%i)', ii, nPop);
+    disp(callStr);
+    ExecuteOptimisation(callStr);
     
 
 

@@ -1371,10 +1371,14 @@ function [paroptim]=areabusesweepmoretopo(e)
     
 end
 
-function [paroptim]=areahalfbusesweepmoretopo(e)
+function [paroptim]=areahalfbusesweepmoretopo(e, nPop)
     %Similar to areabusesweepmoretopo with a different population
      [paroptim]=areabusesweep(e);
-    
+    if exist('nPop','var');
+        if ~isempty(nPop) && nPop>0
+            paroptim.general.nPop=nPop;
+        end
+    end
     % more topo setup
     cellLevels = [4 20];
     paroptim.parametrisation.optiminit.cellLevels=cellLevels;
@@ -1395,8 +1399,10 @@ function [paroptim]=areahalfbusesweepmoretopo(e)
 
     [paroptim]=ChooseNworkerASO(paroptim);
     
-    paroptim.general.startPop='initbusemann2';
+    paroptim.general.startPop='initbusemann3';
 end
+
+  
 
 function [paroptim]=testnewbuse
     [paroptim]=areahalfbusesweepmoretopo(0.12);
