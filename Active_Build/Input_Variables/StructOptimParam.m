@@ -1402,9 +1402,10 @@ function [paroptim]=testnewbuse
     [paroptim]=areahalfbusesweepmoretopo(0.12);
     paroptim.general.maxIter=1;
     paroptim.general.objectiveName='LengthArea';
-    paroptim.general.nPop=12;
-    paroptim.parametrisation.snakes.step.snakesSteps=55;
+    paroptim.general.nPop=30;
+    paroptim.parametrisation.snakes.step.snakesSteps=110;
     [paroptim]=ConstraintArea(paroptim);
+    paroptim.general.startPop='initbusemann3';
 end
 
 %% ASO Cases

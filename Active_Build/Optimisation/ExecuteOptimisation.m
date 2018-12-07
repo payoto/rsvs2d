@@ -339,15 +339,15 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
             needNewRestartSnake=~isNewRestartSnake;
         end
         if needNewRestartSnake
-%             varExtract={'boundstr'};
-%             [boundstr]=ExtractVariables(varExtract,paramoptim.parametrisation);
-%             [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
-%             [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
-%                 baseGrid,connectstructinfo,paramoptim.initparam,...
-%                 paramoptim.spline,outinfo(end),0,0,0);
-%             
+            %             varExtract={'boundstr'};
+            %             [boundstr]=ExtractVariables(varExtract,paramoptim.parametrisation);
+            %             [loop]=GenerateSnakStartLoop(gridrefined,boundstr);
+            %             [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
+            %                 baseGrid,connectstructinfo,paramoptim.initparam,...
+            %                 paramoptim.spline,outinfo(end),0,0,0);
+            %
             [restartsnake]=ReInitSnake(paramoptim,gridrefined,baseGrid,connectstructinfo,...
-                    iterstruct(end),outinfo);
+                iterstruct(end),outinfo);
         end
     end
     if isOptimStruct
@@ -502,14 +502,14 @@ function [workerList]=StartParallelPool(nWorker,nTry)
     kk=0;
     while numel(gcp('nocreate'))==0 && kk<nTry
         comStr=computer;
-%         if strcmp(comStr(1:2),'PC')
-%             poolName=parallel.importProfile('ExportOptimSnakes.settings');
-%         else
-%             poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
-%         end
-%         clusterObj=parcluster(poolName);
-%         clusterObj.NumWorkers=nWorker;
-%         saveProfile(clusterObj);
+        %         if strcmp(comStr(1:2),'PC')
+        %             poolName=parallel.importProfile('ExportOptimSnakes.settings');
+        %         else
+        %             poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+        %         end
+        %         clusterObj=parcluster(poolName);
+        %         clusterObj.NumWorkers=nWorker;
+        %         saveProfile(clusterObj);
         
         try
             
@@ -1677,6 +1677,9 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
         case 'initbusemann2'
             [origPop]=InitialisePopBuseman2(cellLevels, passDomBounds,nPop,...
                 nDesVar,desVarConstr, desVarVal,axisRatio);
+        case 'initbusemann3'
+            [origPop]=InitialisePopBuseman3(cellLevels, passDomBounds,nPop,...
+                nDesVar,desVarConstr, desVarVal,axisRatio);
             
         case 'initaeroshell'
             [origPop]=InitialiseAeroshell(cellLevels,nPop,nDesVar,desVarConstr,...
@@ -1885,7 +1888,7 @@ function [origPop]=InitialisePopBuseman(cellLevels,nPop,nDesVar,desVarConstr,...
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
         
     end
-%     assignin('base','origPop',origPop)
+    %     assignin('base','origPop',origPop)
 end
 
 
@@ -1927,35 +1930,35 @@ function [origPop]=InitialisePopBuseman2(cellLevels, passDomBounds,nPop,nDesVar,
         pop=zeros(cellLevels);
         while sum(sum(pop))==0
             ratio = 3;
-%             while(ratio>2)
-                fact = randi(2); % governs the thickness of planes
-                nAct=randi(ceil(nStrips/(4*fact)));
-                stripAct=sort(randperm(ceil(nStrips/4),nAct));
-                stripAct=stripAct*2;
-                if (fact==2)
-                    deltaStrip = stripAct(2:end)-stripAct(1:end-1);
-                    deltaStrip(deltaStrip~=2) = 0;
-                    deltaStrip(deltaStrip==2)=1;
-                    stripAct(2:end) = stripAct(2:end)+cumsum(deltaStrip);
-                    stripAct=sort([stripAct,stripAct-1]);
-                end
-                stripAct(stripAct>nStrips)=nStrips;
-                posPeak=randi(cellLevels(1)-1);
-                hPeak=rand([length(stripAct),1])*0.5+0.75;
-                % 2 is because this is in the half volume
-                ratio=mintargPeak/(sum(hPeak)*2);
-                if ratio>1
-                    perPeakDelta = (mintargPeak-sum(hPeak)*2)/(numel(hPeak)*2);
-                    hPeak;
-                    hPeak=hPeak+(1.25-hPeak)...
-                     /(sum((1.25-hPeak)))*(numel(hPeak))*perPeakDelta;
-                    hPeak;
-                end
-                ratio2=mintargPeak/(sum(hPeak)*2);
-                if ratio2>1
-                    hPeak=hPeak*ratio2;
-                end
-%             end
+            %             while(ratio>2)
+            fact = randi(2); % governs the thickness of planes
+            nAct=randi(ceil(nStrips/(4*fact)));
+            stripAct=sort(randperm(ceil(nStrips/4),nAct));
+            stripAct=stripAct*2;
+            if (fact==2)
+                deltaStrip = stripAct(2:end)-stripAct(1:end-1);
+                deltaStrip(deltaStrip~=2) = 0;
+                deltaStrip(deltaStrip==2)=1;
+                stripAct(2:end) = stripAct(2:end)+cumsum(deltaStrip);
+                stripAct=sort([stripAct,stripAct-1]);
+            end
+            stripAct(stripAct>nStrips)=nStrips;
+            posPeak=randi(cellLevels(1)-1);
+            hPeak=rand([length(stripAct),1])*0.5+0.75;
+            % 2 is because this is in the half volume
+            ratio=mintargPeak/(sum(hPeak)*2);
+            if ratio>1
+                perPeakDelta = (mintargPeak-sum(hPeak)*2)/(numel(hPeak)*2);
+                hPeak;
+                hPeak=hPeak+(1.25-hPeak)...
+                    /(sum((1.25-hPeak)))*(numel(hPeak))*perPeakDelta;
+                hPeak;
+            end
+            ratio2=mintargPeak/(sum(hPeak)*2);
+            if ratio2>1
+                hPeak=hPeak*ratio2;
+            end
+            %             end
             storeRatio(ii)=ratio;
             ll=1;
             for jj=stripAct
@@ -1993,42 +1996,160 @@ function [origPop]=InitialisePopBuseman2(cellLevels, passDomBounds,nPop,nDesVar,
         origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
     end
     storeRatio;
-%     assignin('base','origPop',origPop)
+    %     assignin('base','origPop',origPop)
+end
+
+
+function [origPop]=InitialisePopBuseman3(cellLevels, passDomBounds,nPop,nDesVar,desVarConstr,...
+        desVarVal, axisRatio)
+    % Initialises a random number of aerodynamic looking strips in the
+    % domain
+    % uses its ability to spread populations more
+    
+    minTargFill=0;
+    maxTargFill=0;
+    
+    xSpace = (passDomBounds(1,2)-passDomBounds(1,1))*(cellLevels(1)-2)/(cellLevels(1)+2);
+    ySpace = axisRatio*(passDomBounds(2,2)-passDomBounds(2,1))*(cellLevels(2))/(cellLevels(2)+2);
+    
+    
+    vol = xSpace*ySpace;
+    volpCell = vol/((cellLevels(1)-2)*(cellLevels(2)));
+    volpStrip = volpCell*(cellLevels(1)-2);
+    
+    for ii=1:length(desVarConstr)
+        if strcmp(desVarConstr{ii},'MinSumVolFrac')
+            minTargFill=desVarVal{ii};
+            
+        elseif strcmp(desVarConstr{ii},'MinValVolFrac') ...
+                || ~isempty(regexp(desVarConstr{ii}, 'ValVolFrac','once'))
+            %assume length of domain is 1 in x direction
+            % size of domain is axisRatio*1*cellLevels(2)/cellLevels(1)
+            % Volume of a cell is Vd/(cellLevels(1)*cellLevels(2))
+            % Volume of a is Targ/cellVol
+            minTargFill=desVarVal{ii}/volpCell
+            mintargPeak = desVarVal{ii}/(volpStrip/2)
+        end
+    end
+    
+    
+    nStrips=cellLevels(2);
+    origPop=zeros([nPop,nDesVar]);
+    for ii=1:nPop
+        pop=zeros(cellLevels);
+        while sum(sum(pop))==0
+            
+            %             while(ratio>2)
+            fact = randi(2); % governs the thickness of planes
+            nAct=randi(ceil(nStrips/(4*fact)));
+            %nAct=2;
+            stripAct=sort(randperm(ceil(nStrips/4),nAct));
+            stripAct=stripAct*2;
+            if (fact==2)
+                deltaStrip = stripAct(2:end)-stripAct(1:end-1);
+                deltaStrip(deltaStrip~=2) = 0;
+                deltaStrip(deltaStrip==2)=1;
+                stripAct(2:end) = stripAct(2:end)+cumsum(deltaStrip);
+                stripAct=sort([stripAct,stripAct-1]);
+            end
+            stripAct(stripAct>nStrips)=nStrips;
+            posPeak=randi(cellLevels(1)-3);
+            stripAct
+            hPeak=rand([length(stripAct),1])*0.5+0.75;
+            % 2 is because this is in the half volume
+            ratio=mintargPeak/(sum(hPeak)*2);
+            perPeakDelta = (mintargPeak-sum(hPeak)*2)/(numel(hPeak)*2);
+            if ratio>1
+                
+                hPeak;
+                hPeak=hPeak+(1.25-hPeak)...
+                    /(sum((1.25-hPeak)))*(numel(hPeak))*perPeakDelta;
+                hPeak;
+            end
+            ratio2=mintargPeak/(sum(hPeak)*2);
+            if ratio2>1
+                hPeak=hPeak*ratio2;
+            end
+            sum(hPeak)
+            % end
+            storeRatio(ii)=ratio;
+            storeRatio2(ii)=ratio2;
+            ll=1;
+            for jj=stripAct
+                
+                currPeak=hPeak(ll);
+                ll=ll+1;
+                volLine=currPeak*ones([cellLevels(1)-2+1,1]);
+                if numel(volLine)>2
+                    volLine([1,end])=0;
+                end
+                for kk=2:length(volLine)-1
+                    if kk<=posPeak+1
+                        volLine(kk)=currPeak*(kk-1)/posPeak;
+                    else
+                        volLine(kk)=currPeak-currPeak*((kk-1)-posPeak)...
+                            /(length(volLine)-1-posPeak);
+                    end
+                end
+                volFrac=zeros([cellLevels(1)-2,1]);
+                for kk=1:length(volFrac)
+                    volFrac(kk)=mean(volLine(kk:kk+1));
+                end
+                deltaLE=5e-4+rand*1e-3;
+                volFrac=[deltaLE;volFrac;deltaLE];
+                %volFrac(volFrac>1.5)=1.5;
+                pop(:,jj)=volFrac;
+                
+            end
+            sum(sum(pop))
+            pop(:,ceil(nStrips/2)+1:end) = flip(pop(:,1:floor(nStrips/2)),2);
+            [pop]=SpreadFillInitBuse2(pop',@()(1e-3+rand*1e-3))';
+            % Redistribute fraction over 0.9
+            sum(sum(pop))
+        end
+        origPop(ii,1:nDesVar)=reshape(pop,[1,nDesVar]);
+    end
+    storeRatio
+    storeRatio2
+    % assignin('base','origPop',origPop)
 end
 
 function [volFrac]=SpreadFillInitBuse2(volFrac,deltaLE)
-    [x,y]=find(volFrac>0.9);
+    numDoub = 0.7;
+    numSingle = 0.8;
+    [x,y]=find(volFrac>numSingle);
     valRowsS=sum(volFrac,2);
     
     valRowsM=max(volFrac,[],2);
-    
+    numSingleTemp=numSingle+0.1;
     while ~isempty(x)
+        numSingleTemp=numSingle-0.1;
         for nn=1:numel(x)
             if(x(nn)+1<size(volFrac,1) && x(nn)-1>0 ...
                     && all(volFrac(x(nn)+[-1 1], y(nn))==0))
                 %go both up and down
-                volFrac(x(nn)+[-1 1], y(nn)) = (volFrac(x(nn), y(nn))-0.8)/2;
-                volFrac(x(nn), y(nn))=0.8;
+                volFrac(x(nn)+[-1 1], y(nn)) = (volFrac(x(nn), y(nn))-numDoub)/2;
+                volFrac(x(nn), y(nn))=numDoub;
             elseif (x(nn)+1<size(volFrac,1) ...
                     && (volFrac(x(nn)+1, y(nn))==0))
-                volFrac(x(nn)+1, y(nn)) = (volFrac(x(nn), y(nn))-0.9);
-                volFrac(x(nn), y(nn))=0.9;
+                volFrac(x(nn)+1, y(nn)) = (volFrac(x(nn), y(nn))-numSingleTemp);
+                volFrac(x(nn), y(nn))=numSingleTemp;
                 %go only up
             elseif (x(nn)-1>0 ...
                     && (volFrac(x(nn)-1, y(nn))==0))
                 %go only down
-                volFrac(x(nn)-1, y(nn)) = (volFrac(x(nn), y(nn))-0.9);
-                volFrac(x(nn), y(nn))=0.9;
+                volFrac(x(nn)-1, y(nn)) = (volFrac(x(nn), y(nn))-numSingleTemp);
+                volFrac(x(nn), y(nn))=numSingleTemp;
             end
         end
-        [xNew,y]=find(volFrac>0.9);
+        [xNew,y]=find(volFrac>numSingle);
         if numel(xNew)==numel(x) && all(xNew==x)
             break;
         end
         x=xNew;
         valRowsM=[valRowsM,sum(volFrac,2)];
     end
-
+    
     % Shuffle rows to have thicker rows inside thinner ones
     % when contiguous
     actRows = any(volFrac>0,2);
@@ -2041,19 +2162,42 @@ function [volFrac]=SpreadFillInitBuse2(volFrac,deltaLE)
             actCount = actCount+1;
         else
             if(actCount>2)
-               tempOrd = ordPop(ii-actCount:ii-1);
-               ordPop(ii-actCount:ii-1) = tempOrd(SortFromCentre(valRows(ii-actCount:ii-1)));
-               isMid(ii-ceil(actCount/2))=true;
-               isMid(ii-floor(actCount/2))=true;
+                tempOrd = ordPop(ii-actCount:ii-1);
+                ordPop(ii-actCount:ii-1) = tempOrd(SortFromCentre(valRows(ii-actCount:ii-1)));
+                isMid(ii-ceil(actCount/2))=true;
+                isMid(ii-ceil(actCount/2)+1)=true;
             else
                 isMid(ii-actCount:ii-1)=true;
             end
             actCount = 0;
         end
-
+        
     end
     [valRowsS,valRowsM,valRows,valRows(ordPop)];
     volFrac = volFrac(ordPop, :);
+    
+    % smooth the volFrac through bodies
+    actRows = any(volFrac>0,2);
+    valRows=sum(volFrac,2);
+    ordPop = 1:size(volFrac,1);
+    multiplicator=zeroes(size(volFrac,1));
+    actCount=0;
+    for ii=1:size(volFrac,1)
+        if actRows(ii)
+            actCount = actCount+1;
+        else
+            if(actCount>2)
+                valRows(ii-actCount:ii-ceil(actCount/2))
+                valRows(ii-ceil(actCount/2)+1:ii-1)
+
+            else
+                isMid(ii-actCount:ii-1)=true;
+            end
+            actCount = 0;
+        end
+        
+    end
+    
     volFrac(:,[1,end])=0;
     volFrac(find(isMid),[1,end])=deltaLE();
 end

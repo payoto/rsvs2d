@@ -668,7 +668,7 @@ function [population]=MinValSumVolume(constrVal,paroptim,population,baseGrid)
         fillStart=population(ii).fill;
         
         sumFill=sum(fillStart.*volVec);
-        ratio=constrVal/sumFill;
+        ratio=constrVal/sumFill
         if ~isfinite(ratio)
             population(ii).fill=fillStart;
             population(ii).constraint=false;
