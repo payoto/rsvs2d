@@ -257,6 +257,14 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                                 .nonfillvar]=deal([]);
                         end
                     end
+                    if ~isfield(optionalin.(fieldsIn{ii})(1).population(1).additional,...
+                            'objTime')
+                        for kk=1:numel(optionalin.(fieldsIn{ii}))
+                            for lll=1:numel(optionalin.(fieldsIn{ii})(kk).population)
+                               optionalin.(fieldsIn{ii})(kk).population(ll).additional.objTime='';
+                            end
+                        end
+                    end
                     iterstruct=[optionalin.(fieldsIn{ii})(1:startIter),iterstruct]; %#ok<AGROW>
                     isOptimStruct=true;
                     repeatflag=false;
