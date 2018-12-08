@@ -261,7 +261,7 @@ function [paramoptim,outinfo,iterstruct,baseGrid,gridrefined,...
                             'objTime')
                         for kk=1:numel(optionalin.(fieldsIn{ii}))
                             for lll=1:numel(optionalin.(fieldsIn{ii})(kk).population)
-                               optionalin.(fieldsIn{ii})(kk).population(ll).additional.objTime='';
+                               optionalin.(fieldsIn{ii})(kk).population(lll).additional.objTime='';
                             end
                         end
                     end
