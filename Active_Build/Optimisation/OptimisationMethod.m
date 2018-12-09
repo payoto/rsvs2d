@@ -188,6 +188,7 @@ function [newPop,iterCurr,paramoptim]=NoOptimiserRun(paramoptim,iterCurr)
     keepInd=keepInd(1:(numel(keepInd)*nonePopKeep));
     
     
+    paramoptim = SetVariables({'nPop'},{numel(keepInd)},paramoptim);
     newPop=vertcat(iterCurr(sort(keepInd)).fill);
 end
 %% Conjugate gradient
