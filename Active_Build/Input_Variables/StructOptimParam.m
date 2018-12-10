@@ -1414,6 +1414,19 @@ function [paroptim]=testnewbuse
     paroptim.general.startPop='initbusemann3';
 end
 
+function [paroptim]=regenbuse(e)
+    [paroptim]=areabusesweep(e);
+    paroptim.general.optimMethod='none';
+    [paroptim]=ConstraintArea(paroptim);
+    paroptim.general.objectiveName='LengthArea';
+    
+    % Swap to no optim for multistart
+    paroptim.general.maxIter=1;
+    paroptim.general.restartIterNum=1;
+    paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
+    paroptim.general.optimMethod='none';
+end
+
 %% ASO Cases
 % standards
 function [paroptim]=standard_ASO(paroptim)

@@ -35,7 +35,7 @@ function [h]=OptimHistory_old(optimstruct,knownOptim,dirOptim)
             minRes=max(iterRes,[],2);
     end
     
-    meanRes=mean(iterRes,2);
+    meanRes=median(iterRes,2);
     stdRes=std(iterRes,0,2);
     lSub1(2)=plot(1:nIter,minRes,'r-');
     lSub1(3)=plot(1:nIter,meanRes,'color',[0.7 0 0]);
@@ -127,13 +127,13 @@ function [h]=OptimHistory_nograd(optimstruct,knownOptim,defaultVal,dirOptim)
             [minRes,minPos]=max(iterRes,[],2);
     end
     
-    meanRes=mean(iterRes,2);
+    meanRes=median(iterRes,2);
     stdRes=std(iterRes,0,2);
     lSub1(2)=plot(1:nIter,minRes,'r-');
     lSub1(3)=plot(1:nIter,meanRes,'color',[0.7 0 0]);
     lSub1(4)=plot([0,nIter],[knownOptim knownOptim],'r--');
     
-    legend(lSub1,{'Population',['Population ',dirOptim,'imum'],'Population mean',...
+    legend(lSub1,{'Population',['Population ',dirOptim,'imum'],'Population median',...
         'Theoretical Optimum'},'Location','NorthEast', 'interpreter','latex');
     
     xlabel('Iteration', 'interpreter','latex','fontsize',12)

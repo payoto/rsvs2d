@@ -1,4 +1,4 @@
-function [ASOstruct,h]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameRun,figList
+function [ASOstruct,h,optimstruct]=ASOPerformanceAPI(optIn, ASOiters,varargin)%dirSave,nameRun,figList
     % prepare for different cases
     runASOextract=1;
     
