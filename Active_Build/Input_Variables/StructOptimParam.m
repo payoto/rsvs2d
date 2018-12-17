@@ -2862,7 +2862,6 @@ function paroptim=dvp_anisotropicrefine()
     %paroptim.refine.refineOptimType='c'; % 'contour', 'desvargrad' , 'contlength' ,
 end
 
-
 % Debug
 
 function [paroptim]=Debug170213_1()
@@ -2933,7 +2932,6 @@ function [paroptim]=Debug170329()
     paroptim.refine.refineIter=3;
     paroptim.optim.CG.gradScaleType='none'; % 'volume'
 end
-
 
 function [paroptim]=Debug170403()
     paroptim=invdeslocal_test4('uo','contcurve',0,1);
