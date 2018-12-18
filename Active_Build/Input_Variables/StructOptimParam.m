@@ -1339,7 +1339,7 @@ function [paroptim]=areabusesweep(e)
     ratioChord=0.03;
     paroptim.parametrisation.general.passDomBounds=...
         SizeAerofoilRSVSGrid(cellLevels,ratioChord);
-    [paroptim]=AdaptSizeforBusemann(paroptim,e);
+    [paroptim]=AdaptSizeforBusemannHalf(paroptim,e);
     paroptim.constraint.initVal=...
         {{'LETE','max',(ratioChord^2)/2*(cellLevels(1)-2)^2}};
     
