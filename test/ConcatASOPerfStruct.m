@@ -1,6 +1,6 @@
 
 
-pathToConstr='C:\Users\ap1949\Local Documents\PhD\res\aso_1804\aeroconv5';
+pathToConstr='C:\Users\ap1949\Local Documents\PhD\res\aso_1804\aeroconv4';
 
 pathDir=FindDir(pathToConstr,'Dir',1);
 
@@ -26,5 +26,5 @@ for ii=1:numel(strctin)
 end
 ASOconstr=[strctin2.ASOstruct];
 
-save('fig/ASOMSconv5.mat','ASOconstr')
+save('fig/ASOMSconv4_new.mat','ASOconstr')
 ASOconstr=ASOPerformanceAPI(ASOconstr,[],'splitCase','RunName','figList',[]);

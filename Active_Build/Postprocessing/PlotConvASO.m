@@ -58,7 +58,7 @@ function []=PlotConvASO(ASOstruct,nIter)
             ASOstruct=ASOstructAll(funcLogTest(lErrVec{iii}));
             ASOstruct=ASOstruct(find(~cellfun(@isempty,regexp({ASOstruct.location},...
                 ['profile_',int2str(nIter(jj)),'$']))));
-            if numel(lErrVec)>1
+            if numel(lErrVec)>0
 %                 fColor=c(mod(iii-1,size(c,1))+1,:);
 %                 fMarker=markerOrd(mod(floor((iii-1)/size(c,1)),numel(markerOrd))+1);
                 fColor=c(mod(floor((iii-1)/numel(markerOrd)),size(c,1))+1,:);
@@ -79,11 +79,15 @@ function []=PlotConvASO(ASOstruct,nIter)
                 
                 field={'adjointMax','adjoint'};
                 for jjj=1:numel(field)
+                    try
                 [ASOstruct(ii).residual(cellfun(@isempty,...
                     {ASOstruct(ii).residual.(field{jjj})})).(field{jjj})]=deal(nan);
                 res=[ASOstruct(ii).residual.(field{jjj})];
                 plot(ax22(mod(jjj,numel(ax22))+1),ASOstruct(ii).majorIt+ASOstruct(ii).DEIter,...
                     res(ASOstruct(ii).majorIt),[fMarker,'-'],'color',fColor);
+                    catch
+                        warning(['field ', field{jj},' failed'])
+                    end
                 end
                     %ones([1 numel(ASOstruct(ii).obj)])*nums(end),
                  l(kk).DisplayName=lName{iii};

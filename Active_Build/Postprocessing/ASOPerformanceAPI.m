@@ -1047,7 +1047,6 @@ function []=PlotSummaryStruct(summaryStruct)
     assignin('base','summaryStruct',summaryStruct)
 end
 
-
 function []=AverageAllLines(ax,ranges)
     
     
