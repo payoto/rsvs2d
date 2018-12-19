@@ -10,7 +10,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=...
+function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory...
+        ]=...
         Main(caseString,restart)
     % Main function for the execution of the Subdivision process
     
@@ -35,16 +36,16 @@ function [unstructured,loop,unstructReshape,snakSave,param,rootDirectory]=...
     
     
     if ~exist('caseString','var'),caseString='WeirdShape';end
-    if ~exist('restart','var'),restart=false;end
+    if ~exist('restart','var'),restart='';end
     
-    if ~restart
+    if isempty(restart)
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
             ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]=...
             StandardRun(caseString);
     else
         [param,unstructured,unstructuredrefined,loop,connectstructinfo...
             ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]=...
-            RestartRun(caseString);
+            RestartRun(caseString, restart);
     end
     varExtract={'useSnakes','typeBound','refineSteps'};
     [useSnakes,typeBound,refineSteps]=ExtractVariables(varExtract,param);
@@ -116,19 +117,20 @@ end
 
 function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
         ,snakSave,unstructReshape,gridrefined,restartsnake,optargout]....
-        =RestartRun(caseStr)
+        =RestartRun(caseStr,restart)
     
-    load([caseStr,'.mat'])
+    [param]=structInputVar(caseStr);
+    load([restart,'.mat'])
     param.general.restart=true;
     
     FID=fopen([cd,'\param_Restart.m'],'w');
     GenerateParameterFile(FID,param,now,'Restart')
     
-    disp(' ')
-    disp('Edit Parameter File in Notepad++, press Any key in the MATLAB command window')
-    disp(' once it is saved to resume execution.')
-    system(['"C:\Program Files (x86)\Notepad++\notepad++.exe"  ',...
-        '"',[cd,'\param_Restart.m'],'"']);
+%     disp(' ')
+%     disp('Edit Parameter File in Notepad++, press Any key in the MATLAB command window')
+%     disp(' once it is saved to resume execution.')
+%     system(['"C:\Program Files (x86)\Notepad++\notepad++.exe"  ',...
+%         '"',[cd,'\param_Restart.m'],'"']);
     %pause
     
     param_Restart

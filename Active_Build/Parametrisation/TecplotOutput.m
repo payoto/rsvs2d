@@ -28,6 +28,9 @@ end
 function []=TecplotOutput_snakes(FID,baseGrid,fineGrid,snakSave,connectstructinfo)
     
     [baseCellCentredGrid]=CellCentredGridInformationReduced(baseGrid);
+    if numel(snakSave)==1
+        snakSave(1:3)=snakSave;
+    end
     
     varsCell={};%{['VARIABLES = "X" ,"Y", "U" ,"V", "MAG" ,"TARGFILL" ,"VOLFRAC", "DIFF"']};
     [cellBaseGrid]=GridStructToCellOut(baseGrid,1);
