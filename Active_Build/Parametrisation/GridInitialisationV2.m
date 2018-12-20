@@ -100,6 +100,18 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
             xMax=max(unstructured.vertex.coord(:,1));
             xMin=min(unstructured.vertex.coord(:,1));
             [unstructured]=CosGridDistribX(unstructured,xMax,xMin);
+        case 'bilinearcos'
+            tol = 0.0002; % tolerance 
+            centre=0.35;
+            xMax=1-tol/2;
+            xMin=0+tol/2;
+            [unstructured]=HalfCosGridDistribX(unstructured,xMax,xMin);
+            [unstructured]=BiLinearGridDistribX(unstructured,xMax,xMin,centre);
+        case 'bilinear'
+            centre=0.3;
+            minX=0;
+            maxX=1;
+            [unstructured]=BiLinearGridDistribX(unstructured,maxX,minX,centre);
         case 'thinLETE'
             maxExcess=0.1;
             xMax=1;
@@ -107,7 +119,7 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
             [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess);
         
         otherwise
-            warning('Unrecognised grid distribution Type')
+            warning([gridDistrib,' is not a recognised grid distribution Type'])
     end
     
 end
@@ -153,6 +165,48 @@ function [unstructured]=CosGridDistribX(unstructured,xMax,xMin)
     newX((x>xMax))=(x(x>xMax)-xMax)/Dx*DminNx+xMax;
     
     newX((x<xMin))=(x(x<xMin)-xMin)/Dx*DminNx+xMin;
+    
+    coord(:,1)=newX;
+    unstructured.vertex.coord=coord;
+    
+end
+function [unstructured]=HalfCosGridDistribX(unstructured,xMax,xMin)
+    
+    coord=unstructured.vertex.coord;
+    x=coord(:,1);
+    
+    Dx=xMax-x;
+    
+    Dx=min(abs(Dx(Dx>1e-10)));
+    
+    xNorm=(coord(:,1)-xMin)/(xMax-xMin);
+    newX=(1-cos(xNorm*pi))/2*(xMax-xMin)+xMin;
+    DminNx=newX(xNorm<1 & xNorm>0)-1;
+    DminNx=min(abs(DminNx(DminNx~=0)));
+    
+    newX((x>xMax))=(x(x>xMax)-xMax)/Dx*DminNx+xMax;
+    
+    newX((x<xMin))=(x(x<xMin)-xMin)/Dx*DminNx+xMin;
+    newX(x>((xMax+xMin)/2))=x(x>((xMax+xMin)/2));
+    coord(:,1)=newX;
+    unstructured.vertex.coord=coord;
+    
+end
+
+function [newnum]=BilinearDistrib(xMax,xMin,centre,num)
+    
+    currCentre = (xMax+xMin)/2;
+    
+    newnum = ((num-xMin)/(currCentre-xMin)*(centre-xMin)+xMin).*(num<currCentre)...
+        +((num-xMax)/(currCentre-xMax)*(centre-xMax)+xMax).*(num>=currCentre);
+end
+
+function [unstructured]=BiLinearGridDistribX(unstructured,xMax,xMin,centre)
+    
+    coord=unstructured.vertex.coord;
+    x=coord(:,1);
+    
+    newX=BilinearDistrib(xMax,xMin,centre,x);
     
     coord(:,1)=newX;
     unstructured.vertex.coord=coord;

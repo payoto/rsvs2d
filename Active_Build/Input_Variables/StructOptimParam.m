@@ -2078,23 +2078,28 @@ end
 
 function paroptim=NACA0012Sweep(gridCase,lvl,optimiser)
     
-    paroptim=bp3_NACA0012_sweep();
+    
+    [paroptim]=CG_NACA0012();
     paroptim=ModifySnakesParam(paroptim,'optimNACA0012');
+    
+    [paroptim]=SmoothModes(paroptim);
+    
     paroptim.obj.flow.CFDfolder=[cd,'\Result_Template\CFD_code_Template\transonicfine'];
     paroptim.general.refineOptim=[0];
     paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2]
     paroptim.optim.CG.minDiffStep=1e-7;
     paroptim.optim.CG.validVol=0.2;
     paroptim.parametrisation.general.subdivType='chaikinNaca0012';
-    paroptim.general.worker=8;
+
     
-    paroptim=ModifySnakesParam(paroptim,['optimNACA0012']);
     
     switch gridCase(1)
         case 'c'
             paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
         case 'u'
             paroptim.parametrisation.snakes.refine.gridDistrib='none';
+        case 'b'
+            paroptim.parametrisation.snakes.refine.gridDistrib='bilinearcos';
     end
     
     paroptim.optim.CG.stepAlgo=optimiser;
@@ -2107,8 +2112,9 @@ function paroptim=NACA0012Sweep(gridCase,lvl,optimiser)
     
     paroptim.general.refineOptim=paroptim.general.refineOptim(lvl+1:end,:);
     
+    chordRatio=0.0002;
     paroptim.parametrisation.general.passDomBounds=...
-        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+        SizeAerofoilRSVSGrid(paroptim.parametrisation.optiminit.cellLevels,chordRatio);
     
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
@@ -2137,6 +2143,8 @@ function paroptim=NACA0012Sweeplocalfullopt(gridCase,lvl,optimiser)
             paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
         case 'u'
             paroptim.parametrisation.snakes.refine.gridDistrib='none';
+        case 'b'
+             paroptim.parametrisation.snakes.refine.gridDistrib='bilinearcos';
     end
     
     switch gridCase(2)
@@ -2155,8 +2163,9 @@ function paroptim=NACA0012Sweeplocalfullopt(gridCase,lvl,optimiser)
     paroptim.optim.CG.stepAlgo=optimiser;
     % only horizontal refinement
     
+    chordRatio=0.01;
     paroptim.parametrisation.general.passDomBounds=...
-        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+        SizeAerofoilRSVSGrid(paroptim.parametrisation.optiminit.cellLevels,chordRatio);
     
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
@@ -2172,7 +2181,7 @@ function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
     [paroptim]=AdaptiveRefinement(paroptim);
     
     paroptim.general.nPop=12;
-    paroptim.general.worker=8;
+    
     
     nIter=100;
     lvl=8;
@@ -2183,7 +2192,7 @@ function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
     paroptim.optim.CG.diffStepSize=[1e-5,-1e-5]; %[0,2]
     paroptim.optim.CG.minDiffStep=1e-7;
     paroptim.optim.CG.validVol=0.2;
-    paroptim.general.worker=8;
+    [paroptim]=ChooseNworkerFlow(paroptim);
     
     
     switch gridCase(1)
@@ -2191,6 +2200,8 @@ function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
             paroptim.parametrisation.snakes.refine.gridDistrib='cosX01';
         case 'u'
             paroptim.parametrisation.snakes.refine.gridDistrib='none';
+        case 'b'
+             paroptim.parametrisation.snakes.refine.gridDistrib='bilinearcos';
     end
     
     switch gridCase(2)
@@ -2209,18 +2220,17 @@ function paroptim=NACA0012Sweeplocal(gridCase,optimiser)
     paroptim.optim.CG.stepAlgo=optimiser;
     % only horizontal refinement
     
+    chordRatio=0.0002;
     paroptim.parametrisation.general.passDomBounds=...
-        MakeCartesianGridBoundsInactE(paroptim.parametrisation.optiminit.cellLevels);
+        SizeAerofoilRSVSGrid(paroptim.parametrisation.optiminit.cellLevels,chordRatio);
     
     
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
     
 end
 
-function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
-    paroptim=NACA0012Sweeplocal('uv',optimiser);
-    
-    paroptim.obj.flow.isSymFlow=true;
+
+function paroptim = N12MMesh(paroptim)
     
     [paroptim]=MeshMotionFull(paroptim);
     
@@ -2233,6 +2243,14 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     paroptim.parametrisation.general.subdivType='chaikin';
     paroptim.parametrisation.snakes.refine.resampleSnak=true;
     paroptim.obj.flow.rootMesh{2}=[cd,filesep,'supportoptim',filesep,'naca0012'];
+end
+
+function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
+    paroptim=NACA0012Sweeplocal('bv',optimiser);
+    
+    paroptim.obj.flow.isSymFlow=true;
+    
+    paroptim = N12MMesh(paroptim);
     
     paroptim.refine.refineOptimRatio=0.3;
     paroptim.refine.rankType=refmethod;
@@ -2240,8 +2258,7 @@ function [paroptim]=N12_LRef_MMesh(refmethod,optimiser)
     [ratio]=PickRatioForRefineNumber(refmethod);
     paroptim.refine.refineOptimRatio=ratio(2);
     
-    paroptim.general.worker=12;
-    paroptim.general.maxIter=00;
+    paroptim.general.maxIter=20;
 end
 
 function [paroptim]=N12_LRef_MMeshre(refmethod,optimiser)
@@ -2250,6 +2267,31 @@ function [paroptim]=N12_LRef_MMeshre(refmethod,optimiser)
     paroptim.general.worker=12;
     paroptim.general.maxIter=0;
 end
+
+function [paroptim]=CAF_NACA0012_ref()
+    [paroptim]=N12_LRef_MMesh('number','conjgrad');
+    [paroptim]=ChooseNworkerFlow(paroptim);
+    
+    paroptim.optim.CG.nLineSearch=16;
+end
+
+function [paroptim]=CAF_NACA0012_noref()
+    paroptim=NACA0012Sweep('bv',1,'conjgrad');
+    paroptim = N12MMesh(paroptim);
+    [paroptim]=ChooseNworkerFlow(paroptim);
+    paroptim.general.maxIter=150;
+    
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 1];
+    paroptim.parametrisation.snakes.refine.axisRatio=1;
+    paroptim.parametrisation.optiminit.defaultCorner=1e-6;
+    paroptim.parametrisation.snakes.step.snakesSteps=400;
+    
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+    paroptim.optim.CG.nLineSearch=16;
+end
+
+
 
 % Supersonic refine
 function paroptim=volsweeprefine(e,gridCase,lvl)

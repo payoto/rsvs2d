@@ -13,6 +13,12 @@ function CAFrestarts(ii)
             caseStr = 'volsweeplocal(0.16,''uo'')';
             pathMat = [restartFolder,'restart_016_caf_s3.mat'];
             ExecuteOptimisation(caseStr,{pathMat, {'conjgrad',1}})
+        case 3
+            caseStr = 'CAF_NACA0012_noref';
+            ExecuteOptimisation(caseStr)
+        case 4
+            caseStr = 'CAF_NACA0012_ref';
+            ExecuteOptimisation(caseStr)
     end
     
     

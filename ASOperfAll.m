@@ -1,5 +1,5 @@
 minII=1;
-maxII=86;
+maxII=6;
 fid=fopen('DirList.txt','r');
 pathStr=cell([maxII,2]);
 for ii=1:maxII

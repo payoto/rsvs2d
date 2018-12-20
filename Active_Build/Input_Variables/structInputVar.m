@@ -573,6 +573,26 @@ function [param]=SnakesBugInternal2()
     param.snakes.step.snakData='all';
 end
 
+function [param] = test_distrib(distrib)
+param = SnakesFoilVVSmall4;
+
+param.snakes.refine.gridDistrib=distrib;
+    param.snakes.step.snakesSteps=20;
+end
+
+function [param] = test_distrib2(distrib)
+    param = SnakesFoilVVSmall;
+
+    param.general.typDat='distrib12';
+    param.snakes.refine.refineGrid= 4;
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.4,0.4];
+    param.snakes.refine.gridDistrib=distrib;
+    param.snakes.step.snakesSteps=20;
+    
+    param.general.passDomBounds=...
+        SizeAerofoilRSVSGrid([12,2],0.01);
+end
 %% Optimisation Cases
 
 function [param]=optimDefault()
