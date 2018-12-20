@@ -93,6 +93,8 @@ function [paroptimgeneral]=DefaultOptimGeneral()
     paroptimgeneral.restartIterNum=inf;
     paroptimgeneral.spillCutOff=2e-2;
     paroptimgeneral.initInterp={};
+    
+    paroptimgeneral.clearUnwantedData = false;
 end
 
 function [paroptimdesvar]=DefaultDesVar()

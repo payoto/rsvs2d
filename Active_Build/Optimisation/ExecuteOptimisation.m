@@ -2551,7 +2551,7 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
     procStr=['Calculate Objective - ',objectiveName];
     [tStart]=PrintStart(procStr,2);
     
-    objInput=ExtractVariables({'objInput'},paramoptim);
+    [objInput,clearUnwantedData]=ExtractVariables({'objInput','clearUnwantedData'},paramoptim);
     
     % DVP : replace loop by full support struct add the mesh motion to
     % paramoptim
@@ -2562,8 +2562,9 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
     
     [objValue,additional]=eval([objectiveName,'(paramoptim,member,',objInput,');']);
     
-    ClearUnwantedData(paramoptim, member);
-    
+    if clearUnwantedData
+        ClearUnwantedData(paramoptim, member);
+    end
     [tElapsed]=PrintEnd(procStr,2,tStart);
     additional.objTime=datestr(tElapsed,'dd-HH:MM:SS');
 end
