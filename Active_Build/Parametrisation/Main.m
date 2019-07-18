@@ -90,23 +90,22 @@ function [param,unstructured,unstructuredrefined,loop,connectstructinfo...
     
     [param]=structInputVar(caseString);
     param.general.restart=false;
-    varExtract={'useSnakes','gridDistrib'};
-    [useSnakes,gridDistrib]=ExtractVariables(varExtract,param);
+    varExtract={'useSnakes','gridDistrib', 'randMultiplier'};
+    [useSnakes, gridDistrib, randMultiplier]=ExtractVariables(varExtract,param);
     
     
     % Execution of subroutines
     
-    [unstructured,loop,unstructReshape]=ExecuteGridInitialisation(param);
+    [~,loop,unstructReshape]=ExecuteGridInitialisation(param);
     
-    [gridrefined,connectstructinfo,unstructuredrefined,looprefined]=...
+    [gridrefined,connectstructinfo,~,loop]=...
         ExecuteGridRefinement(unstructReshape,param);
+    
+    [unstructReshape,gridrefined,connectstructinfo,looprefined,...
+        unstructured, unstructuredrefined]=GridRedistribution(...
+        gridrefined,connectstructinfo,unstructReshape,loop, param);
     snakSave=[];
-    if strcmp(gridDistrib,'randMod')
-        [unstructReshape,gridrefined,connectstructinfo]=TestNonRectangleGrid...
-            (gridrefined,connectstructinfo,unstructReshape);
-        [unstructured]=ModifReshape(unstructReshape);
-        [unstructuredrefined]=ModifReshape(gridrefined);
-    end
+
     if useSnakes
         [snaxel,snakposition,snakSave,loop,restartsnake,optargout]=...
             ExecuteSnakes(gridrefined,looprefined,unstructReshape,...
@@ -176,36 +175,6 @@ function [gridrefined,connectstructinfo,unstructuredrefined,loop]=...
     
 end
 
-function [gridbase,gridrefined,connectstructinfo]=TestNonRectangleGrid(gridrefined,connectstructinfo,gridbase)
-    
-    [gridbase,coarsenconnec]=CoarsenGrid(gridrefined,gridbase,connectstructinfo);
-    gridbase.vertex=gridbase.vertex(FindObjNum([],...
-        unique([gridbase.edge.vertexindex]),[gridbase.vertex.index]));
-    
-    [gridrefined]=RandGridDistrib(gridrefined);
-    [gridbase.vertex.coord]=deal(gridrefined.vertex(...
-        FindObjNum([],[gridbase.vertex.index],[gridrefined.vertex.index])...
-        ).coord);
-    
-end
-
-
-function [unstructured]=RandGridDistrib(unstructured)
-    
-    coord=vertcat(unstructured.vertex.coord);
-    
-    for ii=1:size(coord,2)
-        x=coord(:,ii);
-        x=unique(x);
-        Dx=x(2:end)-x(1:end-1);
-        Dx=min(Dx(Dx>1e-10));
-        coord(:,ii)=Dx*rand(size(coord(:,1)))/2+coord(:,ii);
-    end
-    for ii=1:size(coord,1)
-        unstructured.vertex(ii).coord=coord(ii,:);
-    end
-    
-end
 
 function [snaxel,snakposition,snakSave,loop,restartsnake,optargout]=ExecuteSnakes(unstructured,loop,...
         oldGrid,connectionInfo,param)

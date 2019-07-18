@@ -67,6 +67,10 @@ function [unstructured,loop,unstructReshape]=...
     disp('Reshaping')
     [unstructReshape]=ModifUnstructured(unstructured);
     [loop]=EdgeInCondForVertex(loop,unstructReshape,cond);
+    [unstructReshape] = FillNewGrid(unstructReshape, param);
+    sub = FindObjNum([],unstructured.cell.index,[unstructReshape.cell.index]);
+    unstructured.cell.fill = [unstructReshape.cell(sub).fill];
+    
 end
 
 function [unstructured]=GridRedistrib(unstructured,gridDistrib)
@@ -117,7 +121,7 @@ function [unstructured]=GridRedistrib(unstructured,gridDistrib)
             xMax=1;
             xMin=0;
             [unstructured]=LimGridDistribX(unstructured,xMax,xMin,maxExcess);
-        
+
         otherwise
             warning([gridDistrib,' is not a recognised grid distribution Type'])
     end
@@ -264,6 +268,36 @@ function [unstructured]=CosGridDistribY(unstructured)
     unstructured.vertex.coord=coord;
     
 end
+
+% Fill functions
+
+function [unstructReshape] = FillNewGrid(unstructReshape, param)
+    
+    varExtract={'initialfill'};
+    [initialfill]=ExtractVariables(varExtract,param);
+    switch initialfill{1}
+        case {'none','n/a'}
+        case 'load'
+            [fill]=MatchVoltoShapeGeneral(unstructReshape,initialfill{2});
+        otherwise
+            
+            warning([initialfill{1},' is not a recognised fill type'])
+    end
+    
+    if exist('constrVal', 'var')
+        for ii = 1:numel(unstructReshape.cell)
+            unstructReshape.cell(ii).fill = constrVal{2}(ii);
+        end
+    end
+    if exist('fill', 'var')
+        for ii = 1:numel(unstructReshape.cell)
+            unstructReshape.cell(ii).fill = fill(ii);
+        end
+        
+    end
+        
+end
+
 %% Initialisation Functions
 
 function [unstructured]=InitialisEdgeGrid(param)

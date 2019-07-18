@@ -341,7 +341,7 @@ function [constrVal]=OuterLimitInverse(gridrefined,paramoptim,airfoilstr)
     constrVal={fillSub,reqFrac};
 end
 
-function [constrVal]=MatchVoltoShape(gridrefined,paramoptim,shapePath)
+function [constrVal]=MatchVoltoShape(gridrefined,param,shapePath)
     
     
     %     ((x(x>=(p*c))-xMin)/c)
@@ -354,9 +354,12 @@ function [constrVal]=MatchVoltoShape(gridrefined,paramoptim,shapePath)
     
     warning('Will only work with square or rectangular grids')
     varExtract={'axisRatio'};
-    axisRatio=ExtractVariables(varExtract,paramoptim.parametrisation);
+    axisRatio=ExtractVariables(varExtract,param);
     [uppersurf,lowersurf]=ReadShapeIn(shapePath);
-    
+    if ~iscell(uppersurf)
+        uppersurf = {uppersurf};
+        lowersurf = {lowersurf};
+    end
     
     cellCentredGrid=CellCentreGridInformation(gridrefined);
     isActive=logical([cellCentredGrid(:).isactive]);
@@ -372,23 +375,25 @@ function [constrVal]=MatchVoltoShape(gridrefined,paramoptim,shapePath)
     fillSub=zeros([1,sum(isActive)]);
     reqFrac=zeros([1,sum(isActive)]);
     actCellSub=find(isActive);
-    for ii=1:numel(actCellSub)
-        
-        cellCoords=vertcat(cellCentredGrid(actCellSub(ii)).vertex(:).coord);
-        cellCoords(:,2)=cellCoords(:,2)*axisRatio;
-        [cornerCoord]=IdentifyCorners(cellCoords);
-        posMin=min(cornerCoord);
-        posMax=max(cornerCoord);
-        
-        x=linspace(posMin(1),posMax(1),200);
-        
-        yup=interp1(uppersurf(:,1)*xDist+xMin,uppersurf(:,2)*xDist,x);
-        ylow=interp1(lowersurf(:,1)*xDist+xMin,lowersurf(:,2)*xDist,x);
-        y=min(max(yup,posMin(2)),posMax(2))-min(max(ylow,posMin(2)),posMax(2));
-        %plot(x,cDistrib+y+posMin(2))
-        vol=integr(x,y);
-        fillSub(ii)=ii;
-        reqFrac(ii)=vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
+    for surfNum = 1:numel(uppersurf)
+        for ii=1:numel(actCellSub)
+
+            cellCoords=vertcat(cellCentredGrid(actCellSub(ii)).vertex(:).coord);
+            cellCoords(:,2)=cellCoords(:,2)*axisRatio;
+            [cornerCoord]=IdentifyCorners(cellCoords);
+            posMin=min(cornerCoord);
+            posMax=max(cornerCoord);
+
+            x=linspace(posMin(1),posMax(1),200);
+
+            yup=interp1(uppersurf{surfNum}(:,1)*xDist+xMin,uppersurf{surfNum}(:,2)*xDist,x);
+            ylow=interp1(lowersurf{surfNum}(:,1)*xDist+xMin,lowersurf{surfNum}(:,2)*xDist,x);
+            y=min(max(yup,posMin(2)),posMax(2))-min(max(ylow,posMin(2)),posMax(2));
+            %plot(x,cDistrib+y+posMin(2))
+            vol=integr(x,y);
+            fillSub(ii)=ii;
+            reqFrac(ii)=reqFrac(ii) + vol(end)/cellCentredGrid(actCellSub(ii)).volume/axisRatio;
+        end
     end
     constrVal={fillSub,reqFrac};
 end
@@ -403,8 +408,14 @@ function [uppersurf,lowersurf]=ReadShapeIn(shapepath)
     switch ext
         case 'mat'
             load(shapepath)
-            if ~exist('uppersurf','var');error('Data file loaded did not have the upper surface');end
-            if ~exist('lowersurf','var');error('Data file loaded did not have the lower surface');end
+            if ~exist('uppersurf','var') || ~exist('lowersurf','var')
+                if exist('loop','var')
+                    [uppersurf,lowersurf]=ExtractUpperLowerSurface(loop, 'coord');
+                end
+                if ~exist('uppersurf','var');error('Data file loaded did not have the upper surface');end
+                if ~exist('lowersurf','var');error('Data file loaded did not have the lower surface');end
+            end
+            
             
         case 'dat'
             error('not coded')
@@ -414,6 +425,107 @@ function [uppersurf,lowersurf]=ReadShapeIn(shapepath)
             
     end
     
+end
+
+
+function [loop]=ReadLoopIn(shapepath)
+    
+    filename=dir(shapepath);
+    filename=filename(1).name;
+    extPos=regexp(filename,'\.');
+    ext=filename(extPos+1:end);
+    
+    switch ext
+        case 'mat'
+            load(shapepath)
+
+            if ~exist('loop','var')
+                error('No loop found')
+            end
+            
+            
+        case 'dat'
+            error('not coded')
+            
+        otherwise
+            error('Unknown type')
+            
+    end
+    
+end
+
+function [fillArea]=MatchVoltoShapeGeneral(gridrefined,shapePath)
+    
+    [loop]=ReadLoopIn(shapePath);
+    [fillArea] = LoopToGridFill(gridrefined, loop);
+end
+function [fillArea] = LoopToGridFill(grid, loop)
+    
+    % Find point contenance
+    % assign fill for internal external cells
+    % 
+
+    % idea  2 use error topo, turn a grid into a loop format
+    [gridloop] = GridToLoopFormat(grid);
+    fillArea = zeros(size(gridloop));
+    for jj = 1:numel(loop)
+        for ii = 1:numel(gridloop)
+            A=IntersectingArea(loop(jj).coord, gridloop(ii).coord);
+            fillArea(ii)=fillArea(ii)+A;
+        end
+    end
+    for ii = 1:numel(gridloop)
+        fillArea(ii)=fillArea(ii)/abs(CalculatePolyArea(gridloop(ii).coord));
+    end
+    
+end
+
+function [loop] = GridToLoopFormat(grid)
+    loop = repmat(struct(...
+            'coord',zeros(0,2),...
+            'isccw',true,...
+            'isinternal',false...
+        ),size(grid.cell));
+    
+    edgeCellInd = vertcat(grid.edge.cellindex);
+    vertInd = [grid.vertex.index];
+    for ii = 1:numel(grid.cell)
+        [i,~] = find(edgeCellInd==grid.cell(ii).index);
+        
+        cellVertInds = vertcat(grid.edge(i).vertexindex);
+        [cellVertInds]=OrderBlockEdges(cellVertInds);
+        loop(ii).coord = vertcat(grid.vertex(...
+            FindObjNum([],cellVertInds{1}(:,1),vertInd)).coord);
+         loop(ii).isccw= CCWLoop(loop(ii).coord);
+    end
+    
+end
+
+function [uppersurf,lowersurf]=ExtractUpperLowerSurface(loop, typeLoop)
+    uppersurf=cell(size(loop));
+    lowersurf=cell(size(loop));
+
+    for ii = 1:numel(loop)
+        
+        % Make all loops clockwise
+        isCCW = CCWLoop(loop(ii).(typeLoop));
+        if isCCW
+            loop(ii).(typeLoop) = flip(loop(ii).(typeLoop));
+        end
+
+        [~,TEi] = min(loop(ii).(typeLoop)(:,1));
+        [~,LEi] = max(loop(ii).(typeLoop)(:,1));
+
+        if TEi < LEi
+            uppersurf{ii} = loop(ii).(typeLoop)([LEi:end,1:TEi],:);
+            lowersurf{ii} = loop(ii).(typeLoop)(TEi:LEi,:);
+        else
+            lowersurf{ii} = loop(ii).(typeLoop)([TEi:end,1:LEi],:);
+            uppersurf{ii} = loop(ii).(typeLoop)(LEi:TEi,:);
+        end
+
+
+    end
 end
 
 function [ctc,pct,ttc,refFlag]=ReadNacaString(nacaStr)

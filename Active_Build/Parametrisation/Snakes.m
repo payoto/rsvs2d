@@ -44,7 +44,8 @@ function [snaxel,snakposition,snakSave,loopsnaxel,restartsnake,varargout]=...
     end
     optargout=[optargout,{varargout2}];
     if snakesConsole
-        optargout{end+1}=figure('Name',['VolError',caseStr]);semilogy(1:length(snakSave),[snakSave(:).currentConvVolume]);
+        optargout{end+1}=figure('Name',['VolError',caseStr]);
+        semilogy(1:length(snakSave),[snakSave(:).currentConvVolume]);
         title('Volume error')
         ylabel('Root Mean squared error on volume convergence')
         xlabel('number of iterations')

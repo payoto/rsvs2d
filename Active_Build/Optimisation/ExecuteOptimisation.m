@@ -1714,7 +1714,7 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             nPop=numel(initInterp);
         case 'loadshape'
             specificFillName=MakePathCompliant(specificFillName);
-            [rootFill]=MatchVoltoShape(baseGrid,paroptim,specificFillName);
+            [rootFill]=MatchVoltoShape(baseGrid,paroptim.parametrisation,specificFillName);
             origPop=ones([nPop 1])*rootFill{2};
         case 'initfreefempop'
             

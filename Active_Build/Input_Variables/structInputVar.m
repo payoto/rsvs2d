@@ -103,6 +103,7 @@ function paramsnakesrefine=default_snakes_refine()
     paramsnakesrefine.cellRefineShape='square';
     paramsnakesrefine.gridDistrib='none'; % 'cosX01'
     paramsnakesrefine.pinnedVertex='none'; % 'LETE'
+    paramsnakesrefine.randMultiplier=1;
     
     paramsnakesrefine.typeRefine='grey';
     paramsnakesrefine.LEShrink=0;
@@ -154,6 +155,7 @@ function paramoptiminit=default_optimInit()
     paramoptiminit.cellLevels=[8,2];
     paramoptiminit.refineCellLvl=[0];
     paramoptiminit.defaultfill=0.5;
+    paramoptiminit.initialfill={'n/a'};
     paramoptiminit.defaultCorner=1e-4;
     paramoptiminit.corneractive=false;
     paramoptiminit.modeSmoothType='peaksmooth';
@@ -540,7 +542,7 @@ end
 
 function [param]=TestRand(caseStr)
     [param]=eval(caseStr);
-    %param.snakes.refine.gridDistrib='randMod';
+    param.snakes.refine.gridDistrib='randMod';
     param.snakes.refine.cellRefineShape='triangle';
 end
 
@@ -642,7 +644,7 @@ function [param]=TestTriangularOptimInit(ii)
     param.general.typDat='optimInit';
     param.optiminit.cellGeometry='triangle';
     param.optiminit.ptsDistrib='FFStaggered';
-    param.optiminit.cellLevels=[8,ii];
+    param.optiminit.cellLevels=[6,ii];
     param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=100;
@@ -663,7 +665,7 @@ function [param]=TestTriangularOptimInit2(ii)
     param.optiminit.cellLevels=[5,ii];
     param.snakes.refine.refineGrid=2;
     param.optiminit.defaultfill=0.4;
-    param.snakes.step.snakesSteps=200;
+    param.snakes.step.snakesSteps=100;
     param.general.buildInternal=true;
     param.snakes.step.vertLooseStep=20;
     param.general.internalLoopStep=5;
@@ -672,6 +674,12 @@ function [param]=TestTriangularOptimInit2(ii)
     param.snakes.force.vel.algo='HF';
 end
 
+function [param]=TestTriangularOptimInit4(ii)
+    [param]=TestTriangularOptimInit2(ii);
+    param.snakes.refine.cellRefineShape='centredtriangle';
+    param.snakes.refine.refineGrid=2;
+    param.snakes.step.snakesSteps=100;
+end
 function [param]=OptimNoRestart()
     
     [param]=optimDefault();
@@ -1698,6 +1706,63 @@ function [param]=SnakesFoilVVSmall4()
     param.snakes.step.fillErrCut=1000;
     
     param.general.passDomBounds=MakeCartesianGridBoundsInactE([18 4]);
+end
+
+function param=SnakesFoilVVSmall4triangle()
+    [param]=SnakesFoilVVSmall4();
+    
+    param.snakes.refine.refineGrid=[2];
+    param.snakes.refine.cellRefineShape='triangle';
+end
+
+function param=SnakesFoilVVSmall4Rand2()
+    [param]=SnakesFoilVVSmall4triangle();
+   
+    param.snakes.refine.gridDistrib='randMod';
+    param.snakes.refine.randMultiplier=1.2;
+
+end
+
+function param=SnakesFoilVVSmall4wave()
+    [param]=SnakesFoilVVSmall4();
+   
+    param.snakes.refine.gridDistrib='waveMod';
+%     param.snakes.refine.randMultiplier=1.2;
+
+end
+
+function [param]=SnakesFoilVVSmall4TriangleVOS()
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    param=AvoidLocalOptim(param);
+    
+    param.general.typDat='vvlofoil4';
+    param.snakes.step.snakesSteps=100;
+    param.snakes.refine.refineGrid=[4 4 2];
+    param.snakes.refine.typeRefine='all';
+    param.general.passDomBounds=[-1,1;-0.25,0.25];
+    param.general.refineSteps=5;
+    param.snakes.step.mergeTopo=true;
+    param.plotting.debugPlot=[0];
+    param.snakes.refine.gridDistrib='none';
+    param.snakes.step.fillErrStep=0;
+    param.snakes.step.fillErrCut=1000;
+    
+    param.general.passDomBounds=MakeCartesianGridBoundsInactE([18 4]);
+
+    param.general.typDat='optimInit';
+    param.optiminit.cellGeometry='triangle';
+    param.optiminit.ptsDistrib='FFStaggered';
+    param.optiminit.initialfill={'load','supportoptim\vvlofoil4.mat'};
+    param.optiminit.cellLevels=[18, 8];
+    param.snakes.refine.refineGrid=2;
+    param.optiminit.defaultfill=0.4;
+    param.snakes.step.snakesSteps=100;
+    param.general.buildInternal=false;
+    param.snakes.step.vertLooseStep=500;
+    param.snakes.step.subStep=0;
+
 end
 
 function [param]=WeirdShape()

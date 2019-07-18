@@ -119,7 +119,7 @@ function [cellCentredGrid]=CalculateEdgeCellNormals(cellCentredGrid)
                     norm(vertCoord(1,:)-vertCoord(2,:));
                 
             end
-        catch
+        catch ME
             errorCount=errorCount+1;
             errSave(errorCount)=ii;
         end

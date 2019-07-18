@@ -13,7 +13,8 @@
 
 %% Volume fraction calculation
 
-function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,snakposition,refinedGrid,volfracconnec,...
+function [volumefraction,coeffstruct,cellCentredGrid]=VolumeFraction(snaxel,...
+        snakposition,refinedGrid,volfracconnec,...
         cellCentredGrid,insideContourInfo)
     % Calculates teh volume fraction in the old cells
     

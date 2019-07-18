@@ -27,7 +27,8 @@ function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
     end
     
     if strcmp(cellGeometry,'triangle') && ...
-            ~strcmp(cellRefineShape,'fullytriangle')
+            ~(strcmp(cellRefineShape,'fullytriangle') ...
+             || strcmp(cellRefineShape,'centredtriangle'))
         cellRefineShape='fullytriangle';
         warning('Incompatible cellGeometry and cellRefineShape - defaulting to fullytriangle')
     elseif ~strcmp(cellGeometry,'triangle') && ...
@@ -43,6 +44,8 @@ function [gridrefined2,connectstructinfo,unstructuredrefined,loop]=...
         case 'triangle'
             [gridrefined,connectstructinfo]=RefineGrid(gridreshape,nRefine(unique([1,1:end-1])),typeRefine);
             [gridrefined,connectstructinfo]=MakeTriangularGrid(gridrefined,connectstructinfo,nRefine(end));
+        case 'centredtriangle'
+            error('Centred triangle refinement does not exist')
         case 'fullytriangle'
             [gridrefined,connectstructinfo]=RefineTriangular(gridreshape,nRefine(1));
     end
@@ -901,6 +904,8 @@ function []=PlotCell(figh,axh,unstructured,indexCell,format)
     plot(coord(:,1),coord(:,2),format)
     
 end
+
+
 
 
 %% Test Code

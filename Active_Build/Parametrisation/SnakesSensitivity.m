@@ -654,8 +654,9 @@ end
 
 %% Velocity Calculation (External Function)
 
-function [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]=VelocityCalculationVolumeFraction...
-        (snaxel,snakposition,volumefraction,coeffstructure,forceparam)
+function [snaxel,snakposition,snaxelmodvel,velcalcinfo,sensSnax]...
+    =VelocityCalculationVolumeFraction(snaxel,...
+        snakposition,volumefraction,coeffstructure,forceparam)
     velcalcinfo=[];
     sensSnax=[];
     switch forceparam.velType

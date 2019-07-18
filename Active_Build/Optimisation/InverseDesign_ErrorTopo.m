@@ -9,17 +9,29 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [] = InverseDesign_ErrorTopo()
-    %FUNCTIONLIST allows local functions to be used globally once it has
-    %been used.
-    
-    funcHandles=localfunctions;
-    funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
-    HeaderActivation(funcHandles,funcDir)
-    
+% function [] = InverseDesign_ErrorTopo()
+%     FUNCTIONLIST allows local functions to be used globally once it has
+%     been used.
+%     
+%     funcHandles=localfunctions;
+%     funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
+%     HeaderActivation(funcHandles,funcDir)
+%     
+% end
+
+function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo(paramoptim,loop, arg3)
+    if nargin==2
+        [errorMeasure,h,targCoord,analysisLoop]=ErrorTopo_ParamInput(paramoptim,loop);
+    else
+        analysisLoop=paramoptim;
+        targCoord=loop;
+        profileComp=arg3;
+        [errorMeasure,h,targCoord,analysisLoop]=ErrorTopo(...
+            analysisLoop,targCoord,profileComp);
+    end
 end
 
-function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo2(paramoptim,loop)
+function [errorMeasure,h,targCoord,analysisLoop]=ErrorTopo_ParamInput(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
@@ -40,6 +52,12 @@ function [errorMeasure,h,targCoord,analysisLoop]=InverseDesign_ErrorTopo2(paramo
         otherwise
             error('not coded yet')
     end
+    [errorMeasure,h,targCoord,analysisLoop]=ErrorTopo(...
+        analysisLoop,targCoord,profileComp);
+end
+
+function [errorMeasure,h,targCoord,analysisLoop]=ErrorTopo(...
+        analysisLoop,targCoord,profileComp)
     
     switch profileComp
         case 'distance'
@@ -955,10 +973,23 @@ function [newloop]=SeparateProfilesArea(profileCoord,targCoord)
            
             
         end
+         
         newloop=newloop(1:pLoop);
-    else
+        keepLoop = true(size(newloop));
         
+        for ii=1:pLoop
+            keepLoop(ii) = size(newloop(ii).coord,1)>2;
+        end
+        newloop=newloop(keepLoop);
+        
+        
+        
+    else
+        newloop=repmat(struct('coord',zeros(0,2)),[1,1]);
+%         newloop.coord = profileCoord;
         error('No Intersection, should not happen')
+        % can happen as the table intersection is not the same as the
+        % actual intersection
     end
     
     %error('Compare Profile through area integration has not been coded yet')
