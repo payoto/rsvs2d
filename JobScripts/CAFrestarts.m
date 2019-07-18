@@ -2,7 +2,7 @@ function CAFrestarts(ii)
     MoveToDir('source',1)
     InitialiseSnakeFlow;
     
-    restartFolder = '/panfs/panasas01/aero/ap1949/SnakVolParam/restarts/CAF/';
+    restartFolder = [cd,filesep,'../restarts/CAF/'];
     switch ii
         case 1
             caseStr = 'volsweeplocal(0.15,''uo'')';
@@ -18,6 +18,13 @@ function CAFrestarts(ii)
             ExecuteOptimisation(caseStr)
         case 4
             caseStr = 'CAF_NACA0012_ref';
+            ExecuteOptimisation(caseStr)
+        case 5
+            caseStr = 'volsweeplocal(0.15,''uo'')';
+            ExecuteOptimisation(caseStr)
+            
+        case 6
+            caseStr = 'volsweeplocal(0.16,''uo'')';
             ExecuteOptimisation(caseStr)
     end
     
