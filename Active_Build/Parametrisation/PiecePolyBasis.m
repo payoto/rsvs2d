@@ -108,6 +108,10 @@ function [an,bn,cn]=NextCoeff(ai,bi,ci,d)
     cn=4*ai*d^2+2*bi*d+ci;
     bn=4*ai*d+bi;
     an=3*(-(2*bn*d^2+2*cn*d))/(8*d^3);
+    % an=-6/8*d^-1*bn - 6*cn/(8*d^2);
+    
+    % an=-6/2*ai+-6/8*d^-1*bi - 6*(4*ai*d^2+2*bi*d+ci)/(8*d^2);
+    an= -6*ai - 9/(4*d)*bi - 3*ci/(4*d^2);
     %an=3/(8*d^3)*((8/3*d^3*ai+2*bi*d^2+2*ci*d)-(2*bi*d^2+2*ci*d));
     %    (8/3*d^3*ai+2*bi*d^2+2*ci*d)
     %    (8/3*d^3*an+2*bn*d^2+2*cn*d)

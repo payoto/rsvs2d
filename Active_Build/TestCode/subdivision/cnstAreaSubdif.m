@@ -122,7 +122,7 @@ sol=solve([coeffsolMat(:,1)==areaMat(:,1); sum(subMask,2)==1; subMask(3,1)~=1  ]
 solVec=sym('a',[nUniqVar,1],'real');
 subMask2=subMask(1:2:end,1:2:end);
 %for solI=1:5;
-solI=4;
+solI=5;
 paramsAct=1;
  newStencilAct=newStencil;
 for ii=1:nUniqVar
@@ -135,6 +135,7 @@ end
 %hMain=figure;
 hMain=1;
 solVec
+figKeep = figure;
 for ii=linspace(36,40,10)
     %points=[0 0;1 0;2 0;2 2;1 2; 1 1;0.5 1;0 1];
     points=[0 0;1 0; 1 1;0 1];
@@ -146,41 +147,21 @@ for ii=linspace(36,40,10)
     figure(hMain);
     plot(newPoints(:,1),newPoints(:,2))
     hold on
-    test_subdiv_varstenc
+    test_subdiv_varstenc(points, strct, 7,figKeep );
 
 end
 
 figure(hMain);
 axis equal
 plot(points(:,1),points(:,2));
-%end
-%%
-oldPoints=points
-points=newPoints;
-pointsVec=points';
-pointsVec=pointsVec(:);
-plot(points(:,1),points(:,2));
-n=length(points(:,1));
-centreMat=eye(2*n);
-centreMat=(centreMat+centreMat(:,[end-1:end,1:end-2]))*0.5;
 
-[rotDif]=[0 -1 0 1; 1 0 -1 0];
-normMat=zeros(2*n);
-for ii=1:n-1
-    normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+4))=rotDif;
-end
-ii=n;
-normMat((2*(ii-1)+1):(2*(ii-1)+2),(2*(ii-1)+1):(2*(ii-1)+2))=rotDif(:,1:2);
-normMat((2*(ii-1)+1):(2*(ii-1)+2),1:2)=rotDif(:,3:4);
-A=0.5*(normMat*pointsVec)'*(centreMat*pointsVec);
-A=0.5*pointsVec'*(normMat'*centreMat)*pointsVec
 %%
 vecX=linspace(-1,0.0001,50);
 vecY=linspace(-1,0.0001,50);
 points=oldPoints;
 [X,Y]=meshgrid(vecX,vecY);
 %for mm=0.05:0.1:0.5
-    surfDat=zeros([length(vecX)*[1 1],nUniqVar]);
+surfDat=zeros([length(vecX)*[1 1],nUniqVar]);
 kk=1;
 for ii=vecX
     ll=1;
@@ -191,12 +172,12 @@ for ii=vecX
     kk=kk+1;
 end
 
-% figure
-% for ii=1:nUniqVar
-%     subplot(2,4,ii)
-%     surf(X,Y,surfDat(:,:,ii));
-%     
-% end
+figure
+for ii=1:nUniqVar
+    subplot(2,4,ii)
+    surf(X,Y,surfDat(:,:,ii));
+    
+end
 %%
 figure
 contList={[0.5:0.05:1],[0.3:0.05:1],[0:0.05:0.5],[0:0.025:0.25],[-0.25:0.05:0],[-0.25:0.1:0.25]};

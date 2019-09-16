@@ -18,7 +18,7 @@ function []=QuickFigSave(figList,isNum)
         
         figName=matlab.lang.makeValidName([h(1).Name,int2str(ii(isNum))]);
         %print(h(1),'-r300','-dpng',['.\fig\',figName,'.png'])
-        export_fig(h(1),'-transparent','-r300',['.\fig\',figName,'.png'])
+        export_fig(h(1),'-transparent','-r450',['.\fig\',figName,'.png'])
         h(1).Renderer='painters';
         print(h(1),'-depsc',['.\fig\',figName,'.eps'])
         cell2Save={'PaperType','PaperUnits','PaperSize','PaperPosition'};
