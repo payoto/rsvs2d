@@ -135,6 +135,29 @@ function [isCCW]=CCWLoop(coord)
     end
 end
 
+
+    
+function [snakSave]=WriteSnakSaveLight(dt,volumefraction,currentConvVelocity,...
+        currentConvVolume,lSnak)
+    
+    snakSave.dt=dt;
+    
+    snakSave.volumefraction.targetfill=[volumefraction(:).targetfill];
+    snakSave.volumefraction.currentfraction=[volumefraction(:).volumefraction];
+    snakSave.volumefraction.totVolume=[volumefraction(:).totalvolume];
+    snakSave.volumefraction.isSnax=[volumefraction(:).isSnax];
+    
+    snakSave.volumefraction.refinedInfo.index=[volumefraction(:).newCellInd];
+    snakSave.volumefraction.refinedInfo.fractionvol=[volumefraction(:).splitfraction];
+    
+    snakSave.currentConvVelocity=currentConvVelocity;
+    snakSave.currentConvVolume=currentConvVolume;
+    snakSave.lSnak=lSnak;
+    
+    
+end
+
+
 % Order BlockEdges might cause problems as the different versions were not
 % consistant.
 function [cellOrderedVertex,cellOrderedEdges]=...

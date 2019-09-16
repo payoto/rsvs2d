@@ -2846,8 +2846,14 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     paramoptim=SetVariables({'isRestart'},{true},paramoptim);
     % This line causes problems and exceeding boundmax
     %paramoptim.parametrisation.general.refineSteps=paramoptim.parametrisation.general.refineSteps-1;
-    [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
     
+   % reInitialise the population if requested
+    reInitialiseRefine=ExtractVariables({'reInitialiseRefine'},paramoptim);
+    if reInitialiseRefine
+       [iterstruct(end+1),paramoptim]=InitialisePopulation(paramoptim,baseGrid);
+    else
+        [iterstruct,paramoptim]=GenerateNewPop(paramoptim,iterstruct,nIter,firstValidIter,baseGrid);
+    end
 end
 
 %
@@ -2954,6 +2960,8 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     %         profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     [paramoptim]=UpdateSupportOptim(paramoptim,profloops,transformstruct,oldGrid.connec,iterstruct,oldGrid.base,baseGrid);
     iterstruct=RewriteHistory(iterstruct,profloops,baseGrid,firstValidIter,defaultFillRefMat);
+    
+    
     
     [~,~,~,~,restartsnake]=ExecuteSnakes_Optim('snak',gridrefined,loop,...
         baseGrid,connectstructinfo,paramoptim.initparam,...

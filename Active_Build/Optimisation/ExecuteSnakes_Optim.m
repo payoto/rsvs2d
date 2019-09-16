@@ -337,13 +337,22 @@ end
 function [outinfo,snakSave]=FullResultsRequest(gridrefined,connectstructinfo,baseGrid,...
         snakSave,param,outinfo,nIter,nProf,looprestart,restartsnake,tecStruct)
     snakSave2=snakSave;
-    volfra=snakSave(end).volumefraction;
-    snakSave(end).volumefraction=struct('targetfill',[],'currentfraction'...
-        ,[],'totVolume',[]);
-    snakSave(end).volumefraction.targetfill=[volfra(:).targetfill];
-    snakSave(end).volumefraction.currentfraction=[volfra(:).volumefraction];
-    snakSave(end).volumefraction.totVolume=[volfra(:).totalvolume];
+    % volfra=snakSave(end).volumefraction;
+    % snakSave(end).volumefraction=struct('targetfill',[],'currentfraction'...
+    %     ,[],'totVolume',[]);
+    % snakSave(end).volumefraction.targetfill=[volfra(:).targetfill];
+    % snakSave(end).volumefraction.currentfraction=[volfra(:).volumefraction];
+    % snakSave(end).volumefraction.totVolume=[volfra(:).totalvolume];
+    % snakSave(end).volumefraction.isSnax=[volfra(:).isSnax];
     
+    [snakSaveLight]=WriteSnakSaveLight(snakSave(end).dt,snakSave(end).volumefraction,...
+        snakSave(end).currentConvVelocity,...
+        snakSave(end).currentConvVolume,snakSave(end).lSnak);
+    for ii = fieldnames(snakSaveLight)'
+        snakSave(end).(ii{1}) = snakSaveLight.(ii{1});
+
+    end
+
     outinfo=OptimisationOutput('profilepost',param,outinfo,looprestart,...
         restartsnake,snakSave,tecStruct,nIter,nProf);
     

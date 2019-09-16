@@ -1391,6 +1391,8 @@ function [param]=optimInverseDesign_bulk2()
     param.optiminit.cellLevels=[18,2];
     param.general.passDomBounds=MakeCartesianGridBoundsInactE(param.optiminit.cellLevels);
 end
+
+
 %% Surrogate modelling Cases
 
 function [param]=surrogateDefault()

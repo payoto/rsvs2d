@@ -122,7 +122,7 @@ function [paroptimrefine]=DefaultOptimRefine()
     paroptimrefine.refineOptimRatio=1; % ratio of optimisation
     paroptimrefine.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
     paroptimrefine.slopeConv=0.2; % ratio of converged slope to maximum slope.
-    
+    paroptimrefine.reInitialiseRefine = false; % Reinitialise the population on refinement?
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -4196,7 +4196,7 @@ function paroptim=bulkNacaInvDes()
     end
     initInterp=initInterp([1:2,50,59]);
     %initInterp={'0012','4412','1108'};
-    initInterp={'4412'};
+    initInterp={'0012','4412','1108', '2315'};
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=1;
@@ -4289,6 +4289,42 @@ function paroptim=bulkNacaInvDes2A()
     
     paroptim.obj.invdes.profileComp='area';
     paroptim.spline.resampleSnak=false;
+end
+
+% bulk invdes with refinement
+
+function [paroptim]=bulkTestInvDesRefinement()
+    
+    paroptim=bulkNacaInvDes();
+    
+    paroptim = BulkInvDesRefine(paroptim);
+end
+
+function [paroptim]=bulkNacaInvDesRefinement()
+    
+    paroptim=bulkNacaInvDes2();
+    
+    paroptim = BulkInvDesRefine(paroptim);
+end
+
+function paroptim = BulkInvDesRefine(paroptim)
+    [paroptim]=AdaptiveRefinement(paroptim);
+    paroptim.general.optimMethod='none';
+    paroptim.refine.refineIter=1;
+    paroptim.refine.reInitialiseRefine = true;
+    
+    
+%     [domainBounds]=MakeCartesianGridBoundsInactTE(cellLevels)
+    paroptim.parametrisation.snakes.refine.TEShrink=false;
+    paroptim.parametrisation.snakes.refine.LEShrink=false;
+    paroptim.parametrisation.snakes.refine.pinnedVertex='TE';
+    ratioChord =0.02;
+    cellLevels=paroptim.parametrisation.optiminit.cellLevels;
+%     domainBounds=MakeCartesianGridBoundsInactTE(cellLevels,ratioChord);
+    [domainBounds]=SizeAerofoilRSVSGrid(cellLevels,ratioChord);
+    domainBounds(1,:)=domainBounds(1,:)+ratioChord;
+    paroptim.parametrisation.general.passDomBounds=domainBounds;
+    paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
 end
 
 %% Full Aero Optimisations

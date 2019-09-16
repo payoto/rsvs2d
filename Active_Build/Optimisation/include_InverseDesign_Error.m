@@ -9,7 +9,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [] = InverseDesign_Error()
+function [] = include_InverseDesign_Error()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
     
@@ -19,7 +19,7 @@ function [] = InverseDesign_Error()
     
 end
 
-function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error2(paramoptim,loop)
+function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim,loop)
     
     varExtract={'aeroClass','aeroName','profileComp'};
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
