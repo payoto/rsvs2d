@@ -189,6 +189,9 @@ FigProbGrad/*
 *.poly
 *.edge
 *griduns
+*griduns_full
 *.gch
 *.mat 
+*.plt
+*.avi
 Optimisation/Archive_*
