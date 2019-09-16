@@ -1353,7 +1353,7 @@ function [param]=optimInverseDesign_bulk()
     param.snakes.step.fillLooseCut=1e-1;
     param.snakes.step.vertLooseStep=100;
     param.snakes.step.snakData='all';
-    param.snakes.step.snakesSteps=200;
+    param.snakes.step.snakesSteps=500;
     param.snakes.step.mergeTopo=false;
     param.snakes.step.snaxInitPos=5e-4;
     
