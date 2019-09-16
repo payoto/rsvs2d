@@ -312,6 +312,20 @@ function [param]=Snakestestsmooth3()
     
 end
 
+function [param]=SnakestestTopoEvol(ii)
+    
+    
+    [param]=DefaultCase();
+    param=OptimConvergence(param);
+    
+    param.general.typDat=['test_topo_', int2str(ii)];
+    
+    param.snakes.step.snakesSteps=200;
+    param.snakes.refine.refineGrid=6;
+    param.snakes.refine.typeRefine='all';
+    
+end
+
 function [param]=Snakestestsmooth3_1()
     
     
@@ -1433,7 +1447,7 @@ function [param]=SnakesFoilVVSmall()
     param.snakes.step.snakesSteps=200;
     
     
-    param.snakes.refine.refineGrid=12;
+    param.snakes.refine.refineGrid=4;
     param.snakes.refine.typeRefine='all';
     param.general.passDomBounds=[-1,1;-0.4,0.4];
     param.general.refineSteps=5;
@@ -1754,9 +1768,9 @@ function [param]=SnakesFoilVVSmall4TriangleVOS()
     param.general.typDat='optimInit';
     param.optiminit.cellGeometry='triangle';
     param.optiminit.ptsDistrib='FFStaggered';
-    param.optiminit.initialfill={'load','supportoptim\vvlofoil4.mat'};
-    param.optiminit.cellLevels=[18, 8];
-    param.snakes.refine.refineGrid=2;
+    param.optiminit.initialfill={'load','supportoptim\vvlofoil4tri.mat'};
+    param.optiminit.cellLevels=[20, 6];
+    param.snakes.refine.refineGrid=1;
     param.optiminit.defaultfill=0.4;
     param.snakes.step.snakesSteps=100;
     param.general.buildInternal=false;
@@ -1801,10 +1815,7 @@ end
 function [param]=InitTest_out()
     
     % Load defaults
-    param.general=default_general();
-    param.results=default_results();
-    param.plotting=default_plotting();
-    param.snakes=default_snakes();
+    param=DefaultCase();
     
     param=OptimConvergence(param);
     param=AvoidLocalOptim(param);
@@ -1813,7 +1824,8 @@ function [param]=InitTest_out()
     param.general.typDat='inittest';
     param.snakes.refine.typeRefine='all';
     param.snakes.step.snakesSteps=100;
-    
+    param.general.buildInternal=true;
+    param.general.restart=false;
     %     param.general.boundstr{1}='boundaryis1'; %'boundaryis0'
     %     param.general.boundstr{2}='solidisIn1';
     %     param.general.boundstr{3}='1bound';

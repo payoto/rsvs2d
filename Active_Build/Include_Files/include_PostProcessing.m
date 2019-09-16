@@ -15,6 +15,41 @@ print(figh,figname,'-djpeg','-r600')
 
 end
 
+function [c]=ProjectColorMap(val, cVals,CMap)
+    nC = size(CMap,1);
+    pos=(val-min(cVals))/(max(cVals)-min(cVals))*(nC-1)+1;
+    
+    c = CMap(floor(pos),:)+(CMap(ceil(pos),:)-CMap(floor(pos),:))* ...
+        (pos-floor(pos));
+    
+end
+
+function []=CustomSpy(mat, ax, zfunc, cvalbounds)
+    if ~exist('ax', 'var') || isempty(ax)
+        h=figure();
+        ax = axes();
+    end
+    if ~exist('zfunc', 'var') || isempty(zfunc)
+        zfunc = @(x)  log10(abs(x));
+    end
+    
+    hold on
+    [i,j] = find(mat~=0);
+    nC = 50;
+    C = Viridis(nC);
+    cval = zfunc(mat(sub2ind(size(mat),i,j)));
+    if ~exist('cvalbounds', 'var') || isempty(cvalbounds)
+        cvalbounds = [min(cval),max(cval)];
+    end
+    cfunc = @(v) ProjectColorMap(v, cvalbounds,C);
+    for ii = 1:numel(i)
+        c = cfunc(cval(ii));
+        plot(ax, size(mat,2)-j(ii)+1, i(ii),'s','color',c,'MarkerFaceColor',c);
+    end
+    
+    axis([0 , size(mat,2)+1, 0 , size(mat,1)+1])
+end
+
 function [marker,t]=GenerateResultMarker(typDat,t)
     if nargin==1
         t=now;

@@ -217,7 +217,7 @@ function []=DerivativeOp()
     kk=1;
     areaDistrib=cell(1,numel(listYc));
     for ii=listYc
-        [~,areaDistrib{kk}]=NormalDistance([x,yfunc(x,ii,a)],[x,yfunc(x,ii+1e-5,a)]);
+        [~,areaDistrib{kk}]=NormalDistance([x,yfunc(x,ii,a)],[x,yfunc(x,ii+1e-8*(1+ii),a)]);
         kk=kk+1;
     end
     
@@ -261,6 +261,8 @@ function []=DerivativeOp()
         lineD(kk).DisplayName=num2str(ii,'%.1e');
         kk=kk+1;
     end
+    lineD(kk)=plot(x,(ypar(x,a)),'k--','DisplayName','1-x^2');kk=kk+1;
+    lineD(kk)=plot(x,yfunc(x,0,a),'k-.','DisplayName','y(x,0,1)');
     subplot(1,4,3), hold on;
     kk=1;
     for ii=listYc
@@ -296,10 +298,11 @@ function []=DerivativeOp()
     a=1;
     x=linspace(-a,a,101);
     yc=logspace(-3,1,50);
-    
+    return;
     [X,YC]=meshgrid(x,yc);
     
-    YVAL=yfunc(X,YC,a)./repmat(max((abs(YVAL)),[],2),[1 size(X,2)]);
+    YVAL=yfunc(X,YC,a);
+    YVAL = YVAL./repmat(max((abs(YVAL)),[],2),[1 size(X,2)]);
     normVector=yNorm(X,YC,a,dydyc,dydx);
     %norVal=yNorm2(X,YC,a);
     unitNormal=normVector./repmat(sqrt(sum(normVector.^2,3)),[1 1 3]);

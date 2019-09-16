@@ -246,14 +246,15 @@ end
 function [nurbpatch]=MatchNURBSpatchArea(nurbpatch)
     
     compAreaGS=@(a,P) -abs(ComputeArcArea(P(1:2),P(3:4),a)-P(5));
-    
+    kk = 0;
     b=[-1 1];
     bTest=[0 0];
     for ii=1:2
         bTest(ii)=ComputeArcArea(nurbpatch.coord(1:2),nurbpatch.coord(3:4),b(ii));
-        while sign(b(ii))*bTest(ii)<sign(b(ii))*nurbpatch.dvol
+        while sign(b(ii))*bTest(ii)<sign(b(ii))*nurbpatch.dvol && kk<10000
             b(ii)=b(ii)*2;
             bTest(ii)=ComputeArcArea(nurbpatch.coord(1:2),nurbpatch.coord(3:4),b(ii));
+            kk = kk+1;
         end
     end
     
@@ -401,7 +402,7 @@ function []=ComputeCircularNURBS()
     %plotPoints(pts,'s-');
     [C]=PlotNURBS(u,pts,knots,w,deg);
     
-    %plotPoints(C,'-')
+    plotPoints(C,'-')
     
     % circle from NURBS
     deg=2;
@@ -430,6 +431,90 @@ function []=ComputeCircularNURBS()
     plotPoints(C,'-')
     axis equal
     
+end
+
+function []=ComputeCircularNURBS2()
+    
+    
+    plotPoints= @(points,form) plot(points([1:end],1),points([1:end],2),form);
+    u=linspace(0,1,501);
+    % circle from NURBS
+%     deg=2;
+%     knots=[0 0 0 1/4 1/2 3/4 1 1 1 ];
+    ptsMin=[1 0.5; 1 0; 0 0; 0 1; 1 1; 1 0.5];
+%     tangency = [1 0.5; 0.5 0; 0 0.5 ; 0.5 1; 1 0.5];
+%     betaAngles = ones(1,5)*pi/4;
+%     [knots, w, ~]=ComputeMinimalNURBS_4arcs(betaAngles, pts, tangency);
+%     a=1/sqrt(2);
+% %     w=[1 a a a a 1]';
+%     [C]=PlotNURBS(u,ptsCtrl,knots,w,deg);
+
+
+    deg=2;
+    knots=[0 0 0 1/4 1/4 1/2 1/2 3/4 3/4 1 1 1 ];
+    pts=[ 1 0.5; 1 0; 0.5 0 ; 0 0; 0 0.5 ; 0 1; 0.5 1 ; 1 1; 1 0.5];
+    a=1/sqrt(2);
+    w=[1 a 1 a 1 a 1 a 1]';
+    [C]=PlotNURBS(u,pts,knots,w,deg);
+
+    figure,
+    subplot(1,2,1)
+    hold on
+    plotPoints(ptsMin,'s-');
+
+    plotPoints(C,'-')
+    
+    % circle from NURBS
+    deg=2;
+    knots=[0 0 0 1/4 1/4 1/2 1/2 3/4 3/4 1 1 1 ];
+    pts=[ 1 0.5; 1 0; 0.5 0 ; 0 0; 0 0.5 ; 0 1; 0.5 1 ; 1 1; 1 0.5];
+    a=1/sqrt(2);
+    w=[1 a 1 a 1 a 1 a 1]';
+    [C]=PlotNURBS(u,pts,knots,w,deg);
+
+    subplot(1,2,2)
+    hold on
+    plotPoints(pts,'s-');
+    plotPoints(C,'-')
+    
+end
+
+function [t, w, ctrl]=ComputeMinimalNURBS_4arcs(beta, c, tangency)
+    c
+    tangency
+    w = zeros([1,5]);
+    t = zeros([1,8]);
+    % bi control points, (1->L) (includign endpoints)
+    % beta (1->L)
+    % di the tangency points (0->L)
+    m = zeros([1,size(c,1)-1]); % what is
+    beta = [beta]
+    normVec = @(v) sqrt(sum(v.^2,2));
+    for ii = 2:size(c,1)-1 % (1->L-1)
+        m(ii) = normVec(c(ii,:)-tangency(ii,:))/normVec(c(ii+1,:)-tangency(ii,:));
+    end
+    for ii = 3:size(c,1)-1 % 2->L-1
+        n(ii) = m(ii-1)/((1+m(ii-1))*(1+m(ii))*cos(beta(ii))^2);
+    end
+    m
+    n
+    m(1)=[]
+    n(1)=[]
+%     beta(1)=[]
+    t(3) = 1;
+    t(6:8) = 4;
+    t(4)= ((1-n(3))*t(3)*t(6))/((1-n(3))*t(3)+n(2)*(t(6)-t(3)));
+    t(5)=((1-n(2)))*((1-n(3)))*t(3)*t(6)/((1-n(3)-n(2))*t(3)+n(2)*n(3)*t(6));
+    
+    w(1) = (t(4)-t(3))*(1+m(1))/t(4)*cos(beta(1))^2;
+    for ii = 1:3
+        w(1+ii) = (t(ii+3)-t(ii+2))/(t(ii+2)-t(ii+1))*m(ii)*w(ii);
+    end
+    w(5) = (t(6)-t(4))/(t(5)-t(6))*m(3)*w(4)/(1+m(3))/cos(beta(4))^2;
+    
+    t = [0,t];
+    w = [1,w];
+    ctrl = [tangency(1,:);c;tangency(end,:)];
 end
 
 function [C]=PlotNURBS(u,pts,knots,w,deg)
