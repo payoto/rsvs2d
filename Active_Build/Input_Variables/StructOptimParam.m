@@ -4221,10 +4221,13 @@ function paroptim=bulkOtherInvDes()
     paroptim.spline.resampleSnak=false;
     
 end
+
 function paroptim=bulkNacaInvDes2()
     [paroptim]=Inverse_Bulk();
     
-    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk2');
+    paroptim=ModifySnakesParam(paroptim,'optimInverseDesign_bulk');
+    paroptim.parametrisation.optiminit.cellLevels=[18 4];
+    paroptim.parametrisation.snakes.refine.gridDistrib='none';
     paroptim.obj.invdes.aeroName='';
     %paroptim.optim.CG.varActive='all';
     paroptim.general.startPop='NACAmulti';
