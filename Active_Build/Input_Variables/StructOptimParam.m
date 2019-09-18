@@ -4328,6 +4328,8 @@ function paroptim = BulkInvDesRefine(paroptim)
     domainBounds(1,:)=domainBounds(1,:)+ratioChord;
     paroptim.parametrisation.general.passDomBounds=domainBounds;
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
+    
+    [paroptim]=ChooseNworkerFlow(paroptim);
 end
 
 %% Full Aero Optimisations
