@@ -4306,11 +4306,13 @@ end
 function [paroptim]=bulkNacaInvDesRefinement()
     
     paroptim=bulkNacaInvDes2();
-    
     paroptim = BulkInvDesRefine(paroptim);
 end
 
 function paroptim = BulkInvDesRefine(paroptim)
+    paroptim.parametrisation.optiminit.cellLevels=[9, 2];
+    paroptim.parametrisation.optiminit.defaultCorner = 2.7815e-06;
+
     [paroptim]=AdaptiveRefinement(paroptim);
     paroptim.general.optimMethod='none';
     paroptim.refine.refineIter=1;
@@ -4329,6 +4331,7 @@ function paroptim = BulkInvDesRefine(paroptim)
     paroptim.parametrisation.general.passDomBounds=domainBounds;
     paroptim.initparam=DefaultSnakeInit(paroptim.parametrisation);
     
+    paroptim.obj.invdes.profileComp='distance'; % 'distance' or 'area'
     [paroptim]=ChooseNworkerFlow(paroptim);
 end
 

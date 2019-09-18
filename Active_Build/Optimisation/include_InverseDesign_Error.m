@@ -229,6 +229,7 @@ function [errorMeasure,modifiedDistance]=CompareProfilesDistance(profileCoord,ta
     
     multipliers=ones(size(targCoord(:,1)));
     multipliers(targCoord(:,1)<0.2*max(targCoord(:,1)))=2;
+    multipliers(targCoord(:,1)>1)=0;
     
     modifiedDistance=sqrt(sum((profileCoord-targCoord).^2,2)).*multipliers;
     
