@@ -4196,7 +4196,7 @@ function paroptim=bulkNacaInvDes()
     end
     initInterp=initInterp([1:2,50,59]);
     %initInterp={'0012','4412','1108'};
-    initInterp={'0012','4412','1108', '2315'};
+    initInterp={'0012','4412'};%,'1108', '2315'};
     paroptim.general.initInterp=initInterp;
     paroptim.general.nPop=12;
     paroptim.general.maxIter=1;

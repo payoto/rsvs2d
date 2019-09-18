@@ -25,7 +25,7 @@ function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim
     [aeroClass,aeroName,profileComp]=ExtractVariables(varExtract,paramoptim);
     varExtract={'typeLoop'};
     [typeLoop]=ExtractVariables(varExtract,paramoptim.parametrisation);
-    profileComp='distancenorm';
+    %profileComp='distancenorm';
     [analysisCoord,upperLower,targPrep]=PrepareLoopCoord(loop,profileComp,typeLoop);
     
     switch aeroClass
@@ -51,6 +51,7 @@ function [errorMeasure,h,targCoord,analysisCoord]=InverseDesign_Error(paramoptim
             ax=subplot(2,1,2);
             plot(analysisCoord(:,1),modifiedDistance)
             ax.YScale='log';
+
         case 'area'
             
             [errorMeasure,modifiedDistance]=CompareProfilesArea(analysisCoord,targCoord);
@@ -229,7 +230,7 @@ function [errorMeasure,modifiedDistance]=CompareProfilesDistance(profileCoord,ta
     
     multipliers=ones(size(targCoord(:,1)));
     multipliers(targCoord(:,1)<0.2*max(targCoord(:,1)))=2;
-    multipliers(targCoord(:,1)>1)=0;
+%     multipliers(profileCoord(:,1)>1)=0;
     
     modifiedDistance=sqrt(sum((profileCoord-targCoord).^2,2)).*multipliers;
     
