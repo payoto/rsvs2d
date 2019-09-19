@@ -710,18 +710,22 @@ function [nonBreedVertPersist]=SetNonBreedVerticesPersistent(param,refinedGrid)
     varExtract={'pinnedVertex'};
     [pinnedVertex]=ExtractVariables(varExtract,param);
     nonBreedVertPersist=[];
-    
+    iNonBreed = [];
     switch pinnedVertex
         case 'none'
-            nonBreedVertPersist=[];
             
         case 'LETE'
             coord=vertcat(refinedGrid.vertex(:).coord);
             [~,iLE]=min(normVec(coord,[0 0]));
             [~,iTE]=min(normVec(coord,[1 0]));
-            nonBreedVertPersist=[refinedGrid.vertex(iLE).index,refinedGrid.vertex(iTE).index];
+            iNonBreed = [iLE, iTE];
+        case 'TE'
+            coord=vertcat(refinedGrid.vertex(:).coord);
+            [~,iTE]=min(normVec(coord,[1 0]));
+            iNonBreed = [iTE];
+            
     end
-    
+    nonBreedVertPersist = [refinedGrid.vertex(iNonBreed).index];
     nonBreedVertPersist=unique(nonBreedVertPersist);
 end
 
