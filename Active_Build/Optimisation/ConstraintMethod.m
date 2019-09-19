@@ -169,14 +169,16 @@ function [paramoptim]=LocalConstraintExtraction_Profile(paramoptim,constrVal,gri
     [cellLevels,axisRatio]=ExtractVariables(varExtract(1:2),paramoptim.parametrisation);
     [desVarConstr,desVarVal]=ExtractVariables(varExtract(3:4),paramoptim);
     
+    constrPath = MakePathCompliant(constrVal{1});
     switch constrVal{1}(end-2:end)
         case 'dat'
-            [loop]=BoundaryInput(constrVal{1});
+            MakePathCompliant()
+            [loop]=BoundaryInput(constrPath);
         case 'mat'
-            instruct=load(constrVal{1});
+            instruct=load(constrPath);
             loop=instruct.loop;
         case 'prf'
-            [loop]=LocalConstraintBuilder(constrVal{1}(1:end-3));
+            [loop]=LocalConstraintBuilder(constrPath(1:end-3));
         otherwise
             error('Unrecognised constraint format ')
             
