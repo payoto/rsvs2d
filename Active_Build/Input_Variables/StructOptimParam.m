@@ -4311,7 +4311,8 @@ end
 
 function paroptim = BulkInvDesRefine(paroptim)
     paroptim.parametrisation.optiminit.cellLevels=[9, 2];
-    paroptim.parametrisation.optiminit.defaultCorner = 2.7815e-06;
+    paroptim.parametrisation.optiminit.defaultCorner = 2.6942e-06;
+    paroptim.parametrisation.optiminit.corneractive = true;
 
     [paroptim]=AdaptiveRefinement(paroptim);
     paroptim.general.optimMethod='none';
@@ -4333,6 +4334,10 @@ function paroptim = BulkInvDesRefine(paroptim)
     
     paroptim.obj.invdes.profileComp='distance'; % 'distance' or 'area'
     [paroptim]=ChooseNworkerFlow(paroptim);
+    
+    
+    paroptim.constraint.initConstr={'LocalVolFrac_loop'};
+    paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\TE_constr.mat','min'}};
 end
 
 %% Full Aero Optimisations
