@@ -4198,9 +4198,11 @@ end
 function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(baseGrid,oldGrid,...
         paramoptim,iterstruct,refStep)
     
-    varNames={'refinePattern','refineOptim','refineOptimPopRatio','direction','desVarVal','desVarConstr'};
+    varNames={'refinePattern','refineOptim','refineOptimPopRatio',...
+        'direction','desVarVal','desVarConstr',...
+        'initConstr','initVal'};
     [refinePattern,refineOptim,refineOptimPopRatio,direction,desVarVal,...
-        desVarConstr]=ExtractVariables(varNames,paramoptim);
+        desVarConstr,initConstr,initVal]=ExtractVariables(varNames,paramoptim);
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
         {oldGrid.connec.cell(:).new},...
@@ -4210,8 +4212,15 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
     % Do not refine any cell which is subject to a local constraint
     actSub=find(logical([baseGrid.cell(:).isactive]));
     listLocConstr=find(~cellfun(@isempty,regexp(desVarConstr,'LocalVolFrac_')));
+    listInitConstr=find(~cellfun(@isempty,regexp(initConstr,'LocalVolFrac_')));
     for ii=listLocConstr
-        [baseGrid.cell(actSub(desVarVal{ii}{1})).isrefine]=deal(false);
+        isLoop = false;
+        for jj = listInitConstr
+            isLoop = isLoop || strcmp(initVal{jj}{1}, desVarVal{ii}{3});
+        end
+        if ~isLoop
+            [baseGrid.cell(actSub(desVarVal{ii}{1})).isrefine]=deal(false);
+        end
     end
     
     % implement different refinement patterns
