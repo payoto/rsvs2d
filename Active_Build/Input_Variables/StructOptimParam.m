@@ -4334,7 +4334,7 @@ function paroptim = BulkInvDesRefine(paroptim)
     
     paroptim.obj.invdes.profileComp='distance'; % 'distance' or 'area'
     [paroptim]=ChooseNworkerFlow(paroptim);
-    
+    paroptim.parametrisation.snakes.refine.refineGrid=[4 4];
     
     paroptim.constraint.initConstr={'LocalVolFrac_loop'};
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\TE_constr.mat','min'}};
