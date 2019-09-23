@@ -123,6 +123,8 @@ function [paroptimrefine]=DefaultOptimRefine()
     paroptimrefine.refineOptimPopRatio=0.75; % allows the rejection of outlier in the final population.
     paroptimrefine.slopeConv=0.2; % ratio of converged slope to maximum slope.
     paroptimrefine.reInitialiseRefine = false; % Reinitialise the population on refinement?
+    paroptimrefine.snakingRefineType = 'constant'; % constant, directional
+    paroptimrefine.snakingRefineDirection = [4 4; 1 4; 4 1; 4 4]; %[default 0 , vert 1 , horiz 2, uniform 3]
 end
 
 function [paroptimDE]=DefaultOptimDE()
@@ -4338,6 +4340,8 @@ function paroptim = BulkInvDesRefine(paroptim)
     
     paroptim.constraint.initConstr={'LocalVolFrac_loop'};
     paroptim.constraint.initVal={{'.\Active_Build\ConstraintFiles\TE_constr.mat','min'}};
+
+    paroptim.refine.snakingRefineType = 'directional';
 end
 
 %% Full Aero Optimisations

@@ -1300,6 +1300,54 @@ function [unstructured,unstructReshape,gridrefined,connectstructinfo,...
     
 end
 
+function  [unstructured,baseGrid,gridrefined,fullconnect,...
+        unstructuredRefined,loop] =GridRefineMultiLevel(baseGrid,...
+        paramoptim, refSubSteps,refCellLevels,refineList)
+    
+    gridrefined=baseGrid;
+    nRefSubSteps = numel(refSubSteps);
+    for ii=1:nRefSubSteps
+        refparamsnake=SetVariables({'refineGrid','typeRefine'},...
+            {refCellLevels(refSubSteps(ii),:),'automatic'},...
+            paramoptim.parametrisation);
+        cellSub=FindObjNum([],refineList(1,:),[gridrefined.cell(:).index]);
+        [gridrefined.cell(:).isrefine]=deal(false);
+        for jj=1:numel(cellSub)
+            gridrefined.cell(cellSub(jj)).isrefine=refineList(2,jj)==refSubSteps(ii);
+            if gridrefined.cell(cellSub(jj)).isrefine
+                gridrefined.cell(cellSub(jj)).snakref = refSubSteps(ii);
+            end
+        end
+        [~,newbaseGrid{ii},gridrefinedcell{ii},connectstructinfo{ii},~,loop]...
+            =GridInitAndRefine(refparamsnake,gridrefined); %#ok<AGROW,ASGLU>
+        gridrefined=gridrefinedcell{ii};
+    end
+    %     for ii=1:numel(oldGrid.base.cell)
+    %         oldGrid.base.cell(ii).isrefine=refineList(2,ii);
+    %     end
+    fullconnect=connectstructinfo{1};
+    for ii=2:nRefSubSteps
+        % Build connection information
+        cellSub1=FindObjNum([],refineList(1,find(refineList(2,:)==refSubSteps(ii))),...
+            [fullconnect.cell(:).old]);
+        cellSub2=FindObjNum([],refineList(1,find(refineList(2,:)==refSubSteps(ii))),...
+            [connectstructinfo{ii}.cell(:).old]);
+        [fullconnect.cell(cellSub1).new]=...
+            deal(connectstructinfo{ii}.cell(cellSub2).new);
+    end
+    for ii=2:nRefSubSteps
+        % Build the correct refinement vectors
+        currActiveSub=find(FindObjNum([],[gridrefinedcell{ii}.cell(:).index],...
+            [newbaseGrid{ii}.cell(:).index])==0)';
+        currActiveSub=sort([currActiveSub,find(refineList(2,:)==refSubSteps(ii))]);
+        [gridrefined.cell(currActiveSub).refineVec]=...
+            deal(gridrefinedcell{ii}.cell(currActiveSub).refineVec);
+    end
+    
+    unstructured = ModifReshape(baseGrid);
+    unstructuredRefined = ModifReshape(gridrefined);
+end
+
 function [newGrid,newRefGrid,newRestart]=ReFillGrids(baseGrid,refinedGrid,...
         restartsnake,connectstructinfo,newFill)
     
@@ -2911,8 +2959,22 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     newgrid.connec=connectstructinfo;
     newgrid.cellrefined=CellCentreGridInformation(gridrefined);
     
-    [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
-        =GridInitAndRefine(paramoptim.parametrisation,gridrefined);
+    snakingRefineType = ExtractVariables({'snakingRefineType'},paramoptim);
+    switch snakingRefineType
+        case 'constant'
+            [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
+                =GridInitAndRefine(paramoptim.parametrisation,gridrefined);
+            varNames={'refineGrid'};
+            refineGrid=ExtractVariables(varNames,paramoptim.parametrisation);
+            if numel(refineGrid)==1; refineGrid=ones(1,2)*refineGrid;end
+        case 'directional'
+            [unstrGrid,baseGrid,gridrefined,connectstructinfo,unstrRef,loop]...
+                = DirectionalSnakingGrid(paramoptim,gridrefined);
+            varNames={'snakingRefineDirection'};
+            refineGrid=ExtractVariables(varNames,paramoptim);
+        otherwise
+            error('refine:invalidparameter','Unknown "snakingRefineType" %s',snakingRefineType);
+    end
     
     % Update some parameters
     
@@ -2929,9 +2991,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
         paramoptim);
     
     % Update Fill Information to match snake
-    varNames={'refineGrid'};
-    refineGrid=ExtractVariables(varNames,paramoptim.parametrisation);
-    if numel(refineGrid)==1; refineGrid=ones(1,2)*refineGrid;end
+    
     [gridmatch,~]=GridMatching(oldGrid,newgrid,refineGrid,refCellLevels);
     
     % Fill follows the order of activeCells
@@ -4242,41 +4302,18 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
     
     % Need to add here the additional refinement options
     
-    gridrefined=baseGrid;
-    for ii=1:refSubSteps
-        refparamsnake=SetVariables({'refineGrid','typeRefine'},...
-            {refCellLevels(ii,:),'automatic'},...
-            paramoptim.parametrisation);
-        cellSub=FindObjNum([],refineList(1,:),[gridrefined.cell(:).index]);
-        [gridrefined.cell(:).isrefine]=deal(false);
-        for jj=1:numel(cellSub)
-            gridrefined.cell(cellSub(jj)).isrefine=refineList(2,jj)==ii;
-        end
-        [~,newbaseGrid{ii},gridrefinedcell{ii},connectstructinfo{ii},~,~]...
-            =GridInitAndRefine(refparamsnake,gridrefined); %#ok<AGROW,ASGLU>
-        gridrefined=gridrefinedcell{ii};
-    end
+    [~,~, gridrefined,fullconnect,~, ~] =GridRefineMultiLevel(baseGrid,paramoptim,...
+        refSubSteps,refCellLevels,refineList);
+    
     for ii=1:numel(oldGrid.base.cell)
         oldGrid.base.cell(ii).isrefine=refineList(2,ii);
     end
-    fullconnect=connectstructinfo{1};
-    for ii=2:refSubSteps
-        % Build connection information
-        cellSub1=FindObjNum([],refineList(1,find(refineList(2,:)==ii)),...
-            [fullconnect.cell(:).old]);
-        cellSub2=FindObjNum([],refineList(1,find(refineList(2,:)==ii)),...
-            [connectstructinfo{ii}.cell(:).old]);
-        [fullconnect.cell(cellSub1).new]=...
-            deal(connectstructinfo{ii}.cell(cellSub2).new);
+    for ii=1:numel(oldGrid.base.cell)
+        if refineList(2,ii)~=0
+            oldGrid.base.cell(ii).snakref=refineList(2,ii);
+        end
     end
-    for ii=1:refSubSteps
-        % Build the correct refinement vectors
-        currActiveSub=find(FindObjNum([],[gridrefinedcell{ii}.cell(:).index],...
-            [newbaseGrid{ii}.cell(:).index])==0)';
-        currActiveSub=sort([currActiveSub,find(refineList(2,:)==ii)]);
-        [gridrefined.cell(currActiveSub).refineVec]=...
-            deal(gridrefinedcell{ii}.cell(currActiveSub).refineVec);
-    end
+    
 end
 
 function [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,...
@@ -4296,14 +4333,14 @@ function [refineList,refCellLevels,refSubSteps]=Refinement_edgecross(baseGrid,..
     cellGrad=(cellGrad'*[1;2])';
     
     refineList(2,find(refineList(2,:)))=cellGrad(find(refineList(2,:)));
-    refSubSteps=3;
+    refSubSteps=1:3;
     refCellLevels=[1 2;2 1;2 2];
     actLevels=unique(refineList(2,:));
     actLevels(actLevels==0)=[];
-    refineList(2,:)=reshape(FindObjNum([],refineList(2,:),actLevels),...
-        [1 size(refineList,2)]);
-    refSubSteps=numel(actLevels);
-    refCellLevels=refCellLevels(actLevels,:);
+    %     refineList(2,:)=reshape(FindObjNum([],refineList(2,:),actLevels),...
+    %        [1 size(refineList,2)]);
+    refSubSteps=reshape(actLevels,[1 numel(actLevels)]);
+    %     refCellLevels=refCellLevels(actLevels,:);
     
 end
 
@@ -4334,6 +4371,24 @@ function [cellEdgeLog]=CrossedEdgeRefinementOrientation(connec,snaxel,...
         cellEdgeLog(:,ii)=cellEdgeLog(:,ii) | any(cellEdgeOrient(:,ii)>3);
     end
 end
+
+% Directional Snaking grid
+
+function [unstructured,baseGrid,gridrefined,fullconnect,unstructuredRefined,loop]...
+        = DirectionalSnakingGrid(paramoptim,baseGrid)
+    snakingRefineDirection = ExtractVariables({'snakingRefineDirection'},paramoptim);
+    
+    refCellLevels = snakingRefineDirection;
+    refineList = [[baseGrid.cell.index];[baseGrid.cell.snakref]+1];
+    refSubSteps = unique(refineList(2,:));
+    refSubSteps = reshape(refSubSteps,[1 numel(refSubSteps)]);
+    
+    [unstructured,baseGrid,gridrefined,fullconnect,...
+        unstructuredRefined,loop] =GridRefineMultiLevel(baseGrid,...
+        paramoptim, refSubSteps,refCellLevels,refineList);
+    
+end
+
 %% Test Function
 
 function []=OptimisationDebug(caseStr,debugArgIn)

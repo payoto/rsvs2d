@@ -434,6 +434,7 @@ function [unstructured]=Initialisation_Square(param)
     for ii=1:length(unstructReshape.cell)
         unstructReshape.cell(ii).fill=parametrisation.fill(ii);
         unstructReshape.cell(ii).isactive=parametrisation.isactive(ii);
+        unstructReshape.cell(ii).snakref=0;
     end
     
     for ii=1:length(unstructReshape.edge)

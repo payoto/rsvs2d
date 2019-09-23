@@ -83,17 +83,25 @@ function [gridrefined,connecstructinfo]=RefineGrid(gridreshape,nRefine,typeRefin
     kk=1;
     for ii=1:numel(gridreshape.cell)
         connecstructinfo.cell(ii).old=gridreshape.cell(ii).index;
-        if gridreshape.cell(ii).index==connecstructinfoCell(kk).old;
+        if gridreshape.cell(ii).index==connecstructinfoCell(kk).old
             connecstructinfo.cell(ii).new=connecstructinfoCell(kk).new;
             kk=kk+1;
             kk=min(kk,numel(connecstructinfoCell));
         else
-        connecstructinfo.cell(ii).new=gridreshape.cell(ii).index;
+            connecstructinfo.cell(ii).new=gridreshape.cell(ii).index;
         end
     end
     
     for ii=1:numel(gridrefined.cell)
         gridrefined.cell(ii).refineVec(gridrefined.cell(ii).refineVec==0)=1;
+    end
+    newCellInd = [gridrefined.cell.index];
+    if isfield(gridreshape.cell,'snakref')
+        for ii = 1:numel(gridreshape.cell)
+            [gridrefined.cell(...
+                FindObjNum([],connecstructinfo.cell(ii).new,newCellInd)...
+                ).snakref]=deal(gridreshape.cell(ii).snakref);
+        end
     end
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
@@ -142,6 +150,7 @@ function [cellRefine,cellRefinePos]=IdentifyRefineCell(gridreshape,typeRefine)
             cellRefineLog=logical([gridreshape.cell(:).isrefine]);
             cellRefine=[gridreshape.cell(cellRefineLog).index];
             cellRefinePos=find(cellRefineLog);
+
         otherwise 
             error('Unsupported refinement type')
     end

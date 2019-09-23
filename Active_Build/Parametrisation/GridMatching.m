@@ -19,34 +19,40 @@ function [gridmatch,grids]=GridMatching(origGrid,newGrid,refineOrig,refineNew)
     gridmatch.matchstruct=repmat(struct('newGridInd',[],'newvolume',[],'oldGridInd',[],...
         'oldvolume',[],'coeff',[]),[1 numel(newGrid.refined.cell)]);
     isRefineCell=[origGrid.base.cell(:).isrefine];
+    isSnakRefCell=[origGrid.base.cell(:).snakref]+1;
     
     [origGrid.base.cell(:).isrefine]=deal(false);
     gridmatch.matchstruct=PopulateMatchStruct(origGrid,newGrid,...
         gridmatch.matchstruct,[],true);
-    for ii=1:size(refineNew,1)
-        gridmatch.dat(ii).coeffs=BuildCellMatchTemplate(refineNew(ii,:),refineOrig);
-        gridmatch.dat(ii).origbreak=refineOrig;
-        gridmatch.dat(ii).newbreak=refineNew(ii,:);
-        for jj=1:numel(origGrid.base.cell)
-            origGrid.base.cell(jj).isrefine=isRefineCell(jj)==ii;
-            newGrid.base.cell(jj).isrefine=isRefineCell(jj)==ii;
+    for kk = 1:size(refineOrig,1)
+        for ii=1:size(refineNew,1)
+            [gridmatch.dat(ii,kk).coeffs,gridmatch.dat(ii,kk).warn]=...
+                BuildCellMatchTemplate(refineNew(ii,:),refineOrig(kk,:));
+            gridmatch.dat(ii,kk).origbreak=refineOrig(kk,:);
+            gridmatch.dat(ii,kk).newbreak=refineNew(ii,:);
+            for jj=1:numel(origGrid.base.cell)
+                origGrid.base.cell(jj).isrefine=isRefineCell(jj)==ii && isSnakRefCell(jj)==kk;
+                newGrid.base.cell(jj).isrefine=isRefineCell(jj)==ii && isSnakRefCell(jj)==kk;
+            end
+            gridmatch.matchstruct=PopulateMatchStruct(origGrid,newGrid,...
+                gridmatch.matchstruct,gridmatch.dat(ii,kk),false);
         end
-        gridmatch.matchstruct=PopulateMatchStruct(origGrid,newGrid,...
-            gridmatch.matchstruct,gridmatch.dat(ii).coeffs,false);
     end
     
     grids=struct('origin',origGrid,'new',newGrid,'match',gridmatch);
 end
 
-function [coeffs]=BuildCellMatchTemplate(newSize,oldSize)
+function [coeffs,isWarn]=BuildCellMatchTemplate(newSize,oldSize)
     % Accepts the split levels for each level
-    
+    isWarn = 0;
     % perform checks
     if any(newSize>oldSize),
-        warning('New Mesh is finer than old refined mesh, Data will not pass well')
+%         warning('New Mesh is finer than old refined mesh, Data will not pass well')
+        isWarn = 1;
     end
     if any(mod(oldSize,newSize)),
-        warning('Meshes do not match exactly data transfer will be approximate')
+%         warning('Meshes do not match exactly data transfer will be approximate')
+        isWarn = 2;
     end
     
     for ii=1:2
@@ -86,7 +92,7 @@ function [coeffs]=FindRatios(sN,sO)
     
 end
 
-function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs,isPreparation)
+function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,matchcoeffs,isPreparation)
     
     
     oldIndsNewOrd=cell2mat(cellfun(@(new,old)old*ones([1,numel(new)]),...
@@ -99,7 +105,7 @@ function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs,i
     newIndsNewOrd=[newGrid.connec.cell(:).new];
     newSubGridOrd=FindObjNum([],[newGrid.cellrefined(:).index],newIndsNewOrd);
     oldIndRef=[origGrid.cellrefined(:).index];
-    
+    warn = 0;
     for ii=1:numel(newGrid.cellrefined)
         
         oldCoarseSub=FindObjNum([],origGrid.connec.cell(oldSubsNewOrd(newSubGridOrd(ii))).old,oldCoarseInds);
@@ -116,8 +122,9 @@ function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs,i
             [~,ordOldCell]=sort(oldRefVec(:,end));
             
             matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(ordOldCell);
-            matchstruct(ii).coeff=coeffs(newGrid.cellrefined(ii).refineVec(end),:);
+            matchstruct(ii).coeff=matchcoeffs.coeffs(newGrid.cellrefined(ii).refineVec(end),:);
             
+            warn = matchcoeffs.warn;
             isact=matchstruct(ii).coeff~=0;
             matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(isact);
             matchstruct(ii).coeff=matchstruct(ii).coeff(isact);
@@ -138,7 +145,12 @@ function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,coeffs,i
         %         end
     end
     
-    
+    if warn==1
+        warning('New Mesh is finer than old refined mesh, Data will not pass well')
+
+    elseif warn==2
+        warning('Meshes do not match exactly data transfer will be approximate')
+    end
     
 end
 
