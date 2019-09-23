@@ -126,7 +126,14 @@ function [matchstruct]=PopulateMatchStruct(origGrid,newGrid,matchstruct,matchcoe
             
             warn = matchcoeffs.warn;
             isact=matchstruct(ii).coeff~=0;
-            matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(isact);
+            try
+                matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(isact);
+            catch ME
+                ii
+                matchstruct(ii).oldGridInd
+                isact
+                matchstruct(ii).oldGridInd=matchstruct(ii).oldGridInd(isact);
+            end
             matchstruct(ii).coeff=matchstruct(ii).coeff(isact);
             matchstruct(ii).oldvolume=[origGrid.cellrefined(oldCellSub(ordOldCell(isact))).volume];
         elseif isPreparation
