@@ -4308,7 +4308,7 @@ function [gridrefined,fullconnect,oldGrid,newGrid,refCellLevels]=AnisotropicRefi
     
     newGrid.base=oldGrid.base;
     newGrid.refined=gridrefined;
-    newGrid.connec=connectstructinfo;
+    newGrid.connec=fullconnect;
     newGrid.cellrefined=CellCentreGridInformation(gridrefined);
     
     for ii=1:numel(newGrid.base.cell)
