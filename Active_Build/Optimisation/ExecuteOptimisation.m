@@ -11,7 +11,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%{
+% %{
 function [] = ExecuteOptimisation()
     %FUNCTIONLIST allows local functions to be used globally once it has
     %been used.
@@ -21,9 +21,9 @@ function [] = ExecuteOptimisation()
     HeaderActivation(funcHandles,funcDir)
     
 end
-%}
+% %}
 
-function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
+function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,...
         debugArgIn)
     %close all
     clc
@@ -2945,7 +2945,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     refinementStruct.param=paramoptim;
     oldGrid=SelectRefinementCells(iterstruct(end).population,oldGrid,paramoptim);
     
-    [gridrefined,connectstructinfo,oldGrid,refCellLevels]=AnisotropicRefinement...
+    [gridrefined,connectstructinfo,oldGrid,newgrid,refCellLevels]=AnisotropicRefinement...
         (oldGrid.base,oldGrid,paramoptim,iterstruct,refStep);
     refinementStruct.connecdesvar=connectstructinfo;
     %     [~,baseGrid,gridrefined,connectstructinfo,~,~]...
@@ -2954,10 +2954,7 @@ function [paramoptim,outinfo,iterstruct,unstrGrid,baseGrid,gridrefined,...
     
     defaultFillRefMat=BuildDefaultFillRef(oldGrid,gridrefined,connectstructinfo);
     
-    newgrid.base=oldGrid.base;
-    newgrid.refined=gridrefined;
-    newgrid.connec=connectstructinfo;
-    newgrid.cellrefined=CellCentreGridInformation(gridrefined);
+   
     
     snakingRefineType = ExtractVariables({'snakingRefineType'},paramoptim);
     switch snakingRefineType
@@ -4255,7 +4252,7 @@ end
 
 %% Cell Refinement Orientation
 
-function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(baseGrid,oldGrid,...
+function [gridrefined,fullconnect,oldGrid,newGrid,refCellLevels]=AnisotropicRefinement(baseGrid,oldGrid,...
         paramoptim,iterstruct,refStep)
     
     varNames={'refinePattern','refineOptim','refineOptimPopRatio',...
@@ -4308,9 +4305,15 @@ function [gridrefined,fullconnect,oldGrid,refCellLevels]=AnisotropicRefinement(b
     for ii=1:numel(oldGrid.base.cell)
         oldGrid.base.cell(ii).isrefine=refineList(2,ii);
     end
-    for ii=1:numel(oldGrid.base.cell)
+    
+    newGrid.base=oldGrid.base;
+    newGrid.refined=gridrefined;
+    newGrid.connec=connectstructinfo;
+    newGrid.cellrefined=CellCentreGridInformation(gridrefined);
+    
+    for ii=1:numel(newGrid.base.cell)
         if refineList(2,ii)~=0
-            oldGrid.base.cell(ii).snakref=refineList(2,ii);
+            newGrid.base.cell(ii).snakref=refineList(2,ii);
         end
     end
     
