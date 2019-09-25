@@ -67,7 +67,12 @@ function []=WriteContainerFunctionFile(funcName,funcDir,callerName)
     funcText{1}=['function [varargout]=',funcName,'(varargin)'];
     funcText{end+1}=['%% ',callerName];
     funcText{end+1}=['global ',funcName,'_Handle'];
+    funcText{end+1}=['try'];
     funcText{end+1}=['nOut=nargout(',funcName,'_Handle',');'];
+    funcText{end+1}=['catch'];
+    funcText{end+1}=[callerName];
+    funcText{end+1}=['nOut=nargout(',funcName,'_Handle',');'];
+    funcText{end+1}=['end'];
     funcText{end+1}=['nOutReq=nargout;'];
     funcText{end+1}=['nOut(nOut<0)=nOutReq;'];
     funcText{end+1}=['[varargout{1:nOut}]=',funcName,'_Handle','(varargin{:});'];

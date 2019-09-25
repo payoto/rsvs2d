@@ -376,6 +376,8 @@ function [errorMeasure,areaDistrib]=CompareProfilesDistance2(profileCoord,targCo
         end
     end
     
+    vDist(profileCoord(:,1)<0.2)=vDist(profileCoord(:,1)<0.2)*2;
+    vDist(profileCoord(:,1)>1)=vDist(profileCoord(:,1)>1)*0;
     
     errorMeasure.sum=sum(vDist);
     errorMeasure.mean=mean(vDist);
