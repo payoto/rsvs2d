@@ -23,7 +23,7 @@ function [] = ExecuteOptimisation()
 end
 %}
 
-function [iterstruct,outinfo]=ExecuteOptimisation2(caseStr,restartFromPop,...
+function [iterstruct,outinfo]=ExecuteOptimisation(caseStr,restartFromPop,...
         debugArgIn)
     %close all
     clc
@@ -1836,6 +1836,7 @@ function [nonfillPop]=InitialiseNonFillPop(paramoptim,nPop)
             end
         end
     end
+    nonfillPop = (nonfillPop * (desVarRangeNoFill(2)-desVarRangeNoFill(1))) + desVarRangeNoFill(1);
 end
 
 function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)

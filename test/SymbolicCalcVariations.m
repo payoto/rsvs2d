@@ -151,7 +151,7 @@ function []=DerivativeOp()
     % This shows that as yc tends to infinity (ie that the profile tends to a
     % straight line the profile tends to a parabola)
     
-    dydyc=@(yc,x,a) (sqrt(4*a^2/yc^2-4*x.^2/yc^2+1)-1)./(sqrt(4*a^2/yc^2-4*x.^2/yc^2+1)*2);
+    dydyc=@(yc,x,a) (sqrt(a^2/yc^2-x.^2/yc^2+1)-1)./(sqrt(a^2/yc^2-x.^2/yc^2+1));
     ypar=@(x,a) -(x+a).*(x-a);
     a=1;
     x=linspace(-a,a,501);
@@ -186,12 +186,12 @@ function []=DerivativeOp()
     
     %% Calculating the differences in the coordinate reference frame of the profile locally
     
-    yfunc=@(x,yc,a) -(yc-sqrt(yc^2-4*(x.^2-a^2)))/2;
-    dydyc=@(x,yc,a) -(yc~=0)*(sqrt(4*a^2-4*x.^2+yc.^2)-yc)./(sqrt(4*a^2-4*x.^2+yc.^2)*2+(yc==0))-0.5*(yc==0);
-    dydx=@(x,yc,a) -2*x./(sqrt(yc.^2-4*(x.^2-a^2)));
+    yfunc=@(x,yc,a) -(yc-sqrt(yc^2-(x.^2-a^2)));
+    dydyc=@(x,yc,a) -(yc~=0)*(sqrt(a^2-x.^2+yc.^2)-yc)./(sqrt(a^2-x.^2+yc.^2)+(yc==0))-0.5*(yc==0);
+    dydx=@(x,yc,a) -x./(sqrt(yc.^2-(x.^2-a^2)));
     
     % none of these are right
-    dydnyc1=@(x,yc,a) -(yc-sqrt(yc^2-4*x.^2+4*a^2))./sqrt(6*yc^2+8*a^2-4*x.^2-2*yc*sqrt(yc^2-4*x.^2+4*a^2));
+    dydnyc1=@(x,yc,a) -(yc-sqrt(yc^2-x.^2+a^2))./sqrt(6*yc^2+8*a^2-4*x.^2-2*yc*sqrt(yc^2-4*x.^2+4*a^2));
     dydnyc2=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1);
     dydnyc3=@(x,yc,a,dydyc,dydx) -dydyc(x,yc,a)./sqrt(dydyc(x,yc,a).^2+dydx(x,yc,a).^2+1).^2;
     % norm of difference between 3D gradient vec and XY gradient (normalised)
@@ -290,11 +290,11 @@ function []=DerivativeOp()
     end
     %% 3D plots
     
-    yfunc=@(x,yc,a) -(yc-sqrt(yc.^2-4*(x.^2-a^2)))/2;
-    dydyc=@(x,yc,a) -(sqrt(4*a^2./yc.^2-4*x.^2./yc.^2+1)-1)./(sqrt(4*a^2./yc.^2-4*x.^2./yc.^2+1)*2);
-    dydx=@(x,yc,a) -2*x./(sqrt(yc.^2-4*(x.^2-a^2)));
+    yfunc=@(x,yc,a) -(yc-sqrt(yc.^2-(x.^2-a^2)));
+    dydyc=@(x,yc,a) -(sqrt(a^2./yc.^2-x.^2./yc.^2+1)-1)./(sqrt(a^2./yc.^2-x.^2./yc.^2+1));
+    dydx=@(x,yc,a) -x./(sqrt(yc.^2-(x.^2-a^2)));
     yNorm=@(x,yc,a,dydyc,dydx) cat(3,-dydx(x,yc,a),-dydyc(x,yc,a),ones(size(x)));
-    yNorm2=@(x,yc,a) cat(3,2*x,(sqrt(4*a^2-4*x.^2+yc.^2)-yc),sqrt(4*a^2-4*x.^2+yc.^2));
+    yNorm2=@(x,yc,a) cat(3,x,(sqrt(a^2-x.^2+yc.^2)-yc),sqrt(a^2-x.^2+yc.^2));
     a=1;
     x=linspace(-a,a,101);
     yc=logspace(-3,1,50);

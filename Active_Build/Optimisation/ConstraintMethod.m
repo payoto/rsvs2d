@@ -755,7 +755,7 @@ function [population]=ResultVariableConsCaller(constrName,constrVal,paroptim,pop
         case 'AeroResidualBarrier'
             population=BarrierAerodynamicResidual(constrVal,population);
         case 'AeroLift'
-            
+            population=BarrierAeroLiftResidual(constrVal,population);
         case 'Volume'
             
         case 'SnakResBarrier'
@@ -779,7 +779,7 @@ function population=CheckAerodynamicResidual(constrVal,population)
         if population(ii).constraint
             constrViolation= (population(ii).additional.res>constrVal) && ...
                 (population(ii).additional.res~=0);
-            population(ii).constraint=~constrViolation;
+            population(ii).constraint=(~constrViolation)*population(ii).constraint;
         end
         
     end
@@ -792,16 +792,20 @@ function population=BarrierAerodynamicResidual(constrVal,population)
     for ii=1:length(population)
         
         if population(ii).constraint>0
+            newConstraint = [];
             if population(ii).additional.res<constrVal(1) ... % Constraint fully satisfied
                     || population(ii).additional.res==0
-                population(ii).constraint=1;
+                newConstraint=1;
                 
             elseif population(ii).additional.res>constrVal(2) % Constraint fully violated
-                population(ii).constraint=0;
+                newConstraint=0;
                 
             else
-                population(ii).constraint=1-(0.5+0.5*tanh(3/(-(constrVal(1)-constrVal(2))/2)...
+                newConstraint=1-(0.5+0.5*tanh(3/(-(constrVal(1)-constrVal(2))/2)...
                     *population(ii).additional.res));
+            end
+            if ~isempty(newConstraint)
+                population(ii).constraint = population(ii).constraint*newConstraint;
             end
         end
         
@@ -813,23 +817,55 @@ end
 function population=BarrierSnaxelVolResidual(constrVal,population)
     
     for ii=1:length(population)
-        
         if population(ii).constraint>0
+            newConstraint = [];
             if population(ii).additional.snaxelVolRes<constrVal(1)
-                population(ii).constraint=1;
+                newConstraint=1;
                 
             elseif population(ii).additional.snaxelVolRes>constrVal(2) % Constraint fully violated
-                population(ii).constraint=0;
+                newConstraint=0;
                 
             else
-                population(ii).constraint=1-(0.5+0.5*tanh(3/(-(log10(constrVal(1))-log10(constrVal(2)))/2)...
+                newConstraint=1-(0.5+0.5*tanh(3/(-(log10(constrVal(1))-log10(constrVal(2)))/2)...
                     *log10(population(ii).additional.snaxelVolRes)));
+            end
+            if ~isempty(newConstraint)
+                population(ii).constraint = population(ii).constraint*newConstraint;
             end
         end
         
     end
     
     
+end
+
+
+function population=BarrierAeroLiftResidual(constrVal,population)
+    boundLimit = constrVal(1);
+    constrExtent = constrVal(2);
+    constrLimits = [1 -1]*constrExtent + boundLimit;
+    funcConstr = @(x, constrVal) (1-...
+        (0.5+0.5*tanh(3/(-((constrVal(1))-(constrVal(2)))/2)*...
+        (x-((constrVal(1))+(constrVal(2)))/2))));
+
+    for ii=1:length(population)
+        constraintControl = population(ii).additional.cl;    
+        if population(ii).constraint>0
+            newConstraint = [];
+            if constraintControl<constrVal(1)
+                newConstraint=1;
+                
+            elseif constraintControl>constrVal(2) % Constraint fully violated
+                newConstraint=0;
+                
+            else
+                newConstraint=funcConstr(constraintControl,constrLimits);
+            end
+            if ~isempty(newConstraint)
+                population(ii).constraint = population(ii).constraint*newConstraint;
+            end
+        end
+    end
 end
 
 

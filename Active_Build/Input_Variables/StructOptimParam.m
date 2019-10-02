@@ -1349,6 +1349,7 @@ function [paroptim]=areabusesweep(e)
     
 end
 
+
 function [paroptim]=areabusesweepmoretopo(e)
     % Need to add support of the axis ratio as a design variable in there
     % as well.
@@ -1406,8 +1407,6 @@ function [paroptim]=areahalfbusesweepmoretopo(e, nPop)
     paroptim.general.startPop='initbusemann3';
 end
 
-  
-
 function [paroptim]=testnewbuse
     [paroptim]=areahalfbusesweepmoretopo(0.12);
     paroptim.general.maxIter=1;
@@ -1429,6 +1428,38 @@ function [paroptim]=regenbuse(e)
     paroptim.general.restartIterNum=1;
     paroptim.optim.DE.nonePopKeep=1; % parameter to pick the first 50% of a population
     paroptim.general.optimMethod='none';
+end
+
+% Lifting busemann?
+
+
+function [paroptim]=test_areabusesweeplift()
+    [paroptim]=areabusesweeplift(0.05, 0.2);
+
+    paroptim.general.nPop=50;
+    paroptim.general.maxIter=5;
+end
+
+function [paroptim]=areabusesweeplift(e, cl)
+    [paroptim]=areabusesweep(e);
+    [paroptim]=liftbusemann(paroptim, cl);
+end
+
+function [paroptim]=liftbusemann(paroptim, cl)
+
+    paroptim.desvar.nonFillVar={'alpha'}; % {'axisratio'} 'alpha' 'mach'
+    paroptim.desvar.numNonFillVar=[1];
+    paroptim.desvar.desVarRangeNoFill={[0 10]}; % [0.1,3] [-10,10] [0 0.5]
+    paroptim.desvar.startPopNonFill={'rand'};
+    paroptim.desvar.symType='none';
+
+    paroptim.constraint.resConstr=...
+        [ paroptim.constraint.resConstr, ...
+        {'AeroLift'}];
+    paroptim.constraint.resVal=...
+        [ paroptim.constraint.resVal, ...
+        {[cl,0.05]}];
+    paroptim.general.defaultVal=2;
 end
 
 %% ASO Cases
