@@ -852,10 +852,10 @@ function population=BarrierAeroLiftResidual(constrVal,population)
         constraintControl = population(ii).additional.cl;    
         if population(ii).constraint>0
             newConstraint = [];
-            if constraintControl<constrVal(1)
+            if constraintControl>constrLimits(1)
                 newConstraint=1;
                 
-            elseif constraintControl>constrVal(2) % Constraint fully violated
+            elseif constraintControl<constrLimits(2) % Constraint fully violated
                 newConstraint=0;
                 
             else
