@@ -1458,7 +1458,7 @@ function [paroptim]=liftbusemann(paroptim, cl)
         {'AeroLift'}];
     paroptim.constraint.resVal=...
         [ paroptim.constraint.resVal, ...
-        {[cl,0.05]}];
+        {[cl, 0.05]}];
     paroptim.general.defaultVal=2;
 end
 

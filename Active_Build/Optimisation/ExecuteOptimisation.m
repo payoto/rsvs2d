@@ -2600,8 +2600,12 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
     
     procStr=['Calculate Objective - ',objectiveName];
     [tStart]=PrintStart(procStr,2);
-    
-    [objInput,clearUnwantedData]=ExtractVariables({'objInput','clearUnwantedData'},paramoptim);
+
+    varNames = {'objInput','clearUnwantedData'};
+    [objInput,clearUnwantedData]=ExtractVariables(varNames, paramoptim);
+
+    varNames = {'nonFillVar','numNonFillVar'};
+    [nonFillVar,numNonFillVar]=ExtractVariables(varNames, paramoptim);
     
     % DVP : replace loop by full support struct add the mesh motion to
     % paramoptim
@@ -2609,6 +2613,18 @@ function [objValue,additional]=EvaluateObjective(objectiveName,paramoptim,...
     paramoptim=SetVariables({'parentMesh'},{supportstruct.parentMesh},paramoptim);
     objValue=[];
     
+    % Deal the non fill variables
+    kk = 1;
+    for ii = 1:numel(nonFillVar)
+        switch nonFillVar{ii}
+            case 'alpha'
+                paramoptim=SetVariables({'nAlpha'},{member.nonfillvar(kk)},paramoptim);
+            case 'mach'
+                paramoptim=SetVariables({'nMach'},{member.nonfillvar(kk)},paramoptim);
+                
+        end
+        kk = kk + numNonFillVar(ii);
+    end
     
     [objValue,additional]=eval([objectiveName,'(paramoptim,member,',objInput,');']);
     
