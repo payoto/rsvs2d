@@ -1835,8 +1835,8 @@ function [nonfillPop]=InitialiseNonFillPop(paramoptim,nPop)
                     
             end
         end
-        nonfillPop(:,nS:nE) = (nonfillPop(:,nS:nE) * (desVarRangeNoFill{jj}(2)-desVarRangeNoFill{jj}(1)))...
-            + desVarRangeNoFill{jj}(1);
+%         nonfillPop(:,nS:nE) = (nonfillPop(:,nS:nE) * (desVarRangeNoFill{jj}(2)-desVarRangeNoFill{jj}(1)))...
+%             + desVarRangeNoFill{jj}(1);
     end
 end
 

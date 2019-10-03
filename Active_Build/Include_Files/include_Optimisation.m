@@ -686,6 +686,8 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
     varExtract={'desVarRange','varOverflow','nDesVar'};
     [desVarRange,varOverflow,nDesVar]=ExtractVariables(varExtract,paramoptim);
     optionOut=[];
+    % newNonFill = newRootFill(:,nDesVar+1:end);
+    % newRootFill = newRootFill(:,1:nDesVar);
     switch varOverflow
         case 'truncate'
             minD=min(desVarRange);
@@ -729,8 +731,27 @@ function [newRootFill,optionOut]=OverflowHandling(paramoptim,newRootFill,extraar
             
     end
     
+    % varExtract={'desVarRange','desVarRangeNoFill','nonFillVar',...
+    %     'numNonFillVar','startPopNonFill'};
+    % [desVarRange,desVarRangeNoFill,nonFillVar,numNonFillVar,...
+    %     startPopNonFill]=ExtractVariables(varExtract,paramoptim);
     
-    
+    % kk=1;
+    % desVarNoFillMin = zeros([1 sum(numNonFillVar)]);
+    % desVarNoFillMax = zeros([1 sum(numNonFillVar)]);
+    % for ii = 1:numel(desVarRangeNoFill)
+    %     desVarNoFillMin(kk:kk+numNonFillVar(ii)-1) = min(desVarRangeNoFill{ii});
+    %     desVarNoFillMax(kk:kk+numNonFillVar(ii)-1) = max(desVarRangeNoFill{ii});
+    %     kk=kk+numNonFillVar(ii);
+    % end
+    % desVarNoFillMin = repmat(desVarNoFillMin,[size(newRootFill,1) 1]);
+    % desVarNoFillMax = repmat(desVarNoFillMax,[size(newRootFill,1) 1]);
+
+    % newNonFill(newNonFill < desVarNoFillMin) = desVarNoFillMin(newNonFill < desVarNoFillMin);
+    % newNonFill(newNonFill > desVarNoFillMax) = desVarNoFillMax(newNonFill > desVarNoFillMax);
+
+
+    % newRootFill = [newRootFill, newNonFill];
 end
 
 function [newFill]=SpillOverflow(paramoptim,newRootFill)
