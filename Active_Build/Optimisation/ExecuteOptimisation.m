@@ -1835,8 +1835,9 @@ function [nonfillPop]=InitialiseNonFillPop(paramoptim,nPop)
                     
             end
         end
+        nonfillPop(:,nS:nE) = (nonfillPop(:,nS:nE) * (desVarRangeNoFill{jj}(2)-desVarRangeNoFill{jj}(1)))...
+            + desVarRangeNoFill{jj}(1);
     end
-    nonfillPop = (nonfillPop * (desVarRangeNoFill(2)-desVarRangeNoFill(1))) + desVarRangeNoFill(1);
 end
 
 function [origPop,nPop,deltas]=InitialiseGradientBased(rootPop,paroptim)
