@@ -1,13 +1,13 @@
-function [varargout]=ProjectColorMap(varargin)
+function [varargout]=ProjectColormap(varargin)
 % include_PostProcessing
-global ProjectColorMap_Handle
+global ProjectColormap_Handle
 try
-nOut=nargout(ProjectColorMap_Handle);
+nOut=nargout(ProjectColormap_Handle);
 catch
 include_PostProcessing
-nOut=nargout(ProjectColorMap_Handle);
+nOut=nargout(ProjectColormap_Handle);
 end
 nOutReq=nargout;
 nOut(nOut<0)=nOutReq;
-[varargout{1:nOut}]=ProjectColorMap_Handle(varargin{:});
+[varargout{1:nOut}]=ProjectColormap_Handle(varargin{:});
 end
