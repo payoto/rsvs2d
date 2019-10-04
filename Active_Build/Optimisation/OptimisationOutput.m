@@ -11,19 +11,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 
-% function [] = OptimisationOutput()
-% %    FUNCTIONLIST allows local functions to be used globally once it has
-% %    been used.
-%     
-%     funcHandles=localfunctions;
-%     funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
-%     HeaderActivation(funcHandles,funcDir)
-%     
-% end
+function [] = OptimisationOutput()
+%    FUNCTIONLIST allows local functions to be used globally once it has
+%    been used.
+    
+    funcHandles=localfunctions;
+    funcDir=[cd,'\Automated_Function_Directory_ExecOptim'];
+    HeaderActivation(funcHandles,funcDir)
+    
+end
 
 
 
-function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
+function [out]=OptimisationOutput2(entryPoint,paramoptim,varargin)
     
     
     switch entryPoint

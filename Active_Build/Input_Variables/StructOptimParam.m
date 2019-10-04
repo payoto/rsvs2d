@@ -1330,7 +1330,7 @@ function [paroptim]=areabusesweep(e)
     
     paroptim.desvar.varOverflow='spill'; % 'truncate' 'spill'
     paroptim.general.nPop=100;
-    paroptim.general.maxIter=150;
+    paroptim.general.maxIter=200;
     [paroptim]=ChooseNworkerFlow(paroptim);
     
     paroptim=ModifySnakesParam(paroptim,'optimSupersonicMultiTopo');
