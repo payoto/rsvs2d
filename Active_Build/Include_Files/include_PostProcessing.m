@@ -15,7 +15,7 @@ print(figh,figname,'-djpeg','-r600')
 
 end
 
-function [c]=ProjectColorMap(val, cVals,CMap)
+function [c]=ProjectColorMap2(val, cVals,CMap)
     nC = size(CMap,1);
     pos=(val-min(cVals))/(max(cVals)-min(cVals))*(nC-1)+1;
     
