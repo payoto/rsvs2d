@@ -10,6 +10,7 @@
 %             Alexandre Payot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%{
 % 
 function [] = OptimisationOutput()
 %    FUNCTIONLIST allows local functions to be used globally once it has
@@ -20,10 +21,12 @@ function [] = OptimisationOutput()
     HeaderActivation(funcHandles,funcDir)
     
 end
+%}
 
 
 
-function [out]=OptimisationOutput2(entryPoint,paramoptim,varargin)
+
+function [out]=OptimisationOutput(entryPoint,paramoptim,varargin)
     
     
     switch entryPoint
