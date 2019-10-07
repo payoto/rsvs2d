@@ -3,7 +3,7 @@ function BP3_arealiftbusesweep(vol, cl)
     InitialiseSnakeFlow;
 
     if nargin>0
-    	callStr=sprintf('areabusesweeplift(%.3f, %.2f)',vol,cl);
+    	callStr=sprintf('areabusesweeplift(%.3f,%.2f)',vol,cl);
     else
     	callStr = 'test_areabusesweeplift';
     end
