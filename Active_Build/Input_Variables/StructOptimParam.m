@@ -1347,6 +1347,8 @@ function [paroptim]=areabusesweep(e)
     [paroptim]=AdaptSizeforBusemannHalf(paroptim,e);
     paroptim.constraint.initVal=...
         {{'LETE','max',(ratioChord^2)/2*(cellLevels(1)-2)^2}};
+        
+    paroptim.general.clearUnwantedData = true;
     
 end
 
