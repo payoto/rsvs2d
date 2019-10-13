@@ -27,9 +27,7 @@ function [paroptim]=StructOptimParam(caseStr)
     
     [paroptim]=ModifyCase(paroptim,modifCell);
     
-    paroptim.general.optimCase=regexprep(regexprep(regexprep(...
-        regexprep(caseStrTrim,'(\(|\)|,)','_'),'\.','_'),'''',''),...
-        ' ','');
+    paroptim.general.optimCase=CallString2Name(caseStrTrim, 'legacy');
     
     paroptim.general.optimCase=[paroptim.general.optimCase,modifCell{:}];
     
