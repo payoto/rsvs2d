@@ -1555,7 +1555,6 @@ function []=ClearUnwantedData(paramoptim, member)
                 'CFD/*.vtk'
                 'CFD/flow.dump'
                 'CFD/grid.plt'
-                'CFD/coords.dat'
             };
         case 'ASOFlow'
             fileList = {
