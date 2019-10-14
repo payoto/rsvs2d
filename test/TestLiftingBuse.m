@@ -5,12 +5,12 @@ function []=TestLiftingBuse
 
     %% Define Cases
     % geometriesBound=FindDir(MakePathCompliant('.\Active_Build\Sample Geometries\sampleboundaries'),'boundary',0);
-    testCellParam(1,1:3)={'meshRefLvl',{10 11 12 13 14},1};
-    testCellParam(2,1:3)={'mesher',{'cutcell'},1};
-    testCellParam(5,1:3)={'nMach',{2},1};
-    testCellParam(6,1:3)={'nAlpha',{0, 2, 4, 6, 8, 10},1};
+    testCellParam(1,1:3)={'nAlpha',{0,1, 2,3, 4,5, 6, 7, 8, 9, 10},1};
+    testCellParam(2,1:3)={'area',{0.01,0.03,0.05,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.2,0.25},0};
     testCellParam(3,1:3)={'geometry',LinRes(),0};
-    testCellParam(4,1:3)={'area',{0.05, 0.12},0};
+    testCellParam(4,1:3)={'meshRefLvl',{12},1};
+    testCellParam(5,1:3)={'mesher',{'cutcell'},1};
+    testCellParam(6,1:3)={'nMach',{2},1};
 
     paramoptim=StructOptimParam('FlowSolverBench');
 
@@ -108,15 +108,19 @@ function []=TestLiftingBuse
 
 
     %% Postprocess results
-
+    kk=0;
     % plots with respect to refLevelCell
     listNames=cell(0);
+    % for ii=1:40
+    %     indStart=ii;
+    %     inds=indStart:40:numel(teststruct);
     for ii=1:(numel(teststruct)/numel(testCellParam{1,2}))
         indStart=(ii-1)*numel(testCellParam{1,2})+1;
         indEnd=(ii)*numel(testCellParam{1,2});
+        inds = indStart:indEnd;
         seriesName=[regexprep(regexprep(teststruct(indStart).geometry,...
             '^.*boundary_',''),'\.dat',''),...
-            '_',num2str(teststruct(indStart).nMach,'%.2f')];
+            '_',num2str(teststruct(indStart).area,'%.2f')];
         
         jj=0;
         flagMatch=false;
@@ -135,15 +139,25 @@ function []=TestLiftingBuse
         for kk=1:numel(fieldsRes)
             subplot(3,3,kk),hold on;
             title(fieldsRes{kk})
-            x=[teststruct(indStart:indEnd).meshRefLvl];
-            inds=indStart:indEnd;
+            x=[teststruct(inds).nAlpha];
+            
             y=zeros(size(inds));
             for ll=1:numel(inds)
                 y(ll)=[teststruct(inds(ll)).res.(fieldsRes{kk})];
             end
-            plot(x,y,'-','DisplayName',[teststruct(indStart).mesher,'_',int2str(ii),'_',int2str(kk)])
+            plot(x,y,'-','DisplayName',[teststruct(indStart).mesher,'_',num2str(teststruct(indStart).area),'_',int2str(kk)])
         end
-        
+        if numel(fieldsRes)< 9
+            subplot(3,3,numel(fieldsRes)+1),hold on;
+            cl=zeros(size(inds));
+            cd=zeros(size(inds));
+            for ll=1:numel(inds)
+                cl(ll)=[teststruct(inds(ll)).res.cl];
+                cd(ll)=[teststruct(inds(ll)).res.cd];
+            end
+            plot(cd,cl,'-','DisplayName',[teststruct(indStart).mesher,'_',num2str(teststruct(indStart).area),'_',int2str(kk)])
+            title('drag polar')
+        end
     end
 
     for ii=1:numel(h)
@@ -160,10 +174,10 @@ function [loopFunc]=LinRes()
 
     loopFunc{1}=@(A, flowpath) BoundaryOutput(ConstantArea_Parabola(xMin,xMax,A,nPoints),...
         fopen([flowpath,filesep,matlab.lang.makeValidName(['boundary_Parabola',num2str(A)]),'.dat'],'w'));
-    loopFunc{2}=@(A, flowpath) BoundaryOutput(ConstantArea_Wedge(xMin,xMax,A),...
-        fopen([flowpath,filesep,matlab.lang.makeValidName(['boundary_Wedge',num2str(A)]),'.dat'],'w'));
-    loopFunc{3}=@(A, flowpath) BoundaryOutput(ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints),...
+%     loopFunc{2}=@(A, flowpath) BoundaryOutput(ConstantArea_Wedge(xMin,xMax,A),...
+%         fopen([flowpath,filesep,matlab.lang.makeValidName(['boundary_Wedge',num2str(A)]),'.dat'],'w'));
+    loopFunc{2}=@(A, flowpath) BoundaryOutput(ConstantArea_Klunker(xMin,xMax,A,nMach,nPoints),...
         fopen([flowpath,filesep,matlab.lang.makeValidName(['boundary_Klunker',num2str(A)]),'.dat'],'w'));
-    loopFunc{4}=@(A, flowpath) BoundaryOutput(ConstantArea_Busemann(xMin,xMax,A,nMach),...
+    loopFunc{3}=@(A, flowpath) BoundaryOutput(ConstantArea_Busemann(xMin,xMax,A,nMach),...
         fopen([flowpath,filesep,matlab.lang.makeValidName(['boundary_Busemann',num2str(A)]),'.dat'],'w'));
 end
