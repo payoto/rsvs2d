@@ -506,58 +506,6 @@ function [paramoptim,iterstruct]=InitialiseParamForGrid(baseGrid,paramoptim)
     
 end
 
-function [workerList]=StartParallelPool(nWorker,nTry)
-    kk=0;
-    while numel(gcp('nocreate'))==0 && kk<nTry
-        comStr=computer;
-        %         if strcmp(comStr(1:2),'PC')
-        %             poolName=parallel.importProfile('ExportOptimSnakes.settings');
-        %         else
-        %             poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
-        %         end
-        %         clusterObj=parcluster(poolName);
-        %         clusterObj.NumWorkers=nWorker;
-        %         saveProfile(clusterObj);
-        
-        try
-            
-            c = parcluster('local');
-            c.NumWorkers = max(c.NumWorkers, nWorker);
-            p=parpool(c, nWorker);
-            p.IdleTimeout=Inf;
-            
-        catch ME
-            
-        end
-        kk=kk+1;
-    end
-    
-    if numel(gcp('nocreate'))~=0
-        disp(['Parallel Pool succesfully created after ',int2str(kk),' attempt(s)'])
-    else
-        %error('Parrallel pool failed to start')
-        throw(ME)
-    end
-    ll=1;
-    workerList=[];
-    while numel(workerList)<nWorker && ll<10
-        thisworker=zeros([1 ll*nWorker]);
-        parfor ii=1:ll*nWorker
-            tempworker = getCurrentWorker;
-            thisworker(ii)=tempworker.ProcessId;
-        end
-        workerList=unique(thisworker);
-        ll=ll+1;
-    end
-    if numel(workerList)<nWorker && ~strcmp(computer,'PCWIN64')
-        error('Failed to recover a list of workers')
-    end
-    pctRunOnAll ExecInclude
-    pathStr=cd;
-    parfor ii=1:ll*nWorker
-        cd(pathStr);
-    end
-end
 
 function [paramoptim]=InitialiseObjective(paramoptim)
     varExtract={'objectiveName'};

@@ -1133,6 +1133,8 @@ end
 function paroptim=FlowSolverBench()
     [paroptim]=DefaultOptim();
     paroptim=CutCellObjectiveTriangle(paroptim);
+    [paroptim]=ChooseNworkerFlow(paroptim);
+    
     paroptim.obj.flow.meshSettingsWrite=true; % controls wether mesh settings should be written
     paroptim.obj.flow.meshRefLvl=12;
     paroptim.obj.flow.meshRefSpread=20;

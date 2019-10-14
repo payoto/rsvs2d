@@ -1535,6 +1535,39 @@ function [loop]=ConstantArea_Klunker(xMin,xMax,A,M,nPoints)
     loop.subdivision(end+1,:)=loop.subdivision(1,:);
 end
 
+function [loop]=ConstantArea_Parabola(xMin,xMax,A,nPoints)
+    
+    f=@(x) [x.^2, x, ones(size(x))];
+    F=@(x) [(x.^3)/3, (x.^2)/2, x ];
+    
+    R=[F(xMax)-F(xMin);f(xMax);f(xMin)];
+    targ=[A/2;0;0];
+    
+    coeff=R\targ;
+    
+    xCoord=linspace(xMin,xMax,ceil(nPoints/2))';
+    yCoord=f(xCoord)*coeff;
+    
+    points=[[xCoord,-yCoord];[xCoord(end-1:-1:2),yCoord(end-1:-1:2)]];
+    
+    loop.subdivision=points;
+    loop.isccw=true;
+    loop.subdivision(end+1,:)=loop.subdivision(1,:);
+end
+
+function [loop]=ConstantArea_Wedge(xMin,xMax,A,M)
+    
+    h=2*A/2/(xMax-xMin);
+    
+    
+    points=[xMin,0;xMin+(xMax-xMin)/2,-h;xMax,0;xMin+(xMax-xMin)/2,h];
+    
+    loop.subdivision=points;
+    loop.isccw=true;
+    loop.subdivision(end+1,:)=loop.subdivision(1,:);
+end
+
+
 %% Data removal
 
 
@@ -1593,3 +1626,72 @@ function []=DeleteUnwantedFiles(pathDel, fileList)
         end
     end
 end
+
+
+function [workerList]=StartParallelPool(nWorker,nTry)
+    kk=0;
+    while numel(gcp('nocreate'))==0 && kk<nTry
+        comStr=computer;
+        %         if strcmp(comStr(1:2),'PC')
+        %             poolName=parallel.importProfile('ExportOptimSnakes.settings');
+        %         else
+        %             poolName=parallel.importProfile('ExportOptimSnakesLinux.settings');
+        %         end
+        %         clusterObj=parcluster(poolName);
+        %         clusterObj.NumWorkers=nWorker;
+        %         saveProfile(clusterObj);
+        
+        try
+            
+            c = parcluster('local');
+            c.NumWorkers = max(c.NumWorkers, nWorker);
+            p=parpool(c, nWorker);
+            p.IdleTimeout=Inf;
+            
+        catch ME
+            
+        end
+        kk=kk+1;
+    end
+    
+    if numel(gcp('nocreate'))~=0
+        disp(['Parallel Pool succesfully created after ',int2str(kk),' attempt(s)'])
+    else
+        %error('Parrallel pool failed to start')
+        throw(ME)
+    end
+    ll=1;
+    workerList=[];
+    while numel(workerList)<nWorker && ll<10
+        thisworker=zeros([1 ll*nWorker]);
+        parfor ii=1:ll*nWorker
+            tempworker = getCurrentWorker;
+            thisworker(ii)=tempworker.ProcessId;
+        end
+        workerList=unique(thisworker);
+        ll=ll+1;
+    end
+    if numel(workerList)<nWorker && ~strcmp(computer,'PCWIN64')
+        error('Failed to recover a list of workers')
+    end
+    pctRunOnAll ExecInclude
+    pathStr=cd;
+    parfor ii=1:ll*nWorker
+        cd(pathStr);
+    end
+end
+
+
+function [obj]=OutputAndRunFlowSolve(loop,rootFolder,tag,paramoptim)
+    
+    boundaryFolder=[rootFolder,filesep,tag];
+    mkdir(boundaryFolder);
+    boundaryPath=[boundaryFolder,filesep,'boundary_',tag,'.dat'];
+    fid=fopen(boundaryPath,'w');
+    
+    BoundaryOutput(loop,fid);
+    
+    [obj]=CutCellFlow_Handler(paramoptim,boundaryFolder);
+end
+
+%% Area Constraint - Profile Generation
