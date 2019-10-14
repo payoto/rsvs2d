@@ -153,8 +153,8 @@ function []=TestLiftingBuse
 end
 
 function [loopFunc]=LinRes()
-    xMin = 0;
-    xMax = 1;
+    xMin = -0.2;
+    xMax = 0.8;
     nPoints = 400;
     nMach = 2;
 
