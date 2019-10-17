@@ -1592,6 +1592,8 @@ function [iterstruct,paroptim]=InitialisePopulation(paroptim,baseGrid)
             origPop=ones([nPop 1])*[-0.527550124697614,0.621201147399720,...
                 0.814520320829864, 0.133167225580308,-1.030580011564433,...
                 1.199348401514573,-1.143489960105117,0.541368333874143];
+        case 'ChokeBound'
+            error('needs code')
         case 'halfuniform'
             origPop=ones([nPop nDesVar])*0.5;
         case 'halfuniformthin'
@@ -2674,6 +2676,13 @@ end
 function [objValue,additional]=Rosenbrock(paramoptim,member,loop)
     
     [objValue] = RosenbrockFunction(member.fill);
+    
+    
+    additional.y=objValue;
+end
+function [objValue,additional]=ChokeBoundModel(paramoptim,member,loop)
+    
+    [objValue] = ChokeBoundModelFunction(member.fill);
     
     
     additional.y=objValue;

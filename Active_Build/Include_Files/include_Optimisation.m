@@ -658,7 +658,7 @@ function [isAnalytical]=CheckIfAnalytical(objectiveName)
     
     switch objectiveName
         
-        case 'Rosenbrock'
+        case {'Rosenbrock','ChokeBoundModel'}
             isAnalytical=true;
         otherwise
             isAnalytical=false;

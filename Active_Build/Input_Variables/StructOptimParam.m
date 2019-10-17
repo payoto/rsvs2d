@@ -1300,7 +1300,7 @@ function [paroptim]=Test_Rosenbrock()
     paroptim.desvar.symType='none';
     paroptim.general.objectiveName='Rosenbrock';
     paroptim.general.useSnake=false;
-    paroptim.desvar.nDesVar=4*2;
+    paroptim.desvar.nDesVar=2;
     paroptim.desvar.varOverflow='truncate';
     paroptim.desvar.desVarRange=[-2.048, 2.048];
     paroptim.general.nPop=25;
@@ -1313,6 +1313,15 @@ function [paroptim]=Test_Rosenbrock_BFGS()
     [paroptim]=Test_Rosenbrock();
     
     paroptim.optim.CG.stepAlgo='BFGS';
+    
+end
+
+function [paroptim]=Test_Discontinuity()
+    [paroptim]=Test_Rosenbrock();
+    
+    paroptim.general.objectiveName='ChokeBoundModel';
+    paroptim.general.startPop='Rosenrand';
+%     paroptim.optim.CG.stepAlgo='BFGS';
     
 end
 
