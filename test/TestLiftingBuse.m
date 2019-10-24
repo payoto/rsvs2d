@@ -8,7 +8,7 @@ function []=TestLiftingBuse
     testCellParam(1,1:3)={'nAlpha',{0,1, 2,3, 4,5, 6, 7, 8, 9, 10},1};
     testCellParam(2,1:3)={'area',{0.01,0.03,0.05,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.2,0.25},0};
     testCellParam(3,1:3)={'geometry',LinRes(),0};
-    testCellParam(4,1:3)={'meshRefLvl',{12},1};
+    testCellParam(4,1:3)={'meshRefLvl',{12, 13},1};
     testCellParam(5,1:3)={'mesher',{'cutcell'},1};
     testCellParam(6,1:3)={'nMach',{2},1};
 

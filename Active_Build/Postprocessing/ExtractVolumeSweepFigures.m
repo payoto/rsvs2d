@@ -1,16 +1,11 @@
 function [resstruct]=ExtractVolumeSweepFigures(pathStr)
-    
-    
-    
+
     [childFolder]=ExploreFolderTree({pathStr});
     [optimPaths]=FindOptimResFiles(childFolder);
     %[paramPaths]=FindFinalParamFiles(childFolder);
-    compareOpts=struct('optim',{{'desVarVal'}},'snake',{{'axisRatio'}});
+    compareOpts=struct('optim',{{'desVarVal',{'resVal',2}}},'snake',{{'axisRatio'}});
     [resstruct]=TreatPathsIntoStruct(optimPaths,compareOpts);
-    
-    
-    
-    
+
     plotstruct=ReturnLineProfile(resstruct);
     [~,sOrd]=sort([plotstruct(:).A]);
     plotstruct=plotstruct(sOrd);
@@ -166,6 +161,11 @@ function [refinestruct]=TreatPathsIntoStruct(pltPaths,compareopts)
         end
         kk=kk+1;
     end
+    for ii=numel(compList):-1:1
+        if isnumeric(compList{ii})
+            compList(ii) = [];
+        end
+    end
     [resstruct,patternList]=IdentifyUniqueOptions(resstruct,compList);
     %patternList=patternList{1};
     pattNumRes=zeros([numel(compList),numel(resstruct)]);
@@ -242,33 +242,34 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     end
     instruct=load(paramPath{1});
     
-    for ii=1:numel(compareopts.optim)
-        refinestruct.paramoptim.(compareopts.optim{ii})=ExtractVariables(...
-            compareopts.optim(ii),instruct.paramoptim);
-        refinestruct.(compareopts.optim{ii})=ExtractVariables(...
-            compareopts.optim(ii),instruct.paramoptim);
-        if iscell(refinestruct.paramoptim.(compareopts.optim{ii}))
-            refinestruct.paramoptim.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii}){1};
-            refinestruct.(compareopts.optim{ii})=refinestruct.paramoptim.(compareopts.optim{ii});
+    fields = {'optim','snake'};
+    param = {instruct.paramoptim, instruct.paramoptim.parametrisation};
+
+    for jj = 1:2
+        fieldAct = ['param',fields{jj}];
+        for ii=1:numel(compareopts.(fields{jj}))
+            if iscell(compareopts.(fields{jj}){ii})
+                compareOpt = compareopts.(fields{jj}){ii}{1};
+                compareOptNum = compareopts.(fields{jj}){ii}{2};
+            else
+                compareOpt = compareopts.(fields{jj}){ii};
+                compareOptNum = 1;
+            end
+            refinestruct.(fieldAct).(compareOpt)=ExtractVariables(...
+                {compareOpt},param{jj});
+            refinestruct.(compareOpt)=refinestruct.(fieldAct).(compareOpt);
+            if iscell(refinestruct.(fieldAct).(compareOpt))
+                refinestruct.(fieldAct).(compareOpt) =...
+                    refinestruct.(fieldAct).(compareOpt){compareOptNum};
+                refinestruct.(compareOpt) =...
+                    refinestruct.(fieldAct).(compareOpt);
+            end
+        end
+        if numel(compareopts.(fields{jj}))==0
+            refinestruct.(fieldAct)=struct([]);
         end
     end
-    if numel(compareopts.optim)==0
-        refinestruct.paramoptim=struct([]);
-    end
-    for ii=1:numel(compareopts.snake)
-        refinestruct.paramsnake.(compareopts.snake{ii})=ExtractVariables(...
-            compareopts.snake(ii),instruct.paramoptim.parametrisation);
-        refinestruct.(compareopts.snake{ii})=ExtractVariables(...
-            compareopts.snake(ii),instruct.paramoptim.parametrisation);
-        
-        if iscell(refinestruct.paramsnake.(compareopts.snake{ii}))
-            refinestruct.paramoptim.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii}){1};
-            refinestruct.(compareopts.snake{ii})=refinestruct.paramoptim.(compareopts.snake{ii});
-        end
-    end
-    if numel(compareopts.snake)==0
-        refinestruct.paramsnake=struct([]);
-    end
+
     
     refinestruct.objstart=refinestruct.obj(refinestruct.iterstart);
     refinestruct.objend=refinestruct.obj(refinestruct.iterend-1);
@@ -276,7 +277,8 @@ function [refinestruct]=TreatPathData(optimPath,compareopts)
     refinestruct.dir=optimCell{end-1};
 end
 
-function [iterstart,iterend,nDesVar,objHist,desHist,addHist,optimSolPath]=TrimDataToStruct(optimstruct)
+function [iterstart,iterend,nDesVar,objHist,desHist,addHist,...
+        optimSolPath]=TrimDataToStruct(optimstruct)
     
     iterstart=1;
     n=1;
@@ -320,7 +322,8 @@ function [refinestruct,patternList]=IdentifyUniqueOptions(refinestruct,jobfields
                 test=false;
                 if ischar(refinestruct(jj).(jobfields{ii}))
                     test=strcmp(patternList{ii}{kk},refinestruct(jj).(jobfields{ii}));
-                elseif isnumeric(refinestruct(jj).(jobfields{ii})) || islogical(refinestruct(jj).(jobfields{ii}))
+                elseif isnumeric(refinestruct(jj).(jobfields{ii})) ...
+                        || islogical(refinestruct(jj).(jobfields{ii}))
                     test=(patternList{ii}{kk}==refinestruct(jj).(jobfields{ii}));
                 end
                 if test
@@ -330,8 +333,11 @@ function [refinestruct,patternList]=IdentifyUniqueOptions(refinestruct,jobfields
                 end
             end
             if ~optfound
-                patternList{ii}{end+1}=refinestruct(jj).(jobfields{ii});
-                refinestruct(jj).([jobfields{ii},'num'])=numel(patternList{ii});
+                try
+                    patternList{ii}{end+1}=refinestruct(jj).(jobfields{ii});
+                    refinestruct(jj).([jobfields{ii},'num'])=numel(patternList{ii});
+                catch
+                end
             end
         end
     end
