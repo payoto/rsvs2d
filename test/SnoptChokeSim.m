@@ -6,8 +6,8 @@ function [saveX] = SnoptChokeSim(startPt, isConstrAct, isNewPlot, is3D, ax, plot
     if isempty(SnoptChokeSim_HASRUNBEFORE)
         SnoptChokeSim_HASRUNBEFORE=false;
     end
-    discontinuityMulti = @(x) ((tanh(100*(1-sum(x.^2,1)))+1)/2);
-%     discontinuityMulti = @(x) (sum(x.^2,1)<1);
+    % discontinuityMulti = @(x) ((tanh(100*(1-sum(x.^2,1)))+1)/2);
+	discontinuityMulti = @(x) (sum(x.^2,1)<1);
     userfun = @(x) ChokeBoundModelFunctionSNOPT(x);
     
     nDim = 2;
@@ -103,10 +103,8 @@ function [saveX] = SnoptChokeSim(startPt, isConstrAct, isNewPlot, is3D, ax, plot
     end
     if ~exist('ax','var')
         ax = gca;
-    else
-        ax.NextPlot = 'add';
-        
     end
+    ax.NextPlot = 'add';
     if ~is3D
 %         l = plotPoints(ax,saveLSX', {'k--'});
         l = plotPoints(ax,saveX', plotFormat);
@@ -173,6 +171,9 @@ function [saveX] = SnoptChokeSim(startPt, isConstrAct, isNewPlot, is3D, ax, plot
     end
     
     function [c, ceq, gc, gceq] = nlcon(x)
+        [c, ceq, gc, gceq] = UnitCircularConstraint(x);
+    end
+    function [c, ceq, gc, gceq] = UnitCircularConstraint(x)
         if ~isnan(isConstrAct)
             c = -sum(x.^2)+isConstrAct*2-1;
         elseif -sum(x.^2)+1 > 0;
